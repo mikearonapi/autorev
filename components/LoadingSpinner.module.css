@@ -1,0 +1,100 @@
+/* LoadingSpinner - Reusable loading indicator */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-2xl);
+}
+
+.fullPage {
+  min-height: 60vh;
+}
+
+.spinner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Size variants */
+.small {
+  width: 32px;
+  height: 32px;
+}
+
+.medium {
+  width: 48px;
+  height: 48px;
+}
+
+.large {
+  width: 64px;
+  height: 64px;
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  animation: spin 1.2s ease-in-out infinite;
+}
+
+.small .ring {
+  border-width: 2px;
+}
+
+.large .ring {
+  border-width: 4px;
+}
+
+/* Three concentric rings with different colors and delays */
+.ring:nth-child(1) {
+  width: 100%;
+  height: 100%;
+  border-top-color: var(--sn-primary);
+  animation-delay: 0s;
+}
+
+.ring:nth-child(2) {
+  width: 75%;
+  height: 75%;
+  border-right-color: var(--sn-accent);
+  animation-delay: 0.15s;
+}
+
+.ring:nth-child(3) {
+  width: 50%;
+  height: 50%;
+  border-bottom-color: var(--sn-primary-light);
+  animation-delay: 0.3s;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.text {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+

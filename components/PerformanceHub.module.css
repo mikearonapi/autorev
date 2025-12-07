@@ -1,0 +1,592 @@
+/**
+ * Performance HUB Styles
+ * Gran Turismo-inspired but simple performance visualization
+ */
+
+/* ============================================================================
+   Main Container
+   ============================================================================ */
+.hub {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .hub {
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+  }
+}
+
+/* ============================================================================
+   Left Panel - Car Identity
+   ============================================================================ */
+.carPanel {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
+  padding: var(--space-xl);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--color-white);
+}
+
+.carImageContainer {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.carImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.15) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.carImageText {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.carInfo {
+  text-align: center;
+}
+
+.carBadges {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.tierBadge,
+.categoryBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.tierBadge {
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+}
+
+.categoryBadge {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--color-white);
+}
+
+.carName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  color: var(--color-white);
+}
+
+.carYears {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.carTagline {
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  margin: var(--space-sm) 0 0;
+}
+
+/* Specs Grid */
+.specsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.specLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.specValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.specGain {
+  font-size: 10px;
+  color: var(--sn-accent);
+  font-weight: 700;
+}
+
+/* CTAs */
+.carCtas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: auto;
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.ctaPrimary {
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+}
+
+.ctaPrimary:hover {
+  background: var(--sn-accent-light);
+}
+
+.ctaSecondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+   Right Panel - Performance Dashboard
+   ============================================================================ */
+.dashboardPanel {
+  padding: var(--space-xl);
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.dashboardTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.costBadge {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+  color: var(--sn-primary);
+}
+
+/* Package Selector */
+.packageSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.packagePill {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.packagePill:hover {
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+}
+
+.packagePill.active {
+  background: var(--sn-primary);
+  border-color: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.packagePill.streetSport.active {
+  background: var(--sn-primary);
+  border-color: var(--sn-primary);
+}
+
+.packagePill.trackPack.active {
+  background: var(--sn-accent);
+  border-color: var(--sn-accent);
+  color: var(--sn-primary-dark);
+}
+
+.packagePill.timeAttack.active {
+  background: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* Package Info */
+.packageInfo {
+  padding: var(--space-md);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--sn-accent);
+}
+
+.packageDescription {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ============================================================================
+   Performance Bars
+   ============================================================================ */
+.performanceBars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.performanceBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.barHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.barLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.barIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-100);
+  color: var(--sn-primary);
+}
+
+.barName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.barScores {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+}
+
+.currentScore {
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.stockScoreSmall {
+  color: var(--color-gray-400);
+}
+
+.scoreArrow {
+  color: var(--color-gray-400);
+}
+
+.upgradedScore {
+  font-weight: 700;
+  color: var(--sn-primary);
+}
+
+.scoreDelta {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-success);
+  padding: 2px var(--space-xs);
+  background: var(--color-success-light);
+  border-radius: var(--radius-sm);
+}
+
+/* Bar Track */
+.barTrack {
+  position: relative;
+  height: 8px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.barFillStock {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sn-primary-light) 0%, var(--sn-primary) 100%);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.barFillUpgrade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sn-accent) 0%, var(--sn-accent-light) 100%);
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  transition: all var(--transition-slow);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* ============================================================================
+   Scoring Info
+   ============================================================================ */
+.scoringInfoWrapper {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+}
+
+/* ============================================================================
+   Modules Section
+   ============================================================================ */
+.modulesSection {
+  border-top: 1px solid var(--color-gray-100);
+  padding-top: var(--space-lg);
+}
+
+.modulesToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-md);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modulesToggle:hover {
+  background: var(--color-gray-100);
+}
+
+.toggleIcon {
+  display: flex;
+  transition: transform var(--transition-fast);
+}
+
+.toggleIcon.expanded {
+  transform: rotate(90deg);
+}
+
+.modulesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.moduleCategory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.moduleCategoryTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+.moduleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.moduleChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.moduleChip:hover {
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+}
+
+.moduleChip.selected {
+  background: var(--sn-primary);
+  border-color: var(--sn-primary);
+  color: var(--color-white);
+}
+
+/* ============================================================================
+   Dashboard Footer
+   ============================================================================ */
+.dashboardFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-gray-100);
+  margin-top: auto;
+}
+
+.footerLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--sn-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footerLink:hover {
+  color: var(--sn-primary-dark);
+}
+
+/* ============================================================================
+   Responsive
+   ============================================================================ */
+@media (max-width: 1023px) {
+  .carPanel {
+    padding: var(--space-lg);
+  }
+  
+  .dashboardPanel {
+    padding: var(--space-lg);
+  }
+  
+  .carName {
+    font-size: var(--font-size-xl);
+  }
+  
+  .specsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .specsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .packageSelector {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-sm);
+  }
+  
+  .packagePill {
+    flex-shrink: 0;
+  }
+  
+  .modulesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboardFooter {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
+

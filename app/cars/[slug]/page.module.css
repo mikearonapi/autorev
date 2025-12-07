@@ -1,0 +1,846 @@
+/* ==========================================================================
+   Car Detail Page - Hero Pages for Individual Vehicles
+   SuperNatural Motorsports Brand Integration
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Theme Tokens (matching advisory)
+   -------------------------------------------------------------------------- */
+:root {
+  --sn-primary: #1a4d6e;
+  --sn-primary-light: #2a6d94;
+  --sn-primary-dark: #0f3347;
+  --sn-accent: #c9a227;
+  
+  --color-white: #ffffff;
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+  
+  --score-excellent: #15803d;
+  --score-excellent-bg: rgba(21, 128, 61, 0.1);
+  --score-good: #1d4ed8;
+  --score-good-bg: rgba(29, 78, 216, 0.1);
+  --score-average: #b45309;
+  --score-average-bg: rgba(180, 83, 9, 0.1);
+  --score-poor: #b91c1c;
+  --score-poor-bg: rgba(185, 28, 28, 0.1);
+  
+  --tier-premium: #7c3aed;
+  --tier-premium-bg: rgba(124, 58, 237, 0.12);
+  --tier-upper: #2563eb;
+  --tier-upper-bg: rgba(37, 99, 235, 0.12);
+  --tier-mid: #059669;
+  --tier-mid-bg: rgba(5, 150, 105, 0.12);
+  --tier-entry: #d97706;
+  --tier-entry-bg: rgba(217, 119, 6, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Container
+   -------------------------------------------------------------------------- */
+.container {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
+/* --------------------------------------------------------------------------
+   Loading & Error States
+   -------------------------------------------------------------------------- */
+.loadingState,
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  color: var(--color-gray-500);
+  text-align: center;
+  padding: 2rem;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--sn-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorState h2 {
+  font-size: 1.5rem;
+  color: var(--color-gray-800);
+  margin: 0;
+}
+
+.errorState p {
+  margin: 0;
+  max-width: 400px;
+}
+
+.errorState svg {
+  color: var(--score-poor);
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.backButton:hover {
+  background: var(--sn-primary-dark);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   Hero Section
+   -------------------------------------------------------------------------- */
+.heroSection {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
+  color: var(--color-white);
+  padding: 3rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.heroHeader {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.tierBadge {
+  display: inline-flex;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tierPremium {
+  background: var(--tier-premium-bg);
+  color: #c4b5fd;
+}
+
+.tierUpper {
+  background: var(--tier-upper-bg);
+  color: #93c5fd;
+}
+
+.tierMid {
+  background: var(--tier-mid-bg);
+  color: #6ee7b7;
+}
+
+.tierEntry {
+  background: var(--tier-entry-bg);
+  color: #fcd34d;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.heroYears {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 1.5rem;
+}
+
+.heroTagline {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 1.5rem;
+  font-style: italic;
+  max-width: 600px;
+}
+
+.heroHighlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.heroImageWrapper {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45%;
+  max-width: 500px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.heroImagePlaceholder {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.heroImageText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Specs Strip
+   -------------------------------------------------------------------------- */
+.specsStrip {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: 1.5rem 2rem;
+}
+
+.specsGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 100px;
+}
+
+.specLabel {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.specValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+/* --------------------------------------------------------------------------
+   Main Content
+   -------------------------------------------------------------------------- */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin: 0 0 0.5rem;
+}
+
+.sectionTitle svg {
+  color: var(--sn-primary);
+}
+
+.sectionSubtitle {
+  color: var(--color-gray-500);
+  margin: 0 0 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Score Grid
+   -------------------------------------------------------------------------- */
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.scoreCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.scoreCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.scoreCardLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.scoreValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+.scoreValue.scoreExcellent {
+  background: var(--score-excellent-bg);
+  color: var(--score-excellent);
+}
+
+.scoreValue.scoreGood {
+  background: var(--score-good-bg);
+  color: var(--score-good);
+}
+
+.scoreValue.scoreAverage {
+  background: var(--score-average-bg);
+  color: var(--score-average);
+}
+
+.scoreValue.scorePoor {
+  background: var(--score-poor-bg);
+  color: var(--score-poor);
+}
+
+.scoreBar {
+  height: 8px;
+  background: var(--color-gray-100);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.scoreBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.scoreBarFill.scoreExcellent {
+  background: var(--score-excellent);
+}
+
+.scoreBarFill.scoreGood {
+  background: var(--score-good);
+}
+
+.scoreBarFill.scoreAverage {
+  background: var(--score-average);
+}
+
+.scoreBarFill.scorePoor {
+  background: var(--score-poor);
+}
+
+.scoreRating {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+}
+
+/* Scoring Info */
+.scoringInfoWrapper {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* --------------------------------------------------------------------------
+   Two Column Layout
+   -------------------------------------------------------------------------- */
+.twoColumn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+/* --------------------------------------------------------------------------
+   Pros & Cons
+   -------------------------------------------------------------------------- */
+.notesBox {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.notesBox p {
+  margin: 0;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+}
+
+.prosConsSection {
+  margin-bottom: 1.5rem;
+}
+
+.prosTitle,
+.consTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.prosTitle {
+  color: var(--score-excellent);
+}
+
+.consTitle {
+  color: var(--score-poor);
+}
+
+.prosList,
+.consList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.proItem,
+.conItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-white);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--color-gray-700);
+}
+
+.proItem {
+  border: 1px solid rgba(21, 128, 61, 0.2);
+}
+
+.proItem svg {
+  color: var(--score-excellent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.conItem {
+  border: 1px solid rgba(185, 28, 28, 0.2);
+}
+
+.conItem svg {
+  color: var(--score-poor);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Best For
+   -------------------------------------------------------------------------- */
+.bestForGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.bestForCard {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.bestForCard svg {
+  color: var(--sn-primary);
+}
+
+.noBestFor {
+  color: var(--color-gray-500);
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   Upgrade Teaser
+   -------------------------------------------------------------------------- */
+.upgradeTeaser {
+  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--color-white);
+}
+
+.upgradeTeaserHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.upgradeTeaserHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.upgradeTeaserHeader svg {
+  color: var(--sn-accent);
+}
+
+.upgradeTeaser p {
+  margin: 0 0 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+}
+
+.upgradeTeaserActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.primaryButton {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background: var(--color-white);
+  text-decoration: none;
+}
+
+.secondaryButton {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: var(--color-white);
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-white);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   Performance HUB Section
+   -------------------------------------------------------------------------- */
+.performanceHubSection {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
+  padding: 2.5rem 2rem;
+}
+
+.performanceHubCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .performanceHubCard {
+    flex-direction: row;
+    text-align: left;
+    gap: 1.5rem;
+  }
+}
+
+.performanceHubIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--sn-accent);
+  border-radius: 12px;
+  color: var(--sn-primary-dark);
+  flex-shrink: 0;
+}
+
+.performanceHubContent {
+  flex: 1;
+}
+
+.performanceHubContent h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0 0 0.5rem;
+}
+
+.performanceHubContent p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.performanceHubButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.75rem;
+  background: var(--color-white);
+  color: var(--sn-primary-dark);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.performanceHubButton:hover {
+  background: var(--sn-accent);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Newsletter Section
+   -------------------------------------------------------------------------- */
+.newsletterSection {
+  background: var(--color-gray-100);
+  padding: 3rem 2rem;
+}
+
+.newsletterContent {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   CTA Section
+   -------------------------------------------------------------------------- */
+.ctaSection {
+  background: var(--color-white);
+  border-top: 1px solid var(--color-gray-200);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.ctaContent {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaContent h2 {
+  font-size: 2rem;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.ctaContent p {
+  color: var(--color-gray-600);
+  margin: 0 0 2rem;
+  font-size: 1.1rem;
+}
+
+.ctaButton {
+  display: inline-flex;
+  padding: 1rem 2.5rem;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+  background: var(--sn-primary-dark);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .heroSection {
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  .heroYears {
+    font-size: 1rem;
+  }
+
+  .heroTagline {
+    font-size: 1rem;
+  }
+
+  .heroImageWrapper {
+    display: none;
+  }
+
+  .specsGrid {
+    gap: 1.5rem;
+  }
+
+  .mainContent {
+    padding: 2rem 1.5rem;
+  }
+
+  .twoColumn {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .scoreGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaSection {
+    padding: 3rem 1.5rem;
+  }
+
+  .ctaContent h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroSection {
+    padding: 1.5rem 1rem 2.5rem;
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+  }
+
+  .specsStrip {
+    padding: 1rem;
+  }
+
+  .specsGrid {
+    gap: 1rem;
+  }
+
+  .specItem {
+    min-width: 80px;
+  }
+
+  .mainContent {
+    padding: 1.5rem 1rem;
+  }
+
+  .upgradeTeaser {
+    padding: 1.5rem;
+  }
+
+  .upgradeTeaserActions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

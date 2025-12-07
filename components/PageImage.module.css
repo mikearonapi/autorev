@@ -1,0 +1,167 @@
+/**
+ * PageImage Component Styles
+ * 
+ * Handles page-level images (hero, section, background) with
+ * placeholder fallbacks.
+ */
+
+/* Base Container */
+.container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Variant Sizes */
+.hero {
+  width: 100%;
+  min-height: 60vh;
+}
+
+.section {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+/* Placeholder */
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-slow);
+}
+
+.placeholder.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.placeholderText {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Placeholder decorative elements */
+.placeholderOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 1;
+}
+
+.placeholderPattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+/* Actual Image */
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+
+.image.loaded {
+  opacity: 1;
+}
+
+/* Content Overlay */
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hero-specific styles */
+.hero .placeholder {
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+}
+
+.hero .placeholderOverlay {
+  background: radial-gradient(
+    ellipse at center 80%,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.hero .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+/* Section-specific styles */
+.section .placeholder {
+  border-radius: var(--radius-lg);
+}
+
+.section .image {
+  border-radius: var(--radius-lg);
+}
+
+/* Background-specific styles */
+.background .placeholder,
+.background .image {
+  object-position: center;
+}
+
+/* Shimmer animation for loading state */
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+  z-index: 3;
+}
+
+.placeholder.hidden::before {
+  animation: none;
+}
+

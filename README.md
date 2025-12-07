@@ -1,165 +1,92 @@
 # SuperNatural Motorsports
 
-A premium sports car advisory platform helping enthusiasts at every budget find their perfect car, plan upgrades, and visualize performance improvements.
-
-## Features
-
-- **Car Selector** - Find your perfect sports car with weighted priority scoring across 7 categories
-- **Performance HUB** - Gran Turismo-inspired visualization of stock vs. upgraded performance
-- **Upgrade Advisory** - Get personalized upgrade recommendations based on your goals
-- **Car Detail Pages** - In-depth profiles for 35+ sports cars from $25K to $100K
+**Unleash Your Racing Spirit** — Expert sports car advisory, performance upgrades, and motorsports services.
 
 ## Tech Stack
 
-- **Frontend**: React 18 + Vite
-- **Routing**: React Router v6
-- **Styling**: CSS Modules with CSS custom properties
+- **Framework**: Next.js 14 (App Router)
 - **Database**: Supabase (PostgreSQL)
-- **Hosting**: Vercel
-- **Images**: Vercel Blob Storage
+- **Image Storage**: Vercel Blob
+- **Deployment**: Vercel
+- **Styling**: CSS Modules
 
-## Getting Started
+## Features
 
-### Prerequisites
+- 🚗 **Sports Car Selector** - Find your perfect car based on 7 weighted criteria
+- 📊 **Performance HUB** - Gran Turismo-inspired upgrade visualization
+- 🔧 **Upgrade Advisory** - Expert guidance on modifications
+- 📞 **Contact & Lead Capture** - Non-intrusive lead generation
 
-- Node.js 18+
-- npm or yarn
-- Supabase account (for database)
-- Vercel account (for deployment)
+## Local Development
 
-### Local Development
-
-1. **Clone the repository**
+1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/supernatural-motorsports.git
-   cd supernatural-motorsports
+   git clone https://github.com/mikearonapi/supernaturalmotorsports.git
+   cd supernaturalmotorsports
    ```
 
-2. **Install dependencies**
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp env.example .env
+3. Set up environment variables:
+   Create a `.env.local` file with:
    ```
-   Edit `.env` with your Supabase credentials (see below).
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
 
-4. **Start development server**
+4. Run the development server:
    ```bash
    npm run dev
    ```
-   Open http://localhost:5173
 
-### Environment Variables
+5. Open [http://localhost:3000](http://localhost:3000)
 
-Create a `.env` file in the root directory:
+## Environment Variables
 
-```bash
-# Supabase (required)
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbG...
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token (for images) | Optional |
 
-# Vercel Blob (optional, for images)
-VITE_VERCEL_BLOB_URL=https://your-blob.public.blob.vercel-storage.com
-```
+## Vercel Deployment
 
-**Note**: `VITE_` prefixed variables are exposed to the browser. Never put secrets in these.
+1. Push to GitHub
+2. Connect repository to Vercel
+3. Add Supabase integration (auto-configures environment variables)
+4. Deploy!
 
 ## Database Setup
 
-### Supabase Configuration
+The database schema is in `supabase/schema.sql`. Run it in the Supabase SQL Editor to set up tables.
 
-1. Create a new Supabase project
-2. Go to SQL Editor
-3. Run the schema from `supabase/schema.sql`
-4. (Optional) Seed with initial data using `scripts/seed-cars-from-local.js`
-
-### Schema Overview
-
-- `cars` - Vehicle data (specs, scores, metadata)
-- `leads` - Contact form submissions and newsletter signups
-- `upgrade_packages` - Predefined upgrade tiers with performance deltas
-
-## Deployment
-
-### Vercel Deployment
-
-1. **Connect to GitHub**
-   - Import repository in Vercel dashboard
-   - Vercel auto-detects Vite configuration
-
-2. **Set Environment Variables**
-   In Vercel dashboard → Settings → Environment Variables:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_VERCEL_BLOB_URL` (after setting up Blob storage)
-
-3. **Set up Blob Storage**
-   - Go to Storage → Create → Blob
-   - Copy the public URL to `VITE_VERCEL_BLOB_URL`
-
-4. **Deploy**
-   Push to main branch or click "Deploy" in dashboard
-
-### Build Commands
-
+To seed with sample data:
 ```bash
-npm run build    # Production build
-npm run preview  # Preview production build locally
+npm run seed
 ```
-
-## Image Management
-
-Images are stored in Vercel Blob. See `docs/image-inventory.md` for:
-- Complete list of required images
-- Naming conventions
-- AI generation prompts
-- Upload workflow
-
-### Quick Image Workflow
-
-1. Generate images using Google AI (prompts in `scripts/generate-images.js`)
-2. Upload to Vercel Blob
-3. Update car `image_hero_url` in Supabase (for car images)
 
 ## Project Structure
 
 ```
-├── src/
-│   ├── api/          # Supabase client and data fetching
-│   ├── components/   # Reusable React components
-│   ├── data/         # Static data (cars, categories, upgrades)
-│   ├── lib/          # Utility functions (scoring, performance)
-│   ├── pages/        # Page components (routes)
-│   └── styles/       # Global CSS and theme tokens
-├── supabase/
-│   └── schema.sql    # Database schema
-├── scripts/
-│   ├── generate-images.js    # Image prompt helper
-│   └── seed-cars-from-local.js  # Database seeder
-├── docs/
-│   ├── data-model.md        # Data architecture
-│   └── image-inventory.md   # Image requirements
-└── public/           # Static assets
+├── app/                    # Next.js App Router pages
+│   ├── advisory/          # Car Selector page
+│   ├── cars/[slug]/       # Car detail & performance pages
+│   ├── contact/           # Contact form
+│   ├── performance/       # Performance HUB
+│   ├── services/          # Services page
+│   ├── upgrades/          # Upgrades advisory
+│   ├── layout.jsx         # Root layout
+│   └── page.jsx           # Home page
+├── components/            # React components
+├── data/                  # Static data (cars, categories)
+├── lib/                   # Utilities and API clients
+├── supabase/              # Database schema
+└── scripts/               # Database seeding scripts
 ```
-
-## Data Architecture
-
-See `docs/data-model.md` for detailed information about:
-- What lives in Supabase vs. local files
-- Scoring algorithms
-- Performance calculations
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
 
 ## License
 
 © 2024 SuperNatural Motorsports. All rights reserved.
-
