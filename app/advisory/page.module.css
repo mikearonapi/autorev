@@ -1,0 +1,263 @@
+/* Car Finder Page - Mobile First with Compact Copy */
+
+.page {
+  background: var(--color-gray-50);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  /* Compact mobile padding */
+  padding: 0 var(--space-sm);
+}
+
+@media (min-width: 480px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-xl);
+  }
+}
+
+/* Hero Section - Compact on Mobile */
+.hero {
+  position: relative;
+  /* Shorter hero on mobile */
+  min-height: 45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) 0;
+  text-align: center;
+  color: var(--color-white);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 50vh;
+    padding: var(--space-2xl) 0;
+  }
+}
+
+.heroImageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.7) 0%,
+    rgba(15, 23, 42, 0.6) 50%,
+    rgba(15, 23, 42, 0.8) 100%
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  /* Compact content on mobile */
+  padding: 0 var(--space-xs);
+}
+
+@media (min-width: 768px) {
+  .heroContent {
+    padding: 0;
+  }
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sn-accent);
+  background: rgba(212, 164, 24, 0.2);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs) var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+}
+
+.title {
+  font-family: var(--font-display);
+  /* Smaller title on mobile for compact view */
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 480px) {
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+.titleAccent {
+  color: var(--sn-accent);
+}
+
+.subtitle {
+  /* Compact text on mobile */
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-300);
+  line-height: var(--line-height-relaxed);
+  max-width: 500px;
+  margin: 0 auto var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: var(--font-size-base);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+}
+
+/* Scoring Section */
+.scoringSection {
+  padding: var(--space-md) 0;
+  background: var(--color-gray-50);
+}
+
+/* Tool Section */
+.tool {
+  padding: 0;
+}
+
+/* Override some of the SportsCarComparison container styles to integrate smoothly */
+.tool :global(.container) {
+  background: transparent;
+}
+
+/* Post-Selector CTA */
+.postCta {
+  padding: var(--space-2xl) 0 var(--space-3xl);
+  background: var(--color-gray-50);
+}
+
+.ctaCard {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--color-gray-900) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.ctaContent {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-sm);
+}
+
+.ctaSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-300);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-lg);
+}
+
+.ctaButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.ctaButtons > * {
+  width: 100%;
+  max-width: 220px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .hero {
+    padding: var(--space-3xl) 0;
+  }
+
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .ctaCard {
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  .ctaTitle {
+    font-size: var(--font-size-2xl);
+  }
+
+  .ctaSubtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .ctaButtons {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .ctaButtons > * {
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .title {
+    font-size: var(--font-size-4xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .ctaCard {
+    padding: var(--space-3xl) var(--space-2xl);
+  }
+
+  .ctaTitle {
+    font-size: var(--font-size-3xl);
+  }
+}
+

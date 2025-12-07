@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import MobileBottomCta from '@/components/MobileBottomCta';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const siteUrl = 'https://supernaturalmotorsports.com';
 
@@ -138,6 +140,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        {/* Scroll to top on route change */}
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         <Header />
         <main style={{ 
           flex: 1, 
