@@ -298,17 +298,11 @@ DROP POLICY IF EXISTS "upgrade_packages_delete_policy" ON upgrade_packages;
 -- ============================================================================
 -- TABLE COMMENTS (Documentation)
 -- ============================================================================
-COMMENT ON TABLE cars IS 
-  'Vehicle database for SuperNatural Motorsports. Authoritative source in production. ' ||
-  'Local src/data/cars.js is seed data and fallback only.';
+COMMENT ON TABLE cars IS 'Vehicle database for SuperNatural Motorsports. Authoritative source in production. Local src/data/cars.js is seed data and fallback only.';
 
-COMMENT ON TABLE leads IS 
-  'Lead capture for contact form, newsletter signups, and CTAs. ' ||
-  'Uses upsert pattern: duplicate emails update existing records.';
+COMMENT ON TABLE leads IS 'Lead capture for contact form, newsletter signups, and CTAs. Uses upsert pattern: duplicate emails update existing records.';
 
-COMMENT ON TABLE upgrade_packages IS 
-  'Upgrade packages and modules for Performance HUB. ' ||
-  'Delta values applied client-side via src/lib/performance.js.';
+COMMENT ON TABLE upgrade_packages IS 'Upgrade packages and modules for Performance HUB. Delta values applied client-side via src/lib/performance.js.';
 
 -- Column comments for cars
 COMMENT ON COLUMN cars.slug IS 'URL-friendly unique identifier, used in /cars/:slug routes';
