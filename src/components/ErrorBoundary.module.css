@@ -1,0 +1,104 @@
+/* ErrorBoundary - Graceful error display */
+
+.errorContainer {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  background: var(--color-gray-50);
+}
+
+.errorContent {
+  max-width: 480px;
+  text-align: center;
+  padding: var(--space-2xl);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.errorIcon {
+  color: var(--color-error);
+  margin-bottom: var(--space-lg);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-md);
+}
+
+.message {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 var(--space-xl);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.retryButton {
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.retryButton:hover {
+  background: var(--sn-primary-dark);
+  transform: translateY(-1px);
+}
+
+.homeLink {
+  padding: var(--space-sm) var(--space-xl);
+  background: transparent;
+  color: var(--sn-primary);
+  border: 2px solid var(--sn-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.homeLink:hover {
+  background: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.errorDetails {
+  margin-top: var(--space-xl);
+  text-align: left;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.errorDetails summary {
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin-bottom: var(--space-sm);
+}
+
+.errorDetails pre {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: var(--space-sm) 0;
+}
+

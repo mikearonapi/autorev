@@ -1,0 +1,209 @@
+/* Advisory Page - Mobile First */
+
+.page {
+  background: var(--color-gray-50);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-xl);
+  }
+}
+
+/* Intro Section */
+.intro {
+  background: linear-gradient(180deg, var(--color-white) 0%, var(--color-gray-50) 100%);
+  padding: var(--space-xl) 0 var(--space-2xl);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.introContent {
+  max-width: 700px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sn-primary);
+  background: rgba(26, 77, 110, 0.1);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-md);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-md);
+}
+
+.titleAccent {
+  color: var(--sn-primary);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-lg);
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+}
+
+.feature svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+/* Scoring Section */
+.scoringSection {
+  padding: var(--space-md) 0;
+  background: var(--color-gray-50);
+}
+
+/* Tool Section */
+.tool {
+  padding: 0;
+}
+
+/* Override some of the SportsCarComparison container styles to integrate smoothly */
+.tool :global(.container) {
+  background: transparent;
+}
+
+/* Post-Selector CTA */
+.postCta {
+  padding: var(--space-2xl) 0 var(--space-3xl);
+  background: var(--color-gray-50);
+}
+
+.ctaCard {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--color-gray-900) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.ctaContent {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-sm);
+}
+
+.ctaSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-300);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-lg);
+}
+
+.ctaButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.ctaButtons > * {
+  width: 100%;
+  max-width: 220px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .intro {
+    padding: var(--space-2xl) 0 var(--space-3xl);
+  }
+
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .features {
+    flex-direction: row;
+    gap: var(--space-lg);
+  }
+
+  .ctaCard {
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  .ctaTitle {
+    font-size: var(--font-size-2xl);
+  }
+
+  .ctaSubtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .ctaButtons {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .ctaButtons > * {
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .title {
+    font-size: var(--font-size-4xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .ctaCard {
+    padding: var(--space-3xl) var(--space-2xl);
+  }
+
+  .ctaTitle {
+    font-size: var(--font-size-3xl);
+  }
+}
+
