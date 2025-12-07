@@ -1,0 +1,402 @@
+Subject: Your SuperNatural Motorsports Website - How Everything Works
+
+Hey!
+
+I put together a complete breakdown of your website so you understand 
+exactly what you have and how it all works. I know it's a lot, so I've 
+organized this into digestible sections. Read what interests you, skip 
+what doesn't.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THE 30-SECOND SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your website is a sports car matchmaking tool. People tell it what they 
+care about (sound, reliability, track performance, etc.), and it 
+recommends the best cars for them from a database of 35 vehicles priced 
+$25K-$100K.
+
+There are TWO main tools:
+• CAR FINDER - "Help me find the right car"
+• PERFORMANCE HUB - "Show me what my car could become with upgrades"
+
+Both are unbiased (no affiliate links, no dealerships paying for placement).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+YOUR 7 PAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. HOME (/)
+   Front door - explains what you do, shows all 35 cars in a carousel
+
+2. CAR FINDER (/car-finder)
+   The main recommendation tool - users set priorities, get matched cars
+
+3. PERFORMANCE HUB (/performance)
+   Upgrade visualizer - like Gran Turismo, shows what upgrades would do
+
+4. INDIVIDUAL CAR PAGES (/cars/[car-name])
+   35 pages, one for each car - specs, scores, pros/cons, images
+
+5. SERVICES (/services)
+   Your hands-on work - suspension, brakes, power, track prep, etc.
+
+6. CONTACT (/contact)
+   Contact form - captures leads, stores them in your database
+
+7. UPGRADES (/upgrades)
+   Redirects to Performance HUB (legacy URL)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THE TECH (SIMPLE VERSION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WEBSITE BUILDER: Next.js (what Netflix uses)
+→ Fast loading, good for Google SEO
+
+DATABASE: Supabase (fancy online spreadsheet)
+→ Stores all car data, upgrades, and leads
+
+HOSTING: Vercel (cloud servers)
+→ Site stays up, loads fast worldwide
+
+IMAGES: Vercel Blob (cloud image storage)
+→ Car images load quickly
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DATABASE: WHAT'S STORED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TABLE 1: CARS (35 vehicles)
+Each car has 60+ fields including:
+- Basic: Name, year, price range, tier, category
+- Specs: HP, torque, 0-60, braking, lateral G, weight
+- Advisory Scores: 7 categories (Sound, Interior, Track, etc.)
+- Performance Scores: 7 categories for upgrade visualization
+- Ownership: Maintenance cost, known issues, years to avoid
+- Content: Pros, cons, "best for" audience types
+
+TABLE 2: LEADS (your potential customers)
+- Email, name, interest, car they were looking at, message, timestamp
+
+TABLE 3: UPGRADE PACKAGES
+- Pre-built upgrade bundles (Street Sport, Track Pack, Time Attack, Ultimate Power)
+- Each has: description, cost range, what's included, performance changes
+
+TABLE 4: UPGRADE MODULES
+- Individual parts (intake, exhaust, coilovers, brakes, etc.)
+- Each has: cost, HP gain, score improvements, compatibility info
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW CAR FINDER WORKS (THE LOGIC)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This is the heart of the site. Here's exactly how it matches people to cars:
+
+STEP 1: USER SETS 7 PRIORITY SLIDERS
+Each slider goes from 0x to 3x:
+• Sound & Character (exhaust note, engine emotion)
+• Interior & Comfort (materials, ergonomics, daily livability)
+• Track Capability (lap times, cooling, brake fade resistance)
+• Reliability & Ownership (maintenance costs, known issues)
+• Value for Money (bang for buck, depreciation)
+• Driver Engagement (steering feel, connection, throttle response)
+• Aftermarket & Tuning (parts availability, tuning support)
+
+STEP 2: THE MATH
+For each car, we multiply each score by the user's priority weight:
+
+  TOTAL = (Sound × Weight) + (Interior × Weight) + (Track × Weight) + ...
+
+EXAMPLE:
+User sets: Sound = 3x, Track = 2x, everything else = 1x
+Car scores: Sound = 9, Track = 7, Interior = 6, etc.
+
+Calculation:
+  Sound:      9 × 3 = 27 points
+  Track:      7 × 2 = 14 points
+  Interior:   6 × 1 = 6 points
+  ... and so on
+
+The car with the highest total wins "Top Match"
+
+STEP 3: FILTERS REMOVE NON-MATCHES
+Users can set hard requirements:
+• Manual transmission only
+• RWD only (or AWD only)
+• 2-seater only (or 4+ seats)
+• Price range ($25K-50K, $40K-75K, etc.)
+• Engine layout (Mid-Engine, Front-Engine, Rear-Engine)
+
+Cars that don't meet these are hidden entirely.
+
+STEP 4: PERSONALIZED RECOMMENDATIONS
+Based on their priorities, users see 4-5 recommendation cards:
+• Your Top Match (overall best based on their weights)
+• Your Sound Pick (if they weighted sound highly)
+• Your Track Pick (best track car for them)
+• Your Value Pick (best bang for buck)
+• Your Reliability Pick (most dependable)
+
+These change dynamically based on what they care about most.
+
+WHY THIS WORKS:
+Someone who cares 3x about sound will get matched to the GT350 (sound: 10).
+Someone who cares 3x about reliability will get matched to the RC F (reliability: 10).
+Same database, different recommendations.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW PERFORMANCE HUB WORKS (THE LOGIC)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This is like the garage screen in Gran Turismo or Forza. It shows people 
+what upgrades would do to their car.
+
+THE 7 PERFORMANCE CATEGORIES:
+These are DIFFERENT from the Car Finder scores (those are advisory scores).
+Performance HUB uses these for upgrade visualization:
+
+1. Power & Acceleration (HP, torque, 0-60, quarter mile)
+2. Grip & Cornering (lateral G, tire grip, chassis balance)
+3. Braking (stopping distance, fade resistance, pedal feel)
+4. Track Pace (overall lap time capability)
+5. Drivability & Comfort (daily usability, ride quality)
+6. Reliability & Heat (track endurance, thermal management)
+7. Sound & Emotion (exhaust note, engagement)
+
+HOW SCORES ARE CALCULATED:
+The system calculates scores two ways:
+
+1. EXPLICIT SCORES: Some cars have manually-curated performance scores 
+   (stored as perfPowerAccel, perfGripCornering, etc.)
+
+2. DERIVED SCORES: If no explicit scores exist, it calculates from hard data:
+   • Power Score = 13 - (0-60 time × 1.5)
+     → A 3.0s car = 13 - 4.5 = 8.5 ≈ 9
+     → A 4.5s car = 13 - 6.75 = 6.25 ≈ 6
+   
+   • Grip Score = 5 + ((Lateral G - 0.9) × 22)
+     → 1.0g car = 5 + (0.1 × 22) = 7.2 ≈ 7
+     → 1.1g car = 5 + (0.2 × 22) = 9.4 ≈ 9
+   
+   • Braking Score = 10 - ((60-0 distance - 90) / 5)
+     → 95 ft car = 10 - 1 = 9
+     → 105 ft car = 10 - 3 = 7
+
+THE UPGRADE SYSTEM:
+
+Each upgrade has a "DELTA" value - how much it changes each score.
+
+EXAMPLE: Cat-Back Exhaust
+  Deltas:
+    powerAccel: +0.3
+    soundEmotion: +1.5
+  Metric Changes:
+    HP Gain: +12
+
+EXAMPLE: Track Coilovers
+  Deltas:
+    gripCornering: +2.0
+    trackPace: +1.5
+    drivability: -1.5 (trade-off: stiffer ride)
+  Metric Changes:
+    Lateral G: +0.10
+
+When a user selects upgrades, the system:
+1. Takes the car's stock scores
+2. Adds all the deltas from selected upgrades
+3. Clamps results to 1-10 range
+4. Shows the before/after comparison
+
+THE 4 UPGRADE TIERS:
+
+1. STREET SPORT ($3K-$8K)
+   • Intake, exhaust, tune, lowering springs, brake pads
+   • Small gains: +15 HP, -0.2s 0-60
+   • Daily drivable, mostly warranty-safe
+   • Score changes: +1 power, +0.5 grip, +1.5 sound
+
+2. TRACK PACK ($8K-$20K)
+   • Coilovers, big brakes, oil cooler, aggressive tune
+   • Medium gains: +30 HP, -0.4s 0-60, -8 ft braking
+   • Stiffer ride, ECU tune voids warranty
+   • Score changes: +1.5 power, +2 grip, +2 braking, -1 drivability
+
+3. TIME ATTACK ($25K-$40K)
+   • Cams, ported heads, aero, slicks, roll bar
+   • Big gains: +60 HP, -0.5s 0-60, -15 ft braking
+   • Street compromises, all warranties voided
+   • Score changes: +2 power, +3 grip, +3.5 track, -2.5 drivability
+
+4. ULTIMATE POWER ($15K-$35K+)
+   • Supercharger or turbo kit
+   • Massive gains: +250 HP, -1.0s 0-60
+   • Major modifications, heat management critical
+   • Score changes: +4.5 power, +3 track, -1.5 drivability, -1 reliability
+
+ENGINE-TYPE DETECTION:
+
+The system reads each car's engine field and detects:
+• NA V8 (Naturally Aspirated V8) - responds great to superchargers
+• Turbo V8 - can upgrade existing turbos
+• SC V8 (Supercharged V8) - pulley + tune = easy power
+• NA Flat-6 (Porsche) - limited forced induction options
+• Turbo I4/I6 - good tuning response
+
+This affects what upgrades are shown and HP gain estimates.
+
+EXAMPLE: GT350 with Whipple Supercharger
+  The system knows: GT350 = NA flat-plane V8 = perfect for roots blower
+  Calculated HP gain: +280 HP (526 → 800+ HP)
+  This is based on real-world builds, not generic estimates.
+
+BRAND-SPECIFIC PRICING:
+
+Same exhaust costs different amounts depending on brand.
+
+COST MULTIPLIERS:
+• Exotic (Ferrari, Lamborghini, McLaren, Aston Martin): 2.0x
+• Premium (Porsche, BMW, Mercedes-AMG, Audi): 1.5x
+• Luxury (Lexus, Jaguar, Maserati, Alfa Romeo, Lotus): 1.3x
+• Mainstream (Ford, Chevy, Dodge, Nissan, Toyota): 1.0x
+
+EXAMPLE: Big Brake Kit
+• Mustang GT: $2,500 - $5,000
+• Porsche Cayman: $4,500 - $9,000 (1.5x multiplier + brand override)
+• Aston Martin: $5,000 - $10,000 (2.0x multiplier + brand override)
+
+The system also has brand-specific overrides for known pricing 
+(example: Porsche exhaust is always $1,800-$4,500 regardless of multiplier).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW LEADS ARE CAPTURED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Lead forms appear on:
+• Contact page (main form)
+• Footer (newsletter signup)
+• Car pages ("Want to learn more?")
+• Performance HUB ("Get help with your build")
+
+Each submission captures:
+• Email (required)
+• Name
+• Source (which page they came from)
+• Interest (Car Finder, Performance HUB, Services, Pre-Purchase, Other)
+• Message
+• Car they were looking at
+• Timestamp
+
+Duplicate handling: If same email submits twice, it updates the record 
+instead of creating a duplicate. You always have one clean record per person.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THE 35 CARS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PREMIUM ($75K+) - 7 cars
+• 718 Cayman GT4, 718 Cayman GTS 4.0
+• Audi R8 V8, R8 V10
+• Lamborghini Gallardo
+• Lotus Emira
+• Dodge Viper
+
+UPPER-MID ($55K-75K) - 7 cars
+• C8 Corvette Stingray
+• 981 Cayman GTS, 991.1 Carrera S, 997.2 Carrera S
+• Nissan GT-R
+• Shelby GT500
+• Lotus Evora GT
+
+MID ($40K-55K) - 11 cars
+• 981 Cayman S, Shelby GT350
+• Jaguar F-Type R, C7 Corvette Grand Sport/Z06
+• Camaro ZL1, BMW M2 Competition
+• Alfa Romeo 4C, Aston Martin V8 Vantage
+• Lotus Evora S, Lexus LC 500
+
+BUDGET ($25K-40K) - 10 cars
+• 987.2 Cayman S, Jaguar F-Type V6 S
+• Lexus RC F, Nissan 370Z NISMO
+• Mercedes C63 AMG, BMW M4
+• Mustang GT PP2, Camaro SS 1LE
+• Toyota GR Supra, Maserati GranTurismo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHERE THE DATA CAME FROM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• BASE SPECS: Manufacturer data, trusted automotive sources
+• ADVISORY SCORES: Real ownership experience, forums, journalism, enthusiast consensus
+• OWNERSHIP INFO: Owner forums, repair databases, automotive communities
+• PERFORMANCE SCORES: Hard metrics + real-world track reports
+• UPGRADE PRICING: Industry research, installer quotes, brand catalogs
+
+All scores are 1-10:
+• 9-10: Exceptional (best in class)
+• 7-8: Great
+• 5-6: Good
+• 3-4: Average
+• 1-2: Below average
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FAILSAFES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IF DATABASE GOES DOWN:
+The site has a local backup of all car data. It tries Supabase first, 
+then falls back to local. Users never see an error.
+
+IF IMAGE FAILS:
+Shows a styled placeholder with the car's initials. Everything still works.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMON QUESTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q: How do I see my leads?
+A: Log into Supabase → Table Editor → leads → View/export
+
+Q: How do I update car info?
+A: Edit in Supabase (immediate) or code file + redeploy
+
+Q: Can I add new cars?
+A: Yes - add to database + upload image
+
+Q: Why does upgrade pricing vary?
+A: Brand-specific multipliers. Porsche parts cost more than Ford parts.
+
+Q: Can I change the scoring formulas?
+A: Yes - they're in lib/scoring.js and lib/performance.js
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+QUICK REFERENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Total Cars: 35
+Price Range: $25K - $100K+
+Advisory Scoring Categories: 7
+Performance Scoring Categories: 7
+Upgrade Tiers: 4 (Street, Track, Time Attack, Ultimate Power)
+Lead Sources: Contact, Newsletter, Car Pages, Performance HUB
+Database: Supabase
+Hosting: Vercel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+That's everything! Let me know if you want me to dive deeper into any 
+specific section.
+
+- Mike

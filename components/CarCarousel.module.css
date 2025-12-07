@@ -18,35 +18,40 @@
 
 .scrollContainer {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   overflow-x: hidden;
-  padding: var(--space-xs) 0;
+  padding: var(--space-sm) 0;
   scroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
   /* Enable touch scrolling when paused */
   scroll-snap-type: x proximity;
+  /* Prevent text selection during touch scroll */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @media (min-width: 768px) {
   .scrollContainer {
-    gap: var(--space-md);
-    padding: var(--space-sm) 0;
+    gap: var(--space-lg);
+    padding: var(--space-md) 0;
   }
 }
 
 /* Mobile-first card sizes - compact but touch-friendly */
 .carCard {
   flex-shrink: 0;
-  width: 200px;
-  height: 130px;
+  width: 220px;
+  height: 140px;
   position: relative;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   text-decoration: none;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   box-shadow: var(--shadow-md);
   scroll-snap-align: start;
   -webkit-tap-highlight-color: transparent;
+  /* Better touch area */
+  touch-action: pan-x;
 }
 
 /* Active state for touch */
@@ -65,23 +70,23 @@
 
 @media (min-width: 480px) {
   .carCard {
-    width: 240px;
-    height: 150px;
+    width: 260px;
+    height: 160px;
   }
 }
 
 @media (min-width: 768px) {
   .carCard {
-    width: 280px;
-    height: 180px;
+    width: 300px;
+    height: 190px;
     border-radius: var(--radius-lg);
   }
 }
 
 @media (min-width: 1024px) {
   .carCard {
-    width: 320px;
-    height: 200px;
+    width: 340px;
+    height: 210px;
   }
 }
 

@@ -5,9 +5,10 @@
  * 
  * An auto-scrolling carousel showcasing all 35 sports cars.
  * Creates an engaging visual experience as users scroll through the page.
+ * Mobile-optimized: pauses on touch, allows manual scrolling.
  */
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { carData } from '@/data/cars.js';
@@ -26,6 +27,17 @@ function getCarImageUrl(slug) {
 export default function CarCarousel() {
   const scrollRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartRef = useRef(null);
+  const lastScrollRef = useRef(0);
+  
+  // Check for mobile viewport
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Sort cars by tier for visual variety
   const sortedCars = [...carData].sort((a, b) => {
@@ -36,13 +48,37 @@ export default function CarCarousel() {
   // Duplicate cars for infinite scroll effect
   const displayCars = [...sortedCars, ...sortedCars];
   
+  // Handle touch start - pause animation
+  const handleTouchStart = useCallback((e) => {
+    setIsPaused(true);
+    touchStartRef.current = e.touches[0].clientX;
+    lastScrollRef.current = scrollRef.current?.scrollLeft || 0;
+  }, []);
+  
+  // Handle touch move - manual scrolling
+  const handleTouchMove = useCallback((e) => {
+    if (!touchStartRef.current || !scrollRef.current) return;
+    const touchDelta = touchStartRef.current - e.touches[0].clientX;
+    scrollRef.current.scrollLeft = lastScrollRef.current + touchDelta;
+  }, []);
+  
+  // Handle touch end - resume animation after delay
+  const handleTouchEnd = useCallback(() => {
+    touchStartRef.current = null;
+    // Resume auto-scroll after a brief delay
+    setTimeout(() => {
+      setIsPaused(false);
+    }, 2000);
+  }, []);
+  
   // Auto-scroll animation
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
     
     let animationId;
-    let scrollSpeed = 0.5; // pixels per frame
+    // Slower speed on mobile for better UX
+    const scrollSpeed = isMobile ? 0.3 : 0.5;
     
     const animate = () => {
       if (!isPaused && scrollContainer) {
@@ -64,7 +100,7 @@ export default function CarCarousel() {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [isPaused]);
+  }, [isPaused, isMobile]);
   
   return (
     <div 
@@ -72,7 +108,13 @@ export default function CarCarousel() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className={styles.scrollContainer} ref={scrollRef}>
+      <div 
+        className={styles.scrollContainer} 
+        ref={scrollRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {displayCars.map((car, index) => (
           <Link 
             key={`${car.slug}-${index}`}
@@ -84,7 +126,7 @@ export default function CarCarousel() {
                 src={getCarImageUrl(car.slug)}
                 alt={car.name}
                 fill
-                sizes="280px"
+                sizes="(max-width: 480px) 200px, (max-width: 768px) 240px, 280px"
                 className={styles.carImage}
                 style={{ objectFit: 'cover' }}
               />

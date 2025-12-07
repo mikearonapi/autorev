@@ -603,7 +603,12 @@ export default function SportsCarComparison() {
                   {categoriesWithIcons.map(cat => {
                     const IconComponent = cat.icon;
                 return (
-                      <div key={cat.key} className={styles.tableHeaderIcon} title={cat.label}>
+                      <div 
+                        key={cat.key} 
+                        className={styles.tableHeaderIcon} 
+                        data-tooltip={cat.label}
+                        aria-label={cat.label}
+                      >
                         <IconComponent size={16} />
                   </div>
                 );
