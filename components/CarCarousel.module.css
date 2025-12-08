@@ -1,56 +1,64 @@
 /**
  * CarCarousel Component Styles
- * Mobile-optimized auto-scrolling carousel
+ * Dual-row marquee with opposing scroll directions
  */
 
 .carousel {
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding: var(--space-md) 0;
+  padding: var(--space-sm) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 @media (min-width: 768px) {
   .carousel {
-    padding: var(--space-lg) 0;
+    padding: var(--space-md) 0;
+    gap: var(--space-md);
   }
 }
 
 .scrollContainer {
   display: flex;
-  gap: var(--space-md);
-  overflow-x: hidden;
-  padding: var(--space-sm) 0;
+  gap: var(--space-sm);
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding: var(--space-xs) 0;
   scroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
-  /* Enable touch scrolling when paused */
-  scroll-snap-type: x proximity;
-  /* Prevent text selection during touch scroll */
+  /* Prevent text selection during scroll */
   user-select: none;
   -webkit-user-select: none;
+  /* Hide scrollbar but allow scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
 }
 
 @media (min-width: 768px) {
   .scrollContainer {
-    gap: var(--space-lg);
-    padding: var(--space-md) 0;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
   }
 }
 
-/* Mobile-first card sizes - compact but touch-friendly */
+/* Compact card sizes for dual-row layout */
 .carCard {
   flex-shrink: 0;
-  width: 220px;
-  height: 140px;
+  width: 180px;
+  height: 110px;
   position: relative;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   text-decoration: none;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   box-shadow: var(--shadow-md);
-  scroll-snap-align: start;
   -webkit-tap-highlight-color: transparent;
-  /* Better touch area */
   touch-action: pan-x;
 }
 
@@ -62,7 +70,7 @@
 /* Only apply hover effects on devices with hover capability */
 @media (hover: hover) {
   .carCard:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
     box-shadow: var(--shadow-xl);
     z-index: 10;
   }
@@ -70,23 +78,30 @@
 
 @media (min-width: 480px) {
   .carCard {
-    width: 260px;
-    height: 160px;
+    width: 200px;
+    height: 125px;
   }
 }
 
 @media (min-width: 768px) {
   .carCard {
-    width: 300px;
-    height: 190px;
+    width: 240px;
+    height: 150px;
     border-radius: var(--radius-lg);
   }
 }
 
 @media (min-width: 1024px) {
   .carCard {
-    width: 340px;
-    height: 210px;
+    width: 280px;
+    height: 170px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .carCard {
+    width: 300px;
+    height: 185px;
   }
 }
 
@@ -224,7 +239,7 @@
 .carousel::after {
   content: 'Hover to pause';
   position: absolute;
-  bottom: var(--space-xs);
+  bottom: calc(var(--space-xs) * -1);
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--font-size-xs);

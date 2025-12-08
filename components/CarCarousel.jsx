@@ -3,8 +3,8 @@
 /**
  * CarCarousel Component
  * 
- * An auto-scrolling carousel showcasing all ~100 sports cars.
- * Creates an engaging visual experience as users scroll through the page.
+ * A dual-row marquee showcasing all ~100 sports cars.
+ * Two rows scroll in opposite directions for a dynamic, premium feel.
  * Mobile-optimized: pauses on touch, allows manual scrolling.
  */
 
@@ -50,7 +50,7 @@ function seededShuffle(array, seed = 42) {
 /**
  * Create a variety mix by interleaving cars from different tiers and makes
  */
-function createVarietyMix(cars) {
+function createVarietyMix(cars, seed = 42) {
   // Group cars by manufacturer
   const byMake = {};
   cars.forEach(car => {
@@ -61,11 +61,11 @@ function createVarietyMix(cars) {
   
   // Shuffle each manufacturer's cars
   Object.keys(byMake).forEach(make => {
-    byMake[make] = seededShuffle(byMake[make]);
+    byMake[make] = seededShuffle(byMake[make], seed);
   });
   
   // Interleave cars from different manufacturers for variety
-  const makes = seededShuffle(Object.keys(byMake));
+  const makes = seededShuffle(Object.keys(byMake), seed);
   const result = [];
   let hasMore = true;
   
@@ -82,88 +82,53 @@ function createVarietyMix(cars) {
   return result;
 }
 
-export default function CarCarousel() {
+/**
+ * Single row component for the marquee
+ */
+function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
   const scrollRef = useRef(null);
-  const isPausedRef = useRef(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const touchStartRef = useRef(null);
-  const lastScrollRef = useRef(0);
   
-  // Mark when we're on the client
   useEffect(() => {
     setIsClient(true);
   }, []);
   
-  // Check for mobile viewport
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Triple the cars for seamless infinite scroll
+  const displayCars = useMemo(() => [...cars, ...cars, ...cars], [cars]);
   
-  // Pause/resume handlers using ref to avoid effect restarts
-  const pauseScroll = useCallback(() => {
-    isPausedRef.current = true;
-  }, []);
-  
-  const resumeScroll = useCallback(() => {
-    isPausedRef.current = false;
-  }, []);
-  
-  // Create a varied mix of cars from different makes and tiers
-  const shuffledCars = useMemo(() => createVarietyMix(carData), []);
-  
-  // Duplicate cars for infinite scroll effect (triple for smoother looping)
-  const displayCars = useMemo(() => [...shuffledCars, ...shuffledCars, ...shuffledCars], [shuffledCars]);
-  
-  // Handle touch start - pause animation
-  const handleTouchStart = useCallback((e) => {
-    isPausedRef.current = true;
-    touchStartRef.current = e.touches[0].clientX;
-    lastScrollRef.current = scrollRef.current?.scrollLeft || 0;
-  }, []);
-  
-  // Handle touch move - manual scrolling
-  const handleTouchMove = useCallback((e) => {
-    if (!touchStartRef.current || !scrollRef.current) return;
-    const touchDelta = touchStartRef.current - e.touches[0].clientX;
-    scrollRef.current.scrollLeft = lastScrollRef.current + touchDelta;
-  }, []);
-  
-  // Handle touch end - resume animation after delay
-  const handleTouchEnd = useCallback(() => {
-    touchStartRef.current = null;
-    // Resume auto-scroll after a brief delay
-    setTimeout(() => {
-      isPausedRef.current = false;
-    }, 2000);
-  }, []);
-  
-  // Auto-scroll animation - runs continuously, checks isPausedRef each frame
+  // Auto-scroll animation
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer || !isClient) return;
     
     let animationId;
     let lastTime = performance.now();
-    // Speed in pixels per second for consistent speed across devices
-    const scrollSpeed = isMobile ? 50 : 80;
+    // Speed varies slightly between rows for visual interest
+    const baseSpeed = isMobile ? 40 : 60;
+    const scrollSpeed = direction === 'left' ? baseSpeed : baseSpeed * 0.85;
+    
+    // Start second row at different position for visual variety
+    if (direction === 'right' && scrollContainer.scrollLeft === 0) {
+      scrollContainer.scrollLeft = scrollContainer.scrollWidth / 6;
+    }
     
     const animate = () => {
       const currentTime = performance.now();
-      const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+      const deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
       
-      // Check ref instead of state to avoid effect restarts
       if (!isPausedRef.current && scrollContainer) {
-        scrollContainer.scrollLeft += scrollSpeed * deltaTime;
-        
-        // Reset scroll when we've scrolled through the first set (1/3 of total since we tripled)
-        const oneThirdWidth = scrollContainer.scrollWidth / 3;
-        if (scrollContainer.scrollLeft >= oneThirdWidth) {
-          scrollContainer.scrollLeft = 0;
+        if (direction === 'left') {
+          scrollContainer.scrollLeft += scrollSpeed * deltaTime;
+          const oneThirdWidth = scrollContainer.scrollWidth / 3;
+          if (scrollContainer.scrollLeft >= oneThirdWidth) {
+            scrollContainer.scrollLeft = 0;
+          }
+        } else {
+          scrollContainer.scrollLeft -= scrollSpeed * deltaTime;
+          if (scrollContainer.scrollLeft <= 0) {
+            scrollContainer.scrollLeft = scrollContainer.scrollWidth / 3;
+          }
         }
       }
       animationId = requestAnimationFrame(animate);
@@ -176,7 +141,61 @@ export default function CarCarousel() {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [isMobile, isClient]);
+  }, [isMobile, isClient, direction, isPausedRef]);
+  
+  return (
+    <div className={styles.scrollContainer} ref={scrollRef}>
+      {displayCars.map((car, index) => (
+        <Link 
+          key={`${car.slug}-${rowIndex}-${index}`}
+          href={`/cars/${car.slug}`}
+          className={styles.carCard}
+        >
+          <div className={styles.imageWrapper}>
+            <Image
+              src={getCarImageUrl(car.slug)}
+              alt={car.name}
+              fill
+              sizes="(max-width: 480px) 160px, (max-width: 768px) 200px, 240px"
+              className={styles.carImage}
+              style={{ objectFit: 'cover' }}
+            />
+            <div className={styles.imageOverlay} />
+          </div>
+          <div className={styles.carInfo}>
+            <span className={styles.carName}>{car.name}</span>
+            <span className={styles.carMeta}>{car.priceRange}</span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export default function CarCarousel() {
+  const isPausedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check for mobile viewport
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Pause/resume handlers
+  const pauseScroll = useCallback(() => {
+    isPausedRef.current = true;
+  }, []);
+  
+  const resumeScroll = useCallback(() => {
+    isPausedRef.current = false;
+  }, []);
+  
+  // Create two varied mixes with different seeds for each row
+  const topRowCars = useMemo(() => createVarietyMix(carData, 42), []);
+  const bottomRowCars = useMemo(() => createVarietyMix(carData, 137), []);
   
   return (
     <div 
@@ -184,37 +203,23 @@ export default function CarCarousel() {
       onMouseEnter={pauseScroll}
       onMouseLeave={resumeScroll}
     >
-      <div 
-        className={styles.scrollContainer} 
-        ref={scrollRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {displayCars.map((car, index) => (
-          <Link 
-            key={`${car.slug}-${index}`}
-            href={`/cars/${car.slug}`}
-            className={styles.carCard}
-          >
-            <div className={styles.imageWrapper}>
-              <Image
-                src={getCarImageUrl(car.slug)}
-                alt={car.name}
-                fill
-                sizes="(max-width: 480px) 200px, (max-width: 768px) 240px, 280px"
-                className={styles.carImage}
-                style={{ objectFit: 'cover' }}
-              />
-              <div className={styles.imageOverlay} />
-            </div>
-            <div className={styles.carInfo}>
-              <span className={styles.carName}>{car.name}</span>
-              <span className={styles.carMeta}>{car.priceRange}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {/* Top row - scrolls left */}
+      <MarqueeRow 
+        cars={topRowCars} 
+        direction="left" 
+        isPausedRef={isPausedRef}
+        isMobile={isMobile}
+        rowIndex={0}
+      />
+      
+      {/* Bottom row - scrolls right */}
+      <MarqueeRow 
+        cars={bottomRowCars} 
+        direction="right" 
+        isPausedRef={isPausedRef}
+        isMobile={isMobile}
+        rowIndex={1}
+      />
       
       {/* Gradient overlays for edge fade effect */}
       <div className={styles.gradientLeft} />
