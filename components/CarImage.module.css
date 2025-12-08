@@ -135,6 +135,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Position to show the car (typically in lower portion of hero images) */
+  object-position: center 60%;
   opacity: 0;
   transition: opacity var(--transition-slow);
   z-index: 2;
@@ -142,6 +144,15 @@
 
 .image.loaded {
   opacity: 1;
+}
+
+/* Card images need even more focus on the car */
+.card .image {
+  object-position: center 65%;
+}
+
+.thumbnail .image {
+  object-position: center 65%;
 }
 
 /* Variant-specific placeholder text sizes - Mobile First */
