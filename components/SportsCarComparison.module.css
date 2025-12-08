@@ -597,6 +597,171 @@
 }
 
 /* --------------------------------------------------------------------------
+   Requirements Grid (Step 1 - What Kind of Car?)
+   -------------------------------------------------------------------------- */
+.requirementsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .requirementsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .requirementsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+@media (min-width: 1200px) {
+  .requirementsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.requirementCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  transition: all var(--transition-fast);
+}
+
+.requirementCard:hover {
+  border-color: rgba(26, 77, 110, 0.3);
+  box-shadow: var(--shadow-md);
+}
+
+.requirementQuestion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.requirementIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.requirementIconSvg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--sn-primary);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.requirementIconSvg svg {
+  width: 14px;
+  height: 14px;
+}
+
+.requirementLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.requirementSelect {
+  width: 100%;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  padding-right: 32px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.requirementSelect:hover {
+  border-color: var(--color-gray-300);
+}
+
+.requirementSelect:focus {
+  outline: none;
+  border-color: var(--sn-primary);
+  box-shadow: 0 0 0 2px rgba(26, 77, 110, 0.1);
+}
+
+.requirementToggle {
+  display: flex;
+  gap: 4px;
+}
+
+.toggleBtn {
+  flex: 1;
+  min-width: 50px;
+  padding: 8px 10px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.toggleBtn:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-300);
+}
+
+.toggleActive {
+  background: var(--sn-primary);
+  border-color: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.toggleActive:hover {
+  background: var(--sn-primary-dark);
+  border-color: var(--sn-primary-dark);
+}
+
+.matchCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--sn-primary);
+  border-radius: var(--radius-full);
+}
+
+.matchCountNumber {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.matchCountLabel {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
    Recommendation Cards
    -------------------------------------------------------------------------- */
 .recommendationsGrid {

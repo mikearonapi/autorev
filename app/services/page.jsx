@@ -137,11 +137,11 @@ const services = [
 ];
 
 const processSteps = [
-  { number: '1', title: 'Consult', description: 'We discuss your goals, budget, and timeline to understand exactly what you need.' },
-  { number: '2', title: 'Plan', description: 'We create a detailed build plan with parts recommendations and expected outcomes.' },
-  { number: '3', title: 'Source', description: 'We help source quality parts—no cheap knockoffs, just proven components.' },
-  { number: '4', title: 'Install', description: 'Our experienced team handles the installation with attention to detail.' },
-  { number: '5', title: 'Test', description: 'Road or track testing to verify everything works exactly as intended.' }
+  { number: '1', title: 'Consult', description: 'We listen first. Your goals, budget, and timeline—we understand before we prescribe.' },
+  { number: '2', title: 'Plan', description: 'Disciplined planning. Detailed build plan with parts recommendations and clear outcomes.' },
+  { number: '3', title: 'Source', description: 'Integrity in sourcing. Quality components only—no cheap knockoffs, no shortcuts.' },
+  { number: '4', title: 'Install', description: 'Craftsmanship in execution. Every bolt torqued, every wire routed with purpose.' },
+  { number: '5', title: 'Test', description: 'Verification through action. Road or track testing to prove the build performs.' }
 ];
 
 export default function Services() {
@@ -165,13 +165,13 @@ export default function Services() {
           <div className={styles.heroContent}>
             <span className={styles.badge}>Service Center</span>
             <h1 className={styles.title}>
-              Professional Builds,<br />
-              <span className={styles.titleAccent}>Proven Results</span>
+              Excellence in<br />
+              <span className={styles.titleAccent}>Every Build</span>
             </h1>
             <p className={styles.subtitle}>
-              Our team handles everything from basic bolt-ons to full track builds. 
-              Every modification is validated by professional drivers to ensure 
-              your upgrades perform exactly as intended—no guesswork, just results.
+              Military discipline meets motorsports craftsmanship. Our team handles 
+              everything from basic bolt-ons to full track builds with the same standard 
+              of excellence—no shortcuts, no compromises, just professional results.
             </p>
             <Button href="/contact" variant="secondary" size="lg" icon={<ChatIcon />}>
               Get Started
@@ -257,10 +257,10 @@ export default function Services() {
       <section className={styles.cta}>
         <div className={styles.container}>
           <div className={styles.ctaContent}>
-            <h2 className={styles.ctaTitle}>Ready to Get Started?</h2>
+            <h2 className={styles.ctaTitle}>Ready to Build with Purpose?</h2>
             <p className={styles.ctaSubtitle}>
-              Tell us about your car and goals. We&apos;ll create a plan that fits your 
-              budget and timeline—then make it happen.
+              Tell us about your car and your mission. We&apos;ll create a plan that 
+              respects your budget and delivers real results—then execute it with excellence.
             </p>
             <div className={styles.ctaButtons}>
               <Button href="/contact" variant="secondary" size="lg">

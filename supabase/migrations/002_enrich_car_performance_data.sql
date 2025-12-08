@@ -665,3 +665,4 @@ BEGIN
   RAISE NOTICE 'Cars with Performance HUB scores: % / 35', updated_count;
 END $$;
 
+

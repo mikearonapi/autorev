@@ -623,3 +623,4 @@ BEGIN
   RAISE NOTICE 'Total upgrades: %', (SELECT COUNT(*) FROM upgrade_education);
 END $$;
 
+

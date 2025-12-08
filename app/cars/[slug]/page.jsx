@@ -160,9 +160,9 @@ export default function CarDetail() {
           <Icons.alertCircle size={48} />
           <h2>{error || 'Vehicle not found'}</h2>
           <p>The vehicle you&apos;re looking for doesn&apos;t exist or couldn&apos;t be loaded.</p>
-          <Link href="/car-finder" className={styles.backButton}>
+          <Link href="/car-selector" className={styles.backButton}>
             <Icons.arrowLeft size={18} />
-            Back to Car Finder
+            Back to Car Selector
           </Link>
         </div>
       </div>
@@ -176,9 +176,9 @@ export default function CarDetail() {
       {/* Hero Section */}
       <section className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <Link href="/car-finder" className={styles.backLink}>
+          <Link href="/car-selector" className={styles.backLink}>
             <Icons.arrowLeft size={18} />
-            Back to Car Finder
+            Back to Car Selector
           </Link>
           
           <div className={styles.heroHeader}>
@@ -415,9 +415,9 @@ export default function CarDetail() {
               <Icons.gauge size={20} />
               See Performance Impact
             </Link>
-            <Link href="/car-finder" className={styles.ctaSecondary}>
+            <Link href="/car-selector" className={styles.ctaSecondary}>
               <Icons.arrowLeft size={18} />
-              Back to Car Finder
+              Back to Car Selector
             </Link>
           </div>
         </div>

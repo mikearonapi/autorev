@@ -5436,7 +5436,7 @@ export const carData = [
     aftermarket: 7.5,
     engine: "3.6L/3.8L NA Flat-6",
     hp: 435,
-    trans: "6MT",
+    trans: "6MT/7PDK",
     priceRange: "$85-130K",
     priceAvg: 105000,
     drivetrain: "RWD",

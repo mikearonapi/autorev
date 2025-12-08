@@ -57,3 +57,4 @@ export default function CarDetailLayout({ children }) {
   return children;
 }
 
+

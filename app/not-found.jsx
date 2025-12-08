@@ -14,7 +14,7 @@ export default function NotFound() {
           <Link href="/" className={styles.homeLink}>
             Go Home
           </Link>
-          <Link href="/car-finder" className={styles.advisoryLink}>
+          <Link href="/car-selector" className={styles.advisoryLink}>
             Find Your Car
           </Link>
         </div>

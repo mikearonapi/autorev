@@ -32,9 +32,9 @@ const MessageIcon = () => (
 );
 
 const interests = [
-  { id: 'advisory', label: 'Sports Car Finder' },
+  { id: 'advisory', label: 'Sports Car Selector' },
   { id: 'performance', label: 'Performance HUB / Build Planning' },
-  { id: 'services', label: 'Service Center' },
+  { id: 'education', label: 'Learning About Upgrades' },
   { id: 'inspection', label: 'Pre-Purchase Inspection' },
   { id: 'other', label: 'Something Else' }
 ];
@@ -42,19 +42,19 @@ const interests = [
 const faqs = [
   {
     question: 'How quickly do you respond?',
-    answer: 'We typically respond within 24-48 hours. For urgent matters, please mention it in your message.'
+    answer: 'We typically respond within 24-48 hours. For urgent matters, mention it in your message and we\'ll prioritize.'
   },
   {
     question: 'Do you work on all makes and models?',
-    answer: "We specialize in sports cars and performance vehicles, but we're happy to discuss any project. If it's not in our wheelhouse, we'll point you in the right direction."
+    answer: "We specialize in sports cars and performance vehicles, but we're happy to discuss any project. If it's outside our wheelhouse, we'll point you toward someone who can actually help—not leave you hanging."
   },
   {
     question: 'Can you work with my budget?',
-    answer: "Absolutely. Whether you're spending $1K or $50K, we believe every enthusiast deserves honest guidance. We'll help you prioritize to get the most out of whatever you're working with."
+    answer: "Every budget deserves respect. Whether you're spending $1K or $50K, we bring the same commitment to getting you maximum value. The guy with the budget Miata gets the same attention as the GT3RS owner—that's how we roll."
   },
   {
     question: 'Do you offer remote consultations?',
-    answer: 'Yes! Our consultation services and build planning can be done remotely via video call. For hands-on work, we\'re based in [Location] and happy to discuss logistics.'
+    answer: 'Absolutely. Consultation and build planning work great over video call. For hands-on work, we\'re based in [Location] and happy to discuss logistics.'
   }
 ];
 
@@ -131,8 +131,8 @@ export default function Contact() {
               <span className={styles.titleAccent}>Cars</span>
             </h1>
             <p className={styles.subtitle}>
-              Have a question? Looking for honest advice? Just curious?
-              Drop us a line—no obligation, no sales pitch.
+              Questions? Looking for straight-up honest advice? Just want to talk shop?
+              We&apos;re here to help—no sales pitch, no ego, just drivers helping drivers.
             </p>
           </div>
         </div>
@@ -152,10 +152,10 @@ export default function Contact() {
                   <h2 className={styles.successTitle}>Message Sent!</h2>
                   <p className={styles.successText}>
                     Thanks for reaching out. We&apos;ll get back to you within 48 hours.
-                    In the meantime, check out our Car Finder or Upgrade Planner.
+                    In the meantime, check out our Car Selector or Upgrade Planner.
                   </p>
                   <div className={styles.successLinks}>
-                    <Button href="/car-finder" variant="primary" size="md">
+                    <Button href="/car-selector" variant="primary" size="md">
                       Find Your Car
                     </Button>
                     <Button href="/performance" variant="outline" size="md">
@@ -276,12 +276,12 @@ export default function Contact() {
               </div>
 
               <div className={styles.expectCard}>
-                <h3 className={styles.expectTitle}>What to Expect</h3>
+                <h3 className={styles.expectTitle}>How We Operate</h3>
                 <ul className={styles.expectList}>
-                  <li>Honest advice—no upselling</li>
-                  <li>Budget-conscious recommendations</li>
-                  <li>Real-world experience, not just spec sheets</li>
-                  <li>Respect for your time and goals</li>
+                  <li>Straight talk—no BS, no upselling</li>
+                  <li>Respect for every budget, every build</li>
+                  <li>Real experience, not keyboard warrior advice</li>
+                  <li>We compete with honor—and help you do the same</li>
                 </ul>
               </div>
             </div>

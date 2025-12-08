@@ -1,11 +1,699 @@
 /**
- * Performance HUB Styles
- * Gran Turismo-inspired but simple performance visualization
- * Mobile-First with Touch Optimization
+ * Performance HUB Styles V2
+ * Single-column layout with compact header
+ * Full-width build configuration
  */
 
 /* ============================================================================
-   Main Container - Mobile First
+   NEW LAYOUT V2 - Single Column, Full Width
+   ============================================================================ */
+.hubV2 {
+  background: var(--color-gray-50);
+  min-height: 100vh;
+}
+
+/* ============================================================================
+   NAVIGATION BAR
+   ============================================================================ */
+.hubNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.hubNav .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.hubNav .backLink:hover {
+  color: var(--sn-primary);
+}
+
+.hubNav .viewProfileBtn {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.hubNav .viewProfileBtn:hover {
+  background: var(--sn-primary-dark);
+}
+
+/* ============================================================================
+   CAR HERO SECTION - GT-Inspired Layout
+   ============================================================================ */
+.carHeroSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: var(--color-white);
+}
+
+@media (min-width: 1024px) {
+  .carHeroSection {
+    grid-template-columns: 1.2fr 1fr;
+    padding: var(--space-xl) var(--space-2xl);
+  }
+}
+
+/* Large Car Image */
+.carHeroImage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.carHeroImage .carImageLarge {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carHeroImage .tierBadge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+}
+
+.carHeroImage .tierBadge[data-tier="premium"] {
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+}
+
+.carHeroImage .tierBadge[data-tier="upper-mid"] {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+}
+
+.carHeroImage .tierBadge[data-tier="mid"] {
+  background: linear-gradient(135deg, #cd7f32 0%, #b06b28 100%);
+  color: var(--color-white);
+}
+
+.carHeroImage .tierBadge[data-tier="budget"] {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+}
+
+/* Car Info Panel */
+.carInfoPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.carInfoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.carInfoPanel .carName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  color: var(--color-white);
+}
+
+@media (min-width: 768px) {
+  .carInfoPanel .carName {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.carSubtitle {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.priceRange {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
+
+/* GT-Style Specs Grid */
+.carInfoPanel .specsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .carInfoPanel .specsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.carInfoPanel .specItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.carInfoPanel .specItem:nth-child(2n) {
+  border-right: none;
+}
+
+@media (min-width: 640px) {
+  .carInfoPanel .specItem:nth-child(2n) {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .carInfoPanel .specItem:nth-child(4n) {
+    border-right: none;
+  }
+}
+
+.carInfoPanel .specItem:nth-last-child(-n+2) {
+  border-bottom: none;
+}
+
+@media (min-width: 640px) {
+  .carInfoPanel .specItem:nth-last-child(-n+4) {
+    border-bottom: none;
+  }
+}
+
+.carInfoPanel .specLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.carInfoPanel .specValue {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.carInfoPanel .specValue small {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 2px;
+}
+
+/* GT-Style Rating Bars */
+.ratingBars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ratingBarRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.ratingLabel {
+  width: 80px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ratingBarTrack {
+  flex: 1;
+  position: relative;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Legacy segment styles */
+.ratingSegment {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+/* Continuous fill bars with segment overlay */
+.ratingFillStock {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sn-accent) 0%, #e6b800 100%);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.ratingFillUpgrade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 0 2px 2px 0;
+  transition: all 0.4s ease;
+  animation: upgradeGlow 2s ease-in-out infinite;
+}
+
+@keyframes upgradeGlow {
+  0%, 100% { 
+    opacity: 1; 
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+  }
+  50% { 
+    opacity: 0.9; 
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+  }
+}
+
+/* Segment lines overlay for GT7 aesthetic */
+.ratingSegmentLines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.segmentLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.ratingValue {
+  min-width: 42px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-white);
+  text-align: right;
+}
+
+/* Legacy segment styles - kept for reference */
+.ratingSegment.filled {
+  background: linear-gradient(180deg, var(--sn-accent) 0%, #e6b800 100%);
+  box-shadow: 0 0 4px rgba(255, 209, 0, 0.4);
+}
+
+.ratingSegment.upgraded {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
+
+/* ============================================================================
+   LEGACY HEADER STYLES (kept for compatibility)
+   ============================================================================ */
+/* Header Bar */
+.hubHeader {
+  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  color: var(--color-white);
+}
+
+.hubHeader .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  margin-bottom: var(--space-md);
+  transition: color var(--transition-fast);
+}
+
+.hubHeader .backLink:hover {
+  color: var(--color-white);
+}
+
+/* Compact Car Header Card */
+.carHeaderCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.carImageThumb {
+  width: 140px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.carImageThumb .carImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carHeaderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.carHeaderTop {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.carHeaderName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carHeaderYear {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.carHeaderSpecs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.8);
+  flex-wrap: wrap;
+}
+
+.specDivider {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.viewProfileBtn {
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.viewProfileBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Main Content Area */
+.hubMain {
+  padding: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Title Row */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+.hubTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.titleRow .packageSelector {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.titleRow .costBadge {
+  margin-left: auto;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-accent);
+  color: var(--sn-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* Metrics Grid - Compact 4 cards */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+@media (min-width: 768px) {
+  .metricsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.metricCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.metricIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.metricContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metricLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metricValue {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.metricGain {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-success);
+  background: rgba(34, 197, 94, 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* Full-Width Modules Grid */
+.modulesGridFull {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+}
+
+@media (min-width: 1024px) {
+  .modulesGridFull {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .modulesGridFull {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Performance Section with Bar Charts */
+.performanceSection {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.performanceSection .sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gray-500);
+  margin: 0 0 var(--space-md) 0;
+}
+
+/* Experience Scores Section */
+.scoresSection {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.scoresSection .sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gray-500);
+  margin: 0 0 var(--space-md) 0;
+}
+
+/* Estimates Info */
+.estimatesInfo {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Footer */
+.hubFooter {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  padding: var(--space-xl) 0;
+  margin-top: var(--space-lg);
+}
+
+.hubFooter .footerLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--sn-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.hubFooter .footerLink:hover {
+  color: var(--sn-primary-dark);
+}
+
+/* Responsive adjustments for header */
+@media (max-width: 768px) {
+  .hubHeader {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .carHeaderCard {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .carImageThumb {
+    width: 100%;
+    height: 120px;
+  }
+  
+  .carHeaderTop {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  
+  .carHeaderSpecs {
+    justify-content: center;
+  }
+  
+  .viewProfileBtn {
+    align-self: center;
+    margin-top: var(--space-sm);
+  }
+  
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .titleRow .costBadge {
+    margin-left: 0;
+  }
+  
+  .hubMain {
+    padding: var(--space-md);
+  }
+}
+
+/* ============================================================================
+   LEGACY LAYOUT - Keep for backward compatibility
    ============================================================================ */
 .hub {
   display: grid;
@@ -53,6 +741,12 @@
 @media (min-width: 1024px) {
   .carPanel {
     padding: var(--space-xl);
+    /* Don't stretch full height - stay compact at top */
+    align-self: start;
+    position: sticky;
+    top: 80px; /* Below header */
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
   }
 }
 
@@ -79,7 +773,7 @@
   aspect-ratio: 16 / 10;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
 }
 
 .carImagePlaceholder {
@@ -152,7 +846,59 @@
   margin: var(--space-sm) 0 0;
 }
 
-/* Specs Grid */
+/* Specs Table - GT7 inspired clean layout */
+.specsTable {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.specRow:last-child {
+  border-bottom: none;
+}
+
+.specLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.specValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: right;
+}
+
+.specCurrent {
+  color: var(--color-white);
+}
+
+.specGain {
+  font-size: 10px;
+  color: var(--sn-accent);
+  font-weight: 700;
+  padding: 2px 6px;
+  background: rgba(255, 209, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+/* Legacy grid support for backwards compatibility */
 .specsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -166,28 +912,6 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.specLabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.specValue {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.specGain {
-  font-size: 10px;
-  color: var(--sn-accent);
-  font-weight: 700;
 }
 
 /* CTAs - Touch Optimized */
@@ -417,6 +1141,39 @@
   border-color: var(--color-error);
 }
 
+.packagePill.ultimatePower.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.packagePill.custom {
+  border-style: dashed;
+}
+
+.packagePill.custom.active {
+  background: linear-gradient(135deg, var(--color-gray-700) 0%, var(--color-gray-800) 100%);
+  border-color: var(--color-gray-700);
+  border-style: solid;
+}
+
+/* Inactive package pills - subtle tier colors */
+.packagePill.streetSport:not(.active) {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.packagePill.trackPack:not(.active) {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.packagePill.timeAttack:not(.active) {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.packagePill.ultimatePower:not(.active) {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
 /* Package Info */
 .packageInfo {
   padding: var(--space-md);
@@ -555,9 +1312,111 @@
 /* ============================================================================
    Modules Section
    ============================================================================ */
+/* ============================================================================
+   UNIFIED BUILD CONFIGURATION SECTION
+   Consistent design across all packages
+   ============================================================================ */
+.buildSection {
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 2px solid var(--sn-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.buildHeader {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.buildTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--sn-primary);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.buildSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.selectedCount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(28, 65, 89, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: var(--font-size-xs);
+}
+
+.clearAllBtn {
+  margin-left: auto;
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clearAllBtn:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+}
+
+/* Considerations Section */
+.considerationsSection {
+  margin-top: var(--space-lg);
+}
+
+/* Legacy support */
 .modulesSection {
   border-top: 1px solid var(--color-gray-100);
   padding-top: var(--space-lg);
+}
+
+.customBuildHeader {
+  margin-bottom: var(--space-lg);
+}
+
+.customBuildTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--sn-primary);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.customBuildSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
 }
 
 .modulesToggle {
@@ -623,27 +1482,431 @@
 .moduleChip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 6px 12px;
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-full);
-  font-size: 11px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
   font-weight: 500;
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .moduleChip:hover {
   border-color: var(--sn-primary);
-  color: var(--sn-primary);
+  background: rgba(28, 65, 89, 0.05);
 }
 
 .moduleChip.selected {
   background: var(--sn-primary);
   border-color: var(--sn-primary);
   color: var(--color-white);
+}
+
+/* Checkbox indicator in module chip */
+.moduleCheckbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 4px;
+  background: var(--color-white);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.moduleChip:hover .moduleCheckbox {
+  border-color: var(--sn-primary);
+}
+
+.moduleChip.selected .moduleCheckbox {
+  background: var(--color-white);
+  border-color: var(--color-white);
+  color: var(--sn-primary);
+}
+
+/* Checkmark icon styling */
+.moduleChip.selected .moduleCheckbox svg {
+  stroke-width: 3;
+}
+
+/* Package item indicator - shows which items are part of selected package */
+.moduleChip.packageItem {
+  background: rgba(28, 65, 89, 0.05);
+}
+
+.moduleChip.packageItem.selected {
+  background: var(--sn-primary);
+}
+
+.moduleName {
+  flex: 1;
+  text-align: left;
+}
+
+.moduleChip.hasDeps::after {
+  content: '!';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: var(--color-warning, #f59e0b);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.moduleChip.selected.hasDeps::after {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--sn-primary);
+}
+
+/* Module Chip Wrapper with Info Button */
+.moduleChipWrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.moduleInfoBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-gray-400);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-left: -4px;
+}
+
+.moduleInfoBtn:hover {
+  background: var(--color-gray-100);
+  color: var(--sn-primary);
+}
+
+/* ============================================================================
+   Dependency Warnings
+   ============================================================================ */
+.dependencyWarnings {
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.depWarningBox {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-left: 3px solid var(--color-error, #ef4444);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.depRecommendBox {
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-left: 3px solid var(--color-warning, #fbbf24);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.depWarningHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.depWarningBox .depWarningHeader {
+  color: var(--color-error, #ef4444);
+}
+
+.depRecommendBox .depWarningHeader {
+  color: var(--color-warning, #d97706);
+}
+
+.depWarningText {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  margin: 0 0 var(--space-sm);
+  line-height: 1.4;
+}
+
+.depList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.depTag {
+  display: inline-block;
+  padding: 4px 8px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.depTagRecommended {
+  display: inline-block;
+  padding: 4px 8px;
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.addDepsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-error, #ef4444);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addDepsBtn:hover {
+  background: #dc2626;
+}
+
+.addDepsBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-warning, #f59e0b);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addDepsBtnSecondary:hover {
+  background: #d97706;
+}
+
+/* Systems Impact Panel */
+.systemImpactPanel {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
+}
+
+.systemImpactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.systemImpactCard {
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-50);
+}
+
+.systemImpactHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.systemImpactName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.systemImpactCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.systemImpactStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+}
+
+.systemImpactPositive {
+  color: var(--color-success, #16a34a);
+}
+
+.systemImpactRisk {
+  color: var(--color-error, #b91c1c);
+}
+
+/* Dependency Tag Wrapper with Reason */
+.depTagWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.depReason {
+  font-size: 10px;
+  color: var(--color-gray-500);
+  padding-left: 8px;
+  font-style: italic;
+}
+
+/* Synergy Box (Positive) */
+.depSynergyBox {
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-left: 3px solid var(--color-success, #22c55e);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.depSynergyBox .depWarningHeader {
+  color: var(--color-success, #22c55e);
+}
+
+.synergyText {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  margin: var(--space-xs) 0 0;
+}
+
+.synergyText strong {
+  color: var(--color-success, #16a34a);
+}
+
+/* ============================================================================
+   Car Recommendations Panel
+   ============================================================================ */
+.carRecommendations {
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.recTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--sn-primary);
+  margin: 0 0 var(--space-sm);
+}
+
+.recNarrative {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--sn-accent);
+}
+
+.recUpgrades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.recUpgradeItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recUpgradeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recUpgradeChip:hover {
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+}
+
+.recUpgradeName {
+  font-weight: 500;
+}
+
+.recUpgradeGain {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-success);
+  border-radius: var(--radius-sm);
+}
+
+.recAddBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recAddBtn:hover {
+  background: var(--sn-primary-dark);
+  transform: scale(1.05);
+}
+
+.recComplete {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  margin: 0;
+  padding: var(--space-sm);
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: var(--radius-sm);
 }
 
 /* ============================================================================
@@ -870,6 +2133,86 @@
   border-radius: var(--radius-full);
 }
 
+.moduleBadgeClickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.moduleBadgeClickable:hover {
+  background: var(--sn-primary-dark);
+  transform: translateY(-1px);
+}
+
+.moduleBadgeClickable svg {
+  opacity: 0.7;
+}
+
+/* Clickable Upgrade Chips */
+.upgradeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.upgradeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--font-size-sm);
+}
+
+.upgradeChip:hover {
+  border-color: var(--sn-primary);
+  background: var(--color-gray-50);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.upgradeChip svg:first-child {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.upgradeChipName {
+  color: var(--color-gray-800);
+  font-weight: 500;
+}
+
+.upgradeChipGain {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-success);
+  border-radius: var(--radius-sm);
+}
+
+.infoIcon {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.upgradeChip:hover .infoIcon {
+  color: var(--sn-primary);
+}
+
 .considerations {
   margin-top: var(--space-md);
   padding-top: var(--space-md);
@@ -1013,6 +2356,78 @@
   
   .specsGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Enhanced Mobile Support for New Components */
+@media (max-width: 640px) {
+  /* Car Recommendations - Stack vertically */
+  .carRecommendations {
+    padding: var(--space-sm);
+  }
+  
+  .recUpgrades {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  
+  .recUpgradeItem {
+    width: 100%;
+  }
+  
+  .recUpgradeChip {
+    flex: 1;
+    justify-content: space-between;
+  }
+  
+  /* Upgrade Chips - Full width on mobile */
+  .upgradeChips {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  
+  .upgradeChip {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* Dependency Warnings - Tighter spacing */
+  .dependencyWarnings {
+    margin-top: var(--space-sm);
+  }
+  
+  .depWarningBox,
+  .depRecommendBox {
+    padding: var(--space-sm);
+  }
+  
+  .depList {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .depTag,
+  .depTagRecommended {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Module Info Button - Larger tap target */
+  .moduleInfoBtn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  /* Package Pills - Allow wrapping */
+  .packageSelector {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  
+  .packagePill {
+    min-height: 40px;
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 12px;
   }
 }
 

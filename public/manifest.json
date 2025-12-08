@@ -1,7 +1,7 @@
 {
   "name": "SuperNatural Motorsports",
   "short_name": "SN Motorsports",
-  "description": "Find your perfect sports car with expert advisory. Compare 35+ vehicles from $25K-$100K, plan performance upgrades, and access professional motorsports services.",
+  "description": "Unleash your racing spirit. Find your perfect sports car, plan performance builds with purpose, and join a community that values mastery over materialism. Excellence over ego.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a1628",
@@ -23,4 +23,5 @@
   "categories": ["automotive", "lifestyle", "shopping"],
   "lang": "en-US"
 }
+
 

@@ -133,7 +133,7 @@ export default async function Image() {
               gap: '16px',
             }}
           >
-            {['$25K - $100K', 'Car Finder', 'Performance HUB'].map((badge) => (
+            {['$25K - $100K', 'Car Selector', 'Performance HUB'].map((badge) => (
               <div
                 key={badge}
                 style={{

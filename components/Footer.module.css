@@ -38,6 +38,14 @@
   font-style: italic;
 }
 
+.brandMotto {
+  font-size: 10px;
+  color: var(--color-gray-500);
+  margin-top: var(--space-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 /* Links Section - Grid layout on mobile for better tap targets */
 .links {
   text-align: center;

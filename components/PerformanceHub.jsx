@@ -17,6 +17,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './PerformanceHub.module.css';
 import ScoringInfo from './ScoringInfo';
+import UpgradeDetailModal from './UpgradeDetailModal';
 import {
   getPerformanceProfile,
   getScoreComparison,
@@ -25,8 +26,11 @@ import {
   getUpgradeSummary,
   performanceCategories,
 } from '@/lib/performance.js';
+import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { upgradeTiers } from '@/data/performanceCategories.js';
 import { tierConfig } from '@/data/cars.js';
+import { getRecommendationsForCar, getTierRecommendations } from '@/data/carUpgradeRecommendations.js';
+import { validateUpgradeSelection, getRecommendedUpgrades, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
 import CarImage from './CarImage';
 
 // Icons for performance categories
@@ -113,6 +117,20 @@ const Icons = {
       <path d="M12 2v2"/>
     </svg>
   ),
+  info: ({ size = 20, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
+  alertTriangle: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
 };
 
 // Map icon names to components
@@ -127,21 +145,41 @@ const iconMap = {
 };
 
 /**
+ * Format numeric values with proper precision
+ */
+function formatMetricValue(value, unit) {
+  if (typeof value !== 'number') return value;
+  
+  // Handle floating point artifacts
+  if (unit === 'g') return value.toFixed(2);
+  if (unit === 's') return value.toFixed(1);
+  if (unit === 'ft') return Math.round(value);
+  if (unit === ' hp') return Math.round(value);
+  return Math.round(value * 10) / 10;
+}
+
+/**
  * Real Metric Row - Shows actual values like HP, seconds, feet
  */
 function RealMetricRow({ icon: IconComponent, label, stockValue, upgradedValue, unit, improvement, improvementPrefix = '+', isLowerBetter = false }) {
   const hasImproved = isLowerBetter ? upgradedValue < stockValue : upgradedValue > stockValue;
   const improvementVal = improvement || Math.abs(upgradedValue - stockValue);
   
-  // Calculate percentage for bar (relative to a max)
+  // Format values to prevent floating point artifacts
+  const formattedStock = formatMetricValue(stockValue, unit);
+  const formattedUpgraded = formatMetricValue(upgradedValue, unit);
+  const formattedImprovement = formatMetricValue(improvementVal, unit);
+  
+  // Calculate percentage for bar (relative to realistic max values)
+  // These maxes are set to show headroom - not everything should max out
   const maxValues = {
-    hp: 800,
-    seconds: 6,
-    feet: 130,
-    g: 1.3,
+    hp: 1200,      // Allows for extreme forced induction builds
+    seconds: 8,    // Slowest 0-60 we'd show (gives range from ~2.5s to 8s)
+    feet: 150,     // Worst braking (gives range from ~80ft to 150ft)
+    g: 1.6,        // Competition slicks territory (gives range from ~0.9g to 1.6g)
   };
   
-  let maxValue = 800; // default for HP
+  let maxValue = 1200; // default for HP
   if (unit === 's') maxValue = maxValues.seconds;
   if (unit === 'ft') maxValue = maxValues.feet;
   if (unit === 'g') maxValue = maxValues.g;
@@ -164,15 +202,15 @@ function RealMetricRow({ icon: IconComponent, label, stockValue, upgradedValue, 
         <div className={styles.metricValues}>
           {hasImproved ? (
             <>
-              <span className={styles.stockValueSmall}>{stockValue}{unit}</span>
+              <span className={styles.stockValueSmall}>{formattedStock}{unit}</span>
               <span className={styles.metricArrow}>→</span>
-              <span className={styles.upgradedValue}>{upgradedValue}{unit}</span>
+              <span className={styles.upgradedValue}>{formattedUpgraded}{unit}</span>
               <span className={styles.metricGain}>
-                {improvementPrefix}{improvementVal.toFixed(unit === 'g' ? 2 : unit === 's' ? 1 : 0)}{unit}
+                {improvementPrefix}{formattedImprovement}{unit}
               </span>
             </>
           ) : (
-            <span className={styles.currentValue}>{stockValue}{unit}</span>
+            <span className={styles.currentValue}>{formattedStock}{unit}</span>
           )}
         </div>
       </div>
@@ -245,14 +283,357 @@ function ScoreBar({ category, stockScore, upgradedScore, showUpgrade }) {
 }
 
 /**
- * Component Breakdown - Shows what parts are included in upgrade
+ * GT-Style Rating Bar (1-10 scale) for visual stats display
+ * Shows stock value (gold) and upgrade gains (green) with smooth fills
+ * Supports decimal values with partial segment fills
  */
-function ComponentBreakdown({ selectedUpgrades, showUpgrade }) {
-  if (!showUpgrade || selectedUpgrades.length === 0) return null;
+function RatingBar({ label, stockValue, upgradedValue, maxValue = 10 }) {
+  const hasUpgrade = upgradedValue > stockValue;
+  const displayValue = hasUpgrade ? upgradedValue : stockValue;
   
-  // Get main package
+  // Calculate percentages for the continuous bar approach
+  const stockPercent = (stockValue / maxValue) * 100;
+  const upgradedPercent = (upgradedValue / maxValue) * 100;
+  const upgradeGainPercent = upgradedPercent - stockPercent;
+  
+  return (
+    <div className={styles.ratingBarRow}>
+      <span className={styles.ratingLabel}>{label}</span>
+      <div className={styles.ratingBarTrack}>
+        {/* Stock fill (gold) */}
+        <div 
+          className={styles.ratingFillStock}
+          style={{ width: `${stockPercent}%` }}
+        />
+        {/* Upgrade gain fill (green) - only if upgraded */}
+        {hasUpgrade && (
+          <div 
+            className={styles.ratingFillUpgrade}
+            style={{ 
+              left: `${stockPercent}%`,
+              width: `${upgradeGainPercent}%` 
+            }}
+          />
+        )}
+        {/* Segment lines overlay for GT7 look */}
+        <div className={styles.ratingSegmentLines}>
+          {[...Array(9)].map((_, i) => (
+            <div key={i} className={styles.segmentLine} style={{ left: `${(i + 1) * 10}%` }} />
+          ))}
+        </div>
+      </div>
+      <span className={styles.ratingValue}>{displayValue.toFixed(1)}</span>
+    </div>
+  );
+}
+
+/**
+ * Recommended for This Car - Shows car-specific upgrade recommendations
+ */
+function CarRecommendations({ car, currentTier, selectedModules, onAddToModule, onUpgradeClick }) {
+  // Get recommendations - returns null for 'stock' or 'custom' or unrecognized tiers
+  const recommendations = useMemo(() => {
+    if (currentTier === 'stock' || currentTier === 'custom') return null;
+    return getTierRecommendations(car.slug, currentTier);
+  }, [car.slug, currentTier]);
+  
+  // Combine mustHave and recommended, resolving to full upgrade details
+  // Must compute this before conditional return to satisfy React hooks rules
+  const allRecommended = useMemo(() => {
+    if (!recommendations) return [];
+    const keys = [...(recommendations.mustHave || []), ...(recommendations.recommended || [])];
+    return keys.map(key => {
+      const upgrade = getUpgradeByKey(key);
+      const isSelected = selectedModules.includes(key);
+      return { key, upgrade, isSelected };
+    }).filter(item => item.upgrade);
+  }, [recommendations, selectedModules]);
+  
+  // Group into selected and not-selected
+  const notYetSelected = allRecommended.filter(item => !item.isSelected);
+  
+  // Early return after all hooks
+  if (!recommendations) return null;
+  if (notYetSelected.length === 0 && !recommendations.narrative) return null;
+  
+  return (
+    <div className={styles.carRecommendations}>
+      <h4 className={styles.recTitle}>
+        <Icons.flag size={16} />
+        Recommended for {car.name}
+      </h4>
+      
+      {recommendations.narrative && (
+        <p className={styles.recNarrative}>{recommendations.narrative}</p>
+      )}
+      
+      {notYetSelected.length > 0 && (
+        <div className={styles.recUpgrades}>
+          {notYetSelected.map(({ key, upgrade }) => (
+            <div key={key} className={styles.recUpgradeItem}>
+              <button
+                className={styles.recUpgradeChip}
+                onClick={() => onUpgradeClick(upgrade)}
+              >
+                <span className={styles.recUpgradeName}>{upgrade.name}</span>
+                {upgrade.metricChanges?.hpGain && (
+                  <span className={styles.recUpgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
+                )}
+              </button>
+              <button
+                className={styles.recAddBtn}
+                onClick={() => onAddToModule(key)}
+                title="Add to build"
+              >
+                <Icons.check size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {notYetSelected.length === 0 && (
+        <p className={styles.recComplete}>
+          <Icons.check size={14} /> All recommended upgrades are in your build!
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Dependency Warnings - Shows missing required/recommended upgrades
+ * Now powered by the Connected Tissue Matrix for comprehensive dependency checking
+ * Soft enforcement: warns but doesn't prevent selection
+ */
+function DependencyWarnings({ selectedModules, availableModules, onAddMods, car }) {
+  // Use the Connected Tissue Matrix for comprehensive dependency checking
+  const validation = useMemo(() => {
+    if (selectedModules.length === 0) return null;
+    return validateUpgradeSelection(selectedModules, car);
+  }, [selectedModules, car]);
+  
+  // Get recommended upgrades with full context
+  const recommendations = useMemo(() => {
+    if (selectedModules.length === 0) return [];
+    return getRecommendedUpgrades(selectedModules, car);
+  }, [selectedModules, car]);
+  
+  // Also check simple requires/stronglyRecommended from individual upgrades (fallback)
+  const simpleDeps = useMemo(() => {
+    const allRequires = new Set();
+    const allRecommended = new Set();
+    
+    selectedModules.forEach(modKey => {
+      const mod = getUpgradeByKey(modKey);
+      if (!mod) return;
+      
+      if (mod.requires) {
+        mod.requires.forEach(reqKey => {
+          if (!selectedModules.includes(reqKey)) {
+            allRequires.add(reqKey);
+          }
+        });
+      }
+      
+      if (mod.stronglyRecommended) {
+        mod.stronglyRecommended.forEach(recKey => {
+          if (!selectedModules.includes(recKey) && !allRequires.has(recKey)) {
+            allRecommended.add(recKey);
+          }
+        });
+      }
+    });
+    
+    const availableKeys = Object.values(availableModules).flat().map(m => m.key);
+    
+    return {
+      required: [...allRequires].filter(k => availableKeys.includes(k)),
+      recommended: [...allRecommended].filter(k => availableKeys.includes(k)),
+    };
+  }, [selectedModules, availableModules]);
+  
+  // Merge matrix-based and simple deps
+  const criticalIssues = validation?.critical || [];
+  const warningIssues = validation?.warnings || [];
+  const infoIssues = validation?.info || [];
+  const synergies = validation?.synergies || [];
+  
+  // Combine simple requires with matrix-based critical issues
+  const allRequired = new Set(simpleDeps.required);
+  criticalIssues.forEach(issue => {
+    issue.recommendation?.forEach(r => allRequired.add(r));
+  });
+  
+  // Combine simple recommended with matrix-based warnings
+  const allRecommended = new Set(simpleDeps.recommended);
+  warningIssues.forEach(issue => {
+    issue.recommendation?.forEach(r => {
+      if (!allRequired.has(r)) allRecommended.add(r);
+    });
+  });
+  
+  // Filter to available modules
+  const availableKeys = Object.values(availableModules).flat().map(m => m.key);
+  const filteredRequired = [...allRequired].filter(k => availableKeys.includes(k));
+  const filteredRecommended = [...allRecommended].filter(k => availableKeys.includes(k));
+  
+  // Nothing to show
+  if (filteredRequired.length === 0 && filteredRecommended.length === 0 && synergies.length === 0) {
+    return null;
+  }
+  
+  return (
+    <div className={styles.dependencyWarnings}>
+      {/* Critical / Required */}
+      {filteredRequired.length > 0 && (
+        <div className={styles.depWarningBox}>
+          <div className={styles.depWarningHeader}>
+            <Icons.alertTriangle size={16} />
+            <span>Required Supporting Mods</span>
+          </div>
+          <p className={styles.depWarningText}>
+            Your selected upgrades need these supporting mods to function properly:
+          </p>
+          <div className={styles.depList}>
+            {filteredRequired.map(key => {
+              const upgrade = getUpgradeByKey(key);
+              const rec = recommendations.find(r => r.upgradeKey === key);
+              return (
+                <div key={key} className={styles.depTagWrapper}>
+                  <span className={styles.depTag}>
+                    {upgrade?.name || key}
+                  </span>
+                  {rec?.reason && (
+                    <span className={styles.depReason}>{rec.reason}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <button 
+            className={styles.addDepsBtn}
+            onClick={() => onAddMods(filteredRequired)}
+          >
+            <Icons.check size={14} />
+            Add Required Mods
+          </button>
+        </div>
+      )}
+      
+      {/* Warnings / Recommended */}
+      {filteredRecommended.length > 0 && (
+        <div className={styles.depRecommendBox}>
+          <div className={styles.depWarningHeader}>
+            <Icons.info size={16} />
+            <span>Strongly Recommended</span>
+          </div>
+          <p className={styles.depWarningText}>
+            These mods pair well with your selections for best results:
+          </p>
+          <div className={styles.depList}>
+            {filteredRecommended.map(key => {
+              const upgrade = getUpgradeByKey(key);
+              const rec = recommendations.find(r => r.upgradeKey === key);
+              return (
+                <div key={key} className={styles.depTagWrapper}>
+                  <span className={styles.depTagRecommended}>
+                    {upgrade?.name || key}
+                  </span>
+                  {rec?.reason && (
+                    <span className={styles.depReason}>{rec.reason}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <button 
+            className={styles.addDepsBtnSecondary}
+            onClick={() => onAddMods(filteredRecommended)}
+          >
+            Add Recommended
+          </button>
+        </div>
+      )}
+      
+      {/* Positive Synergies */}
+      {synergies.length > 0 && (
+        <div className={styles.depSynergyBox}>
+          <div className={styles.depWarningHeader}>
+            <Icons.check size={16} />
+            <span>Great Combinations</span>
+          </div>
+          {synergies.map((synergy, idx) => (
+            <p key={idx} className={styles.synergyText}>
+              <strong>{synergy.name}:</strong> {synergy.message}
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Systems Impact Panel - shows which systems are affected by the current build
+ */
+function SystemsImpactPanel({ selectedModules }) {
+  const impacts = useMemo(() => {
+    if (!selectedModules || selectedModules.length === 0) return [];
+    return getSystemImpactOverview(selectedModules);
+  }, [selectedModules]);
+
+  if (!impacts || impacts.length === 0) return null;
+
+  return (
+    <div className={styles.systemImpactPanel}>
+      <h4 className={styles.sectionTitle}>Systems Impacted</h4>
+      <div className={styles.systemImpactGrid}>
+        {impacts.map(item => (
+          <div key={item.system.key} className={styles.systemImpactCard}>
+            <div className={styles.systemImpactHeader}>
+              <span className={styles.systemImpactName}>{item.system.name}</span>
+              <span className={styles.systemImpactCount}>
+                {item.totalImpacts} touchpoint{item.totalImpacts !== 1 ? 's' : ''}
+              </span>
+            </div>
+            <div className={styles.systemImpactStats}>
+              {item.improves > 0 && (
+                <span className={styles.systemImpactPositive}>+{item.improves} improves</span>
+              )}
+              {(item.stresses > 0 || item.compromises > 0) && (
+                <span className={styles.systemImpactRisk}>
+                  {item.stresses + item.compromises} stresses/risks
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Component Breakdown - Shows what parts are included in upgrade
+ * Now with clickable upgrade items that open the encyclopedia modal
+ */
+function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
+  // Get main package and modules first (these aren't hooks)
   const mainPackage = selectedUpgrades.find(u => u.type === 'package');
   const modules = selectedUpgrades.filter(u => u.type === 'module');
+  
+  // Get resolved upgrade details for the includedUpgradeKeys
+  // Must call useMemo before any conditional returns (React hooks rules)
+  const resolvedUpgrades = useMemo(() => {
+    if (!mainPackage?.includedUpgradeKeys) return [];
+    return mainPackage.includedUpgradeKeys
+      .map(key => getUpgradeByKey(key))
+      .filter(Boolean);
+  }, [mainPackage]);
+  
+  // Early return after all hooks
+  if (!showUpgrade || selectedUpgrades.length === 0) return null;
   
   return (
     <div className={styles.componentBreakdown}>
@@ -261,7 +642,29 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade }) {
         What's Included
       </h4>
       
-      {mainPackage && mainPackage.includes && (
+      {/* Clickable upgrade chips using includedUpgradeKeys */}
+      {resolvedUpgrades.length > 0 && (
+        <div className={styles.upgradeChips}>
+          {resolvedUpgrades.map((upgrade) => (
+            <button
+              key={upgrade.key}
+              className={styles.upgradeChip}
+              onClick={() => onUpgradeClick(upgrade)}
+              title={upgrade.shortDescription || upgrade.description}
+            >
+              <Icons.check size={12} />
+              <span className={styles.upgradeChipName}>{upgrade.name}</span>
+              {upgrade.metricChanges?.hpGain && (
+                <span className={styles.upgradeChipGain}>+{upgrade.metricChanges.hpGain}hp</span>
+              )}
+              <Icons.info size={12} className={styles.infoIcon} />
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Fallback to plain text includes if no includedUpgradeKeys */}
+      {resolvedUpgrades.length === 0 && mainPackage?.includes && (
         <div className={styles.componentList}>
           {mainPackage.includes.map((item, idx) => (
             <div key={idx} className={styles.componentItem}>
@@ -272,13 +675,24 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade }) {
         </div>
       )}
       
+      {/* Additional standalone modules selected by user */}
       {modules.length > 0 && (
         <div className={styles.additionalModules}>
           <span className={styles.modulesLabel}>Additional Modules:</span>
           <div className={styles.modulesList}>
-            {modules.map(mod => (
-              <span key={mod.key} className={styles.moduleBadge}>{mod.name}</span>
-            ))}
+            {modules.map(mod => {
+              const modDetails = getUpgradeByKey(mod.key);
+              return (
+                <button 
+                  key={mod.key} 
+                  className={styles.moduleBadgeClickable}
+                  onClick={() => onUpgradeClick(modDetails || mod)}
+                >
+                  {mod.name}
+                  <Icons.info size={10} />
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -301,9 +715,19 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade }) {
  * Main Performance HUB component
  */
 export default function PerformanceHub({ car }) {
-  const [selectedPackageKey, setSelectedPackageKey] = useState('stock');
+  // Get car-specific recommendations to determine default tier
+  const carRecommendations = useMemo(() => 
+    getRecommendationsForCar(car.slug), 
+    [car.slug]
+  );
+  
+  // Initialize to car's default tier if available, otherwise stock
+  const [selectedPackageKey, setSelectedPackageKey] = useState(() => {
+    return carRecommendations?.defaultTier || 'stock';
+  });
   const [expandedModules, setExpandedModules] = useState(false);
   const [selectedModules, setSelectedModules] = useState([]);
+  const [selectedUpgradeForModal, setSelectedUpgradeForModal] = useState(null);
   
   // Get available upgrades for this car
   const availableUpgrades = useMemo(() => 
@@ -311,12 +735,28 @@ export default function PerformanceHub({ car }) {
     [car]
   );
   
-  // Determine which upgrades are active
+  // Get the modules included in the currently selected package
+  const packageIncludedModules = useMemo(() => {
+    if (selectedPackageKey === 'stock' || selectedPackageKey === 'custom') return [];
+    const pkg = availableUpgrades.packages.find(p => p.key === selectedPackageKey);
+    return pkg?.includedUpgradeKeys || [];
+  }, [selectedPackageKey, availableUpgrades.packages]);
+  
+  // Effective selected modules (package defaults + user modifications)
+  const effectiveSelectedModules = useMemo(() => {
+    if (selectedPackageKey === 'custom' || selectedPackageKey === 'stock') {
+      return selectedModules;
+    }
+    // For packages, combine package defaults with any additional user selections
+    const combined = new Set([...packageIncludedModules, ...selectedModules]);
+    return Array.from(combined);
+  }, [selectedPackageKey, packageIncludedModules, selectedModules]);
+  
+  // Determine which upgrades are active (for performance calculation)
   const activeUpgradeKeys = useMemo(() => {
-    if (selectedPackageKey === 'stock') return [];
-    if (selectedPackageKey === 'custom') return selectedModules;
-    return [selectedPackageKey, ...selectedModules];
-  }, [selectedPackageKey, selectedModules]);
+    if (selectedPackageKey === 'stock' && selectedModules.length === 0) return [];
+    return effectiveSelectedModules;
+  }, [selectedPackageKey, selectedModules, effectiveSelectedModules]);
   
   // Get performance profile
   const profile = useMemo(() => 
@@ -344,17 +784,40 @@ export default function PerformanceHub({ car }) {
   
   const handlePackageSelect = (key) => {
     setSelectedPackageKey(key);
-    if (key !== 'custom') {
-      setSelectedModules([]);
-    }
+    // Clear custom modules when switching packages
+    setSelectedModules([]);
   };
   
   const handleModuleToggle = (moduleKey) => {
-    setSelectedModules(prev => {
-      if (prev.includes(moduleKey)) {
-        return prev.filter(k => k !== moduleKey);
+    if (selectedPackageKey !== 'custom' && selectedPackageKey !== 'stock') {
+      // User is modifying a package - auto-switch to Custom
+      // Copy current effective selections first
+      const currentSelections = new Set(effectiveSelectedModules);
+      
+      if (currentSelections.has(moduleKey)) {
+        currentSelections.delete(moduleKey);
+      } else {
+        currentSelections.add(moduleKey);
       }
-      return [...prev, moduleKey];
+      
+      setSelectedPackageKey('custom');
+      setSelectedModules(Array.from(currentSelections));
+    } else {
+      // Already in Custom or Stock mode - normal toggle
+      setSelectedModules(prev => {
+        if (prev.includes(moduleKey)) {
+          return prev.filter(k => k !== moduleKey);
+        }
+        return [...prev, moduleKey];
+      });
+    }
+  };
+  
+  // Handler for adding required/recommended mods
+  const handleAddRequiredMods = (modKeys) => {
+    setSelectedModules(prev => {
+      const newMods = modKeys.filter(k => !prev.includes(k));
+      return [...prev, ...newMods];
     });
   };
   
@@ -366,133 +829,166 @@ export default function PerformanceHub({ car }) {
     ['drivability', 'reliabilityHeat', 'soundEmotion'].includes(cat.key)
   );
 
+  // Format numbers with commas
+  const formatNumber = (num) => num?.toLocaleString() || '—';
+  
   return (
-    <div className={styles.hub}>
-      {/* Left Panel - Car Identity */}
-      <div className={styles.carPanel}>
-        <Link href="/car-finder" className={styles.backLink}>
+    <div className={styles.hubV2}>
+      {/* ================================================================
+          NAVIGATION BAR
+          ================================================================ */}
+      <nav className={styles.hubNav}>
+        <Link href="/performance" className={styles.backLink}>
           <Icons.arrowLeft size={16} />
-          Back to Car Finder
+          Back to Performance HUB
         </Link>
-        
-        <div className={styles.carImageContainer}>
-          <CarImage car={car} variant="card" className={styles.carImage} />
+        <Link href={`/cars/${car.slug}`} className={styles.viewProfileBtn}>
+          View Full Profile →
+        </Link>
+      </nav>
+
+      {/* ================================================================
+          CAR HERO SECTION - GT-Inspired Layout
+          ================================================================ */}
+      <header className={styles.carHeroSection}>
+        {/* Large Car Image */}
+        <div className={styles.carHeroImage}>
+          <CarImage car={car} variant="hero" className={styles.carImageLarge} />
+          <div className={styles.tierBadge} data-tier={car.tier}>
+            {tierInfo.label || car.tier}
+          </div>
         </div>
         
-        <div className={styles.carInfo}>
-          <div className={styles.carBadges}>
-            <span className={styles.tierBadge}>{tierInfo.label || car.tier}</span>
-            <span className={styles.categoryBadge}>{car.category}</span>
+        {/* Car Info Panel - GT Style */}
+        <div className={styles.carInfoPanel}>
+          {/* Header with name and price */}
+          <div className={styles.carInfoHeader}>
+            <div>
+              <h1 className={styles.carName}>{car.name}</h1>
+              <p className={styles.carSubtitle}>{car.years} • {car.brand || 'Sports Car'} • {car.country || ''}</p>
+            </div>
+            <div className={styles.priceRange}>
+              {tierInfo.priceRange || '$50-75K'}
+            </div>
           </div>
-          <h2 className={styles.carName}>{car.name}</h2>
-          <p className={styles.carYears}>{car.years}</p>
-          {car.tagline && (
-            <p className={styles.carTagline}>{car.tagline}</p>
-          )}
-        </div>
-        
-        <div className={styles.specsGrid}>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Engine</span>
-            <span className={styles.specValue}>{car.engine}</span>
-          </div>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Power</span>
-            <span className={styles.specValue}>
-              {profile.upgradedMetrics.hp} hp
-              {showUpgrade && profile.upgradedMetrics.hp > car.hp && (
-                <span className={styles.specGain}>
-                  +{profile.upgradedMetrics.hp - car.hp}
-                </span>
-              )}
-            </span>
-          </div>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Trans</span>
-            <span className={styles.specValue}>{car.trans}</span>
-          </div>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Drive</span>
-            <span className={styles.specValue}>{car.drivetrain || 'RWD'}</span>
-          </div>
-          {profile.stockMetrics.zeroToSixty && (
+          
+          {/* Specs Grid - Like GT */}
+          <div className={styles.specsGrid}>
             <div className={styles.specItem}>
-              <span className={styles.specLabel}>0-60</span>
-              <span className={styles.specValue}>
-                {profile.upgradedMetrics.zeroToSixty?.toFixed(1)}s
-                {showUpgrade && profile.upgradedMetrics.zeroToSixty < profile.stockMetrics.zeroToSixty && (
-                  <span className={styles.specGain}>
-                    -{(profile.stockMetrics.zeroToSixty - profile.upgradedMetrics.zeroToSixty).toFixed(1)}s
-                  </span>
-                )}
-              </span>
+              <span className={styles.specLabel}>Engine</span>
+              <span className={styles.specValue}>{car.engine}</span>
             </div>
-          )}
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Price</span>
-            <span className={styles.specValue}>{car.priceRange}</span>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Max Power</span>
+              <span className={styles.specValue}>{car.hp} <small>hp</small></span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Max Torque</span>
+              <span className={styles.specValue}>{car.torque || '—'} <small>lb-ft</small></span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Weight</span>
+              <span className={styles.specValue}>{formatNumber(car.curbWeight)} <small>lbs</small></span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Drivetrain</span>
+              <span className={styles.specValue}>{car.drivetrain || 'RWD'}</span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>0-60 mph</span>
+              <span className={styles.specValue}>{car.zeroToSixty || '—'} <small>sec</small></span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Layout</span>
+              <span className={styles.specValue}>{car.category || 'Front-Engine'}</span>
+            </div>
+            <div className={styles.specItem}>
+              <span className={styles.specLabel}>Transmission</span>
+              <span className={styles.specValue}>{car.manualAvailable ? 'Manual Available' : 'Auto Only'}</span>
+            </div>
+          </div>
+          
+          {/* GT-Style Visual Rating Bars - Connected to Profile */}
+          <div className={styles.ratingBars}>
+            <RatingBar 
+              label="Power" 
+              stockValue={profile.stockScores.powerAccel || 7} 
+              upgradedValue={profile.upgradedScores.powerAccel || profile.stockScores.powerAccel || 7}
+            />
+            <RatingBar 
+              label="Handling" 
+              stockValue={profile.stockScores.gripCornering || 7} 
+              upgradedValue={profile.upgradedScores.gripCornering || profile.stockScores.gripCornering || 7}
+            />
+            <RatingBar 
+              label="Braking" 
+              stockValue={profile.stockScores.braking || 7} 
+              upgradedValue={profile.upgradedScores.braking || profile.stockScores.braking || 7}
+            />
+            <RatingBar 
+              label="Track Pace" 
+              stockValue={profile.stockScores.trackPace || 7} 
+              upgradedValue={profile.upgradedScores.trackPace || profile.stockScores.trackPace || 7}
+            />
+            <RatingBar 
+              label="Sound" 
+              stockValue={profile.stockScores.soundEmotion || 7} 
+              upgradedValue={profile.upgradedScores.soundEmotion || profile.stockScores.soundEmotion || 7}
+            />
           </div>
         </div>
-        
-        {/* CTAs */}
-        <div className={styles.carCtas}>
-          <Link href={`/cars/${car.slug}`} className={styles.ctaSecondary}>
-            View Full Profile
-          </Link>
-          <Link 
-            href={`/upgrades?car=${car.slug}${selectedPackageKey !== 'stock' ? `&package=${selectedPackageKey}` : ''}`} 
-            className={styles.ctaPrimary}
-          >
-            <Icons.wrench size={16} />
-            Learn More
-          </Link>
-        </div>
-      </div>
-      
-      {/* Right Panel - Performance Dashboard */}
-      <div className={styles.dashboardPanel}>
-        <div className={styles.dashboardHeader}>
-          <h3 className={styles.dashboardTitle}>Performance HUB</h3>
-          {showUpgrade && (
-            <div className={styles.costBadge} title={totalCost.tierDescription || ''}>
-              Est. Investment: {totalCost.display}
-              {totalCost.tier !== 'mainstream' && (
-                <span className={styles.costTierBadge}>
-                  {totalCost.tierLabel}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* Package Selector */}
-        <div className={styles.packageSelector}>
-          <button
-            className={`${styles.packagePill} ${selectedPackageKey === 'stock' && selectedModules.length === 0 ? styles.active : ''}`}
-            onClick={() => handlePackageSelect('stock')}
-          >
-            Stock
-          </button>
-          {availableUpgrades.packages.map(pkg => (
+      </header>
+
+      {/* ================================================================
+          MAIN CONTENT - Full width
+          ================================================================ */}
+      <main className={styles.hubMain}>
+        {/* Title + Package Selector Row */}
+        <div className={styles.titleRow}>
+          <h2 className={styles.hubTitle}>Performance HUB</h2>
+          <div className={styles.packageSelector}>
             <button
-              key={pkg.key}
-              className={`${styles.packagePill} ${styles[pkg.tier]} ${selectedPackageKey === pkg.key ? styles.active : ''}`}
-              onClick={() => handlePackageSelect(pkg.key)}
+              className={`${styles.packagePill} ${selectedPackageKey === 'stock' && selectedModules.length === 0 ? styles.active : ''}`}
+              onClick={() => handlePackageSelect('stock')}
             >
-              {pkg.name.replace(' Package', '').replace(' Build', '')}
+              Stock
             </button>
-          ))}
-        </div>
-        
-        {/* Package Description */}
-        {selectedPackageKey !== 'stock' && (
-          <div className={styles.packageInfo}>
-            <p className={styles.packageDescription}>{upgradeSummary}</p>
+            {availableUpgrades.packages.map(pkg => (
+              <button
+                key={pkg.key}
+                className={`${styles.packagePill} ${styles[pkg.tier]} ${selectedPackageKey === pkg.key ? styles.active : ''}`}
+                onClick={() => handlePackageSelect(pkg.key)}
+              >
+                {pkg.name.replace(' Package', '').replace(' Build', '')}
+              </button>
+            ))}
+            <button
+              className={`${styles.packagePill} ${styles.custom} ${selectedPackageKey === 'custom' ? styles.active : ''}`}
+              onClick={() => handlePackageSelect('custom')}
+            >
+              Custom
+            </button>
           </div>
+          {showUpgrade && (
+            <div className={styles.costBadge}>
+              Est. Investment: {totalCost.display}
+            </div>
+          )}
+        </div>
+
+        {/* Car-Specific Recommendations - MOVED TO TOP */}
+        {carRecommendations && (
+          <CarRecommendations
+            car={car}
+            currentTier={selectedPackageKey}
+            selectedModules={effectiveSelectedModules}
+            onAddToModule={(key) => handleModuleToggle(key)}
+            onUpgradeClick={setSelectedUpgradeForModal}
+          />
         )}
-        
-        {/* Real Metrics Section */}
-        <div className={styles.metricsSection}>
+
+        {/* Performance Metrics - Full Bar Charts */}
+        <div className={styles.performanceSection}>
           <h4 className={styles.sectionTitle}>Performance Metrics</h4>
           
           {/* Power (HP) */}
@@ -545,7 +1041,10 @@ export default function PerformanceHub({ car }) {
           )}
         </div>
         
-        {/* Subjective Scores Section */}
+        {/* Systems Impact Overview */}
+        <SystemsImpactPanel selectedModules={effectiveSelectedModules} />
+        
+        {/* Experience Scores Section */}
         <div className={styles.scoresSection}>
           <h4 className={styles.sectionTitle}>Experience Scores</h4>
           {subjectiveCategories.map(cat => (
@@ -559,70 +1058,124 @@ export default function PerformanceHub({ car }) {
           ))}
         </div>
         
-        {/* Component Breakdown */}
-        <ComponentBreakdown 
-          selectedUpgrades={profile.selectedUpgrades}
-          showUpgrade={showUpgrade}
-        />
+        {/* ============================================================
+           BUILD YOUR CONFIGURATION - Full Width
+           Shows for ALL packages with appropriate pre-selections
+           ============================================================ */}
+        <div className={styles.buildSection}>
+          <div className={styles.buildHeader}>
+            <h3 className={styles.buildTitle}>
+              <Icons.wrench size={20} />
+              {selectedPackageKey === 'custom' 
+                ? 'Build Your Configuration' 
+                : selectedPackageKey === 'stock'
+                  ? 'Available Upgrades'
+                  : `${availableUpgrades.packages.find(p => p.key === selectedPackageKey)?.name || 'Package'} - What's Included`
+              }
+            </h3>
+            <p className={styles.buildSubtitle}>
+              {selectedPackageKey === 'custom' 
+                ? 'Select upgrades to see real-time performance impact'
+                : selectedPackageKey === 'stock'
+                  ? 'Choose upgrades to start building your configuration'
+                  : 'Checkmarks show included items • Click any item to customize'
+              }
+            </p>
+            {effectiveSelectedModules.length > 0 && (
+              <div className={styles.selectedCount}>
+                <span className={styles.countBadge}>{effectiveSelectedModules.length}</span>
+                {effectiveSelectedModules.length === 1 ? 'upgrade' : 'upgrades'} selected
+                {selectedPackageKey === 'custom' && (
+                  <button 
+                    className={styles.clearAllBtn}
+                    onClick={() => setSelectedModules([])}
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {/* Full-Width Module Grid */}
+          <div className={styles.modulesGridFull}>
+            {Object.entries(availableUpgrades.modulesByCategory).map(([catKey, modules]) => (
+              <div key={catKey} className={styles.moduleCategory}>
+                <h5 className={styles.moduleCategoryTitle}>
+                  {catKey.charAt(0).toUpperCase() + catKey.slice(1)}
+                </h5>
+                <div className={styles.moduleList}>
+                  {modules.map(mod => {
+                    const fullDetails = getUpgradeByKey(mod.key) || mod;
+                    const isSelected = effectiveSelectedModules.includes(mod.key);
+                    const isPackageItem = packageIncludedModules.includes(mod.key);
+                    
+                    return (
+                      <div key={mod.key} className={styles.moduleChipWrapper}>
+                        <button
+                          className={`${styles.moduleChip} ${isSelected ? styles.selected : ''} ${isPackageItem && selectedPackageKey !== 'custom' ? styles.packageItem : ''}`}
+                          onClick={() => handleModuleToggle(mod.key)}
+                          title={mod.description}
+                        >
+                          <span className={styles.moduleCheckbox}>
+                            {isSelected ? <Icons.check size={12} /> : null}
+                          </span>
+                          <span className={styles.moduleName}>{mod.name}</span>
+                          {mod.metricChanges?.hpGain && (
+                            <span className={styles.moduleHpGain}>+{mod.metricChanges.hpGain}hp</span>
+                          )}
+                        </button>
+                        <button
+                          className={styles.moduleInfoBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedUpgradeForModal(fullDetails);
+                          }}
+                          aria-label={`Info about ${mod.name}`}
+                        >
+                          <Icons.info size={14} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Dependency Warnings - Powered by Connected Tissue Matrix */}
+          <DependencyWarnings 
+            selectedModules={effectiveSelectedModules}
+            availableModules={availableUpgrades.modulesByCategory}
+            onAddMods={handleAddRequiredMods}
+            car={car}
+          />
+        </div>
         
-        {/* Scoring Info */}
-        <div className={styles.scoringInfoWrapper}>
+        {/* About These Estimates - Collapsible */}
+        <div className={styles.estimatesInfo}>
           <ScoringInfo variant="performance" />
         </div>
         
-        {/* Module Customization (Expandable) */}
-        <div className={styles.modulesSection}>
-          <button 
-            className={styles.modulesToggle}
-            onClick={() => setExpandedModules(!expandedModules)}
-          >
-            <span>Fine-tune with individual modules</span>
-            <span className={`${styles.toggleIcon} ${expandedModules ? styles.expanded : ''}`}>
-              <Icons.chevronDown size={16} />
-            </span>
-          </button>
-          
-          {expandedModules && (
-            <div className={styles.modulesGrid}>
-              {Object.entries(availableUpgrades.modulesByCategory).map(([catKey, modules]) => (
-                <div key={catKey} className={styles.moduleCategory}>
-                  <h4 className={styles.moduleCategoryTitle}>
-                    {catKey.charAt(0).toUpperCase() + catKey.slice(1)}
-                  </h4>
-                  <div className={styles.moduleList}>
-                    {modules.map(mod => (
-                      <button
-                        key={mod.key}
-                        className={`${styles.moduleChip} ${selectedModules.includes(mod.key) ? styles.selected : ''}`}
-                        onClick={() => handleModuleToggle(mod.key)}
-                        title={mod.description}
-                      >
-                        {selectedModules.includes(mod.key) && (
-                          <Icons.check size={12} />
-                        )}
-                        <span>{mod.name}</span>
-                        {mod.metricChanges?.hpGain && (
-                          <span className={styles.moduleHpGain}>+{mod.metricChanges.hpGain}hp</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* Bottom CTA */}
-        <div className={styles.dashboardFooter}>
-          <Link href="/services" className={styles.footerLink}>
-            About Our Services <Icons.chevronRight size={14} />
+        {/* Footer Links */}
+        <div className={styles.hubFooter}>
+          <Link href="/education" className={styles.footerLink}>
+            Learn About Upgrades <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>
             Have Questions? <Icons.chevronRight size={14} />
           </Link>
         </div>
-      </div>
+      </main>
+      
+      {/* Upgrade Detail Modal */}
+      {selectedUpgradeForModal && (
+        <UpgradeDetailModal
+          upgrade={selectedUpgradeForModal}
+          onClose={() => setSelectedUpgradeForModal(null)}
+          showAddToBuild={false}
+        />
+      )}
     </div>
   );
 }

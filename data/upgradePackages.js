@@ -74,6 +74,15 @@ export const genericPackages = [
       'Performance brake pads (street compound)',
       'Alignment to factory sport specs',
     ],
+    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    includedUpgradeKeys: [
+      'cold-air-intake',
+      'ecu-tune',
+      'cat-back-exhaust',
+      'lowering-springs',
+      'brake-pads-performance',
+      'performance-alignment',
+    ],
     considerations: [
       'Most work maintains factory warranty',
       'ECU tune may affect warranty - check dealer policy',
@@ -125,6 +134,19 @@ export const genericPackages = [
       'Performance exhaust (headers or full system)',
       'Adjustable sway bars (front and rear)',
       'Performance alignment (aggressive camber + toe)',
+    ],
+    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    includedUpgradeKeys: [
+      'coilovers',
+      'big-brake-kit',
+      'brake-pads-performance',
+      'braided-brake-lines',
+      'high-temp-brake-fluid',
+      'oil-cooler',
+      'ecu-tune',
+      'headers',
+      'sway-bars',
+      'performance-alignment',
     ],
     considerations: [
       'Noticeably firmer ride on street - not harsh but sporty',
@@ -183,6 +205,27 @@ export const genericPackages = [
       'Roll bar or half cage (safety + chassis stiffness)',
       'Data acquisition system (AiM Solo or similar)',
     ],
+    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    includedUpgradeKeys: [
+      'camshafts',
+      'ported-heads',
+      'headers',
+      'cat-back-exhaust',
+      'ecu-tune',
+      'fuel-system-upgrade',
+      'coilovers',
+      'big-brake-kit',
+      'brake-pads-performance',
+      'lightweight-wheels',
+      'competition-tires',
+      'front-splitter',
+      'rear-wing',
+      'rear-diffuser',
+      'radiator-upgrade',
+      'oil-cooler',
+      'trans-cooler',
+      'roll-bar',
+    ],
     considerations: [
       'Serious build - not recommended for daily driving',
       'All warranties voided',
@@ -235,6 +278,19 @@ export const genericPackages = [
       'Full exhaust with downpipes/headers',
       'Oil cooler + upgraded cooling system',
       'Supporting drive components (belts, pulleys)',
+    ],
+    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    includedUpgradeKeys: [
+      'supercharger-roots',
+      'fuel-system-upgrade',
+      'intercooler',
+      'heat-exchanger-sc',
+      'ecu-tune',
+      'clutch-upgrade',
+      'headers',
+      'downpipe',
+      'oil-cooler',
+      'radiator-upgrade',
     ],
     considerations: [
       'Major power increase requires quality fuel (91+ octane, E85 for max power)',
@@ -321,6 +377,8 @@ export const upgradeModules = [
       hpGain: 25,
       zeroToSixtyImprovement: 0.1,
     },
+    // Headers require a tune to take full advantage of the gains
+    requires: ['ecu-tune'],
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
@@ -369,6 +427,257 @@ export const upgradeModules = [
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
+  // Stage Tunes for Factory Turbo/SC Cars
+  {
+    key: 'stage1-tune',
+    name: 'Stage 1 ECU Tune',
+    slug: 'stage1-tune',
+    type: 'module',
+    category: 'power',
+    tier: 'streetSport',
+    description: 'Flash-only ECU tune for factory turbo/SC cars. No hardware required. Increases boost, optimizes timing. 91+ octane required. Brands: APR, Cobb, Unitronic, JB4.',
+    estimatedCost: '$600 - $1,200',
+    estimatedCostLow: 600,
+    estimatedCostHigh: 1200,
+    deltas: {
+      powerAccel: 1.5,
+      trackPace: 0.8,
+      soundEmotion: 0.3,
+    },
+    metricChanges: {
+      hpGain: 70,
+      torqueGain: 90,
+      zeroToSixtyImprovement: 0.4,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'stage2-tune',
+    name: 'Stage 2 ECU Tune',
+    slug: 'stage2-tune',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'Aggressive tune requiring supporting mods (downpipe, intake). Significantly more power than Stage 1. Brands: APR, GIAC, Unitronic, IE.',
+    estimatedCost: '$800 - $1,500',
+    estimatedCostLow: 800,
+    estimatedCostHigh: 1500,
+    deltas: {
+      powerAccel: 2.5,
+      trackPace: 1.2,
+      reliabilityHeat: -0.3,
+      soundEmotion: 0.8,
+    },
+    metricChanges: {
+      hpGain: 120,
+      torqueGain: 150,
+      zeroToSixtyImprovement: 0.7,
+    },
+    requires: ['downpipe', 'intake'],
+    stronglyRecommended: ['intercooler', 'hpfp-upgrade'],
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'stage3-tune',
+    name: 'Stage 3+ Tune',
+    slug: 'stage3-tune',
+    type: 'module',
+    category: 'power',
+    tier: 'ultimatePower',
+    description: 'Maximum power tune requiring turbo upgrade, fueling upgrades, and supporting mods. Pushing factory limits. Brands: APR, IE, Unitronic custom.',
+    estimatedCost: '$1,500 - $3,000',
+    estimatedCostLow: 1500,
+    estimatedCostHigh: 3000,
+    deltas: {
+      powerAccel: 4,
+      trackPace: 2,
+      reliabilityHeat: -1,
+      soundEmotion: 1.5,
+    },
+    metricChanges: {
+      hpGain: 200,
+      torqueGain: 250,
+      zeroToSixtyImprovement: 1.2,
+    },
+    requires: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'intercooler'],
+    stronglyRecommended: ['clutch-upgrade', 'oil-cooler', 'trans-cooler'],
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // Piggyback ECU / JB4 style tuners
+  {
+    key: 'piggyback-tuner',
+    name: 'Piggyback Tuner (JB4)',
+    slug: 'piggyback-tuner',
+    type: 'module',
+    category: 'power',
+    tier: 'streetSport',
+    description: 'Plug-and-play boost controller. No ECU flash required, warranty-friendly removal. Brands: JB4, Burger Motorsports, RaceChip.',
+    estimatedCost: '$400 - $700',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 700,
+    deltas: {
+      powerAccel: 1.2,
+      trackPace: 0.5,
+    },
+    metricChanges: {
+      hpGain: 50,
+      torqueGain: 70,
+      zeroToSixtyImprovement: 0.3,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // Downpipe - Essential for Stage 2
+  {
+    key: 'downpipe',
+    name: 'Downpipe (Turbo Cars)',
+    slug: 'downpipe',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'High-flow or catless downpipe. Reduces exhaust restriction, enables Stage 2 tunes. Brands: AWE, Milltek, Soul Performance.',
+    estimatedCost: '$600 - $1,500',
+    estimatedCostLow: 600,
+    estimatedCostHigh: 1500,
+    deltas: {
+      powerAccel: 0.8,
+      soundEmotion: 1.0,
+      trackPace: 0.3,
+    },
+    metricChanges: {
+      hpGain: 20,
+      torqueGain: 30,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // Charge Pipe Upgrade
+  {
+    key: 'charge-pipe-upgrade',
+    name: 'Charge Pipe Upgrade',
+    slug: 'charge-pipe-upgrade',
+    type: 'module',
+    category: 'power',
+    tier: 'streetSport',
+    description: 'Upgraded charge pipes prevent cracking under high boost. Essential for Stage 2+. Brands: Burger Motorsports, ARM, ETS.',
+    estimatedCost: '$200 - $400',
+    estimatedCostLow: 200,
+    estimatedCostHigh: 400,
+    deltas: {
+      reliabilityHeat: 0.5,
+    },
+    metricChanges: {
+      hpGain: 0,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // HPFP Upgrade
+  {
+    key: 'hpfp-upgrade',
+    name: 'High Pressure Fuel Pump (HPFP)',
+    slug: 'hpfp-upgrade',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'Upgraded fuel pump for higher flow. Essential for E85 or high-boost applications. Brands: APR, Autotech, IE.',
+    estimatedCost: '$400 - $800',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 800,
+    deltas: {
+      reliabilityHeat: 0.3,
+    },
+    metricChanges: {
+      hpGain: 0,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // E85/Flex Fuel
+  {
+    key: 'flex-fuel-e85',
+    name: 'E85/Flex Fuel Kit',
+    slug: 'flex-fuel-e85',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'Ethanol fuel system upgrade allowing E85 use for significant power gains. Requires HPFP, injectors, tune. Brands: Zeitronix, IE, Custom.',
+    estimatedCost: '$1,500 - $3,500',
+    estimatedCostLow: 1500,
+    estimatedCostHigh: 3500,
+    deltas: {
+      powerAccel: 2,
+      trackPace: 1,
+      reliabilityHeat: -0.3,
+    },
+    metricChanges: {
+      hpGain: 80,
+      torqueGain: 100,
+      zeroToSixtyImprovement: 0.5,
+    },
+    requires: ['hpfp-upgrade'],
+    stronglyRecommended: ['fuel-system-upgrade'],
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // Methanol Injection
+  {
+    key: 'methanol-injection',
+    name: 'Water/Methanol Injection',
+    slug: 'methanol-injection',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'Spray methanol/water mix for cooler intake temps and knock resistance. Brands: AEM, Snow Performance, Aquamist.',
+    estimatedCost: '$500 - $1,200',
+    estimatedCostLow: 500,
+    estimatedCostHigh: 1200,
+    deltas: {
+      powerAccel: 0.8,
+      reliabilityHeat: 0.5,
+      trackPace: 0.3,
+    },
+    metricChanges: {
+      hpGain: 30,
+      torqueGain: 40,
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // DCT Tune/Software
+  {
+    key: 'dct-tune',
+    name: 'DCT/PDK Software Upgrade',
+    slug: 'dct-tune',
+    type: 'module',
+    category: 'power',
+    tier: 'streetSport',
+    description: 'Transmission software for faster shifts and higher torque limits. Brands: Cobb, APR, Porsche Motorsport.',
+    estimatedCost: '$800 - $2,000',
+    estimatedCostLow: 800,
+    estimatedCostHigh: 2000,
+    deltas: {
+      powerAccel: 0.3,
+      trackPace: 0.5,
+    },
+    metricChanges: {
+      zeroToSixtyImprovement: 0.2,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
 
   // ============================================================================
   // FORCED INDUCTION MODULES
@@ -400,6 +709,9 @@ export const upgradeModules = [
       'Basic supporting tune',
       'Intake/piping components',
     ],
+    // Soft dependencies - these upgrades are strongly recommended or required
+    requires: ['fuel-system-upgrade'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'heat-exchanger-sc'],
     carSlug: null,
     applicableEngines: ['NA V8', 'NA V6'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -432,6 +744,9 @@ export const upgradeModules = [
       'Custom ECU calibration',
       'Upgraded intake manifold',
     ],
+    // Soft dependencies - these upgrades are strongly recommended or required
+    requires: ['fuel-system-upgrade'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'heat-exchanger-sc', 'driveshaft-upgrade'],
     carSlug: null,
     applicableEngines: ['NA V8'],
     applicableLayouts: ['Front-Engine'],
@@ -465,6 +780,9 @@ export const upgradeModules = [
       'Wastegate',
       'BOV/Diverter valve',
     ],
+    // Soft dependencies - these upgrades are strongly recommended or required
+    requires: ['fuel-system-upgrade', 'ecu-tune'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler'],
     carSlug: null,
     applicableEngines: ['NA V8', 'NA I6', 'NA I4'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -498,6 +816,9 @@ export const upgradeModules = [
       'Wastegates',
       'Complete piping kit',
     ],
+    // Soft dependencies - these upgrades are strongly recommended or required
+    requires: ['fuel-system-upgrade', 'ecu-tune'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler', 'forged-internals', 'driveshaft-upgrade'],
     carSlug: null,
     applicableEngines: ['NA V8'],
     applicableLayouts: ['Front-Engine', 'Mid-Engine'],
@@ -529,6 +850,8 @@ export const upgradeModules = [
       'Upgraded downpipe(s)',
       'ECU tune for increased boost',
     ],
+    // Soft dependencies - these upgrades are strongly recommended or required
+    stronglyRecommended: ['intercooler', 'hpfp-upgrade', 'oil-cooler', 'charge-pipe-upgrade'],
     carSlug: null,
     applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -1298,8 +1621,37 @@ export function isUpgradeCompatible(car, upgrade) {
   return upgrade.applicableEngines.some(applicable => {
     // Exact match
     if (engineType === applicable) return true;
-    // Partial match (e.g., 'NA V8' matches 'V8' requirement)
-    if (engineType.includes(applicable.replace('NA ', '').replace('Turbo ', '').replace('SC ', ''))) return true;
+    
+    // Check aspiration compatibility - turbo upgrades only for turbo cars, etc.
+    const upgradeIsTurbo = applicable.startsWith('Turbo');
+    const upgradeIsSC = applicable.startsWith('SC');
+    const upgradeIsNA = applicable.startsWith('NA');
+    
+    const carIsTurbo = engineType.startsWith('Turbo');
+    const carIsSC = engineType.startsWith('SC');
+    const carIsNA = engineType.startsWith('NA');
+    
+    // If upgrade specifically requires Turbo, only allow Turbo cars
+    if (upgradeIsTurbo && !carIsTurbo) return false;
+    // If upgrade specifically requires SC, only allow SC cars  
+    if (upgradeIsSC && !carIsSC) return false;
+    // If upgrade specifically requires NA, only allow NA cars
+    if (upgradeIsNA && !carIsNA) return false;
+    
+    // Now check engine size/type compatibility (V8, V6, I4, Flat-6, etc.)
+    const getBaseEngine = (type) => type.replace(/^(NA |Turbo |SC )/, '');
+    const upgradeBaseEngine = getBaseEngine(applicable);
+    const carBaseEngine = getBaseEngine(engineType);
+    
+    // Match if base engine types are the same
+    if (carBaseEngine === upgradeBaseEngine) return true;
+    
+    // Allow generic V8/V6 to match any V8/V6 regardless of aspiration prefix
+    // ONLY if the upgrade doesn't specify aspiration
+    if (!upgradeIsTurbo && !upgradeIsSC && !upgradeIsNA) {
+      if (carBaseEngine === applicable || carBaseEngine.includes(applicable)) return true;
+    }
+    
     return false;
   });
 }

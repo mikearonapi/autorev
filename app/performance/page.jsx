@@ -10,7 +10,7 @@ import { carData as localCarData, tierConfig } from '@/data/cars.js';
 import PerformanceHub from '@/components/PerformanceHub';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import CarImage from '@/components/CarImage';
-import UpgradeGuide from '@/components/UpgradeGuide';
+// UpgradeGuide moved to /education page
 import Button from '@/components/Button';
 
 // Blob URL for hero image
@@ -48,12 +48,6 @@ const Icons = {
       <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
     </svg>
   ),
-  book: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-    </svg>
-  ),
 };
 
 /**
@@ -67,7 +61,7 @@ function PerformanceContent() {
   const [selectedCarSlug, setSelectedCarSlug] = useState(searchParams.get('car') || '');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTier, setFilterTier] = useState('all');
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'build'); // 'build' or 'learn'
+  // Removed 'learn' tab - education content moved to /education page
 
   // Load cars
   useEffect(() => {
@@ -86,16 +80,14 @@ function PerformanceContent() {
     loadCars();
   }, []);
 
-  // Update URL when car is selected or tab changes
+  // Update URL when car is selected
   useEffect(() => {
     if (selectedCarSlug) {
       window.history.pushState({}, '', `/performance?car=${selectedCarSlug}`);
-    } else if (activeTab === 'learn') {
-      window.history.pushState({}, '', '/performance?tab=learn');
     } else {
       window.history.pushState({}, '', '/performance');
     }
-  }, [selectedCarSlug, activeTab]);
+  }, [selectedCarSlug]);
 
   // Filter cars based on search and tier
   const filteredCars = useMemo(() => {
@@ -131,26 +123,9 @@ function PerformanceContent() {
   // If a car is selected, show the Performance HUB
   if (selectedCar) {
     return (
-      <div className={styles.page}>
-        {/* Back to Selection */}
-        <div className={styles.backBar}>
-          <div className={styles.container}>
-            <button 
-              onClick={() => setSelectedCarSlug('')}
-              className={styles.backButton}
-            >
-              ← Select Different Car
-            </button>
-            <span className={styles.selectedCarName}>
-              {selectedCar.name}
-            </span>
-          </div>
-        </div>
-        
-        {/* Performance HUB */}
-        <div className={styles.hubWrapper}>
-          <PerformanceHub car={selectedCar} />
-        </div>
+      <div className={styles.pageFullWidth}>
+        {/* Performance HUB - Full Width */}
+        <PerformanceHub car={selectedCar} />
       </div>
     );
   }
@@ -176,48 +151,20 @@ function PerformanceContent() {
           <div className={styles.heroContent}>
             <span className={styles.badge}>Performance HUB</span>
             <h1 className={styles.title}>
-              Maximize Your<br />
-              <span className={styles.titleAccent}>Performance</span>
+              Power Under<br />
+              <span className={styles.titleAccent}>Control</span>
             </h1>
             <p className={styles.subtitle}>
-              Learn about upgrades, see how they transform your car&apos;s capabilities, 
-              and build a personalized modification plan. From cold air intakes to 
-              full track builds—we help you spend smarter and drive faster.
+              Build with intention. Select your car and create a personalized 
+              modification plan that makes sense—not one that chases dyno numbers or 
+              internet clout. We help you spend smart and extract real performance.
             </p>
-            
-            {/* Mode Tabs */}
-            <div className={styles.modeTabs}>
-              <button
-                className={`${styles.modeTab} ${activeTab === 'build' ? styles.active : ''}`}
-                onClick={() => setActiveTab('build')}
-              >
-                <Icons.wrench size={18} />
-                Plan Your Build
-              </button>
-              <button
-                className={`${styles.modeTab} ${activeTab === 'learn' ? styles.active : ''}`}
-                onClick={() => setActiveTab('learn')}
-              >
-                <Icons.book size={18} />
-                Learn About Upgrades
-              </button>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Learn About Upgrades Tab */}
-      {activeTab === 'learn' && (
-        <section className={styles.learnSection}>
-          <div className={styles.container}>
-            <UpgradeGuide />
-          </div>
-        </section>
-      )}
-
-      {/* Car Selection - only show in build tab */}
-      {activeTab === 'build' && (
-        <section className={styles.selection}>
+      {/* Car Selection */}
+      <section className={styles.selection}>
           <div className={styles.container}>
           {/* Filters */}
           <div className={styles.filters}>
@@ -304,23 +251,22 @@ function PerformanceContent() {
             )}
           </div>
         </section>
-      )}
 
       {/* CTA Section */}
       <section className={styles.cta}>
         <div className={styles.container}>
           <div className={styles.ctaContent}>
-            <h2 className={styles.ctaTitle}>Ready to Build?</h2>
+            <h2 className={styles.ctaTitle}>Ready to Build with Purpose?</h2>
             <p className={styles.ctaSubtitle}>
-              Our team turns your upgrade plan into reality. From bolt-ons to full builds, 
-              we handle the installation and validate the results with professional track testing.
+              Mastery starts with understanding. Visit our Education section to learn 
+              how modifications work as a system, or reach out to discuss your project with drivers who&apos;ve been there.
             </p>
             <div className={styles.ctaButtons}>
-              <Button href="/services" variant="secondary" size="lg">
-                Get It Built
+              <Button href="/education" variant="secondary" size="lg">
+                Learn About Mods
               </Button>
-              <Button href="/car-finder" variant="outlineLight" size="lg">
-                Find Your Car First
+              <Button href="/contact" variant="outlineLight" size="lg">
+                Talk to Us
               </Button>
             </div>
           </div>

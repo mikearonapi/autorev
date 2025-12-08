@@ -8,6 +8,11 @@
   background: var(--color-gray-50);
 }
 
+.pageFullWidth {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -608,10 +613,18 @@
 }
 
 /* Back Bar (when car is selected) */
+/* Note: main element has padding-top for header, add small offset for visibility */
 .backBar {
   background: var(--color-white);
   border-bottom: 1px solid var(--color-gray-200);
   padding: var(--space-sm) 0;
+  padding-top: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .backBar {
+    padding-top: var(--space-md);
+  }
 }
 
 .backBar .container {

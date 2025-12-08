@@ -127,6 +127,67 @@ const Icons = {
       <polyline points="15 3 21 3 21 9"/>
       <line x1="10" y1="14" x2="21" y2="3"/>
     </svg>
+  ),
+  // Requirement card icons
+  wallet: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+      <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+      <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+    </svg>
+  ),
+  gearshift: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 21v-6"/>
+      <path d="M12 9V3"/>
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M6 6h2"/>
+      <path d="M6 12h2"/>
+      <path d="M16 6h2"/>
+      <path d="M16 18h2"/>
+    </svg>
+  ),
+  drivetrain: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="2"/>
+      <circle cx="4" cy="12" r="2"/>
+      <circle cx="20" cy="12" r="2"/>
+      <path d="M6 12h4"/>
+      <path d="M14 12h4"/>
+    </svg>
+  ),
+  seat: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 18v3h3"/>
+      <path d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4"/>
+      <path d="M20 18v3h-3"/>
+      <path d="M8 14V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v9"/>
+    </svg>
+  ),
+  engine: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="6" width="20" height="12" rx="2"/>
+      <path d="M6 6V4"/>
+      <path d="M10 6V4"/>
+      <path d="M14 6V4"/>
+      <path d="M18 6V4"/>
+      <path d="M6 18v2"/>
+      <path d="M18 18v2"/>
+      <circle cx="12" cy="12" r="2"/>
+    </svg>
+  ),
+  globe: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+      <path d="M2 12h20"/>
+    </svg>
+  ),
+  racing: ({ size = 20, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 12c0-3 2.5-6 6-6 1 0 2 .5 2.5 1L22 5v7c0 3-2.5 6-6 6-1 0-2-.5-2.5-1L12 19v-7Z"/>
+      <path d="M2 5l1.5 2c.5-.5 1.5-1 2.5-1 3.5 0 6 3 6 6v7l-1.5-2c-.5.5-1.5 1-2.5 1-3.5 0-6-3-6-6V5Z"/>
+    </svg>
   )
 };
 
@@ -190,10 +251,12 @@ export default function SportsCarComparison() {
   
   // Must-have filters (hard constraints)
   const [mustHaveFilters, setMustHaveFilters] = useState({
-    manualOnly: false,
-    drivetrainFilter: 'all', // 'all', 'RWD', 'AWD'
+    transmissionFilter: 'all', // 'all', 'manual', 'automatic'
+    drivetrainFilter: 'all', // 'all', 'RWD', 'AWD', 'FWD'
     seatsFilter: 'all', // 'all', '2', '4'
     engineLayoutFilter: 'all', // 'all', 'Mid-Engine', 'Front-Engine', 'Rear-Engine'
+    originFilter: 'all', // 'all', 'american', 'japanese', 'european'
+    styleFilter: 'all', // 'all', 'purist', 'tuner', 'drift', 'stance'
   });
   
   // Refs
@@ -250,6 +313,43 @@ export default function SportsCarComparison() {
     [weights]
   );
 
+  // Helper to determine car origin category
+  const getCarOrigin = useCallback((car) => {
+    if (car.country === 'USA') return 'american';
+    if (car.country === 'Japan') return 'japanese';
+    if (['Germany', 'Italy', 'UK'].includes(car.country)) return 'european';
+    return 'other';
+  }, []);
+
+  // Helper to determine if car matches enthusiast style
+  const matchesStyle = useCallback((car, style) => {
+    if (style === 'all') return true;
+    
+    switch (style) {
+      case 'purist':
+        // Purist: NA engines, high sound/driverFun, manual available
+        const isNA = car.engine && !car.engine.toLowerCase().includes('turbo') && 
+                     !car.engine.toLowerCase().includes('sc') && 
+                     !car.engine.toLowerCase().includes('supercharg');
+        return isNA && car.sound >= 8 && car.driverFun >= 8 && car.manualAvailable;
+      
+      case 'tuner':
+        // Tuner: High aftermarket support, good platform for mods
+        return car.aftermarket >= 8;
+      
+      case 'drift':
+        // Drift: RWD, good power-to-weight, responsive
+        return car.drivetrain === 'RWD' && car.hp >= 300 && car.driverFun >= 7;
+      
+      case 'stance':
+        // Stance: Popular in car culture, good aftermarket, Japanese or German preferred
+        return car.aftermarket >= 7 && ['Japan', 'Germany'].includes(car.country);
+      
+      default:
+        return true;
+    }
+  }, []);
+
   // Filtered and sorted cars (with must-have filters)
   // Price filter uses the LOW end of the price range so cars are shown if they START under budget
   const filteredCars = useMemo(() => {
@@ -257,8 +357,17 @@ export default function SportsCarComparison() {
       .filter(car => getPriceLow(car) >= priceMin && getPriceLow(car) <= priceMax)
       .filter(car => car.name.toLowerCase().includes(searchTerm.toLowerCase()))
       // Engine layout filter is now in mustHaveFilters.engineLayoutFilter
-      // Must-have: Manual transmission (use manualAvailable boolean field)
-      .filter(car => !mustHaveFilters.manualOnly || car.manualAvailable === true)
+      // Must-have: Transmission filter (parse trans field like "6MT", "8AT", "6MT/7PDK")
+      .filter(car => {
+        if (mustHaveFilters.transmissionFilter === 'all') return true;
+        const trans = (car.trans || '').toUpperCase();
+        const hasManual = trans.includes('MT');
+        const hasAuto = trans.includes('AT') || trans.includes('DCT') || trans.includes('PDK') || 
+                        trans.includes('AUTO') || trans.includes('TRONIC') || trans.includes('GEAR');
+        if (mustHaveFilters.transmissionFilter === 'manual') return hasManual;
+        if (mustHaveFilters.transmissionFilter === 'automatic') return hasAuto;
+        return true;
+      })
       // Must-have: Drivetrain filter
       .filter(car => mustHaveFilters.drivetrainFilter === 'all' || car.drivetrain === mustHaveFilters.drivetrainFilter)
       // Must-have: Seats filter (graceful handling if seats data is missing)
@@ -267,13 +376,17 @@ export default function SportsCarComparison() {
         (mustHaveFilters.seatsFilter === '4' && car.seats >= 4))
       // Must-have: Engine layout filter
       .filter(car => mustHaveFilters.engineLayoutFilter === 'all' || car.category === mustHaveFilters.engineLayoutFilter)
+      // Origin filter (American Muscle vs Import)
+      .filter(car => mustHaveFilters.originFilter === 'all' || getCarOrigin(car) === mustHaveFilters.originFilter)
+      // Enthusiast style filter (Purist, Tuner, Drift, Stance)
+      .filter(car => matchesStyle(car, mustHaveFilters.styleFilter))
       .map(car => ({ ...car, total: calculateTotal(car) }))
       .sort((a, b) => {
         if (sortBy === 'price') return a.priceAvg - b.priceAvg;
         if (sortBy === 'name') return a.name.localeCompare(b.name);
         return b[sortBy] - a[sortBy];
       });
-  }, [carData, weights, sortBy, priceMin, priceMax, searchTerm, mustHaveFilters, calculateTotal]);
+  }, [carData, weights, sortBy, priceMin, priceMax, searchTerm, mustHaveFilters, calculateTotal, getCarOrigin, matchesStyle]);
 
   // Get user's top priorities for ranking display
   const topPriorities = useMemo(() => 
@@ -372,12 +485,198 @@ export default function SportsCarComparison() {
           </div>
         )}
         
-        {/* Step 1: Define Priorities */}
+        {/* Step 1: What Kind of Car? */}
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div className={styles.stepBadge}>1</div>
-            <h2 className={styles.sectionTitle}>Define Your Priorities</h2>
-            <span className={styles.sectionMeta}>Adjust importance of each category</span>
+            <h2 className={styles.sectionTitle}>What Kind of Car Are You Looking For?</h2>
+            <span className={styles.sectionMeta}>Tell us your must-haves and preferences</span>
+          </div>
+
+          <div className={styles.requirementsGrid}>
+            {/* Budget Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.wallet size={14} /></span>
+                <span className={styles.requirementLabel}>Budget</span>
+              </div>
+              <select 
+                value={`${priceMin}-${priceMax}`} 
+                onChange={handlePriceChange}
+                className={styles.requirementSelect}
+                aria-label="Budget range"
+              >
+                <option value="0-100000">Under $100K</option>
+                <option value="0-75000">Under $75K</option>
+                <option value="0-60000">Under $60K</option>
+                <option value="0-50000">Under $50K</option>
+                <option value="0-40000">Under $40K</option>
+                <option value="0-30000">Under $30K</option>
+              </select>
+            </div>
+
+            {/* Transmission Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.gearshift size={14} /></span>
+                <span className={styles.requirementLabel}>Transmission</span>
+              </div>
+              <div className={styles.requirementToggle}>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'all' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'all' }))}
+                >
+                  Any
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'manual' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'manual' }))}
+                >
+                  Manual
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'automatic' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'automatic' }))}
+                >
+                  Auto
+                </button>
+              </div>
+            </div>
+
+            {/* Drivetrain Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.drivetrain size={14} /></span>
+                <span className={styles.requirementLabel}>Drivetrain</span>
+              </div>
+              <div className={styles.requirementToggle}>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'all' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'all' }))}
+                >
+                  Any
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'RWD' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'RWD' }))}
+                >
+                  RWD
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'AWD' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'AWD' }))}
+                >
+                  AWD
+                </button>
+              </div>
+            </div>
+
+            {/* Seating Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.seat size={14} /></span>
+                <span className={styles.requirementLabel}>Seats</span>
+              </div>
+              <div className={styles.requirementToggle}>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === 'all' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: 'all' }))}
+                >
+                  Any
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === '2' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: '2' }))}
+                >
+                  2
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === '4' ? styles.toggleActive : ''}`}
+                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: '4' }))}
+                >
+                  4+
+                </button>
+              </div>
+            </div>
+
+            {/* Engine Layout Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.engine size={14} /></span>
+                <span className={styles.requirementLabel}>Engine</span>
+              </div>
+              <select
+                value={mustHaveFilters.engineLayoutFilter}
+                onChange={e => setMustHaveFilters(prev => ({ ...prev, engineLayoutFilter: e.target.value }))}
+                className={styles.requirementSelect}
+                aria-label="Engine layout"
+              >
+                <option value="all">Any Position</option>
+                <option value="Front-Engine">Front Engine</option>
+                <option value="Mid-Engine">Mid Engine</option>
+                <option value="Rear-Engine">Rear Engine</option>
+              </select>
+            </div>
+
+            {/* Car Culture Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.globe size={14} /></span>
+                <span className={styles.requirementLabel}>Origin</span>
+              </div>
+              <select
+                value={mustHaveFilters.originFilter}
+                onChange={e => setMustHaveFilters(prev => ({ ...prev, originFilter: e.target.value }))}
+                className={styles.requirementSelect}
+                aria-label="Car culture preference"
+              >
+                <option value="all">Any Origin</option>
+                <option value="american">American</option>
+                <option value="japanese">Japanese</option>
+                <option value="european">European</option>
+              </select>
+            </div>
+
+            {/* Enthusiast Style Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.racing size={14} /></span>
+                <span className={styles.requirementLabel}>Style</span>
+              </div>
+              <select
+                value={mustHaveFilters.styleFilter}
+                onChange={e => setMustHaveFilters(prev => ({ ...prev, styleFilter: e.target.value }))}
+                className={styles.requirementSelect}
+                aria-label="Driving style preference"
+              >
+                <option value="all">Any Style</option>
+                <option value="purist">Purist</option>
+                <option value="tuner">Tuner</option>
+                <option value="drift">Drift</option>
+                <option value="stance">Stance</option>
+              </select>
+            </div>
+          </div>
+
+          {filterWarning && (
+            <div className={styles.filterWarning}>
+              <Icons.alertCircle size={14} />
+              <span>{filterWarning} — try relaxing some filters</span>
+            </div>
+          )}
+          
+          <div className={styles.matchCount}>
+            <span className={styles.matchCountNumber}>{filteredCars.length}</span>
+            <span className={styles.matchCountLabel}>cars match your criteria</span>
+          </div>
+        </section>
+
+        {/* Step 2: Define Priorities */}
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.stepBadge}>2</div>
+            <h2 className={styles.sectionTitle}>What Matters Most to You?</h2>
+            <span className={styles.sectionMeta}>Adjust importance of each category to personalize rankings</span>
           </div>
 
           <div className={styles.prioritiesGrid}>
@@ -436,68 +735,12 @@ export default function SportsCarComparison() {
               </div>
             </div>
           )}
-
-          {/* Must-Have Filters */}
-          <div className={styles.mustHaveFilters}>
-            <span className={styles.mustHaveLabel}>Must-Have Requirements:</span>
-            <div className={styles.mustHaveOptions}>
-              <label className={styles.mustHaveCheckbox}>
-                <input
-                  type="checkbox"
-                  checked={mustHaveFilters.manualOnly}
-                  onChange={e => setMustHaveFilters(prev => ({ ...prev, manualOnly: e.target.checked }))}
-                />
-                <span className={styles.checkboxLabel}>Manual Transmission</span>
-              </label>
-              
-              <select
-                value={mustHaveFilters.drivetrainFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: e.target.value }))}
-                className={styles.mustHaveSelect}
-                aria-label="Drivetrain requirement"
-              >
-                <option value="all">Any Drivetrain</option>
-                <option value="RWD">RWD Only</option>
-                <option value="AWD">AWD Only</option>
-              </select>
-              
-              <select
-                value={mustHaveFilters.seatsFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, seatsFilter: e.target.value }))}
-                className={styles.mustHaveSelect}
-                aria-label="Seating requirement"
-              >
-                <option value="all">Any Seating</option>
-                <option value="2">2-Seater Only</option>
-                <option value="4">4+ Seats</option>
-              </select>
-              
-              <select
-                value={mustHaveFilters.engineLayoutFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, engineLayoutFilter: e.target.value }))}
-                className={styles.mustHaveSelect}
-                aria-label="Engine layout requirement"
-              >
-                <option value="all">Any Engine Layout</option>
-                <option value="Mid-Engine">Mid-Engine Only</option>
-                <option value="Front-Engine">Front-Engine Only</option>
-                <option value="Rear-Engine">Rear-Engine Only</option>
-              </select>
-            </div>
-            
-            {filterWarning && (
-              <div className={styles.filterWarning}>
-                <Icons.alertCircle size={14} />
-                <span>{filterWarning} — try relaxing some filters</span>
-              </div>
-            )}
-          </div>
         </section>
 
-        {/* Step 2: Recommendations */}
+        {/* Step 3: Recommendations */}
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <div className={styles.stepBadge}>2</div>
+            <div className={styles.stepBadge}>3</div>
             <h2 className={styles.sectionTitle}>Your Personalized Recommendations</h2>
           </div>
 
@@ -552,10 +795,10 @@ export default function SportsCarComparison() {
           </div>
         </section>
 
-        {/* Step 3: Explore All Vehicles */}
+        {/* Step 4: Explore All Vehicles */}
         <section className={styles.section} ref={tableRef}>
           <div className={styles.sectionHeader}>
-            <div className={styles.stepBadge}>3</div>
+            <div className={styles.stepBadge}>4</div>
             <h2 className={styles.sectionTitle}>Explore All Vehicles</h2>
             <span className={styles.sectionMeta}>{filteredCars.length} vehicles</span>
             </div>

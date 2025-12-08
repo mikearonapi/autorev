@@ -35,27 +35,27 @@ const MessageIcon = () => (
 // Page-specific CTAs
 const pageCtas = {
   '/': {
-    primary: { href: '/car-finder', label: 'Find Your Car', icon: <SearchIcon /> },
+    primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   },
-  '/car-finder': {
+  '/car-selector': {
     primary: { href: '/contact', label: 'Get Expert Help', icon: <MessageIcon /> },
     secondary: { href: '/performance', label: 'Plan Build' }
   },
   '/performance': {
     primary: { href: '/contact', label: 'Talk to Expert', icon: <MessageIcon /> },
-    secondary: { href: '/services', label: 'Services' }
+    secondary: { href: '/education', label: 'Learn More' }
   },
   '/upgrades': {
     primary: { href: '/performance', label: 'Plan Your Build', icon: <WrenchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   },
-  '/services': {
-    primary: { href: '/contact', label: 'Get Started', icon: <MessageIcon /> },
-    secondary: { href: '/car-finder', label: 'Find Car' }
+  '/education': {
+    primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
+    secondary: { href: '/contact', label: 'Contact' }
   },
   '/cars': {
-    primary: { href: '/car-finder', label: 'Compare Cars', icon: <SearchIcon /> },
+    primary: { href: '/car-selector', label: 'Compare Cars', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   }
 };

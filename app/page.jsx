@@ -6,8 +6,8 @@ import styles from './page.module.css';
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
 export const metadata = {
-  title: 'SuperNatural Motorsports | Sports Car Finder & Performance Experts',
-  description: 'Your destination for sports car expertise. Find your perfect car with our intelligent comparison tool, plan performance upgrades, and access professional motorsports services. From Porsche to BMW M to Corvette.',
+  title: 'SuperNatural Motorsports | Unleash Your Racing Spirit',
+  description: 'Excellence over ego. Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a brotherhood of drivers who value mastery over materialism. From Miatas to GT3s—we lift up every enthusiast.',
   alternates: {
     canonical: '/',
   },
@@ -60,35 +60,35 @@ const CheckIcon = () => (
 const pillars = [
   {
     icon: <CarIcon />,
-    title: 'Car Finder',
-    description: 'Find your perfect sports car based on what actually matters to you—sound, track capability, reliability, value, and more.',
+    title: 'Car Selector',
+    description: 'Own your lane. Find the right car for your goals—not someone else\'s Instagram feed. Sound, track capability, reliability, and real-world value.',
     cta: 'Find Your Car',
-    href: '/car-finder',
+    href: '/car-selector',
     accent: 'primary'
   },
   {
     icon: <ToolIcon />,
     title: 'Performance HUB',
-    description: 'Already have a car? Explore upgrades, see how they affect performance scores, and plan your build with confidence.',
+    description: 'Power under control. Plan your build the smart way—see how upgrades affect your car as a system, and spend your budget where it counts.',
     cta: 'Plan Your Build',
     href: '/performance',
     accent: 'secondary'
   },
   {
     icon: <WrenchIcon />,
-    title: 'Service Center',
-    description: 'Need hands-on help? Our team handles everything from suspension setup to full performance builds.',
-    cta: 'Get It Built',
-    href: '/services',
+    title: 'Education',
+    description: 'Build your knowledge. Understand the fundamentals of modifications, connected systems, and why some builds work and others don\'t.',
+    cta: 'Start Learning',
+    href: '/education',
     accent: 'tertiary'
   }
 ];
 
 const steps = [
-  { number: '01', title: 'Tell Us Your Goals', description: 'Track days? Canyon runs? Daily driving? We start with what you actually want.' },
-  { number: '02', title: 'Get Matched', description: 'Our tools match you with cars or upgrades based on real-world experience.' },
-  { number: '03', title: 'Plan Your Path', description: 'Whether buying or modding, we help you prioritize for your budget.' },
-  { number: '04', title: 'Hit the Road', description: 'Execute your plan with confidence—or let us handle the build.' }
+  { number: '01', title: 'Define Your Mission', description: 'Track days? Canyon carving? Daily driver? We start with your real goals—not internet hype.' },
+  { number: '02', title: 'Get Matched', description: 'Our tools match you with cars or upgrades based on real ownership experience, not just specs.' },
+  { number: '03', title: 'Plan with Purpose', description: 'Whether buying or building, we help you prioritize for maximum impact on your actual budget.' },
+  { number: '04', title: 'Drive with Confidence', description: 'Execute your plan knowing every decision was made with intention—not impulse.' }
 ];
 
 export default function Home() {
@@ -115,10 +115,10 @@ export default function Home() {
           </h1>
           <p className={styles.heroSubtitle}>
             Find the perfect sports car. Plan the ultimate build. 
-            SuperNatural Motorsports helps enthusiasts at every budget 
-            make smarter performance decisions.
+            SuperNatural Motorsports helps drivers at every budget 
+            pursue mastery—not materialism. Build skills, not just ego.
           </p>
-          <Button href="/car-finder" variant="secondary" size="lg" icon={<ArrowRightIcon />}>
+          <Button href="/car-selector" variant="secondary" size="lg" icon={<ArrowRightIcon />}>
             Find Your Car
           </Button>
         </div>
@@ -187,22 +187,22 @@ export default function Home() {
         <div className={styles.container}>
           <div className={styles.valueGrid}>
             <div className={styles.valueContent}>
-              <h2 className={styles.valueTitle}>
-                Built for Enthusiasts,<br />
-                <span className={styles.valueAccent}>At Every Budget</span>
-              </h2>
-              <p className={styles.valueDescription}>
-                Whether you&apos;re eyeing a Miata or a GT3, we bring the same passion 
-                and expertise. No gatekeeping—just honest advice based on real 
-                ownership experience.
-              </p>
-              <ul className={styles.valueList}>
-                <li><CheckIcon /> Real-world ownership insights, not just spec sheets</li>
-                <li><CheckIcon /> Unbiased recommendations—we&apos;re not selling you a car</li>
-                <li><CheckIcon /> Community-driven data from actual enthusiasts</li>
-                <li><CheckIcon /> Approachable experts who love cars as much as you do</li>
-              </ul>
-              <Button href="/car-finder" variant="primary" size="lg">
+            <h2 className={styles.valueTitle}>
+              Brotherhood Over<br />
+              <span className={styles.valueAccent}>Gatekeeping</span>
+            </h2>
+            <p className={styles.valueDescription}>
+              We lift up the driver with the $3K Miata the same as the one with 
+              the $300K GT3RS. No flex culture, no clout chasing—just honest guidance 
+              and genuine community.
+            </p>
+            <ul className={styles.valueList}>
+              <li><CheckIcon /> Real ownership insights, not just spec sheet comparisons</li>
+              <li><CheckIcon /> Honest advice—we&apos;re not selling you anything</li>
+              <li><CheckIcon /> Community built on respect, not rivalry</li>
+              <li><CheckIcon /> Mentorship from drivers who walk the walk</li>
+            </ul>
+              <Button href="/car-selector" variant="primary" size="lg">
                 Find Your Car
               </Button>
             </div>
@@ -226,12 +226,12 @@ export default function Home() {
       <section className={styles.finalCta}>
         <div className={styles.container}>
           <div className={styles.ctaContent}>
-            <h2 className={styles.ctaTitle}>Ready to Find Your Car?</h2>
+            <h2 className={styles.ctaTitle}>Ready to Own Your Lane?</h2>
             <p className={styles.ctaSubtitle}>
-              No signup required. Explore our free tools and see what catches your eye.
+              No signup required. Free tools built for drivers who value substance over status.
             </p>
             <div className={styles.ctaButtons}>
-              <Button href="/car-finder" variant="secondary" size="lg">
+              <Button href="/car-selector" variant="secondary" size="lg">
                 Find Your Car
               </Button>
               <Button href="/contact" variant="outlineLight" size="lg">

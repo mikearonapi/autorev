@@ -289,145 +289,230 @@ export function getCategoryByKey(key) {
  * @returns {Object} - Performance scores for each category
  */
 export function mapCarToPerformanceScores(car) {
-  // Priority: Use explicit curated scores (perf*) if available, otherwise calculate from hard metrics
+  // ALWAYS calculate from hard metrics using the new upgrade-headroom calibration
+  // This ensures consistent scoring across all cars and leaves room for upgrades
+  // The old perfXXX scores were calibrated to give 9-10 to stock cars, which doesn't
+  // leave room for upgrades to show meaningful improvement.
+  
+  // Sound scoring - cap at 8.5 to leave room for exhaust upgrades (+1-2 points)
+  // Cars with already great exhaust notes (9+) get capped at 8.5
+  // Cars with lower sound scores keep their actual value
+  const rawSound = car.sound || 5;
+  const soundScore = Math.min(8.5, rawSound);
+  
   return {
-    powerAccel: car.perfPowerAccel ?? calculatePowerScore(car),
-    gripCornering: car.perfGripCornering ?? calculateGripScore(car),
-    braking: car.perfBraking ?? calculateBrakingScore(car),
-    trackPace: car.perfTrackPace ?? calculateTrackPaceScore(car),
-    drivability: car.perfDrivability ?? calculateDrivabilityScore(car),
-    reliabilityHeat: car.perfReliabilityHeat ?? car.reliability ?? 5,
-    soundEmotion: car.perfSoundEmotion ?? car.sound ?? 5,
+    powerAccel: calculatePowerScore(car),
+    gripCornering: calculateGripScore(car),
+    braking: calculateBrakingScore(car),
+    trackPace: calculateTrackPaceScore(car),
+    drivability: calculateDrivabilityScore(car),
+    reliabilityHeat: Math.min(7.5, car.reliability ?? 5), // Cap at 7.5, cooling mods improve
+    soundEmotion: soundScore,
   };
 }
 
 /**
  * Calculate power score from available hard metrics
- * Uses 0-60 time as primary metric with HP adjustment for perceived power
- * Algorithm calibrated against expert-curated scores for accuracy
+ * 
+ * SCORING PHILOSOPHY (leaving headroom for upgrades):
+ * - 10 = Maximum modified (1000+ HP, supercharged/turbo builds)
+ * - 9 = Heavily modified (800-1000 HP)
+ * - 8 = Moderately modified or exceptional stock (700-800 HP)
+ * - 7 = Light mods or strong stock (550-700 HP, sub-3.5s 0-60)
+ * - 6 = Good sports car stock (400-550 HP, 3.5-4.0s 0-60)
+ * - 5 = Entry sports car (300-400 HP, 4.0-5.0s 0-60)
+ * - 4 = Hot hatch (200-300 HP, 5.0-6.0s 0-60)
+ * 
+ * Stock cars should generally score 5-7.5, reserving 8-10 for modified builds.
  */
 function calculatePowerScore(car) {
   let score = 5; // default
   
   // Primary: Use 0-60 time if available (measures actual acceleration)
   if (car.zeroToSixty) {
-    // Calibrated scale: 2.5s = 10, 3.0s = 9.25, 3.5s = 8.5, 4.0s = 7.75, 4.5s = 7, 5.0s = 6.25
-    // Formula: 13 - (0-60 * 1.5) gives excellent fit to real-world data
-    score = 13 - (car.zeroToSixty * 1.5);
+    // New calibration leaving headroom for upgrades:
+    // 2.5s = 7.5 (stock supercar, upgradeable to 9+)
+    // 3.0s = 7.0
+    // 3.5s = 6.5
+    // 4.0s = 6.0
+    // 4.5s = 5.5
+    // 5.0s = 5.0
+    // 6.0s = 4.0
+    score = 10 - (car.zeroToSixty * 1.0);
   }
   // Secondary: Use power-to-weight if no 0-60 available
   else if (car.hp && car.curbWeight) {
     const powerToWeight = car.hp / (car.curbWeight / 1000);
-    // Scale: 150 hp/ton = 5, 200 = 7, 250 = 9, 300+ = 10
-    score = powerToWeight / 30;
+    // Scale: 150 hp/ton = 4, 200 = 5, 250 = 6, 300 = 7, 350 = 7.5
+    score = 2 + (powerToWeight / 60);
   }
   // Fallback: Use advisory scores
   else {
     score = Math.round((car.track + car.driverFun) / 2) || 5;
   }
   
-  // HP adjustment for perceived power (muscle cars feel powerful even if 0-60 is slower)
-  // Calibrated to match curated scores: 600+ HP = +2, 500-599 HP = +1
+  // Small HP adjustment for perceived power (smaller than before to not overshoot)
+  // High HP cars feel powerful even with slower 0-60 (heavy muscle cars)
   if (car.hp) {
-    if (car.hp >= 600) score += 2;
-    else if (car.hp >= 500) score += 1;
+    if (car.hp >= 700) score += 0.5;      // Exceptional (GT500, ZL1)
+    else if (car.hp >= 600) score += 0.3; // Strong (Viper, GT-R)
+    else if (car.hp >= 500) score += 0.2; // Good (M4, Camaro SS)
   }
   
-  return Math.max(1, Math.min(10, Math.round(score)));
+  // Cap stock cars at 8.0 - reserve 8.5-10 for modified builds
+  const stockCap = 8.0;
+  score = Math.min(score, stockCap);
+  
+  return Math.max(1, Math.min(10, Math.round(score * 10) / 10));
 }
 
 /**
  * Calculate grip score from available hard metrics
- * Uses lateral G as primary metric (direct measurement of mechanical grip)
- * Algorithm calibrated against expert-curated scores
+ * 
+ * SCORING PHILOSOPHY (leaving headroom for upgrades):
+ * - 10 = Maximum (1.35g+ with slicks and aero)
+ * - 9 = Track slicks (1.25-1.35g)
+ * - 8 = R-compound tires + coilovers (1.18-1.25g)
+ * - 7 = Good street tires + suspension mods (1.10-1.18g)
+ * - 6.5 = Premium stock sports car (1.05-1.10g)
+ * - 6 = Good stock sports car (1.00-1.05g)
+ * - 5.5 = Average sports car (0.95-1.00g)
+ * - 5 = Entry sports car (0.90-0.95g)
+ * 
+ * Stock cars on street tires should score 5-7.5, reserving 8-10 for track setups.
  */
 function calculateGripScore(car) {
   // Primary: Use lateral G if available (direct measurement of grip)
   if (car.lateralG) {
-    // Calibrated scale: 0.9g = 5 (baseline), each 0.045g above adds 1 point
-    // Real-world benchmarks: 0.95g = 6, 1.0g = 7, 1.05g = 8, 1.10g = 9, 1.15g+ = 10
-    // Formula: 5 + ((lateralG - 0.9) * 22) fits curated data well
-    const score = 5 + ((car.lateralG - 0.9) * 22);
-    return Math.max(1, Math.min(10, Math.round(score)));
+    // New calibration with headroom for track tires/suspension:
+    // 0.90g = 5.0 (baseline)
+    // 0.95g = 5.5
+    // 1.00g = 6.0
+    // 1.05g = 6.5
+    // 1.10g = 7.0
+    // 1.15g = 7.5
+    // 1.20g = 8.0 (R-compound territory)
+    // 1.30g = 9.0 (slicks)
+    // 1.40g = 10.0 (full aero + slicks)
+    const score = 4 + ((car.lateralG - 0.85) * 12);
+    
+    // Cap stock street cars at 7.5 - reserve 8-10 for track setups
+    const stockCap = 7.5;
+    return Math.max(1, Math.min(stockCap, Math.round(score * 10) / 10));
   }
   
   // Fallback: Use track score with chassis type modifier
   let base = car.track || 5;
   
   // Mid-engine cars typically have better weight distribution
-  if (car.category === 'Mid-Engine') base = Math.min(10, base + 0.5);
+  if (car.category === 'Mid-Engine') base = Math.min(7.5, base + 0.3);
   // Rear-engine premium cars have excellent grip when engineered properly
-  else if (car.category === 'Rear-Engine' && car.tier === 'premium') base = Math.min(10, base + 0.3);
+  else if (car.category === 'Rear-Engine' && car.tier === 'premium') base = Math.min(7.5, base + 0.2);
   
-  return Math.round(base);
+  return Math.round(base * 10) / 10;
 }
 
 /**
  * Calculate braking score from available hard metrics
- * Uses 60-0 braking distance as primary metric
- * Algorithm calibrated against expert-curated scores
+ * 
+ * SCORING PHILOSOPHY (leaving headroom for upgrades):
+ * - 10 = Full race setup (carbon ceramics, slicks, <80ft)
+ * - 9 = Big brake kit + track pads + R-compound (80-85ft)
+ * - 8 = Big brake kit + track pads (85-90ft)
+ * - 7.5 = Upgraded pads + good rotors (90-93ft)
+ * - 7 = Stock premium brakes (93-97ft)
+ * - 6.5 = Good stock brakes (97-102ft)
+ * - 6 = Average stock brakes (102-108ft)
+ * - 5.5 = Entry level (108-115ft)
+ * 
+ * Stock cars should score 5.5-7.5, reserving 8-10 for BBK and track setups.
  */
 function calculateBrakingScore(car) {
   // Primary: Use 60-0 braking distance if available
   if (car.braking60To0) {
-    // Calibrated scale based on industry benchmarks:
-    // 90ft = 10 (exceptional), 95ft = 9, 100ft = 8, 105ft = 7, 110ft = 6, 115ft = 5
-    // Formula: 10 - ((braking - 90) / 5) provides accurate mapping
-    // Every 5 feet slower loses 1 point from perfect 10
-    const score = 10 - ((car.braking60To0 - 90) / 5);
-    return Math.max(1, Math.min(10, Math.round(score)));
+    // New calibration with headroom for brake upgrades:
+    // 80ft = 9.4 (BBK + track pads + R-compound)
+    // 85ft = 8.8
+    // 90ft = 8.2
+    // 95ft = 7.6
+    // 100ft = 7.0
+    // 105ft = 6.4
+    // 110ft = 5.8
+    // 115ft = 5.2
+    const score = 19 - (car.braking60To0 * 0.12);
+    
+    // Cap stock cars at 7.5 - reserve 8-10 for BBK and track pads
+    const stockCap = 7.5;
+    return Math.max(1, Math.min(stockCap, Math.round(score * 10) / 10));
   }
   
   // Fallback: Use track score with tier modifier
   let base = car.track || 5;
   
-  // Premium and track-focused cars typically have better brakes (bigger rotors, better calipers)
-  if (car.tier === 'premium') base = Math.min(10, base + 1);
-  else if (car.tier === 'upper-mid') base = Math.min(10, base + 0.5);
+  // Premium and track-focused cars typically have better brakes
+  if (car.tier === 'premium') base = Math.min(7.5, base + 0.5);
+  else if (car.tier === 'upper-mid') base = Math.min(7.5, base + 0.3);
   
-  return Math.round(base);
+  return Math.round(base * 10) / 10;
 }
 
 /**
  * Calculate track pace score
- * Composite of power, grip, braking, and overall track capability
- * Algorithm calibrated for accuracy against expert-curated track scores
+ * 
+ * SCORING PHILOSOPHY (leaving headroom for upgrades):
+ * - 10 = Full race build (aero, slicks, weight reduction, tuned suspension)
+ * - 9 = Time attack build (coilovers, R-compounds, bolt-ons)
+ * - 8 = Track pack car (upgraded suspension, track pads, good tires)
+ * - 7-7.5 = Track-ready stock sports car (GT4, Z06, GT350)
+ * - 6-6.5 = Good sports car on track (M4, Camaro SS)
+ * - 5-5.5 = Average sports car on track
+ * 
+ * Stock cars should score 5-7.5, reserving 8-10 for track-built cars.
  */
 function calculateTrackPaceScore(car) {
-  // If we have explicit curated track pace score, use it
-  if (car.perfTrackPace) return car.perfTrackPace;
+  // Calculate from component scores (power, grip, braking)
+  // Weight grip and braking higher for track relevance
+  const powerScore = calculatePowerScore(car);
+  const gripScore = calculateGripScore(car);
+  const brakingScore = calculateBrakingScore(car);
   
-  // If we have the advisory track score, use it with validation
-  if (car.track) {
-    let base = car.track;
-    
-    // For track-focused cars (GT4, Z06, GT350R), boost score based on tier/category
-    if (car.tier === 'premium') base = Math.min(10, base + 0.5);
-    
-    // Validate against quarter mile time if available
-    if (car.quarterMile) {
-      // Quarter mile benchmarks adjusted for track capability:
-      // < 11s = 10, 11-11.5s = 9, 11.5-12s = 8, 12-12.5s = 7, 12.5-13s = 6
-      const qmBoost = Math.max(0, (12.5 - car.quarterMile) * 0.4);
-      base = Math.min(10, base + qmBoost);
-    }
-    
-    return Math.round(base);
+  // Weighted average: grip and braking matter more on track
+  let score = (powerScore * 0.3) + (gripScore * 0.35) + (brakingScore * 0.35);
+  
+  // Boost for track-focused variants (GT4, Z06, GT350R, ACR, etc.)
+  if (car.name && (
+    car.name.includes('GT4') || 
+    car.name.includes('GT3') || 
+    car.name.includes('Z06') || 
+    car.name.includes('GT350') ||
+    car.name.includes('ACR') ||
+    car.name.includes('Track') ||
+    car.name.includes('1LE')
+  )) {
+    score += 0.5;
   }
   
-  // Fallback calculation using hard metrics
-  return 5;
+  // Cap stock cars at 8.0 - reserve 8.5-10 for modified track builds
+  const stockCap = 8.0;
+  return Math.max(1, Math.min(stockCap, Math.round(score * 10) / 10));
 }
 
 /**
  * Calculate drivability score
- * Factors in comfort, daily usability, and track compromise
- * Algorithm calibrated against expert-curated drivability scores
+ * 
+ * SCORING PHILOSOPHY:
+ * Drivability is INVERSELY affected by track upgrades (stiffer = less comfortable)
+ * Stock scores should be accurate - mods typically DECREASE this score
+ * No cap needed since this score goes DOWN with performance mods, not up
+ * 
+ * - 10 = Luxury GT, daily driver comfort
+ * - 8-9 = Premium sports car with good daily usability
+ * - 6-7 = Track-capable car with some street compromise
+ * - 4-5 = Hardcore track car, rough daily
+ * - 2-3 = Race car with plates
  */
 function calculateDrivabilityScore(car) {
-  // If we have explicit curated drivability score, use it
-  if (car.perfDrivability) return car.perfDrivability;
-  
+  // Calculate from car characteristics - don't use old manual scores
   const interiorScore = car.interior || 5;
   const reliabilityScore = car.reliability || 5;
   const trackScore = car.track || 5;
@@ -436,20 +521,30 @@ function calculateDrivabilityScore(car) {
   let base = interiorScore;
   
   // Premium tiers typically have better daily usability (adaptive dampers, quieter)
-  if (car.tier === 'premium') base = Math.min(10, base + 1);
-  else if (car.tier === 'upper-mid') base = Math.min(10, base + 0.5);
-  
-  // GT/grand touring cars are designed for long-distance comfort
-  if (car.category === 'Grand Tourer') base = Math.min(10, base + 1.5);
+  if (car.tier === 'premium') base = Math.min(10, base + 0.5);
+  else if (car.tier === 'upper-mid') base = Math.min(10, base + 0.3);
   
   // Track-focused variants sacrifice comfort (track suspensions are stiff)
-  if (trackScore >= 9) base -= 1.5;
-  else if (trackScore >= 8) base -= 0.5;
+  // GT4, GT3, Z06, ACR, etc. are designed for track, not comfort
+  if (car.name && (
+    car.name.includes('GT4') || 
+    car.name.includes('GT3') || 
+    car.name.includes('Z06') || 
+    car.name.includes('ACR') ||
+    car.name.includes('1LE') ||
+    car.name.includes('Track')
+  )) {
+    base -= 1.5;
+  } else if (trackScore >= 9) {
+    base -= 1.0;
+  } else if (trackScore >= 8) {
+    base -= 0.5;
+  }
   
   // Reliability contributes to drivability (fewer worries on daily drives)
-  base = (base * 0.75) + (reliabilityScore * 0.25);
+  base = (base * 0.7) + (reliabilityScore * 0.3);
   
-  return Math.max(1, Math.min(10, Math.round(base)));
+  return Math.max(1, Math.min(10, Math.round(base * 10) / 10));
 }
 
 /**

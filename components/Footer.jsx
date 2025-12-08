@@ -35,15 +35,16 @@ export default function Footer() {
         <div className={styles.brand}>
           <h3 className={styles.brandName}>SuperNatural Motorsports</h3>
           <p className={styles.tagline}>Unleash Your Racing Spirit</p>
+          <p className={styles.brandMotto}>Excellence over ego. Mastery over materialism.</p>
         </div>
 
         {/* Quick Links */}
         <div className={styles.links}>
           <h4 className={styles.linksTitle}>Quick Links</h4>
           <nav className={styles.nav}>
-            <Link href="/car-finder" className={styles.link}>Car Finder</Link>
+            <Link href="/car-selector" className={styles.link}>Car Selector</Link>
             <Link href="/performance" className={styles.link}>Performance HUB</Link>
-            <Link href="/services" className={styles.link}>Service Center</Link>
+            <Link href="/education" className={styles.link}>Education</Link>
             <Link href="/contact" className={styles.link}>Contact</Link>
           </nav>
         </div>
@@ -68,8 +69,8 @@ export default function Footer() {
         <div className={styles.newsletter}>
           <NewsletterSignup 
             variant="compact"
-            title="Stay in the Loop"
-            description="Expert insights and market updates."
+            title="Own Your Lane"
+            description="Build knowledge. Build skills. Build community."
             buttonText="Join"
           />
         </div>
@@ -82,7 +83,7 @@ export default function Footer() {
             © {currentYear} SuperNatural Motorsports. All rights reserved.
           </p>
           <p className={styles.note}>
-            For enthusiasts, by enthusiasts. All budgets welcome.
+            From the $3K Miata to the $300K GT3RS—we lift up every enthusiast.
           </p>
         </div>
       </div>
