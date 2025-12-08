@@ -1,0 +1,65 @@
+{
+  "runAt": "2025-12-08T19:25:01.839Z",
+  "summary": {
+    "errors": 0,
+    "warnings": 5,
+    "info": 3,
+    "itemsChecked": {
+      "cars": 98,
+      "systems": 14,
+      "nodes": 80,
+      "upgrades": 12,
+      "categories": 7
+    }
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "source": "c7-corvette-z06",
+      "field": "hp/torque",
+      "message": "HP and torque are identical (possible data error)",
+      "value": null
+    },
+    {
+      "source": "camaro-zl1",
+      "field": "hp/torque",
+      "message": "HP and torque are identical (possible data error)",
+      "value": null
+    },
+    {
+      "source": "camaro-ss-1le",
+      "field": "hp/torque",
+      "message": "HP and torque are identical (possible data error)",
+      "value": null
+    },
+    {
+      "source": "subaru-wrx-sti-gd",
+      "field": "hp/torque",
+      "message": "HP and torque are identical (possible data error)",
+      "value": null
+    },
+    {
+      "source": "ford-focus-rs",
+      "field": "hp/torque",
+      "message": "HP and torque are identical (possible data error)",
+      "value": null
+    }
+  ],
+  "info": [
+    {
+      "source": "alfa-romeo-4c",
+      "field": "zeroToSixty",
+      "message": "Faster than typical for power-to-weight"
+    },
+    {
+      "source": "mitsubishi-lancer-evo-x",
+      "field": "zeroToSixty",
+      "message": "Faster than typical for power-to-weight"
+    },
+    {
+      "source": "tesla-model-3-performance",
+      "field": "zeroToSixty",
+      "message": "Faster than typical for power-to-weight"
+    }
+  ]
+}

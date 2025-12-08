@@ -1,11 +1,10 @@
 /* ==========================================================================
-   Car Detail Page - Hero Pages for Individual Vehicles
-   SuperNatural Motorsports Brand Integration
-   Theme tokens are defined in app/globals.css
+   Car Detail Page - Curated Experience
+   SuperNatural Motorsports
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Container
+   Container & Base
    -------------------------------------------------------------------------- */
 .container {
   min-height: 100vh;
@@ -38,9 +37,7 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 .errorState h2 {
@@ -73,7 +70,6 @@
 
 .backButton:hover {
   background: var(--sn-primary-dark);
-  text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -85,7 +81,6 @@
   padding: 3rem 2rem 4rem;
   position: relative;
   overflow: hidden;
-  /* Center the hero content area */
   display: flex;
   justify-content: center;
 }
@@ -116,7 +111,6 @@
 
 .backLink:hover {
   color: var(--color-white);
-  text-decoration: none;
 }
 
 .heroHeader {
@@ -136,25 +130,10 @@
   letter-spacing: 0.05em;
 }
 
-.tierPremium {
-  background: var(--tier-premium-bg);
-  color: #c4b5fd;
-}
-
-.tierUpper {
-  background: var(--tier-upper-bg);
-  color: #93c5fd;
-}
-
-.tierMid {
-  background: var(--tier-mid-bg);
-  color: #6ee7b7;
-}
-
-.tierEntry {
-  background: var(--tier-entry-bg);
-  color: #fcd34d;
-}
+.tierPremium { background: var(--tier-premium-bg); color: #c4b5fd; }
+.tierUpper { background: var(--tier-upper-bg); color: #93c5fd; }
+.tierMid { background: var(--tier-mid-bg); color: #6ee7b7; }
+.tierEntry { background: var(--tier-entry-bg); color: #fcd34d; }
 
 .categoryBadge {
   display: inline-flex;
@@ -189,6 +168,15 @@
   font-size: 1.25rem;
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0 1.5rem;
+}
+
+.heroEssence {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+  max-width: 550px;
+  font-style: italic;
 }
 
 .heroTagline {
@@ -228,24 +216,8 @@
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
 }
 
-.heroImagePlaceholder {
-  aspect-ratio: 16/9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-}
-
-.heroImageText {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.3);
-  text-transform: uppercase;
-}
-
 /* --------------------------------------------------------------------------
-   Specs Strip
+   Specs Strips
    -------------------------------------------------------------------------- */
 .specsStrip {
   background: var(--color-white);
@@ -278,9 +250,12 @@
   margin-bottom: 0.25rem;
 }
 
-/* --------------------------------------------------------------------------
-   Performance Specs Strip (Secondary)
-   -------------------------------------------------------------------------- */
+.specValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
 .perfSpecsStrip {
   background: var(--sn-primary-dark);
   padding: 1rem 2rem;
@@ -316,53 +291,1356 @@
   letter-spacing: 0.05em;
 }
 
-.specValue {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-gray-800);
+/* --------------------------------------------------------------------------
+   Table of Contents Navigation
+   -------------------------------------------------------------------------- */
+.tocNav {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 64px;
+  z-index: 100;
 }
 
-.specMeta {
-  font-size: 0.7rem;
-  font-weight: 500;
+.tocInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  overflow-x: auto;
+}
+
+.tocLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.tocLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tocLinks a {
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.tocLinks a:hover {
   color: var(--sn-primary);
-  margin-top: 0.15rem;
-  padding: 0.15rem 0.4rem;
-  background: rgba(26, 77, 110, 0.1);
-  border-radius: var(--radius-sm);
-  display: inline-block;
 }
 
 /* --------------------------------------------------------------------------
    Main Content
    -------------------------------------------------------------------------- */
 .mainContent {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 2rem 2rem 3rem;
 }
 
-.section {
-  margin-bottom: 3rem;
+/* --------------------------------------------------------------------------
+   Collapsible Sections
+   -------------------------------------------------------------------------- */
+.collapsibleSection {
+  background: var(--color-white);
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
-.sectionTitle {
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.sectionHeader:hover {
+  background: var(--color-gray-50);
+}
+
+.sectionHeaderLeft {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-gray-800);
-  margin: 0 0 0.5rem;
 }
 
-.sectionTitle svg {
+.sectionHeaderLeft svg {
   color: var(--sn-primary);
+}
+
+.sectionHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin: 0;
+}
+
+.sectionHeader > svg {
+  color: var(--color-gray-400);
+}
+
+.sectionContent {
+  padding: 0 1.5rem 1.5rem;
 }
 
 .sectionSubtitle {
   color: var(--color-gray-500);
   margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   Story Section
+   -------------------------------------------------------------------------- */
+.storyBlock {
+  margin-bottom: 2rem;
+}
+
+.storyBlock:last-child {
+  margin-bottom: 0;
+}
+
+.storyBlock h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-accent);
+  display: inline-block;
+}
+
+.storyText {
+  color: var(--color-gray-700);
+  line-height: 1.75;
+}
+
+.storyText p {
+  margin: 0 0 1rem;
+}
+
+.storyText p:last-child {
+  margin-bottom: 0;
+}
+
+.lineageBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 12px;
+  margin-top: 1.5rem;
+}
+
+.lineageItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.lineageLabel {
+  font-size: 0.7rem;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lineageValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+/* --------------------------------------------------------------------------
+   Driving Experience Section
+   -------------------------------------------------------------------------- */
+.experienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.experienceCard {
+  background: var(--color-gray-50);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.experienceCard h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sn-primary);
+  margin: 0 0 0.75rem;
+}
+
+.experienceText {
+  color: var(--color-gray-700);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.experienceText p {
+  margin: 0 0 0.75rem;
+}
+
+.experienceText p:last-child {
+  margin-bottom: 0;
+}
+
+.comfortBox {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
+  border-radius: 12px;
+  color: var(--color-white);
+}
+
+.comfortBox h4 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.comfortBox p {
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.balanceBadge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* --------------------------------------------------------------------------
+   Strengths & Weaknesses Section
+   -------------------------------------------------------------------------- */
+.notesBox {
+  background: var(--color-gray-50);
+  border-left: 4px solid var(--sn-accent);
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.notesBox p {
+  margin: 0;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.strengthsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.strengthsColumn,
+.weaknessesColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.prosTitle,
+.consTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.prosTitle { color: var(--score-excellent); }
+.consTitle { color: var(--score-poor); }
+
+.strengthsList,
+.weaknessesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.strengthItem,
+.weaknessItem {
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.strengthItem {
+  background: rgba(21, 128, 61, 0.05);
+  border: 1px solid rgba(21, 128, 61, 0.15);
+}
+
+.weaknessItem {
+  background: rgba(185, 28, 28, 0.05);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+}
+
+.strengthItem h4,
+.weaknessItem h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: var(--color-gray-800);
+}
+
+.strengthItem p,
+.weaknessItem p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.prosList,
+.consList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.proItem,
+.conItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-white);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--color-gray-700);
+}
+
+.proItem { border: 1px solid rgba(21, 128, 61, 0.2); }
+.proItem svg { color: var(--score-excellent); flex-shrink: 0; margin-top: 2px; }
+
+.conItem { border: 1px solid rgba(185, 28, 28, 0.2); }
+.conItem svg { color: var(--score-poor); flex-shrink: 0; margin-top: 2px; }
+
+.ownerFitSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ownerFitCard {
+  padding: 1.25rem;
+  border-radius: 12px;
+  background: var(--color-gray-50);
+}
+
+.ownerFitCard h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--color-gray-800);
+}
+
+.ownerFitCard p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.bestForSection h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray-600);
+  margin: 0 0 0.75rem;
+}
+
+.bestForGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.bestForCard {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.bestForCard svg { color: var(--sn-primary); }
+
+/* --------------------------------------------------------------------------
+   Buyer's Guide Section
+   -------------------------------------------------------------------------- */
+.buyersSummary {
+  background: var(--sn-primary);
+  color: var(--color-white);
+  padding: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.buyersSummary p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.marketBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.marketBadge.appreciating {
+  background: rgba(21, 128, 61, 0.1);
+  color: var(--score-excellent);
+}
+
+.marketBadge.stable {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--score-good);
+}
+
+.marketBadge.depreciating {
+  background: rgba(185, 28, 28, 0.1);
+  color: var(--score-poor);
+}
+
+.buyersBlock {
+  margin-bottom: 2rem;
+}
+
+.buyersBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.yearsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yearItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+}
+
+.yearItem.avoid {
+  background: rgba(185, 28, 28, 0.05);
+}
+
+.yearBadge {
+  padding: 0.35rem 0.75rem;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.yearBadge.avoid {
+  background: var(--score-poor);
+}
+
+.yearItem p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-gray-700);
+  line-height: 1.5;
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.optionItem {
+  padding: 1rem;
+  background: rgba(21, 128, 61, 0.05);
+  border: 1px solid rgba(21, 128, 61, 0.15);
+  border-radius: 10px;
+}
+
+.optionItem.secondary {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.optionHeader svg {
+  color: var(--score-excellent);
+}
+
+.optionItem.secondary .optionHeader svg {
+  color: var(--sn-accent);
+}
+
+.optionHeader strong {
+  font-size: 0.95rem;
+  color: var(--color-gray-800);
+}
+
+.optionItem p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.checklistList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.checklistList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.checklistList li svg {
+  color: var(--sn-primary);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.ppiNote {
+  margin: 1rem 0 0;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  font-style: italic;
+}
+
+.priceGuideGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.priceGuideCard {
+  padding: 1.25rem;
+  background: var(--color-gray-50);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.priceGuideCard.recommended {
+  background: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.priceLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+  margin-bottom: 0.5rem;
+}
+
+.priceGuideCard.recommended .priceLabel {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.priceValue {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin-bottom: 0.5rem;
+}
+
+.priceGuideCard.recommended .priceValue {
+  color: var(--color-white);
+}
+
+.priceGuideCard p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  line-height: 1.4;
+}
+
+.priceGuideCard.recommended p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.marketCommentary {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--color-gray-50);
+  border-radius: 12px;
+}
+
+.marketCommentary h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--color-gray-800);
+}
+
+/* --------------------------------------------------------------------------
+   Ownership Section
+   -------------------------------------------------------------------------- */
+.ownershipBlock {
+  margin-bottom: 2rem;
+}
+
+.ownershipBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.costGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.costCard {
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.costCard.typical {
+  background: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.costLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+  margin-bottom: 0.25rem;
+}
+
+.costCard.typical .costLabel {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.costValue {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+}
+
+.costCard.typical .costValue {
+  color: var(--color-white);
+}
+
+.costNotes {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.serviceItem {
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+}
+
+.serviceItem h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 0.5rem;
+}
+
+.serviceInterval {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  margin-bottom: 0.25rem;
+}
+
+.serviceCost {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sn-primary);
+  margin-bottom: 0.5rem;
+}
+
+.serviceItem p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  line-height: 1.4;
+}
+
+.issuesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.issueItem {
+  padding: 1rem;
+  border-radius: 10px;
+  border-left: 4px solid;
+}
+
+.issueItem.minor {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: var(--score-good);
+}
+
+.issueItem.moderate {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: var(--score-average);
+}
+
+.issueItem.major {
+  background: rgba(185, 28, 28, 0.05);
+  border-color: var(--score-poor);
+}
+
+.issueHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.issueHeader h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0;
+}
+
+.issueMeta {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.severityBadge,
+.frequencyBadge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.severityBadge.minor { background: rgba(59, 130, 246, 0.15); color: var(--score-good); }
+.severityBadge.moderate { background: rgba(245, 158, 11, 0.15); color: var(--score-average); }
+.severityBadge.major { background: rgba(185, 28, 28, 0.15); color: var(--score-poor); }
+
+.frequencyBadge {
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+.issueItem p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.issueCost {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.ownershipMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metaLabel {
+  font-size: 0.7rem;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metaValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  text-transform: capitalize;
+}
+
+.metaValue.excellent { color: var(--score-excellent); }
+.metaValue.good { color: var(--score-good); }
+.metaValue.moderate { color: var(--score-average); }
+.metaValue.difficult { color: var(--score-poor); }
+
+/* --------------------------------------------------------------------------
+   Track Section
+   -------------------------------------------------------------------------- */
+.trackReadinessBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.trackReadinessBadge.needs-prep {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--score-average);
+}
+
+.trackReadinessBadge.weekend-warrior {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--score-good);
+}
+
+.trackReadinessBadge.track-ready {
+  background: rgba(21, 128, 61, 0.15);
+  color: var(--score-excellent);
+}
+
+.trackReadinessBadge.race-bred {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
+
+.trackNotes {
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.trackBlock {
+  margin-bottom: 2rem;
+}
+
+.trackBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.trackPrepList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.trackPrepItem {
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  border-left: 4px solid;
+}
+
+.trackPrepItem.essential {
+  border-color: var(--score-excellent);
+}
+
+.trackPrepItem.recommended {
+  border-color: var(--score-good);
+}
+
+.trackPrepItem.optional {
+  border-color: var(--color-gray-400);
+}
+
+.trackPrepHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.trackPrepHeader strong {
+  font-size: 0.95rem;
+  color: var(--color-gray-800);
+}
+
+.priorityBadge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.priorityBadge.essential {
+  background: rgba(21, 128, 61, 0.15);
+  color: var(--score-excellent);
+}
+
+.priorityBadge.recommended {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--score-good);
+}
+
+.priorityBadge.optional {
+  background: var(--color-gray-200);
+  color: var(--color-gray-600);
+}
+
+.trackPrepCost {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sn-primary);
+  margin-bottom: 0.5rem;
+}
+
+.trackPrepItem p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.laptimeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.laptimeCard {
+  padding: 1.25rem;
+  background: var(--sn-primary-dark);
+  color: var(--color-white);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.laptimeTrack {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.laptimeTime {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sn-accent);
+  margin-bottom: 0.5rem;
+}
+
+.laptimeSource {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.laptimeCard p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   Alternatives Section
+   -------------------------------------------------------------------------- */
+.alternativesBlock {
+  margin-bottom: 2rem;
+}
+
+.alternativesBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.alternativesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alternativeCard {
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.alternativeCard:hover {
+  background: var(--color-gray-100);
+}
+
+.alternativeLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--sn-primary);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.alternativeLink:hover {
+  text-decoration: underline;
+}
+
+.alternativeCard p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Community Section
+   -------------------------------------------------------------------------- */
+.communityIntro {
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.communityStrengthBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.communityStrengthBar > span:first-child {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.strengthMeter {
+  flex: 1;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.strengthFill {
+  height: 100%;
+  background: var(--score-excellent);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.communityStrengthBar > span:last-child {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+}
+
+.communityBlock {
+  margin-bottom: 1.5rem;
+}
+
+.communityBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.resourcesList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.resourceCard {
+  display: block;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.resourceCard:hover {
+  background: var(--color-gray-100);
+  transform: translateY(-2px);
+}
+
+.resourceCard > svg {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: var(--color-gray-400);
+}
+
+.resourceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.resourceHeader strong {
+  color: var(--sn-primary);
+  font-size: 0.95rem;
+}
+
+.resourceType {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: 4px;
+}
+
+.resourceCard p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  line-height: 1.4;
+}
+
+.groupsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.groupBadge {
+  padding: 0.5rem 0.75rem;
+  background: var(--color-gray-100);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--color-gray-700);
+}
+
+/* --------------------------------------------------------------------------
+   Media & Reviews Section
+   -------------------------------------------------------------------------- */
+.quotesSection {
+  margin-bottom: 2rem;
+}
+
+.expertQuote {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
+  border-radius: 12px;
+  color: var(--color-white);
+  margin-bottom: 1rem;
+}
+
+.expertQuote p {
+  font-size: 1.1rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+}
+
+.expertQuote cite {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-style: normal;
+}
+
+.mediaBlock {
+  margin-bottom: 1.5rem;
+}
+
+.mediaBlock h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 1rem;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reviewCard {
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.reviewHeader strong {
+  color: var(--color-gray-800);
+  font-size: 0.9rem;
+}
+
+.reviewRating {
+  padding: 0.2rem 0.5rem;
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.reviewCard p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.videosList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.videoCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.videoCard:hover {
+  background: var(--color-gray-100);
+  transform: translateY(-2px);
+}
+
+.videoCard > svg {
+  color: var(--score-poor);
+  flex-shrink: 0;
+}
+
+.videoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.videoInfo strong {
+  font-size: 0.9rem;
+  color: var(--color-gray-800);
+}
+
+.videoInfo > span {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.videoDuration {
+  font-size: 0.7rem;
+  color: var(--color-gray-400);
 }
 
 /* --------------------------------------------------------------------------
@@ -375,7 +1653,7 @@
 }
 
 .scoreCard {
-  background: var(--color-white);
+  background: var(--color-gray-50);
   border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 0.875rem 1rem;
@@ -401,29 +1679,14 @@
   border-radius: 4px;
 }
 
-.scoreValue.scoreExcellent {
-  background: var(--score-excellent-bg);
-  color: var(--score-excellent);
-}
-
-.scoreValue.scoreGood {
-  background: var(--score-good-bg);
-  color: var(--score-good);
-}
-
-.scoreValue.scoreAverage {
-  background: var(--score-average-bg);
-  color: var(--score-average);
-}
-
-.scoreValue.scorePoor {
-  background: var(--score-poor-bg);
-  color: var(--score-poor);
-}
+.scoreValue.scoreExcellent { background: var(--score-excellent-bg); color: var(--score-excellent); }
+.scoreValue.scoreGood { background: var(--score-good-bg); color: var(--score-good); }
+.scoreValue.scoreAverage { background: var(--score-average-bg); color: var(--score-average); }
+.scoreValue.scorePoor { background: var(--score-poor-bg); color: var(--score-poor); }
 
 .scoreBar {
   height: 6px;
-  background: var(--color-gray-100);
+  background: var(--color-gray-200);
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 0.35rem;
@@ -435,151 +1698,20 @@
   transition: width 0.3s ease;
 }
 
-.scoreBarFill.scoreExcellent {
-  background: var(--score-excellent);
-}
-
-.scoreBarFill.scoreGood {
-  background: var(--score-good);
-}
-
-.scoreBarFill.scoreAverage {
-  background: var(--score-average);
-}
-
-.scoreBarFill.scorePoor {
-  background: var(--score-poor);
-}
+.scoreBarFill.scoreExcellent { background: var(--score-excellent); }
+.scoreBarFill.scoreGood { background: var(--score-good); }
+.scoreBarFill.scoreAverage { background: var(--score-average); }
+.scoreBarFill.scorePoor { background: var(--score-poor); }
 
 .scoreRating {
   font-size: 0.7rem;
   color: var(--color-gray-500);
 }
 
-/* Scoring Info */
 .scoringInfoWrapper {
   margin-top: 1rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-gray-200);
-}
-
-/* --------------------------------------------------------------------------
-   Two Column Layout
-   -------------------------------------------------------------------------- */
-.twoColumn {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-}
-
-/* --------------------------------------------------------------------------
-   Pros & Cons
-   -------------------------------------------------------------------------- */
-.notesBox {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.notesBox p {
-  margin: 0;
-  color: var(--color-gray-700);
-  line-height: 1.6;
-}
-
-.prosConsSection {
-  margin-bottom: 1.5rem;
-}
-
-.prosTitle,
-.consTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem;
-}
-
-.prosTitle {
-  color: var(--score-excellent);
-}
-
-.consTitle {
-  color: var(--score-poor);
-}
-
-.prosList,
-.consList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.proItem,
-.conItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: var(--color-white);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: var(--color-gray-700);
-}
-
-.proItem {
-  border: 1px solid rgba(21, 128, 61, 0.2);
-}
-
-.proItem svg {
-  color: var(--score-excellent);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.conItem {
-  border: 1px solid rgba(185, 28, 28, 0.2);
-}
-
-.conItem svg {
-  color: var(--score-poor);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* --------------------------------------------------------------------------
-   Best For
-   -------------------------------------------------------------------------- */
-.bestForGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.bestForCard {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-gray-700);
-}
-
-.bestForCard svg {
-  color: var(--sn-primary);
-}
-
-.noBestFor {
-  color: var(--color-gray-500);
-  font-style: italic;
 }
 
 /* --------------------------------------------------------------------------
@@ -590,6 +1722,7 @@
   border-radius: 16px;
   padding: 2rem;
   color: var(--color-white);
+  margin-top: 2rem;
 }
 
 .upgradeTeaserHeader {
@@ -634,7 +1767,6 @@
 
 .primaryButton:hover {
   background: var(--color-white);
-  text-decoration: none;
 }
 
 .secondaryButton {
@@ -652,92 +1784,13 @@
 .secondaryButton:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--color-white);
-  text-decoration: none;
-}
-
-/* --------------------------------------------------------------------------
-   Performance HUB Section
-   -------------------------------------------------------------------------- */
-.performanceHubSection {
-  background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
-  padding: 2.5rem 2rem;
-}
-
-.performanceHubCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-@media (min-width: 768px) {
-  .performanceHubCard {
-    flex-direction: row;
-    text-align: left;
-    gap: 1.5rem;
-  }
-}
-
-.performanceHubIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  background: var(--sn-accent);
-  border-radius: 12px;
-  color: var(--sn-primary-dark);
-  flex-shrink: 0;
-}
-
-.performanceHubContent {
-  flex: 1;
-}
-
-.performanceHubContent h3 {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-white);
-  margin: 0 0 0.5rem;
-}
-
-.performanceHubContent p {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.5;
-  margin: 0;
-}
-
-.performanceHubButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.875rem 1.75rem;
-  background: var(--color-white);
-  color: var(--sn-primary-dark);
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.performanceHubButton:hover {
-  background: var(--sn-accent);
-  transform: translateY(-2px);
 }
 
 /* --------------------------------------------------------------------------
    CTA Section
    -------------------------------------------------------------------------- */
 .ctaSection {
-  background: var(--color-gray-50);
+  background: var(--color-gray-100);
   border-top: 1px solid var(--color-gray-200);
   padding: 2rem;
   text-align: center;
@@ -792,36 +1845,6 @@
   border-color: var(--sn-primary);
 }
 
-.ctaContent h2 {
-  font-size: 2rem;
-  color: var(--color-gray-800);
-  margin: 0 0 1rem;
-}
-
-.ctaContent p {
-  color: var(--color-gray-600);
-  margin: 0 0 2rem;
-  font-size: 1.1rem;
-}
-
-.ctaButton {
-  display: inline-flex;
-  padding: 1rem 2.5rem;
-  background: var(--sn-primary);
-  color: var(--color-white);
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.ctaButton:hover {
-  background: var(--sn-primary-dark);
-  transform: translateY(-2px);
-  text-decoration: none;
-}
-
 /* --------------------------------------------------------------------------
    Responsive
    -------------------------------------------------------------------------- */
@@ -852,6 +1875,7 @@
     margin-bottom: 1rem;
   }
 
+  .heroEssence,
   .heroTagline {
     font-size: 0.95rem;
     margin-bottom: 1rem;
@@ -862,7 +1886,6 @@
     font-size: 0.85rem;
   }
 
-  /* Show hero image on mobile - positioned below content */
   .heroImageWrapper {
     position: relative;
     width: calc(100% + 2rem);
@@ -870,9 +1893,7 @@
     height: auto;
     aspect-ratio: 16/9;
     order: 2;
-    opacity: 1;
     transform: none;
-    pointer-events: auto;
     top: auto;
     right: auto;
     max-width: none;
@@ -882,35 +1903,58 @@
     filter: none;
   }
 
-  .specsGrid {
-    gap: 1rem;
-    justify-content: flex-start;
+  .tocNav {
+    display: none;
   }
 
   .mainContent {
     padding: 1.5rem 1rem;
   }
 
-  .twoColumn {
+  .experienceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .strengthsGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .ownerFitSection {
+    grid-template-columns: 1fr;
+  }
+
+  .checklistList {
+    grid-template-columns: 1fr;
+  }
+
+  .priceGuideGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .costGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .serviceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .laptimeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .resourcesList {
+    grid-template-columns: 1fr;
+  }
+
+  .videosList {
+    grid-template-columns: 1fr;
   }
 
   .scoreGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
-  }
-
-  .scoreCard {
-    padding: 0.75rem;
-  }
-
-  .ctaSection {
-    padding: 1.5rem 1rem;
-  }
-
-  .ctaContent h2 {
-    font-size: 1.25rem;
   }
 }
 
@@ -933,7 +1977,8 @@
   }
 
   .tierBadge,
-  .categoryBadge {
+  .categoryBadge,
+  .brandBadge {
     font-size: 0.65rem;
     padding: 0.25rem 0.6rem;
   }
@@ -954,7 +1999,6 @@
 
   .specsGrid {
     gap: 0.75rem 1.25rem;
-    flex-wrap: wrap;
     justify-content: center;
   }
 
@@ -968,11 +2012,6 @@
 
   .specValue {
     font-size: 0.85rem;
-  }
-
-  .specMeta {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
   }
 
   .perfSpecsStrip {
@@ -992,42 +2031,23 @@
   }
 
   .mainContent {
-    padding: 1.25rem 0.75rem;
+    padding: 1rem 0.75rem;
   }
 
-  .section {
-    margin-bottom: 2rem;
+  .sectionHeader {
+    padding: 1rem;
   }
 
-  .sectionTitle {
-    font-size: 1.15rem;
-    gap: 0.5rem;
+  .sectionHeader h2 {
+    font-size: 1.1rem;
   }
 
-  .sectionTitle svg {
-    width: 20px;
-    height: 20px;
+  .sectionContent {
+    padding: 0 1rem 1rem;
   }
 
   .scoreGrid {
     grid-template-columns: 1fr;
-  }
-
-  .notesBox {
-    padding: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .proItem,
-  .conItem {
-    padding: 0.6rem 0.75rem;
-    font-size: 0.85rem;
-    gap: 0.5rem;
-  }
-
-  .bestForCard {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
   }
 
   .upgradeTeaser {
@@ -1067,4 +2087,3 @@
     justify-content: center;
   }
 }
-

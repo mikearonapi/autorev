@@ -1,0 +1,1405 @@
+{
+  "generatedAt": "2025-12-08T18:11:27.787Z",
+  "summary": {
+    "total": 98,
+    "passed": 14,
+    "failed": 3,
+    "warnings": 0,
+    "noReference": 81
+  },
+  "results": [
+    {
+      "slug": "718-cayman-gt4",
+      "name": "718 Cayman GT4",
+      "brand": "Porsche",
+      "checks": {
+        "hp": {
+          "database": 414,
+          "reference": 414,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 309,
+          "reference": 309,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3227,
+          "reference": 3227,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 4.2,
+          "reference": 4.2,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "718-cayman-gts-40",
+      "name": "718 Cayman GTS 4.0",
+      "brand": "Porsche",
+      "checks": {
+        "hp": {
+          "database": 394,
+          "reference": 394,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 309,
+          "reference": 309,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3153,
+          "reference": 3153,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 4.3,
+          "reference": 4.3,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "audi-r8-v8",
+      "name": "Audi R8 V8",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-r8-v10",
+      "name": "Audi R8 V10",
+      "brand": "Audi",
+      "checks": {
+        "hp": {
+          "database": 525,
+          "reference": 525,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 398,
+          "reference": 398,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3660,
+          "reference": 3660,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.4,
+          "reference": 3.4,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "lamborghini-gallardo",
+      "name": "Lamborghini Gallardo",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lotus-emira",
+      "name": "Lotus Emira",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "dodge-viper",
+      "name": "Dodge Viper",
+      "brand": "Dodge",
+      "checks": {
+        "hp": {
+          "database": 645,
+          "reference": 645,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 600,
+          "reference": 600,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3374,
+          "reference": 3374,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.3,
+          "reference": 3.3,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "c8-corvette-stingray",
+      "name": "C8 Corvette Stingray",
+      "brand": "Chevrolet",
+      "checks": {
+        "hp": {
+          "database": 490,
+          "reference": 490,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 470,
+          "reference": 465,
+          "withinThreshold": true,
+          "variance": 5,
+          "percentVariance": "1.08",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3535,
+          "reference": 3535,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 2.9,
+          "reference": 2.9,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "981-cayman-gts",
+      "name": "981 Cayman GTS",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "991-1-carrera-s",
+      "name": "991.1 Carrera S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "997-2-carrera-s",
+      "name": "997.2 Carrera S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "nissan-gt-r",
+      "name": "Nissan GT-R",
+      "brand": "Nissan",
+      "checks": {
+        "hp": {
+          "database": 545,
+          "reference": 565,
+          "withinThreshold": false,
+          "variance": -20,
+          "percentVariance": "-3.54",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 463,
+          "reference": 467,
+          "withinThreshold": true,
+          "variance": -4,
+          "percentVariance": "-0.86",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3933,
+          "reference": 3933,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 2.9,
+          "reference": 2.9,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "FAIL",
+      "errors": [
+        "hp: Out of threshold (DB: 545, Ref: 565, Variance: -20)"
+      ],
+      "warnings": []
+    },
+    {
+      "slug": "shelby-gt500",
+      "name": "Shelby GT500",
+      "brand": "Ford",
+      "checks": {
+        "hp": {
+          "database": 760,
+          "reference": 760,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 625,
+          "reference": 625,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 4171,
+          "reference": 4171,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.3,
+          "reference": 3.3,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "lotus-evora-gt",
+      "name": "Lotus Evora GT",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "981-cayman-s",
+      "name": "981 Cayman S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "shelby-gt350",
+      "name": "Shelby GT350",
+      "brand": "Ford",
+      "checks": {
+        "hp": {
+          "database": 526,
+          "reference": 526,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 429,
+          "reference": 429,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3760,
+          "reference": 3760,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 4.3,
+          "reference": 4.3,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "jaguar-f-type-r",
+      "name": "Jaguar F-Type R",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "c7-corvette-grand-sport",
+      "name": "C7 Corvette Grand Sport",
+      "brand": "Chevrolet",
+      "checks": {
+        "hp": {
+          "database": 460,
+          "reference": 460,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 465,
+          "reference": 465,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3524,
+          "reference": 3524,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.6,
+          "reference": 3.6,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "c7-corvette-z06",
+      "name": "C7 Corvette Z06",
+      "brand": "Chevrolet",
+      "checks": {
+        "hp": {
+          "database": 650,
+          "reference": 650,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 650,
+          "reference": 650,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3599,
+          "reference": 3599,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.2,
+          "reference": 2.95,
+          "withinThreshold": true,
+          "variance": 0.25,
+          "percentVariance": "8.47",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "camaro-zl1",
+      "name": "Camaro ZL1",
+      "brand": "Chevrolet",
+      "checks": {
+        "hp": {
+          "database": 650,
+          "reference": 650,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 650,
+          "reference": 650,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 4078,
+          "reference": 4078,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.5,
+          "reference": 3.5,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "bmw-m2-competition",
+      "name": "BMW M2 Competition",
+      "brand": "BMW",
+      "checks": {
+        "hp": {
+          "database": 405,
+          "reference": 405,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 406,
+          "reference": 406,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3655,
+          "reference": 3600,
+          "withinThreshold": true,
+          "variance": 55,
+          "percentVariance": "1.53",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 4,
+          "reference": 4,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "alfa-romeo-4c",
+      "name": "Alfa Romeo 4C",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "aston-martin-v8-vantage",
+      "name": "Aston Martin V8 Vantage",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lotus-evora-s",
+      "name": "Lotus Evora S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lexus-lc-500",
+      "name": "Lexus LC 500",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "987-2-cayman-s",
+      "name": "987.2 Cayman S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "jaguar-f-type-v6-s",
+      "name": "Jaguar F-Type V6 S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lexus-rc-f",
+      "name": "Lexus RC F",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "nissan-370z-nismo",
+      "name": "Nissan 370Z NISMO",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mercedes-c63-amg-w204",
+      "name": "Mercedes C63 AMG W204",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m4-f82",
+      "name": "BMW M4 F82",
+      "brand": "BMW",
+      "checks": {
+        "hp": {
+          "database": 425,
+          "reference": 425,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 406,
+          "reference": 406,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3580,
+          "reference": 3530,
+          "withinThreshold": true,
+          "variance": 50,
+          "percentVariance": "1.42",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.9,
+          "reference": 4.1,
+          "withinThreshold": true,
+          "variance": -0.19999999999999973,
+          "percentVariance": "-4.88",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "mustang-gt-pp2",
+      "name": "Mustang GT PP2",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "camaro-ss-1le",
+      "name": "Camaro SS 1LE",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "toyota-gr-supra",
+      "name": "Toyota GR Supra",
+      "brand": "Toyota",
+      "checks": {
+        "hp": {
+          "database": 382,
+          "reference": 382,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 365,
+          "reference": 368,
+          "withinThreshold": true,
+          "variance": -3,
+          "percentVariance": "-0.82",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3400,
+          "reference": 3397,
+          "withinThreshold": true,
+          "variance": 3,
+          "percentVariance": "0.09",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 3.9,
+          "reference": 3.9,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "maserati-granturismo",
+      "name": "Maserati GranTurismo",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mitsubishi-lancer-evo-8-9",
+      "name": "Mitsubishi Lancer Evolution VIII/IX",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mitsubishi-lancer-evo-x",
+      "name": "Mitsubishi Lancer Evolution X",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "subaru-wrx-sti-gd",
+      "name": "Subaru Impreza WRX STI GD",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "subaru-wrx-sti-gr-gv",
+      "name": "Subaru WRX STI GR/GV",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "subaru-wrx-sti-va",
+      "name": "Subaru WRX STI VA",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "honda-s2000",
+      "name": "Honda S2000",
+      "brand": "Honda",
+      "checks": {
+        "hp": {
+          "database": 240,
+          "reference": 237,
+          "withinThreshold": true,
+          "variance": 3,
+          "percentVariance": "1.27",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 162,
+          "reference": 162,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 2835,
+          "reference": 2864,
+          "withinThreshold": true,
+          "variance": -29,
+          "percentVariance": "-1.01",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 5.4,
+          "reference": 6,
+          "withinThreshold": false,
+          "variance": -0.5999999999999996,
+          "percentVariance": "-10.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "FAIL",
+      "errors": [
+        "zeroToSixty: Out of threshold (DB: 5.4, Ref: 6, Variance: -0.5999999999999996)"
+      ],
+      "warnings": []
+    },
+    {
+      "slug": "mazda-mx5-miata-na",
+      "name": "Mazda MX-5 Miata NA",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mazda-mx5-miata-nb",
+      "name": "Mazda MX-5 Miata NB",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mazda-mx5-miata-nc",
+      "name": "Mazda MX-5 Miata NC",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mazda-mx5-miata-nd",
+      "name": "Mazda MX-5 Miata ND",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "toyota-86-scion-frs",
+      "name": "Toyota 86 / Scion FR-S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "toyota-gr86",
+      "name": "Toyota GR86",
+      "brand": "Toyota",
+      "checks": {
+        "hp": {
+          "database": 228,
+          "reference": 228,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 184,
+          "reference": 184,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 2811,
+          "reference": 2811,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 5.4,
+          "reference": 6.1,
+          "withinThreshold": false,
+          "variance": -0.6999999999999993,
+          "percentVariance": "-11.48",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "FAIL",
+      "errors": [
+        "zeroToSixty: Out of threshold (DB: 5.4, Ref: 6.1, Variance: -0.6999999999999993)"
+      ],
+      "warnings": []
+    },
+    {
+      "slug": "subaru-brz-zc6",
+      "name": "Subaru BRZ",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "subaru-brz-zd8",
+      "name": "Subaru BRZ (2nd Gen)",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "toyota-supra-mk4-a80-turbo",
+      "name": "Toyota Supra Mk4 A80 Turbo",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mazda-rx7-fd3s",
+      "name": "Mazda RX-7 FD3S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "nissan-300zx-twin-turbo-z32",
+      "name": "Nissan 300ZX Twin Turbo Z32",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "nissan-350z",
+      "name": "Nissan 350Z",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "nissan-z-rz34",
+      "name": "Nissan Z",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "acura-integra-type-r-dc2",
+      "name": "Acura Integra Type R",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m3-e46",
+      "name": "BMW M3 E46",
+      "brand": "BMW",
+      "checks": {
+        "hp": {
+          "database": 333,
+          "reference": 333,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "torque": {
+          "database": 262,
+          "reference": 262,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 1,
+            "absolute": 5
+          }
+        },
+        "curbWeight": {
+          "database": 3415,
+          "reference": 3415,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "percent": 2,
+            "absolute": 50
+          }
+        },
+        "zeroToSixty": {
+          "database": 4.8,
+          "reference": 4.8,
+          "withinThreshold": true,
+          "variance": 0,
+          "percentVariance": "0.00",
+          "threshold": {
+            "absolute": 0.3
+          }
+        }
+      },
+      "status": "PASS",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "bmw-m3-e92",
+      "name": "BMW M3 E92",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m3-f80",
+      "name": "BMW M3 F80",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-1m-coupe-e82",
+      "name": "BMW 1 Series M Coupe",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-z4m-e85-e86",
+      "name": "BMW Z4 M Coupe/Roadster",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-rs5-b8",
+      "name": "Audi RS5 B8",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-rs5-b9",
+      "name": "Audi RS5 B9",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-rs3-8v",
+      "name": "Audi RS3 8V",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-rs3-8y",
+      "name": "Audi RS3 8Y",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-tt-rs-8j",
+      "name": "Audi TT RS 8J",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "audi-tt-rs-8s",
+      "name": "Audi TT RS 8S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mercedes-amg-c63-w205",
+      "name": "Mercedes-AMG C63 W205",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "alfa-romeo-giulia-quadrifoglio",
+      "name": "Alfa Romeo Giulia Quadrifoglio",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m5-e39",
+      "name": "BMW M5 E39",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m5-e60",
+      "name": "BMW M5 E60",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m5-f10-competition",
+      "name": "BMW M5 F10 Competition",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "bmw-m5-f90-competition",
+      "name": "BMW M5 F90 Competition",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mercedes-amg-e63-w212",
+      "name": "Mercedes-AMG E63 W212",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mercedes-amg-e63s-w213",
+      "name": "Mercedes-AMG E63 S W213",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "cadillac-cts-v-gen2",
+      "name": "Cadillac CTS-V Gen 2",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "cadillac-cts-v-gen3",
+      "name": "Cadillac CTS-V Gen 3",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "chevrolet-corvette-c6-z06",
+      "name": "Chevrolet Corvette C6 Z06",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "chevrolet-corvette-c6-grand-sport",
+      "name": "Chevrolet Corvette C6 Grand Sport",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "chevrolet-corvette-c5-z06",
+      "name": "Chevrolet Corvette C5 Z06",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "dodge-challenger-srt-392",
+      "name": "Dodge Challenger SRT 392",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "dodge-challenger-hellcat",
+      "name": "Dodge Challenger Hellcat",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "dodge-charger-srt-392",
+      "name": "Dodge Charger SRT 392",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "dodge-charger-hellcat",
+      "name": "Dodge Charger Hellcat",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "ford-mustang-boss-302",
+      "name": "Ford Mustang Boss 302",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lotus-elise-s2",
+      "name": "Lotus Elise S2",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "lotus-exige-s",
+      "name": "Lotus Exige S",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "honda-civic-type-r-fk8",
+      "name": "Honda Civic Type R FK8",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "honda-civic-type-r-fl5",
+      "name": "Honda Civic Type R FL5",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "volkswagen-golf-r-mk7",
+      "name": "Volkswagen Golf R Mk7",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "volkswagen-golf-r-mk8",
+      "name": "Volkswagen Golf R Mk8",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "volkswagen-gti-mk7",
+      "name": "Volkswagen GTI Mk7",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "ford-focus-rs",
+      "name": "Ford Focus RS",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "porsche-911-turbo-997-1",
+      "name": "Porsche 911 Turbo 997.1",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "porsche-911-turbo-997-2",
+      "name": "Porsche 911 Turbo 997.2",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "porsche-911-gt3-996",
+      "name": "Porsche 911 GT3 996",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "porsche-911-gt3-997",
+      "name": "Porsche 911 GT3 997",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "mercedes-amg-gt",
+      "name": "Mercedes-AMG GT",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    },
+    {
+      "slug": "tesla-model-3-performance",
+      "name": "Tesla Model 3 Performance",
+      "status": "NO_REFERENCE",
+      "message": "No OEM reference data available"
+    }
+  ]
+}

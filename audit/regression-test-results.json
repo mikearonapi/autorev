@@ -1,0 +1,351 @@
+{
+  "runAt": "2025-12-08T19:25:01.802Z",
+  "summary": {
+    "passed": 60,
+    "failed": 0,
+    "total": 60,
+    "passRate": 100
+  },
+  "tests": [
+    {
+      "name": "  HP",
+      "status": "PASS"
+    },
+    {
+      "name": "  Torque",
+      "status": "PASS"
+    },
+    {
+      "name": "  Curb Weight",
+      "status": "PASS"
+    },
+    {
+      "name": "  0-60 Time",
+      "status": "PASS"
+    },
+    {
+      "name": "  Drivetrain",
+      "status": "PASS"
+    },
+    {
+      "name": "  Brand",
+      "status": "PASS"
+    },
+    {
+      "name": "  HP",
+      "status": "PASS"
+    },
+    {
+      "name": "  Torque",
+      "status": "PASS"
+    },
+    {
+      "name": "  Curb Weight",
+      "status": "PASS"
+    },
+    {
+      "name": "  0-60 Time",
+      "status": "PASS"
+    },
+    {
+      "name": "  Drivetrain",
+      "status": "PASS"
+    },
+    {
+      "name": "  Brand",
+      "status": "PASS"
+    },
+    {
+      "name": "  HP",
+      "status": "PASS"
+    },
+    {
+      "name": "  Torque",
+      "status": "PASS"
+    },
+    {
+      "name": "  Curb Weight",
+      "status": "PASS"
+    },
+    {
+      "name": "  0-60 Time",
+      "status": "PASS"
+    },
+    {
+      "name": "  Drivetrain",
+      "status": "PASS"
+    },
+    {
+      "name": "  Brand",
+      "status": "PASS"
+    },
+    {
+      "name": "  HP",
+      "status": "PASS"
+    },
+    {
+      "name": "  Torque",
+      "status": "PASS"
+    },
+    {
+      "name": "  Curb Weight",
+      "status": "PASS"
+    },
+    {
+      "name": "  0-60 Time",
+      "status": "PASS"
+    },
+    {
+      "name": "  Drivetrain",
+      "status": "PASS"
+    },
+    {
+      "name": "  Brand",
+      "status": "PASS"
+    },
+    {
+      "name": "  HP",
+      "status": "PASS"
+    },
+    {
+      "name": "  Torque",
+      "status": "PASS"
+    },
+    {
+      "name": "  Curb Weight",
+      "status": "PASS"
+    },
+    {
+      "name": "  0-60 Time",
+      "status": "PASS"
+    },
+    {
+      "name": "  Drivetrain",
+      "status": "PASS"
+    },
+    {
+      "name": "  Brand",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Shelby GT350",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Shelby GT500",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Toyota GR Supra",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: BMW M4 F82",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Nissan GT-R",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: 718 Cayman GT4",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: C8 Corvette Stingray",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Dodge Viper",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Honda S2000",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine type: Mazda RX-7 FD3S",
+      "status": "PASS"
+    },
+    {
+      "name": "  Rule triggered: grip-brakes-fluid",
+      "status": "PASS"
+    },
+    {
+      "name": "  Rule triggered: headers-tune",
+      "status": "PASS"
+    },
+    {
+      "name": "  Has warnings",
+      "status": "PASS"
+    },
+    {
+      "name": "  Has warnings",
+      "status": "PASS"
+    },
+    {
+      "name": "  powerAccel",
+      "status": "PASS"
+    },
+    {
+      "name": "  gripCornering",
+      "status": "PASS"
+    },
+    {
+      "name": "  soundEmotion",
+      "status": "PASS"
+    },
+    {
+      "name": "  powerAccel",
+      "status": "PASS"
+    },
+    {
+      "name": "  gripCornering",
+      "status": "PASS"
+    },
+    {
+      "name": "  trackPace",
+      "status": "PASS"
+    },
+    {
+      "name": "  powerAccel",
+      "status": "PASS"
+    },
+    {
+      "name": "  gripCornering",
+      "status": "PASS"
+    },
+    {
+      "name": "  drivability",
+      "status": "PASS"
+    },
+    {
+      "name": "  Grip/Cornering score",
+      "status": "PASS"
+    },
+    {
+      "name": "  Score bounds for Dodge Charger Hellcat",
+      "status": "PASS"
+    },
+    {
+      "name": "  Power score",
+      "status": "PASS"
+    },
+    {
+      "name": "  Power score",
+      "status": "PASS"
+    },
+    {
+      "name": "All nodes have required fields",
+      "status": "PASS"
+    },
+    {
+      "name": "All edges reference valid nodes",
+      "status": "PASS"
+    },
+    {
+      "name": "Upgrade mappings mostly valid",
+      "status": "PASS"
+    }
+  ],
+  "goldenData": {
+    "vehicleSpecs": {
+      "shelby-gt350": {
+        "hp": 526,
+        "torque": 429,
+        "curbWeight": 3760,
+        "zeroToSixty": 4.3,
+        "drivetrain": "RWD",
+        "brand": "Ford"
+      },
+      "c8-corvette-stingray": {
+        "hp": 495,
+        "torque": 470,
+        "curbWeight": 3535,
+        "zeroToSixty": 2.9,
+        "drivetrain": "RWD",
+        "brand": "Chevrolet"
+      },
+      "nissan-gt-r": {
+        "hp": 565,
+        "torque": 467,
+        "curbWeight": 3935,
+        "zeroToSixty": 2.9,
+        "drivetrain": "AWD",
+        "brand": "Nissan"
+      },
+      "718-cayman-gt4": {
+        "hp": 414,
+        "torque": 309,
+        "curbWeight": 3227,
+        "zeroToSixty": 4.2,
+        "drivetrain": "RWD",
+        "brand": "Porsche"
+      },
+      "toyota-gr-supra": {
+        "hp": 382,
+        "torque": 365,
+        "curbWeight": 3397,
+        "zeroToSixty": 3.9,
+        "drivetrain": "RWD",
+        "brand": "Toyota"
+      }
+    },
+    "engineTypes": {
+      "shelby-gt350": "NA V8",
+      "shelby-gt500": "SC V8",
+      "toyota-gr-supra": "Turbo I6",
+      "bmw-m4-f82": "Turbo I6",
+      "nissan-gt-r": "Turbo V6",
+      "718-cayman-gt4": "NA Flat-6",
+      "c8-corvette-stingray": "NA V8",
+      "dodge-viper": "NA V10",
+      "honda-s2000": "NA I4",
+      "mazda-rx7-fd3s": "Turbo I4"
+    },
+    "scoreRanges": {
+      "shelby-gt350": {
+        "powerAccel": {
+          "min": 5,
+          "max": 7
+        },
+        "gripCornering": {
+          "min": 5,
+          "max": 8
+        },
+        "soundEmotion": {
+          "min": 7,
+          "max": 9
+        }
+      },
+      "c8-corvette-stingray": {
+        "powerAccel": {
+          "min": 7,
+          "max": 9
+        },
+        "gripCornering": {
+          "min": 6,
+          "max": 9
+        },
+        "trackPace": {
+          "min": 6,
+          "max": 9
+        }
+      },
+      "mazda-mx5-miata-nd": {
+        "powerAccel": {
+          "min": 3,
+          "max": 5
+        },
+        "gripCornering": {
+          "min": 5,
+          "max": 8
+        },
+        "drivability": {
+          "min": 7,
+          "max": 9
+        }
+      }
+    }
+  }
+}

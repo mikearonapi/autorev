@@ -17,7 +17,24 @@
  * - safety: Harnesses, seats, roll bars, fire suppression
  * - weightReduction: Lightweight panels, interior deletion, seam welding
  * - engineSwaps: Complete engine swaps and crate engines
+ * 
+ * DATA ACCURACY DISCLAIMER:
+ * All horsepower and performance gain estimates are based on community dyno data,
+ * manufacturer claims, and aggregated tuner reports. Actual results vary based on
+ * vehicle condition, supporting modifications, fuel quality, ambient conditions,
+ * and tuning quality. These figures should be treated as estimates, not guarantees.
+ * 
+ * Last validated: December 8, 2025
  */
+
+/**
+ * Performance gains disclaimer for display in the UI
+ * @type {string}
+ */
+export const PERFORMANCE_GAINS_DISCLAIMER = 
+  'All horsepower and performance gain estimates are based on community dyno data and ' +
+  'manufacturer claims. Actual results vary based on vehicle condition, supporting ' +
+  'modifications, fuel quality, and tuning quality. These figures should be treated as estimates.';
 
 /**
  * Unified upgrade categories with descriptions

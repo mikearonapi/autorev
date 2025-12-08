@@ -7,7 +7,24 @@
  * Premium European brands (Porsche, Ferrari, Aston Martin, etc.) have
  * significantly higher parts and labor costs compared to mainstream
  * American or Japanese brands.
+ * 
+ * PRICING DISCLAIMER:
+ * All pricing estimates reflect typical market ranges as of 2024-2025.
+ * Actual costs vary by region, installer, specific product selection,
+ * and market conditions. Labor rates differ significantly by location.
+ * Always obtain quotes from qualified installers before committing to purchases.
+ * 
+ * Last validated: December 8, 2025
  */
+
+/**
+ * Pricing disclaimer for display in the UI
+ * @type {string}
+ */
+export const PRICING_DISCLAIMER = 
+  'Pricing estimates reflect typical market ranges as of 2024-2025. Actual costs vary ' +
+  'by region, installer, and specific product selection. Always obtain quotes from ' +
+  'qualified installers before committing to purchases.';
 
 /**
  * Platform cost tiers with multipliers

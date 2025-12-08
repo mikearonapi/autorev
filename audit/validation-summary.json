@@ -1,0 +1,49 @@
+{
+  "runAt": "2025-12-08T19:25:01.877Z",
+  "mode": "quick",
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 1,
+    "total": 5
+  },
+  "results": [
+    {
+      "name": "Data Quality Queries",
+      "status": "passed",
+      "exitCode": 0,
+      "duration": 41,
+      "critical": true,
+      "description": "Checks for impossible values, missing fields, and data anomalies"
+    },
+    {
+      "name": "Algorithm Regression Tests",
+      "status": "passed",
+      "exitCode": 0,
+      "duration": 59,
+      "critical": true,
+      "description": "Golden test set for scoring and algorithm behavior"
+    },
+    {
+      "name": "Content Linter",
+      "status": "passed",
+      "exitCode": 0,
+      "duration": 36,
+      "critical": false,
+      "description": "Validates educational content and metadata quality"
+    },
+    {
+      "name": "Vehicle Data Audit",
+      "status": "skipped",
+      "description": "Compares vehicle data against OEM reference dataset"
+    },
+    {
+      "name": "Validation Suite",
+      "status": "passed",
+      "exitCode": 0,
+      "duration": 36,
+      "critical": false,
+      "description": "Comprehensive data quality, algorithm, and content checks"
+    }
+  ]
+}

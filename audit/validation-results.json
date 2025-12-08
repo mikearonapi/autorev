@@ -1,0 +1,671 @@
+{
+  "runAt": "2025-12-08T19:25:01.874Z",
+  "summary": {
+    "passed": 30,
+    "failed": 0,
+    "warnings": 102,
+    "passRate": 100
+  },
+  "tests": [
+    {
+      "name": "All required fields present",
+      "status": "PASS",
+      "message": "98 vehicles checked"
+    },
+    {
+      "name": "No duplicate slugs",
+      "status": "PASS",
+      "message": "98 unique slugs"
+    },
+    {
+      "name": "HP values reasonable",
+      "status": "PASS",
+      "message": "All values between 80-1500 hp"
+    },
+    {
+      "name": "Weight values reasonable",
+      "status": "PASS",
+      "message": "All values between 1500-6000 lbs"
+    },
+    {
+      "name": "0-60 times reasonable",
+      "status": "PASS",
+      "message": "All values between 2.0-10.0s"
+    },
+    {
+      "name": "Drivetrain values valid",
+      "status": "PASS",
+      "message": "All use RWD/AWD/FWD/4WD"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "718 Cayman GT4: claimed 4.2s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "718 Cayman GTS 4.0: claimed 4.3s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi R8 V8: claimed 4.1s, estimated 8.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi R8 V10: claimed 3.4s, estimated 7.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lamborghini Gallardo: claimed 3.5s, estimated 7.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lotus Emira: claimed 4.2s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Dodge Viper: claimed 3.3s, estimated 7.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "C8 Corvette Stingray: claimed 2.9s, estimated 8.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "981 Cayman GTS: claimed 4.5s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "991.1 Carrera S: claimed 4.1s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "997.2 Carrera S: claimed 4.3s, estimated 8.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Nissan GT-R: claimed 2.9s, estimated 7.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Shelby GT500: claimed 3.3s, estimated 7.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lotus Evora GT: claimed 3.8s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "981 Cayman S: claimed 4.6s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Shelby GT350: claimed 4.3s, estimated 8.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Jaguar F-Type R: claimed 3.9s, estimated 8.1s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "C7 Corvette Grand Sport: claimed 3.6s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "C7 Corvette Z06: claimed 3.2s, estimated 7.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Camaro ZL1: claimed 3.5s, estimated 7.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M2 Competition: claimed 4s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Alfa Romeo 4C: claimed 4.1s, estimated 9.1s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Aston Martin V8 Vantage: claimed 4.7s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lotus Evora S: claimed 4.3s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lexus LC 500: claimed 4.4s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "987.2 Cayman S: claimed 4.9s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Jaguar F-Type V6 S: claimed 4.6s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lexus RC F: claimed 4.3s, estimated 8.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Nissan 370Z NISMO: claimed 4.8s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mercedes C63 AMG W204: claimed 4.3s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M4 F82: claimed 3.9s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mustang GT PP2: claimed 4.3s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Camaro SS 1LE: claimed 4.2s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Toyota GR Supra: claimed 3.9s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Maserati GranTurismo: claimed 4.7s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mitsubishi Lancer Evolution VIII/IX: claimed 4.7s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mitsubishi Lancer Evolution X: claimed 4.5s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Subaru Impreza WRX STI GD: claimed 4.8s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Subaru WRX STI GR/GV: claimed 4.7s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Subaru WRX STI VA: claimed 4.6s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Honda S2000: claimed 5.4s, estimated 9.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mazda MX-5 Miata NB: claimed 7.9s, estimated 9.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mazda MX-5 Miata NC: claimed 6.5s, estimated 9.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mazda MX-5 Miata ND: claimed 5.7s, estimated 9.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Toyota 86 / Scion FR-S: claimed 6.2s, estimated 9.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Toyota GR86: claimed 5.4s, estimated 9.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Subaru BRZ: claimed 6.2s, estimated 9.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Subaru BRZ (2nd Gen): claimed 5.4s, estimated 9.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Toyota Supra Mk4 A80 Turbo: claimed 4.6s, estimated 9.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mazda RX-7 FD3S: claimed 4.8s, estimated 9.1s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Nissan 300ZX Twin Turbo Z32: claimed 5s, estimated 9.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Nissan 350Z: claimed 5.2s, estimated 9.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Nissan Z: claimed 4.5s, estimated 8.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Acura Integra Type R: claimed 6.2s, estimated 9.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M3 E46: claimed 4.8s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M3 E92: claimed 4.1s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M3 F80: claimed 3.9s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW 1 Series M Coupe: claimed 4.7s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW Z4 M Coupe/Roadster: claimed 4.8s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi RS5 B8: claimed 4.5s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi RS5 B9: claimed 3.7s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi RS3 8V: claimed 3.9s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi RS3 8Y: claimed 3.6s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi TT RS 8J: claimed 4.1s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Audi TT RS 8S: claimed 3.6s, estimated 8.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mercedes-AMG C63 W205: claimed 3.9s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Alfa Romeo Giulia Quadrifoglio: claimed 3.8s, estimated 8.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M5 E39: claimed 4.8s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M5 E60: claimed 4.5s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M5 F10 Competition: claimed 3.7s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "BMW M5 F90 Competition: claimed 3.1s, estimated 7.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mercedes-AMG E63 W212: claimed 3.6s, estimated 8.3s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mercedes-AMG E63 S W213: claimed 3.3s, estimated 8.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Cadillac CTS-V Gen 2: claimed 3.9s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Cadillac CTS-V Gen 3: claimed 3.6s, estimated 7.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Chevrolet Corvette C6 Z06: claimed 3.6s, estimated 7.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Chevrolet Corvette C6 Grand Sport: claimed 4s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Chevrolet Corvette C5 Z06: claimed 4s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Dodge Challenger SRT 392: claimed 4.2s, estimated 8.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Dodge Challenger Hellcat: claimed 3.6s, estimated 7.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Dodge Charger SRT 392: claimed 4.3s, estimated 8.8s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Dodge Charger Hellcat: claimed 3.7s, estimated 7.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Ford Mustang Boss 302: claimed 4.2s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lotus Elise S2: claimed 4.9s, estimated 9.1s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Lotus Exige S: claimed 4s, estimated 8.6s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Honda Civic Type R FK8: claimed 5s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Honda Civic Type R FL5: claimed 4.9s, estimated 9.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Volkswagen Golf R Mk7: claimed 4.5s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Volkswagen Golf R Mk8: claimed 4.4s, estimated 8.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Volkswagen GTI Mk7: claimed 5.7s, estimated 9.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Ford Focus RS: claimed 4.6s, estimated 8.7s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Porsche 911 Turbo 997.1: claimed 3.7s, estimated 8.0s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Porsche 911 Turbo 997.2: claimed 3.2s, estimated 7.9s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Porsche 911 GT3 996: claimed 4.3s, estimated 8.5s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Porsche 911 GT3 997: claimed 4s, estimated 8.2s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Mercedes-AMG GT: claimed 3.9s, estimated 8.4s"
+    },
+    {
+      "name": "P/W inconsistency",
+      "status": "WARN",
+      "message": "Tesla Model 3 Performance: claimed 3.1s, estimated 8.5s"
+    },
+    {
+      "name": "GT350 scores in bounds",
+      "status": "PASS",
+      "message": "All scores between 1-10"
+    },
+    {
+      "name": "Power score formula",
+      "status": "PASS",
+      "message": "Expected ~5, got 5.9"
+    },
+    {
+      "name": "Engine type: shelby-gt350",
+      "status": "PASS",
+      "message": "NA V8"
+    },
+    {
+      "name": "Engine type: toyota-gr-supra",
+      "status": "PASS",
+      "message": "Turbo I6"
+    },
+    {
+      "name": "Engine type: shelby-gt500",
+      "status": "PASS",
+      "message": "SC V8"
+    },
+    {
+      "name": "Engine type: nissan-gt-r",
+      "status": "PASS",
+      "message": "Turbo V6"
+    },
+    {
+      "name": "HP multipliers defined",
+      "status": "PASS",
+      "message": "All engine types have multipliers"
+    },
+    {
+      "name": "Track tire → brake fluid",
+      "status": "PASS",
+      "message": "Warning correctly triggered"
+    },
+    {
+      "name": "Supercharger → fuel system",
+      "status": "PASS",
+      "message": "Warning or dependency triggered"
+    },
+    {
+      "name": "Headers → tune required",
+      "status": "PASS",
+      "message": "Warning correctly triggered"
+    },
+    {
+      "name": "Unmapped upgrade key",
+      "status": "WARN",
+      "message": "streetSport"
+    },
+    {
+      "name": "Unmapped upgrade key",
+      "status": "WARN",
+      "message": "trackPack"
+    },
+    {
+      "name": "Unmapped upgrade key",
+      "status": "WARN",
+      "message": "timeAttack"
+    },
+    {
+      "name": "Unmapped upgrade key",
+      "status": "WARN",
+      "message": "ultimatePower"
+    },
+    {
+      "name": "Some upgrades unmapped",
+      "status": "WARN",
+      "message": "4 upgrades without node mappings"
+    },
+    {
+      "name": "All systems have descriptions",
+      "status": "PASS",
+      "message": "14 systems"
+    },
+    {
+      "name": "All edge references valid",
+      "status": "PASS",
+      "message": "52 edges checked"
+    },
+    {
+      "name": "All categories complete",
+      "status": "PASS",
+      "message": "7 categories"
+    },
+    {
+      "name": "Car references valid",
+      "status": "PASS",
+      "message": "4 referenced cars exist"
+    },
+    {
+      "name": "RWD car count",
+      "status": "PASS",
+      "message": "71 RWD cars"
+    },
+    {
+      "name": "AWD car count",
+      "status": "PASS",
+      "message": "23 AWD cars"
+    },
+    {
+      "name": "Porsche engine consistency",
+      "status": "PASS",
+      "message": "11/11 Flat-6"
+    },
+    {
+      "name": "GT350 Stock HP",
+      "status": "PASS",
+      "message": "HP should be 526"
+    },
+    {
+      "name": "C8 Corvette 0-60",
+      "status": "PASS",
+      "message": "0-60 should be 2.9s"
+    },
+    {
+      "name": "GT-R Drivetrain",
+      "status": "PASS",
+      "message": "Drivetrain should be AWD"
+    },
+    {
+      "name": "Viper Weight",
+      "status": "PASS",
+      "message": "Weight should be ~3374 lbs"
+    },
+    {
+      "name": "System Count",
+      "status": "PASS",
+      "message": "Should have at least 14 systems"
+    },
+    {
+      "name": "Node Count",
+      "status": "PASS",
+      "message": "Should have at least 50 nodes"
+    },
+    {
+      "name": "Upgrade Package Count",
+      "status": "PASS",
+      "message": "Should have at least 4 packages"
+    }
+  ]
+}

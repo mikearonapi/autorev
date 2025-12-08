@@ -362,8 +362,10 @@ export default function SportsCarComparison() {
         if (mustHaveFilters.transmissionFilter === 'all') return true;
         const trans = (car.trans || '').toUpperCase();
         const hasManual = trans.includes('MT');
+        // Check for all automatic types: AT, DCT, PDK, DSG, SMG, Auto, Tronic, Gear, Direct
         const hasAuto = trans.includes('AT') || trans.includes('DCT') || trans.includes('PDK') || 
-                        trans.includes('AUTO') || trans.includes('TRONIC') || trans.includes('GEAR');
+                        trans.includes('DSG') || trans.includes('SMG') || trans.includes('AUTO') || 
+                        trans.includes('TRONIC') || trans.includes('GEAR') || trans.includes('DIRECT');
         if (mustHaveFilters.transmissionFilter === 'manual') return hasManual;
         if (mustHaveFilters.transmissionFilter === 'automatic') return hasAuto;
         return true;

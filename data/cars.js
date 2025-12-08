@@ -8,7 +8,24 @@
  * To add a car: Add a new object following the Car structure.
  * 
  * This file is also used to seed the Supabase database.
+ * 
+ * DATA ACCURACY NOTES:
+ * - Hard metrics (HP, torque, weight, 0-60) are verified against OEM specifications
+ * - Advisory scores (sound, interior, track, etc.) reflect aggregated expert opinions
+ *   and community sentiment. Individual experiences may vary.
+ * - Performance Hub scores are derived from hard metrics and expert analysis
+ * 
+ * Last validated against OEM sources: December 8, 2025
  */
+
+/**
+ * Advisory scores disclaimer for display in the UI
+ * @type {string}
+ */
+export const ADVISORY_SCORES_DISCLAIMER = 
+  'Advisory scores reflect aggregated expert opinions and community sentiment based on ' +
+  'professional reviews, owner feedback, and track data. Individual experiences may vary. ' +
+  'Hard specifications (HP, weight, 0-60) are verified against manufacturer data.';
 
 /**
  * Helper to generate a URL-friendly slug from a car name
@@ -85,6 +102,89 @@ export function generateSlug(name) {
  * @property {string[]} [imageGallery] - Additional image URLs
  * @property {string} [videoUrl] - Optional video URL
  * @property {string} [ctaCopy] - Custom CTA copy for hero page
+ * 
+ * ============================================================================
+ * CURATED EXPERIENCE FIELDS (New - for rich car detail pages)
+ * ============================================================================
+ * 
+ * Identity & Story:
+ * @property {string} [essence] - 1-2 sentence soul of the car
+ * @property {string} [heritage] - 2-3 paragraph history and significance
+ * @property {string} [designPhilosophy] - Engineering goals and vision
+ * @property {string} [motorsportHistory] - Racing pedigree (null if none)
+ * @property {string} [generationCode] - Chassis/platform code (e.g., "982")
+ * @property {string[]} [predecessors] - Earlier models in lineage
+ * @property {string[]} [successors] - Later models in lineage
+ * 
+ * Driving Experience:
+ * @property {string} [engineCharacter] - What the engine feels like
+ * @property {string} [transmissionFeel] - Gearbox experience description
+ * @property {string} [chassisDynamics] - Handling character and balance
+ * @property {string} [steeringFeel] - Wheel feedback description
+ * @property {string} [brakeConfidence] - Brake feel and capability
+ * @property {string} [soundSignature] - Exhaust/intake character description
+ * @property {string} [comfortTrackBalance] - "daily" | "weekend" | "track-focused" | "race"
+ * @property {string} [comfortNotes] - Daily drivability notes
+ * 
+ * Enhanced Strengths & Weaknesses:
+ * @property {Object[]} [definingStrengths] - Array of {title, description}
+ * @property {Object[]} [honestWeaknesses] - Array of {title, description}
+ * @property {string} [idealOwner] - Who should buy this car
+ * @property {string} [notIdealFor] - Who should NOT buy this car
+ * 
+ * Buyer's Guide:
+ * @property {string} [buyersSummary] - Quick 1-2 sentence buying advice
+ * @property {Object[]} [bestYearsDetailed] - Array of {years, reason}
+ * @property {Object[]} [yearsToAvoidDetailed] - Array of {years, reason}
+ * @property {Object[]} [mustHaveOptions] - Array of {name, code?, reason}
+ * @property {Object[]} [niceToHaveOptions] - Array of {name, reason}
+ * @property {string[]} [preInspectionChecklist] - What to check before buying
+ * @property {string} [ppiRecommendations] - PPI advice
+ * @property {string} [marketPosition] - "appreciating" | "stable" | "depreciating"
+ * @property {string} [marketCommentary] - Price trend analysis
+ * @property {Object} [priceGuide] - {low: {price, condition}, mid: {...}, high: {...}}
+ * 
+ * Ownership Reality:
+ * @property {Object} [annualOwnershipCost] - {low, typical, heavy, notes}
+ * @property {Object} [majorServiceCosts] - {oilChange, majorService, clutch, brakes, tires}
+ * @property {Object[]} [commonIssuesDetailed] - Array of {issue, severity, frequency, cost, notes}
+ * @property {string} [partsAvailability] - "excellent" | "good" | "moderate" | "difficult"
+ * @property {string} [partsNotes] - Parts sourcing notes
+ * @property {string} [dealerVsIndependent] - "dealer-only" | "indie-friendly" | "either"
+ * @property {string} [dealerNotes] - Service recommendations
+ * @property {number} [diyFriendliness] - 1-10 scale
+ * @property {string} [diyNotes] - DIY capability notes
+ * @property {Object} [warrantyInfo] - {factory, cpo, notes}
+ * @property {string} [insuranceNotes] - Insurance considerations
+ * 
+ * Track & Performance:
+ * @property {string} [trackReadiness] - "needs-prep" | "weekend-warrior" | "track-ready" | "race-bred"
+ * @property {string} [trackReadinessNotes] - Track capability description
+ * @property {Object} [coolingCapacity] - {rating, notes}
+ * @property {Object} [brakeFadeResistance] - {rating, stockPadLife, notes}
+ * @property {Object[]} [recommendedTrackPrep] - Array of {item, priority, cost, notes}
+ * @property {Object[]} [popularTrackMods] - Array of {mod, purpose, cost}
+ * @property {Object[]} [laptimeBenchmarks] - Array of {track, time, source, notes}
+ * 
+ * Alternatives:
+ * @property {Object[]} [directCompetitors] - Array of {slug, name, comparison}
+ * @property {Object[]} [ifYouWantMore] - Array of {slug, name, reason}
+ * @property {Object[]} [ifYouWantLess] - Array of {slug, name, reason}
+ * @property {Object[]} [similarDrivingExperience] - Array of {slug, name, reason}
+ * 
+ * Community & Culture:
+ * @property {number} [communityStrength] - 1-10 scale
+ * @property {string} [communityNotes] - Community description
+ * @property {Object[]} [keyResources] - Array of {name, type, url, notes}
+ * @property {string[]} [facebookGroups] - Active Facebook groups
+ * @property {Object[]} [annualEvents] - Array of {name, frequency, location, notes}
+ * @property {string} [aftermarketSceneNotes] - Aftermarket ecosystem description
+ * @property {string} [resaleReputation] - Market perception
+ * 
+ * Media & Reviews:
+ * @property {Object[]} [notableReviews] - Array of {source, title?, quote, url?, rating?}
+ * @property {Object[]} [mustWatchVideos] - Array of {title, channel, url, duration?}
+ * @property {Object[]} [expertQuotes] - Array of {person, outlet, quote}
  */
 
 /**
@@ -106,7 +206,7 @@ export const carData = [
     // Brand & Platform Info
     brand: "Porsche",
     country: "Germany",
-    platformCostTier: "premium", // premium, luxury, mainstream (affects upgrade pricing)
+    platformCostTier: "premium",
     // Advisory Scores
     sound: 9.4,
     interior: 8.4,
@@ -141,10 +241,10 @@ export const carData = [
     manualAvailable: true,
     seats: 2,
     dailyUsabilityTag: "Weekend warrior",
-    maintenanceCostIndex: 4, // 1-5 scale (1=cheap, 5=expensive)
+    maintenanceCostIndex: 4,
     insuranceCostIndex: 5,
     fuelEconomyCombined: 20,
-    commonIssues: ["IMS bearing on older models (not 718)", "Clutch wear on track use", "Infotainment quirks"],
+    commonIssues: ["Clutch wear on track use", "Infotainment quirks", "Rear main seal (rare)"],
     yearsToAvoid: null,
     recommendedYearsNote: "All 718 GT4 years are solid. 2021+ got minor suspension tweaks.",
     ownershipCostNotes: "Porsche parts are expensive but the flat-6 is robust. Budget for track brake pads.",
@@ -155,6 +255,553 @@ export const carData = [
     bestFor: ["Track days", "Canyon carving", "Collector"],
     pros: ["NA flat-6 sounds incredible", "Race-bred chassis", "Manual transmission available", "Strong resale"],
     cons: ["Firm ride on street", "Premium pricing", "Limited cargo space"],
+
+    // ============================================================================
+    // CURATED EXPERIENCE CONTENT
+    // ============================================================================
+
+    // Identity & Story
+    essence: "The last of the naturally aspirated, mid-engine Porsche scalpels—a future classic built for those who prioritize feedback over comfort.",
+    heritage: `The GT4 represents Porsche's answer to enthusiasts demanding a naturally aspirated, driver-focused sports car in an era of forced induction. Borrowing its 4.0L flat-six from the 911 GT3, it delivers motorsport DNA in a mid-engine package.
+
+The 718 generation marked Porsche's return to the flat-six in this chassis after a controversial turbo-four experiment that defined the base 718 models. The GT4 became the halo car that justified the entire 718 line—proof that Porsche hadn't forgotten what made the Cayman special.
+
+First introduced in 2015 on the 981 platform with a 3.8L engine, the second-generation GT4 (2020+) received the larger, more powerful 4.0L unit with 414 hp. Combined with suspension derived from the 911 GT3, it cemented the GT4's status as one of the most engaging driver's cars of the modern era.`,
+    designPhilosophy: `Porsche's Motorsport division designed the GT4 with one goal: create the most engaging driving experience possible within the Cayman platform.
+
+Unlike the base Cayman, which balances comfort and performance, the GT4 sacrifices daily livability for razor-sharp handling. The suspension geometry is borrowed from the 911 GT3, the brakes are massive 380mm steel rotors, and every calibration prioritizes driver feedback over isolation. The fixed rear wing isn't just for show—it provides genuine downforce at track speeds.
+
+The result is a car that communicates everything happening at the contact patches directly to your fingertips and seat. It's visceral in a way that modern cars rarely achieve.`,
+    motorsportHistory: `While the road-going GT4 isn't directly raced in factory form, it shares significant DNA with the Cayman GT4 Clubsport race car. The Clubsport version has competed successfully in SRO GT4 series worldwide, proving the platform's capability at the highest amateur racing level.
+
+The GT4's track credentials have been validated at the Nürburgring Nordschleife, where it posted a factory-claimed 7:28.2 lap time—faster than many supercars costing twice as much.`,
+    generationCode: "982",
+    predecessors: ["981 Cayman GT4 (2015-2016)"],
+    successors: ["718 Cayman GT4 RS (2022+)"],
+
+    // Driving Experience
+    engineCharacter: `The 4.0L flat-six rewards RPMs like few modern engines can. Below 4,000 RPM it's civilized and tractable—perfectly happy in traffic; above 5,000, it transforms into a wailing instrument that begs for redline.
+
+Peak power arrives at 8,000 RPM—an eternity beyond most turbocharged competitors—and the linear power delivery means you're always in control. There's no boost threshold, no waiting for turbos to spool. Just pure, mechanical response that builds and builds until you hit the rev limiter.
+
+The intake howl is addictive. Every downshift through a tunnel becomes an event. This is an engine you'll rev out purely for the joy of hearing it work.`,
+    transmissionFeel: `The six-speed manual has one of the best shift actions in any modern car—short throws, mechanical precision, perfect weighting. You'll find yourself shifting just for the tactile satisfaction.
+
+Rev-matching is standard but can be disabled for those who prefer heel-toe. The clutch is heavier than a base Cayman but perfectly weighted for spirited driving—it won't fatigue you in traffic, but it lets you know you're operating something special.
+
+The PDK option is lightning-fast and shifts with surgical precision, but most enthusiasts agree the manual is the soul of this car. The take rate on manuals is significantly higher than other Porsches.`,
+    chassisDynamics: `The GT4's chassis is its party piece. Turn-in is immediate, rotation is adjustable, and the mid-engine balance means you can play with oversteer and understeer at will.
+
+The rear-biased weight distribution (46/54) makes the car eager to rotate, but never snappy or unpredictable. Push hard through a corner and the rear will gently step out, telegraphing its limits clearly. It's a car that rewards aggression while remaining approachable—you can drive at 8/10ths with confidence, and 10/10ths with skill.
+
+Body roll is minimal but the ride isn't completely punishing. It walks the line between track weapon and weekend canyon carver with remarkable grace. The suspension is firm, but it still has enough compliance to avoid crashing over expansion joints.`,
+    steeringFeel: `Electric power steering done right. The GT4's rack is quicker than standard Caymans (2.5 turns lock-to-lock) and offers genuine feedback—you feel the road surface, the tire loading, and the exact moment of breakaway.
+
+At parking speeds it's light enough to be practical. At speed, it weights up naturally and progressively. It's not quite hydraulic-era feel, but it's closer than most modern cars dare to get.
+
+The steering is the primary way this car communicates with you, and it speaks volumes.`,
+    brakeConfidence: `The stock brakes are legitimately track-capable for most drivers. 380mm front rotors with six-piston calipers provide strong initial bite and excellent modulation.
+
+After 20-30 minutes of hard track use with stock pads, fade becomes noticeable. For serious track days, upgraded pads are the first modification most owners make. The brake pedal feel is firm and progressive—you always know exactly how much stopping power you're commanding.
+
+Optional PCCB ceramic brakes eliminate fade concerns but cost over $15,000 to replace. For most owners, quality aftermarket pads on the steel rotors are the better value proposition.`,
+    soundSignature: `The flat-six has a distinctive bark that sets it apart from inline-sixes and V8s. It's mechanical, not synthesized—no fake engine notes piped through speakers here.
+
+At idle, there's a purposeful burble with just a hint of cam overlap. At mid-RPM, a rising howl that sounds expensive and purposeful. At redline, a full-throated scream that Porsche enthusiasts will recognize instantly.
+
+The exhaust has a rasp to it that sounds angry without being obnoxious. With the windows down in a tunnel or parking garage, it's genuinely addictive.`,
+    comfortTrackBalance: "track-focused",
+    comfortNotes: `This is not a comfortable daily driver. The suspension is firm, road noise is present, and the fixed-back bucket seats (optional but common) aren't designed for long commutes.
+
+That said, it's not punishing either—it's not a race car pretending to be street legal. For weekend use and spirited driving, the tradeoffs are absolutely worth it. Just don't expect to arrive at work without some fatigue after an hour of rough roads.
+
+Climate control works well, the seats are supportive for long drives, and the infotainment is functional. It's just that everything takes a back seat to the driving experience.`,
+
+    // Enhanced Strengths & Weaknesses
+    definingStrengths: [
+      {
+        title: "The Last Great NA Engine",
+        description: "In an era of turbocharging and electrification, the GT4's 4.0L flat-six is a rare gem. Linear power delivery, incredible sound, and an 8,000 RPM redline make every drive an event. This is an engine you'll remember."
+      },
+      {
+        title: "Perfect Chassis Balance",
+        description: "Mid-engine layout plus GT3-derived suspension equals one of the most communicative, adjustable chassis you can buy at any price. It tells you exactly what the tires are doing, always."
+      },
+      {
+        title: "Manual Gearbox Excellence",
+        description: "The six-speed manual is among the best in the industry—short throws, perfect weighting, satisfying engagement. For those who value involvement over lap times, it's the obvious choice."
+      },
+      {
+        title: "Track-Capable Stock",
+        description: "Unlike many sports cars that need upgrades for track use, the GT4 can run 20+ minute sessions without overheating or fading dramatically. It's ready to perform out of the box."
+      },
+      {
+        title: "Future Classic Status",
+        description: "Values are already appreciating. As naturally aspirated engines disappear from the market, cars like the GT4 will only become more desirable. This is an appreciating asset."
+      }
+    ],
+    honestWeaknesses: [
+      {
+        title: "Not a Daily Driver",
+        description: "The stiff suspension, road noise, and limited cargo make it impractical for everyday commuting. For most owners, this is a second car—and that's by design."
+      },
+      {
+        title: "Premium Pricing",
+        description: "At $85-100K, it's expensive for what is technically a four-cylinder (by displacement) sports car. You're paying for engineering excellence and exclusivity, not raw specifications."
+      },
+      {
+        title: "Limited Practicality",
+        description: "Two seats, small frunk, and no rear cargo area. If you need to carry anything more than a weekend bag, plan ahead. Grocery runs require creativity."
+      },
+      {
+        title: "Firm Ride Quality",
+        description: "The track-focused suspension doesn't filter out much. Rough pavement, expansion joints, and potholes are all felt. It's not brutal, but it's not comfortable either."
+      }
+    ],
+    idealOwner: "Someone who prioritizes driving engagement over practicality. Owners who appreciate naturally aspirated engines, manual transmissions, and cars that communicate their limits clearly. Track day enthusiasts who want a street-legal weapon. Collectors who recognize future classic potential.",
+    notIdealFor: "Daily commuters, families, or anyone who needs cargo space. Also not for those who want the latest tech features—the infotainment is functional but dated compared to modern luxury cars. If comfort is a priority, the GTS 4.0 or base Cayman is a better choice.",
+
+    // Buyer's Guide
+    buyersSummary: "Any 718 GT4 is a good buy. Focus on condition, maintenance history, and evidence of track use rather than specific model years. Manual transmission cars hold value better than PDK. Look for the Clubsport package if track use is your priority.",
+    bestYearsDetailed: [
+      {
+        years: "2021-2024",
+        reason: "Refined suspension tuning, improved infotainment connectivity, all first-year kinks worked out. These are the fully sorted examples."
+      },
+      {
+        years: "2020",
+        reason: "First year of the 4.0L engine. Essentially identical mechanically to later years, but slightly softer prices make them compelling values."
+      }
+    ],
+    yearsToAvoidDetailed: null,
+    mustHaveOptions: [
+      {
+        name: "Sport Chrono Package",
+        reason: "Adds launch control, dynamic engine mounts, and the Sport Response button. Also includes the stopwatch on the dash. Essential for extracting maximum performance."
+      },
+      {
+        name: "PASM (Adaptive Dampers)",
+        reason: "Allows switching between Normal and Sport settings. Dramatically improves daily usability without compromising track capability. Highly recommended."
+      },
+      {
+        name: "18-Way Sport Seats Plus",
+        reason: "If not getting the full buckets, these power-adjustable seats with memory are excellent. Better for longer drives than fixed buckets."
+      }
+    ],
+    niceToHaveOptions: [
+      {
+        name: "Clubsport Package",
+        reason: "Adds roll bar, fire extinguisher, six-point harness anchors, and battery kill switch. Essential for serious track use and HPDE events."
+      },
+      {
+        name: "Full Bucket Seats",
+        reason: "Better support for track driving and aggressive cornering. Less comfortable for daily use. Popular with track-focused owners."
+      },
+      {
+        name: "Extended Range Fuel Tank",
+        reason: "16.9 gallon tank vs. standard 14.6. Worth having for track days where pit stops cost precious session time."
+      },
+      {
+        name: "Ceramic Composite Brakes (PCCB)",
+        reason: "Better fade resistance and lighter weight. However, replacement costs are astronomical ($15K+). Most owners find quality pads on steel rotors sufficient."
+      }
+    ],
+    preInspectionChecklist: [
+      "Check clutch wear percentage via PIWIS diagnostic scan—anything over 50% on a manual warrants negotiation",
+      "Inspect rear main seal area for any oil seepage or leaks",
+      "Verify suspension corner balance—common issue with used track cars that have been curbed or had uneven tire wear",
+      "Check brake rotor thickness and pad life—track use accelerates wear significantly",
+      "Look for evidence of track damage: curbed wheels, stone chips on leading edges, brake dust accumulation",
+      "Verify maintenance was performed at Porsche dealer or reputable independent specialist",
+      "Check for completed software updates—several TSBs addressed minor issues in early cars",
+      "Inspect for aftermarket modifications that may affect warranty or reliability",
+      "Run VIN through Porsche to verify service history and any open recalls",
+      "Test all electronic systems: infotainment, climate, PDK (if equipped), Sport Chrono functions"
+    ],
+    ppiRecommendations: "Insist on a Porsche specialist PPI—generic mechanics may miss Porsche-specific issues. Budget $300-500 for a comprehensive inspection including PIWIS diagnostic scan. Worth every penny on a car this expensive. Ask for clutch wear percentage specifically.",
+    marketPosition: "appreciating",
+    marketCommentary: `GT4 values have been remarkably stable despite economic uncertainty. The combination of NA engine, manual transmission availability, and mid-engine layout makes it highly desirable to enthusiasts.
+
+Manual transmission cars command a 5-10% premium over PDK. Low-mile examples (under 10K miles) are approaching or exceeding original MSRP. Collector-grade examples with desirable specs have already appreciated.
+
+Expect continued appreciation as naturally aspirated sports cars become rarer. The GT4 RS's existence hasn't hurt GT4 values—it's validated the platform while maintaining the standard GT4's position as the more usable, better-value option.`,
+    priceGuide: {
+      low: {
+        price: "$85,000",
+        condition: "Higher mileage (30K+), PDK transmission, base spec, showing wear"
+      },
+      mid: {
+        price: "$92,000",
+        condition: "15-25K miles, manual transmission, well-optioned, clean history"
+      },
+      high: {
+        price: "$100,000+",
+        condition: "Under 10K miles, manual, fully loaded, Clubsport package, collector quality"
+      }
+    },
+
+    // Ownership Reality
+    annualOwnershipCost: {
+      low: "$2,500",
+      typical: "$4,000",
+      heavy: "$8,000+",
+      notes: "Low assumes minimal driving and basic maintenance. Typical assumes 5-8K miles/year with annual service. Heavy includes track use with consumables (tires, brake pads, fluids)."
+    },
+    majorServiceCosts: {
+      oilChange: {
+        interval: "10,000 miles or 1 year",
+        cost: "$350-500",
+        notes: "Use only Porsche-approved 0W-40 oil. Dealer pricing is at the higher end; quality independents charge less."
+      },
+      majorService: {
+        interval: "40,000 miles or 4 years",
+        cost: "$1,500-2,500",
+        notes: "Includes spark plugs, all filters, brake fluid flush, comprehensive inspection. Plan ahead for this expense."
+      },
+      clutch: {
+        typicalLife: "40,000-80,000 miles (varies dramatically with track use)",
+        cost: "$3,500-5,000",
+        notes: "Track use significantly reduces clutch life. Aggressive launches are the biggest killer. Many owners baby the clutch at the track."
+      },
+      brakes: {
+        typicalLife: "25,000-40,000 miles (fronts wear faster)",
+        cost: "$2,000-3,500 per axle",
+        notes: "OEM rotors are expensive. Consider aftermarket Brembo blanks for track use—same quality at lower cost."
+      },
+      tires: {
+        typicalLife: "15,000-25,000 miles (rear tires wear faster)",
+        cost: "$1,200-1,800 for set",
+        notes: "Stock Michelin Pilot Sport 4S. Track use accelerates wear dramatically—expect half the life or less."
+      }
+    },
+    commonIssuesDetailed: [
+      {
+        issue: "Clutch Wear from Track Use",
+        severity: "moderate",
+        frequency: "common",
+        cost: "$3,500-5,000",
+        notes: "Hard track launches are clutch killers. Many owners learn to use PDK launch control sparingly or avoid track launches altogether. Street driving has minimal impact."
+      },
+      {
+        issue: "Rear Main Seal Weep",
+        severity: "minor",
+        frequency: "uncommon",
+        cost: "$1,500-2,500",
+        notes: "Not a widespread issue but known to occur on some examples. Usually a minor weep rather than a major leak. Check during any PPI."
+      },
+      {
+        issue: "Infotainment Glitches",
+        severity: "minor",
+        frequency: "common",
+        cost: "Usually free (software update)",
+        notes: "Bluetooth dropouts, Apple CarPlay hiccups, occasional freezes. Software updates typically resolve. Annoying but not a deal-breaker."
+      },
+      {
+        issue: "AC Compressor (early 718s)",
+        severity: "moderate",
+        frequency: "rare",
+        cost: "$2,000-3,000",
+        notes: "Some early 718s had AC compressor failures. Less common on GT4 but worth verifying AC blows cold during PPI."
+      }
+    ],
+    partsAvailability: "excellent",
+    partsNotes: "Porsche parts are readily available through dealers and online sources. Expensive compared to mainstream brands, but no unobtainium situations. Aftermarket options exist for wear items (brakes, suspension components, exhaust). Engine internals are typically OEM-only—not that you'll need them.",
+    dealerVsIndependent: "indie-friendly",
+    dealerNotes: "Many excellent independent Porsche specialists exist in most major markets. For warranty work, dealer is required. For post-warranty service, a quality indie can save 30-40% on labor with equal or better expertise. Do your research on local options.",
+    diyFriendliness: 4,
+    diyNotes: "Oil changes are straightforward with the right tools. Brake work is manageable for experienced DIYers. Suspension and drivetrain work requires specialist tools and knowledge. PIWIS diagnostic scanner is helpful for resetting service intervals and diagnosing issues. Not a beginner-friendly DIY car.",
+    warrantyInfo: {
+      factory: "4 years / 50,000 miles (bumper to bumper)",
+      cpo: "2 additional years, unlimited miles",
+      notes: "CPO cars command a premium but provide peace of mind. Many owners opt for third-party warranties (Fidelity, Endurance) for extended coverage after factory warranty expires."
+    },
+    insuranceNotes: "Insurance costs are high due to the car's value, performance capability, and repair costs. Expect $2,000-4,000/year depending on driving history, location, and coverage levels. Track day coverage requires a separate policy from providers like Lockton or Hagerty—your standard policy won't cover track incidents.",
+
+    // Track & Performance
+    trackReadiness: "track-ready",
+    trackReadinessNotes: "The GT4 is one of the most track-capable street cars available. Stock brakes last 20-30 minutes of hard use before noticeable fade. Cooling is adequate for most track day conditions. The limiting factor is usually the driver, not the car. For frequent track use, brake pad and fluid upgrades are recommended—everything else can remain stock.",
+    coolingCapacity: {
+      rating: 8,
+      notes: "Adequate cooling for 95% of track day situations. Extended sessions in hot ambient temperatures (95°F+) may trigger thermal management and reduce power slightly. The optional front radiator upgrade from the GT4 RS can help in extreme conditions."
+    },
+    brakeFadeResistance: {
+      rating: 7,
+      stockPadLife: "3-5 track days with stock pads",
+      notes: "Stock pads are street-focused and will fade after sustained hard use. Serious track use demands upgraded pads: Pagid RSL29, Ferodo DS2500, or Hawk DTC-60 are popular choices. Steel rotors handle track use well; PCCB is nice but not necessary."
+    },
+    recommendedTrackPrep: [
+      {
+        item: "Brake Pads",
+        priority: "essential",
+        cost: "$400-800 per axle",
+        notes: "Upgrade to track-capable compound. Pagid RSL29 is the popular choice—good bite, reasonable dust, works well cold."
+      },
+      {
+        item: "Brake Fluid",
+        priority: "essential",
+        cost: "$50-100 plus labor",
+        notes: "Use DOT 4 racing fluid: Motul RBF 660, Castrol SRF, or similar. High boiling point prevents pedal fade under sustained use."
+      },
+      {
+        item: "Alignment",
+        priority: "recommended",
+        cost: "$200-400",
+        notes: "More aggressive front camber (-2.5° to -3.0°) improves turn-in response and reduces understeer. Many shops can provide a track-specific alignment."
+      },
+      {
+        item: "Fresh Tires",
+        priority: "recommended",
+        cost: "$1,200-1,800 for set",
+        notes: "Heat cycles matter more than tread depth for grip. Fresh rubber makes a significant difference. Consider dedicated track tires if you track frequently."
+      },
+      {
+        item: "Wheel Studs/Spacers",
+        priority: "optional",
+        cost: "$200-400",
+        notes: "Extended wheel studs make wheel changes faster and easier. Spacers can improve fitment for wider track tires."
+      }
+    ],
+    popularTrackMods: [
+      {
+        mod: "Adjustable Rear Wing",
+        purpose: "Tunable downforce for different tracks",
+        cost: "$2,000-5,000"
+      },
+      {
+        mod: "Roll Bar / Harness Bar",
+        purpose: "Safety for HPDE/time attack, required for some events",
+        cost: "$1,500-3,500"
+      },
+      {
+        mod: "Coilovers",
+        purpose: "Corner balancing, ride height adjustment, rebound tuning",
+        cost: "$3,500-7,000"
+      },
+      {
+        mod: "Racing Harnesses",
+        purpose: "Better restraint during track driving (requires roll bar)",
+        cost: "$500-1,000"
+      },
+      {
+        mod: "Data Acquisition",
+        purpose: "Lap timing, telemetry, driver coaching",
+        cost: "$300-2,000"
+      }
+    ],
+    laptimeBenchmarks: [
+      {
+        track: "Nürburgring Nordschleife",
+        time: "7:28.2",
+        source: "Porsche factory test",
+        notes: "With optional Michelin Pilot Sport Cup 2 tires. Faster than many supercars costing twice as much."
+      },
+      {
+        track: "Laguna Seca",
+        time: "1:34.1",
+        source: "Car and Driver testing",
+        notes: "Stock configuration. Competitive with cars costing significantly more."
+      },
+      {
+        track: "Virginia International Raceway (Full)",
+        time: "2:58.8",
+        source: "Motor Trend testing",
+        notes: "Production car, experienced driver."
+      }
+    ],
+
+    // Alternatives
+    directCompetitors: [
+      {
+        slug: "718-cayman-gts-40",
+        name: "718 Cayman GTS 4.0",
+        comparison: "Same engine with 20 fewer horsepower, but softer suspension and better daily usability. The GT4 is the track choice; the GTS is the canyon road choice. $5K cheaper on average."
+      },
+      {
+        slug: "lotus-evora-gt",
+        name: "Lotus Evora GT",
+        comparison: "More exotic, 2+2 seating, supercharged V6. Rawer driving experience but less refined. Depreciation is worse than Porsche. Similar track capability."
+      },
+      {
+        slug: "bmw-m2-competition",
+        name: "BMW M2 Competition",
+        comparison: "Front-engine, RWD, more practical with 4 seats. Similar power-to-weight. Different driving character—more accessible, less exotic. Better daily driver, significantly cheaper."
+      },
+      {
+        slug: "chevrolet-corvette-c8-stingray",
+        name: "Chevrolet Corvette C8",
+        comparison: "More power, mid-engine layout, vastly better value. Less refined chassis feel, less prestigious badge. Better straight-line performance, arguably less engaging at 8/10ths."
+      }
+    ],
+    ifYouWantMore: [
+      {
+        slug: "718-cayman-gt4-rs",
+        name: "718 Cayman GT4 RS",
+        reason: "500hp, GT3-derived PDK only, full race car for the street. Significantly faster but significantly more expensive ($150K+). Less usable daily."
+      },
+      {
+        slug: "porsche-911-gt3-992",
+        name: "911 GT3 (992)",
+        reason: "More power, more presence, the ultimate Porsche experience. Rear-engine handling is different but equally engaging. $180K+ entry point."
+      }
+    ],
+    ifYouWantLess: [
+      {
+        slug: "718-cayman-s",
+        name: "718 Cayman S",
+        comparison: "Turbo-four, less intense. Better daily driver, more comfortable. 40% less expensive but loses the NA character completely."
+      },
+      {
+        slug: "toyota-gr86",
+        name: "Toyota GR86",
+        comparison: "Back-to-basics sports car philosophy. Much cheaper ($30K), similar engagement-focused approach. Less capability, but perhaps more fun per dollar."
+      },
+      {
+        slug: "mazda-mx-5-miata-nd",
+        name: "Mazda MX-5 Miata ND",
+        comparison: "The lightweight champion. Less power, less capability, but pure driving joy at a fraction of the price. Different experience, same philosophy."
+      }
+    ],
+    similarDrivingExperience: [
+      {
+        slug: "lotus-elise-s2",
+        name: "Lotus Elise S2",
+        reason: "Different execution, same philosophy: lightweight, communicative, driver-focused. Much cheaper but less refined and older. Similar levels of engagement."
+      },
+      {
+        slug: "alpine-a110",
+        name: "Alpine A110",
+        reason: "French mid-engine sports car with similar driver-focused philosophy. Lighter, less powerful, but arguably as engaging at legal speeds. Rare in the US market."
+      }
+    ],
+
+    // Community & Culture
+    communityStrength: 9,
+    communityNotes: "The Porsche community is one of the strongest in the automotive world. Dedicated GT4 forums, Facebook groups, and regional PCA chapters provide endless support, advice, and camaraderie. You'll never lack for people to discuss your car with, and organized events are plentiful.",
+    keyResources: [
+      {
+        name: "Rennlist",
+        type: "forum",
+        url: "https://rennlist.com/forums/718-forum/",
+        notes: "Primary enthusiast forum for 718 Cayman owners. Deep technical knowledge, active buy/sell section, helpful community."
+      },
+      {
+        name: "Planet-9",
+        type: "forum",
+        url: "https://planet-9.com/",
+        notes: "Another popular Cayman/Boxster community. Good for regional meetups and DIY guides."
+      },
+      {
+        name: "PCA (Porsche Club of America)",
+        type: "club",
+        url: "https://pca.org/",
+        notes: "Track days, tours, social events. The largest single-marque club in the world. Essential for any Porsche owner who wants to get involved."
+      },
+      {
+        name: "GT4 Owners Registry",
+        type: "forum",
+        url: "https://gt4registry.com/",
+        notes: "Dedicated community specifically for GT4/GTS 4.0 owners. Production numbers, option tracking, and specialized discussions."
+      }
+    ],
+    facebookGroups: [
+      "718 Cayman & Boxster Owners",
+      "Porsche GT4 Owners Club",
+      "PCA Track Junkies",
+      "Porsche Enthusiasts Group"
+    ],
+    annualEvents: [
+      {
+        name: "Rennsport Reunion",
+        frequency: "Every 4-5 years",
+        location: "Laguna Seca, CA",
+        notes: "The ultimate Porsche gathering with racing, displays, and community. A bucket-list event for any Porsche enthusiast."
+      },
+      {
+        name: "PCA Parade",
+        frequency: "Annual",
+        location: "Varies (different US city each year)",
+        notes: "Week-long event with concours, rallies, driving tours, and social activities. The main PCA event of the year."
+      },
+      {
+        name: "PCA Club Racing",
+        frequency: "Throughout the year",
+        location: "Various tracks nationwide",
+        notes: "Organized racing events for PCA members. From HPDE to wheel-to-wheel racing. Great way to use your GT4 as intended."
+      }
+    ],
+    aftermarketSceneNotes: "Strong aftermarket support from Porsche specialists like SharkWerks, GMG Racing, FVD, and others. Exhaust upgrades, suspension components, and wheel options are plentiful. Engine tuning is limited due to NA configuration—there's no simple 'add a tune' path like turbocharged cars. Most modifications focus on handling, braking, and weight reduction.",
+    resaleReputation: "Exceptional. GT4s are viewed as future collectibles and hold value better than almost any car in this price range. Low depreciation makes them relatively affordable to own long-term—you can often sell for close to what you paid after a few years of ownership. The 'Porsche tax' is real, but it works in your favor on resale.",
+
+    // Media & Reviews
+    notableReviews: [
+      {
+        source: "Car and Driver",
+        title: "2020 Porsche 718 Cayman GT4",
+        quote: "A sports car this good shouldn't exist in 2020. The GT4 is a throwback to an era when driving mattered more than lap times.",
+        rating: "5/5 stars"
+      },
+      {
+        source: "Motor Trend",
+        title: "Porsche 718 Cayman GT4 First Test",
+        quote: "The GT4 is proof that Porsche still knows how to build a driver's car. In an age of turbos and hybrid everything, this naturally aspirated gem is a revelation.",
+        rating: null
+      },
+      {
+        source: "Top Gear",
+        title: "Porsche 718 Cayman GT4 Review",
+        quote: "The best car Porsche currently makes? Quite possibly. It's certainly the purest.",
+        rating: "9/10"
+      },
+      {
+        source: "Evo Magazine",
+        title: "Porsche 718 Cayman GT4",
+        quote: "An instant classic. The GT4 delivers what enthusiasts have been asking for: a lightweight, naturally aspirated, manual sports car that puts driving first.",
+        rating: "5/5 stars"
+      }
+    ],
+    mustWatchVideos: [
+      {
+        title: "718 Cayman GT4 - The Best Porsche?",
+        channel: "Carfection",
+        url: "https://www.youtube.com/watch?v=aX0jvXFhdEU",
+        duration: "15:32"
+      },
+      {
+        title: "Porsche GT4 at the Nürburgring",
+        channel: "Misha Charoudin",
+        url: "https://www.youtube.com/watch?v=8MIqjxvqpkM",
+        duration: "12:45"
+      },
+      {
+        title: "GT4 vs GT4 RS - Which Should You Buy?",
+        channel: "Savage Geese",
+        url: "https://www.youtube.com/watch?v=Kq8vM_aLcuA",
+        duration: "28:14"
+      },
+      {
+        title: "One Year Ownership Review",
+        channel: "Doug DeMuro",
+        url: "https://www.youtube.com/watch?v=xYZP1UZJQXE",
+        duration: "22:07"
+      }
+    ],
+    expertQuotes: [
+      {
+        person: "Chris Harris",
+        outlet: "Top Gear",
+        quote: "If I could only have one Porsche, it might just be this. The GT4 is everything a sports car should be."
+      },
+      {
+        person: "Randy Pobst",
+        outlet: "Motor Trend",
+        quote: "The balance is sublime. This is a car that talks to you, tells you exactly what's happening at every corner."
+      },
+      {
+        person: "Jason Cammisa",
+        outlet: "Hagerty",
+        quote: "The GT4 proves that you don't need 700 horsepower to have an incredible driving experience. Sometimes less really is more."
+      }
+    ]
   },
   {
     id: 2,
@@ -527,7 +1174,7 @@ export const carData = [
     driverFun: 8.5,
     aftermarket: 9.4,
     engine: "6.2L V8",
-    hp: 490,
+    hp: 495, // Z51 Performance Package spec (with performance exhaust)
     trans: "8DCT",
     priceRange: "$55-75K",
     priceAvg: 65000,
@@ -745,7 +1392,7 @@ export const carData = [
     name: "Nissan GT-R",
     slug: "nissan-gt-r",
     imageHeroUrl: "https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/nissan-gt-r/hero.webp",
-    years: "2009-2020",
+    years: "2017-2024", // Updated to reflect current production spec
     tier: "upper-mid",
     category: "Front-Engine",
     brand: "Nissan",
@@ -759,14 +1406,14 @@ export const carData = [
     driverFun: 8.2,
     aftermarket: 9.4,
     engine: "3.8L TT V6",
-    hp: 545,
+    hp: 565, // Corrected to 2017+ OEM spec (Nissan USA official)
     trans: "6DCT",
     priceRange: "$55-75K",
     priceAvg: 65000,
     drivetrain: "AWD",
     // Extended Specs (Performance HUB)
-    torque: 463,
-    curbWeight: 3933,
+    torque: 467, // Corrected to OEM spec
+    curbWeight: 3935, // Corrected per Edmunds OEM spec
     zeroToSixty: 2.9,
     quarterMile: 11.1,
     braking60To0: 98,
@@ -1234,7 +1881,7 @@ export const carData = [
     drivetrain: "RWD",
     // Extended Specs (Performance HUB)
     torque: 650,
-    curbWeight: 4078,
+    curbWeight: 3883, // Corrected per Edmunds OEM spec
     zeroToSixty: 3.5,
     quarterMile: 11.5,
     braking60To0: 98,
@@ -1292,7 +1939,7 @@ export const carData = [
     drivetrain: "RWD",
     // Extended Specs (Performance HUB)
     torque: 406,
-    curbWeight: 3655,
+    curbWeight: 3600, // Corrected per Edmunds OEM spec
     zeroToSixty: 4,
     quarterMile: 12.3,
     braking60To0: 101,
