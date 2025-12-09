@@ -575,41 +575,241 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
 }
 
 /**
- * Systems Impact Panel - shows which systems are affected by the current build
+ * Build Summary Panel - Comprehensive build validation and insights
+ * Consolidates: Systems Impact + Dependency Warnings + Recommendations
  */
-function SystemsImpactPanel({ selectedModules }) {
+function BuildSummaryPanel({ selectedModules, availableModules, onAddMods, car }) {
+  // Get system impacts
   const impacts = useMemo(() => {
     if (!selectedModules || selectedModules.length === 0) return [];
     return getSystemImpactOverview(selectedModules);
   }, [selectedModules]);
-
-  if (!impacts || impacts.length === 0) return null;
+  
+  // Get validation data
+  const validation = useMemo(() => {
+    if (selectedModules.length === 0) return null;
+    return validateUpgradeSelection(selectedModules, car);
+  }, [selectedModules, car]);
+  
+  // Get recommended upgrades
+  const recommendations = useMemo(() => {
+    if (selectedModules.length === 0) return [];
+    return getRecommendedUpgrades(selectedModules, car);
+  }, [selectedModules, car]);
+  
+  // Check simple deps from upgrades
+  const simpleDeps = useMemo(() => {
+    const allRequires = new Set();
+    const allRecommended = new Set();
+    
+    selectedModules.forEach(modKey => {
+      const mod = getUpgradeByKey(modKey);
+      if (!mod) return;
+      
+      if (mod.requires) {
+        mod.requires.forEach(reqKey => {
+          if (!selectedModules.includes(reqKey)) {
+            allRequires.add(reqKey);
+          }
+        });
+      }
+      
+      if (mod.stronglyRecommended) {
+        mod.stronglyRecommended.forEach(recKey => {
+          if (!selectedModules.includes(recKey) && !allRequires.has(recKey)) {
+            allRecommended.add(recKey);
+          }
+        });
+      }
+    });
+    
+    const availableKeys = Object.values(availableModules || {}).flat().map(m => m.key);
+    
+    return {
+      required: [...allRequires].filter(k => availableKeys.includes(k)),
+      recommended: [...allRecommended].filter(k => availableKeys.includes(k)),
+    };
+  }, [selectedModules, availableModules]);
+  
+  // Calculate stats
+  const stats = useMemo(() => {
+    let improves = 0;
+    let stresses = 0;
+    
+    impacts.forEach(item => {
+      improves += item.improves || 0;
+      stresses += (item.stresses || 0) + (item.compromises || 0);
+    });
+    
+    return {
+      upgrades: selectedModules.length,
+      systems: impacts.length,
+      improves,
+      stresses,
+    };
+  }, [selectedModules, impacts]);
+  
+  // Get issues and synergies from validation
+  const criticalIssues = validation?.critical || [];
+  const warningIssues = validation?.warnings || [];
+  const synergies = validation?.synergies || [];
+  
+  // Filter to available modules
+  const availableKeys = Object.values(availableModules || {}).flat().map(m => m.key);
+  const filteredRequired = simpleDeps.required.filter(k => availableKeys.includes(k));
+  const filteredRecommended = simpleDeps.recommended.filter(k => availableKeys.includes(k));
+  
+  // Determine build health status
+  const hasIssues = filteredRequired.length > 0 || criticalIssues.length > 0;
+  const hasWarnings = filteredRecommended.length > 0 || warningIssues.length > 0;
+  const healthStatus = hasIssues ? 'critical' : hasWarnings ? 'warning' : 'healthy';
+  
+  if (selectedModules.length === 0) return null;
 
   return (
-    <div className={styles.systemImpactPanel}>
-      <h4 className={styles.sectionTitle}>Systems Impacted</h4>
-      <div className={styles.systemImpactGrid}>
-        {impacts.map(item => (
-          <div key={item.system.key} className={styles.systemImpactCard}>
-            <div className={styles.systemImpactHeader}>
-              <span className={styles.systemImpactName}>{item.system.name}</span>
-              <span className={styles.systemImpactCount}>
-                {item.totalImpacts} touchpoint{item.totalImpacts !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div className={styles.systemImpactStats}>
-              {item.improves > 0 && (
-                <span className={styles.systemImpactPositive}>+{item.improves} improves</span>
-              )}
-              {(item.stresses > 0 || item.compromises > 0) && (
-                <span className={styles.systemImpactRisk}>
-                  {item.stresses + item.compromises} stresses/risks
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+    <div className={styles.buildSummaryPanel} data-status={healthStatus}>
+      {/* Build Health Header */}
+      <div className={styles.buildSummaryHeader}>
+        <div className={styles.buildSummaryTitle}>
+          <Icons.wrench size={18} />
+          <h4>Build Summary</h4>
+          {healthStatus === 'healthy' && <span className={styles.healthBadge} data-status="healthy">✓ Ready</span>}
+          {healthStatus === 'warning' && <span className={styles.healthBadge} data-status="warning">⚠ Review</span>}
+          {healthStatus === 'critical' && <span className={styles.healthBadge} data-status="critical">⚠ Action Needed</span>}
+        </div>
       </div>
+      
+      {/* Stats Row */}
+      <div className={styles.buildStatsRow}>
+        <div className={styles.buildStat}>
+          <span className={styles.buildStatNumber}>{stats.upgrades}</span>
+          <span className={styles.buildStatLabel}>Upgrades</span>
+        </div>
+        <div className={styles.buildStat}>
+          <span className={styles.buildStatNumber}>{stats.systems}</span>
+          <span className={styles.buildStatLabel}>Systems</span>
+        </div>
+        <div className={styles.buildStat} data-type="positive">
+          <span className={styles.buildStatNumber}>+{stats.improves}</span>
+          <span className={styles.buildStatLabel}>Improvements</span>
+        </div>
+        <div className={styles.buildStat} data-type={stats.stresses > 0 ? 'negative' : 'neutral'}>
+          <span className={styles.buildStatNumber}>{stats.stresses}</span>
+          <span className={styles.buildStatLabel}>Stress Points</span>
+        </div>
+      </div>
+      
+      {/* Issues Section - Required/Critical */}
+      {filteredRequired.length > 0 && (
+        <div className={styles.buildIssueBox} data-severity="critical">
+          <div className={styles.buildIssueHeader}>
+            <Icons.alertTriangle size={16} />
+            <span>Missing Requirements</span>
+          </div>
+          <p className={styles.buildIssueDesc}>
+            These upgrades are required for your selected mods to work properly:
+          </p>
+          <div className={styles.buildIssueList}>
+            {filteredRequired.map(key => {
+              const upgrade = getUpgradeByKey(key);
+              const rec = recommendations.find(r => r.upgradeKey === key);
+              return (
+                <div key={key} className={styles.buildIssueItem}>
+                  <div className={styles.buildIssueContent}>
+                    <span className={styles.buildIssueName}>{upgrade?.name || key}</span>
+                    {rec?.reason && <span className={styles.buildIssueReason}>{rec.reason}</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <button 
+            className={styles.buildActionBtn}
+            onClick={() => onAddMods(filteredRequired)}
+          >
+            <Icons.check size={14} />
+            Add Required ({filteredRequired.length})
+          </button>
+        </div>
+      )}
+      
+      {/* Warnings Section - Recommended */}
+      {filteredRecommended.length > 0 && (
+        <div className={styles.buildIssueBox} data-severity="warning">
+          <div className={styles.buildIssueHeader}>
+            <Icons.info size={16} />
+            <span>Strongly Recommended</span>
+          </div>
+          <p className={styles.buildIssueDesc}>
+            These upgrades pair well with your selections for best results:
+          </p>
+          <div className={styles.buildIssueList}>
+            {filteredRecommended.map(key => {
+              const upgrade = getUpgradeByKey(key);
+              const rec = recommendations.find(r => r.upgradeKey === key);
+              return (
+                <div key={key} className={styles.buildIssueItem}>
+                  <div className={styles.buildIssueContent}>
+                    <span className={styles.buildIssueName}>{upgrade?.name || key}</span>
+                    {rec?.reason && <span className={styles.buildIssueReason}>{rec.reason}</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <button 
+            className={styles.buildActionBtnSecondary}
+            onClick={() => onAddMods(filteredRecommended)}
+          >
+            Add Recommended ({filteredRecommended.length})
+          </button>
+        </div>
+      )}
+      
+      {/* Synergies Section */}
+      {synergies.length > 0 && (
+        <div className={styles.buildSynergyBox}>
+          <div className={styles.buildIssueHeader}>
+            <Icons.check size={16} />
+            <span>Great Combinations</span>
+          </div>
+          {synergies.map((synergy, idx) => (
+            <p key={idx} className={styles.buildSynergyText}>
+              <strong>{synergy.name}:</strong> {synergy.message}
+            </p>
+          ))}
+        </div>
+      )}
+      
+      {/* Systems Overview - Compact */}
+      {impacts.length > 0 && (
+        <div className={styles.buildSystemsOverview}>
+          <div className={styles.buildSystemsHeader}>
+            <span>Systems Affected</span>
+          </div>
+          <div className={styles.buildSystemsGrid}>
+            {impacts.map(item => (
+              <div 
+                key={item.system.key} 
+                className={styles.buildSystemChip}
+                data-has-risk={(item.stresses || 0) + (item.compromises || 0) > 0}
+              >
+                <span className={styles.buildSystemName}>{item.system.name}</span>
+                <div className={styles.buildSystemStats}>
+                  {item.improves > 0 && (
+                    <span className={styles.buildSystemPositive}>+{item.improves}</span>
+                  )}
+                  {(item.stresses > 0 || item.compromises > 0) && (
+                    <span className={styles.buildSystemNegative}>
+                      {item.stresses + item.compromises} stress
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -837,15 +1037,18 @@ export default function PerformanceHub({ car }) {
       {/* ================================================================
           NAVIGATION BAR
           ================================================================ */}
-      <nav className={styles.hubNav}>
-        <Link href="/performance" className={styles.backLink}>
-          <Icons.arrowLeft size={16} />
-          Back to Performance HUB
-        </Link>
-        <Link href={`/cars/${car.slug}`} className={styles.viewProfileBtn}>
-          View Full Profile →
-        </Link>
-      </nav>
+      <div className={styles.hubNavWrapper}>
+        <nav className={styles.hubNav}>
+          <Link href="/performance" className={styles.backLink}>
+            <Icons.arrowLeft size={16} />
+            Back to Performance HUB
+          </Link>
+          <Link href={`/cars/${car.slug}`} className={styles.viewProfileLink}>
+            View Car Details
+            <Icons.chevronRight size={14} />
+          </Link>
+        </nav>
+      </div>
 
       {/* ================================================================
           CAR HERO SECTION - GT-Inspired Layout
@@ -1041,9 +1244,6 @@ export default function PerformanceHub({ car }) {
           )}
         </div>
         
-        {/* Systems Impact Overview */}
-        <SystemsImpactPanel selectedModules={effectiveSelectedModules} />
-        
         {/* Experience Scores Section */}
         <div className={styles.scoresSection}>
           <h4 className={styles.sectionTitle}>Experience Scores</h4>
@@ -1142,15 +1342,15 @@ export default function PerformanceHub({ car }) {
               </div>
             ))}
           </div>
-          
-          {/* Dependency Warnings - Powered by Connected Tissue Matrix */}
-          <DependencyWarnings 
-            selectedModules={effectiveSelectedModules}
-            availableModules={availableUpgrades.modulesByCategory}
-            onAddMods={handleAddRequiredMods}
-            car={car}
-          />
         </div>
+        
+        {/* Build Summary Panel - Comprehensive validation at the bottom */}
+        <BuildSummaryPanel 
+          selectedModules={effectiveSelectedModules}
+          availableModules={availableUpgrades.modulesByCategory}
+          onAddMods={handleAddRequiredMods}
+          car={car}
+        />
         
         {/* About These Estimates - Collapsible */}
         <div className={styles.estimatesInfo}>
@@ -1159,17 +1359,11 @@ export default function PerformanceHub({ car }) {
         
         {/* Footer Links */}
         <div className={styles.hubFooter}>
-          {effectiveSelectedModules.length > 0 && (
-            <Link 
-              href={`/education?upgrades=${effectiveSelectedModules.join(',')}`}
-              className={styles.footerLinkPrimary}
-            >
-              <Icons.wrench size={14} />
-              View in Build Planner
-            </Link>
-          )}
           <Link href="/education" className={styles.footerLink}>
-            Learn About Upgrades <Icons.chevronRight size={14} />
+            Learn About Modifications <Icons.chevronRight size={14} />
+          </Link>
+          <Link href="/education#systems" className={styles.footerLink}>
+            Explore Vehicle Systems <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>
             Have Questions? <Icons.chevronRight size={14} />

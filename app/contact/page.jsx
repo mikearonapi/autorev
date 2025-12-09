@@ -81,6 +81,26 @@ export default function Contact() {
     setSubmitError(null);
     
     try {
+      // Send email notification to Cory
+      const emailResponse = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          interest: formData.interest,
+          car: formData.car,
+          message: formData.message,
+        }),
+      });
+      
+      const emailResult = await emailResponse.json();
+      
+      if (!emailResult.success) {
+        console.warn('[Contact] Email failed, but continuing with lead capture:', emailResult.error);
+      }
+      
+      // Also save to database for lead tracking
       const result = await submitLead({
         email: formData.email,
         name: formData.name,
@@ -91,10 +111,11 @@ export default function Contact() {
           car: formData.car,
           interest: formData.interest,
           form_page: 'contact',
+          email_sent: emailResult.success,
         },
       });
       
-      if (result.success) {
+      if (result.success || emailResult.success) {
         setSubmitted(true);
       } else {
         setSubmitError(result.error || 'Failed to send message. Please try again.');
@@ -266,7 +287,7 @@ export default function Contact() {
               <div className={styles.infoCard}>
                 <div className={styles.infoIcon}><MailIcon /></div>
                 <h3 className={styles.infoTitle}>Email Us</h3>
-                <p className={styles.infoText}>info@supernaturalmotorsports.com</p>
+                <p className={styles.infoText}>Cory@supernaturalmotorsports.com</p>
               </div>
 
               <div className={styles.infoCard}>

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import styles from './Footer.module.css';
-import NewsletterSignup from './NewsletterSignup';
 
 // Social Icons
 const InstagramIcon = () => (
@@ -59,21 +58,12 @@ export default function Footer() {
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="YouTube">
               <YouTubeIcon />
             </a>
-            <a href="mailto:info@supernaturalmotorsports.com" className={styles.socialLink} aria-label="Email">
+            <a href="mailto:Cory@supernaturalmotorsports.com" className={styles.socialLink} aria-label="Email">
               <MailIcon />
             </a>
           </div>
         </div>
 
-        {/* Newsletter Signup */}
-        <div className={styles.newsletter}>
-          <NewsletterSignup 
-            variant="compact"
-            title="Own Your Lane"
-            description="Build knowledge. Build skills. Build community."
-            buttonText="Join"
-          />
-        </div>
       </div>
 
       {/* Bottom Bar */}
