@@ -499,3 +499,8 @@ console.log('\nCar Ownership Data:', JSON.stringify(carOwnershipData, null, 2));
 console.log('\nTotal cars with data:', Object.keys(carOwnershipData).length);
 
 
+
+
+
+
+

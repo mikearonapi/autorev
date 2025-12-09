@@ -1,0 +1,259 @@
+/* ExpertReviewedStrip.module.css */
+
+.strip {
+  padding: 3rem 0;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1320px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.headerLeft svg {
+  color: #059669;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0.25rem 0 0;
+}
+
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a4d6e;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.viewAll:hover {
+  background: rgba(26, 77, 110, 0.08);
+  color: #0f3a54;
+}
+
+/* Cards Container */
+.cardsContainer {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  padding: 0.5rem 0 1rem;
+}
+
+.cardsContainer::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cardsContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cardsContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.cardsTrack {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  width: max-content;
+}
+
+/* Card */
+.card {
+  flex: 0 0 260px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.cardImage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.cardBadge svg {
+  color: #4ade80;
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+.cardName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardScore {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.cardPrice {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cardQuote {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Trust Line */
+.trustLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 1320px;
+  margin: 1rem auto 0;
+  padding: 0 1.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.trustLine svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .strip {
+    padding: 2rem 0;
+  }
+
+  .header {
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .viewAll {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .cardsTrack {
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+
+  .card {
+    flex: 0 0 220px;
+  }
+
+  .cardContent {
+    padding: 0.75rem;
+  }
+
+  .trustLine {
+    padding: 0 1rem;
+    font-size: 0.6875rem;
+    flex-wrap: wrap;
+  }
+}
+

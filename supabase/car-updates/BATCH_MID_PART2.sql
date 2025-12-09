@@ -302,3 +302,8 @@ FROM cars
 WHERE slug IN ('bmw-m2-competition', 'alfa-romeo-4c', 'aston-martin-v8-vantage', 'lotus-evora-s', 'lexus-lc-500', 'mitsubishi-lancer-evo-8-9')
 ORDER BY name;
 
+
+
+
+
+

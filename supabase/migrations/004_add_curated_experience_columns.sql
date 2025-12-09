@@ -229,3 +229,8 @@ COMMENT ON TABLE cars IS 'Vehicle database for SuperNatural Motorsports with com
 -- 2. Update cars with curated content using UPDATE statements
 -- 3. Update carsClient.js to map new columns from snake_case to camelCase
 
+
+
+
+
+

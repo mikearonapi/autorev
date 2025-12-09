@@ -297,3 +297,8 @@ FROM cars
 WHERE slug IN ('camaro-ss-1le', 'toyota-gr-supra', 'maserati-granturismo', 'mitsubishi-lancer-evo-x', 'subaru-wrx-sti-gd', 'subaru-wrx-sti-gr-gv')
 ORDER BY name;
 
+
+
+
+
+

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import CarCarousel from '@/components/CarCarousel';
+import MethodologyStrip from '@/components/MethodologyStrip';
 import styles from './page.module.css';
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
@@ -160,6 +161,9 @@ export default function Home() {
         </div>
         <CarCarousel />
       </section>
+
+      {/* Methodology - Transparent about our research process */}
+      <MethodologyStrip />
 
       {/* How It Works Section */}
       <section className={styles.howItWorks}>

@@ -3,20 +3,32 @@
   "version": "1.0.0",
   "description": "SuperNatural Motorsports - Unleash Your Racing Spirit. Sports car advisory, upgrade planning, and performance services.",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/migrate-and-seed.js"
+    "seed": "node scripts/migrate-and-seed.js",
+    "youtube:pipeline": "node scripts/youtube-pipeline.js",
+    "youtube:discover": "node scripts/youtube-discovery.js",
+    "youtube:transcripts": "node scripts/youtube-transcripts.js",
+    "youtube:ai": "node scripts/youtube-ai-processing.js",
+    "youtube:consensus": "node scripts/youtube-aggregate-consensus.js",
+    "youtube:curated": "node scripts/youtube-browser-discovery.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "@supabase/supabase-js": "^2.86.2",
     "@vercel/blob": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "googleapis": "^144.0.0",
     "next": "^14.2.0",
+    "puppeteer": "^24.32.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "resend": "^6.5.2"
+    "resend": "^6.5.2",
+    "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

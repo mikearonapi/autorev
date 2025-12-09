@@ -501,3 +501,8 @@ FROM cars
 WHERE slug IN ('c8-corvette-stingray', '981-cayman-gts', '991-1-carrera-s')
 ORDER BY name;
 
+
+
+
+
+

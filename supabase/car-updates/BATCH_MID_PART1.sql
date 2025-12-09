@@ -301,3 +301,8 @@ FROM cars
 WHERE slug IN ('981-cayman-s', 'shelby-gt350', 'jaguar-f-type-r', 'c7-corvette-grand-sport', 'c7-corvette-z06', 'camaro-zl1')
 ORDER BY name;
 
+
+
+
+
+

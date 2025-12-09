@@ -309,3 +309,8 @@ FROM cars
 WHERE slug IN ('997-2-carrera-s', 'nissan-gt-r', 'shelby-gt500', 'lotus-evora-gt', 'mazda-rx7-fd3s', 'acura-integra-type-r-dc2')
 ORDER BY name;
 
+
+
+
+
+

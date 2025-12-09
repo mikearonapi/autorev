@@ -804,3 +804,8 @@ Quick advice for prospective buyers.
 *Document created: December 8, 2024*
 *Version: 1.0*
 
+
+
+
+
+

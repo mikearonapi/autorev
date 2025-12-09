@@ -5,12 +5,13 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { fetchCarBySlug } from '@/lib/carsClient.js';
-import { getCarBySlug as getLocalCarBySlug, categories, tierConfig } from '@/data/cars.js';
+import { getCarBySlug as getLocalCarBySlug, tierConfig } from '@/data/cars.js';
 import { calculateScoreBreakdown, getScoreLabel, DEFAULT_WEIGHTS } from '@/lib/scoring.js';
 import CarImage from '@/components/CarImage';
 import ScoringInfo from '@/components/ScoringInfo';
+import ExpertReviews from '@/components/ExpertReviews';
 
-// Icons - Using inline SVG for consistency
+// Icons - compact inline SVG components
 const Icons = {
   arrowLeft: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -124,12 +125,6 @@ const Icons = {
       <polyline points="18 15 12 9 6 15"/>
     </svg>
   ),
-  clipboard: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-    </svg>
-  ),
   trendingUp: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
@@ -147,7 +142,58 @@ const Icons = {
       <line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
   ),
+  heart: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  ),
+  clipboard: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg>
+  ),
+  timer: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  layers: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  ),
+  activity: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+  ),
+  cpu: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+      <rect x="9" y="9" width="6" height="6" />
+      <line x1="9" y1="1" x2="9" y2="4" />
+      <line x1="15" y1="1" x2="15" y2="4" />
+      <line x1="9" y1="20" x2="9" y2="23" />
+      <line x1="15" y1="20" x2="15" y2="23" />
+      <line x1="20" y1="9" x2="23" y2="9" />
+      <line x1="20" y1="14" x2="23" y2="14" />
+      <line x1="1" y1="9" x2="4" y2="9" />
+      <line x1="1" y1="14" x2="4" y2="14" />
+    </svg>
+  ),
 };
+
+// Tab definitions
+const TABS = [
+  { id: 'overview', label: 'Overview', icon: Icons.car },
+  { id: 'buying', label: 'Buying Guide', icon: Icons.clipboard },
+  { id: 'ownership', label: 'Ownership', icon: Icons.dollar },
+  { id: 'reviews', label: 'Reviews', icon: Icons.star },
+];
 
 // Get tier badge class
 const getTierClass = (tier) => {
@@ -177,25 +223,22 @@ const getMarketIcon = (position) => {
   }
 };
 
-// Collapsible Section Component
-function CollapsibleSection({ title, icon, children, defaultOpen = true, id }) {
+// Expandable Section Component (for use within tabs)
+function ExpandableSection({ title, children, defaultOpen = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <section className={styles.collapsibleSection} id={id}>
+    <div className={styles.expandableSection}>
       <button 
-        className={styles.sectionHeader} 
+        className={styles.expandableHeader} 
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <div className={styles.sectionHeaderLeft}>
-          {icon}
-          <h2>{title}</h2>
-        </div>
-        {isOpen ? <Icons.chevronUp size={24} /> : <Icons.chevronDown size={24} />}
+        <span>{title}</span>
+        {isOpen ? <Icons.chevronUp size={20} /> : <Icons.chevronDown size={20} />}
       </button>
-      {isOpen && <div className={styles.sectionContent}>{children}</div>}
-    </section>
+      {isOpen && <div className={styles.expandableContent}>{children}</div>}
+    </div>
   );
 }
 
@@ -205,6 +248,7 @@ export default function CarDetail() {
   const [car, setCar] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Fetch car data
   useEffect(() => {
@@ -253,11 +297,12 @@ export default function CarDetail() {
     return calculateScoreBreakdown(car, DEFAULT_WEIGHTS);
   }, [car]);
 
-  // Check if car has curated content
-  const hasCuratedContent = useMemo(() => {
-    if (!car) return false;
-    return !!(car.essence || car.heritage || car.engineCharacter);
-  }, [car]);
+  // Calculate average score for quick take
+  const averageScore = useMemo(() => {
+    if (!scoreBreakdown.length) return null;
+    const sum = scoreBreakdown.reduce((acc, s) => acc + s.rawScore, 0);
+    return (sum / scoreBreakdown.length).toFixed(1);
+  }, [scoreBreakdown]);
 
   // Loading state
   if (isLoading) {
@@ -292,424 +337,396 @@ export default function CarDetail() {
 
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
+      {/* ================================================================
+          HERO SECTION - Compact, impactful first impression
+          ================================================================ */}
       <section className={styles.heroSection}>
         <div className={styles.heroInner}>
-          <div className={styles.heroContent}>
-            <Link href="/car-selector" className={styles.backLink}>
-              <Icons.arrowLeft size={18} />
-              Back to Car Selector
-            </Link>
-            
-            <div className={styles.heroHeader}>
-              <span className={`${styles.tierBadge} ${getTierClass(car.tier)}`}>
-                {tier.label}
-              </span>
-              <span className={styles.categoryBadge}>{car.category}</span>
-              {car.brand && (
-                <span className={styles.brandBadge}>{car.brand}</span>
+          <div className={styles.heroMain}>
+            <div className={styles.heroContent}>
+              <Link href="/car-selector" className={styles.backLink}>
+                <Icons.arrowLeft size={18} />
+                Back to Car Selector
+              </Link>
+              
+              <div className={styles.heroBadges}>
+                <span className={`${styles.tierBadge} ${getTierClass(car.tier)}`}>
+                  {tier.label}
+                </span>
+                <span className={styles.categoryBadge}>{car.category}</span>
+                {car.brand && <span className={styles.brandBadge}>{car.brand}</span>}
+              </div>
+              
+              <h1 className={styles.heroTitle}>{car.name}</h1>
+              <p className={styles.heroYears}>{car.years}</p>
+              
+              {car.essence && (
+                <p className={styles.heroEssence}>{car.essence}</p>
               )}
+              
+              <div className={styles.heroHighlight}>
+                <Icons.zap size={18} />
+                <span>{car.highlight}</span>
+              </div>
             </div>
             
-            <h1 className={styles.heroTitle}>{car.name}</h1>
-            <p className={styles.heroYears}>{car.years}</p>
-            
-            {/* Essence - the soul of the car */}
-            {car.essence ? (
-              <p className={styles.heroEssence}>{car.essence}</p>
-            ) : car.tagline ? (
-              <p className={styles.heroTagline}>{car.tagline}</p>
-            ) : null}
-            
-            <div className={styles.heroHighlight}>
-              <Icons.zap size={18} />
-              <span>{car.highlight}</span>
+            <div className={styles.heroImageWrapper}>
+              <CarImage car={car} variant="hero" className={styles.heroImage} lazy={false} />
             </div>
           </div>
           
-          <div className={styles.heroImageWrapper}>
-            <CarImage car={car} variant="hero" className={styles.heroImage} />
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Specs Strip */}
-      <section className={styles.specsStrip}>
-        <div className={styles.specsGrid}>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Engine</span>
-            <span className={styles.specValue}>{car.engine}</span>
-          </div>
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Power</span>
-            <span className={styles.specValue}>{car.hp} hp</span>
-          </div>
-          {car.torque && (
+          <div className={styles.specBar}>
             <div className={styles.specItem}>
-              <span className={styles.specLabel}>Torque</span>
-              <span className={styles.specValue}>{car.torque} lb-ft</span>
+              <Icons.cpu size={20} />
+              <div className={styles.specContent}>
+                <span className={styles.specLabel}>Engine</span>
+                <span className={styles.specValue}>{car.engine}</span>
+              </div>
             </div>
-          )}
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Trans</span>
-            <span className={styles.specValue}>{car.trans}</span>
-          </div>
-          {car.drivetrain && (
             <div className={styles.specItem}>
-              <span className={styles.specLabel}>Drive</span>
-              <span className={styles.specValue}>{car.drivetrain}</span>
+              <Icons.zap size={20} />
+              <div className={styles.specContent}>
+                <span className={styles.specLabel}>Power</span>
+                <span className={styles.specValue}>{car.hp} hp</span>
+              </div>
             </div>
-          )}
-          <div className={styles.specItem}>
-            <span className={styles.specLabel}>Price</span>
-            <span className={styles.specValue}>{car.priceRange}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Performance Metrics Strip */}
-      {(car.zeroToSixty || car.quarterMile || car.curbWeight || car.braking60To0 || car.lateralG) && (
-        <section className={styles.perfSpecsStrip}>
-          <div className={styles.perfSpecsGrid}>
+            {car.torque && (
+              <div className={styles.specItem}>
+                <Icons.activity size={20} />
+                <div className={styles.specContent}>
+                  <span className={styles.specLabel}>Torque</span>
+                  <span className={styles.specValue}>{car.torque} lb-ft</span>
+                </div>
+              </div>
+            )}
             {car.zeroToSixty && (
-              <div className={styles.perfSpecItem}>
-                <span className={styles.perfSpecValue}>{car.zeroToSixty}s</span>
-                <span className={styles.perfSpecLabel}>0-60 mph</span>
+              <div className={styles.specItem}>
+                <Icons.timer size={20} />
+                <div className={styles.specContent}>
+                  <span className={styles.specLabel}>0-60 mph</span>
+                  <span className={styles.specValue}>{car.zeroToSixty}s</span>
+                </div>
               </div>
             )}
-            {car.quarterMile && (
-              <div className={styles.perfSpecItem}>
-                <span className={styles.perfSpecValue}>{car.quarterMile}s</span>
-                <span className={styles.perfSpecLabel}>¼ Mile</span>
+            <div className={styles.specItem}>
+              <Icons.layers size={20} />
+              <div className={styles.specContent}>
+                <span className={styles.specLabel}>Trans</span>
+                <span className={styles.specValue}>{car.trans}</span>
               </div>
-            )}
-            {car.braking60To0 && (
-              <div className={styles.perfSpecItem}>
-                <span className={styles.perfSpecValue}>{car.braking60To0} ft</span>
-                <span className={styles.perfSpecLabel}>60-0 Braking</span>
+            </div>
+            <div className={styles.specItem}>
+              <Icons.dollar size={20} />
+              <div className={styles.specContent}>
+                <span className={styles.specLabel}>Price</span>
+                <span className={styles.specValue}>{car.priceRange}</span>
               </div>
-            )}
-            {car.lateralG && (
-              <div className={styles.perfSpecItem}>
-                <span className={styles.perfSpecValue}>{car.lateralG}g</span>
-                <span className={styles.perfSpecLabel}>Lateral G</span>
-              </div>
-            )}
-            {car.curbWeight && (
-              <div className={styles.perfSpecItem}>
-                <span className={styles.perfSpecValue}>{car.curbWeight.toLocaleString()} lbs</span>
-                <span className={styles.perfSpecLabel}>Curb Weight</span>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Table of Contents - Only show if curated content exists */}
-      {hasCuratedContent && (
-        <nav className={styles.tocNav}>
-          <div className={styles.tocInner}>
-            <span className={styles.tocLabel}>Jump to:</span>
-            <div className={styles.tocLinks}>
-              <a href="#story">The Story</a>
-              <a href="#driving">Driving Experience</a>
-              <a href="#strengths">Strengths & Tradeoffs</a>
-              <a href="#buyers-guide">Buyer&apos;s Guide</a>
-              <a href="#ownership">Ownership</a>
-              <a href="#track">Track & Performance</a>
-              <a href="#alternatives">Alternatives</a>
-              <a href="#community">Community</a>
-              <a href="#scores">Scores</a>
             </div>
           </div>
-        </nav>
-      )}
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <div className={styles.mainContent}>
+      {/* ================================================================
+          QUICK TAKE - 30-second summary for fast scanners
+          ================================================================ */}
+      <section className={styles.quickTake}>
+        <div className={styles.quickTakeInner}>
+          <div className={styles.quickTakeHeader}>
+            <h2>Quick Take</h2>
+            {averageScore && (
+              <div className={`${styles.quickScore} ${getScoreTierClass(parseFloat(averageScore))}`}>
+                <span className={styles.quickScoreValue}>{averageScore}</span>
+                <span className={styles.quickScoreLabel}>/ 10</span>
+              </div>
+            )}
+          </div>
+          
+          {/* What's Special */}
+          <div className={styles.quickTakeContent}>
+            {car.notes && (
+              <p className={styles.quickSummary}>{car.notes}</p>
+            )}
+            
+            <div className={styles.quickGrid}>
+              {/* Best For */}
+              {car.bestFor?.length > 0 && (
+                <div className={styles.quickCard}>
+                  <h3>Best For</h3>
+                  <div className={styles.quickTags}>
+                    {car.bestFor.slice(0, 3).map((item, i) => (
+                      <span key={i} className={styles.quickTag}>{item}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Key Strength */}
+              {car.definingStrengths?.[0] && (
+                <div className={styles.quickCard}>
+                  <h3>
+                    <Icons.check size={16} />
+                    Key Strength
+                  </h3>
+                  <p>{car.definingStrengths[0].title}</p>
+                </div>
+              )}
+              
+              {/* Watch Out For */}
+              {car.honestWeaknesses?.[0] && (
+                <div className={styles.quickCard}>
+                  <h3>
+                    <Icons.x size={16} />
+                    Watch For
+                  </h3>
+                  <p>{car.honestWeaknesses[0].title}</p>
+                </div>
+              )}
+              
+              {/* Price Snapshot */}
+              {car.priceGuide?.mid && (
+                <div className={styles.quickCard}>
+                  <h3>Sweet Spot Price</h3>
+                  <p className={styles.quickPrice}>{car.priceGuide.mid.price}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================
+          TAB NAVIGATION - Clean, scannable navigation
+          ================================================================ */}
+      <nav className={styles.tabNav}>
+        <div className={styles.tabNavInner}>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              className={`${styles.tabButton} ${activeTab === tab.id ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <tab.icon size={18} />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* ================================================================
+          TAB CONTENT - Progressive disclosure
+          ================================================================ */}
+      <div className={styles.tabContent}>
         
         {/* ============================================================
-            SECTION: THE STORY
+            TAB: OVERVIEW - The story, driving experience, strengths
             ============================================================ */}
-        {(car.heritage || car.designPhilosophy || car.motorsportHistory) && (
-          <CollapsibleSection 
-            title="The Story" 
-            icon={<Icons.book size={24} />}
-            id="story"
-            defaultOpen={true}
-          >
-            {car.heritage && (
-              <div className={styles.storyBlock}>
-                <h3>Heritage & Legacy</h3>
-                <div className={styles.storyText}>
-                  {car.heritage.split('\n\n').map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            )}
+        {activeTab === 'overview' && (
+          <div className={styles.tabPanel}>
             
-            {car.designPhilosophy && (
-              <div className={styles.storyBlock}>
-                <h3>Design Philosophy</h3>
-                <div className={styles.storyText}>
-                  {car.designPhilosophy.split('\n\n').map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
+            {/* The Story */}
+            {(car.heritage || car.designPhilosophy) && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.book size={22} />
+                  <h2>The Story</h2>
                 </div>
-              </div>
-            )}
-            
-            {car.motorsportHistory && (
-              <div className={styles.storyBlock}>
-                <h3>Motorsport Heritage</h3>
-                <div className={styles.storyText}>
-                  {car.motorsportHistory.split('\n\n').map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {(car.predecessors?.length > 0 || car.successors?.length > 0) && (
-              <div className={styles.lineageBar}>
-                {car.predecessors?.length > 0 && (
-                  <div className={styles.lineageItem}>
-                    <span className={styles.lineageLabel}>Preceded by</span>
-                    <span className={styles.lineageValue}>{car.predecessors.join(', ')}</span>
-                  </div>
-                )}
-                {car.generationCode && (
-                  <div className={styles.lineageItem}>
-                    <span className={styles.lineageLabel}>Generation</span>
-                    <span className={styles.lineageValue}>{car.generationCode}</span>
-                  </div>
-                )}
-                {car.successors?.length > 0 && (
-                  <div className={styles.lineageItem}>
-                    <span className={styles.lineageLabel}>Succeeded by</span>
-                    <span className={styles.lineageValue}>{car.successors.join(', ')}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </CollapsibleSection>
-        )}
-
-        {/* ============================================================
-            SECTION: THE DRIVING EXPERIENCE
-            ============================================================ */}
-        {(car.engineCharacter || car.chassisDynamics || car.transmissionFeel || car.steeringFeel || car.soundSignature) && (
-          <CollapsibleSection 
-            title="The Driving Experience" 
-            icon={<Icons.car size={24} />}
-            id="driving"
-            defaultOpen={true}
-          >
-            <div className={styles.experienceGrid}>
-              {car.engineCharacter && (
-                <div className={styles.experienceCard}>
-                  <h3>Engine Character</h3>
-                  <div className={styles.experienceText}>
-                    {car.engineCharacter.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {car.chassisDynamics && (
-                <div className={styles.experienceCard}>
-                  <h3>Chassis Dynamics</h3>
-                  <div className={styles.experienceText}>
-                    {car.chassisDynamics.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {car.transmissionFeel && (
-                <div className={styles.experienceCard}>
-                  <h3>Transmission Feel</h3>
-                  <div className={styles.experienceText}>
-                    {car.transmissionFeel.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {car.steeringFeel && (
-                <div className={styles.experienceCard}>
-                  <h3>Steering Feel</h3>
-                  <div className={styles.experienceText}>
-                    {car.steeringFeel.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {car.soundSignature && (
-                <div className={styles.experienceCard}>
-                  <h3>Sound Signature</h3>
-                  <div className={styles.experienceText}>
-                    {car.soundSignature.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {car.brakeConfidence && (
-                <div className={styles.experienceCard}>
-                  <h3>Brake Confidence</h3>
-                  <div className={styles.experienceText}>
-                    {car.brakeConfidence.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {car.comfortNotes && (
-              <div className={styles.comfortBox}>
-                <h4>Daily Usability</h4>
-                <p>{car.comfortNotes}</p>
-                {car.comfortTrackBalance && (
-                  <span className={`${styles.balanceBadge} ${styles[car.comfortTrackBalance]}`}>
-                    {car.comfortTrackBalance.replace('-', ' ')}
-                  </span>
-                )}
-              </div>
-            )}
-          </CollapsibleSection>
-        )}
-
-        {/* ============================================================
-            SECTION: STRENGTHS & TRADEOFFS
-            ============================================================ */}
-        <CollapsibleSection 
-          title="Strengths & Tradeoffs" 
-          icon={<Icons.shield size={24} />}
-          id="strengths"
-          defaultOpen={true}
-        >
-          {/* What We Think Summary */}
-          {car.notes && (
-            <div className={styles.notesBox}>
-              <p>{car.notes}</p>
-            </div>
-          )}
-
-          <div className={styles.strengthsGrid}>
-            {/* Defining Strengths */}
-            <div className={styles.strengthsColumn}>
-              <h3 className={styles.prosTitle}>
-                <Icons.check size={20} />
-                Defining Strengths
-              </h3>
-              {car.definingStrengths?.length > 0 ? (
-                <div className={styles.strengthsList}>
-                  {car.definingStrengths.map((item, index) => (
-                    <div key={index} className={styles.strengthItem}>
-                      <h4>{item.title}</h4>
-                      <p>{item.description}</p>
+                
+                {car.heritage && (
+                  <div className={styles.storyBlock}>
+                    <h3>Heritage & Legacy</h3>
+                    <div className={styles.storyText}>
+                      {car.heritage.split('\n\n').map((para, i) => (
+                        <p key={i}>{para}</p>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : car.pros?.length > 0 ? (
-                <ul className={styles.prosList}>
-                  {car.pros.map((pro, index) => (
-                    <li key={index} className={styles.proItem}>
-                      <Icons.check size={16} />
-                      <span>{pro}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-
-            {/* Honest Weaknesses */}
-            <div className={styles.weaknessesColumn}>
-              <h3 className={styles.consTitle}>
-                <Icons.x size={20} />
-                Honest Tradeoffs
-              </h3>
-              {car.honestWeaknesses?.length > 0 ? (
-                <div className={styles.weaknessesList}>
-                  {car.honestWeaknesses.map((item, index) => (
-                    <div key={index} className={styles.weaknessItem}>
-                      <h4>{item.title}</h4>
-                      <p>{item.description}</p>
+                  </div>
+                )}
+                
+                {car.designPhilosophy && (
+                  <div className={styles.storyBlock}>
+                    <h3>Design Philosophy</h3>
+                    <div className={styles.storyText}>
+                      {car.designPhilosophy.split('\n\n').map((para, i) => (
+                        <p key={i}>{para}</p>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : car.cons?.length > 0 ? (
-                <ul className={styles.consList}>
-                  {car.cons.map((con, index) => (
-                    <li key={index} className={styles.conItem}>
-                      <Icons.x size={16} />
-                      <span>{con}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          </div>
+                  </div>
+                )}
+                
+                {/* Lineage */}
+                {(car.predecessors?.length > 0 || car.generationCode) && (
+                  <div className={styles.lineageBar}>
+                    {car.predecessors?.length > 0 && (
+                      <div className={styles.lineageItem}>
+                        <span className={styles.lineageLabel}>Preceded by</span>
+                        <span className={styles.lineageValue}>{car.predecessors.join(', ')}</span>
+                      </div>
+                    )}
+                    {car.generationCode && (
+                      <div className={styles.lineageItem}>
+                        <span className={styles.lineageLabel}>Generation</span>
+                        <span className={styles.lineageValue}>{car.generationCode}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
 
-          {/* Ideal Owner */}
-          {(car.idealOwner || car.notIdealFor) && (
-            <div className={styles.ownerFitSection}>
-              {car.idealOwner && (
-                <div className={styles.ownerFitCard}>
-                  <h4>
+            {/* Driving Experience */}
+            {(car.engineCharacter || car.chassisDynamics || car.transmissionFeel) && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.car size={22} />
+                  <h2>The Driving Experience</h2>
+                </div>
+                
+                <div className={styles.experienceGrid}>
+                  {car.engineCharacter && (
+                    <div className={styles.experienceCard}>
+                      <h3>Engine Character</h3>
+                      <p>{car.engineCharacter.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                  {car.chassisDynamics && (
+                    <div className={styles.experienceCard}>
+                      <h3>Chassis Dynamics</h3>
+                      <p>{car.chassisDynamics.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                  {car.transmissionFeel && (
+                    <div className={styles.experienceCard}>
+                      <h3>Transmission Feel</h3>
+                      <p>{car.transmissionFeel.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                  {car.steeringFeel && (
+                    <div className={styles.experienceCard}>
+                      <h3>Steering Feel</h3>
+                      <p>{car.steeringFeel.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                  {car.soundSignature && (
+                    <div className={styles.experienceCard}>
+                      <h3>Sound Signature</h3>
+                      <p>{car.soundSignature.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                  {car.brakeConfidence && (
+                    <div className={styles.experienceCard}>
+                      <h3>Brake Confidence</h3>
+                      <p>{car.brakeConfidence.split('\n\n')[0]}</p>
+                    </div>
+                  )}
+                </div>
+
+                {car.comfortNotes && (
+                  <div className={styles.dailyBox}>
+                    <div className={styles.dailyHeader}>
+                      <h4>Daily Usability</h4>
+                      {car.comfortTrackBalance && (
+                        <span className={styles.balanceBadge}>
+                          {car.comfortTrackBalance.replace('-', ' ')}
+                        </span>
+                      )}
+                    </div>
+                    <p>{car.comfortNotes}</p>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Strengths & Tradeoffs */}
+            <section className={styles.contentSection}>
+              <div className={styles.sectionHeader}>
+                <Icons.shield size={22} />
+                <h2>Strengths & Tradeoffs</h2>
+              </div>
+              
+              <div className={styles.prosConsGrid}>
+                {/* Strengths */}
+                <div className={styles.prosColumn}>
+                  <h3 className={styles.prosTitle}>
                     <Icons.check size={18} />
-                    Ideal Owner
-                  </h4>
-                  <p>{car.idealOwner}</p>
+                    Defining Strengths
+                  </h3>
+                  {car.definingStrengths?.length > 0 ? (
+                    <div className={styles.prosConsList}>
+                      {car.definingStrengths.map((item, i) => (
+                        <div key={i} className={styles.strengthItem}>
+                          <strong>{item.title}</strong>
+                          <p>{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : car.pros?.length > 0 ? (
+                    <ul className={styles.simpleList}>
+                      {car.pros.map((pro, i) => (
+                        <li key={i}>
+                          <Icons.check size={14} />
+                          <span>{pro}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
-              )}
-              {car.notIdealFor && (
-                <div className={styles.ownerFitCard}>
-                  <h4>
-                    <Icons.x size={18} />
-                    Not Ideal For
-                  </h4>
-                  <p>{car.notIdealFor}</p>
-                </div>
-              )}
-            </div>
-          )}
 
-          {/* Best For Tags */}
-          {car.bestFor?.length > 0 && (
-            <div className={styles.bestForSection}>
-              <h4>Best For</h4>
-              <div className={styles.bestForGrid}>
-                {car.bestFor.map((archetype, index) => (
-                  <div key={index} className={styles.bestForCard}>
-                    <Icons.target size={18} />
-                    <span>{archetype}</span>
-                  </div>
-                ))}
+                {/* Tradeoffs */}
+                <div className={styles.consColumn}>
+                  <h3 className={styles.consTitle}>
+                    <Icons.x size={18} />
+                    Honest Tradeoffs
+                  </h3>
+                  {car.honestWeaknesses?.length > 0 ? (
+                    <div className={styles.prosConsList}>
+                      {car.honestWeaknesses.map((item, i) => (
+                        <div key={i} className={styles.weaknessItem}>
+                          <strong>{item.title}</strong>
+                          <p>{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : car.cons?.length > 0 ? (
+                    <ul className={styles.simpleList}>
+                      {car.cons.map((con, i) => (
+                        <li key={i}>
+                          <Icons.x size={14} />
+                          <span>{con}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          )}
-        </CollapsibleSection>
+
+              {/* Ideal Owner */}
+              {(car.idealOwner || car.notIdealFor) && (
+                <div className={styles.ownerFit}>
+                  {car.idealOwner && (
+                    <div className={styles.fitCard}>
+                      <h4><Icons.check size={16} /> Ideal Owner</h4>
+                      <p>{car.idealOwner}</p>
+                    </div>
+                  )}
+                  {car.notIdealFor && (
+                    <div className={styles.fitCard}>
+                      <h4><Icons.x size={16} /> Not Ideal For</h4>
+                      <p>{car.notIdealFor}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
 
         {/* ============================================================
-            SECTION: BUYER'S GUIDE
+            TAB: BUYING GUIDE - Years, options, pricing, alternatives
             ============================================================ */}
-        {(car.buyersSummary || car.bestYearsDetailed || car.mustHaveOptions || car.preInspectionChecklist || car.priceGuide) && (
-          <CollapsibleSection 
-            title="Buyer's Guide" 
-            icon={<Icons.clipboard size={24} />}
-            id="buyers-guide"
-            defaultOpen={true}
-          >
+        {activeTab === 'buying' && (
+          <div className={styles.tabPanel}>
+            
+            {/* Buyer's Summary */}
             {car.buyersSummary && (
               <div className={styles.buyersSummary}>
                 <p>{car.buyersSummary}</p>
@@ -726,77 +743,152 @@ export default function CarDetail() {
 
             {/* Best Years */}
             {car.bestYearsDetailed?.length > 0 && (
-              <div className={styles.buyersBlock}>
-                <h3>Best Years to Buy</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.check size={22} />
+                  <h2>Best Years to Buy</h2>
+                </div>
                 <div className={styles.yearsList}>
-                  {car.bestYearsDetailed.map((item, index) => (
-                    <div key={index} className={styles.yearItem}>
+                  {car.bestYearsDetailed.map((item, i) => (
+                    <div key={i} className={styles.yearItem}>
                       <span className={styles.yearBadge}>{item.years}</span>
                       <p>{item.reason}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Years to Avoid */}
             {car.yearsToAvoidDetailed?.length > 0 && (
-              <div className={styles.buyersBlock}>
-                <h3>Years to Avoid</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.x size={22} />
+                  <h2>Years to Avoid</h2>
+                </div>
                 <div className={styles.yearsList}>
-                  {car.yearsToAvoidDetailed.map((item, index) => (
-                    <div key={index} className={`${styles.yearItem} ${styles.avoid}`}>
+                  {car.yearsToAvoidDetailed.map((item, i) => (
+                    <div key={i} className={`${styles.yearItem} ${styles.avoid}`}>
                       <span className={`${styles.yearBadge} ${styles.avoid}`}>{item.years}</span>
                       <p>{item.reason}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Must Have Options */}
+            {/* Must-Have Options */}
             {car.mustHaveOptions?.length > 0 && (
-              <div className={styles.buyersBlock}>
-                <h3>Must-Have Options</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.star size={22} />
+                  <h2>Must-Have Options</h2>
+                </div>
                 <div className={styles.optionsList}>
-                  {car.mustHaveOptions.map((opt, index) => (
-                    <div key={index} className={styles.optionItem}>
-                      <div className={styles.optionHeader}>
-                        <Icons.check size={16} />
-                        <strong>{opt.name}</strong>
-                      </div>
+                  {car.mustHaveOptions.map((opt, i) => (
+                    <div key={i} className={styles.optionItem}>
+                      <strong><Icons.check size={14} /> {opt.name}</strong>
                       <p>{opt.reason}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Nice to Have Options */}
-            {car.niceToHaveOptions?.length > 0 && (
-              <div className={styles.buyersBlock}>
-                <h3>Nice-to-Have Options</h3>
-                <div className={styles.optionsList}>
-                  {car.niceToHaveOptions.map((opt, index) => (
-                    <div key={index} className={`${styles.optionItem} ${styles.secondary}`}>
-                      <div className={styles.optionHeader}>
-                        <Icons.star size={16} />
-                        <strong>{opt.name}</strong>
-                      </div>
-                      <p>{opt.reason}</p>
-                    </div>
-                  ))}
+            {/* Price Guide */}
+            {car.priceGuide && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.dollar size={22} />
+                  <h2>Price Guide</h2>
                 </div>
-              </div>
+                <div className={styles.priceGrid}>
+                  {car.priceGuide?.low && (
+                    <div className={styles.priceCard}>
+                      <span className={styles.priceLabel}>Entry Level</span>
+                      <span className={styles.priceValue}>{car.priceGuide.low.price}</span>
+                      <p>{car.priceGuide.low.condition}</p>
+                    </div>
+                  )}
+                  {car.priceGuide?.mid && (
+                    <div className={`${styles.priceCard} ${styles.recommended}`}>
+                      <span className={styles.priceLabel}>Sweet Spot</span>
+                      <span className={styles.priceValue}>{car.priceGuide.mid.price}</span>
+                      <p>{car.priceGuide.mid.condition}</p>
+                    </div>
+                  )}
+                  {car.priceGuide?.high && (
+                    <div className={styles.priceCard}>
+                      <span className={styles.priceLabel}>Collector Grade</span>
+                      <span className={styles.priceValue}>{car.priceGuide.high.price}</span>
+                      <p>{car.priceGuide.high.condition}</p>
+                    </div>
+                  )}
+                </div>
+              </section>
             )}
 
-            {/* Pre-Purchase Inspection */}
+            {/* Alternatives */}
+            {(car.directCompetitors || car.ifYouWantMore || car.ifYouWantLess) && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.target size={22} />
+                  <h2>Alternatives to Consider</h2>
+                </div>
+
+                {Array.isArray(car.directCompetitors) && car.directCompetitors.length > 0 && (
+                  <div className={styles.alternativesBlock}>
+                    <h3>Direct Competitors</h3>
+                    <div className={styles.altList}>
+                      {car.directCompetitors.map((alt, i) => (
+                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                          <strong>{alt.name}</strong>
+                          <p>{alt.comparison}</p>
+                          <Icons.externalLink size={14} />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {Array.isArray(car.ifYouWantMore) && car.ifYouWantMore.length > 0 && (
+                  <div className={styles.alternativesBlock}>
+                    <h3>If You Want More</h3>
+                    <div className={styles.altList}>
+                      {car.ifYouWantMore.map((alt, i) => (
+                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                          <strong>{alt.name}</strong>
+                          <p>{alt.reason}</p>
+                          <Icons.externalLink size={14} />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {Array.isArray(car.ifYouWantLess) && car.ifYouWantLess.length > 0 && (
+                  <div className={styles.alternativesBlock}>
+                    <h3>Save Money With</h3>
+                    <div className={styles.altList}>
+                      {car.ifYouWantLess.map((alt, i) => (
+                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                          <strong>{alt.name}</strong>
+                          <p>{alt.reason || alt.comparison}</p>
+                          <Icons.externalLink size={14} />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Pre-Purchase Checklist */}
             {car.preInspectionChecklist?.length > 0 && (
-              <div className={styles.buyersBlock}>
-                <h3>Pre-Purchase Inspection Checklist</h3>
-                <ul className={styles.checklistList}>
-                  {car.preInspectionChecklist.map((item, index) => (
-                    <li key={index}>
+              <ExpandableSection title="Pre-Purchase Inspection Checklist">
+                <ul className={styles.checklist}>
+                  {car.preInspectionChecklist.map((item, i) => (
+                    <li key={i}>
                       <Icons.check size={14} />
                       <span>{item}</span>
                     </li>
@@ -805,67 +897,24 @@ export default function CarDetail() {
                 {car.ppiRecommendations && (
                   <p className={styles.ppiNote}>{car.ppiRecommendations}</p>
                 )}
-              </div>
+              </ExpandableSection>
             )}
-
-            {/* Price Guide */}
-            {car.priceGuide && (
-              <div className={styles.buyersBlock}>
-                <h3>Price Guide</h3>
-                <div className={styles.priceGuideGrid}>
-                  {car.priceGuide.low && (
-                    <div className={styles.priceGuideCard}>
-                      <span className={styles.priceLabel}>Entry Level</span>
-                      <span className={styles.priceValue}>{car.priceGuide.low.price}</span>
-                      <p>{car.priceGuide.low.condition}</p>
-                    </div>
-                  )}
-                  {car.priceGuide.mid && (
-                    <div className={`${styles.priceGuideCard} ${styles.recommended}`}>
-                      <span className={styles.priceLabel}>Sweet Spot</span>
-                      <span className={styles.priceValue}>{car.priceGuide.mid.price}</span>
-                      <p>{car.priceGuide.mid.condition}</p>
-                    </div>
-                  )}
-                  {car.priceGuide.high && (
-                    <div className={styles.priceGuideCard}>
-                      <span className={styles.priceLabel}>Collector Grade</span>
-                      <span className={styles.priceValue}>{car.priceGuide.high.price}</span>
-                      <p>{car.priceGuide.high.condition}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Market Commentary */}
-            {car.marketCommentary && (
-              <div className={styles.marketCommentary}>
-                <h3>Market Outlook</h3>
-                <div className={styles.storyText}>
-                  {car.marketCommentary.split('\n\n').map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CollapsibleSection>
+          </div>
         )}
 
         {/* ============================================================
-            SECTION: OWNERSHIP REALITY
+            TAB: OWNERSHIP - Costs, issues, community, track
             ============================================================ */}
-        {(car.annualOwnershipCost || car.majorServiceCosts || car.commonIssuesDetailed) && (
-          <CollapsibleSection 
-            title="Ownership Reality" 
-            icon={<Icons.dollar size={24} />}
-            id="ownership"
-            defaultOpen={false}
-          >
+        {activeTab === 'ownership' && (
+          <div className={styles.tabPanel}>
+
             {/* Annual Costs */}
             {car.annualOwnershipCost && (
-              <div className={styles.ownershipBlock}>
-                <h3>Annual Ownership Cost</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.dollar size={22} />
+                  <h2>Annual Ownership Cost</h2>
+                </div>
                 <div className={styles.costGrid}>
                   <div className={styles.costCard}>
                     <span className={styles.costLabel}>Light Use</span>
@@ -883,67 +932,61 @@ export default function CarDetail() {
                 {car.annualOwnershipCost.notes && (
                   <p className={styles.costNotes}>{car.annualOwnershipCost.notes}</p>
                 )}
-              </div>
+              </section>
             )}
 
             {/* Major Service Costs */}
             {car.majorServiceCosts && (
-              <div className={styles.ownershipBlock}>
-                <h3>Major Service Costs</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.tool size={22} />
+                  <h2>Major Service Costs</h2>
+                </div>
                 <div className={styles.serviceGrid}>
                   {car.majorServiceCosts.oilChange && (
-                    <div className={styles.serviceItem}>
+                    <div className={styles.serviceCard}>
                       <h4>Oil Change</h4>
-                      <span className={styles.serviceInterval}>{car.majorServiceCosts.oilChange.interval}</span>
                       <span className={styles.serviceCost}>{car.majorServiceCosts.oilChange.cost}</span>
-                      <p>{car.majorServiceCosts.oilChange.notes}</p>
+                      <span className={styles.serviceInterval}>{car.majorServiceCosts.oilChange.interval}</span>
                     </div>
                   )}
                   {car.majorServiceCosts.majorService && (
-                    <div className={styles.serviceItem}>
+                    <div className={styles.serviceCard}>
                       <h4>Major Service</h4>
-                      <span className={styles.serviceInterval}>{car.majorServiceCosts.majorService.interval}</span>
                       <span className={styles.serviceCost}>{car.majorServiceCosts.majorService.cost}</span>
-                      <p>{car.majorServiceCosts.majorService.notes}</p>
-                    </div>
-                  )}
-                  {car.majorServiceCosts.clutch && (
-                    <div className={styles.serviceItem}>
-                      <h4>Clutch Replacement</h4>
-                      <span className={styles.serviceInterval}>{car.majorServiceCosts.clutch.typicalLife}</span>
-                      <span className={styles.serviceCost}>{car.majorServiceCosts.clutch.cost}</span>
-                      <p>{car.majorServiceCosts.clutch.notes}</p>
+                      <span className={styles.serviceInterval}>{car.majorServiceCosts.majorService.interval}</span>
                     </div>
                   )}
                   {car.majorServiceCosts.brakes && (
-                    <div className={styles.serviceItem}>
+                    <div className={styles.serviceCard}>
                       <h4>Brakes</h4>
-                      <span className={styles.serviceInterval}>{car.majorServiceCosts.brakes.typicalLife}</span>
                       <span className={styles.serviceCost}>{car.majorServiceCosts.brakes.cost}</span>
-                      <p>{car.majorServiceCosts.brakes.notes}</p>
+                      <span className={styles.serviceInterval}>{car.majorServiceCosts.brakes.typicalLife}</span>
                     </div>
                   )}
                   {car.majorServiceCosts.tires && (
-                    <div className={styles.serviceItem}>
+                    <div className={styles.serviceCard}>
                       <h4>Tires</h4>
-                      <span className={styles.serviceInterval}>{car.majorServiceCosts.tires.typicalLife}</span>
                       <span className={styles.serviceCost}>{car.majorServiceCosts.tires.cost}</span>
-                      <p>{car.majorServiceCosts.tires.notes}</p>
+                      <span className={styles.serviceInterval}>{car.majorServiceCosts.tires.typicalLife}</span>
                     </div>
                   )}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Common Issues */}
+            {/* Known Issues */}
             {car.commonIssuesDetailed?.length > 0 && (
-              <div className={styles.ownershipBlock}>
-                <h3>Known Issues</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.alertCircle size={22} />
+                  <h2>Known Issues</h2>
+                </div>
                 <div className={styles.issuesList}>
-                  {car.commonIssuesDetailed.map((issue, index) => (
-                    <div key={index} className={`${styles.issueItem} ${styles[issue.severity]}`}>
+                  {car.commonIssuesDetailed.map((issue, i) => (
+                    <div key={i} className={`${styles.issueCard} ${styles[issue.severity]}`}>
                       <div className={styles.issueHeader}>
-                        <h4>{issue.issue}</h4>
+                        <strong>{issue.issue}</strong>
                         <div className={styles.issueMeta}>
                           <span className={`${styles.severityBadge} ${styles[issue.severity]}`}>
                             {issue.severity}
@@ -952,14 +995,99 @@ export default function CarDetail() {
                         </div>
                       </div>
                       <p>{issue.notes}</p>
-                      <span className={styles.issueCost}>Typical cost: {issue.cost}</span>
+                      <span className={styles.issueCost}>Typical: {issue.cost}</span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Ownership Notes */}
+            {/* Track & Performance */}
+            {(car.trackReadiness || car.recommendedTrackPrep) && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.flag size={22} />
+                  <h2>Track & Performance</h2>
+                </div>
+
+                {car.trackReadiness && (
+                  <div className={`${styles.trackBadge} ${styles[car.trackReadiness]}`}>
+                    <Icons.flag size={18} />
+                    <span>{car.trackReadiness.replace('-', ' ')}</span>
+                  </div>
+                )}
+
+                {car.trackReadinessNotes && (
+                  <p className={styles.trackNotes}>{car.trackReadinessNotes}</p>
+                )}
+
+                {car.recommendedTrackPrep?.length > 0 && (
+                  <ExpandableSection title="Recommended Track Prep">
+                    <div className={styles.trackPrepList}>
+                      {car.recommendedTrackPrep.map((item, i) => (
+                        <div key={i} className={`${styles.trackPrepItem} ${styles[item.priority]}`}>
+                          <div className={styles.trackPrepHeader}>
+                            <strong>{item.item}</strong>
+                            <span className={`${styles.priorityBadge} ${styles[item.priority]}`}>
+                              {item.priority}
+                            </span>
+                          </div>
+                          <span className={styles.trackPrepCost}>{item.cost}</span>
+                          <p>{item.notes}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </ExpandableSection>
+                )}
+              </section>
+            )}
+
+            {/* Community */}
+            {(car.communityStrength || car.keyResources) && (
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.users size={22} />
+                  <h2>Community & Culture</h2>
+                </div>
+
+                {car.communityStrength && (
+                  <div className={styles.communityBar}>
+                    <span>Community Strength</span>
+                    <div className={styles.strengthMeter}>
+                      <div 
+                        className={styles.strengthFill} 
+                        style={{ width: `${car.communityStrength * 10}%` }}
+                      />
+                    </div>
+                    <span>{car.communityStrength}/10</span>
+                  </div>
+                )}
+
+                {car.communityNotes && (
+                  <p className={styles.communityNotes}>{car.communityNotes}</p>
+                )}
+
+                {car.keyResources?.length > 0 && (
+                  <div className={styles.resourcesGrid}>
+                    {car.keyResources.map((res, i) => (
+                      <a 
+                        key={i} 
+                        href={res.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className={styles.resourceCard}
+                      >
+                        <strong>{res.name}</strong>
+                        <span className={styles.resourceType}>{res.type}</span>
+                        <p>{res.notes}</p>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Ownership Meta */}
             <div className={styles.ownershipMeta}>
               {car.partsAvailability && (
                 <div className={styles.metaItem}>
@@ -969,244 +1097,65 @@ export default function CarDetail() {
                   </span>
                 </div>
               )}
-              {car.dealerVsIndependent && (
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Service Options</span>
-                  <span className={styles.metaValue}>{car.dealerVsIndependent}</span>
-                </div>
-              )}
               {car.diyFriendliness && (
                 <div className={styles.metaItem}>
                   <span className={styles.metaLabel}>DIY Friendly</span>
                   <span className={styles.metaValue}>{car.diyFriendliness}/10</span>
                 </div>
               )}
+              {car.dealerVsIndependent && (
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>Service</span>
+                  <span className={styles.metaValue}>{car.dealerVsIndependent}</span>
+                </div>
+              )}
             </div>
-          </CollapsibleSection>
+          </div>
         )}
 
         {/* ============================================================
-            SECTION: TRACK & PERFORMANCE
+            TAB: REVIEWS - Expert reviews, scores, media
             ============================================================ */}
-        {(car.trackReadiness || car.recommendedTrackPrep || car.laptimeBenchmarks) && (
-          <CollapsibleSection 
-            title="Track & Performance" 
-            icon={<Icons.flag size={24} />}
-            id="track"
-            defaultOpen={false}
-          >
-            {car.trackReadiness && (
-              <div className={`${styles.trackReadinessBadge} ${styles[car.trackReadiness]}`}>
-                <Icons.flag size={18} />
-                <span>{car.trackReadiness.replace('-', ' ')}</span>
+        {activeTab === 'reviews' && (
+          <div className={styles.tabPanel}>
+
+            {/* Expert Reviews (YouTube AI) */}
+            <section className={styles.contentSection}>
+              <div className={styles.sectionHeader}>
+                <Icons.play size={22} />
+                <h2>Expert Reviews</h2>
               </div>
-            )}
+              <ExpertReviews carSlug={car.slug} car={car} />
+            </section>
 
-            {car.trackReadinessNotes && (
-              <p className={styles.trackNotes}>{car.trackReadinessNotes}</p>
-            )}
-
-            {/* Recommended Track Prep */}
-            {car.recommendedTrackPrep?.length > 0 && (
-              <div className={styles.trackBlock}>
-                <h3>Recommended Track Prep</h3>
-                <div className={styles.trackPrepList}>
-                  {car.recommendedTrackPrep.map((item, index) => (
-                    <div key={index} className={`${styles.trackPrepItem} ${styles[item.priority]}`}>
-                      <div className={styles.trackPrepHeader}>
-                        <strong>{item.item}</strong>
-                        <span className={`${styles.priorityBadge} ${styles[item.priority]}`}>
-                          {item.priority}
-                        </span>
-                      </div>
-                      <span className={styles.trackPrepCost}>{item.cost}</span>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Lap Times */}
-            {car.laptimeBenchmarks?.length > 0 && (
-              <div className={styles.trackBlock}>
-                <h3>Lap Time Benchmarks</h3>
-                <div className={styles.laptimeGrid}>
-                  {car.laptimeBenchmarks.map((lap, index) => (
-                    <div key={index} className={styles.laptimeCard}>
-                      <span className={styles.laptimeTrack}>{lap.track}</span>
-                      <span className={styles.laptimeTime}>{lap.time}</span>
-                      <span className={styles.laptimeSource}>{lap.source}</span>
-                      {lap.notes && <p>{lap.notes}</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CollapsibleSection>
-        )}
-
-        {/* ============================================================
-            SECTION: ALTERNATIVES TO CONSIDER
-            ============================================================ */}
-        {(car.directCompetitors || car.ifYouWantMore || car.ifYouWantLess) && (
-          <CollapsibleSection 
-            title="Alternatives to Consider" 
-            icon={<Icons.target size={24} />}
-            id="alternatives"
-            defaultOpen={false}
-          >
-            {car.directCompetitors?.length > 0 && (
-              <div className={styles.alternativesBlock}>
-                <h3>Direct Competitors</h3>
-                <div className={styles.alternativesList}>
-                  {car.directCompetitors.map((alt, index) => (
-                    <div key={index} className={styles.alternativeCard}>
-                      <Link href={`/cars/${alt.slug}`} className={styles.alternativeLink}>
-                        <strong>{alt.name}</strong>
-                        <Icons.externalLink size={14} />
-                      </Link>
-                      <p>{alt.comparison}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {car.ifYouWantMore?.length > 0 && (
-              <div className={styles.alternativesBlock}>
-                <h3>If You Want More</h3>
-                <div className={styles.alternativesList}>
-                  {car.ifYouWantMore.map((alt, index) => (
-                    <div key={index} className={styles.alternativeCard}>
-                      <Link href={`/cars/${alt.slug}`} className={styles.alternativeLink}>
-                        <strong>{alt.name}</strong>
-                        <Icons.externalLink size={14} />
-                      </Link>
-                      <p>{alt.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {car.ifYouWantLess?.length > 0 && (
-              <div className={styles.alternativesBlock}>
-                <h3>If You Want Less / Save Money</h3>
-                <div className={styles.alternativesList}>
-                  {car.ifYouWantLess.map((alt, index) => (
-                    <div key={index} className={styles.alternativeCard}>
-                      <Link href={`/cars/${alt.slug}`} className={styles.alternativeLink}>
-                        <strong>{alt.name}</strong>
-                        <Icons.externalLink size={14} />
-                      </Link>
-                      <p>{alt.reason || alt.comparison}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CollapsibleSection>
-        )}
-
-        {/* ============================================================
-            SECTION: COMMUNITY & CULTURE
-            ============================================================ */}
-        {(car.communityStrength || car.keyResources || car.facebookGroups) && (
-          <CollapsibleSection 
-            title="Community & Culture" 
-            icon={<Icons.users size={24} />}
-            id="community"
-            defaultOpen={false}
-          >
-            {car.communityNotes && (
-              <p className={styles.communityIntro}>{car.communityNotes}</p>
-            )}
-
-            {car.communityStrength && (
-              <div className={styles.communityStrengthBar}>
-                <span>Community Strength</span>
-                <div className={styles.strengthMeter}>
-                  <div 
-                    className={styles.strengthFill} 
-                    style={{ width: `${car.communityStrength * 10}%` }}
-                  />
-                </div>
-                <span>{car.communityStrength}/10</span>
-              </div>
-            )}
-
-            {car.keyResources?.length > 0 && (
-              <div className={styles.communityBlock}>
-                <h3>Key Resources</h3>
-                <div className={styles.resourcesList}>
-                  {car.keyResources.map((res, index) => (
-                    <a 
-                      key={index} 
-                      href={res.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={styles.resourceCard}
-                    >
-                      <div className={styles.resourceHeader}>
-                        <strong>{res.name}</strong>
-                        <span className={styles.resourceType}>{res.type}</span>
-                      </div>
-                      <p>{res.notes}</p>
-                      <Icons.externalLink size={14} />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {car.facebookGroups?.length > 0 && (
-              <div className={styles.communityBlock}>
-                <h3>Facebook Groups</h3>
-                <div className={styles.groupsList}>
-                  {car.facebookGroups.map((group, index) => (
-                    <span key={index} className={styles.groupBadge}>{group}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {car.aftermarketSceneNotes && (
-              <div className={styles.communityBlock}>
-                <h3>Aftermarket Scene</h3>
-                <p>{car.aftermarketSceneNotes}</p>
-              </div>
-            )}
-          </CollapsibleSection>
-        )}
-
-        {/* ============================================================
-            SECTION: MEDIA & REVIEWS
-            ============================================================ */}
-        {(car.notableReviews || car.mustWatchVideos || car.expertQuotes) && (
-          <CollapsibleSection 
-            title="Media & Reviews" 
-            icon={<Icons.play size={24} />}
-            id="media"
-            defaultOpen={false}
-          >
+            {/* Expert Quotes */}
             {car.expertQuotes?.length > 0 && (
-              <div className={styles.quotesSection}>
-                {car.expertQuotes.map((quote, index) => (
-                  <blockquote key={index} className={styles.expertQuote}>
-                    <p>&ldquo;{quote.quote}&rdquo;</p>
-                    <cite>— {quote.person}, {quote.outlet}</cite>
-                  </blockquote>
-                ))}
-              </div>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.star size={22} />
+                  <h2>What Experts Say</h2>
+                </div>
+                <div className={styles.quotesGrid}>
+                  {car.expertQuotes.map((quote, i) => (
+                    <blockquote key={i} className={styles.expertQuote}>
+                      <p>&ldquo;{quote.quote}&rdquo;</p>
+                      <cite>— {quote.person}, {quote.outlet}</cite>
+                    </blockquote>
+                  ))}
+                </div>
+              </section>
             )}
 
+            {/* Notable Reviews */}
             {car.notableReviews?.length > 0 && (
-              <div className={styles.mediaBlock}>
-                <h3>Notable Reviews</h3>
+              <section className={styles.contentSection}>
+                <div className={styles.sectionHeader}>
+                  <Icons.book size={22} />
+                  <h2>Notable Reviews</h2>
+                </div>
                 <div className={styles.reviewsList}>
-                  {car.notableReviews.map((review, index) => (
-                    <div key={index} className={styles.reviewCard}>
+                  {car.notableReviews.map((review, i) => (
+                    <div key={i} className={styles.reviewCard}>
                       <div className={styles.reviewHeader}>
                         <strong>{review.source}</strong>
                         {review.rating && <span className={styles.reviewRating}>{review.rating}</span>}
@@ -1215,113 +1164,84 @@ export default function CarDetail() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {car.mustWatchVideos?.length > 0 && (
-              <div className={styles.mediaBlock}>
-                <h3>Must-Watch Videos</h3>
-                <div className={styles.videosList}>
-                  {car.mustWatchVideos.map((video, index) => (
-                    <a 
-                      key={index} 
-                      href={video.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={styles.videoCard}
-                    >
-                      <Icons.play size={24} />
-                      <div className={styles.videoInfo}>
-                        <strong>{video.title}</strong>
-                        <span>{video.channel}</span>
-                        {video.duration && <span className={styles.videoDuration}>{video.duration}</span>}
+            {/* Performance Scores */}
+            <section className={styles.contentSection}>
+              <div className={styles.sectionHeader}>
+                <Icons.gauge size={22} />
+                <h2>Performance Scores</h2>
+              </div>
+              
+              <div className={styles.scoreGrid}>
+                {scoreBreakdown.map(score => {
+                  const { label: ratingLabel } = getScoreLabel(score.rawScore);
+                  return (
+                    <div key={score.key} className={styles.scoreCard}>
+                      <div className={styles.scoreCardHeader}>
+                        <span className={styles.scoreCardLabel}>{score.label}</span>
+                        <span className={`${styles.scoreValue} ${getScoreTierClass(score.rawScore)}`}>
+                          {score.rawScore}/10
+                        </span>
                       </div>
-                    </a>
-                  ))}
-                </div>
+                      <div className={styles.scoreBar}>
+                        <div 
+                          className={`${styles.scoreBarFill} ${getScoreTierClass(score.rawScore)}`}
+                          style={{ width: `${score.percentage}%` }}
+                        />
+                      </div>
+                      <span className={styles.scoreRating}>{ratingLabel}</span>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </CollapsibleSection>
+
+              <ScoringInfo variant="carDetail" />
+            </section>
+          </div>
         )}
+      </div>
 
-        {/* ============================================================
-            SECTION: PERFORMANCE SCORES
-            ============================================================ */}
-        <CollapsibleSection 
-          title="Performance Scores" 
-          icon={<Icons.gauge size={24} />}
-          id="scores"
-          defaultOpen={!hasCuratedContent}
-        >
-          <p className={styles.sectionSubtitle}>
-            How this vehicle scores across our key categories
-          </p>
-          
-          <div className={styles.scoreGrid}>
-            {scoreBreakdown.map(score => {
-              const { label: ratingLabel } = getScoreLabel(score.rawScore);
-              return (
-                <div key={score.key} className={styles.scoreCard}>
-                  <div className={styles.scoreCardHeader}>
-                    <span className={styles.scoreCardLabel}>{score.label}</span>
-                    <span className={`${styles.scoreValue} ${getScoreTierClass(score.rawScore)}`}>
-                      {score.rawScore}/10
-                    </span>
-                  </div>
-                  <div className={styles.scoreBar}>
-                    <div 
-                      className={`${styles.scoreBarFill} ${getScoreTierClass(score.rawScore)}`}
-                      style={{ width: `${score.percentage}%` }}
-                    />
-                  </div>
-                  <span className={styles.scoreRating}>{ratingLabel}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className={styles.scoringInfoWrapper}>
-            <ScoringInfo variant="carDetail" />
-          </div>
-        </CollapsibleSection>
-
-        {/* Upgrade Teaser */}
-        <div className={styles.upgradeTeaser}>
-          <div className={styles.upgradeTeaserHeader}>
+      {/* ================================================================
+          UPGRADE TEASER - CTA for modifications
+          ================================================================ */}
+      <section className={styles.upgradeTeaser}>
+        <div className={styles.upgradeTeaserInner}>
+          <div className={styles.upgradeTeaserContent}>
             <Icons.tool size={24} />
-            <h3>Thinking About Upgrades?</h3>
+            <div>
+              <h3>Thinking About Upgrades?</h3>
+              <p>
+                Explore popular modification paths for the {car.name}. 
+                No pressure—just ideas and honest advice.
+              </p>
+            </div>
           </div>
-          <p>
-            Explore popular modification paths for the {car.name}. 
-            No pressure—just ideas and honest advice.
-          </p>
           <div className={styles.upgradeTeaserActions}>
-            <Link 
-              href={`/performance?car=${car.slug}`} 
-              className={styles.primaryButton}
-            >
+            <Link href={`/performance?car=${car.slug}`} className={styles.primaryBtn}>
               Explore Upgrades
             </Link>
-            <Link href="/education" className={styles.secondaryButton}>
+            <Link href="/education" className={styles.secondaryBtn}>
               Learn More
             </Link>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* CTA Section */}
-      <section className={styles.ctaSection}>
-        <div className={styles.ctaContent}>
-          <div className={styles.ctaButtons}>
-            <Link href={`/performance?car=${car.slug}`} className={styles.ctaPrimary}>
-              <Icons.gauge size={20} />
-              See Performance Impact
-            </Link>
-            <Link href="/car-selector" className={styles.ctaSecondary}>
-              <Icons.arrowLeft size={18} />
-              Back to Car Selector
-            </Link>
-          </div>
+      {/* ================================================================
+          FOOTER CTA
+          ================================================================ */}
+      <section className={styles.footerCta}>
+        <div className={styles.footerCtaInner}>
+          <Link href={`/performance?car=${car.slug}`} className={styles.ctaPrimary}>
+            <Icons.gauge size={20} />
+            See Performance Impact
+          </Link>
+          <Link href="/car-selector" className={styles.ctaSecondary}>
+            <Icons.arrowLeft size={18} />
+            Back to Car Selector
+          </Link>
         </div>
       </section>
     </div>

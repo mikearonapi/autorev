@@ -340,3 +340,8 @@ FROM cars
 WHERE slug IN ('mercedes-amg-e63-w212', 'cadillac-cts-v-gen2', 'chevrolet-corvette-c6-grand-sport', 'dodge-challenger-srt-392', 'dodge-charger-srt-392', 'ford-mustang-boss-302', 'lotus-elise-s2')
 ORDER BY name;
 
+
+
+
+
+

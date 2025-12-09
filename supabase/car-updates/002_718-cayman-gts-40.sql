@@ -212,3 +212,8 @@ WHERE slug = '718-cayman-gts-40';
 SELECT name, slug, essence IS NOT NULL AS has_essence, heritage IS NOT NULL AS has_heritage
 FROM cars WHERE slug = '718-cayman-gts-40';
 
+
+
+
+
+

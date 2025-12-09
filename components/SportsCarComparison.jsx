@@ -11,7 +11,8 @@ import {
   getRecommendations,
   getTopPriorities,
   getDynamicRecommendationTypes,
-  DEFAULT_WEIGHTS 
+  DEFAULT_WEIGHTS,
+  ENTHUSIAST_WEIGHTS
 } from '@/lib/scoring.js';
 import CarImage from './CarImage';
 
@@ -188,6 +189,11 @@ const Icons = {
       <path d="M12 12c0-3 2.5-6 6-6 1 0 2 .5 2.5 1L22 5v7c0 3-2.5 6-6 6-1 0-2-.5-2.5-1L12 19v-7Z"/>
       <path d="M2 5l1.5 2c.5-.5 1.5-1 2.5-1 3.5 0 6 3 6 6v7l-1.5-2c-.5.5-1.5 1-2.5 1-3.5 0-6-3-6-6V5Z"/>
     </svg>
+  ),
+  verified: ({ size = 14, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+    </svg>
   )
 };
 
@@ -240,7 +246,8 @@ export default function SportsCarComparison() {
   const [loadError, setLoadError] = useState(null);
   
   // State for user preferences
-  const [weights, setWeights] = useState(() => DEFAULT_WEIGHTS);
+  // Use ENTHUSIAST_WEIGHTS by default to prioritize driving engagement
+  const [weights, setWeights] = useState(() => ENTHUSIAST_WEIGHTS);
   const [sortBy, setSortBy] = useState('total');
   const [priceMax, setPriceMax] = useState(100000);
   const [priceMin, setPriceMin] = useState(0);
@@ -658,6 +665,7 @@ export default function SportsCarComparison() {
                 <option value="stance">Stance</option>
               </select>
             </div>
+
           </div>
 
           {filterWarning && (

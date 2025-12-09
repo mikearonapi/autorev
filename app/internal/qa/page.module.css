@@ -1,0 +1,300 @@
+/* Internal QA Page Styles */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  color: #64748b;
+  margin: 0;
+}
+
+/* Summary Stats */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.stat.alert {
+  border-color: #fbbf24;
+  background: #fef3c7;
+}
+
+.statValue {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.stat.alert .statValue {
+  color: #b45309;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.875rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.filterBtn.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: white;
+}
+
+/* Cars List */
+.carsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.carCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.carCard.hasIssues {
+  border-left: 4px solid #f59e0b;
+}
+
+.carHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.carName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+}
+
+.reviewCount {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.viewLink {
+  font-size: 0.8125rem;
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
+}
+
+/* Discrepancies */
+.discrepancies {
+  margin-bottom: 1rem;
+}
+
+.discrepancies h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem;
+}
+
+.discrepancyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.discrepancy {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.discrepancy.up {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.discrepancy.down {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.discrepancyCategory {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-transform: capitalize;
+  margin-bottom: 0.375rem;
+}
+
+.discrepancyScores {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.discrepancyScores strong {
+  color: #0f172a;
+}
+
+.arrow {
+  font-weight: bold;
+}
+
+.discrepancy.up .arrow {
+  color: #22c55e;
+}
+
+.discrepancy.down .arrow {
+  color: #f59e0b;
+}
+
+.suggestion {
+  display: block;
+  font-size: 0.6875rem;
+  color: #64748b;
+  margin-top: 0.375rem;
+}
+
+/* Tags Row */
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tagGroup {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.tagLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-size: 0.6875rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.tag.strength {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.tag.weakness {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+/* No Reviews */
+.noReviews {
+  text-align: center;
+  padding: 1rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+/* Loading & Error */
+.loading,
+.error,
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.error {
+  color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .carHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+

@@ -55,3 +55,8 @@ ALTER TABLE cars ADD CONSTRAINT cars_perf_reliability_heat_check CHECK (perf_rel
 ALTER TABLE cars ADD CONSTRAINT cars_perf_sound_emotion_check CHECK (perf_sound_emotion >= 1 AND perf_sound_emotion <= 10);
 
 
+
+
+
+
+

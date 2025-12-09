@@ -912,6 +912,75 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
 }
 
 /**
+ * Expert Track Insights - Shows what reviewers say about track performance
+ */
+function ExpertTrackInsights({ car }) {
+  const consensus = car?.externalConsensus || car?.external_consensus;
+  const reviewCount = car?.expertReviewCount || car?.expert_review_count || 0;
+  
+  // Only show if we have track-related feedback
+  if (reviewCount === 0) return null;
+  
+  // Get track-related weaknesses
+  const trackWeaknesses = (consensus?.weaknesses || [])
+    .filter(w => {
+      const tag = (w.tag || w).toLowerCase();
+      return tag.includes('brake') || tag.includes('cool') || tag.includes('heat') || 
+             tag.includes('grip') || tag.includes('traction') || tag.includes('suspension');
+    })
+    .slice(0, 3);
+    
+  // Get track-related strengths
+  const trackStrengths = (consensus?.strengths || [])
+    .filter(s => {
+      const tag = (s.tag || s).toLowerCase();
+      return tag.includes('handl') || tag.includes('steer') || tag.includes('balance') || 
+             tag.includes('grip') || tag.includes('track') || tag.includes('brake');
+    })
+    .slice(0, 3);
+    
+  if (trackWeaknesses.length === 0 && trackStrengths.length === 0) return null;
+  
+  return (
+    <div className={styles.expertTrackInsights}>
+      <h4 className={styles.expertInsightsTitle}>
+        <Icons.flag size={16} />
+        What Reviewers Say About Track Use
+      </h4>
+      <div className={styles.expertInsightsContent}>
+        {trackStrengths.length > 0 && (
+          <div className={styles.expertInsightsGroup}>
+            <span className={styles.expertInsightsLabel}>Praised:</span>
+            <div className={styles.expertInsightsTags}>
+              {trackStrengths.map((s, i) => (
+                <span key={i} className={`${styles.expertInsightsTag} ${styles.strength}`}>
+                  {s.tag || s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        {trackWeaknesses.length > 0 && (
+          <div className={styles.expertInsightsGroup}>
+            <span className={styles.expertInsightsLabel}>Watch for:</span>
+            <div className={styles.expertInsightsTags}>
+              {trackWeaknesses.map((w, i) => (
+                <span key={i} className={`${styles.expertInsightsTag} ${styles.weakness}`}>
+                  {w.tag || w}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <p className={styles.expertInsightsNote}>
+        Based on {reviewCount} expert review{reviewCount > 1 ? 's' : ''}
+      </p>
+    </div>
+  );
+}
+
+/**
  * Main Performance HUB component
  */
 export default function PerformanceHub({ car }) {
@@ -1189,6 +1258,9 @@ export default function PerformanceHub({ car }) {
             onUpgradeClick={setSelectedUpgradeForModal}
           />
         )}
+
+        {/* Expert Track Insights - What reviewers say */}
+        <ExpertTrackInsights car={car} />
 
         {/* Performance Metrics - Full Bar Charts */}
         <div className={styles.performanceSection}>
