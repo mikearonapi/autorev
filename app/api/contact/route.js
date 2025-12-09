@@ -1,13 +1,14 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const CONTACT_EMAIL = 'Cory@supernaturalmotorsports.com';
 
 export async function POST(request) {
   try {
     const body = await request.json();
     const { name, email, interest, car, message } = body;
+
+    // Initialize Resend at runtime (not build time)
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Validate required fields
     if (!name || !email || !message) {
