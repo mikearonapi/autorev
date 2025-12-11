@@ -12,25 +12,29 @@
 }
 
 /* ==========================================================================
-   Hero Section
+   Hero Section - Matching home page style
    ========================================================================== */
 
 .hero {
   position: relative;
-  min-height: 45vh;
+  min-height: 85vh;
+  min-height: 85dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl) 0;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: calc(var(--space-xl) + var(--header-height-mobile));
   text-align: center;
   color: var(--color-white);
   overflow: hidden;
+  background: var(--color-gray-900);
 }
 
 @media (min-width: 768px) {
   .hero {
-    min-height: 50vh;
-    padding: var(--space-2xl) 0;
+    min-height: 90vh;
+    padding: var(--space-2xl) var(--space-lg);
+    padding-top: calc(var(--space-2xl) + var(--header-height));
   }
 }
 
@@ -42,7 +46,13 @@
 
 .heroImage {
   object-fit: cover;
-  object-position: center;
+  object-position: center 30%;
+}
+
+@media (min-width: 768px) {
+  .heroImage {
+    object-position: center;
+  }
 }
 
 .heroOverlay {
@@ -51,10 +61,21 @@
   z-index: 1;
   background: linear-gradient(
     to bottom,
-    rgba(15, 23, 42, 0.85) 0%,
-    rgba(15, 23, 42, 0.75) 50%,
-    rgba(15, 23, 42, 0.95) 100%
+    rgba(10, 10, 20, 0.7) 0%,
+    rgba(10, 10, 20, 0.5) 40%,
+    rgba(10, 10, 20, 0.8) 100%
   );
+}
+
+@media (min-width: 768px) {
+  .heroOverlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 20, 0.6) 0%,
+      rgba(10, 10, 20, 0.4) 40%,
+      rgba(10, 10, 20, 0.7) 100%
+    );
+  }
 }
 
 .heroContent {

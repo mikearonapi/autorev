@@ -10,22 +10,26 @@
   }
 }
 
-/* Hero Section with Image Backdrop */
+/* Hero Section with Image Backdrop - Matching home page style */
 .hero {
   position: relative;
-  min-height: 50vh;
+  min-height: 85vh;
+  min-height: 85dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3xl) var(--space-md);
+  padding: var(--space-xl) var(--space-md);
+  padding-top: calc(var(--space-xl) + var(--header-height-mobile));
   text-align: center;
   overflow: hidden;
+  background: var(--color-gray-900);
 }
 
 @media (min-width: 768px) {
   .hero {
-    min-height: 60vh;
-    padding: var(--space-4xl) var(--space-xl);
+    min-height: 90vh;
+    padding: var(--space-2xl) var(--space-lg);
+    padding-top: calc(var(--space-2xl) + var(--header-height));
   }
 }
 
@@ -40,15 +44,33 @@
   object-position: center 30%;
 }
 
+@media (min-width: 768px) {
+  .heroImage {
+    object-position: center;
+  }
+}
+
 .heroOverlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(
     to bottom,
-    rgba(26, 26, 46, 0.7) 0%,
-    rgba(26, 77, 110, 0.8) 100%
+    rgba(10, 10, 20, 0.7) 0%,
+    rgba(10, 10, 20, 0.5) 40%,
+    rgba(10, 10, 20, 0.8) 100%
   );
-  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .heroOverlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 20, 0.6) 0%,
+      rgba(10, 10, 20, 0.4) 40%,
+      rgba(10, 10, 20, 0.7) 100%
+    );
+  }
 }
 
 .heroContent {
