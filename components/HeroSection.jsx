@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/app/page.module.css';
 
-// AI-generated images (owned/licensed)
-const heroImageUrl = '/images/pages/home-hero.png';
+// AI-generated images (owned/licensed) - Dodge Viper overhead shot
+const heroImageUrl = '/images/pages/home-hero.jpg';
 
 // Cycling hero messages - punchy and to the point
 const heroMessages = [
@@ -37,7 +37,7 @@ export default function HeroSection() {
         setCurrentMessageIndex((prev) => (prev + 1) % heroMessages.length);
         setIsVisible(true);
       }, 500); // Half second for fade out
-    }, 4000); // 4 seconds per message (including transitions)
+    }, 3750); // 3.75 seconds per message (including transitions)
 
     return () => clearInterval(cycleInterval);
   }, []);
@@ -47,7 +47,7 @@ export default function HeroSection() {
       <div className={styles.heroImageWrapper}>
         <Image
           src={heroImageUrl}
-          alt="Sports car on a winding mountain road at golden hour"
+          alt="Dodge Viper ACR overhead view with dramatic lighting"
           fill
           priority
           quality={90}
