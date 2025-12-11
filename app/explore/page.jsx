@@ -41,10 +41,10 @@ const Icons = {
   ),
 };
 
-// High-quality images - unique to this page (no duplicates from homepage)
-const heroImage = '/images/pages/explore-hero.jpg'; // Corvette ZR1 Sebring Orange
-const catalogImage = '/images/pages/catalog-multi-cars.jpg'; // Multiple cars - perfect for "catalog"
-const educationImage = '/images/pages/engine-bay.png';
+// AI-generated images (owned/licensed) - unique to this page
+const heroImage = '/images/pages/canyon-road.png'; // Scenic driving road - exploration theme
+const catalogImage = '/images/pages/cars-and-coffee.png'; // Cars & coffee meet - multiple cars, community feel
+const educationImage = '/images/pages/engine-bay.png'; // Clean engine bay detail
 
 export default function ExplorePage() {
   return (
@@ -54,7 +54,7 @@ export default function ExplorePage() {
         <div className={styles.heroImageWrapper}>
           <Image
             src={heroImage}
-            alt="Stunning Corvette ZR1 in Sebring Orange"
+            alt="Scenic winding canyon road perfect for spirited driving"
             fill
             priority
             quality={90}
@@ -81,7 +81,7 @@ export default function ExplorePage() {
             <div className={styles.pathImageWrapper}>
               <Image
                 src={catalogImage}
-                alt="Explore our car catalog"
+                alt="Sports cars gathered at a cars and coffee community meet"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={styles.pathImage}

@@ -16,8 +16,8 @@ import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import ContextualBadge from '@/components/ContextualBadge';
 import TunabilityBadge from '@/components/TunabilityBadge';
 
-// High-quality hero image - Corvette wheel and brake detail
-const heroImageUrl = '/images/pages/performance-hero.jpg';
+// AI-generated hero image (owned/licensed)
+const heroImageUrl = '/images/pages/performance-hero.png';
 
 // Icons
 const Icons = {

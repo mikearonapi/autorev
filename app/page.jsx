@@ -15,8 +15,8 @@ export const metadata = {
   },
 };
 
-// Page images - using high-quality pressroom imagery
-const heroImageUrl = '/images/pages/home-hero.jpg'; // Stunning Viper overhead shot
+// AI-generated images (owned/licensed)
+const heroImageUrl = '/images/pages/home-hero.png';
 const BLOB_BASE = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com';
 const valueImageUrl = `${BLOB_BASE}/pages/home/value-section.webp`;
 
