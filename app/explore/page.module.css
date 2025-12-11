@@ -1,13 +1,6 @@
 /* Explore Page - KISS Design */
 .page {
   min-height: 100vh;
-  padding-top: var(--header-height-mobile);
-}
-
-@media (min-width: 768px) {
-  .page {
-    padding-top: var(--header-height);
-  }
 }
 
 /* Hero Section with Image Backdrop - Matching home page style */

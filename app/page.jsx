@@ -2,8 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import CarCarousel from '@/components/CarCarousel';
-import MethodologyStrip from '@/components/MethodologyStrip';
-import TrustIndicators from '@/components/TrustIndicators';
 import HeroSection from '@/components/HeroSection';
 import styles from './page.module.css';
 
@@ -110,12 +108,6 @@ const pillars = [
   }
 ];
 
-const steps = [
-  { number: '01', title: 'Define Your Mission', description: 'Track days? Canyon carving? Daily driver? We start with your real goals—not internet hype.' },
-  { number: '02', title: 'Get Matched', description: 'Our tools match you with cars or upgrades based on real ownership experience, not just specs.' },
-  { number: '03', title: 'Plan with Purpose', description: 'Whether buying or building, we help you prioritize for maximum impact on your actual budget.' },
-  { number: '04', title: 'Drive with Confidence', description: 'Execute your plan knowing every decision was made with intention—not impulse.' }
-];
 
 export default function Home() {
   return (
@@ -154,33 +146,6 @@ export default function Home() {
           <p className={styles.carShowcaseSubtitle}>From weekend warriors to track machines</p>
         </div>
         <CarCarousel />
-      </section>
-
-      {/* Trust Indicators - Compact version for credibility */}
-      <TrustIndicators variant="compact" />
-
-      {/* Methodology - Transparent about our research process */}
-      <MethodologyStrip />
-
-      {/* How It Works Section */}
-      <section className={styles.howItWorks}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>How It Works</h2>
-            <p className={styles.sectionSubtitle}>
-              From first click to first drive, we&apos;re with you
-            </p>
-          </div>
-          <div className={styles.stepsGrid}>
-            {steps.map((step, index) => (
-              <div key={index} className={styles.stepCard}>
-                <div className={styles.stepNumber}>{step.number}</div>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDescription}>{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Value Props Section */}
