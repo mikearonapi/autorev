@@ -49,6 +49,29 @@
   aspect-ratio: 43 / 24;
 }
 
+/* Garage variant - optimized for premium studio photography */
+.garage {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: #0a0a0a; /* Dark base to match studio images */
+  border-radius: 0; /* Square corners for garage display */
+}
+
+@media (min-width: 768px) {
+  .garage {
+    aspect-ratio: 16 / 10; /* Slightly taller for better car showcase */
+    border-radius: 0;
+  }
+}
+
+/* No hover effects for garage variant */
+.garage:hover .placeholder,
+.garage:hover .image,
+.garage:active .placeholder,
+.garage:active .image {
+  transform: none !important;
+}
+
 /* Placeholder */
 .placeholder {
   position: absolute;
@@ -139,6 +162,31 @@
 .card .image,
 .thumbnail .image {
   object-position: center center;
+}
+
+/* Garage variant - studio images are typically centered */
+.garage .image {
+  object-position: center center;
+}
+
+/* Garage placeholder - dark studio theme */
+.garage .placeholder {
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f14 100%);
+}
+
+.garage .placeholderGrid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.garage .placeholderOverlay {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
 }
 
 /* Variant-specific placeholder text sizes - Mobile First */

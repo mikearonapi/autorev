@@ -4,12 +4,13 @@
  * Saved Builds Provider
  * 
  * React Context provider for managing saved Performance HUB builds.
- * Requires authentication - builds are stored in Supabase.
+ * - Uses Supabase for authenticated users
+ * - Falls back to localStorage for guests (for testing/demo purposes)
  * 
  * @module components/providers/SavedBuildsProvider
  */
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   fetchUserSavedBuilds,
@@ -17,6 +18,39 @@ import {
   updateUserBuild,
   deleteUserBuild,
 } from '@/lib/userDataService';
+
+// LocalStorage key for guest builds
+const STORAGE_KEY = 'autorev_saved_builds';
+
+/**
+ * Load builds from localStorage
+ */
+function loadLocalBuilds() {
+  if (typeof window === 'undefined') return [];
+  
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (err) {
+    console.warn('[SavedBuildsProvider] Failed to load local builds:', err);
+  }
+  return [];
+}
+
+/**
+ * Save builds to localStorage
+ */
+function saveLocalBuilds(builds) {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(builds));
+  } catch (err) {
+    console.warn('[SavedBuildsProvider] Failed to save local builds:', err);
+  }
+}
 
 /**
  * @typedef {Object} SavedBuild
@@ -57,13 +91,24 @@ export function SavedBuildsProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [builds, setBuilds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const syncedRef = useRef(false);
+
+  // Hydrate from localStorage initially (for SSR/guest users)
+  useEffect(() => {
+    const localBuilds = loadLocalBuilds();
+    setBuilds(localBuilds);
+    setIsHydrated(true);
+  }, []);
 
   /**
    * Fetch builds from Supabase
    */
   const fetchBuilds = useCallback(async () => {
     if (!isAuthenticated || !user?.id) {
-      setBuilds([]);
+      // Not authenticated - load from localStorage
+      const localBuilds = loadLocalBuilds();
+      setBuilds(localBuilds);
       return;
     }
 
@@ -74,7 +119,9 @@ export function SavedBuildsProvider({ children }) {
       
       if (error) {
         console.error('[SavedBuildsProvider] Error fetching builds:', error);
-        setBuilds([]);
+        // Fall back to localStorage
+        const localBuilds = loadLocalBuilds();
+        setBuilds(localBuilds);
       } else if (data) {
         const transformedBuilds = data.map(build => ({
           id: build.id,
@@ -93,10 +140,13 @@ export function SavedBuildsProvider({ children }) {
         }));
         
         setBuilds(transformedBuilds);
+        syncedRef.current = true;
       }
     } catch (err) {
       console.error('[SavedBuildsProvider] Unexpected error:', err);
-      setBuilds([]);
+      // Fall back to localStorage
+      const localBuilds = loadLocalBuilds();
+      setBuilds(localBuilds);
     } finally {
       setIsLoading(false);
     }
@@ -104,94 +154,139 @@ export function SavedBuildsProvider({ children }) {
 
   // Fetch builds when auth state changes
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || !isHydrated) return;
     fetchBuilds();
-  }, [fetchBuilds, authLoading]);
+  }, [fetchBuilds, authLoading, isHydrated]);
+
+  // Save to localStorage when builds change (for guests)
+  useEffect(() => {
+    if (!isHydrated) return;
+    
+    // Only save to localStorage if not authenticated
+    if (!isAuthenticated) {
+      saveLocalBuilds(builds);
+    }
+  }, [builds, isHydrated, isAuthenticated]);
 
   /**
    * Save a new build
    */
   const saveBuild = useCallback(async (buildData) => {
-    if (!isAuthenticated || !user?.id) {
-      return { data: null, error: new Error('Must be signed in to save builds') };
+    // If authenticated, save to Supabase
+    if (isAuthenticated && user?.id) {
+      setIsLoading(true);
+      
+      const { data, error } = await saveUserBuild(user.id, buildData);
+      
+      if (!error && data) {
+        const newBuild = {
+          id: data.id,
+          carSlug: data.car_slug,
+          carName: data.car_name,
+          name: data.build_name,
+          upgrades: data.selected_upgrades || [],
+          totalHpGain: data.total_hp_gain || 0,
+          totalCostLow: data.total_cost_low || 0,
+          totalCostHigh: data.total_cost_high || 0,
+          finalHp: data.final_hp,
+          notes: data.notes,
+          isFavorite: data.is_favorite || false,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+        
+        setBuilds(prev => [newBuild, ...prev]);
+      }
+      
+      setIsLoading(false);
+      return { data, error };
     }
 
-    setIsLoading(true);
+    // Not authenticated - save to localStorage
+    const newBuild = {
+      id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      carSlug: buildData.carSlug,
+      carName: buildData.carName,
+      name: buildData.name || 'Untitled Build',
+      upgrades: buildData.upgrades || [],
+      totalHpGain: buildData.totalHpGain || 0,
+      totalCostLow: buildData.totalCostLow || 0,
+      totalCostHigh: buildData.totalCostHigh || 0,
+      finalHp: buildData.finalHp,
+      notes: buildData.notes,
+      isFavorite: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
     
-    const { data, error } = await saveUserBuild(user.id, buildData);
-    
-    if (!error && data) {
-      const newBuild = {
-        id: data.id,
-        carSlug: data.car_slug,
-        carName: data.car_name,
-        name: data.build_name,
-        upgrades: data.selected_upgrades || [],
-        totalHpGain: data.total_hp_gain || 0,
-        totalCostLow: data.total_cost_low || 0,
-        totalCostHigh: data.total_cost_high || 0,
-        finalHp: data.final_hp,
-        notes: data.notes,
-        isFavorite: data.is_favorite || false,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-      };
-      
-      setBuilds(prev => [newBuild, ...prev]);
-    }
-    
-    setIsLoading(false);
-    return { data, error };
+    setBuilds(prev => [newBuild, ...prev]);
+    return { data: newBuild, error: null };
   }, [isAuthenticated, user?.id]);
 
   /**
    * Update an existing build
    */
   const updateBuildHandler = useCallback(async (buildId, updates) => {
-    if (!isAuthenticated || !user?.id) {
-      return { data: null, error: new Error('Must be signed in') };
+    // If authenticated, update in Supabase
+    if (isAuthenticated && user?.id) {
+      const { data, error } = await updateUserBuild(user.id, buildId, updates);
+      
+      if (!error && data) {
+        setBuilds(prev => prev.map(build => {
+          if (build.id === buildId) {
+            return {
+              ...build,
+              name: data.build_name,
+              upgrades: data.selected_upgrades || [],
+              totalHpGain: data.total_hp_gain || 0,
+              totalCostLow: data.total_cost_low || 0,
+              totalCostHigh: data.total_cost_high || 0,
+              finalHp: data.final_hp,
+              notes: data.notes,
+              isFavorite: data.is_favorite || false,
+              updatedAt: data.updated_at,
+            };
+          }
+          return build;
+        }));
+      }
+      
+      return { data, error };
     }
 
-    const { data, error } = await updateUserBuild(user.id, buildId, updates);
+    // Not authenticated - update in localStorage
+    setBuilds(prev => prev.map(build => {
+      if (build.id === buildId) {
+        return {
+          ...build,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      return build;
+    }));
     
-    if (!error && data) {
-      setBuilds(prev => prev.map(build => {
-        if (build.id === buildId) {
-          return {
-            ...build,
-            name: data.build_name,
-            upgrades: data.selected_upgrades || [],
-            totalHpGain: data.total_hp_gain || 0,
-            totalCostLow: data.total_cost_low || 0,
-            totalCostHigh: data.total_cost_high || 0,
-            finalHp: data.final_hp,
-            notes: data.notes,
-            isFavorite: data.is_favorite || false,
-            updatedAt: data.updated_at,
-          };
-        }
-        return build;
-      }));
-    }
-    
-    return { data, error };
+    return { data: { id: buildId, ...updates }, error: null };
   }, [isAuthenticated, user?.id]);
 
   /**
    * Delete a build
    */
   const deleteBuildHandler = useCallback(async (buildId) => {
-    if (!isAuthenticated || !user?.id) {
-      return { error: new Error('Must be signed in') };
+    // If authenticated, delete from Supabase
+    if (isAuthenticated && user?.id) {
+      const { error } = await deleteUserBuild(user.id, buildId);
+      
+      if (!error) {
+        setBuilds(prev => prev.filter(build => build.id !== buildId));
+      }
+      
+      return { error };
     }
 
-    const { error } = await deleteUserBuild(user.id, buildId);
-    
-    if (!error) {
-      setBuilds(prev => prev.filter(build => build.id !== buildId));
-    }
-    
-    return { error };
+    // Not authenticated - delete from localStorage
+    setBuilds(prev => prev.filter(build => build.id !== buildId));
+    return { error: null };
   }, [isAuthenticated, user?.id]);
 
   /**
@@ -211,7 +306,7 @@ export function SavedBuildsProvider({ children }) {
   const value = {
     builds,
     isLoading,
-    canSave: isAuthenticated,
+    canSave: true, // Now supports localStorage for guests
     saveBuild,
     updateBuild: updateBuildHandler,
     deleteBuild: deleteBuildHandler,

@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const CONTACT_EMAIL = 'Cory@supernaturalmotorsports.com';
+const CONTACT_EMAIL = 'contact@autorev.app';
 
 export async function POST(request) {
   try {
@@ -40,7 +40,7 @@ export async function POST(request) {
 
     // Send email to Cory
     const { data, error } = await resend.emails.send({
-      from: 'SuperNatural Motorsports <noreply@supernaturalmotorsports.com>',
+      from: 'AutoRev <noreply@autorev.app>',
       to: [CONTACT_EMAIL],
       replyTo: email,
       subject: `New Contact Form Message from ${name}`,
@@ -48,7 +48,7 @@ export async function POST(request) {
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 12px 12px 0 0;">
             <h1 style="color: #00d4ff; margin: 0; font-size: 24px;">New Contact Form Submission</h1>
-            <p style="color: #8892b0; margin: 10px 0 0 0;">SuperNatural Motorsports</p>
+            <p style="color: #8892b0; margin: 10px 0 0 0;">AutoRev</p>
           </div>
           
           <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 12px 12px;">

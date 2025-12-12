@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Car Database
+ * AutoRev - Car Database
  * 
  * This is the single source of truth for all car data in the application.
  * Each car has scoring fields (1-10), specifications, and metadata for hero pages.

@@ -1,45 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import styles from '@/app/page.module.css';
+import { carData } from '@/data/cars.js';
+import upgradeDetails from '@/data/upgradeEducation.js';
 
 // AI-generated images (owned/licensed) - Dodge Viper overhead shot
 const heroImageUrl = '/images/pages/home-hero.jpg';
 
-// Cycling hero messages - punchy and to the point
-const heroMessages = [
-  'Explore sports cars and learn what makes them tick.',
-  'Find the perfect match for your goals.',
-  'Plan performance builds that deliver real results.',
-  'Save favorites and compare options in your garage.',
-];
-
-// Quick Stats - Key metrics to build trust
-const quickStats = [
-  { value: '98', label: 'Sports Cars Analyzed', suffix: '+' },
-  { value: '50', label: 'Upgrade Modules', suffix: '+' },
-  { value: '7', label: 'Performance Categories', suffix: '' },
-  { value: '24', label: 'Expert Sources Cited', suffix: '+' },
-];
+// Brand suffix rotation: Revival → Revelation → Revolution
+const brandSuffixes = ['ival', 'elation', 'olution'];
 
 export default function HeroSection() {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const [suffixIndex, setSuffixIndex] = useState(0);
+  const [suffixVisible, setSuffixVisible] = useState(true);
 
+  // Dynamic stats pulled from actual data
+  const quickStats = useMemo(() => {
+    const carCount = carData?.length || 98;
+    const upgradeCount = Object.keys(upgradeDetails || {}).length || 77;
+    
+    return [
+      { value: String(carCount), label: 'Sports Cars', suffix: '' },
+      { value: String(upgradeCount), label: 'Upgrade Guides', suffix: '+' },
+      { value: 'Miatas to GT3s', label: 'From', suffix: '', isText: true },
+      { value: 'Every Service', label: 'Know', suffix: '', isText: true },
+    ];
+  }, []);
+
+  // Cycle through brand suffixes every 1.5 seconds
   useEffect(() => {
-    const cycleInterval = setInterval(() => {
-      // Fade out
-      setIsVisible(false);
-      
-      // After fade out, change message and fade in
+    const suffixInterval = setInterval(() => {
+      setSuffixVisible(false);
       setTimeout(() => {
-        setCurrentMessageIndex((prev) => (prev + 1) % heroMessages.length);
-        setIsVisible(true);
-      }, 500); // Half second for fade out
-    }, 3750); // 3.75 seconds per message (including transitions)
+        setSuffixIndex((prev) => (prev + 1) % brandSuffixes.length);
+        setSuffixVisible(true);
+      }, 300);
+    }, 1500);
 
-    return () => clearInterval(cycleInterval);
+    return () => clearInterval(suffixInterval);
   }, []);
 
   return (
@@ -58,11 +58,11 @@ export default function HeroSection() {
       <div className={styles.heroOverlay} />
       <div className={styles.heroContent}>
         <h1 className={styles.heroTitle}>
-          Unleash Your<br />
-          <span className={styles.heroAccent}>Racing Spirit</span>
+          Find What<br />
+          <span className={styles.heroAccent}>Drives You</span>
         </h1>
-        <p className={`${styles.heroSubtitle} ${styles.cyclingText} ${isVisible ? styles.visible : styles.hidden}`}>
-          {heroMessages[currentMessageIndex]}
+        <p className={styles.heroSubtitle}>
+          Join the auto <span className={styles.heroRevWord}><span className={styles.heroAccent}>rev</span><span className={`${styles.heroAccent} ${styles.heroBrandSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span></span>
         </p>
       </div>
       <div className={styles.heroScroll}>
@@ -70,15 +70,24 @@ export default function HeroSection() {
         <div className={styles.scrollIndicator} />
       </div>
       
-      {/* Quick Stats Bar */}
+      {/* Quick Stats Bar - Dynamic values from actual data */}
       <div className={styles.quickStatsBar}>
         {quickStats.map((stat, index) => (
-          <div key={index} className={styles.quickStat}>
-            <span className={styles.quickStatValue}>
-              {stat.value}
-              {stat.suffix && <span className={styles.quickStatSuffix}>{stat.suffix}</span>}
-            </span>
-            <span className={styles.quickStatLabel}>{stat.label}</span>
+          <div key={index} className={`${styles.quickStat} ${stat.isText ? styles.quickStatText : ''}`}>
+            {stat.isText ? (
+              <>
+                <span className={styles.quickStatLabel}>{stat.label}</span>
+                <span className={styles.quickStatValue}>{stat.value}</span>
+              </>
+            ) : (
+              <>
+                <span className={styles.quickStatValue}>
+                  {stat.value}
+                  {stat.suffix && <span className={styles.quickStatSuffix}>{stat.suffix}</span>}
+                </span>
+                <span className={styles.quickStatLabel}>{stat.label}</span>
+              </>
+            )}
           </div>
         ))}
       </div>

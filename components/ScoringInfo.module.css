@@ -336,8 +336,8 @@
 }
 
 .performanceContent {
-  padding: 1rem;
-  padding-top: 0;
+  padding: 1rem 1.25rem;
+  margin-top: 0.5rem;
   border-top: 1px solid var(--color-gray-200, #e5e5e5);
   animation: slideDown 0.2s ease;
 }
@@ -355,6 +355,81 @@
 
 .performanceContent p:last-of-type {
   margin-bottom: 0.5rem;
+}
+
+/* =========================================================================
+   Compact Variant
+   ========================================================================= */
+.compactContainer {
+  background: var(--color-gray-50, #fafafa);
+  border: 1px solid var(--color-gray-200, #e5e5e5);
+  border-radius: 8px;
+  margin: 0 0 var(--space-lg, 1.5rem) 0;
+  overflow: hidden;
+}
+
+.compactHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.compactHeader:hover {
+  background-color: var(--color-gray-100, #f5f5f5);
+}
+
+.compactTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-gray-600, #525252);
+}
+
+.compactTitle span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+  color: inherit;
+}
+
+.compactContent {
+  padding: 0 1rem 0.75rem 1rem;
+  color: var(--color-gray-600, #525252);
+  animation: slideDown 0.2s ease;
+  border-top: 1px solid var(--color-gray-200, #e5e5e5);
+}
+
+.compactContent p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0.75rem 0 0 0;
+}
+
+.compactContent p:first-child {
+  margin-top: 0.75rem;
+}
+
+.compactContent strong {
+  color: var(--color-gray-800, #262626);
+}
+
+.compactFeedback {
+  font-size: 0.75rem !important;
+  color: var(--color-gray-500, #737373) !important;
+  margin-top: 0.5rem !important;
+}
+
+.compactFeedback a {
+  color: var(--sn-primary, #1a4d6e);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.compactFeedback a:hover {
+  text-decoration: underline;
 }
 
 /* Full Variant */
@@ -516,4 +591,3 @@
     grid-template-columns: 1fr;
   }
 }
-

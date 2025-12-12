@@ -84,7 +84,7 @@ export default function ExpertReviewedStrip() {
           {cars.map((car) => (
             <Link 
               key={car.slug} 
-              href={`/cars/${car.slug}#expert-reviews`}
+              href={`/browse-cars/${car.slug}#expert-reviews`}
               className={styles.card}
             >
               <div className={styles.cardImage}>

@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Upgrade Packages & Modules
+ * AutoRev - Upgrade Packages & Modules
  * 
  * This file defines the upgrade packages and individual modules available
  * for the Performance HUB. Each package/module specifies performance deltas
@@ -74,14 +74,13 @@ export const genericPackages = [
       'Performance brake pads (street compound)',
       'Alignment to factory sport specs',
     ],
-    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    // Module keys that match upgradeModules for grid selection
     includedUpgradeKeys: [
-      'cold-air-intake',
-      'ecu-tune',
-      'cat-back-exhaust',
+      'intake',
+      'tune-street',
+      'exhaust-catback',
       'lowering-springs',
-      'brake-pads-performance',
-      'performance-alignment',
+      'brake-pads-street',
     ],
     considerations: [
       'Most work maintains factory warranty',
@@ -135,18 +134,16 @@ export const genericPackages = [
       'Adjustable sway bars (front and rear)',
       'Performance alignment (aggressive camber + toe)',
     ],
-    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    // Module keys that match upgradeModules for grid selection
     includedUpgradeKeys: [
-      'coilovers',
+      'coilovers-track',
       'big-brake-kit',
-      'brake-pads-performance',
-      'braided-brake-lines',
-      'high-temp-brake-fluid',
+      'brake-pads-track',
+      'brake-fluid-lines',
       'oil-cooler',
-      'ecu-tune',
+      'tune-track',
       'headers',
       'sway-bars',
-      'performance-alignment',
     ],
     considerations: [
       'Noticeably firmer ride on street - not harsh but sporty',
@@ -205,26 +202,23 @@ export const genericPackages = [
       'Roll bar or half cage (safety + chassis stiffness)',
       'Data acquisition system (AiM Solo or similar)',
     ],
-    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    // Module keys that match upgradeModules for grid selection
     includedUpgradeKeys: [
       'camshafts',
       'ported-heads',
       'headers',
-      'cat-back-exhaust',
-      'ecu-tune',
-      'fuel-system-upgrade',
-      'coilovers',
+      'exhaust-catback',
+      'tune-track',
+      'coilovers-track',
       'big-brake-kit',
-      'brake-pads-performance',
-      'lightweight-wheels',
-      'competition-tires',
-      'front-splitter',
-      'rear-wing',
-      'rear-diffuser',
+      'brake-pads-track',
+      'wheels-lightweight',
+      'tires-track',
+      'splitter',
+      'wing',
       'radiator-upgrade',
       'oil-cooler',
       'trans-cooler',
-      'roll-bar',
     ],
     considerations: [
       'Serious build - not recommended for daily driving',
@@ -279,18 +273,18 @@ export const genericPackages = [
       'Oil cooler + upgraded cooling system',
       'Supporting drive components (belts, pulleys)',
     ],
-    // Canonical upgrade keys that map to Upgrade Encyclopedia entries
+    // Module keys that match upgradeModules for grid selection
+    // Note: supercharger-roots OR supercharger-centrifugal will be shown based on engine type
     includedUpgradeKeys: [
       'supercharger-roots',
-      'fuel-system-upgrade',
-      'intercooler',
+      'supercharger-centrifugal',
       'heat-exchanger-sc',
-      'ecu-tune',
-      'clutch-upgrade',
+      'tune-track',
       'headers',
-      'downpipe',
+      'exhaust-catback',
       'oil-cooler',
       'radiator-upgrade',
+      'trans-cooler',
     ],
     considerations: [
       'Major power increase requires quality fuel (91+ octane, E85 for max power)',
@@ -907,6 +901,49 @@ export const upgradeModules = [
     },
     carSlug: null,
     applicableEngines: ['SC V8', 'Turbo V8', 'Turbo V6', 'Turbo I4'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'intercooler',
+    name: 'Intercooler Upgrade',
+    slug: 'intercooler',
+    type: 'module',
+    category: 'forcedInduction',
+    tier: 'trackPack',
+    description: 'Larger front-mount or top-mount intercooler for lower intake temps and more consistent power.',
+    estimatedCost: '$600 - $1,500',
+    estimatedCostLow: 600,
+    estimatedCostHigh: 1500,
+    deltas: {
+      reliabilityHeat: 1,
+      powerAccel: 0.3,
+      trackPace: 0.3,
+    },
+    metricChanges: {
+      hpGain: 20, // Reduces heat soak, consistent power
+    },
+    carSlug: null,
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'fuel-system-upgrade',
+    name: 'Fuel System Upgrade',
+    slug: 'fuel-system-upgrade',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    description: 'Upgraded injectors, fuel pump, and fuel lines to support high-power applications.',
+    estimatedCost: '$1,200 - $3,000',
+    estimatedCostLow: 1200,
+    estimatedCostHigh: 3000,
+    deltas: {
+      reliabilityHeat: 0.5,
+    },
+    metricChanges: {
+      hpGain: 0, // Enables higher power, doesn't add directly
+    },
+    carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
 

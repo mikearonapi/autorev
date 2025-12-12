@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SuperNatural Motorsports - Global Styles & Theme Tokens
+   AutoRev - Global Styles & Theme Tokens
    Mobile-First Design System
    ========================================================================== */
 
@@ -139,8 +139,10 @@
      LAYOUT - Mobile-First Breakpoints
      ======================================================================= */
   --container-max: 1320px;
-  --header-height: 72px;
-  --header-height-mobile: 56px;
+  --header-height: 56px;
+  --header-height-mobile: 48px;
+  --header-height-desktop: 64px;
+  --selected-car-banner-height: 52px;
   
   /* Mobile-first content widths */
   --content-width-narrow: 480px;

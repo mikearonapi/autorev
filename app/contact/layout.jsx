@@ -6,13 +6,13 @@ export const metadata = {
   description: 'Have a question about sports cars, performance upgrades, or the Car Selector? Reach out—we\'re drivers helping drivers. No sales pitch, just honest advice.',
   keywords: ['contact', 'sports car questions', 'car advice', 'performance help', 'motorsports community'],
   openGraph: {
-    title: 'Contact Us | SuperNatural Motorsports',
+    title: 'Contact Us | AutoRev',
     description: 'Have a question? Reach out—we\'re drivers helping drivers. No sales pitch, just honest advice.',
     url: '/contact',
     type: 'website',
   },
   twitter: {
-    title: 'Contact Us | SuperNatural Motorsports',
+    title: 'Contact Us | AutoRev',
     description: 'Have a question? Reach out—we\'re drivers helping drivers.',
   },
   alternates: {

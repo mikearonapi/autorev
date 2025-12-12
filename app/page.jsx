@@ -4,10 +4,11 @@ import Button from '@/components/Button';
 import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
 import styles from './page.module.css';
+import { carData } from '@/data/cars.js';
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
 export const metadata = {
-  title: 'SuperNatural Motorsports | Unleash Your Racing Spirit',
+  title: 'AutoRev | Find What Drives You',
   description: 'Excellence over ego. Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a brotherhood of drivers who value mastery over materialism. From Miatas to GT3s—we lift up every enthusiast.',
   alternates: {
     canonical: '/',
@@ -76,10 +77,10 @@ const GarageIcon = () => (
 const pillars = [
   {
     icon: <ExploreIcon />,
-    title: 'Explore',
-    description: 'Learn about sports cars and performance modifications. Browse our catalog, understand how upgrades work as a system, and build real knowledge.',
-    cta: 'Start Exploring',
-    href: '/explore',
+    title: 'Browse Cars',
+    description: 'Explore our collection of 100+ sports cars. Filter by make, price, and category. Find detailed specs, ownership insights, and performance data.',
+    cta: 'Browse Cars',
+    href: '/browse-cars',
     accent: 'tertiary'
   },
   {
@@ -92,10 +93,10 @@ const pillars = [
   },
   {
     icon: <ToolIcon />,
-    title: 'Performance HUB',
-    description: 'Optimize any car for maximum performance. See how upgrades affect the whole system and plan builds that deliver real results.',
+    title: 'Mod Planner',
+    description: 'Plan your build with purpose. Select your car, explore upgrade recommendations, and see how mods work together as a system.',
     cta: 'Plan Your Build',
-    href: '/performance',
+    href: '/mod-planner',
     accent: 'secondary'
   },
   {
@@ -142,7 +143,7 @@ export default function Home() {
       {/* Car Showcase Carousel */}
       <section className={styles.carShowcase}>
         <div className={styles.carShowcaseHeader}>
-          <h2 className={styles.carShowcaseTitle}>~100 Sports Cars to Explore</h2>
+          <h2 className={styles.carShowcaseTitle}>{carData.length} Sports Cars to Explore</h2>
           <p className={styles.carShowcaseSubtitle}>From weekend warriors to track machines</p>
         </div>
         <CarCarousel />
@@ -188,25 +189,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className={styles.finalCta}>
-        <div className={styles.container}>
-          <div className={styles.ctaContent}>
-            <h2 className={styles.ctaTitle}>Ready to Own Your Lane?</h2>
-            <p className={styles.ctaSubtitle}>
-              No signup required. Free tools built for drivers who value substance over status.
-            </p>
-            <div className={styles.ctaButtons}>
-              <Button href="/car-selector" variant="secondary" size="lg">
-                Find Your Car
-              </Button>
-              <Button href="/contact" variant="outlineLight" size="lg">
-                Have Questions?
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

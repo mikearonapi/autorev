@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Algorithm Regression Tests
+ * AutoRev - Algorithm Regression Tests
  * 
  * Golden test set for validating scoring, upgrade, and recommendation algorithms.
  * These tests ensure algorithm behavior doesn't change unexpectedly.

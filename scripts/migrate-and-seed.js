@@ -262,7 +262,7 @@ async function testConnection() {
  */
 async function main() {
   console.log('\n========================================');
-  console.log('SuperNatural Motorsports Database Setup');
+  console.log('AutoRev Database Setup');
   console.log('========================================\n');
   
   console.log(`Supabase URL: ${SUPABASE_URL}`);

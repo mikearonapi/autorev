@@ -33,6 +33,11 @@ import {
  * @property {string} [years]
  * @property {number} [hp]
  * @property {string} [priceRange]
+ * @property {string} [tier]
+ * @property {string} [category]
+ * @property {string} [imageHeroUrl] - Hero image URL for consistent thumbnails
+ * @property {number} [zeroToSixty] - 0-60 time in seconds
+ * @property {number} [curbWeight] - Curb weight in kg
  */
 
 /**

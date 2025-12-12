@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * SuperNatural Motorsports - Master Validation Suite Runner
+ * AutoRev - Master Validation Suite Runner
  * 
  * Runs all validation tools in sequence and generates a consolidated report.
  * 
@@ -98,7 +98,7 @@ async function runScript(scriptPath) {
 
 async function main() {
   console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║  SuperNatural Motorsports - Master Validation Runner       ║');
+  console.log('║  AutoRev - Master Validation Runner                         ║');
   console.log('╚════════════════════════════════════════════════════════════╝');
   console.log();
   console.log(`Running at: ${new Date().toISOString()}`);

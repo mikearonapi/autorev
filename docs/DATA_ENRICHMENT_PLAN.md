@@ -1,4 +1,4 @@
-# Data Enrichment Plan for SuperNatural Motorsports
+# Data Enrichment Plan for AutoRev
 
 > **Created**: December 7, 2024  
 > **Purpose**: Identify and prioritize database enrichment opportunities  
@@ -322,7 +322,7 @@ After enrichment, we should have:
 - Upgrade education in database (easy to update)
 - Hero blurbs for top 10 most-viewed cars
 
-This will make SuperNatural Motorsports **the most comprehensive sports car comparison platform** for enthusiasts.
+This will make AutoRev **the most comprehensive sports car comparison platform** for enthusiasts.
 
 
 

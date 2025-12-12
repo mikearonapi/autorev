@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title,
       description,
-      url: `/cars/${slug}`,
+      url: `/browse-cars/${slug}`,
       type: 'website',
     },
     twitter: {
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
       description: `Detailed profile of the ${car.name}. Performance scores, specs, and ownership insights.`,
     },
     alternates: {
-      canonical: `/cars/${slug}`,
+      canonical: `/browse-cars/${slug}`,
     },
   };
 }
@@ -56,10 +56,3 @@ export async function generateStaticParams() {
 export default function CarDetailLayout({ children }) {
   return children;
 }
-
-
-
-
-
-
-

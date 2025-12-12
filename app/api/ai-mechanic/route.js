@@ -13,7 +13,7 @@ const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514
 /**
  * System prompt for AI Mechanic
  */
-const SYSTEM_PROMPT = `You are an AI Mechanic for SuperNatural Motorsports, a platform dedicated to sports car enthusiasts.
+const SYSTEM_PROMPT = `You are an AI Mechanic for AutoRev, a platform dedicated to sports car enthusiasts.
 
 Your role:
 - Provide expert advice on sports cars, maintenance, modifications, and buying guidance

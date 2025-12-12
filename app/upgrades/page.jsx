@@ -1,11 +1,13 @@
 import { redirect } from 'next/navigation';
 
-// Redirect /upgrades to /performance (Performance HUB)
-// This page is deprecated - upgrade planning is now part of the Performance HUB
+/**
+ * Redirect /upgrades to /mod-planner
+ * Upgrade planning is now part of the Mod Planner.
+ */
 
 export const metadata = {
-  title: 'Redirecting to Performance HUB',
-  description: 'Upgrade planning is now part of the Performance HUB.',
+  title: 'Redirecting to Mod Planner',
+  description: 'Upgrade planning is now part of the Mod Planner.',
   robots: {
     index: false,
     follow: true,
@@ -13,5 +15,5 @@ export const metadata = {
 };
 
 export default function UpgradesRedirect() {
-  redirect('/performance');
+  redirect('/mod-planner');
 }

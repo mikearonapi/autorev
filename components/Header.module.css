@@ -37,37 +37,60 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 8px;
   text-decoration: none;
   z-index: 1001;
   -webkit-tap-highlight-color: transparent;
+  /* Fixed width to prevent layout shift when suffix changes */
+  min-width: 160px;
 }
 
 .logoIcon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
-  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-white);
   flex-shrink: 0;
 }
 
 .logoText {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .logoName {
   font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: var(--color-gray-900);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.logoRev {
+  color: var(--sn-accent);
+}
+
+.logoSuffix {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  color: var(--sn-accent);
+  transition: opacity 0.3s ease-in-out;
+  display: inline-block;
+  /* Fixed width for longest suffix "elation" to prevent layout shift */
+  min-width: 38px;
+}
+
+.suffixVisible {
+  opacity: 1;
+}
+
+.suffixHidden {
+  opacity: 0;
 }
 
 .logoTagline {
@@ -100,6 +123,66 @@
 .navLinkActive {
   color: var(--sn-primary);
   font-weight: 600;
+}
+
+/* Desktop Dropdown */
+.navDropdown {
+  position: relative;
+}
+
+.navDropdown .navLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navDropdown .navLink svg {
+  transition: transform var(--transition-fast);
+}
+
+.navDropdown:hover .navLink svg {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 160px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-xs) 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  z-index: 1000;
+}
+
+.navDropdown:hover .dropdownMenu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdownItem {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background: var(--color-gray-50);
+  color: var(--sn-primary);
+}
+
+.dropdownItemActive {
+  color: var(--sn-primary);
+  background: rgba(26, 77, 110, 0.05);
 }
 
 /* User Menu Wrapper - Profile/Account */
@@ -189,6 +272,45 @@
   background: rgba(26, 77, 110, 0.05);
 }
 
+/* Mobile Navigation Group with Sublinks */
+.mobileNavGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileNavGroup .mobileNavLink {
+  border-bottom: none;
+}
+
+.mobileSubLinks {
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--space-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.mobileSubLink {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--color-gray-500);
+  padding: var(--space-sm) var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobileSubLink:active {
+  background: var(--color-gray-50);
+}
+
+.mobileSubLink.mobileNavLinkActive {
+  color: var(--sn-primary);
+}
 
 /* Tablet Breakpoint */
 @media (min-width: 768px) {
@@ -198,15 +320,6 @@
 
   .container {
     padding: 0 var(--space-lg);
-  }
-
-  .logoIcon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .logoName {
-    font-size: 16px;
   }
 
   .logoTagline {
@@ -229,15 +342,6 @@
     padding: 0 var(--space-xl);
   }
   
-  .logoIcon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .logoName {
-    font-size: 18px;
-  }
-
   .logoTagline {
     font-size: 12px;
   }

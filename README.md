@@ -1,6 +1,6 @@
-# SuperNatural Motorsports
+# AutoRev
 
-**Unleash Your Racing Spirit** — Expert sports car advisory, performance upgrades, and motorsports services.
+**Find What Drives You** — Expert sports car advisory, performance upgrades, and guidance for enthusiasts.
 
 ## Tech Stack
 
@@ -21,8 +21,8 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mikearonapi/supernaturalmotorsports.git
-   cd supernaturalmotorsports
+   git clone https://github.com/mikearonapi/autorev.git
+   cd autorev
    ```
 
 2. Install dependencies:
@@ -89,4 +89,4 @@ npm run seed
 
 ## License
 
-© 2024 SuperNatural Motorsports. All rights reserved.
+© 2024 AutoRev. All rights reserved.

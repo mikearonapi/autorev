@@ -1,5 +1,5 @@
 # Accuracy Thresholds & Decision Rules
-## SuperNatural Motorsports - OEM-Spec Audit
+## AutoRev - OEM-Spec Audit
 
 > **Created:** December 8, 2024  
 > **Purpose:** Define quantitative accuracy targets and dispute resolution rules  

@@ -238,7 +238,7 @@ export default function ExpertReviews({ carSlug, car }) {
             {upgradeSuggestions.map((upgrade, i) => (
               <Link 
                 key={i}
-                href={`/performance?car=${car.slug}`}
+                href={`/mod-planner?car=${car.slug}`}
                 className={styles.upgradeTag}
               >
                 {formatTag(upgrade)}
@@ -361,7 +361,7 @@ export default function ExpertReviews({ carSlug, car }) {
       {/* Disclaimer */}
       <p className={styles.disclaimer}>
         Expert opinions sourced from trusted automotive reviewers. 
-        Not affiliated with SuperNatural Motorsports.
+        Not affiliated with AutoRev.
       </p>
     </div>
   );

@@ -29,11 +29,19 @@ import {
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { upgradeTiers } from '@/data/performanceCategories.js';
 import { tierConfig } from '@/data/cars.js';
-import { getRecommendationsForCar, getTierRecommendations } from '@/data/carUpgradeRecommendations.js';
-import { validateUpgradeSelection, getRecommendedUpgrades, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
+import { 
+  hasRecommendations, 
+  getPrimaryFocus, 
+  getCoreUpgrades, 
+  getEnhancementUpgrades,
+  getRecommendationProgress,
+} from '@/lib/carRecommendations.js';
+import { validateUpgradeSelection, getRecommendedUpgrades, SEVERITY } from '@/lib/dependencyChecker.js';
 import CarImage from './CarImage';
 import UpgradeAggregator from './UpgradeAggregator';
 import { useCarSelection } from './providers/CarSelectionProvider';
+import { useSavedBuilds } from './providers/SavedBuildsProvider';
+import { useAuth } from './providers/AuthProvider';
 
 // Icons for performance categories
 const Icons = {
@@ -133,6 +141,24 @@ const Icons = {
       <line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
   ),
+  save: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+      <polyline points="17 21 17 13 7 13 7 21"/>
+      <polyline points="7 3 7 8 15 8"/>
+    </svg>
+  ),
+  folder: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+    </svg>
+  ),
+  x: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  ),
 };
 
 // Map icon names to components
@@ -145,6 +171,94 @@ const iconMap = {
   thermometer: Icons.thermometer,
   sound: Icons.sound,
 };
+
+/**
+ * Package descriptions - explains what each upgrade tier does
+ */
+const packageDescriptions = {
+  stock: {
+    title: 'Stock Configuration',
+    shortDesc: 'Factory OEM performance as delivered from the manufacturer.',
+    details: 'The baseline configuration with no modifications. All factory components and calibrations remain intact.'
+  },
+  streetSport: {
+    title: 'Street Sport',
+    shortDesc: 'Enhanced street performance with improved throttle response and sound.',
+    details: 'Bolt-on upgrades that sharpen response and improve the driving experience while maintaining daily drivability. Includes intake, exhaust, tune, and lowering springs.'
+  },
+  trackPack: {
+    title: 'Track Pack',
+    shortDesc: 'Serious track capability with upgraded brakes, suspension, and cooling.',
+    details: 'Built for regular HPDE and track days. Adds adjustable coilovers, big brake kit, track pads, oil cooler, and performance exhaust. Maintains street legality.'
+  },
+  timeAttack: {
+    title: 'Time Attack',
+    shortDesc: 'Maximum naturally-aspirated performance with full chassis optimization.',
+    details: 'Competitive time attack build with camshafts, ported heads, full aero, R-compound tires, and comprehensive cooling. Some street comfort compromised.'
+  },
+  ultimatePower: {
+    title: 'Ultimate Power',
+    shortDesc: 'Maximum horsepower through forced induction.',
+    details: 'Supercharger or turbo kit with supporting fuel system, cooling, and drivetrain upgrades. Massive power gains for street monsters or drag builds.'
+  },
+  custom: {
+    title: 'Custom Build',
+    shortDesc: 'Choose your own adventure - select individual upgrades.',
+    details: 'Build your own configuration by selecting individual modules. Mix and match to create the perfect setup for your specific needs.'
+  }
+};
+
+/**
+ * Package Description Component - Explains what each tier does
+ */
+function PackageDescription({ packageKey, packages, showUpgrade, totalCost, hpGain }) {
+  const desc = packageDescriptions[packageKey] || packageDescriptions.stock;
+  const currentPkg = packages?.find(p => p.key === packageKey);
+  
+  return (
+    <div className={styles.packageDescriptionCard}>
+      <div className={styles.packageDescriptionContent}>
+        <div className={styles.packageDescriptionText}>
+          <h3 className={styles.packageDescriptionTitle}>{desc.title}</h3>
+          <p className={styles.packageDescriptionShort}>{desc.shortDesc}</p>
+        </div>
+        {showUpgrade && packageKey !== 'stock' && (
+          <div className={styles.packageDescriptionStats}>
+            {hpGain > 0 && (
+              <div className={styles.packageStat}>
+                <Icons.bolt size={14} />
+                <span className={styles.packageStatValue}>+{hpGain} HP</span>
+              </div>
+            )}
+            {totalCost?.low > 0 && (
+              <div className={styles.packageStat}>
+                <span className={styles.packageStatLabel}>$</span>
+                <span className={styles.packageStatValue}>{totalCost.display}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Format category key to human-readable name
+ */
+function formatCategoryName(key) {
+  const categoryNames = {
+    power: 'Power',
+    forcedInduction: 'Forced Induction',
+    chassis: 'Chassis',
+    brakes: 'Brakes',
+    cooling: 'Cooling',
+    wheels: 'Wheels',
+    aero: 'Aero',
+    drivetrain: 'Drivetrain',
+  };
+  return categoryNames[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+}
 
 /**
  * Format numeric values with proper precision
@@ -330,74 +444,160 @@ function RatingBar({ label, stockValue, upgradedValue, maxValue = 10 }) {
 }
 
 /**
- * Recommended for This Car - Shows car-specific upgrade recommendations
+ * What Your Car Needs - Database-driven car-specific upgrade recommendations
+ * Shows for ALL modes (Stock, Custom, and all packages)
  */
-function CarRecommendations({ car, currentTier, selectedModules, onAddToModule, onUpgradeClick }) {
-  // Get recommendations - returns null for 'stock' or 'custom' or unrecognized tiers
-  const recommendations = useMemo(() => {
-    if (currentTier === 'stock' || currentTier === 'custom') return null;
-    return getTierRecommendations(car.slug, currentTier);
-  }, [car.slug, currentTier]);
+function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClick }) {
+  // Get recommendations from database (car.upgradeRecommendations)
+  const primaryFocus = useMemo(() => getPrimaryFocus(car), [car]);
+  const coreUpgrades = useMemo(() => getCoreUpgrades(car), [car]);
+  const enhancementUpgrades = useMemo(() => getEnhancementUpgrades(car), [car]);
+  const progress = useMemo(() => getRecommendationProgress(car, selectedModules), [car, selectedModules]);
   
-  // Combine mustHave and recommended, resolving to full upgrade details
-  // Must compute this before conditional return to satisfy React hooks rules
-  const allRecommended = useMemo(() => {
-    if (!recommendations) return [];
-    const keys = [...(recommendations.mustHave || []), ...(recommendations.recommended || [])];
-    return keys.map(key => {
-      const upgrade = getUpgradeByKey(key);
-      const isSelected = selectedModules.includes(key);
-      return { key, upgrade, isSelected };
-    }).filter(item => item.upgrade);
-  }, [recommendations, selectedModules]);
+  // Get platform strengths and watch-outs from the car data
+  const platformStrengths = car?.upgradeRecommendations?.platformStrengths || [];
+  const watchOuts = car?.upgradeRecommendations?.watchOuts || [];
   
-  // Group into selected and not-selected
-  const notYetSelected = allRecommended.filter(item => !item.isSelected);
+  // Filter to show only upgrades not yet selected
+  const coreNotSelected = coreUpgrades.filter(u => !selectedModules.includes(u.key));
+  const enhancementNotSelected = enhancementUpgrades.filter(u => !selectedModules.includes(u.key));
   
-  // Early return after all hooks
-  if (!recommendations) return null;
-  if (notYetSelected.length === 0 && !recommendations.narrative) return null;
+  // Early return if no recommendations in database
+  if (!hasRecommendations(car)) return null;
   
   return (
     <div className={styles.carRecommendations}>
-      <h4 className={styles.recTitle}>
-        <Icons.flag size={16} />
-        Recommended for {car.name}
-      </h4>
-      
-      {recommendations.narrative && (
-        <p className={styles.recNarrative}>{recommendations.narrative}</p>
-      )}
-      
-      {notYetSelected.length > 0 && (
-        <div className={styles.recUpgrades}>
-          {notYetSelected.map(({ key, upgrade }) => (
-            <div key={key} className={styles.recUpgradeItem}>
-              <button
-                className={styles.recUpgradeChip}
-                onClick={() => onUpgradeClick(upgrade)}
-              >
-                <span className={styles.recUpgradeName}>{upgrade.name}</span>
-                {upgrade.metricChanges?.hpGain && (
-                  <span className={styles.recUpgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
-                )}
-              </button>
-              <button
-                className={styles.recAddBtn}
-                onClick={() => onAddToModule(key)}
-                title="Add to build"
-              >
-                <Icons.check size={12} />
-              </button>
+      <div className={styles.recHeader}>
+        <h4 className={styles.recTitle}>
+          <Icons.flag size={16} />
+          What Your {car.name} Needs
+        </h4>
+        {progress.progress > 0 && progress.progress < 100 && (
+          <div className={styles.recProgress}>
+            <div className={styles.recProgressBar}>
+              <div 
+                className={styles.recProgressFill} 
+                style={{ width: `${progress.progress}%` }} 
+              />
             </div>
-          ))}
+            <span className={styles.recProgressText}>{progress.progress}% complete</span>
+          </div>
+        )}
+        {progress.progress === 100 && (
+          <span className={styles.recCompleteBadge}>
+            <Icons.check size={12} /> All recommended!
+          </span>
+        )}
+      </div>
+      
+      {/* Primary Focus Area */}
+      {primaryFocus && (
+        <div className={styles.recFocusArea}>
+          <div className={styles.recFocusHeader}>
+            <span className={styles.recFocusLabel}>Priority:</span>
+            <span className={styles.recFocusValue}>{primaryFocus.label}</span>
+          </div>
+          {primaryFocus.reason && (
+            <p className={styles.recNarrative}>{primaryFocus.reason}</p>
+          )}
         </div>
       )}
       
-      {notYetSelected.length === 0 && (
+      {/* Core Upgrades - Essential for this car */}
+      {coreNotSelected.length > 0 && (
+        <div className={styles.recSection}>
+          <span className={styles.recSectionLabel}>Core Upgrades:</span>
+          <div className={styles.recUpgrades}>
+            {coreNotSelected.map((upgrade) => (
+              <div key={upgrade.key} className={styles.recUpgradeItem}>
+                <button
+                  className={`${styles.recUpgradeChip} ${styles.recCore}`}
+                  onClick={() => onUpgradeClick(upgrade)}
+                >
+                  <span className={styles.recUpgradeName}>{upgrade.name}</span>
+                  {upgrade.metricChanges?.hpGain > 0 && (
+                    <span className={styles.recUpgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
+                  )}
+                </button>
+                <button
+                  className={styles.recAddBtn}
+                  onClick={() => onAddToModule(upgrade.key)}
+                  title="Add to build"
+                >
+                  <Icons.check size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Enhancement Upgrades - Also Recommended */}
+      {enhancementNotSelected.length > 0 && (
+        <div className={styles.recSection}>
+          <span className={styles.recSectionLabel}>Also Consider:</span>
+          <div className={styles.recUpgrades}>
+            {enhancementNotSelected.map((upgrade) => (
+              <div key={upgrade.key} className={styles.recUpgradeItem}>
+                <button
+                  className={styles.recUpgradeChip}
+                  onClick={() => onUpgradeClick(upgrade)}
+                >
+                  <span className={styles.recUpgradeName}>{upgrade.name}</span>
+                  {upgrade.metricChanges?.hpGain > 0 && (
+                    <span className={styles.recUpgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
+                  )}
+                </button>
+                <button
+                  className={styles.recAddBtn}
+                  onClick={() => onAddToModule(upgrade.key)}
+                  title="Add to build"
+                >
+                  <Icons.check size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* All Done Message */}
+      {coreNotSelected.length === 0 && enhancementNotSelected.length === 0 && (
         <p className={styles.recComplete}>
           <Icons.check size={14} /> All recommended upgrades are in your build!
         </p>
+      )}
+      
+      {/* Platform Insights - Collapsible */}
+      {(platformStrengths.length > 0 || watchOuts.length > 0) && (
+        <details className={styles.recInsights}>
+          <summary className={styles.recInsightsSummary}>
+            <Icons.info size={14} />
+            Platform Insights
+          </summary>
+          <div className={styles.recInsightsContent}>
+            {platformStrengths.length > 0 && (
+              <div className={styles.recInsightsGroup}>
+                <span className={styles.recInsightsLabel}>Strengths:</span>
+                <ul className={styles.recInsightsList}>
+                  {platformStrengths.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {watchOuts.length > 0 && (
+              <div className={styles.recInsightsGroup}>
+                <span className={styles.recInsightsLabel}>Watch For:</span>
+                <ul className={styles.recInsightsList}>
+                  {watchOuts.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </details>
       )}
     </div>
   );
@@ -577,246 +777,6 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
 }
 
 /**
- * Build Summary Panel - Comprehensive build validation and insights
- * Consolidates: Systems Impact + Dependency Warnings + Recommendations
- */
-function BuildSummaryPanel({ selectedModules, availableModules, onAddMods, car }) {
-  // Get system impacts
-  const impacts = useMemo(() => {
-    if (!selectedModules || selectedModules.length === 0) return [];
-    return getSystemImpactOverview(selectedModules);
-  }, [selectedModules]);
-  
-  // Get validation data
-  const validation = useMemo(() => {
-    if (selectedModules.length === 0) return null;
-    return validateUpgradeSelection(selectedModules, car);
-  }, [selectedModules, car]);
-  
-  // Get recommended upgrades
-  const recommendations = useMemo(() => {
-    if (selectedModules.length === 0) return [];
-    return getRecommendedUpgrades(selectedModules, car);
-  }, [selectedModules, car]);
-  
-  // Check simple deps from upgrades
-  const simpleDeps = useMemo(() => {
-    const allRequires = new Set();
-    const allRecommended = new Set();
-    
-    selectedModules.forEach(modKey => {
-      const mod = getUpgradeByKey(modKey);
-      if (!mod) return;
-      
-      if (mod.requires) {
-        mod.requires.forEach(reqKey => {
-          if (!selectedModules.includes(reqKey)) {
-            allRequires.add(reqKey);
-          }
-        });
-      }
-      
-      if (mod.stronglyRecommended) {
-        mod.stronglyRecommended.forEach(recKey => {
-          if (!selectedModules.includes(recKey) && !allRequires.has(recKey)) {
-            allRecommended.add(recKey);
-          }
-        });
-      }
-    });
-    
-    const availableKeys = Object.values(availableModules || {}).flat().map(m => m.key);
-    
-    return {
-      required: [...allRequires].filter(k => availableKeys.includes(k)),
-      recommended: [...allRecommended].filter(k => availableKeys.includes(k)),
-    };
-  }, [selectedModules, availableModules]);
-  
-  // Calculate stats
-  const stats = useMemo(() => {
-    let improves = 0;
-    let stresses = 0;
-    
-    impacts.forEach(item => {
-      improves += item.improves || 0;
-      stresses += (item.stresses || 0) + (item.compromises || 0);
-    });
-    
-    return {
-      upgrades: selectedModules.length,
-      systems: impacts.length,
-      improves,
-      stresses,
-    };
-  }, [selectedModules, impacts]);
-  
-  // Get issues and synergies from validation
-  const criticalIssues = validation?.critical || [];
-  const warningIssues = validation?.warnings || [];
-  const synergies = validation?.synergies || [];
-  
-  // Filter to available modules
-  const availableKeys = Object.values(availableModules || {}).flat().map(m => m.key);
-  const filteredRequired = simpleDeps.required.filter(k => availableKeys.includes(k));
-  const filteredRecommended = simpleDeps.recommended.filter(k => availableKeys.includes(k));
-  
-  // Determine build health status
-  const hasIssues = filteredRequired.length > 0 || criticalIssues.length > 0;
-  const hasWarnings = filteredRecommended.length > 0 || warningIssues.length > 0;
-  const healthStatus = hasIssues ? 'critical' : hasWarnings ? 'warning' : 'healthy';
-  
-  if (selectedModules.length === 0) return null;
-
-  return (
-    <div className={styles.buildSummaryPanel} data-status={healthStatus}>
-      {/* Build Health Header */}
-      <div className={styles.buildSummaryHeader}>
-        <div className={styles.buildSummaryTitle}>
-          <Icons.wrench size={18} />
-          <h4>Build Summary</h4>
-          {healthStatus === 'healthy' && <span className={styles.healthBadge} data-status="healthy">✓ Ready</span>}
-          {healthStatus === 'warning' && <span className={styles.healthBadge} data-status="warning">⚠ Review</span>}
-          {healthStatus === 'critical' && <span className={styles.healthBadge} data-status="critical">⚠ Action Needed</span>}
-        </div>
-      </div>
-      
-      {/* Stats Row */}
-      <div className={styles.buildStatsRow}>
-        <div className={styles.buildStat}>
-          <span className={styles.buildStatNumber}>{stats.upgrades}</span>
-          <span className={styles.buildStatLabel}>Upgrades</span>
-        </div>
-        <div className={styles.buildStat}>
-          <span className={styles.buildStatNumber}>{stats.systems}</span>
-          <span className={styles.buildStatLabel}>Systems</span>
-        </div>
-        <div className={styles.buildStat} data-type="positive">
-          <span className={styles.buildStatNumber}>+{stats.improves}</span>
-          <span className={styles.buildStatLabel}>Improvements</span>
-        </div>
-        <div className={styles.buildStat} data-type={stats.stresses > 0 ? 'negative' : 'neutral'}>
-          <span className={styles.buildStatNumber}>{stats.stresses}</span>
-          <span className={styles.buildStatLabel}>Stress Points</span>
-        </div>
-      </div>
-      
-      {/* Issues Section - Required/Critical */}
-      {filteredRequired.length > 0 && (
-        <div className={styles.buildIssueBox} data-severity="critical">
-          <div className={styles.buildIssueHeader}>
-            <Icons.alertTriangle size={16} />
-            <span>Missing Requirements</span>
-          </div>
-          <p className={styles.buildIssueDesc}>
-            These upgrades are required for your selected mods to work properly:
-          </p>
-          <div className={styles.buildIssueList}>
-            {filteredRequired.map(key => {
-              const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find(r => r.upgradeKey === key);
-              return (
-                <div key={key} className={styles.buildIssueItem}>
-                  <div className={styles.buildIssueContent}>
-                    <span className={styles.buildIssueName}>{upgrade?.name || key}</span>
-                    {rec?.reason && <span className={styles.buildIssueReason}>{rec.reason}</span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <button 
-            className={styles.buildActionBtn}
-            onClick={() => onAddMods(filteredRequired)}
-          >
-            <Icons.check size={14} />
-            Add Required ({filteredRequired.length})
-          </button>
-        </div>
-      )}
-      
-      {/* Warnings Section - Recommended */}
-      {filteredRecommended.length > 0 && (
-        <div className={styles.buildIssueBox} data-severity="warning">
-          <div className={styles.buildIssueHeader}>
-            <Icons.info size={16} />
-            <span>Strongly Recommended</span>
-          </div>
-          <p className={styles.buildIssueDesc}>
-            These upgrades pair well with your selections for best results:
-          </p>
-          <div className={styles.buildIssueList}>
-            {filteredRecommended.map(key => {
-              const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find(r => r.upgradeKey === key);
-              return (
-                <div key={key} className={styles.buildIssueItem}>
-                  <div className={styles.buildIssueContent}>
-                    <span className={styles.buildIssueName}>{upgrade?.name || key}</span>
-                    {rec?.reason && <span className={styles.buildIssueReason}>{rec.reason}</span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <button 
-            className={styles.buildActionBtnSecondary}
-            onClick={() => onAddMods(filteredRecommended)}
-          >
-            Add Recommended ({filteredRecommended.length})
-          </button>
-        </div>
-      )}
-      
-      {/* Synergies Section */}
-      {synergies.length > 0 && (
-        <div className={styles.buildSynergyBox}>
-          <div className={styles.buildIssueHeader}>
-            <Icons.check size={16} />
-            <span>Great Combinations</span>
-          </div>
-          {synergies.map((synergy, idx) => (
-            <p key={idx} className={styles.buildSynergyText}>
-              <strong>{synergy.name}:</strong> {synergy.message}
-            </p>
-          ))}
-        </div>
-      )}
-      
-      {/* Systems Overview - Compact */}
-      {impacts.length > 0 && (
-        <div className={styles.buildSystemsOverview}>
-          <div className={styles.buildSystemsHeader}>
-            <span>Systems Affected</span>
-          </div>
-          <div className={styles.buildSystemsGrid}>
-            {impacts.map(item => (
-              <div 
-                key={item.system.key} 
-                className={styles.buildSystemChip}
-                data-has-risk={(item.stresses || 0) + (item.compromises || 0) > 0}
-              >
-                <span className={styles.buildSystemName}>{item.system.name}</span>
-                <div className={styles.buildSystemStats}>
-                  {item.improves > 0 && (
-                    <span className={styles.buildSystemPositive}>+{item.improves}</span>
-                  )}
-                  {(item.stresses > 0 || item.compromises > 0) && (
-                    <span className={styles.buildSystemNegative}>
-                      {item.stresses + item.compromises} stress
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
  * Component Breakdown - Shows what parts are included in upgrade
  * Now with clickable upgrade items that open the encyclopedia modal
  */
@@ -985,23 +945,53 @@ function ExpertTrackInsights({ car }) {
 /**
  * Main Performance HUB component
  */
-export default function PerformanceHub({ car }) {
+export default function PerformanceHub({ car, initialBuildId = null, onChangeCar = null }) {
   // Global car selection integration
-  const { selectCar, setUpgrades, isHydrated } = useCarSelection();
+  const { selectCar, setUpgrades, clearCar, isHydrated } = useCarSelection();
+  
+  // Auth and saved builds
+  const { isAuthenticated } = useAuth();
+  const { saveBuild, updateBuild, getBuildById, getBuildsByCarSlug, canSave } = useSavedBuilds();
 
-  // Get car-specific recommendations to determine default tier
-  const carRecommendations = useMemo(() =>
-    getRecommendationsForCar(car.slug),
-    [car.slug]
-  );
-
-  // Initialize to car's default tier if available, otherwise stock
-  const [selectedPackageKey, setSelectedPackageKey] = useState(() => {
-    return carRecommendations?.defaultTier || 'stock';
-  });
+  // Initialize to stock - users can select their preferred package
+  const [selectedPackageKey, setSelectedPackageKey] = useState('stock');
   const [expandedModules, setExpandedModules] = useState(false);
   const [selectedModules, setSelectedModules] = useState([]);
   const [selectedUpgradeForModal, setSelectedUpgradeForModal] = useState(null);
+  
+  // Save build modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [buildName, setBuildName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [currentBuildId, setCurrentBuildId] = useState(initialBuildId);
+  const [saveError, setSaveError] = useState(null);
+  
+  // Get existing builds for this car
+  const existingBuilds = useMemo(() => 
+    getBuildsByCarSlug(car.slug),
+    [getBuildsByCarSlug, car.slug]
+  );
+  
+  // Reset state when car changes (ensures clean slate when navigating between cars)
+  useEffect(() => {
+    // Reset to stock when car changes
+    setSelectedModules([]);
+    setSelectedPackageKey('stock');
+    setCurrentBuildId(null);
+    setSaveError(null);
+  }, [car.slug]);
+
+  // Load initial build if provided (after reset, so this overrides if needed)
+  useEffect(() => {
+    if (initialBuildId) {
+      const build = getBuildById(initialBuildId);
+      if (build && build.carSlug === car.slug) {
+        setSelectedModules(build.upgrades || []);
+        setSelectedPackageKey('custom');
+        setCurrentBuildId(initialBuildId);
+      }
+    }
+  }, [initialBuildId, getBuildById, car.slug]);
 
   // Set this car as selected when viewing the performance hub
   // This ensures the car banner shows the correct car
@@ -1017,22 +1007,35 @@ export default function PerformanceHub({ car }) {
     [car]
   );
   
+  // Get all available module keys for this car
+  const availableModuleKeys = useMemo(() => {
+    return Object.values(availableUpgrades.modulesByCategory || {})
+      .flat()
+      .map(m => m.key);
+  }, [availableUpgrades.modulesByCategory]);
+  
   // Get the modules included in the currently selected package
+  // Filter to only include modules that are actually available for this car
   const packageIncludedModules = useMemo(() => {
     if (selectedPackageKey === 'stock' || selectedPackageKey === 'custom') return [];
     const pkg = availableUpgrades.packages.find(p => p.key === selectedPackageKey);
-    return pkg?.includedUpgradeKeys || [];
-  }, [selectedPackageKey, availableUpgrades.packages]);
+    const packageKeys = pkg?.includedUpgradeKeys || [];
+    // Only include keys that are actually available for this car
+    return packageKeys.filter(key => availableModuleKeys.includes(key));
+  }, [selectedPackageKey, availableUpgrades.packages, availableModuleKeys]);
   
   // Effective selected modules (package defaults + user modifications)
+  // This only includes modules that are actually available for this car
   const effectiveSelectedModules = useMemo(() => {
     if (selectedPackageKey === 'custom' || selectedPackageKey === 'stock') {
-      return selectedModules;
+      // Filter custom selections to available modules
+      return selectedModules.filter(key => availableModuleKeys.includes(key));
     }
     // For packages, combine package defaults with any additional user selections
     const combined = new Set([...packageIncludedModules, ...selectedModules]);
-    return Array.from(combined);
-  }, [selectedPackageKey, packageIncludedModules, selectedModules]);
+    // Filter to available modules
+    return Array.from(combined).filter(key => availableModuleKeys.includes(key));
+  }, [selectedPackageKey, packageIncludedModules, selectedModules, availableModuleKeys]);
   
   // Determine which upgrades are active (for performance calculation)
   const activeUpgradeKeys = useMemo(() => {
@@ -1103,6 +1106,59 @@ export default function PerformanceHub({ car }) {
     });
   };
   
+  // Handler for saving/updating a build
+  const handleSaveBuild = async () => {
+    if (!canSave) {
+      setSaveError('Please sign in to save builds');
+      return;
+    }
+    
+    if (!buildName.trim()) {
+      setSaveError('Please enter a build name');
+      return;
+    }
+    
+    setIsSaving(true);
+    setSaveError(null);
+    
+    const buildData = {
+      carSlug: car.slug,
+      carName: car.name,
+      buildName: buildName.trim(),
+      selectedUpgrades: effectiveSelectedModules,
+      totalHpGain: profile.upgradedMetrics.hp - profile.stockMetrics.hp,
+      totalCostLow: totalCost.low,
+      totalCostHigh: totalCost.high,
+      finalHp: profile.upgradedMetrics.hp,
+    };
+    
+    try {
+      let result;
+      if (currentBuildId) {
+        // Update existing build
+        result = await updateBuild(currentBuildId, buildData);
+      } else {
+        // Save new build
+        result = await saveBuild(buildData);
+        if (result.data) {
+          setCurrentBuildId(result.data.id);
+        }
+      }
+      
+      if (result.error) {
+        setSaveError(result.error.message || 'Failed to save build');
+      } else {
+        setShowSaveModal(false);
+        setBuildName('');
+      }
+    } catch (err) {
+      setSaveError('An unexpected error occurred');
+      console.error('[PerformanceHub] Save build error:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
   const tierInfo = tierConfig[car.tier] || {};
   const showUpgrade = selectedPackageKey !== 'stock' || selectedModules.length > 0;
   
@@ -1116,21 +1172,6 @@ export default function PerformanceHub({ car }) {
   
   return (
     <div className={styles.hubV2}>
-      {/* ================================================================
-          NAVIGATION BAR
-          ================================================================ */}
-      <div className={styles.hubNavWrapper}>
-        <nav className={styles.hubNav}>
-          <Link href="/performance" className={styles.backLink}>
-            <Icons.arrowLeft size={16} />
-            Back to Performance HUB
-          </Link>
-          <Link href={`/cars/${car.slug}`} className={styles.viewProfileLink}>
-            View Car Details
-            <Icons.chevronRight size={14} />
-          </Link>
-        </nav>
-      </div>
 
       {/* ================================================================
           CAR HERO SECTION - GT-Inspired Layout
@@ -1152,44 +1193,67 @@ export default function PerformanceHub({ car }) {
               <h1 className={styles.carName}>{car.name}</h1>
               <p className={styles.carSubtitle}>{car.years} • {car.brand || 'Sports Car'} • {car.country || ''}</p>
             </div>
-            <div className={styles.priceRange}>
-              {tierInfo.priceRange || '$50-75K'}
+            <div className={styles.carInfoHeaderRight}>
+              <div className={styles.priceRange}>
+                {tierInfo.priceRange || '$50-75K'}
+              </div>
+              <button 
+                className={styles.changeCarButton}
+                onClick={() => {
+                  clearCar();
+                  if (onChangeCar) {
+                    onChangeCar();
+                  } else {
+                    window.history.pushState({}, '', '/mod-planner');
+                    window.location.href = '/mod-planner';
+                  }
+                }}
+                title="Select a different car"
+              >
+                <Icons.arrowLeft size={16} />
+                <span>Change Car</span>
+              </button>
             </div>
           </div>
           
-          {/* Specs Grid - Like GT */}
-          <div className={styles.specsGrid}>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Engine</span>
-              <span className={styles.specValue}>{car.engine}</span>
+          {/* Hero Specs - Key Stats Prominently Displayed */}
+          <div className={styles.heroSpecs}>
+            <div className={styles.heroSpecMain}>
+              <span className={styles.heroSpecLabel}>Engine</span>
+              <span className={styles.heroSpecValue}>{car.engine}</span>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Max Power</span>
-              <span className={styles.specValue}>{car.hp} <small>hp</small></span>
+            <div className={styles.heroSpecDivider} />
+            <div className={styles.heroSpecHighlight}>
+              <div className={styles.heroSpecNumber}>{car.hp}</div>
+              <div className={styles.heroSpecUnit}>hp</div>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Max Torque</span>
-              <span className={styles.specValue}>{car.torque || '—'} <small>lb-ft</small></span>
+            <div className={styles.heroSpecHighlight}>
+              <div className={styles.heroSpecNumber}>{car.torque || '—'}</div>
+              <div className={styles.heroSpecUnit}>lb-ft</div>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Weight</span>
-              <span className={styles.specValue}>{formatNumber(car.curbWeight)} <small>lbs</small></span>
+            <div className={styles.heroSpecHighlight}>
+              <div className={styles.heroSpecNumber}>{formatNumber(car.curbWeight)}</div>
+              <div className={styles.heroSpecUnit}>lbs</div>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Drivetrain</span>
-              <span className={styles.specValue}>{car.drivetrain || 'RWD'}</span>
+          </div>
+          
+          {/* Secondary Specs Row */}
+          <div className={styles.secondarySpecs}>
+            <div className={styles.secondarySpec}>
+              <span className={styles.secondarySpecLabel}>Drivetrain</span>
+              <span className={styles.secondarySpecValue}>{car.drivetrain || 'RWD'}</span>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>0-60 mph</span>
-              <span className={styles.specValue}>{car.zeroToSixty || '—'} <small>sec</small></span>
+            <div className={styles.secondarySpec}>
+              <span className={styles.secondarySpecLabel}>0-60 mph</span>
+              <span className={styles.secondarySpecValue}>{car.zeroToSixty || '—'} <small>sec</small></span>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Layout</span>
-              <span className={styles.specValue}>{car.category || 'Front-Engine'}</span>
+            <div className={styles.secondarySpec}>
+              <span className={styles.secondarySpecLabel}>Layout</span>
+              <span className={styles.secondarySpecValue}>{car.category || 'Front-Engine'}</span>
             </div>
-            <div className={styles.specItem}>
-              <span className={styles.specLabel}>Transmission</span>
-              <span className={styles.specValue}>{car.manualAvailable ? 'Manual Available' : 'Auto Only'}</span>
+            <div className={styles.secondarySpec}>
+              <span className={styles.secondarySpecLabel}>Transmission</span>
+              <span className={styles.secondarySpecValue}>{car.manualAvailable ? 'Manual' : 'Auto'}</span>
             </div>
           </div>
           
@@ -1228,9 +1292,50 @@ export default function PerformanceHub({ car }) {
           MAIN CONTENT - Full width
           ================================================================ */}
       <main className={styles.hubMain}>
-        {/* Title + Package Selector Row */}
+        {/* Title Row with Save Button */}
         <div className={styles.titleRow}>
           <h2 className={styles.hubTitle}>Performance HUB</h2>
+          <button
+            className={styles.saveBuildButton}
+            onClick={() => {
+              setBuildName(currentBuildId ? getBuildById(currentBuildId)?.name || '' : `${car.name} Build`);
+              setShowSaveModal(true);
+            }}
+            title={canSave ? 'Save this build to your garage' : 'Sign in to save builds'}
+          >
+            <Icons.save size={16} />
+            <span>{currentBuildId ? 'Update Build' : 'Save Build'}</span>
+          </button>
+          {existingBuilds.length > 0 && (
+            <div className={styles.existingBuildsDropdown}>
+              <button className={styles.loadBuildButton} title="Load a saved build">
+                <Icons.folder size={16} />
+                <span>My Builds ({existingBuilds.length})</span>
+              </button>
+              <div className={styles.buildsDropdownMenu}>
+                {existingBuilds.map(build => (
+                  <button
+                    key={build.id}
+                    className={styles.buildMenuItem}
+                    onClick={() => {
+                      setSelectedModules(build.upgrades || []);
+                      setSelectedPackageKey('custom');
+                      setCurrentBuildId(build.id);
+                    }}
+                  >
+                    <span className={styles.buildMenuName}>{build.name}</span>
+                    <span className={styles.buildMenuMeta}>
+                      {build.upgrades?.length || 0} upgrades • ${build.totalCostLow?.toLocaleString()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Package Selector Row */}
+        <div className={styles.packageSelectorRow}>
           <div className={styles.packageSelector}>
             <button
               className={`${styles.packagePill} ${selectedPackageKey === 'stock' && selectedModules.length === 0 ? styles.active : ''}`}
@@ -1254,26 +1359,26 @@ export default function PerformanceHub({ car }) {
               Custom
             </button>
           </div>
-          {showUpgrade && (
-            <UpgradeAggregator
-              car={car}
-              selectedUpgrades={profile.selectedUpgrades}
-              totalCost={totalCost}
-              variant="compact"
-            />
-          )}
+        </div>
+        
+        {/* Package Description */}
+        <div className={styles.packageDescription}>
+          <PackageDescription 
+            packageKey={selectedPackageKey} 
+            packages={availableUpgrades.packages}
+            showUpgrade={showUpgrade}
+            totalCost={totalCost}
+            hpGain={profile.upgradedMetrics.hp - profile.stockMetrics.hp}
+          />
         </div>
 
-        {/* Car-Specific Recommendations - MOVED TO TOP */}
-        {carRecommendations && (
-          <CarRecommendations
-            car={car}
-            currentTier={selectedPackageKey}
-            selectedModules={effectiveSelectedModules}
-            onAddToModule={(key) => handleModuleToggle(key)}
-            onUpgradeClick={setSelectedUpgradeForModal}
-          />
-        )}
+        {/* Car-Specific Recommendations - Database-driven, shows for ALL modes */}
+        <CarRecommendations
+          car={car}
+          selectedModules={effectiveSelectedModules}
+          onAddToModule={(key) => handleModuleToggle(key)}
+          onUpgradeClick={setSelectedUpgradeForModal}
+        />
 
         {/* Expert Track Insights - What reviewers say */}
         <ExpertTrackInsights car={car} />
@@ -1390,7 +1495,7 @@ export default function PerformanceHub({ car }) {
             {Object.entries(availableUpgrades.modulesByCategory).map(([catKey, modules]) => (
               <div key={catKey} className={styles.moduleCategory}>
                 <h5 className={styles.moduleCategoryTitle}>
-                  {catKey.charAt(0).toUpperCase() + catKey.slice(1)}
+                  {formatCategoryName(catKey)}
                 </h5>
                 <div className={styles.moduleList}>
                   {modules.map(mod => {
@@ -1432,25 +1537,53 @@ export default function PerformanceHub({ car }) {
           </div>
         </div>
         
-        {/* Build Summary Panel - Comprehensive validation at the bottom */}
-        <BuildSummaryPanel 
-          selectedModules={effectiveSelectedModules}
-          availableModules={availableUpgrades.modulesByCategory}
-          onAddMods={handleAddRequiredMods}
-          car={car}
-        />
-        
         {/* About These Estimates - Collapsible */}
         <div className={styles.estimatesInfo}>
           <ScoringInfo variant="performance" />
         </div>
         
+        {/* Plan Your Build CTA - Links to detailed build view in Garage */}
+        {effectiveSelectedModules.length > 0 && (
+          <div className={styles.planBuildCta}>
+            <div className={styles.planBuildContent}>
+              <div className={styles.planBuildText}>
+                <h4 className={styles.planBuildTitle}>Ready to Execute Your Build?</h4>
+                <p className={styles.planBuildDescription}>
+                  View the complete build plan with tools needed, installation notes, and complexity assessment.
+                </p>
+              </div>
+              {currentBuildId ? (
+                <Link 
+                  href={`/garage?build=${currentBuildId}`}
+                  className={styles.planBuildButton}
+                >
+                  <Icons.folder size={18} />
+                  View Full Build Plan
+                  <Icons.chevronRight size={16} />
+                </Link>
+              ) : (
+                <button
+                  className={styles.planBuildButton}
+                  onClick={() => {
+                    setBuildName(`${car.name} Build`);
+                    setShowSaveModal(true);
+                  }}
+                >
+                  <Icons.save size={18} />
+                  Save & View Build Plan
+                  <Icons.chevronRight size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        
         {/* Footer Links */}
         <div className={styles.hubFooter}>
-          <Link href="/education" className={styles.footerLink}>
+          <Link href="/how-mods-work" className={styles.footerLink}>
             Learn About Modifications <Icons.chevronRight size={14} />
           </Link>
-          <Link href="/education#systems" className={styles.footerLink}>
+          <Link href="/how-mods-work#systems" className={styles.footerLink}>
             Explore Vehicle Systems <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>
@@ -1466,6 +1599,105 @@ export default function PerformanceHub({ car }) {
           onClose={() => setSelectedUpgradeForModal(null)}
           showAddToBuild={false}
         />
+      )}
+      
+      {/* Save Build Modal */}
+      {showSaveModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
+          <div className={styles.saveModal} onClick={e => e.stopPropagation()}>
+            <div className={styles.saveModalHeader}>
+              <h3 className={styles.saveModalTitle}>
+                <Icons.save size={20} />
+                {currentBuildId ? 'Update Build' : 'Save Build'}
+              </h3>
+              <button 
+                className={styles.saveModalClose}
+                onClick={() => setShowSaveModal(false)}
+              >
+                <Icons.x size={20} />
+              </button>
+            </div>
+            
+            <div className={styles.saveModalBody}>
+              <div className={styles.saveModalCarInfo}>
+                <CarImage car={car} variant="thumbnail" className={styles.saveModalCarImage} />
+                <div className={styles.saveModalCarDetails}>
+                  <span className={styles.saveModalCarName}>{car.name}</span>
+                  <div className={styles.saveModalUpgradeCount}>
+                    <span>{effectiveSelectedModules.length} upgrade{effectiveSelectedModules.length !== 1 ? 's' : ''}</span>
+                    <span>${totalCost.low?.toLocaleString()} - ${totalCost.high?.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.saveModalSummary}>
+                <h4 className={styles.saveModalSummaryTitle}>Selected Upgrades</h4>
+                {effectiveSelectedModules.length > 0 ? (
+                  <div className={styles.saveModalUpgradesList}>
+                    {effectiveSelectedModules.map(mod => (
+                      <span key={mod} className={styles.saveModalUpgradeTag}>
+                        <Icons.check size={12} />
+                        {mod}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.saveModalEmptyState}>
+                    No upgrades selected yet
+                  </div>
+                )}
+              </div>
+              
+              <div className={styles.saveModalField}>
+                <label className={styles.saveModalLabel} htmlFor="buildName">
+                  Build Name
+                </label>
+                <input
+                  id="buildName"
+                  type="text"
+                  className={styles.saveModalInput}
+                  value={buildName}
+                  onChange={e => setBuildName(e.target.value)}
+                  placeholder="e.g., Track Day Setup, Daily Driver+"
+                  autoFocus
+                />
+              </div>
+              
+              {saveError && (
+                <div className={styles.saveModalError}>
+                  <Icons.alertTriangle size={16} />
+                  {saveError}
+                </div>
+              )}
+              
+              {!canSave && (
+                <div className={styles.saveModalSignIn}>
+                  <Icons.info size={16} />
+                  <span>Sign in to save builds to your garage</span>
+                  <Link href="/garage" className={styles.saveModalSignInLink}>
+                    Sign In
+                  </Link>
+                </div>
+              )}
+            </div>
+            
+            <div className={styles.saveModalFooter}>
+              <button 
+                className={styles.saveModalCancel}
+                onClick={() => setShowSaveModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className={styles.saveModalSave}
+                onClick={handleSaveBuild}
+                disabled={isSaving || !canSave}
+              >
+                {isSaving ? 'Saving...' : (currentBuildId ? 'Update Build' : 'Save to Garage')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

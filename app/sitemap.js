@@ -3,10 +3,10 @@
 
 import { carData } from '@/data/cars.js';
 
-const siteUrl = 'https://supernaturalmotorsports.com';
+const siteUrl = 'https://autorev.app';
 
 export default async function sitemap() {
-  // Static pages
+  // Static pages - ordered by priority
   const staticPages = [
     {
       url: siteUrl,
@@ -15,21 +15,33 @@ export default async function sitemap() {
       priority: 1.0,
     },
     {
+      url: `${siteUrl}/browse-cars`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${siteUrl}/car-selector`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/performance`,
+      url: `${siteUrl}/mod-planner`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/education`,
+      url: `${siteUrl}/how-mods-work`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/garage`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
@@ -38,11 +50,23 @@ export default async function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.6,
     },
+    {
+      url: `${siteUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${siteUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 
   // Dynamic car detail pages
   const carPages = carData.map((car) => ({
-    url: `${siteUrl}/cars/${car.slug}`,
+    url: `${siteUrl}/browse-cars/${car.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.7,
@@ -50,4 +74,3 @@ export default async function sitemap() {
 
   return [...staticPages, ...carPages];
 }
-

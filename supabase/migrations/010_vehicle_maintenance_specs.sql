@@ -1,6 +1,6 @@
 -- ============================================================================
 -- VEHICLE MAINTENANCE SPECIFICATIONS SCHEMA
--- SuperNatural Motorsports - Comprehensive OEM Maintenance Data
+-- AutoRev - Comprehensive OEM Maintenance Data
 --
 -- This schema captures all OEM maintenance specifications for vehicles,
 -- enabling the AI Mechanic to provide accurate, model-specific advice.

@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Car-Specific Upgrade Recommendations
+ * AutoRev - Car-Specific Upgrade Recommendations
  * 
  * This file maps each car to its recommended upgrade packages, must-have modules,
  * nice-to-have modules, and platform-specific notes for each tier.

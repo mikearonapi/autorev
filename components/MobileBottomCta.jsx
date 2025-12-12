@@ -32,7 +32,7 @@ const MessageIcon = () => (
   </svg>
 );
 
-// Page-specific CTAs
+// Page-specific CTAs - updated with new URLs
 const pageCtas = {
   '/': {
     primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
@@ -40,21 +40,17 @@ const pageCtas = {
   },
   '/car-selector': {
     primary: { href: '/contact', label: 'Get Expert Help', icon: <MessageIcon /> },
-    secondary: { href: '/performance', label: 'Plan Build' }
+    secondary: { href: '/mod-planner', label: 'Plan Build' }
   },
-  '/performance': {
+  '/mod-planner': {
     primary: { href: '/contact', label: 'Talk to Expert', icon: <MessageIcon /> },
-    secondary: { href: '/education', label: 'Learn More' }
+    secondary: { href: '/how-mods-work', label: 'Learn More' }
   },
-  '/upgrades': {
-    primary: { href: '/performance', label: 'Plan Your Build', icon: <WrenchIcon /> },
-    secondary: { href: '/contact', label: 'Contact' }
-  },
-  '/education': {
+  '/how-mods-work': {
     primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   },
-  '/cars': {
+  '/browse-cars': {
     primary: { href: '/car-selector', label: 'Compare Cars', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   }
@@ -74,7 +70,7 @@ export default function MobileBottomCta() {
     if (pageCtas[pathname]) {
       return pageCtas[pathname];
     }
-    // Check for partial matches (e.g., /cars/[slug])
+    // Check for partial matches (e.g., /browse-cars/[slug])
     for (const path of Object.keys(pageCtas)) {
       if (pathname.startsWith(path) && path !== '/') {
         return pageCtas[path];
@@ -136,4 +132,3 @@ export default function MobileBottomCta() {
     </div>
   );
 }
-

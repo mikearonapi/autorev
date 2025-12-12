@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Brand-Specific Upgrade Pricing
+ * AutoRev - Brand-Specific Upgrade Pricing
  * 
  * This module provides cost multipliers and overrides for upgrade pricing
  * based on car brand, platform, and country of origin.

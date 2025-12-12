@@ -65,8 +65,8 @@ export default function SelectedCarFloatingWidget() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  // Don't show on car detail pages or performance hub (redundant)
-  const hiddenPaths = ['/cars/', '/performance'];
+  // Don't show on car detail pages or mod planner (redundant)
+  const hiddenPaths = ['/browse-cars/', '/mod-planner'];
   const shouldHide = hiddenPaths.some(path => pathname.startsWith(path));
 
   // Handle scroll to hide when scrolling down
@@ -163,7 +163,7 @@ export default function SelectedCarFloatingWidget() {
           {/* Quick Actions */}
           <div className={styles.actions}>
             <Link 
-              href={`/cars/${selectedCar.slug}`}
+              href={`/browse-cars/${selectedCar.slug}`}
               className={styles.actionBtn}
               onClick={() => setIsExpanded(false)}
             >
@@ -171,7 +171,7 @@ export default function SelectedCarFloatingWidget() {
               View Details
             </Link>
             <Link 
-              href={`/cars/${selectedCar.slug}/performance`}
+              href={`/mod-planner?car=${selectedCar.slug}`}
               className={`${styles.actionBtn} ${styles.primaryAction}`}
               onClick={() => setIsExpanded(false)}
             >

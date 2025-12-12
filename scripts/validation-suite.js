@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Automated Validation Suite
+ * AutoRev - Automated Validation Suite
  * 
  * Comprehensive data quality checks, algorithm regression tests, 
  * and content validation for the audit process.
@@ -500,7 +500,7 @@ function runGoldenTests() {
 
 async function runAllTests() {
   console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║  SuperNatural Motorsports - Automated Validation Suite     ║');
+  console.log('║  AutoRev - Automated Validation Suite                       ║');
   console.log('║  Version 1.0.0                                             ║');
   console.log('╚════════════════════════════════════════════════════════════╝');
   console.log(`\nRunning at: ${new Date().toISOString()}`);

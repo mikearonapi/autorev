@@ -97,7 +97,7 @@ export default function CompareButton({
       className={`${styles.icon} ${isInCompare ? styles.inCompare : ''} ${isDisabled ? styles.disabled : ''} ${className}`}
       disabled={isDisabled}
       aria-label={isInCompare ? 'Remove from compare' : 'Add to compare'}
-      title={isDisabled ? 'Compare list is full' : isInCompare ? 'Remove from compare' : 'Add to compare'}
+      title={isDisabled ? 'Compare list full (max 4)' : isInCompare ? 'Remove from compare list' : 'Add to compare list'}
     >
       {isInCompare ? <Icons.check size={size} /> : <Icons.compareOutline size={size} />}
     </button>

@@ -237,6 +237,38 @@ export default function ScoringInfo({ variant = 'inline' }) {
     );
   }
 
+  // Compact variant for Car Selector (between sections 3 and 4)
+  if (variant === 'compact') {
+    return (
+      <div className={styles.compactContainer}>
+        <div className={styles.compactHeader} onClick={() => setExpanded(!expanded)} role="button" tabIndex={0}>
+          <div className={styles.compactTitle}>
+            <InfoIcon size={16} />
+            <span>About Our Scoring & Sources</span>
+          </div>
+          <ChevronIcon size={16} expanded={expanded} />
+        </div>
+        
+        {expanded && (
+          <div className={styles.compactContent}>
+            <p>
+              <strong>We aim to be unbiased.</strong> We're not paid by manufacturers or dealers.
+            </p>
+            <p>
+              Scores reflect our hands-on experience combined with insights from trusted reviewers 
+              like <strong>SavageGeese</strong>, <strong>Throttle House</strong>, <strong>TheTopher</strong>, 
+              and <strong>Jason Cammisa</strong>. We synthesize expert opinions to give you accurate 
+              ownership and driving projections.
+            </p>
+            <p className={styles.compactFeedback}>
+              Disagree with a score? <a href="/contact">Let us know</a> — we update based on real owner feedback.
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Inline disclosure variant (default)
   if (variant === 'inline') {
     return (

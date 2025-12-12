@@ -1,0 +1,590 @@
+/* My Garage - Gaming Inspired Design (GT7 / Forza style) */
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #0a0a14 0%, #12121e 50%, #1a1a28 100%);
+  color: var(--color-white);
+  padding-top: var(--header-height-mobile);
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: var(--header-height);
+  }
+}
+
+/* Header - Compact gaming style */
+.header {
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent);
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: var(--space-2xl) var(--space-xl) var(--space-xl);
+  }
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.headerText {
+  flex: 1;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.titleMain {
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.titleAccent {
+  color: var(--sn-gold);
+  font-size: 0.6em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  margin: 0;
+  max-width: 500px;
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+}
+
+.signInButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg);
+  background: rgba(196, 165, 100, 0.15);
+  color: var(--sn-gold);
+  border: 1px solid rgba(196, 165, 100, 0.3);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.signInButton:hover {
+  background: rgba(196, 165, 100, 0.25);
+  border-color: var(--sn-gold);
+}
+
+/* Tabs - Gaming style navigation */
+.tabs {
+  padding: 0 var(--space-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: var(--header-height-mobile);
+  z-index: 50;
+}
+
+@media (min-width: 768px) {
+  .tabs {
+    top: var(--header-height);
+    padding: 0 var(--space-xl);
+  }
+}
+
+.tabsContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  color: var(--color-gray-400);
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+}
+
+.tab:hover {
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tabActive {
+  color: var(--sn-gold);
+  border-bottom-color: var(--sn-gold);
+  background: rgba(196, 165, 100, 0.08);
+}
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2xs);
+  background: rgba(196, 165, 100, 0.2);
+  color: var(--sn-gold);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+}
+
+.tabActive .tabCount {
+  background: var(--sn-gold);
+  color: var(--color-gray-900);
+}
+
+/* Content Area */
+.content {
+  padding: var(--space-xl) var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-2xl) var(--space-xl);
+  }
+}
+
+.gridContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Car Grid - Gaming card layout */
+.carGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+  .carGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .carGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
+/* Car Card - Gaming inspired */
+.carCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.carCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(196, 165, 100, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(196, 165, 100, 0.2);
+}
+
+.carCardImage {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, rgba(30, 30, 40, 1) 0%, rgba(20, 20, 30, 1) 100%);
+  overflow: hidden;
+}
+
+.carCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+}
+
+.carCardContent {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.carCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.carCardName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .carCardName {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.carCardMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: var(--space-2xs) 0 0;
+}
+
+.removeButton {
+  padding: var(--space-xs);
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: #e74c3c;
+}
+
+/* Stats - Gaming HUD style */
+.carCardStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 10px;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.statValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.carCardAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(196, 165, 100, 0.1);
+  color: var(--sn-gold);
+  border: 1px solid rgba(196, 165, 100, 0.2);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.carCardAction:hover {
+  background: rgba(196, 165, 100, 0.2);
+  border-color: var(--sn-gold);
+  gap: var(--space-sm);
+}
+
+/* Build Card - Specific styling for saved builds */
+.buildCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.buildCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(52, 152, 219, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(52, 152, 219, 0.2);
+}
+
+.buildCardImage {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, rgba(30, 30, 40, 1) 0%, rgba(20, 20, 30, 1) 100%);
+}
+
+.buildCardBadge {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  background: rgba(52, 152, 219, 0.9);
+  color: var(--color-white);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(10px);
+}
+
+.buildCardContent {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.buildCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.buildCardName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .buildCardName {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.buildCardCar {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: var(--space-2xs) 0 0;
+}
+
+.buildCardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.buildCardMeta span:first-child {
+  color: var(--sn-gold);
+  font-weight: 700;
+}
+
+.buildCardAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.2);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.buildCardAction:hover {
+  background: rgba(52, 152, 219, 0.2);
+  border-color: #3498db;
+  gap: var(--space-sm);
+}
+
+/* Compare Header */
+.compareHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+  .compareHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.compareNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  margin: 0;
+}
+
+.compareButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--sn-gold);
+  color: var(--color-gray-900);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+}
+
+.compareButton:hover {
+  background: var(--sn-gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 165, 100, 0.3);
+}
+
+/* Empty State - Gaming style placeholder */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-3xl) var(--space-md);
+  min-height: 400px;
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-600);
+  margin-bottom: var(--space-lg);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0 0 var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.emptyDescription {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-400);
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 0 var(--space-xl);
+}
+
+.emptyAction {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: rgba(196, 165, 100, 0.15);
+  color: var(--sn-gold);
+  border: 1px solid rgba(196, 165, 100, 0.3);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.emptyAction:hover {
+  background: rgba(196, 165, 100, 0.25);
+  border-color: var(--sn-gold);
+  gap: var(--space-md);
+  box-shadow: 0 4px 12px rgba(196, 165, 100, 0.2);
+}
+
+/* Responsive improvements */
+@media (max-width: 639px) {
+  .carCardStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat:last-child {
+    grid-column: 1 / -1;
+  }
+}

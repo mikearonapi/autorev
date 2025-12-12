@@ -1,7 +1,7 @@
 {
-  "name": "supernatural-motorsports",
+  "name": "autorev",
   "version": "1.0.0",
-  "description": "SuperNatural Motorsports - Unleash Your Racing Spirit. Sports car advisory, upgrade planning, and performance services.",
+  "description": "AutoRev - Find What Drives You. Sports car advisory, upgrade planning, and performance guidance.",
   "private": true,
   "type": "module",
   "scripts": {
@@ -26,10 +26,12 @@
     "dotenv": "^16.4.5",
     "googleapis": "^144.0.0",
     "next": "^14.2.0",
+    "openai": "^6.10.0",
     "puppeteer": "^24.32.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "resend": "^6.5.2",
+    "sharp": "^0.34.5",
     "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {

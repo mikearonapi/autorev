@@ -1,4 +1,4 @@
--- SuperNatural Motorsports - Database Seed Data
+-- AutoRev - Database Seed Data
 -- 
 -- This file contains INSERT statements to populate the cars table with the full database.
 -- Run this in the Supabase SQL Editor AFTER running schema.sql.

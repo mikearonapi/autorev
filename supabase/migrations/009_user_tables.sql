@@ -1,6 +1,6 @@
 -- ============================================================================
 -- USER TABLES MIGRATION
--- SuperNatural Motorsports - User Account & Garage Features
+-- AutoRev - User Account & Garage Features
 -- 
 -- This migration adds tables for:
 --   1. user_profiles - Extended user profile info

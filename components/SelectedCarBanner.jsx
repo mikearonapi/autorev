@@ -91,9 +91,9 @@ export default function SelectedCarBanner() {
   const { selectedCar, buildSummary, appliedUpgrades, clearCar, isHydrated } = useCarSelection();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Determine if we're in a Performance Hub context
-  const isPerformanceContext = pathname?.startsWith('/performance');
-  const isCarDetailPage = pathname?.startsWith('/cars/');
+  // Determine if we're in a Mod Planner context
+  const isPerformanceContext = pathname?.startsWith('/mod-planner');
+  const isCarDetailPage = pathname?.startsWith('/browse-cars/');
   
   // Don't show banner if no car is selected or during SSR
   if (!isHydrated || !hasSelectedCar || !selectedCar) {
@@ -170,12 +170,12 @@ export default function SelectedCarBanner() {
             {isExpanded ? <Icons.chevronUp size={16} /> : <Icons.chevronDown size={16} />}
           </button>
 
-          {/* Performance Hub Link - if not already there */}
+          {/* Mod Planner Link - if not already there */}
           {!isPerformanceContext && (
             <Link 
-              href={`/performance?car=${selectedCar.slug}`}
+              href={`/mod-planner?car=${selectedCar.slug}`}
               className={styles.actionBtn}
-              title="Go to Performance Hub"
+              title="Go to Mod Planner"
             >
               <Icons.wrench size={14} />
               <span className={styles.actionLabel}>Build</span>
@@ -279,16 +279,16 @@ export default function SelectedCarBanner() {
           <div className={styles.expandedActions}>
             {!isPerformanceContext && (
               <Link 
-                href={`/performance?car=${selectedCar.slug}`}
+                href={`/mod-planner?car=${selectedCar.slug}`}
                 className={styles.expandedActionBtn}
               >
                 <Icons.wrench size={16} />
-                Go to Performance Hub
+                Go to Mod Planner
               </Link>
             )}
             {!isCarDetailPage && (
               <Link 
-                href={`/cars/${selectedCar.slug}`}
+                href={`/browse-cars/${selectedCar.slug}`}
                 className={styles.expandedActionBtnSecondary}
               >
                 View Car Details

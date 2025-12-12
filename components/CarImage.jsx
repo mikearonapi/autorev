@@ -9,13 +9,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getCarHeroImage, getCarThumbnail, getPlaceholderGradient } from '@/lib/images.js';
+import { getCarHeroImage, getCarThumbnail, getCarGarageImage, getPlaceholderGradient } from '@/lib/images.js';
 import styles from './CarImage.module.css';
 
 /**
  * @typedef {Object} CarImageProps
  * @property {Object} car - Car object with name, slug, imageHeroUrl, etc.
- * @property {'hero' | 'thumbnail' | 'card'} [variant='hero'] - Image size variant
+ * @property {'hero' | 'thumbnail' | 'card' | 'garage'} [variant='hero'] - Image size variant
  * @property {string} [className] - Additional CSS class
  * @property {boolean} [showName=true] - Show car name on placeholder
  * @property {boolean} [lazy=true] - Use lazy loading
@@ -30,17 +30,28 @@ export default function CarImage({
 }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
   
   // Reset error state when car changes
   useEffect(() => {
     setImageError(false);
     setImageLoaded(false);
+    setUsingFallback(false);
   }, [car?.slug]);
   
   // Get image URL based on variant
   const getImageUrl = () => {
     if (variant === 'thumbnail' || variant === 'card') {
       return getCarThumbnail(car);
+    }
+    // For garage variant, try exclusive garage image first
+    if (variant === 'garage') {
+      const garageImage = getCarGarageImage(car);
+      // If we're using fallback (garage image failed), use hero instead
+      if (usingFallback || !garageImage) {
+        return getCarHeroImage(car);
+      }
+      return garageImage;
     }
     return getCarHeroImage(car);
   };
@@ -51,6 +62,11 @@ export default function CarImage({
   
   // Handle image load error
   const handleError = () => {
+    // For garage variant, try fallback to hero image before showing placeholder
+    if (variant === 'garage' && !usingFallback) {
+      setUsingFallback(true);
+      return;
+    }
     setImageError(true);
   };
   
@@ -98,15 +114,16 @@ export default function CarImage({
           loading={lazy ? 'lazy' : 'eager'}
           // Mobile-optimized sizes: load smaller images on smaller screens
           sizes={
-            variant === 'hero' 
+            variant === 'hero' || variant === 'garage'
               ? '(max-width: 480px) 100vw, (max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw'
               : variant === 'card' 
                 ? '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 400px'
                 : '(max-width: 480px) 50vw, (max-width: 768px) 33vw, 200px'
           }
+          quality={variant === 'garage' ? 90 : 75}
           style={{ objectFit: 'cover' }}
-          // Prioritize hero images on car detail pages
-          priority={variant === 'hero' && !lazy}
+          // Prioritize hero and garage images
+          priority={(variant === 'hero' || variant === 'garage') && !lazy}
         />
       )}
     </div>

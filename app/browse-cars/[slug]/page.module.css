@@ -1,6 +1,6 @@
 /* ==========================================================================
    Car Detail Page - Redesigned for Progressive Disclosure
-   SuperNatural Motorsports
+   AutoRev
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -239,47 +239,45 @@
 /* Hero Actions Row */
 .heroActions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-top: 1rem;
 }
 
-.actionButtons {
+/* Mod Button - matches FavoriteButton/CompareButton icon style */
+.modButton {
   display: flex;
-  gap: 0.5rem;
-}
-
-/* Select Car Button */
-.selectCarBtn {
-  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: var(--color-white);
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  color: var(--color-gray-400);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.selectCarBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
+.modButton:hover:not(:disabled) {
+  background: var(--color-white);
+  color: var(--sn-primary);
+  transform: scale(1.1);
 }
 
-.selectCarBtn.selected {
-  background: var(--color-success);
-  border-color: var(--color-success);
-  color: var(--color-white);
+.modButton:disabled {
   cursor: default;
 }
 
-.selectCarBtn.selected svg {
-  color: var(--color-white);
+.modButtonActive {
+  color: var(--color-success);
+  background: var(--color-white);
+}
+
+.modButtonActive:hover {
+  color: var(--color-success);
+  transform: scale(1.1);
 }
 
 .heroImageWrapper {

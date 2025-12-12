@@ -65,25 +65,40 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-lg);
-  padding: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   color: var(--color-white);
 }
 
 @media (min-width: 1024px) {
   .carHeroSection {
-    grid-template-columns: 1.2fr 1fr;
-    padding: var(--space-xl) var(--space-2xl);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    padding: var(--space-lg) var(--space-2xl);
+    align-items: center;
+  }
+}
+
+@media (min-width: 1280px) {
+  .carHeroSection {
+    grid-template-columns: 1.1fr 1fr;
   }
 }
 
 /* Large Car Image */
 .carHeroImage {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 1024px) {
+  .carHeroImage {
+    aspect-ratio: 3 / 2;
+    max-height: 380px;
+  }
 }
 
 .carHeroImage .carImageLarge {
@@ -128,7 +143,13 @@
 .carInfoPanel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+}
+
+@media (min-width: 1024px) {
+  .carInfoPanel {
+    padding: var(--space-sm) 0;
+  }
 }
 
 .carInfoHeader {
@@ -136,6 +157,33 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-md);
+}
+
+.carInfoHeaderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.changeCarButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.changeCarButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .carInfoPanel .carName {
@@ -237,12 +285,165 @@
   margin-left: 2px;
 }
 
+/* ==========================================================================
+   HERO SPECS - Premium Display for Key Stats
+   ========================================================================== */
+.heroSpecs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .heroSpecs {
+    flex-wrap: nowrap;
+    gap: var(--space-lg);
+  }
+}
+
+.heroSpecMain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.heroSpecMain .heroSpecLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sn-accent);
+  font-weight: 600;
+}
+
+.heroSpecMain .heroSpecValue {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .heroSpecMain .heroSpecValue {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.heroSpecDivider {
+  display: none;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 30%,
+    rgba(255, 255, 255, 0.3) 70%,
+    transparent 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .heroSpecDivider {
+    display: block;
+  }
+}
+
+.heroSpecHighlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.heroSpecHighlight:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.heroSpecNumber {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .heroSpecNumber {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+.heroSpecUnit {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+/* Secondary Specs Row */
+.secondarySpecs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .secondarySpecs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.secondarySpec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.secondarySpecLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.secondarySpecValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.secondarySpecValue small {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 2px;
+}
+
 /* GT-Style Rating Bars */
 .ratingBars {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   background: rgba(0, 0, 0, 0.3);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -468,9 +669,9 @@
 .titleRow {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   flex-wrap: wrap;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .hubTitle {
@@ -481,10 +682,91 @@
   margin: 0;
 }
 
-.titleRow .packageSelector {
+/* Package Selector Row - below title */
+.packageSelectorRow {
+  margin-bottom: var(--space-md);
+}
+
+.packageSelectorRow .packageSelector {
   display: flex;
   gap: var(--space-xs);
   flex-wrap: wrap;
+}
+
+/* Package Description Section */
+.packageDescription {
+  margin-bottom: var(--space-2xl);
+}
+
+/* Performance Section - Add top margin for spacing */
+.performanceSection {
+  margin-top: var(--space-xl);
+}
+
+.packageDescriptionCard {
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.packageDescriptionContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.packageDescriptionText {
+  flex: 1;
+  min-width: 200px;
+}
+
+.packageDescriptionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--sn-primary);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.packageDescriptionShort {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.packageDescriptionStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-shrink: 0;
+}
+
+.packageStat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(28, 65, 89, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.packageStat svg {
+  color: var(--sn-primary);
+}
+
+.packageStatLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-500);
+}
+
+.packageStatValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--sn-primary);
 }
 
 .titleRow .costBadge {
@@ -628,6 +910,78 @@
 }
 
 /* Footer */
+/* ============================================================================
+   PLAN YOUR BUILD CTA
+   ============================================================================ */
+.planBuildCta {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-xl);
+  border: 1px solid rgba(196, 165, 100, 0.3);
+}
+
+.planBuildContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .planBuildContent {
+    flex-direction: row;
+    text-align: left;
+    justify-content: space-between;
+  }
+}
+
+.planBuildText {
+  flex: 1;
+}
+
+.planBuildTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0 0 var(--space-xs);
+}
+
+.planBuildDescription {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+.planBuildButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.planBuildButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
 .hubFooter {
   display: flex;
   gap: var(--space-lg);
@@ -2078,7 +2432,7 @@
 }
 
 /* ============================================================================
-   Car Recommendations Panel
+   Car Recommendations Panel - Database-Driven
    ============================================================================ */
 .carRecommendations {
   background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
@@ -2088,6 +2442,15 @@
   margin-top: var(--space-md);
 }
 
+.recHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
 .recTitle {
   display: flex;
   align-items: center;
@@ -2095,18 +2458,100 @@
   font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--sn-primary);
-  margin: 0 0 var(--space-sm);
+  margin: 0;
+}
+
+.recProgress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.recProgressBar {
+  width: 80px;
+  height: 6px;
+  background: var(--color-gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.recProgressFill {
+  height: 100%;
+  background: var(--color-success);
+  border-radius: 3px;
+  transition: width var(--transition-normal);
+}
+
+.recProgressText {
+  font-size: 11px;
+  color: var(--color-gray-500);
+  font-weight: 500;
+}
+
+.recCompleteBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-success);
+  padding: 4px 8px;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+/* Primary Focus Area */
+.recFocusArea {
+  margin-bottom: var(--space-md);
+}
+
+.recFocusHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.recFocusLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recFocusValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--sn-accent);
 }
 
 .recNarrative {
   font-size: var(--font-size-xs);
   color: var(--color-gray-600);
   line-height: 1.5;
-  margin: 0 0 var(--space-md);
+  margin: 0;
   padding: var(--space-sm);
   background: rgba(0, 0, 0, 0.02);
   border-radius: var(--radius-sm);
   border-left: 2px solid var(--sn-accent);
+}
+
+/* Upgrade Sections */
+.recSection {
+  margin-bottom: var(--space-md);
+}
+
+.recSection:last-of-type {
+  margin-bottom: 0;
+}
+
+.recSectionLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-xs);
 }
 
 .recUpgrades {
@@ -2138,6 +2583,18 @@
 .recUpgradeChip:hover {
   border-color: var(--sn-primary);
   color: var(--sn-primary);
+}
+
+/* Core upgrade variant - more prominent */
+.recUpgradeChip.recCore {
+  border-color: var(--sn-accent);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.recUpgradeChip.recCore:hover {
+  border-color: var(--sn-accent);
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-gray-900);
 }
 
 .recUpgradeName {
@@ -2182,6 +2639,74 @@
   padding: var(--space-sm);
   background: rgba(34, 197, 94, 0.1);
   border-radius: var(--radius-sm);
+}
+
+/* Platform Insights - Collapsible */
+.recInsights {
+  margin-top: var(--space-md);
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: var(--space-sm);
+}
+
+.recInsightsSummary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  list-style: none;
+}
+
+.recInsightsSummary::-webkit-details-marker {
+  display: none;
+}
+
+.recInsightsSummary::after {
+  content: '+';
+  margin-left: auto;
+  font-size: 14px;
+  transition: transform var(--transition-fast);
+}
+
+.recInsights[open] .recInsightsSummary::after {
+  content: '−';
+}
+
+.recInsightsContent {
+  padding-top: var(--space-sm);
+}
+
+.recInsightsGroup {
+  margin-bottom: var(--space-sm);
+}
+
+.recInsightsGroup:last-child {
+  margin-bottom: 0;
+}
+
+.recInsightsLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.recInsightsList {
+  margin: 0;
+  padding-left: var(--space-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  line-height: 1.6;
+}
+
+.recInsightsList li {
+  margin-bottom: 2px;
 }
 
 /* ============================================================================
@@ -2707,6 +3232,28 @@
 
 /* Enhanced Mobile Support for New Components */
 @media (max-width: 640px) {
+  /* Title row mobile */
+  .titleRow {
+    gap: var(--space-sm);
+  }
+  
+  /* Package description mobile */
+  .packageDescriptionContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  
+  .packageDescriptionStats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .packageStat {
+    flex: 1;
+    justify-content: center;
+  }
+  
   /* Car Recommendations - Stack vertically */
   .carRecommendations {
     padding: var(--space-sm);
@@ -2775,5 +3322,420 @@
     padding: var(--space-xs) var(--space-sm);
     font-size: 12px;
   }
+}
+
+/* ==========================================================================
+   SAVE BUILD BUTTON & DROPDOWN
+   ========================================================================== */
+.saveBuildButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.saveBuildButton:hover {
+  background: var(--sn-accent-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 164, 24, 0.3);
+}
+
+.saveBuildButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Existing Builds Dropdown */
+.existingBuildsDropdown {
+  position: relative;
+}
+
+.loadBuildButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-white);
+  color: var(--sn-primary);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loadBuildButton:hover {
+  background: var(--color-gray-50);
+  border-color: var(--sn-primary);
+}
+
+.buildsDropdownMenu {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  right: 0;
+  min-width: 280px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.existingBuildsDropdown:hover .buildsDropdownMenu,
+.existingBuildsDropdown:focus-within .buildsDropdownMenu {
+  display: flex;
+}
+
+.buildMenuItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.buildMenuItem:hover {
+  background: var(--color-gray-50);
+}
+
+.buildMenuItem:not(:last-child) {
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.buildMenuName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.buildMenuMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+/* ==========================================================================
+   SAVE BUILD MODAL
+   ========================================================================== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-md);
+  backdrop-filter: blur(4px);
+}
+
+.saveModal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.saveModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.saveModalTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0;
+}
+
+.saveModalClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.saveModalClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.saveModalBody {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.saveModalCarInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+}
+
+.saveModalCarImage {
+  width: 100px;
+  height: 65px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-gray-100);
+}
+
+.saveModalCarImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.saveModalCarDetails {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.saveModalCarName {
+  display: block;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  font-size: var(--font-size-base);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saveModalUpgradeCount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.saveModalUpgradeCount span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.saveModalUpgradeCount span:first-child {
+  padding: 2px 8px;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.saveModalUpgradeCount span:last-child {
+  padding: 2px 8px;
+  background: var(--sn-accent);
+  color: var(--sn-primary-dark);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+/* Build Summary in Modal */
+.saveModalSummary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.saveModalSummaryTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+.saveModalUpgradesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: var(--space-sm);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-100);
+}
+
+.saveModalUpgradeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.saveModalUpgradeTag svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.saveModalEmptyState {
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--color-gray-400);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+.saveModalField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.saveModalLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.saveModalInput {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-900);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.saveModalInput:focus {
+  outline: none;
+  border-color: var(--sn-primary);
+  box-shadow: 0 0 0 3px rgba(26, 77, 110, 0.1);
+}
+
+.saveModalInput::placeholder {
+  color: var(--color-gray-400);
+}
+
+.saveModalError {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-error-light);
+  color: var(--color-error);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.saveModalSignIn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-info-light);
+  color: var(--color-info);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.saveModalSignInLink {
+  margin-left: auto;
+  color: var(--sn-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.saveModalSignInLink:hover {
+  text-decoration: underline;
+}
+
+.saveModalFooter {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.saveModalCancel {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.saveModalCancel:hover {
+  background: var(--color-gray-100);
+}
+
+.saveModalSave {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.saveModalSave:hover:not(:disabled) {
+  background: var(--sn-primary-dark);
+}
+
+.saveModalSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 

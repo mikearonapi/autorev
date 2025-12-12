@@ -25,34 +25,49 @@
   to { transform: rotate(360deg); }
 }
 
-/* Sign In Button (unauthenticated) */
+/* Sign In Button (unauthenticated) - Circular avatar style */
 .signInBtn {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--sn-primary);
-  color: var(--color-white);
+  padding: 0;
+  background: transparent;
+  color: var(--color-gray-600);
   border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .signInBtn:hover {
+  color: var(--color-gray-900);
+}
+
+.signInBtn:hover .avatarPlaceholder {
   background: var(--sn-primary-dark);
+  border-color: var(--sn-primary-dark);
 }
 
-.signInBtn span {
-  display: none;
+.avatarPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--sn-primary);
+  border: 2px solid var(--sn-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  transition: all 0.2s ease;
 }
 
-@media (min-width: 640px) {
-  .signInBtn span {
-    display: inline;
-  }
+.loginText {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-500);
+}
+
+.signInBtn:hover .loginText {
+  color: var(--color-gray-700);
 }
 
 /* Trigger Button */

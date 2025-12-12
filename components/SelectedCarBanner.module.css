@@ -1,17 +1,22 @@
 /* SelectedCarBanner - Mobile First */
+/* Positioned at bottom of viewport for better page layout visibility */
 
 .banner {
   position: fixed;
-  top: var(--header-height-mobile);
+  bottom: 0;
   left: 0;
   right: 0;
   z-index: 999;
   background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
   color: var(--color-white);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
   /* Support for notched devices */
   padding-left: env(safe-area-inset-left, 0);
   padding-right: env(safe-area-inset-right, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  /* Flex column-reverse so expanded content appears above on mobile */
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .bannerInner {
@@ -167,12 +172,11 @@
   background: rgba(185, 28, 28, 0.5);
 }
 
-/* Expanded Content (Mobile) */
+/* Expanded Content (Mobile) - Expands upward from bottom banner */
 .expandedContent {
   padding: var(--space-md);
-  padding-top: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .expandedStats {
@@ -280,10 +284,6 @@
    ========================================================================== */
 
 @media (min-width: 768px) {
-  .banner {
-    top: var(--header-height-desktop, 64px);
-  }
-  
   .bannerInner {
     padding: var(--space-sm) var(--space-lg);
   }

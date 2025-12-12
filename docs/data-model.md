@@ -1,6 +1,6 @@
-# SuperNatural Motorsports - Data Model & Ownership
+# AutoRev - Data Model & Ownership
 
-This document defines the data boundaries and ownership rules for the SuperNatural Motorsports application. It serves as the single source of truth for understanding where data lives and who is responsible for it.
+This document defines the data boundaries and ownership rules for the AutoRev application. It serves as the single source of truth for understanding where data lives and who is responsible for it.
 
 ## Data Ownership Summary
 

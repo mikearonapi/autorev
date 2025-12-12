@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'SuperNatural Motorsports - Find Your Perfect Sports Car';
+export const alt = 'AutoRev - Find Your Perfect Sports Car';
 export const size = {
   width: 1200,
   height: 630,
@@ -116,7 +116,7 @@ export default async function Image() {
                 letterSpacing: '-0.5px',
               }}
             >
-              SuperNatural Motorsports
+              AutoRev
             </span>
           </div>
 
@@ -132,7 +132,7 @@ export default async function Image() {
               letterSpacing: '-2px',
             }}
           >
-            Unleash Your Racing Spirit
+            Find What Drives You
           </h1>
 
           {/* Subheadline */}
@@ -197,7 +197,7 @@ export default async function Image() {
             fontWeight: 500,
           }}
         >
-          supernaturalmotorsports.vercel.app
+          autorev.app
         </div>
       </div>
     ),

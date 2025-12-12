@@ -365,7 +365,7 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0] || 'all';
   
-  console.log('🚀 SuperNatural Motorsports - Database Migration Runner');
+  console.log('🚀 AutoRev - Database Migration Runner');
   console.log('=' .repeat(60));
   console.log(`   Supabase URL: ${SUPABASE_URL}`);
   console.log(`   Command: ${command}`);

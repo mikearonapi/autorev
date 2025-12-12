@@ -91,6 +91,26 @@
   padding: 0 var(--space-sm);
 }
 
+/* Hero Brand word container - fixed width to prevent layout shift */
+.heroRevWord {
+  display: inline-block;
+  text-align: left;
+  /* Width to accommodate "revolution" (longest word) */
+  width: 5.8em;
+}
+
+.heroBrandSuffix {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.suffixVisible {
+  opacity: 1;
+}
+
+.suffixHidden {
+  opacity: 0;
+}
+
 .heroTitle {
   font-family: var(--font-display);
   font-size: var(--font-size-2xl);
@@ -283,6 +303,28 @@
 @media (min-width: 768px) {
   .quickStatLabel {
     font-size: var(--font-size-sm);
+  }
+}
+
+/* Text-style stats (label first, then text value) */
+.quickStatText {
+  flex-direction: column;
+}
+
+.quickStatText .quickStatLabel {
+  order: -1;
+  margin-bottom: 2px;
+}
+
+.quickStatText .quickStatValue {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .quickStatText .quickStatValue {
+    font-size: var(--font-size-xl);
   }
 }
 

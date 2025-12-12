@@ -179,7 +179,7 @@ export default function Contact() {
                     <Button href="/car-selector" variant="primary" size="md">
                       Find Your Car
                     </Button>
-                    <Button href="/performance" variant="outline" size="md">
+                    <Button href="/mod-planner" variant="outline" size="md">
                       Plan Your Build
                     </Button>
                   </div>
@@ -287,7 +287,7 @@ export default function Contact() {
               <div className={styles.infoCard}>
                 <div className={styles.infoIcon}><MailIcon /></div>
                 <h3 className={styles.infoTitle}>Email Us</h3>
-                <p className={styles.infoText}>Cory@supernaturalmotorsports.com</p>
+                <p className={styles.infoText}>contact@autorev.app</p>
               </div>
 
               <div className={styles.infoCard}>

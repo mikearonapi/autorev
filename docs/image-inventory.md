@@ -1,4 +1,4 @@
-# SuperNatural Motorsports - Image Inventory
+# AutoRev - Image Inventory
 
 This document lists all images needed for the site. Each image has a unique filename that indicates where it belongs.
 

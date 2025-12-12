@@ -1,4 +1,4 @@
--- SuperNatural Motorsports - Supabase Database Schema
+-- AutoRev - Supabase Database Schema
 -- 
 -- This file contains the SQL to create the required tables in Supabase.
 -- Run this in the Supabase SQL Editor to set up your database.
@@ -436,7 +436,7 @@ DROP POLICY IF EXISTS "car_known_issues_delete_policy" ON car_known_issues;
 -- ============================================================================
 -- TABLE COMMENTS (Documentation)
 -- ============================================================================
-COMMENT ON TABLE cars IS 'Vehicle database for SuperNatural Motorsports. Authoritative source in production. Local src/data/cars.js is seed data and fallback only.';
+COMMENT ON TABLE cars IS 'Vehicle database for AutoRev. Authoritative source in production. Local src/data/cars.js is seed data and fallback only.';
 
 COMMENT ON TABLE leads IS 'Lead capture for contact form, newsletter signups, and CTAs. Uses upsert pattern: duplicate emails update existing records.';
 

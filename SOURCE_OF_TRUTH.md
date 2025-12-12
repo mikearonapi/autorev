@@ -1,11 +1,11 @@
-# SuperNatural Motorsports - Source of Truth
+# AutoRev - Source of Truth
 
 > **Last Updated**: December 8, 2024 (Major vehicle database expansion - 98 vehicles)  
 > **Framework**: Next.js 14 (App Router)  
 > **Database**: Supabase (PostgreSQL)  
 > **Deployment**: Vercel  
 
-This document is the authoritative reference for all code decisions, architecture, and relationships in the SuperNatural Motorsports codebase.
+This document is the authoritative reference for all code decisions, architecture, and relationships in the AutoRev codebase.
 
 ---
 
@@ -31,7 +31,7 @@ This document is the authoritative reference for all code decisions, architectur
 
 ## 1. Project Overview
 
-SuperNatural Motorsports is a sports car advisory platform that helps enthusiasts find the right vehicle based on their priorities. The site features:
+AutoRev is a sports car advisory platform that helps enthusiasts find the right vehicle based on their priorities. The site features:
 
 - **Sports Car Selector**: 98 vehicles with 7 weighted scoring criteria
 - **Performance HUB**: Gran Turismo-inspired upgrade visualization
@@ -96,7 +96,7 @@ The database includes **98 sports cars and performance vehicles under $100k**, o
 ## 3. Project Structure
 
 ```
-supernatural-motorsports/
+autorev/
 ├── app/                      # Next.js App Router (pages)
 │   ├── layout.jsx           # Root layout (Header + Footer)
 │   ├── page.jsx             # Home page (/)
@@ -615,7 +615,7 @@ Home → Upgrades → Fill Form → Contact
 1. User has a car, wants to upgrade
 2. Goes to Upgrades page, fills out goals/budget
 3. Submits form, which creates a lead
-4. SuperNatural team follows up
+4. AutoRev team follows up
 
 ### Journey 3: Exploring Performance
 
@@ -637,8 +637,8 @@ Performance HUB → Select Car → View Stock Scores → Select Upgrades → See
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/mikearonapi/supernaturalmotorsports.git
-cd supernaturalmotorsports
+git clone https://github.com/mikearonapi/autorev.git
+cd autorev
 
 # 2. Install dependencies
 npm install
@@ -735,7 +735,7 @@ Add console logging by checking browser DevTools:
 1. Check this document first
 2. Review `docs/data-model.md` for data questions
 3. Check GitHub issues
-4. Contact: info@supernaturalmotorsports.com
+4. Contact: contact@autorev.app
 
 ---
 

@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Comprehensive Upgrade Encyclopedia
+ * AutoRev - Comprehensive Upgrade Encyclopedia
  * 
  * This is the unified, comprehensive source of educational content for all car upgrades.
  * It covers performance, reliability, and track-prep upgrades across all major categories.

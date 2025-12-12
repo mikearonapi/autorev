@@ -93,7 +93,7 @@ export default function FavoriteButton({
       onClick={handleClick}
       className={`${styles.icon} ${isFavorited ? styles.favorited : ''} ${className}`}
       aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-      title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+      title={isFavorited ? 'Remove from favorites' : 'Save to favorites'}
     >
       {isFavorited ? <Icons.heartFilled size={size} /> : <Icons.heartOutline size={size} />}
     </button>

@@ -1,5 +1,5 @@
 # Performance Hub Domain Audit Report
-## SuperNatural Motorsports - OEM-Spec & Empirical Validation
+## AutoRev - OEM-Spec & Empirical Validation
 
 > **Audit Date:** December 8, 2024  
 > **Auditor:** Automated Audit System + Manual Review  
@@ -312,7 +312,7 @@ const algorithmTests = [
 
 ---
 
-*Report generated as part of SuperNatural Motorsports Data Audit Initiative*
+*Report generated as part of AutoRev Data Audit Initiative*
 
 
 

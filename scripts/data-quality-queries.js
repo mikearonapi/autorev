@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - DB Data Quality Queries
+ * AutoRev - DB Data Quality Queries
  * 
  * These queries can be run against the database to detect data quality issues.
  * Run with: node scripts/data-quality-queries.js

@@ -2,7 +2,7 @@
 /**
  * Page & Atmospheric Image Generation Script
  * 
- * Generates enthusiast-focused page images for the SuperNatural Motorsports site.
+ * Generates enthusiast-focused page images for the AutoRev site.
  * These images capture the weekend warrior / hobbyist spirit - people who love cars,
  * might do track days for fun, and are passionate enthusiasts rather than pros.
  * 
@@ -70,8 +70,162 @@ if (!fs.existsSync(GENERATED_IMAGES_DIR)) {
  */
 const PAGE_IMAGES = {
   // =========================================================================
-  // PAGE HERO IMAGES (9)
+  // PAGE HERO IMAGES (10)
   // =========================================================================
+  
+  carCatalogHero: {
+    filename: 'car-catalog-hero.png',
+    blobPath: 'pages/catalog/hero.webp',
+    aspectRatio: '16:9',
+    description: 'Car Catalog hero - cinematic track day scene with multiple enthusiast cars',
+    prompt: `OUTDOOR cinematic photograph looking DOWN a professional racetrack straightaway. Multiple enthusiast sports cars driving at speed in formation - include a variety like a Porsche 911 GT3, a Corvette, a BMW M car, a Nissan GT-R, and a Mazda Miata all sharing the track. Shot from a low angle at track level, looking along the racing line with the cars approaching. Motion blur on the track surface and barriers conveys speed. The setting is a classic American road course like Road Atlanta or Laguna Seca - green grass, catch fencing, dramatic elevation changes visible ahead. Late afternoon golden hour lighting creating long shadows and warm tones. The atmosphere is ALIVE with energy - this is track day, enthusiasts pushing their machines. Porsche press photo quality - cinematic, dramatic, professional automotive photography. NOT a studio shot, real outdoor track environment with sky and scenery. The image should make you want to be there, feel the speed, hear the engines.`,
+  },
+  
+  carSelectorHero: {
+    filename: 'car-selector-hero.png',
+    blobPath: 'pages/selector/hero.webp',
+    aspectRatio: '16:9',
+    description: 'Car Selector hero - curated collection of diverse sports cars to browse and choose from',
+    prompt: `OUTDOOR photograph from an elevated perspective looking down at a curated gathering of diverse enthusiast sports cars arranged on an elegant brick or cobblestone courtyard. Include 8-12 different sports cars representing variety: a Porsche 911, a Chevrolet Corvette, a BMW M2, a Mazda Miata, a Ford Mustang GT, a Nissan 370Z, a Toyota Supra, and a Lotus in different colors - silver, blue, red, yellow, white, black. The cars are arranged artfully facing different directions, creating visual interest like a car show or private collection. Setting is an upscale venue with lush green trees forming a natural backdrop, dappled sunlight filtering through. The mood is aspirational yet approachable - these are attainable enthusiast cars, a collection you could browse to find YOUR perfect car. Shot from slightly above, inviting the viewer to explore the selection. Porsche press photo quality, warm afternoon light, intimate and exclusive atmosphere. This feels like discovering a hidden enthusiast gathering where you can find your dream car.`,
+  },
+  
+  findYourCarHero: {
+    filename: 'find-your-car-hero.png',
+    blobPath: 'pages/find-your-car/hero.webp',
+    aspectRatio: '16:9',
+    description: 'Find Your Car page - silhouette of person getting into their perfect car at sunset',
+    prompt: `CINEMATIC silhouette photograph at sunset on California Highway 1 or a stunning coastal cliff road. A beautiful sports car (like a Porsche 911 or sleek coupe) is parked at a scenic overlook, facing toward the Pacific Ocean. A person in SILHOUETTE is captured in the moment of opening the driver's door and stepping into the car - one foot in, hand on the door frame, about to embark on their journey. The sun is setting directly behind the scene, creating a dramatic orange and golden glow that outlines both the person and the car in a warm halo of light. The sky is painted in deep oranges, reds, purples, and golds. The ocean or dramatic landscape is visible in the background, slightly out of focus. The mood is deeply EMOTIONAL - this is THE MOMENT of finding your perfect match, the beginning of a love story between driver and machine. Dark, moody, with the sunset providing all the illumination. The silhouette conveys anticipation, excitement, and the promise of adventures to come. Professional cinematic photography, lens flare from the setting sun, the kind of image that makes your heart race. This is not just a car - it's YOUR car, YOUR perfect match.`,
+  },
+  
+  // =========================================================================
+  // CAROUSEL HERO IMAGES - Top 15 Cars (Dramatic Studio Silhouettes)
+  // CRITICAL: All cars must be positioned identically for smooth carousel effect
+  // - Car PERFECTLY CENTERED horizontally in frame
+  // - Car occupies exactly 70% of frame width
+  // - Wheels/ground line at exactly 60% down from top of image
+  // - Camera at exact eye level, perfect 90-degree side profile
+  // - Identical lighting setup and floor reflection for all
+  // =========================================================================
+  
+  carouselCaymanGT4: {
+    filename: 'carousel-cayman-gt4.png',
+    blobPath: 'carousel/718-cayman-gt4.webp',
+    aspectRatio: '16:9',
+    description: 'Porsche 718 Cayman GT4 - dramatic studio silhouette',
+    prompt: `Dark moody automotive studio photograph. Porsche 718 Cayman GT4 in perfect side profile facing left. Dark grey or black car color. Pure black background. Dramatic rim lighting - thin silver/white light outlines the car's silhouette along the roofline, hood, fenders, and rear wing. Dark reflective floor creates subtle mirror reflection. Very dark and cinematic mood. The car emerges from shadows with only edge lighting visible. Professional automotive photography, clean composition, eye-level camera angle.`,
+  },
+  
+  carouselR8V10: {
+    filename: 'carousel-r8-v10.png',
+    blobPath: 'carousel/audi-r8-v10.webp',
+    aspectRatio: '16:9',
+    description: 'Audi R8 V10 - dramatic studio silhouette',
+    prompt: `STUDIO photograph of an Audi R8 V10. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the roofline, distinctive side blade, and body curves. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The R8's mid-engine supercar silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, ultra-clean, minimalist.`,
+  },
+  
+  carouselGallardo: {
+    filename: 'carousel-gallardo.png',
+    blobPath: 'carousel/lamborghini-gallardo.webp',
+    aspectRatio: '16:9',
+    description: 'Lamborghini Gallardo - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Lamborghini Gallardo. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the sharp wedge roofline and aggressive Italian lines. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The Gallardo's exotic silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselEmira: {
+    filename: 'carousel-emira.png',
+    blobPath: 'carousel/lotus-emira.webp',
+    aspectRatio: '16:9',
+    description: 'Lotus Emira - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Lotus Emira. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the flowing British sports car curves and elegant mid-engine proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The Emira's sophisticated silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, ultra-clean, minimalist.`,
+  },
+  
+  carouselViper: {
+    filename: 'carousel-viper.png',
+    blobPath: 'carousel/dodge-viper.webp',
+    aspectRatio: '16:9',
+    description: 'Dodge Viper - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Dodge Viper Gen 5 ACR. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the long hood, massive fenders, and huge rear wing. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The Viper's brutish American silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselC8Corvette: {
+    filename: 'carousel-c8-corvette.png',
+    blobPath: 'carousel/c8-corvette.webp',
+    aspectRatio: '16:9',
+    description: 'C8 Corvette Stingray - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a C8 Chevrolet Corvette Stingray. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the sharp angles, floating roofline, and exotic mid-engine proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The C8's supercar silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, ultra-clean, minimalist.`,
+  },
+  
+  carousel911: {
+    filename: 'carousel-911-991.png',
+    blobPath: 'carousel/porsche-911-991.webp',
+    aspectRatio: '16:9',
+    description: 'Porsche 911 991 - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Porsche 911 (991 generation Carrera S). CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the iconic sloping roofline, rear-engine haunches, and timeless 911 curves. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The 911's legendary silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselGTR: {
+    filename: 'carousel-gtr.png',
+    blobPath: 'carousel/nissan-gtr.webp',
+    aspectRatio: '16:9',
+    description: 'Nissan GT-R - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Nissan GT-R R35. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the aggressive wide body, muscular fenders, and functional aerodynamics. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. Godzilla's menacing silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselGT500: {
+    filename: 'carousel-gt500.png',
+    blobPath: 'carousel/shelby-gt500.webp',
+    aspectRatio: '16:9',
+    description: 'Shelby GT500 - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Ford Mustang Shelby GT500. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the aggressive hood vents, wide muscular body, and track-focused stance. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The GT500's powerful silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselEvoraGT: {
+    filename: 'carousel-evora-gt.png',
+    blobPath: 'carousel/lotus-evora-gt.webp',
+    aspectRatio: '16:9',
+    description: 'Lotus Evora GT - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Lotus Evora GT. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the elegant British GT curves, rear diffuser, and balanced mid-engine proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The Evora GT's refined silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselSupraMk4: {
+    filename: 'carousel-supra-mk4.png',
+    blobPath: 'carousel/toyota-supra-mk4.webp',
+    aspectRatio: '16:9',
+    description: 'Toyota Supra Mk4 A80 - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Toyota Supra Mk4 A80 Turbo. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the distinctive bubble roof, flowing curves, and iconic rear wing. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The legendary Supra silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist, JDM legend.`,
+  },
+  
+  carouselRX7: {
+    filename: 'carousel-rx7-fd.png',
+    blobPath: 'carousel/mazda-rx7-fd.webp',
+    aspectRatio: '16:9',
+    description: 'Mazda RX-7 FD3S - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Mazda RX-7 FD3S. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the sensual organic curves, pop-up headlight profile, and perfect proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The FD's gorgeous silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist, automotive art.`,
+  },
+  
+  carousel1M: {
+    filename: 'carousel-bmw-1m.png',
+    blobPath: 'carousel/bmw-1m.webp',
+    aspectRatio: '16:9',
+    description: 'BMW 1M Coupe - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a BMW 1 Series M Coupe (E82 1M). CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the wide box flares, aggressive compact stance, and muscular proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The 1M's brutish silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carouselRS5: {
+    filename: 'carousel-rs5.png',
+    blobPath: 'carousel/audi-rs5.webp',
+    aspectRatio: '16:9',
+    description: 'Audi RS5 - dramatic studio silhouette',
+    prompt: `STUDIO photograph of an Audi RS5 Coupe. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the wide Quattro fenders, elegant roofline, and athletic GT proportions. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The RS5's refined silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist.`,
+  },
+  
+  carousel997: {
+    filename: 'carousel-997.png',
+    blobPath: 'carousel/porsche-997.webp',
+    aspectRatio: '16:9',
+    description: 'Porsche 997 Carrera S - dramatic studio silhouette',
+    prompt: `STUDIO photograph of a Porsche 997 Carrera S. CRITICAL POSITIONING: Car must be PERFECTLY CENTERED horizontally in frame. Car occupies exactly 70% of the frame width. The ground/wheel line is positioned at exactly 60% down from the top of the image. Camera is at EXACT eye level, shooting a perfect 90-degree side profile - no angle up or down. The car faces LEFT. Dark grey or black color. Pure black background (#000000). Dramatic RIM LIGHTING only - thin white/silver light tracing the classic 911 roofline, rear-engine haunches, and timeless curves. Dark polished concrete floor with subtle mirror reflection. VERY DARK and MOODY. The 997's beautiful silhouette emerges from pure darkness. NO other elements, NO gradients. Professional automotive studio photography, minimalist, Porsche perfection.`,
+  },
   
   homeHero: {
     filename: 'home-hero.png',
@@ -141,8 +295,16 @@ const PAGE_IMAGES = {
     filename: 'performance-hero.png',
     blobPath: 'pages/performance/hero.webp',
     aspectRatio: '16:9',
-    description: 'Performance HUB - dramatic track action or garage build',
-    prompt: `OUTDOOR photograph of a serious sports car in dramatic motion on a racetrack during a spirited driving session. The car is a Porsche 911, BMW M3, or similar performance car, captured mid-corner with visible suspension compression and slight brake glow. The shot conveys POWER and PERFORMANCE - the thrill of extracting maximum potential from your machine. Dynamic angle, sense of speed and precision. Golden hour lighting for drama. This is what performance upgrades are FOR - unlocking your car's potential on track. Professional automotive photography, action shot, aspirational but attainable performance driving.`,
+    description: 'Performance HUB - dramatic engine bay showcasing power and engineering',
+    prompt: `STUDIO photograph of a high-performance sports car engine bay, dramatically lit against a dark background. The engine features carbon fiber covers, polished aluminum components, and aggressive styling. Moody, high-contrast lighting highlights the textures - the weave of carbon fiber, the gleam of machined metal, the precision engineering. Could be a twin-turbo V8, flat-six, or high-revving inline-6. Red or orange accent details add visual drama. The image conveys RAW POWER, engineering excellence, and premium performance. This is the heart of the machine - where performance comes from. Professional automotive studio photography, dramatic rim lighting, deep shadows, premium feel. NO visible brand logos or badges. The engine should look like a work of art - mechanical beauty that makes enthusiasts' hearts race.`,
+  },
+  
+  educationHero: {
+    filename: 'education-hero.png',
+    blobPath: 'pages/education/hero.webp',
+    aspectRatio: '16:9',
+    description: 'Education Center - technical learning and understanding how cars work as systems',
+    prompt: `CINEMATIC photograph of a pristine automotive workshop/classroom environment. A sports car (like a Porsche 911 or BMW M3) is elevated on a professional lift with its suspension, brakes, and drivetrain components beautifully exposed and visible. The setting combines a high-end garage with educational elements - clean white walls, professional lighting, perhaps a large display screen showing technical diagrams in the background. Tools are organized immaculately. The mood is EDUCATIONAL and ASPIRATIONAL - this is where you come to truly understand your machine. Think of a premium driving school or manufacturer training center. Soft, even lighting that highlights the mechanical components clearly. The atmosphere suggests knowledge, precision, and mastery. This is NOT a dirty garage - it's a place of learning where enthusiasts become experts. Professional automotive photography, clean and modern aesthetic, cinematic composition.`,
   },
   
   contactHero: {

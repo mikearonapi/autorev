@@ -317,22 +317,18 @@ export default function AIMechanic({ isOpen, onClose, carContext }) {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask me anything..."
               className={styles.input}
-              disabled={isLoading || !isAuthenticated}
+              disabled={isLoading}
             />
             <button
               type="submit"
               className={styles.sendBtn}
-              disabled={!input.trim() || isLoading || !isAuthenticated}
+              disabled={!input.trim() || isLoading}
             >
               {isLoading ? <Icons.loader size={18} /> : <Icons.send size={18} />}
             </button>
           </form>
 
-          {!isAuthenticated && (
-            <div className={styles.authPrompt}>
-              Sign in to chat with AI Mechanic
-            </div>
-          )}
+          {/* Auth prompt removed for testing */}
         </>
       )}
     </div>

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document defines the Subject Matter Expert (SME) review process for validating data accuracy, resolving disputes, and maintaining quality standards across the SuperNatural Motorsports platform.
+This document defines the Subject Matter Expert (SME) review process for validating data accuracy, resolving disputes, and maintaining quality standards across the AutoRev platform.
 
 ---
 

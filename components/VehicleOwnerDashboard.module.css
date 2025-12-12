@@ -1,0 +1,511 @@
+/* VehicleOwnerDashboard.module.css */
+
+.dashboard {
+  padding: 1.5rem;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.dashboard::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.dashboard::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Vehicle Header */
+.vehicleHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vehicleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vehicleName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.vehicleTrim {
+  font-size: 0.875rem;
+  color: #c4a564;
+  font-weight: 500;
+}
+
+.mileageDisplay {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(196, 165, 100, 0.15);
+  border-radius: 0.5rem;
+  color: #c4a564;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+/* VIN Section */
+.vinSection {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vinLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.copyableValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.copyableValue:hover {
+  background: rgba(196, 165, 100, 0.2);
+  color: #c4a564;
+}
+
+.copyableValue svg {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.copyableValue:hover svg {
+  opacity: 1;
+}
+
+.emptyValue {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Section Titles */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 1.5rem 0 1rem;
+}
+
+.sectionTitle svg {
+  color: #c4a564;
+}
+
+/* Quick Reference Grid */
+.quickRefGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Quick Reference Card */
+.quickRefCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.quickRefCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.quickRefHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.875rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quickRefIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+.quickRefTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.quickRefItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quickRefItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+
+.quickRefLabel {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.quickRefValue {
+  color: #fff;
+  font-weight: 500;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+
+.quickRefExpand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickRefExpand:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* Service Schedule Grid */
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.serviceCard {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.serviceCard.urgent {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.serviceCard.soon {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.serviceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.serviceName {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.9375rem;
+}
+
+.urgentBadge {
+  padding: 0.125rem 0.5rem;
+  background: rgba(239, 68, 68, 0.2);
+  border-radius: 1rem;
+  color: #ef4444;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.serviceDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.serviceInterval {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.serviceNext {
+  font-size: 0.8125rem;
+  color: #c4a564;
+  font-weight: 500;
+}
+
+.serviceCost {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Known Issues Grid */
+.issuesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.issueCard {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  border-left: 3px solid;
+}
+
+.issueCard.issue_critical {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.issueCard.issue_high {
+  border-left-color: #f97316;
+  background: rgba(249, 115, 22, 0.05);
+}
+
+.issueCard.issue_medium {
+  border-left-color: #eab308;
+  background: rgba(234, 179, 8, 0.05);
+}
+
+.issueCard.issue_low {
+  border-left-color: #22c55e;
+}
+
+.issueHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.issueSeverity {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.recallNumber {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+}
+
+.issueTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 0.5rem;
+}
+
+.issueDescription {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.issueSymptoms {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.symptomsLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.issueSymptoms ul {
+  margin: 0.375rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.issueSymptoms li {
+  margin-bottom: 0.25rem;
+}
+
+/* Ownership Grid */
+.ownershipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.ownershipItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ownershipLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ownershipValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Notes Section */
+.notesSection {
+  margin-top: 1.5rem;
+}
+
+.notesText {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* No Data Message */
+.noDataMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.noDataMessage svg {
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+.noDataMessage p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.noDataHint {
+  margin-top: 0.5rem !important;
+  font-size: 0.8125rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Data Source Note */
+.dataSourceNote {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(196, 165, 100, 0.1);
+  border: 1px solid rgba(196, 165, 100, 0.2);
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dataSourceNote svg {
+  flex-shrink: 0;
+  color: #c4a564;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .quickRefGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .serviceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicleHeader {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mileageDisplay {
+    align-self: flex-start;
+  }
+
+  .ownershipGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

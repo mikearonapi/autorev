@@ -13,12 +13,13 @@ import {
   getTopPriorities,
   getDynamicRecommendationTypes,
   DEFAULT_WEIGHTS,
-  ENTHUSIAST_WEIGHTS
 } from '@/lib/scoring.js';
 import CarImage from './CarImage';
 import { useCarSelection } from './providers/CarSelectionProvider';
 import FavoriteButton from './FavoriteButton';
 import CompareButton from './CompareButton';
+import ScoringInfo from './ScoringInfo';
+import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
 
 /**
  * Extract the low price from a price range string like "$55-70K" → 55000
@@ -262,8 +263,8 @@ export default function SportsCarComparison() {
   const [loadError, setLoadError] = useState(null);
 
   // State for user preferences
-  // Use ENTHUSIAST_WEIGHTS by default to prioritize driving engagement
-  const [weights, setWeights] = useState(() => ENTHUSIAST_WEIGHTS);
+  // All categories start at "Normal" (1.0) - user adjusts from there
+  const [weights, setWeights] = useState(() => DEFAULT_WEIGHTS);
   const [sortBy, setSortBy] = useState('total');
   const [priceMax, setPriceMax] = useState(100000);
   const [priceMin, setPriceMin] = useState(0);
@@ -339,6 +340,22 @@ export default function SportsCarComparison() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Save user preferences whenever they change (for Compare Modal to reference)
+  useEffect(() => {
+    savePreferences({
+      budgetMin: priceMin,
+      budgetMax: priceMax,
+      transmissionFilter: mustHaveFilters.transmissionFilter,
+      drivetrainFilter: mustHaveFilters.drivetrainFilter,
+      seatsFilter: mustHaveFilters.seatsFilter,
+      engineLayoutFilter: mustHaveFilters.engineLayoutFilter,
+      originFilter: mustHaveFilters.originFilter,
+      styleFilter: mustHaveFilters.styleFilter,
+      tierFilter: mustHaveFilters.tierFilter,
+      weights,
+    });
+  }, [priceMin, priceMax, mustHaveFilters, weights]);
 
   // Calculate weighted total score using scoring library
   const calculateTotal = useCallback((car) => 
@@ -471,7 +488,7 @@ export default function SportsCarComparison() {
     return getRecommendations(filteredCars, weights);
   }, [filteredCars, weights]);
 
-  // Active priorities for summary display
+  // Active priorities for summary display (legacy, kept for potential future use)
   const activePriorities = useMemo(() => 
     categoriesWithIcons
       .filter(cat => weights[cat.key] > 1)
@@ -543,71 +560,13 @@ export default function SportsCarComparison() {
             <span>{loadError}</span>
           </div>
         )}
-        
+
         {/* Step 1: What Kind of Car? */}
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div className={styles.stepBadge}>1</div>
             <h2 className={styles.sectionTitle}>What Kind of Car Are You Looking For?</h2>
-            <span className={styles.sectionMeta}>Tell us your must-haves and preferences</span>
-          </div>
-
-          {/* Category Quick Filters */}
-          <div className={styles.categoryFilters}>
-            <span className={styles.categoryFiltersLabel}>Browse by Category:</span>
-            <div className={styles.categoryFilterScroll}>
-              {CAR_CATEGORIES.map(cat => {
-                const IconComponent = cat.icon;
-                const isActive = mustHaveFilters.categoryFilter === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    className={`${styles.categoryFilterBtn} ${isActive ? styles.categoryFilterActive : ''}`}
-                    onClick={() => setMustHaveFilters(prev => ({ ...prev, categoryFilter: cat.key }))}
-                  >
-                    <IconComponent size={16} />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Tier Quick Filters */}
-          <div className={styles.tierFilters}>
-            <span className={styles.tierFiltersLabel}>Quick Filter by Tier:</span>
-            <div className={styles.tierFilterButtons}>
-              <button
-                className={`${styles.tierFilterBtn} ${mustHaveFilters.tierFilter === 'all' ? styles.tierFilterActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'all' }))}
-              >
-                All Tiers
-              </button>
-              <button
-                className={`${styles.tierFilterBtn} ${styles.tierFilterPremium} ${mustHaveFilters.tierFilter === 'premium' ? styles.tierFilterActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'premium' }))}
-              >
-                Premium
-              </button>
-              <button
-                className={`${styles.tierFilterBtn} ${styles.tierFilterUpper} ${mustHaveFilters.tierFilter === 'upper-mid' ? styles.tierFilterActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'upper-mid' }))}
-              >
-                Upper-Mid
-              </button>
-              <button
-                className={`${styles.tierFilterBtn} ${styles.tierFilterMid} ${mustHaveFilters.tierFilter === 'mid' ? styles.tierFilterActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'mid' }))}
-              >
-                Mid
-              </button>
-              <button
-                className={`${styles.tierFilterBtn} ${styles.tierFilterBudget} ${mustHaveFilters.tierFilter === 'budget' ? styles.tierFilterActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'budget' }))}
-              >
-                Budget
-              </button>
-            </div>
+            <span className={styles.sectionMeta}>Tell us your must-haves</span>
           </div>
 
           <div className={styles.requirementsGrid}>
@@ -782,11 +741,6 @@ export default function SportsCarComparison() {
               <span>{filterWarning} — try relaxing some filters</span>
             </div>
           )}
-          
-          <div className={styles.matchCount}>
-            <span className={styles.matchCountNumber}>{filteredCars.length}</span>
-            <span className={styles.matchCountLabel}>cars match your criteria</span>
-          </div>
         </section>
 
         {/* Step 2: Define Priorities */}
@@ -800,24 +754,23 @@ export default function SportsCarComparison() {
           <div className={styles.prioritiesGrid}>
             {categoriesWithIcons.map(cat => {
               const IconComponent = cat.icon;
-              const isActive = weights[cat.key] > 0;
               const isHighPriority = weights[cat.key] > 1;
+              const isLowPriority = weights[cat.key] < 1;
               const badge = getPriorityBadge(weights[cat.key]);
               const descriptor = getDescriptorForValue(cat.key, weights[cat.key]);
               
               return (
                 <div 
                   key={cat.key} 
-                  className={`${styles.priorityCard} ${isHighPriority ? styles.priorityCardActive : ''}`}
+                  className={`${styles.priorityCard} ${isHighPriority ? styles.priorityCardHigh : ''} ${isLowPriority ? styles.priorityCardLow : ''}`}
                 >
                   <div className={styles.priorityCardHeader}>
                     <div className={styles.priorityCardIcon}>
-                      <IconComponent size={18} />
+                      <IconComponent size={16} />
                       <span className={styles.priorityCardLabel}>{cat.label}</span>
                     </div>
                     <span className={badge.className}>{badge.text}</span>
                   </div>
-                  <p className={styles.priorityCardDesc}>{cat.desc}</p>
                   <input
                     type="range"
                     min="0"
@@ -839,24 +792,6 @@ export default function SportsCarComparison() {
             })}
           </div>
 
-          {/* Priority Ranking Display */}
-          {topPriorities.length > 0 && (
-            <div className={styles.prioritySummary}>
-              <span className={styles.prioritySummaryLabel}>Your Priority Ranking:</span>
-              <div className={styles.prioritySummaryTags}>
-                {topPriorities.map(priority => {
-                  const IconComponent = priority.icon;
-                  return (
-                    <span key={priority.key} className={styles.priorityRankTag} data-rank={priority.rank}>
-                      <span className={styles.priorityRankBadge}>{priority.rank}</span>
-                      <IconComponent size={14} />
-                      {priority.label}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </section>
 
         {/* Step 3: Recommendations */}
@@ -917,15 +852,73 @@ export default function SportsCarComparison() {
           </div>
         </section>
 
+        {/* About Our Scoring & Sources */}
+        <ScoringInfo variant="compact" />
+
         {/* Step 4: Explore All Vehicles */}
         <section className={styles.section} ref={tableRef}>
           <div className={styles.sectionHeader}>
             <div className={styles.stepBadge}>4</div>
             <h2 className={styles.sectionTitle}>Explore All Vehicles</h2>
             <span className={styles.sectionMeta}>{filteredCars.length} vehicles</span>
+          </div>
+
+          {/* Category & Tier Filters */}
+          <div className={styles.exploreFilters}>
+            {/* Category Pills */}
+            <div className={styles.exploreCategoryRow}>
+              {CAR_CATEGORIES.map(cat => {
+                const IconComponent = cat.icon;
+                const isActive = mustHaveFilters.categoryFilter === cat.key;
+                return (
+                  <button
+                    key={cat.key}
+                    className={`${styles.exploreCategoryBtn} ${isActive ? styles.exploreCategoryActive : ''}`}
+                    onClick={() => setMustHaveFilters(prev => ({ ...prev, categoryFilter: cat.key }))}
+                  >
+                    <IconComponent size={14} />
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Filters */}
+            {/* Tier Pills */}
+            <div className={styles.exploreTierRow}>
+              <button
+                className={`${styles.exploreTierBtn} ${mustHaveFilters.tierFilter === 'all' ? styles.exploreTierActive : ''}`}
+                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'all' }))}
+              >
+                All Tiers
+              </button>
+              <button
+                className={`${styles.exploreTierBtn} ${styles.exploreTierPremium} ${mustHaveFilters.tierFilter === 'premium' ? styles.exploreTierActive : ''}`}
+                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'premium' }))}
+              >
+                Premium
+              </button>
+              <button
+                className={`${styles.exploreTierBtn} ${styles.exploreTierUpper} ${mustHaveFilters.tierFilter === 'upper-mid' ? styles.exploreTierActive : ''}`}
+                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'upper-mid' }))}
+              >
+                Upper-Mid
+              </button>
+              <button
+                className={`${styles.exploreTierBtn} ${styles.exploreTierMid} ${mustHaveFilters.tierFilter === 'mid' ? styles.exploreTierActive : ''}`}
+                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'mid' }))}
+              >
+                Mid
+              </button>
+              <button
+                className={`${styles.exploreTierBtn} ${styles.exploreTierBudget} ${mustHaveFilters.tierFilter === 'budget' ? styles.exploreTierActive : ''}`}
+                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'budget' }))}
+              >
+                Budget
+              </button>
+            </div>
+          </div>
+
+          {/* Search & Sort Filters */}
           <div className={styles.filtersBar}>
             <div className={styles.filtersGroup}>
               <div className={styles.searchInput}>

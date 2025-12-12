@@ -1,0 +1,522 @@
+'use client';
+
+/**
+ * BuildDetailView Component
+ * 
+ * Comprehensive view of a saved build showing everything needed to understand
+ * and execute the build:
+ * - All upgrades organized by category
+ * - Build complexity and difficulty assessment
+ * - Tools and equipment required
+ * - Systems affected with stress indicators
+ * - Synergies and warnings
+ * - Cost breakdown
+ * - Link to modify in Performance Hub
+ */
+
+import { useMemo } from 'react';
+import Link from 'next/link';
+import CarImage from './CarImage';
+import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from '@/lib/upgrades.js';
+import { validateUpgradeSelection, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
+import { getToolsForBuild, calculateBuildComplexity, difficultyLevels, toolCategories } from '@/data/upgradeTools.js';
+import styles from './BuildDetailView.module.css';
+
+// Icons
+const Icons = {
+  wrench: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+  tool: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 21h4l13-13a2.83 2.83 0 0 0-4-4L3 17v4z"/>
+      <path d="M14.5 5.5L18.5 9.5"/>
+    </svg>
+  ),
+  clock: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 6v6l4 2"/>
+    </svg>
+  ),
+  bolt: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
+  dollar: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    </svg>
+  ),
+  check: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
+  alert: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  info: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
+  arrowRight: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  ),
+  arrowLeft: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/>
+      <polyline points="12 19 5 12 12 5"/>
+    </svg>
+  ),
+  gauge: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  list: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"/>
+      <line x1="8" y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6" x2="3.01" y2="6"/>
+      <line x1="3" y1="12" x2="3.01" y2="12"/>
+      <line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+  ),
+  star: ({ size = 20, filled = false }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+  ),
+  home: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  ),
+};
+
+/**
+ * Build Summary Header Card
+ */
+function BuildSummaryCard({ build, car, complexity }) {
+  return (
+    <div className={styles.summaryCard}>
+      <div className={styles.summaryImage}>
+        <CarImage car={car} variant="hero" />
+      </div>
+      <div className={styles.summaryContent}>
+        <div className={styles.summaryHeader}>
+          <h2 className={styles.buildName}>{build.name}</h2>
+          <span className={styles.buildDate}>
+            Saved {new Date(build.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+        <p className={styles.carName}>{car.name}</p>
+        
+        <div className={styles.summaryStats}>
+          <div className={styles.summaryStat}>
+            <Icons.wrench size={16} />
+            <span className={styles.summaryStatValue}>{build.upgrades?.length || 0}</span>
+            <span className={styles.summaryStatLabel}>Upgrades</span>
+          </div>
+          <div className={styles.summaryStat}>
+            <Icons.bolt size={16} />
+            <span className={styles.summaryStatValue}>+{build.totalHpGain || 0}</span>
+            <span className={styles.summaryStatLabel}>HP Gain</span>
+          </div>
+          <div className={styles.summaryStat}>
+            <Icons.clock size={16} />
+            <span className={styles.summaryStatValue}>{complexity.timeEstimate?.display || '—'}</span>
+            <span className={styles.summaryStatLabel}>Est. Time</span>
+          </div>
+          <div className={styles.summaryStat}>
+            <Icons.dollar size={16} />
+            <span className={styles.summaryStatValue}>${(build.totalCostLow || 0).toLocaleString()}</span>
+            <span className={styles.summaryStatLabel}>Est. Cost</span>
+          </div>
+        </div>
+
+        <div className={styles.summaryActions}>
+          <Link 
+            href={`/mod-planner?car=${car.slug}&build=${build.id}`}
+            className={styles.modifyButton}
+          >
+            <Icons.tool size={16} />
+            Modify Build
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Difficulty Badge Component
+ */
+function DifficultyBadge({ difficulty }) {
+  const info = difficultyLevels[difficulty] || difficultyLevels.moderate;
+  
+  return (
+    <div className={styles.difficultyBadge} data-difficulty={difficulty}>
+      <span className={styles.difficultyDot} style={{ backgroundColor: info.color }} />
+      <span className={styles.difficultyName}>{info.name}</span>
+    </div>
+  );
+}
+
+/**
+ * Build Complexity Section
+ */
+function BuildComplexitySection({ complexity }) {
+  const info = complexity.difficultyInfo || difficultyLevels.moderate;
+  
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.gauge size={18} />
+        Build Complexity
+      </h3>
+      
+      <div className={styles.complexityCard}>
+        <div className={styles.complexityHeader}>
+          <DifficultyBadge difficulty={complexity.difficulty} />
+          <span className={styles.complexityTime}>
+            <Icons.clock size={14} />
+            {complexity.timeEstimate?.display || 'Variable'}
+          </span>
+        </div>
+        
+        <p className={styles.complexityDescription}>{info.description}</p>
+        
+        <div className={styles.complexityMeta}>
+          <div className={styles.complexityMetaItem}>
+            <Icons.home size={14} />
+            <span>{info.garageRequirement}</span>
+          </div>
+        </div>
+        
+        <div className={styles.diyAssessment} data-feasibility={complexity.diyFeasibility}>
+          <div className={styles.diyAssessmentIcon}>
+            {complexity.diyFeasibility === 'fully-diy' && <Icons.check size={16} />}
+            {complexity.diyFeasibility === 'partial-diy' && <Icons.info size={16} />}
+            {(complexity.diyFeasibility === 'shop-recommended' || complexity.diyFeasibility === 'mostly-shop') && <Icons.alert size={16} />}
+          </div>
+          <div className={styles.diyAssessmentContent}>
+            <span className={styles.diyAssessmentLabel}>
+              {complexity.diyFeasibility === 'fully-diy' && 'DIY Friendly'}
+              {complexity.diyFeasibility === 'partial-diy' && 'Partial DIY'}
+              {complexity.diyFeasibility === 'shop-recommended' && 'Shop Recommended'}
+              {complexity.diyFeasibility === 'mostly-shop' && 'Professional Install'}
+            </span>
+            <p className={styles.diyAssessmentMessage}>{complexity.diyMessage}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Upgrades List Section - Organized by category
+ */
+function UpgradesListSection({ upgrades, upgradeDetails }) {
+  const categories = getCanonicalCategories();
+  
+  // Group upgrades by category
+  const upgradesByCategory = useMemo(() => {
+    const grouped = {};
+    
+    upgradeDetails.forEach(upgrade => {
+      if (!upgrade) return;
+      const catKey = getCanonicalCategoryKey(upgrade.category) || 'power';
+      if (!grouped[catKey]) {
+        grouped[catKey] = {
+          ...categories[catKey],
+          upgrades: [],
+        };
+      }
+      grouped[catKey].upgrades.push(upgrade);
+    });
+    
+    return Object.values(grouped).filter(cat => cat.upgrades.length > 0);
+  }, [upgradeDetails, categories]);
+  
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.list size={18} />
+        Build Plan ({upgrades.length} Upgrades)
+      </h3>
+      
+      <div className={styles.upgradesGrid}>
+        {upgradesByCategory.map(category => (
+          <div key={category.key} className={styles.categoryCard}>
+            <h4 className={styles.categoryTitle}>{category.name}</h4>
+            <ul className={styles.upgradeList}>
+              {category.upgrades.map(upgrade => (
+                <li key={upgrade.key} className={styles.upgradeItem}>
+                  <Icons.check size={14} className={styles.upgradeCheck} />
+                  <div className={styles.upgradeInfo}>
+                    <span className={styles.upgradeName}>{upgrade.name}</span>
+                    {upgrade.metricChanges?.hpGain > 0 && (
+                      <span className={styles.upgradeGain}>+{upgrade.metricChanges.hpGain} hp</span>
+                    )}
+                  </div>
+                  {(upgrade.estimatedCostLow || upgrade.cost?.low) && (
+                    <span className={styles.upgradeCost}>
+                      ${(upgrade.estimatedCostLow || upgrade.cost?.low || 0).toLocaleString()}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Tools Required Section
+ */
+function ToolsSection({ toolsData }) {
+  const { essential, recommended, byCategory } = toolsData;
+  
+  if (essential.length === 0 && recommended.length === 0) {
+    return null;
+  }
+  
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.wrench size={18} />
+        Tools & Equipment Required
+      </h3>
+      
+      <div className={styles.toolsGrid}>
+        {Object.values(byCategory).map(category => (
+          <div key={category.key} className={styles.toolCategory}>
+            <h4 className={styles.toolCategoryTitle}>
+              {category.name}
+            </h4>
+            <ul className={styles.toolList}>
+              {category.tools.map(tool => (
+                <li key={tool.key} className={styles.toolItem}>
+                  <span className={styles.toolName}>{tool.name}</span>
+                  {tool.essential && (
+                    <span className={styles.toolEssential}>Essential</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      
+      {essential.length > 0 && (
+        <div className={styles.toolsSummary}>
+          <strong>{essential.length}</strong> essential tools • 
+          <strong> {recommended.length}</strong> recommended
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Systems Impact Section
+ */
+function SystemsImpactSection({ impacts, validation }) {
+  if (!impacts || impacts.length === 0) {
+    return null;
+  }
+  
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.gauge size={18} />
+        Systems Affected
+      </h3>
+      
+      <div className={styles.systemsGrid}>
+        {impacts.map(impact => (
+          <div 
+            key={impact.system.key} 
+            className={styles.systemCard}
+            data-has-stress={(impact.stresses + impact.compromises) > 0}
+          >
+            <h4 className={styles.systemName}>{impact.system.name}</h4>
+            <div className={styles.systemStats}>
+              {impact.improves > 0 && (
+                <span className={styles.systemImproves}>
+                  +{impact.improves} improvements
+                </span>
+              )}
+              {(impact.stresses + impact.compromises) > 0 && (
+                <span className={styles.systemStress}>
+                  {impact.stresses + impact.compromises} stress point{(impact.stresses + impact.compromises) > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Synergies */}
+      {validation?.synergies?.length > 0 && (
+        <div className={styles.synergiesBox}>
+          <div className={styles.synergiesHeader}>
+            <Icons.star size={16} filled />
+            <span>Great Combinations</span>
+          </div>
+          {validation.synergies.map((synergy, idx) => (
+            <p key={idx} className={styles.synergyItem}>
+              <strong>{synergy.name}:</strong> {synergy.message}
+            </p>
+          ))}
+        </div>
+      )}
+      
+      {/* Warnings */}
+      {(validation?.warnings?.length > 0 || validation?.critical?.length > 0) && (
+        <div className={styles.warningsBox}>
+          <div className={styles.warningsHeader}>
+            <Icons.alert size={16} />
+            <span>Build Notes</span>
+          </div>
+          {validation.critical?.map((issue, idx) => (
+            <p key={`critical-${idx}`} className={styles.warningItem} data-severity="critical">
+              {issue.message}
+            </p>
+          ))}
+          {validation.warnings?.map((issue, idx) => (
+            <p key={`warning-${idx}`} className={styles.warningItem}>
+              {issue.message}
+            </p>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Installation Notes Section
+ */
+function InstallationNotesSection({ complexity }) {
+  const notes = complexity.notes || [];
+  
+  if (notes.length === 0) {
+    return null;
+  }
+  
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.info size={18} />
+        Installation Notes
+      </h3>
+      
+      <ul className={styles.notesList}>
+        {notes.map((item, idx) => (
+          <li key={idx} className={styles.noteItem}>
+            <strong>{item.upgrade}:</strong> {item.note}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/**
+ * Main BuildDetailView Component
+ */
+export default function BuildDetailView({ build, car, onBack }) {
+  // Resolve upgrade keys to full upgrade objects
+  const upgradeDetails = useMemo(() => {
+    return (build.upgrades || []).map(key => getUpgradeByKey(key)).filter(Boolean);
+  }, [build.upgrades]);
+  
+  // Calculate build complexity
+  const complexity = useMemo(() => {
+    return calculateBuildComplexity(build.upgrades || []);
+  }, [build.upgrades]);
+  
+  // Get tools required
+  const toolsData = useMemo(() => {
+    return getToolsForBuild(build.upgrades || []);
+  }, [build.upgrades]);
+  
+  // Get system impacts
+  const impacts = useMemo(() => {
+    return getSystemImpactOverview(build.upgrades || []);
+  }, [build.upgrades]);
+  
+  // Validate build
+  const validation = useMemo(() => {
+    return validateUpgradeSelection(build.upgrades || [], car);
+  }, [build.upgrades, car]);
+
+  return (
+    <div className={styles.container}>
+      {/* Back Navigation */}
+      <div className={styles.backNav}>
+        <button onClick={onBack} className={styles.backButton}>
+          <Icons.arrowLeft size={16} />
+          Back to Builds
+        </button>
+      </div>
+      
+      {/* Summary Card */}
+      <BuildSummaryCard build={build} car={car} complexity={complexity} />
+      
+      {/* Build Complexity */}
+      <BuildComplexitySection complexity={complexity} />
+      
+      {/* Upgrades List */}
+      <UpgradesListSection 
+        upgrades={build.upgrades || []} 
+        upgradeDetails={upgradeDetails} 
+      />
+      
+      {/* Tools Required */}
+      <ToolsSection toolsData={toolsData} />
+      
+      {/* Systems Impact */}
+      <SystemsImpactSection impacts={impacts} validation={validation} />
+      
+      {/* Installation Notes */}
+      <InstallationNotesSection complexity={complexity} />
+      
+      {/* Bottom CTA */}
+      <div className={styles.bottomCta}>
+        <Link 
+          href={`/mod-planner?car=${car.slug}&build=${build.id}`}
+          className={styles.ctaButton}
+        >
+          <Icons.tool size={18} />
+          Modify This Build
+          <Icons.arrowRight size={16} />
+        </Link>
+      </div>
+    </div>
+  );
+}

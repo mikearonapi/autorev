@@ -1,8 +1,8 @@
-# SuperNatural Motorsports Website - Complete Owner's Guide
+# AutoRev Website - Complete Owner's Guide
 
-> **Prepared for**: SuperNatural Motorsports Management  
+> **Prepared for**: AutoRev Management  
 > **Last Updated**: December 2024  
-> **Website URL**: Your live site hosted on Vercel
+> **Website URL**: https://autorev.app
 
 ---
 
@@ -24,7 +24,7 @@
 
 ## 1. What Is This Website?
 
-SuperNatural Motorsports is a **sports car advisory platform** that helps car enthusiasts find the right vehicle based on their personal priorities. Think of it as a matchmaking service between people and sports cars.
+AutoRev is a **sports car advisory platform** that helps car enthusiasts find the right vehicle based on their personal priorities. Think of it as a matchmaking service between people and sports cars.
 
 ### The Core Philosophy
 
@@ -49,7 +49,7 @@ Your website has **7 main pages** that visitors can access:
 ### Home Page (`/`)
 - **What it is**: The front door of your website
 - **What's on it**: 
-  - Hero banner with "Unleash Your Racing Spirit"
+  - Hero banner with "Find What Drives You"
   - Three pillars explaining what you do (Car Finder, Performance HUB, Service Center)
   - A carousel showing all 35 cars
   - How it works steps
@@ -682,7 +682,7 @@ For technical support or questions about the website:
 
 ---
 
-*This guide covers everything you need to know about how your SuperNatural Motorsports website works. Keep it handy for reference, and feel free to ask questions about anything that's not clear.*
+*This guide covers everything you need to know about how your AutoRev website works. Keep it handy for reference, and feel free to ask questions about anything that's not clear.*
 
 
 

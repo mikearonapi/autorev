@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Content Linter
+ * AutoRev - Content Linter
  * 
  * Validates educational content, descriptions, and metadata for quality issues.
  * Run with: node scripts/content-linter.js

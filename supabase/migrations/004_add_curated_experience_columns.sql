@@ -219,7 +219,7 @@ CREATE INDEX IF NOT EXISTS idx_cars_community_strength ON cars(community_strengt
 -- ============================================================================
 -- UPDATE TABLE COMMENT
 -- ============================================================================
-COMMENT ON TABLE cars IS 'Vehicle database for SuperNatural Motorsports with comprehensive curated content. Includes specs, scores, editorial content, buyer''s guide, ownership costs, track performance, and community information.';
+COMMENT ON TABLE cars IS 'Vehicle database for AutoRev with comprehensive curated content. Includes specs, scores, editorial content, buyer''s guide, ownership costs, track performance, and community information.';
 
 -- ============================================================================
 -- MIGRATION COMPLETE

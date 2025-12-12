@@ -1,41 +1,136 @@
 /* Car Catalog Page */
 .catalogPage {
   min-height: 100vh;
-  padding-top: var(--header-height-mobile);
+}
+
+/* Hero Section - Matching home page style */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  min-height: 85dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: calc(var(--space-xl) + var(--header-height-mobile));
+  text-align: center;
+  overflow: hidden;
+  background: var(--color-gray-900);
 }
 
 @media (min-width: 768px) {
-  .catalogPage {
-    padding-top: var(--header-height);
+  .hero {
+    min-height: 90vh;
+    padding: var(--space-2xl) var(--space-lg);
+    padding-top: calc(var(--space-2xl) + var(--header-height));
   }
 }
 
-/* Hero Section */
-.hero {
-  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
-  padding: var(--space-2xl) var(--space-md);
-  color: var(--color-white);
-  text-align: center;
+.heroImageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+@media (min-width: 768px) {
+  .heroImage {
+    object-position: center;
+  }
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 20, 0.7) 0%,
+    rgba(10, 10, 20, 0.5) 40%,
+    rgba(10, 10, 20, 0.8) 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .heroOverlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 20, 0.6) 0%,
+      rgba(10, 10, 20, 0.4) 40%,
+      rgba(10, 10, 20, 0.7) 100%
+    );
+  }
 }
 
 .heroContent {
+  position: relative;
+  z-index: 2;
   max-width: 700px;
   margin: 0 auto;
 }
 
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: var(--space-2xs) var(--space-sm);
+  background: rgba(196, 165, 100, 0.2);
+  color: var(--sn-gold);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs) var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+}
+
 .heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: var(--font-size-2xl);
   font-weight: 700;
-  margin-bottom: var(--space-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  color: var(--color-white);
+  margin: 0 0 var(--space-md);
+  line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+.titleAccent {
+  color: var(--sn-accent);
 }
 
 .heroSubtitle {
-  font-size: var(--font-size-lg);
-  opacity: 0.9;
+  font-size: var(--font-size-base);
+  color: var(--color-gray-300);
   line-height: 1.6;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+@media (min-width: 1024px) {
+  .heroSubtitle {
+    font-size: var(--font-size-lg);
+  }
 }
 
 /* Filters Section */
@@ -46,6 +141,7 @@
   position: sticky;
   top: var(--header-height-mobile);
   z-index: 100;
+  color-scheme: light;
 }
 
 @media (min-width: 768px) {
@@ -95,7 +191,13 @@
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.searchInput::placeholder {
+  color: var(--color-gray-500);
 }
 
 .searchInput:focus {
@@ -113,13 +215,23 @@
 
 .filterSelect {
   padding: var(--space-sm) var(--space-md);
+  padding-right: calc(var(--space-md) + 16px);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
-  background: var(--color-white);
+  background-color: var(--color-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-sm) center;
+  color: var(--color-gray-900);
   cursor: pointer;
   transition: border-color var(--transition-fast);
   min-width: 140px;
+}
+
+.filterSelect option {
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
 }
 
 .filterSelect:focus {
@@ -130,8 +242,9 @@
 /* Results Count */
 .resultsCount {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   margin-left: auto;
+  white-space: nowrap;
 }
 
 /* Car Grid */
@@ -216,6 +329,75 @@
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* Card Action Buttons */
+.cardActions {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
+  gap: var(--space-2xs);
+  z-index: 10;
+}
+
+.actionButton {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: scale(1.1);
+  background: var(--color-white);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Favorite Active State */
+.favoriteActive {
+  background: #e74c3c;
+  color: var(--color-white);
+}
+
+.favoriteActive:hover {
+  background: #c0392b;
+  color: var(--color-white);
+}
+
+/* Compare Active State */
+.compareActive {
+  background: var(--sn-primary);
+  color: var(--color-white);
+}
+
+.compareActive:hover {
+  background: var(--sn-primary-dark);
+  color: var(--color-white);
+}
+
+/* My Collection Active State */
+.myCarsActive {
+  background: #2ecc71;
+  color: var(--color-white);
+}
+
+.myCarsActive:hover {
+  background: #27ae60;
+  color: var(--color-white);
 }
 
 .cardContent {

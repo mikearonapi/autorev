@@ -1,5 +1,5 @@
 /**
- * SuperNatural Motorsports - Performance HUB Categories
+ * AutoRev - Performance HUB Categories
  * 
  * This file defines the 7 core performance categories used in the Performance HUB.
  * Each category blends hard metrics with experience-based scoring to give users

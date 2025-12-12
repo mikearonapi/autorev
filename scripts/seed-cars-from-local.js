@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SuperNatural Motorsports - Database Seed Script
+ * AutoRev - Database Seed Script
  * 
  * This script syncs local car data from data/cars.js to Supabase.
  * Run this when setting up a new environment or after adding/modifying cars locally.
@@ -188,7 +188,7 @@ async function seedUpgradePackages() {
 }
 
 async function main() {
-  console.log('🚀 SuperNatural Motorsports - Database Seed Script');
+  console.log('🚀 AutoRev - Database Seed Script');
   console.log('   Target:', SUPABASE_URL);
   
   try {

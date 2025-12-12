@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SuperNatural Motorsports - Upgrade Data Consistency Validator
+ * AutoRev - Upgrade Data Consistency Validator
  * 
  * This script validates that all upgrade keys referenced across the codebase
  * resolve to actual entries in the upgrade encyclopedia or modules.

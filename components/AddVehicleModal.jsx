@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import styles from './AddVehicleModal.module.css';
-
 /**
- * Icons
+ * Add Vehicle Modal
+ * 
+ * Modal for adding a new vehicle to user's garage.
+ * Simple search interface - tap a car to add it to My Collection.
  */
+
+import { useState, useMemo } from 'react';
+import styles from './AddVehicleModal.module.css';
+import { carData } from '@/data/cars.js';
+import { calculateWeightedScore } from '@/lib/scoring';
+import CarImage from './CarImage';
+
+// Icons
 const Icons = {
   x: ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -16,332 +24,224 @@ const Icons = {
   search: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      <path d="m21 21-4.35-4.35"/>
     </svg>
   ),
   car: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
-      <circle cx="6.5" cy="16.5" r="2.5"/>
-      <circle cx="16.5" cy="16.5" r="2.5"/>
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+      <circle cx="7" cy="17" r="2"/>
+      <path d="M9 17h6"/>
+      <circle cx="17" cy="17" r="2"/>
     </svg>
   ),
   check: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  ),
-  loader: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.spinIcon}>
-      <line x1="12" y1="2" x2="12" y2="6"/>
-      <line x1="12" y1="18" x2="12" y2="22"/>
-      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
-      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-      <line x1="2" y1="12" x2="6" y2="12"/>
-      <line x1="18" y1="12" x2="22" y2="12"/>
-      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
-      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
     </svg>
   ),
 };
 
-/**
- * Add Vehicle Modal
- * Allows users to add a vehicle to their garage via VIN or manual entry
- */
-export default function AddVehicleModal({ isOpen, onClose, onAdd }) {
-  const [mode, setMode] = useState('vin'); // 'vin' | 'manual'
-  const [vin, setVin] = useState('');
-  const [isDecoding, setIsDecoding] = useState(false);
-  const [decodedData, setDecodedData] = useState(null);
-  const [error, setError] = useState('');
-  
-  // Manual entry fields
-  const [year, setYear] = useState('');
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [trim, setTrim] = useState('');
-  const [nickname, setNickname] = useState('');
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicles = [] }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [addingSlug, setAddingSlug] = useState(null);
+  const [recentlyAdded, setRecentlyAdded] = useState(new Set());
 
-  // Reset state when modal opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setMode('vin');
-      setVin('');
-      setDecodedData(null);
-      setError('');
-      setYear('');
-      setMake('');
-      setModel('');
-      setTrim('');
-      setNickname('');
-    }
-  }, [isOpen]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
-
-  // Prevent body scroll
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
-  // Decode VIN
-  const handleDecodeVin = async () => {
-    if (!vin || vin.length < 17) {
-      setError('Please enter a valid 17-character VIN');
-      return;
-    }
-
-    setError('');
-    setIsDecoding(true);
-    setDecodedData(null);
-
-    try {
-      const response = await fetch(`/api/vin/decode?vin=${encodeURIComponent(vin)}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setDecodedData(data);
-        // Auto-fill manual fields
-        setYear(data.year?.toString() || '');
-        setMake(data.make || '');
-        setModel(data.model || '');
-        setTrim(data.trim || '');
-      } else {
-        setError(data.error || 'Failed to decode VIN');
-      }
-    } catch (err) {
-      setError('Failed to decode VIN. Please try again.');
-    } finally {
-      setIsDecoding(false);
-    }
+  // Default weights for scoring (balanced enthusiast preferences)
+  const defaultWeights = {
+    powerAccel: 1.5,
+    gripCornering: 1.5,
+    braking: 1.2,
+    trackPace: 1.5,
+    drivability: 1.0,
+    reliabilityHeat: 1.0,
+    soundEmotion: 1.2,
   };
 
-  // Handle VIN input change
-  const handleVinChange = (e) => {
-    const value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
-    setVin(value.slice(0, 17));
-    setError('');
-    setDecodedData(null);
-  };
-
-  // Handle submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Filter and sort cars based on search
+  const filteredCars = useMemo(() => {
+    let results = carData;
     
-    if (!year || !make || !model) {
-      setError('Year, Make, and Model are required');
-      return;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      results = carData.filter(car => 
+        car.name?.toLowerCase().includes(query) ||
+        car.brand?.toLowerCase().includes(query) ||
+        car.category?.toLowerCase().includes(query) ||
+        car.engine?.toLowerCase().includes(query) ||
+        car.years?.toLowerCase().includes(query)
+      );
     }
+    
+    // Sort by weighted score (highest scoring cars first)
+    return results
+      .map(car => ({
+        car,
+        score: calculateWeightedScore(car, defaultWeights)
+      }))
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.car)
+      .slice(0, 30);
+  }, [searchQuery]);
 
-    setIsSubmitting(true);
-    setError('');
+  // Check if a car is already in My Collection
+  const isOwned = (slug) => {
+    return existingVehicles.some(v => v.matchedCarSlug === slug) || recentlyAdded.has(slug);
+  };
 
+  // Handle adding a car to My Collection
+  const handleAddVehicle = async (car) => {
+    if (isOwned(car.slug) || addingSlug) return;
+    
+    setAddingSlug(car.slug);
+    
     try {
-      await onAdd({
-        vin: vin || null,
-        year: parseInt(year),
+      // Parse year from car data
+      const yearMatch = car.years?.match(/(\d{4})/);
+      const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+      
+      // Extract make and model from name
+      let make = '';
+      let model = car.name;
+      
+      if (car.name.startsWith('718') || car.name.startsWith('911') || car.name.startsWith('981') || 
+          car.name.startsWith('997') || car.name.startsWith('987') || car.name.startsWith('991') || 
+          car.name.startsWith('992')) {
+        make = 'Porsche';
+      } else {
+        const parts = car.name.split(' ');
+        make = parts[0];
+        model = parts.slice(1).join(' ');
+      }
+
+      const vehicleData = {
+        year,
         make,
         model,
-        trim: trim || null,
-        nickname: nickname || null,
-        vinDecodeData: decodedData?.raw || null,
-      });
-      onClose();
+        matchedCarSlug: car.slug,
+      };
+
+      await onAdd(vehicleData);
+      setRecentlyAdded(prev => new Set([...prev, car.slug]));
     } catch (err) {
-      setError(err.message || 'Failed to add vehicle');
+      console.error('Error adding vehicle:', err);
     } finally {
-      setIsSubmitting(false);
+      setAddingSlug(null);
     }
   };
 
-  // Handle backdrop click
-  const handleBackdropClick = useCallback((e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  }, [onClose]);
+  // Reset state when modal closes
+  const handleClose = () => {
+    setSearchQuery('');
+    setRecentlyAdded(new Set());
+    onClose();
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.container} onClick={handleBackdropClick}>
-      <div className={styles.modal} role="dialog" aria-modal="true">
-        {/* Close Button */}
-        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-          <Icons.x size={20} />
-        </button>
-
+    <div className={styles.overlay} onClick={handleClose}>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.iconWrapper}>
-            <Icons.car size={28} />
+          <h2 className={styles.title}>Add to My Collection</h2>
+          <button onClick={handleClose} className={styles.closeButton}>
+            <Icons.x size={24} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className={styles.content}>
+          {/* Search */}
+          <div className={styles.searchWrapper}>
+            <Icons.search size={18} />
+            <input
+              type="text"
+              placeholder="Search vehicles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+              autoFocus
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className={styles.searchClear}
+                type="button"
+              >
+                <Icons.x size={16} />
+              </button>
+            )}
           </div>
-          <h2 className={styles.title}>Add Your Vehicle</h2>
-          <p className={styles.subtitle}>
-            Enter your VIN for automatic details, or add manually
-          </p>
-        </div>
 
-        {/* Mode Tabs */}
-        <div className={styles.tabs}>
-          <button
-            className={`${styles.tab} ${mode === 'vin' ? styles.tabActive : ''}`}
-            onClick={() => setMode('vin')}
-          >
-            VIN Lookup
-          </button>
-          <button
-            className={`${styles.tab} ${mode === 'manual' ? styles.tabActive : ''}`}
-            onClick={() => setMode('manual')}
-          >
-            Manual Entry
-          </button>
-        </div>
-
-        {/* Error Message */}
-        {error && <div className={styles.error}>{error}</div>}
-
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* VIN Input */}
-          {mode === 'vin' && (
-            <div className={styles.vinSection}>
-              <label className={styles.label}>Vehicle Identification Number (VIN)</label>
-              <div className={styles.vinInputWrapper}>
-                <input
-                  type="text"
-                  value={vin}
-                  onChange={handleVinChange}
-                  className={styles.vinInput}
-                  placeholder="Enter 17-character VIN"
-                  maxLength={17}
-                />
-                <button
-                  type="button"
-                  onClick={handleDecodeVin}
-                  className={styles.decodeBtn}
-                  disabled={vin.length < 17 || isDecoding}
-                >
-                  {isDecoding ? <Icons.loader size={18} /> : <Icons.search size={18} />}
-                  {isDecoding ? 'Decoding...' : 'Decode'}
-                </button>
-              </div>
-              <p className={styles.vinHint}>
-                Find your VIN on your registration, insurance card, or driver&apos;s side dashboard
-              </p>
-
-              {/* Decoded Result */}
-              {decodedData && (
-                <div className={styles.decodedResult}>
-                  <div className={styles.decodedHeader}>
-                    <Icons.check size={18} />
-                    <span>Vehicle Found!</span>
-                  </div>
-                  <div className={styles.decodedInfo}>
-                    <strong>{decodedData.year} {decodedData.make} {decodedData.model}</strong>
-                    {decodedData.trim && <span>{decodedData.trim}</span>}
-                  </div>
-                </div>
-              )}
-            </div>
+          {/* Search hint */}
+          {!searchQuery && (
+            <p className={styles.searchHint}>
+              Search by make, model, category, or year • Tap to add
+            </p>
           )}
 
-          {/* Manual Entry Fields */}
-          <div className={styles.formGrid}>
-            <div className={styles.formGroup}>
-              <label htmlFor="year" className={styles.label}>Year *</label>
-              <input
-                id="year"
-                type="number"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className={styles.input}
-                placeholder="2020"
-                min="1900"
-                max={new Date().getFullYear() + 1}
-                required
-              />
-            </div>
-            
-            <div className={styles.formGroup}>
-              <label htmlFor="make" className={styles.label}>Make *</label>
-              <input
-                id="make"
-                type="text"
-                value={make}
-                onChange={(e) => setMake(e.target.value)}
-                className={styles.input}
-                placeholder="Porsche"
-                required
-              />
-            </div>
-            
-            <div className={styles.formGroup}>
-              <label htmlFor="model" className={styles.label}>Model *</label>
-              <input
-                id="model"
-                type="text"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className={styles.input}
-                placeholder="911 GT3"
-                required
-              />
-            </div>
-            
-            <div className={styles.formGroup}>
-              <label htmlFor="trim" className={styles.label}>Trim</label>
-              <input
-                id="trim"
-                type="text"
-                value={trim}
-                onChange={(e) => setTrim(e.target.value)}
-                className={styles.input}
-                placeholder="Optional"
-              />
-            </div>
+          {/* Car List */}
+          <div className={styles.carList}>
+            {filteredCars.map(car => {
+              const alreadyOwned = isOwned(car.slug);
+              const isAdding = addingSlug === car.slug;
+              
+              return (
+                <button
+                  key={car.slug}
+                  className={`${styles.carOption} ${alreadyOwned ? styles.carOptionAdded : ''}`}
+                  onClick={() => handleAddVehicle(car)}
+                  disabled={alreadyOwned || isAdding}
+                >
+                  <div className={styles.carOptionImage}>
+                    <CarImage car={car} variant="thumbnail" showName={false} />
+                  </div>
+                  <div className={styles.carOptionInfo}>
+                    <span className={styles.carOptionName}>{car.name}</span>
+                    <span className={styles.carOptionMeta}>
+                      {car.hp} hp • {car.category || 'Sports Car'} • {car.priceRange || car.years}
+                    </span>
+                  </div>
+                  <span className={styles.carOptionAction}>
+                    {alreadyOwned ? (
+                      <span className={styles.addedBadge}>
+                        <Icons.check size={14} />
+                        Added
+                      </span>
+                    ) : isAdding ? (
+                      <span className={styles.addingBadge}>Adding...</span>
+                    ) : (
+                      <span className={styles.addBadge}>
+                        <Icons.car size={14} />
+                        Add
+                      </span>
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+            {filteredCars.length === 0 && searchQuery && (
+              <div className={styles.noResults}>
+                <Icons.car size={32} />
+                <p className={styles.noResultsText}>No vehicles found matching "{searchQuery}"</p>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Nickname */}
-          <div className={styles.formGroup}>
-            <label htmlFor="nickname" className={styles.label}>Nickname (optional)</label>
-            <input
-              id="nickname"
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className={styles.input}
-              placeholder='e.g., "Track Toy", "Daily Driver"'
-            />
+        {/* Footer with count */}
+        {recentlyAdded.size > 0 && (
+          <div className={styles.footer}>
+            <span className={styles.addedCount}>
+              <Icons.check size={16} />
+              {recentlyAdded.size} car{recentlyAdded.size !== 1 ? 's' : ''} added to My Collection
+            </span>
+            <button onClick={handleClose} className={styles.doneButton}>
+              Done
+            </button>
           </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className={styles.submitBtn}
-            disabled={isSubmitting || !year || !make || !model}
-          >
-            {isSubmitting ? 'Adding...' : 'Add Vehicle'}
-          </button>
-        </form>
+        )}
       </div>
     </div>
   );

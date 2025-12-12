@@ -78,12 +78,18 @@ export default function UserMenu({ onSignInClick }) {
     );
   }
 
-  // Not authenticated - show sign in button
+  // Not authenticated - show circular avatar icon only
   if (!isAuthenticated) {
     return (
-      <button className={styles.signInBtn} onClick={onSignInClick}>
-        <Icons.user size={18} />
-        <span>Sign In</span>
+      <button 
+        className={styles.signInBtn} 
+        onClick={onSignInClick}
+        aria-label="Log in"
+        title="Log in"
+      >
+        <div className={styles.avatarPlaceholder}>
+          <Icons.user size={18} />
+        </div>
       </button>
     );
   }
