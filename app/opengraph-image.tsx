@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 // Using Node.js runtime to avoid Edge Function size limit (images exceed 2MB)
 export const alt = 'AutoRev - Find Your Perfect Sports Car';
@@ -24,19 +26,12 @@ const BRAND = {
  * Brand-aligned: teal primary + gold accent
  */
 export default async function Image() {
-  // Fetch the hero image for embedding
-  const heroImageResponse = await fetch(
-    new URL('../public/images/pages/home-hero.jpg', import.meta.url)
-  );
-  const heroImageData = await heroImageResponse.arrayBuffer();
-  const heroImageBase64 = Buffer.from(heroImageData).toString('base64');
+  // Read images from filesystem (Node.js runtime)
+  const heroImageData = readFileSync(join(process.cwd(), 'public/images/pages/home-hero.jpg'));
+  const heroImageBase64 = heroImageData.toString('base64');
 
-  // Fetch the logo - use the generated white version
-  const logoResponse = await fetch(
-    new URL('../public/images/autorev-logo-white.png', import.meta.url)
-  );
-  const logoData = await logoResponse.arrayBuffer();
-  const logoBase64 = Buffer.from(logoData).toString('base64');
+  const logoData = readFileSync(join(process.cwd(), 'public/images/autorev-logo-white.png'));
+  const logoBase64 = logoData.toString('base64');
 
   return new ImageResponse(
     (
