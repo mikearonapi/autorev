@@ -172,7 +172,7 @@ export default async function Image() {
               gap: '14px',
             }}
           >
-            <span>100+ Sports Cars</span>
+            <span>98 Sports Cars</span>
             <span style={{ color: BRAND.gold, fontSize: '18px' }}>◆</span>
             <span>$25K – $300K</span>
             <span style={{ color: BRAND.gold, fontSize: '18px' }}>◆</span>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/Button';
 import OnboardingPopup, { garageOnboardingSteps, tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
 import styles from '@/app/page.module.css';
+import { carData } from '@/data/cars.js';
 
 // Icons
 const CarIcon = () => (
@@ -51,12 +52,15 @@ const BookIcon = () => (
 
 export default function PillarsSection() {
   const [activeOnboarding, setActiveOnboarding] = useState(null);
+  
+  // Get dynamic car count from database
+  const carCount = carData?.length || 98;
 
   const pillars = [
     {
       icon: <ExploreIcon />,
       title: 'Browse Cars',
-      description: 'Explore our collection of 100+ sports cars. Filter by make, price, and category. Find detailed specs, ownership insights, and performance data.',
+      description: `Explore our collection of ${carCount} sports cars. Filter by make, price, and category. Find detailed specs, ownership insights, and performance data.`,
       cta: 'Browse Cars',
       href: '/browse-cars',
       accent: 'tertiary'

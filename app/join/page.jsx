@@ -7,6 +7,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import styles from './page.module.css';
+import { carData } from '@/data/cars.js';
 
 // Icons
 const Icons = {
@@ -78,6 +79,9 @@ const Icons = {
   ),
 };
 
+// Get dynamic car count from database
+const CAR_COUNT = carData?.length || 98;
+
 // Membership tiers - simplified for clarity
 const tiers = [
   {
@@ -89,7 +93,7 @@ const tiers = [
     icon: Icons.car,
     color: '#059669',
     features: [
-      'Car Finder + full 100+ car database',
+      `Car Finder + full ${CAR_COUNT}-car database`,
       'Specs, education & tuning shop',
       'Community builds & newsletter',
     ],

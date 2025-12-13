@@ -6,8 +6,8 @@
  */
 
 export const metadata = {
-  title: 'Browse Cars | Explore 100+ Sports & Performance Vehicles',
-  description: 'Browse our collection of 100+ sports cars, from budget-friendly Miatas to exotic supercars. Filter by make, price tier, and category. Compare specs, find your perfect match.',
+  title: 'Browse Cars | Explore 98 Sports & Performance Vehicles',
+  description: 'Browse our collection of 98 sports cars, from budget-friendly Miatas to exotic supercars. Filter by make, price tier, and category. Compare specs, find your perfect match.',
   keywords: [
     'sports cars',
     'performance cars',
@@ -24,14 +24,14 @@ export const metadata = {
     'import tuners',
   ],
   openGraph: {
-    title: 'Browse Cars | Explore 100+ Sports & Performance Vehicles',
-    description: 'Browse our collection of 100+ sports cars. Filter by make, price, and category. Find your perfect match.',
+    title: 'Browse Cars | Explore 98 Sports & Performance Vehicles',
+    description: 'Browse our collection of 98 sports cars. Filter by make, price, and category. Find your perfect match.',
     url: '/browse-cars',
     type: 'website',
   },
   twitter: {
-    title: 'Browse Cars | Explore 100+ Sports & Performance Vehicles',
-    description: 'Browse 100+ sports cars. Filter by make, price, and category.',
+    title: 'Browse Cars | Explore 98 Sports & Performance Vehicles',
+    description: 'Browse 98 sports cars. Filter by make, price, and category.',
   },
   alternates: {
     canonical: '/browse-cars',

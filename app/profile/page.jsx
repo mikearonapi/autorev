@@ -9,6 +9,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
+import { carData } from '@/data/cars.js';
 
 // Format fuel units for display (1 cent = 1 fuel)
 const formatFuel = (cents) => `${cents || 0}`;
@@ -142,6 +143,9 @@ const Icons = {
   ),
 };
 
+// Get dynamic car count from database
+const CAR_COUNT = carData?.length || 98;
+
 // Subscription plans configuration - matches join page
 const PLANS = {
   free: {
@@ -150,7 +154,7 @@ const PLANS = {
     price: 0,
     priceNote: 'Forever',
     features: [
-      'Car Finder + full 100+ car database',
+      `Car Finder + full ${CAR_COUNT}-car database`,
       'Specs, education & tuning shop',
       'Community builds & newsletter',
       '25 AL Fuel/month (~15-20 chats)',
