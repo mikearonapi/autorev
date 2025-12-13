@@ -11,8 +11,7 @@ import CarImage from '@/components/CarImage';
 import ScoringInfo from '@/components/ScoringInfo';
 import ExpertReviews from '@/components/ExpertReviews';
 import { useCarSelection } from '@/components/providers/CarSelectionProvider';
-import FavoriteButton from '@/components/FavoriteButton';
-import CompareButton from '@/components/CompareButton';
+import CarActionMenu from '@/components/CarActionMenu';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -393,19 +392,9 @@ export default function CarDetail() {
                 <span>{car.highlight}</span>
               </div>
               
-              {/* Actions */}
+              {/* Universal Car Actions */}
               <div className={styles.heroActions}>
-                <FavoriteButton car={car} variant="icon" />
-                <CompareButton car={car} variant="icon" />
-                <button 
-                  onClick={() => selectCar(car)}
-                  className={`${styles.modButton} ${isThisCarSelected ? styles.modButtonActive : ''}`}
-                  disabled={isThisCarSelected}
-                  title={isThisCarSelected ? 'Car selected for upgrades' : 'Select this car for upgrades'}
-                  aria-label={isThisCarSelected ? 'Car selected for upgrades' : 'Select this car for upgrades'}
-                >
-                  {isThisCarSelected ? <Icons.checkCircle size={20} /> : <Icons.tool size={20} />}
-                </button>
+                <CarActionMenu car={car} variant="inline" />
               </div>
             </div>
             
@@ -880,7 +869,7 @@ export default function CarDetail() {
                     <h3>Direct Competitors</h3>
                     <div className={styles.altList}>
                       {car.directCompetitors.map((alt, i) => (
-                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                        <Link key={i} href={alt.slug ? `/browse-cars/${alt.slug}` : '#'} className={styles.altCard}>
                           <strong>{alt.name}</strong>
                           <p>{alt.comparison}</p>
                           <Icons.externalLink size={14} />
@@ -895,7 +884,7 @@ export default function CarDetail() {
                     <h3>If You Want More</h3>
                     <div className={styles.altList}>
                       {car.ifYouWantMore.map((alt, i) => (
-                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                        <Link key={i} href={alt.slug ? `/browse-cars/${alt.slug}` : '#'} className={styles.altCard}>
                           <strong>{alt.name}</strong>
                           <p>{alt.reason}</p>
                           <Icons.externalLink size={14} />
@@ -910,7 +899,7 @@ export default function CarDetail() {
                     <h3>Save Money With</h3>
                     <div className={styles.altList}>
                       {car.ifYouWantLess.map((alt, i) => (
-                        <Link key={i} href={alt.slug ? `/cars/${alt.slug}` : '#'} className={styles.altCard}>
+                        <Link key={i} href={alt.slug ? `/browse-cars/${alt.slug}` : '#'} className={styles.altCard}>
                           <strong>{alt.name}</strong>
                           <p>{alt.reason || alt.comparison}</p>
                           <Icons.externalLink size={14} />
@@ -1242,38 +1231,13 @@ export default function CarDetail() {
         )}
       </div>
 
-      {/* ================================================================
-          UPGRADE TEASER - CTA for modifications
-          ================================================================ */}
-      <section className={styles.upgradeTeaser}>
-        <div className={styles.upgradeTeaserInner}>
-          <div className={styles.upgradeTeaserContent}>
-            <Icons.tool size={24} />
-            <div>
-              <h3>Thinking About Upgrades?</h3>
-              <p>
-                Explore popular modification paths for the {car.name}. 
-                No pressure—just ideas and honest advice.
-              </p>
-            </div>
-          </div>
-          <div className={styles.upgradeTeaserActions}>
-            <Link href={`/performance?car=${car.slug}`} className={styles.primaryBtn}>
-              Explore Upgrades
-            </Link>
-            <Link href="/education" className={styles.secondaryBtn}>
-              Learn More
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ================================================================
           FOOTER CTA
           ================================================================ */}
       <section className={styles.footerCta}>
         <div className={styles.footerCtaInner}>
-          <Link href={`/performance?car=${car.slug}`} className={styles.ctaPrimary}>
+          <Link href={`/mod-planner?car=${car.slug}`} className={styles.ctaPrimary}>
             <Icons.gauge size={20} />
             See Performance Impact
           </Link>

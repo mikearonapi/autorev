@@ -1,0 +1,236 @@
+/* =============================================================================
+   SCROLL INDICATOR - Animated scroll cue for hero sections
+   Uses brand yellow (--sn-accent) with smooth animations
+   ============================================================================= */
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .scrollIndicator {
+    bottom: 32px;
+    padding: 16px 24px;
+  }
+}
+
+/* Visibility states */
+.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  pointer-events: none;
+}
+
+/* Content wrapper */
+.scrollContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "Scroll" text */
+.scrollText {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--sn-accent, #D4AF37);
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .scrollText {
+    font-size: 12px;
+  }
+}
+
+/* Icon container */
+.scrollIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Mouse icon */
+.mouse {
+  width: 22px;
+  height: 34px;
+  border: 2px solid var(--sn-accent, #D4AF37);
+  border-radius: 11px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+@media (min-width: 768px) {
+  .mouse {
+    width: 24px;
+    height: 38px;
+    border-radius: 12px;
+    padding-top: 7px;
+  }
+}
+
+/* Mouse wheel - animated */
+.wheel {
+  width: 4px;
+  height: 8px;
+  background: var(--sn-accent, #D4AF37);
+  border-radius: 2px;
+  animation: scrollWheel 2s ease-in-out infinite;
+}
+
+@keyframes scrollWheel {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  51% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animated chevrons */
+.chevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-top: 2px;
+}
+
+.chevron {
+  color: var(--sn-accent, #D4AF37);
+  opacity: 0;
+  animation: chevronBounce 2s ease-in-out infinite;
+}
+
+.chevron:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.chevron:nth-child(2) {
+  margin-top: -4px;
+  animation-delay: 0.15s;
+}
+
+@keyframes chevronBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(2px);
+  }
+  75% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Hover effect - more prominent */
+.scrollIndicator:hover .mouse {
+  border-color: var(--sn-accent-light, #e8be3d);
+  box-shadow: 0 0 12px rgba(212, 164, 24, 0.4);
+}
+
+.scrollIndicator:hover .wheel {
+  background: var(--sn-accent-light, #e8be3d);
+}
+
+.scrollIndicator:hover .chevron {
+  color: var(--sn-accent-light, #e8be3d);
+}
+
+.scrollIndicator:hover .scrollText {
+  color: var(--sn-accent-light, #e8be3d);
+  opacity: 1;
+}
+
+/* Focus state for accessibility */
+.scrollIndicator:focus-visible {
+  outline: 2px solid var(--sn-accent, #D4AF37);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* Active/pressed state */
+.scrollIndicator:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+/* Subtle glow pulse effect on the entire indicator */
+.scrollIndicator::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 16px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(212, 164, 24, 0.15) 0%,
+    transparent 70%
+  );
+  animation: glowPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+

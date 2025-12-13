@@ -1,15 +1,16 @@
 /**
- * Performance HUB Styles V2
+ * Upgrade Center Styles V2 (formerly Performance HUB)
  * Single-column layout with compact header
  * Full-width build configuration
+ * Optimized for Tuning Shop dark theme integration
  */
 
 /* ============================================================================
    NEW LAYOUT V2 - Single Column, Full Width
    ============================================================================ */
 .hubV2 {
-  background: var(--color-gray-50);
-  min-height: 100vh;
+  background: transparent;
+  min-height: 100%;
 }
 
 /* ============================================================================
@@ -663,6 +664,7 @@
   padding: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
+  background: transparent;
 }
 
 /* Title Row */
@@ -678,7 +680,7 @@
   font-family: var(--font-display);
   font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: var(--color-gray-900);
+  color: var(--color-white, #ffffff);
   margin: 0;
 }
 
@@ -880,7 +882,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-gray-500);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 var(--space-md) 0;
 }
 
@@ -898,7 +900,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-gray-500);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 var(--space-md) 0;
 }
 
@@ -2815,10 +2817,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-gray-500);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 var(--space-md);
   padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .metricsSection,

@@ -253,8 +253,7 @@ export function CompareProvider({ children }) {
   const loadSavedList = useCallback((list) => {
     // This would need to fetch full car data from the slugs
     // For now, we just set the slugs/names
-    console.log('[CompareProvider] Loading saved list:', list);
-    // Implementation would require fetching car data from slugs
+    // TODO: Implementation would require fetching car data from slugs
   }, []);
 
   const value = {

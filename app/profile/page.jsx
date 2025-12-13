@@ -8,6 +8,17 @@ import styles from './page.module.css';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
+
+// Format fuel units for display (1 cent = 1 fuel)
+const formatFuel = (cents) => `${cents || 0}`;
+
+// Estimate conversations from fuel (rough: 1-2 fuel per simple chat)
+const estimateConversations = (fuel) => {
+  const min = Math.floor(fuel / 2);
+  const max = Math.floor(fuel / 1.2);
+  return `~${min}-${max}`;
+};
 
 // Icons
 const Icons = {
@@ -100,64 +111,79 @@ const Icons = {
       <line x1="10" y1="14" x2="21" y2="3"/>
     </svg>
   ),
+  fuel: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 22V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
+      <path d="M15 10h4a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2"/>
+      <path d="M15 6V3"/>
+      <path d="M3 22h12"/>
+      <rect x="6" y="10" width="6" height="4"/>
+    </svg>
+  ),
+  bot: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="10" rx="2"/>
+      <circle cx="12" cy="5" r="2"/>
+      <path d="M12 7v4"/>
+      <line x1="8" y1="16" x2="8" y2="16"/>
+      <line x1="16" y1="16" x2="16" y2="16"/>
+    </svg>
+  ),
+  plus: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  ),
+  zap: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
 };
 
-// Subscription plans configuration
+// Subscription plans configuration - matches join page
 const PLANS = {
   free: {
     id: 'free',
     name: 'Free',
     price: 0,
+    priceNote: 'Forever',
     features: [
-      'Browse car catalog',
-      'Use car selector',
-      'View performance specs',
-      'Read education content',
-      'Save up to 5 favorites',
+      'Car Finder + full 100+ car database',
+      'Specs, education & tuning shop',
+      'Community builds & newsletter',
+      '25 AL Fuel/month (~15-20 chats)',
     ],
-    limits: {
-      favorites: 5,
-      builds: 0,
-      compare: 2,
-    },
   },
-  enthusiast: {
-    id: 'enthusiast',
-    name: 'Enthusiast',
-    price: 9.99,
+  collector: {
+    id: 'collector',
+    name: 'Collector',
+    price: 0,
+    priceNote: 'Free During Beta',
+    futurePrice: '$4.99/mo',
     features: [
       'Everything in Free',
-      'Unlimited favorites',
-      'Save up to 10 builds',
-      'Compare up to 5 cars',
-      'AI Mechanic assistant',
-      'Priority support',
+      'My Garage — save & track cars',
+      'Collections & side-by-side compare',
+      'Ownership history & export',
+      '100 AL Fuel/month (~70-80 chats)',
     ],
-    limits: {
-      favorites: -1,
-      builds: 10,
-      compare: 5,
-    },
     popular: true,
   },
-  pro: {
-    id: 'pro',
-    name: 'Pro',
-    price: 19.99,
+  tuner: {
+    id: 'tuner',
+    name: 'Tuner',
+    price: 0,
+    priceNote: 'Free During Beta',
+    futurePrice: '$9.99/mo',
     features: [
-      'Everything in Enthusiast',
-      'Unlimited saved builds',
-      'Unlimited comparisons',
-      'VIN decoder access',
-      'Maintenance tracking',
-      'Export data',
-      'Early access to new features',
+      'Everything in Collector',
+      'Save & organize tuning projects',
+      'Build analytics & cost projections',
+      'PDF exports & early access',
+      '250 AL Fuel/month (~175-200 chats)',
     ],
-    limits: {
-      favorites: -1,
-      builds: -1,
-      compare: -1,
-    },
   },
 };
 
@@ -177,6 +203,18 @@ export default function ProfilePage() {
     newsletter: false,
   });
 
+  // AL Fuel state
+  const [alBalance, setAlBalance] = useState({
+    fuel: 25,
+    monthlyFuel: 25,
+    spentFuel: 0,
+    plan: 'free',
+    tank: { percentage: 100, status: { label: 'Full', color: '#22c55e' } },
+    messagesThisMonth: 0,
+  });
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+
   // Current plan (mock - would come from backend)
   const currentPlan = profile?.subscription_tier || 'free';
 
@@ -195,6 +233,102 @@ export default function ProfilePage() {
       setDisplayName(user.user_metadata.full_name);
     }
   }, [profile, user]);
+
+  // Fetch AL Balance - live from API (fuel-based display)
+  useEffect(() => {
+    async function fetchAlBalance() {
+      if (!user?.id) return;
+      
+      setIsLoadingBalance(true);
+      try {
+        const response = await fetch(`/api/users/${user.id}/al-credits`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          const plan = AL_PLANS[data.plan || currentPlan] || AL_PLANS.free;
+          const fuel = data.balanceCents || 0;
+          const monthlyFuel = data.monthlyAllocationCents || plan.allocation.monthlyCents;
+          const spentFuel = data.spentThisMonthCents || 0;
+          
+          setAlBalance({
+            fuel,
+            monthlyFuel,
+            spentFuel,
+            plan: data.plan || currentPlan,
+            planName: data.planName || plan.name,
+            tank: data.tank || {
+              percentage: 100,
+              status: { label: 'Full', color: '#22c55e' },
+              label: plan.tankLabel,
+            },
+            purchasedFuel: data.purchasedCents || 0,
+            messagesThisMonth: data.messagesThisMonth || 0,
+          });
+        } else {
+          console.warn('Failed to fetch balance, using defaults');
+          const plan = AL_PLANS[currentPlan] || AL_PLANS.free;
+          const monthlyFuel = plan.allocation.monthlyCents;
+          setAlBalance({
+            fuel: monthlyFuel,
+            monthlyFuel,
+            spentFuel: 0,
+            plan: currentPlan,
+            planName: plan.name,
+            tank: {
+              percentage: 100,
+              status: { label: 'Full', color: '#22c55e' },
+              label: plan.tankLabel,
+            },
+            purchasedFuel: 0,
+            messagesThisMonth: 0,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch AL balance:', err);
+        const plan = AL_PLANS[currentPlan] || AL_PLANS.free;
+        const monthlyFuel = plan.allocation.monthlyCents;
+        setAlBalance({
+          fuel: monthlyFuel,
+          monthlyFuel,
+          spentFuel: 0,
+          plan: currentPlan,
+          planName: plan.name,
+          tank: {
+            percentage: 100,
+            status: { label: 'Full', color: '#22c55e' },
+            label: plan.tankLabel,
+          },
+          purchasedFuel: 0,
+          messagesThisMonth: 0,
+        });
+      } finally {
+        setIsLoadingBalance(false);
+      }
+    }
+
+    fetchAlBalance();
+  }, [user?.id, currentPlan]);
+
+  // Handle fuel top-up purchase
+  const handlePurchaseTopup = async (packageId) => {
+    setIsPurchasing(true);
+    try {
+      const package_ = AL_TOPUP_PACKAGES.find(p => p.id === packageId);
+      if (package_) {
+        setAlBalance(prev => ({
+          ...prev,
+          fuel: (prev.fuel || 0) + package_.cents,
+          purchasedFuel: (prev.purchasedFuel || 0) + package_.cents,
+        }));
+        alert(`Successfully added ${package_.cents} fuel to your tank!`);
+      }
+    } catch (err) {
+      console.error('Failed to purchase top-up:', err);
+      alert('Purchase failed. Please try again.');
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
 
   // Handle profile update
   const handleSaveProfile = async () => {
@@ -243,6 +377,7 @@ export default function ProfilePage() {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: Icons.user },
+    { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
     { id: 'subscription', label: 'Subscription', icon: Icons.crown },
     { id: 'billing', label: 'Billing', icon: Icons.creditCard },
     { id: 'notifications', label: 'Notifications', icon: Icons.bell },
@@ -251,58 +386,85 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        {/* Back Link */}
-        <Link href="/garage" className={styles.backLink}>
-          <Icons.arrowLeft size={18} />
-          Back to Garage
-        </Link>
-
-        {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.avatar}>
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt={displayName || 'Profile'}
-                width={80}
-                height={80}
-                className={styles.avatarImage}
-              />
-            ) : (
-              <span className={styles.avatarInitials}>{initials}</span>
-            )}
-          </div>
-          <div className={styles.headerInfo}>
-            <h1 className={styles.title}>{displayName || 'Your Account'}</h1>
-            <p className={styles.email}>
-              <Icons.mail size={16} />
-              {user.email}
-            </p>
-            <div className={styles.headerMeta}>
-              <span className={styles.memberSince}>
-                <Icons.calendar size={14} />
-                Member since {memberSince}
-              </span>
-              <span className={styles.planBadge} data-plan={currentPlan}>
-                <Icons.crown size={14} />
-                {PLANS[currentPlan]?.name || 'Free'} Plan
-              </span>
+      {/* Hero Header with Gradient */}
+      <div className={styles.heroHeader}>
+        <div className={styles.heroOverlay} />
+        <div className={styles.heroContent}>
+          <div className={styles.profileHeader}>
+            <div className={styles.avatar}>
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={displayName || 'Profile'}
+                  width={100}
+                  height={100}
+                  className={styles.avatarImage}
+                />
+              ) : (
+                <span className={styles.avatarInitials}>{initials}</span>
+              )}
+              <div className={styles.avatarGlow} />
             </div>
+            
+            <div className={styles.headerInfo}>
+              <h1 className={styles.title}>{displayName || 'Your Account'}</h1>
+              <p className={styles.email}>
+                <Icons.mail size={16} />
+                {user.email}
+              </p>
+              <div className={styles.headerMeta}>
+                <span className={styles.memberSince}>
+                  <Icons.calendar size={14} />
+                  Member since {memberSince}
+                </span>
+                <span className={styles.planBadge} data-plan={currentPlan}>
+                  <Icons.crown size={14} />
+                  {PLANS[currentPlan]?.name || 'Free'} Plan
+                </span>
+              </div>
+            </div>
+            
+            {/* Quick Sign Out Button */}
+            <button onClick={handleSignOut} className={styles.headerSignOut}>
+              <Icons.logout size={18} />
+              <span>Sign Out</span>
+            </button>
           </div>
-        </header>
+        </div>
+      </div>
+      
+      <div className={styles.container}>
 
-        {/* Stats */}
-        <div className={styles.stats}>
-          <div className={styles.statCard}>
-            <Icons.heart size={24} />
-            <div className={styles.statValue}>{favoritesCount}</div>
-            <div className={styles.statLabel}>Favorites</div>
-          </div>
-          <div className={styles.statCard}>
-            <Icons.wrench size={24} />
-            <div className={styles.statValue}>{builds.length}</div>
-            <div className={styles.statLabel}>Saved Builds</div>
+        {/* Quick Stats */}
+        <div className={styles.statsRow}>
+          <Link href="/garage" className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icons.heart size={22} />
+            </div>
+            <div className={styles.statContent}>
+              <span className={styles.statValue}>{favoritesCount}</span>
+              <span className={styles.statLabel}>Favorites</span>
+            </div>
+            <Icons.externalLink size={14} />
+          </Link>
+          <Link href="/tuning-shop" className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icons.wrench size={22} />
+            </div>
+            <div className={styles.statContent}>
+              <span className={styles.statValue}>{builds.length}</span>
+              <span className={styles.statLabel}>Saved Builds</span>
+            </div>
+            <Icons.externalLink size={14} />
+          </Link>
+          <div className={styles.statCard} data-highlight>
+            <div className={styles.statIconAl}>
+              <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+            </div>
+            <div className={styles.statContent}>
+              <span className={styles.statValue}>{formatFuel(alBalance.fuel)}</span>
+              <span className={styles.statLabel}>AL Fuel</span>
+            </div>
           </div>
         </div>
 
@@ -317,7 +479,11 @@ export default function ProfilePage() {
                   className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
                   onClick={() => setActiveTab(tab.id)}
                 >
-                  <TabIcon size={18} />
+                  {tab.icon === 'al-mascot' ? (
+                    <img src="/images/al-mascot.png" alt="AL" className={styles.tabAlIcon} />
+                  ) : (
+                    <TabIcon size={18} />
+                  )}
                   <span>{tab.label}</span>
                 </button>
               );
@@ -381,6 +547,153 @@ export default function ProfilePage() {
             </section>
           )}
 
+          {/* AL Fuel Tab */}
+          {activeTab === 'al' && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <img src="/images/al-mascot.png" alt="AL" className={styles.alIconSmall} />
+                AL Fuel
+              </h2>
+              
+              <p className={styles.sectionDescription}>
+                Fuel powers your conversations with AL. Simple questions use less, detailed research uses more.
+              </p>
+
+              {/* Fuel Tank Visualization */}
+              <div className={styles.gasTankContainer}>
+                <div className={styles.gasTankCard}>
+                  <div className={styles.gasTankHeader}>
+                    <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+                    <span>{alBalance.tank?.label || 'Your Tank'}</span>
+                  </div>
+                  
+                  <div className={styles.gasTankMeter}>
+                    <div 
+                      className={styles.gasTankFill}
+                      style={{ 
+                        width: `${alBalance.tank?.percentage || 0}%`,
+                        backgroundColor: alBalance.tank?.status?.color || '#22c55e',
+                      }}
+                    />
+                    <div className={styles.gasTankMarkers}>
+                      <span>E</span>
+                      <span>¼</span>
+                      <span>½</span>
+                      <span>¾</span>
+                      <span>F</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.gasTankStats}>
+                    <div className={styles.gasTankStat}>
+                      <span className={styles.gasTankValue}>{formatFuel(alBalance.fuel)}</span>
+                      <span className={styles.gasTankLabel}>Fuel Available</span>
+                    </div>
+                    <div className={styles.gasTankStat}>
+                      <span className={styles.gasTankValue}>{formatFuel(alBalance.spentFuel)}</span>
+                      <span className={styles.gasTankLabel}>Used This Month</span>
+                    </div>
+                    <div className={styles.gasTankStat}>
+                      <span className={styles.gasTankValue}>{formatFuel(alBalance.monthlyFuel)}</span>
+                      <span className={styles.gasTankLabel}>Monthly Refill</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.gasTankStatus}>
+                    <span 
+                      className={styles.statusIndicator}
+                      style={{ backgroundColor: alBalance.tank?.status?.color }}
+                    />
+                    {alBalance.tank?.status?.label} - {alBalance.tank?.percentage}%
+                    {alBalance.messagesThisMonth > 0 && (
+                      <span style={{ marginLeft: '8px', opacity: 0.7 }}>
+                        • {alBalance.messagesThisMonth} chat{alBalance.messagesThisMonth !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* How Fuel Works */}
+              <div className={styles.creditInfo}>
+                <h3>Fuel Usage</h3>
+                <div className={styles.creditInfoGrid}>
+                  <div className={styles.creditInfoItem}>
+                    <Icons.zap size={16} />
+                    <div>
+                      <strong>1-2 fuel</strong>
+                      <p>Quick questions</p>
+                    </div>
+                  </div>
+                  <div className={styles.creditInfoItem}>
+                    <Icons.zap size={16} />
+                    <div>
+                      <strong>2-4 fuel</strong>
+                      <p>Car comparisons</p>
+                    </div>
+                  </div>
+                  <div className={styles.creditInfoItem}>
+                    <Icons.zap size={16} />
+                    <div>
+                      <strong>4-8 fuel</strong>
+                      <p>Deep research</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Up Fuel */}
+              <div className={styles.purchaseSection}>
+                <h3>
+                  <Icons.plus size={18} />
+                  Top Up Fuel
+                </h3>
+                
+                <div className={styles.creditPackages}>
+                  {AL_TOPUP_PACKAGES.map(pkg => (
+                    <div 
+                      key={pkg.id} 
+                      className={`${styles.creditPackage} ${pkg.popular ? styles.creditPackagePopular : ''}`}
+                    >
+                      {pkg.popular && <span className={styles.popularTag}>Popular</span>}
+                      {pkg.savings && <span className={styles.savingsTag}>{pkg.savings}</span>}
+                      
+                      <div className={styles.packageName}>{pkg.label}</div>
+                      <div className={styles.packageCredits}>{pkg.cents} fuel</div>
+                      <div className={styles.packagePrice}>${pkg.price.toFixed(2)}</div>
+                      <p className={styles.packageDescription}>{pkg.description}</p>
+                      
+                      <button
+                        className={styles.purchaseButton}
+                        onClick={() => handlePurchaseTopup(pkg.id)}
+                        disabled={isPurchasing}
+                      >
+                        {isPurchasing ? '...' : 'Buy'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Plan Upgrade Prompt */}
+              {currentPlan === 'free' && (
+                <div className={styles.upgradePrompt}>
+                  <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+                  <div>
+                    <h4>Want More Monthly Fuel?</h4>
+                    <p>Upgrade for 4x or 10x more fuel each month.</p>
+                  </div>
+                  <button 
+                    className={styles.upgradeButton}
+                    onClick={() => setActiveTab('subscription')}
+                  >
+                    View Plans
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
+
           {/* Subscription Tab */}
           {activeTab === 'subscription' && (
             <section className={styles.section}>
@@ -394,7 +707,7 @@ export default function ProfilePage() {
               </p>
 
               <div className={styles.plansGrid}>
-                {Object.values(PLANS).map(plan => (
+                {Object.values(PLANS).map((plan, index) => (
                   <div 
                     key={plan.id} 
                     className={`${styles.planCard} ${currentPlan === plan.id ? styles.planCardCurrent : ''} ${plan.popular ? styles.planCardPopular : ''}`}
@@ -404,9 +717,16 @@ export default function ProfilePage() {
                     
                     <h3 className={styles.planName}>{plan.name}</h3>
                     <div className={styles.planPrice}>
-                      <span className={styles.planAmount}>${plan.price}</span>
-                      {plan.price > 0 && <span className={styles.planPeriod}>/month</span>}
+                      <span className={styles.planAmount}>
+                        {plan.price === 0 ? 'Free' : `$${plan.price}`}
+                      </span>
+                      <span className={styles.planPeriod}>{plan.priceNote}</span>
                     </div>
+                    {plan.futurePrice && (
+                      <span className={styles.futurePrice}>
+                        {plan.futurePrice} after beta
+                      </span>
+                    )}
                     
                     <ul className={styles.planFeatures}>
                       {plan.features.map((feature, i) => (
@@ -421,13 +741,13 @@ export default function ProfilePage() {
                       <button className={styles.planButtonCurrent} disabled>
                         Current Plan
                       </button>
-                    ) : plan.price > PLANS[currentPlan]?.price ? (
+                    ) : index > Object.keys(PLANS).indexOf(currentPlan) ? (
                       <button className={styles.planButtonUpgrade}>
                         Upgrade to {plan.name}
                       </button>
                     ) : (
                       <button className={styles.planButtonDowngrade}>
-                        Downgrade
+                        Switch to {plan.name}
                       </button>
                     )}
                   </div>

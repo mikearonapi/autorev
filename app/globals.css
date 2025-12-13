@@ -16,9 +16,14 @@
   --sn-primary: #1a4d6e;
   --sn-primary-light: #2a6d94;
   --sn-primary-dark: #0f3347;
-  --sn-accent: #d4a418;
-  --sn-accent-light: #e8be3d;
-  --sn-accent-dark: #b08a14;
+  --sn-accent: #D4AF37;
+  --sn-accent-light: #E6C54A;
+  --sn-accent-dark: #B8973A;
+  
+  /* Gold aliases (unified with accent) */
+  --sn-gold: #D4AF37;
+  --sn-gold-light: #E6C54A;
+  --sn-gold-dark: #B8973A;
   
   /* Neutral Palette */
   --color-white: #ffffff;

@@ -126,7 +126,6 @@ export function FavoritesProvider({ children }) {
           const localFavorites = loadFavorites().favorites;
           
           if (localFavorites.length > 0 && !syncedRef.current) {
-            console.log('[FavoritesProvider] Syncing local favorites to Supabase...');
             await syncFavoritesToSupabase(user.id, localFavorites);
             syncedRef.current = true;
           }

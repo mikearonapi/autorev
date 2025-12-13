@@ -111,7 +111,7 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #c4a564;
+  border-color: #D4AF37;
   box-shadow: 0 0 0 3px rgba(196, 165, 100, 0.15);
 }
 
@@ -189,7 +189,7 @@
 
 .carOption:hover:not(:disabled) {
   background: var(--color-surface-hover, #252525);
-  border-color: #c4a564;
+  border-color: #D4AF37;
 }
 
 .carOption:disabled {
@@ -258,15 +258,15 @@
   background: rgba(196, 165, 100, 0.15);
   border: 1px solid rgba(196, 165, 100, 0.4);
   border-radius: 1rem;
-  color: #c4a564;
+  color: #D4AF37;
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .carOption:hover:not(:disabled) .addBadge {
-  background: #c4a564;
-  border-color: #c4a564;
+  background: #D4AF37;
+  border-color: #D4AF37;
   color: #1a1a1a;
 }
 
@@ -345,3 +345,11 @@
 .doneButton:hover {
   background: #22c55e;
 }
+
+
+
+
+
+
+
+

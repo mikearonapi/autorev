@@ -24,3 +24,10 @@ COMMENT ON COLUMN cars.upgrade_recommendations IS 'Car-specific upgrade recommen
 -- Create index for querying by primary focus
 CREATE INDEX IF NOT EXISTS idx_cars_upgrade_recommendations_focus 
   ON cars ((upgrade_recommendations->>'primaryFocus'));
+
+
+
+
+
+
+

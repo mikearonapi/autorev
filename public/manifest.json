@@ -1,27 +1,54 @@
 {
-  "name": "AutoRev",
+  "name": "AutoRev - Find What Drives You",
   "short_name": "AutoRev",
-  "description": "Unleash your racing spirit. Find your perfect sports car, plan performance builds with purpose, and join a community that values mastery over materialism. Excellence over ego.",
+  "description": "Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a community that values mastery over materialism. Excellence over ego—from Miatas to GT3s.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a1628",
   "theme_color": "#1a4d6e",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
       "src": "/apple-icon",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon",
       "sizes": "32x32",
       "type": "image/png"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "categories": ["automotive", "lifestyle", "shopping"],
-  "lang": "en-US"
+  "screenshots": [
+    {
+      "src": "/opengraph-image",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["automotive", "lifestyle", "shopping", "sports"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
-
-

@@ -580,12 +580,19 @@ function EmptyState({ onCreateBuild }) {
       <div className={styles.emptyIcon}>
         <Icons.wrench size={48} />
       </div>
-      <h3>No Builds Yet</h3>
-      <p>Start planning your perfect build. Create configurations in the Mod Planner and save them here for reference.</p>
-      <Link href="/mod-planner" className={styles.emptyAction}>
-        <Icons.plus size={18} />
-        Create Your First Build
-      </Link>
+      <h3>No Projects Yet</h3>
+      <p>Start planning your perfect build. Create mod configurations for any car and save them here to track your progress.</p>
+      {onCreateBuild ? (
+        <button onClick={onCreateBuild} className={styles.emptyAction}>
+          <Icons.plus size={18} />
+          Start Your First Project
+        </button>
+      ) : (
+        <Link href="/mod-planner" className={styles.emptyAction}>
+          <Icons.plus size={18} />
+          Start Your First Project
+        </Link>
+      )}
     </div>
   );
 }
@@ -598,6 +605,7 @@ export default function BuildsWorkshop({
   cars,
   onViewDetails, 
   onDeleteBuild,
+  onNewProject,
 }) {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [groupByVehicle, setGroupByVehicle] = useState(true);
@@ -617,7 +625,7 @@ export default function BuildsWorkshop({
   // Group builds by vehicle
   const groupedBuilds = useMemo(() => {
     if (!groupByVehicle) {
-      return [{ carSlug: null, carName: 'All Builds', builds }];
+      return [{ carSlug: null, carName: 'All Projects', builds }];
     }
     
     const groups = {};
@@ -674,7 +682,7 @@ export default function BuildsWorkshop({
   }, [onDeleteBuild]);
   
   if (builds.length === 0) {
-    return <EmptyState />;
+    return <EmptyState onCreateBuild={onNewProject} />;
   }
   
   return (
@@ -682,7 +690,7 @@ export default function BuildsWorkshop({
       {/* Toolbar */}
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>
-          <span className={styles.buildCount}>{builds.length} Build{builds.length !== 1 ? 's' : ''}</span>
+          <span className={styles.buildCount}>{builds.length} Project{builds.length !== 1 ? 's' : ''}</span>
           
           <button 
             className={`${styles.toolbarBtn} ${groupByVehicle ? styles.active : ''}`}
@@ -743,10 +751,17 @@ export default function BuildsWorkshop({
             </button>
           </div>
           
-          <Link href="/mod-planner" className={styles.newBuildBtn}>
-            <Icons.plus size={16} />
-            <span>New Build</span>
-          </Link>
+          {onNewProject ? (
+            <button onClick={onNewProject} className={styles.newBuildBtn}>
+              <Icons.plus size={16} />
+              <span>New Project</span>
+            </button>
+          ) : (
+            <Link href="/mod-planner" className={styles.newBuildBtn}>
+              <Icons.plus size={16} />
+              <span>New Project</span>
+            </Link>
+          )}
         </div>
       </div>
       
@@ -754,7 +769,7 @@ export default function BuildsWorkshop({
       {compareMode && (
         <div className={styles.compareModeBar}>
           <Icons.compare size={18} />
-          <span>Select 2-3 builds to compare pricing, performance, and parts</span>
+          <span>Select 2-3 projects to compare pricing, performance, and parts</span>
         </div>
       )}
       
@@ -769,7 +784,7 @@ export default function BuildsWorkshop({
                 </div>
                 <div className={styles.groupInfo}>
                   <h3>{group.carName}</h3>
-                  <span>{group.builds.length} build{group.builds.length !== 1 ? 's' : ''}</span>
+                  <span>{group.builds.length} project{group.builds.length !== 1 ? 's' : ''}</span>
                 </div>
               </div>
             )}

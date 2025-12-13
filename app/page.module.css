@@ -150,6 +150,40 @@
   }
 }
 
+/* Hero Join Button - White border CTA */
+.heroJoinButton {
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-300);
+  line-height: var(--line-height-relaxed);
+  padding: var(--space-sm) var(--space-lg);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: var(--space-sm);
+}
+
+.heroJoinButton:hover {
+  border-color: var(--color-white);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+.heroJoinButton:active {
+  transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+  .heroJoinButton {
+    font-size: var(--font-size-base);
+    padding: var(--space-md) var(--space-xl);
+  }
+}
+
 /* Cycling text animation */
 .cyclingText {
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
@@ -185,53 +219,15 @@
   max-width: 260px;
 }
 
-/* Scroll indicator - hidden on very small screens */
-.heroScroll {
-  position: absolute;
-  bottom: var(--space-lg);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--color-gray-400);
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+/* Scroll indicator positioning - positioned above quick stats bar on home page */
+.hero > :global(.scrollIndicator) {
+  bottom: 120px; /* Position above the quick stats bar */
 }
 
-@media (min-height: 700px) {
-  .heroScroll {
-    display: flex;
+@media (min-width: 768px) {
+  .hero > :global(.scrollIndicator) {
+    bottom: 130px; /* Adjust for larger stats bar on desktop */
   }
-}
-
-.scrollIndicator {
-  width: 20px;
-  height: 32px;
-  border: 2px solid var(--color-gray-600);
-  border-radius: 10px;
-  position: relative;
-}
-
-.scrollIndicator::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3px;
-  height: 6px;
-  background: var(--sn-accent);
-  border-radius: 2px;
-  animation: scrollBounce 2s infinite;
-}
-
-@keyframes scrollBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  50% { transform: translateX(-50%) translateY(6px); opacity: 0.5; }
 }
 
 /* Quick Stats Bar */
@@ -388,16 +384,23 @@
   gap: var(--space-sm);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .pillarsGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .pillarsGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+  }
+}
+
+@media (min-width: 1200px) {
+  .pillarsGrid {
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--space-md);
   }
 }
@@ -414,7 +417,13 @@
 
 @media (min-width: 768px) {
   .pillarCard {
-    padding: var(--space-lg);
+    padding: var(--space-md);
+  }
+}
+
+@media (min-width: 1200px) {
+  .pillarCard {
+    padding: var(--space-sm) var(--space-md);
   }
 }
 
@@ -476,6 +485,18 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .pillarIcon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: var(--space-xs);
+  }
+  .pillarIcon svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 .pillarCard.secondary .pillarIcon {
   color: var(--sn-accent-dark);
 }
@@ -505,6 +526,13 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .pillarTitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-xs);
+  }
+}
+
 .pillarDescription {
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
@@ -519,10 +547,16 @@
 
 @media (min-width: 768px) {
   .pillarDescription {
-    margin-bottom: var(--space-lg);
-    -webkit-line-clamp: unset;
-    display: block;
-    overflow: visible;
+    margin-bottom: var(--space-md);
+    -webkit-line-clamp: 4;
+  }
+}
+
+@media (min-width: 1200px) {
+  .pillarDescription {
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-sm);
+    -webkit-line-clamp: 4;
   }
 }
 

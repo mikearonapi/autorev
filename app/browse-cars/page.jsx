@@ -6,11 +6,14 @@ import Image from 'next/image';
 import styles from './page.module.css';
 import { carData as cars, tierConfig } from '@/data/cars.js';
 import CarImage from '@/components/CarImage';
+import ScrollIndicator from '@/components/ScrollIndicator';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useCompare } from '@/components/providers/CompareProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import CarActionMenu from '@/components/CarActionMenu';
+import { useFeedback } from '@/components/FeedbackWidget';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';
@@ -118,6 +121,9 @@ export default function CarCatalog() {
   
   // Check if a car is already in My Collection
   const isInMyCars = (slug) => vehicles.some(v => v.matchedCarSlug === slug);
+  
+  // Feedback hook for car requests
+  const { openCarRequest } = useFeedback();
   
   // Handle adding car to My Collection
   const handleAddToMyCars = async (car) => {
@@ -262,6 +268,7 @@ export default function CarCatalog() {
             find your perfect match, and learn what makes each one special.
           </p>
         </div>
+        <ScrollIndicator />
       </section>
 
       {/* Filters Section */}
@@ -337,14 +344,15 @@ export default function CarCatalog() {
       {/* Car Grid */}
       <section className={styles.gridSection}>
         <div className={styles.carGrid}>
-          {filteredCars.map(car => {
-            const isCarFavorite = isFavorite(car.slug);
-            const isCarInCompare = isInCompare(car.slug);
-            const canAddToCompare = !isCompareFull || isCarInCompare;
-            const isCarInMyCars = isInMyCars(car.slug);
-            const isAddingThis = addingCar === car.slug;
-            return (
+          {filteredCars.map(car => (
               <div key={car.id || car.slug} className={styles.carCardWrapper}>
+                {/* Actions positioned outside the card link to prevent clipping */}
+                <div 
+                  className={styles.cardActions}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <CarActionMenu car={car} variant="compact" />
+                </div>
                 <Link 
                   href={`/browse-cars/${car.slug}`}
                   className={styles.carCard}
@@ -366,43 +374,6 @@ export default function CarCatalog() {
                         {tierConfig[car.tier]?.label || car.tier}
                       </span>
                     )}
-                    <div className={styles.cardActions}>
-                      <button
-                        className={`${styles.actionButton} ${isCarInMyCars ? styles.myCarsActive : ''}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (!isCarInMyCars && !isAddingThis) handleAddToMyCars(car);
-                        }}
-                        disabled={isCarInMyCars || isAddingThis}
-                        title={isCarInMyCars ? 'In My Collection' : 'Add to My Collection'}
-                      >
-                        {isCarInMyCars ? <Icons.check size={14} /> : <Icons.garage size={16} />}
-                      </button>
-                      <button
-                        className={`${styles.actionButton} ${isCarInCompare ? styles.compareActive : ''}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (canAddToCompare) toggleCompare(car);
-                        }}
-                        disabled={!canAddToCompare}
-                        title={isCarInCompare ? 'Remove from compare' : isCompareFull ? 'Compare list full' : 'Add to compare'}
-                      >
-                        <Icons.compare size={16} />
-                      </button>
-                      <button
-                        className={`${styles.actionButton} ${isCarFavorite ? styles.favoriteActive : ''}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleFavorite(car);
-                        }}
-                        title={isCarFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                      >
-                        <Icons.heart size={16} filled={isCarFavorite} />
-                      </button>
-                    </div>
                   </div>
               <div className={styles.cardContent}>
                 <h3 className={styles.carName}>{car.name}</h3>
@@ -421,8 +392,7 @@ export default function CarCatalog() {
               </div>
                 </Link>
               </div>
-            );
-          })}
+          ))}
         </div>
 
         {/* No results */}
@@ -430,16 +400,54 @@ export default function CarCatalog() {
           <div className={styles.noResults}>
             <h3>No cars found</h3>
             <p>Try adjusting your filters or search query.</p>
+            <div className={styles.noResultsActions}>
+              <button 
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedMake('all');
+                  setSelectedTier('all');
+                  setSelectedCategory('all');
+                }}
+                className={styles.clearFiltersBtn}
+              >
+                Clear All Filters
+              </button>
+              <button 
+                onClick={() => openCarRequest(`I was searching for "${searchQuery}" but couldn't find it.`)}
+                className={styles.requestCarBtn}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Request This Car
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Request a Car Banner - shows at bottom of grid when there are results */}
+        {filteredCars.length > 0 && (
+          <div className={styles.requestCarBanner}>
+            <div className={styles.requestCarContent}>
+              <div className={styles.requestCarIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                  <circle cx="7" cy="17" r="2"/>
+                  <path d="M9 17h6"/>
+                  <circle cx="17" cy="17" r="2"/>
+                </svg>
+              </div>
+              <div className={styles.requestCarText}>
+                <span className={styles.requestCarTitle}>Can't find your car?</span>
+                <span className={styles.requestCarSubtitle}>We're constantly adding more vehicles. Let us know what you'd like to see!</span>
+              </div>
+            </div>
             <button 
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedMake('all');
-                setSelectedTier('all');
-                setSelectedCategory('all');
-              }}
-              className={styles.clearFiltersBtn}
+              onClick={() => openCarRequest()}
+              className={styles.requestCarBannerBtn}
             >
-              Clear All Filters
+              Request a Car
             </button>
           </div>
         )}

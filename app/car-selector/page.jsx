@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SportsCarComparison from '@/components/SportsCarComparison';
+import ScrollIndicator from '@/components/ScrollIndicator';
 import styles from './page.module.css';
 
 // Carousel images - Top 15 highest-scoring cars by AutoRev scoring criteria
@@ -106,6 +107,7 @@ export default function CarSelector() {
             </div>
           </div>
         </div>
+        <ScrollIndicator />
       </section>
 
       {/* Sports Car Selector Tool */}

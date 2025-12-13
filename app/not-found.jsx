@@ -15,7 +15,7 @@ export default function NotFound() {
             Go Home
           </Link>
           <Link href="/car-selector" className={styles.advisoryLink}>
-            Find Your Car
+            Your Sportscar Match
           </Link>
         </div>
       </div>

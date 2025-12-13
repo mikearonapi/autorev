@@ -1,0 +1,369 @@
+/* ===========================================
+   CAR ACTION MENU - Universal Actions
+   =========================================== */
+
+/* Container Themes */
+.container[data-theme='light'] {
+  --btn-bg: rgba(0, 0, 0, 0.5); /* 50% opacity for better visibility */
+  --btn-border: rgba(0, 0, 0, 0.1);
+  --btn-text: #ffffff; /* White text for contrast on dark background */
+  --btn-hover-bg: rgba(0, 0, 0, 0.7);
+  --btn-hover-border: rgba(0, 0, 0, 0.2);
+  --btn-hover-text: #ffffff;
+  --menu-bg: #ffffff;
+  --menu-border: rgba(0, 0, 0, 0.1);
+  --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --divider: rgba(0, 0, 0, 0.08);
+}
+
+.container[data-theme='dark'] {
+  --btn-bg: rgba(255, 255, 255, 0.5); /* 50% opacity */
+  --btn-border: rgba(255, 255, 255, 0.12);
+  --btn-text: #000000; /* Black text for contrast */
+  --btn-hover-bg: rgba(255, 255, 255, 0.7);
+  --btn-hover-border: rgba(255, 255, 255, 0.2);
+  --btn-hover-text: #000000;
+  --menu-bg: #1a1b1e;
+  --menu-border: rgba(255, 255, 255, 0.12);
+  --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --divider: rgba(255, 255, 255, 0.08);
+}
+
+/* Fallback to system preference if no data-theme */
+@media (prefers-color-scheme: light) {
+  .container:not([data-theme]) {
+    --btn-bg: rgba(0, 0, 0, 0.5);
+    --btn-border: rgba(0, 0, 0, 0.1);
+    --btn-text: #ffffff;
+    --btn-hover-bg: rgba(0, 0, 0, 0.7);
+    --btn-hover-border: rgba(0, 0, 0, 0.2);
+    --btn-hover-text: #ffffff;
+    --menu-bg: #ffffff;
+    --menu-border: rgba(0, 0, 0, 0.1);
+    --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --divider: rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .container:not([data-theme]) {
+    --btn-bg: rgba(255, 255, 255, 0.5);
+    --btn-border: rgba(255, 255, 255, 0.12);
+    --btn-text: #000000;
+    --btn-hover-bg: rgba(255, 255, 255, 0.7);
+    --btn-hover-border: rgba(255, 255, 255, 0.2);
+    --btn-hover-text: #000000;
+    --menu-bg: #1a1b1e;
+    --menu-border: rgba(255, 255, 255, 0.12);
+    --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --divider: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Inline Menu - Default */
+.inlineMenu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.actionBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 8px;
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.actionBtn:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  transform: translateY(-1px);
+}
+
+.actionBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Pulse animation on hover for "premium" feel */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(var(--pulse-color), 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(var(--pulse-color), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--pulse-color), 0); }
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Active States */
+.actionBtn.active {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: rgba(16, 185, 129, 1);
+  color: #ffffff;
+}
+
+.actionBtn.activeFavorite {
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(239, 68, 68, 1);
+  color: #ffffff;
+}
+
+.actionBtn.modBtn {
+  background: rgba(196, 165, 100, 0.1);
+  border-color: rgba(196, 165, 100, 0.25);
+  color: var(--sn-gold, #D4AF37);
+}
+
+.actionBtn.modBtn:hover:not(:disabled) {
+  background: rgba(196, 165, 100, 0.15);
+  border-color: rgba(196, 165, 100, 0.3);
+  color: var(--sn-gold, #D4AF37);
+}
+
+/* Compact Menu */
+.compactMenu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.compactBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 8px;
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compactBtn:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  transform: translateY(-1px);
+}
+
+.compactBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.compactBtn.active {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: rgba(16, 185, 129, 1);
+  color: #ffffff;
+}
+
+.compactBtn.activeFavorite {
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(239, 68, 68, 1);
+  color: #ffffff;
+}
+
+/* Dropdown Menu */
+.dropdownWrapper {
+  position: relative;
+}
+
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 8px;
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdownTrigger:hover {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-text);
+}
+
+.dropdownBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--menu-bg);
+  border: 1px solid var(--menu-border);
+  border-radius: 12px;
+  box-shadow: var(--menu-shadow);
+  padding: 6px;
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--btn-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.dropdownItem:hover:not(:disabled) {
+  background: var(--btn-bg);
+  color: var(--btn-hover-text);
+}
+
+.dropdownItem:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dropdownItem.active {
+  color: #10b981;
+}
+
+.dropdownItem.active svg {
+  color: #10b981;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: var(--divider);
+  margin: 4px 0;
+}
+
+/* Quick Action Buttons */
+.quickBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 8px;
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.quickBtnSmall {
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  gap: 4px;
+}
+
+.quickBtnLarge {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 10px;
+  gap: 8px;
+}
+
+.quickBtn:hover:not(:disabled),
+.quickBtnSmall:hover:not(:disabled),
+.quickBtnLarge:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+}
+
+.quickBtnActive {
+  background: rgba(16, 185, 129, 0.9); /* Opaque green */
+  border-color: rgba(16, 185, 129, 1);
+  color: #ffffff;
+}
+
+/* Tooltip */
+.tooltipWrapper {
+  position: relative;
+  display: flex;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px); /* Move slightly further up */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999; /* Ensure high z-index */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  backdrop-filter: blur(4px);
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -4px;
+  border-width: 4px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+.tooltipWrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-2px);
+}

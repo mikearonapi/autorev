@@ -5,8 +5,9 @@ import Image from 'next/image';
 import styles from '@/app/page.module.css';
 import { carData } from '@/data/cars.js';
 import upgradeDetails from '@/data/upgradeEducation.js';
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
 
-// AI-generated images (owned/licensed) - Dodge Viper overhead shot
+// Hero image - Dodge Viper overhead shot
 const heroImageUrl = '/images/pages/home-hero.jpg';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
@@ -15,6 +16,9 @@ const brandSuffixes = ['ival', 'elation', 'olution'];
 export default function HeroSection() {
   const [suffixIndex, setSuffixIndex] = useState(0);
   const [suffixVisible, setSuffixVisible] = useState(true);
+  
+  // Auth modal (for potential future use)
+  const authModal = useAuthModal();
 
   // Dynamic stats pulled from actual data
   const quickStats = useMemo(() => {
@@ -42,12 +46,18 @@ export default function HeroSection() {
     return () => clearInterval(suffixInterval);
   }, []);
 
+  // Handle join button click - always navigates to join page
+  const handleJoinClick = (e) => {
+    e.preventDefault();
+    window.location.href = '/join';
+  };
+
   return (
     <section className={styles.hero}>
       <div className={styles.heroImageWrapper}>
         <Image
           src={heroImageUrl}
-          alt="Dodge Viper ACR overhead view with dramatic lighting"
+          alt="718 Cayman GT4 RS rear view with glowing taillights in dramatic studio lighting"
           fill
           priority
           quality={90}
@@ -61,13 +71,9 @@ export default function HeroSection() {
           Find What<br />
           <span className={styles.heroAccent}>Drives You</span>
         </h1>
-        <p className={styles.heroSubtitle}>
+        <button onClick={handleJoinClick} className={styles.heroJoinButton}>
           Join the auto <span className={styles.heroRevWord}><span className={styles.heroAccent}>rev</span><span className={`${styles.heroAccent} ${styles.heroBrandSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span></span>
-        </p>
-      </div>
-      <div className={styles.heroScroll}>
-        <span>Scroll to explore</span>
-        <div className={styles.scrollIndicator} />
+        </button>
       </div>
       
       {/* Quick Stats Bar - Dynamic values from actual data */}
@@ -91,6 +97,13 @@ export default function HeroSection() {
           </div>
         ))}
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModal.isOpen}
+        onClose={authModal.close}
+        defaultMode={authModal.defaultMode}
+      />
     </section>
   );
 }

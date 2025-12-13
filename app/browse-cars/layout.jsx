@@ -41,3 +41,10 @@ export const metadata = {
 export default function BrowseCarsLayout({ children }) {
   return children;
 }
+
+
+
+
+
+
+

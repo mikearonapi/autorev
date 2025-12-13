@@ -256,3 +256,10 @@ $$ LANGUAGE plpgsql STABLE;
 COMMENT ON TABLE user_maintenance_preferences IS 'User overrides for default maintenance specs on their vehicles';
 COMMENT ON TABLE user_recall_tracking IS 'Track completion status of NHTSA recalls for user vehicles';
 COMMENT ON FUNCTION get_upcoming_service_reminders IS 'Returns upcoming and overdue service reminders for a user';
+
+
+
+
+
+
+

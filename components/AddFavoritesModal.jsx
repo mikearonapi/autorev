@@ -116,7 +116,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
-          <h2 className={styles.title}>Add to My Collection</h2>
+          <h2 className={styles.title}>Add to Favorites</h2>
           <button onClick={handleClose} className={styles.closeButton}>
             <Icons.x size={24} />
           </button>

@@ -100,7 +100,6 @@ export async function POST(request) {
       );
     }
 
-    console.log('[Contact API] Email sent successfully:', data?.id);
     return Response.json({ success: true, data: { id: data?.id } });
   } catch (err) {
     console.error('[Contact API] Unexpected error:', err);

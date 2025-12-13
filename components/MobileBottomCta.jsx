@@ -35,7 +35,7 @@ const MessageIcon = () => (
 // Page-specific CTAs - updated with new URLs
 const pageCtas = {
   '/': {
-    primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
+    primary: { href: '/car-selector', label: 'Your Sportscar Match', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   },
   '/car-selector': {
@@ -44,10 +44,10 @@ const pageCtas = {
   },
   '/mod-planner': {
     primary: { href: '/contact', label: 'Talk to Expert', icon: <MessageIcon /> },
-    secondary: { href: '/how-mods-work', label: 'Learn More' }
+    secondary: { href: '/encyclopedia', label: 'Learn More' }
   },
-  '/how-mods-work': {
-    primary: { href: '/car-selector', label: 'Find Your Car', icon: <SearchIcon /> },
+  '/encyclopedia': {
+    primary: { href: '/car-selector', label: 'Your Sportscar Match', icon: <SearchIcon /> },
     secondary: { href: '/contact', label: 'Contact' }
   },
   '/browse-cars': {

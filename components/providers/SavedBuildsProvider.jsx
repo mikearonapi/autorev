@@ -208,7 +208,7 @@ export function SavedBuildsProvider({ children }) {
       carSlug: buildData.carSlug,
       carName: buildData.carName,
       name: buildData.name || 'Untitled Build',
-      upgrades: buildData.upgrades || [],
+      upgrades: buildData.selectedUpgrades || buildData.upgrades || [],
       totalHpGain: buildData.totalHpGain || 0,
       totalCostLow: buildData.totalCostLow || 0,
       totalCostHigh: buildData.totalCostHigh || 0,

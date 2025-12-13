@@ -280,6 +280,34 @@
   transform: scale(1.1);
 }
 
+/* Prominent Mod CTA Button */
+.modCtaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #d4af37 0%, #D4AF37 100%);
+  color: #000;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.modCtaButton:hover {
+  background: linear-gradient(135deg, #e6c54a 0%, #d4b574 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.modCtaButton:active {
+  transform: translateY(0);
+}
+
 .heroImageWrapper {
   position: relative;
   display: flex;

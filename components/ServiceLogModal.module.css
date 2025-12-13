@@ -149,7 +149,7 @@
 }
 
 .categoryActive .categoryLabel {
-  color: #c4a564;
+  color: #D4AF37;
 }
 
 /* Form Grid */
@@ -203,7 +203,7 @@
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: #c4a564;
+  border-color: #D4AF37;
   background: rgba(0, 0, 0, 0.4);
 }
 
@@ -244,7 +244,7 @@
 .checkbox {
   width: 16px;
   height: 16px;
-  accent-color: #c4a564;
+  accent-color: #D4AF37;
 }
 
 /* Cost Section */
@@ -259,7 +259,7 @@
 .sectionTitle {
   font-size: 12px;
   font-weight: 700;
-  color: #c4a564;
+  color: #D4AF37;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0 0 12px;
@@ -320,7 +320,7 @@
 .totalValue {
   font-size: 18px;
   font-weight: 700;
-  color: #c4a564;
+  color: #D4AF37;
   font-family: var(--font-mono, monospace);
 }
 
@@ -349,7 +349,7 @@
   background: rgba(196, 165, 100, 0.15);
   border: 1px solid rgba(196, 165, 100, 0.3);
   border-radius: 6px;
-  color: #c4a564;
+  color: #D4AF37;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -405,7 +405,7 @@
 
 .saveBtn {
   padding: 10px 24px;
-  background: #c4a564;
+  background: #D4AF37;
   border: none;
   border-radius: 8px;
   color: #1a1a1a;
@@ -423,3 +423,11 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+
+
+
+
+
+
+

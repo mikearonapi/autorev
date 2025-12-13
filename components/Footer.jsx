@@ -27,9 +27,9 @@ export default function Footer() {
 
   const mainLinks = [
     { href: '/browse-cars', label: 'Browse Cars' },
-    { href: '/car-selector', label: 'Find Your Car' },
-    { href: '/mod-planner', label: 'Mod Planner' },
-    { href: '/how-mods-work', label: 'How Mods Work' },
+    { href: '/car-selector', label: 'Your Sportscar Match' },
+    { href: '/tuning-shop', label: 'Tuning Shop' },
+    { href: '/encyclopedia', label: 'Encyclopedia' },
     { href: '/garage', label: 'My Garage' },
     { href: '/contact', label: 'Contact' },
   ];

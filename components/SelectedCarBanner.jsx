@@ -143,7 +143,12 @@ export default function SelectedCarBanner() {
               <>
                 <div className={styles.stat}>
                   <Icons.dollar size={14} />
-                  <span className={styles.statValue}>{formatCurrency(buildSummary.totalCost)}</span>
+                  <span className={styles.statValue}>
+                    {buildSummary.totalCostLow && buildSummary.totalCostHigh && buildSummary.totalCostLow !== buildSummary.totalCostHigh
+                      ? `${formatCurrency(buildSummary.totalCostLow)} - ${formatCurrency(buildSummary.totalCostHigh)}`
+                      : formatCurrency(buildSummary.totalCost)
+                    }
+                  </span>
                   <span className={styles.statLabel}>build</span>
                 </div>
                 
@@ -242,7 +247,12 @@ export default function SelectedCarBanner() {
               <>
                 <div className={styles.expandedStat}>
                   <span className={styles.expandedStatLabel}>Build Cost</span>
-                  <span className={styles.expandedStatValue}>{formatCurrency(buildSummary.totalCost)}</span>
+                  <span className={styles.expandedStatValue}>
+                    {buildSummary.totalCostLow && buildSummary.totalCostHigh && buildSummary.totalCostLow !== buildSummary.totalCostHigh
+                      ? `${formatCurrency(buildSummary.totalCostLow)} - ${formatCurrency(buildSummary.totalCostHigh)}`
+                      : formatCurrency(buildSummary.totalCost)
+                    }
+                  </span>
                 </div>
                 
                 <div className={styles.expandedStat}>

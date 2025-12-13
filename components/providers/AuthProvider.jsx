@@ -90,10 +90,33 @@ export function AuthProvider({ children }) {
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (event, session) => {
-      console.log('[AuthProvider] Auth event:', event);
-      
       if (event === 'SIGNED_IN' && session?.user) {
         const profile = await fetchProfile(session.user.id);
+        
+        // Check if there's a pending tier selection from the join page
+        const pendingTier = localStorage.getItem('autorev_selected_tier');
+        if (pendingTier && pendingTier !== profile?.subscription_tier) {
+          try {
+            // Update the profile with the selected tier
+            const { data: updatedProfile } = await updateUserProfile({ 
+              subscription_tier: pendingTier 
+            });
+            localStorage.removeItem('autorev_selected_tier');
+            
+            setState({
+              user: session.user,
+              profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
+              session,
+              isLoading: false,
+              isAuthenticated: true,
+            });
+            return;
+          } catch (err) {
+            console.error('[AuthProvider] Failed to apply selected tier:', err);
+            localStorage.removeItem('autorev_selected_tier');
+          }
+        }
+        
         setState({
           user: session.user,
           profile,

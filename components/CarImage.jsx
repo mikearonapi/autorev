@@ -111,7 +111,7 @@ export default function CarImage({
           className={`${styles.image} ${imageLoaded ? styles.loaded : ''}`}
           onError={handleError}
           onLoad={handleLoad}
-          loading={lazy ? 'lazy' : 'eager'}
+          priority={!lazy}
           // Mobile-optimized sizes: load smaller images on smaller screens
           sizes={
             variant === 'hero' || variant === 'garage'

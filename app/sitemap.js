@@ -27,13 +27,25 @@ export default async function sitemap() {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/join`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}/tuning-shop`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/mod-planner`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/how-mods-work`,
+      url: `${siteUrl}/encyclopedia`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,

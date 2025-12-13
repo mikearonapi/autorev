@@ -8,7 +8,16 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default function AppleIcon() {
+/**
+ * Apple Touch Icon - Uses the actual AutoRev logo image
+ * Used for iOS home screen and Safari bookmarks
+ */
+export default async function AppleIcon() {
+  // Fetch the actual logo image
+  const logoData = await fetch(
+    new URL('../public/images/autorev-logo-trimmed.png', import.meta.url)
+  ).then((res) => res.arrayBuffer());
+
   return new ImageResponse(
     (
       <div
@@ -18,17 +27,18 @@ export default function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #1a4d6e 0%, #0f3460 100%)',
+          background: '#ffffff',
           borderRadius: '40px',
         }}
       >
-        <div
+        <img
+          src={`data:image/png;base64,${Buffer.from(logoData).toString('base64')}`}
+          width={150}
+          height={150}
           style={{
-            fontSize: '100px',
+            objectFit: 'contain',
           }}
-        >
-          🏎️
-        </div>
+        />
       </div>
     ),
     {
@@ -36,10 +46,3 @@ export default function AppleIcon() {
     }
   );
 }
-
-
-
-
-
-
-

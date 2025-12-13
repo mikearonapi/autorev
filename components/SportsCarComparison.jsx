@@ -15,9 +15,7 @@ import {
   DEFAULT_WEIGHTS,
 } from '@/lib/scoring.js';
 import CarImage from './CarImage';
-import { useCarSelection } from './providers/CarSelectionProvider';
-import FavoriteButton from './FavoriteButton';
-import CompareButton from './CompareButton';
+import CarActionMenu from './CarActionMenu';
 import ScoringInfo from './ScoringInfo';
 import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
 
@@ -272,9 +270,6 @@ export default function SportsCarComparison() {
   // selectedCategory removed - now using mustHaveFilters.engineLayoutFilter
   const [expandedId, setExpandedId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
-  // Global car selection integration
-  const { selectedCar, selectCar, isHydrated } = useCarSelection();
   
   // Must-have filters (hard constraints)
   const [mustHaveFilters, setMustHaveFilters] = useState({
@@ -835,7 +830,7 @@ export default function SportsCarComparison() {
                       </div>
                       {car.slug && (
                         <Link 
-                          href={`/cars/${car.slug}`}
+                          href={`/browse-cars/${car.slug}`}
                           className={styles.recCardLink}
                           onClick={e => e.stopPropagation()}
                         >
@@ -1130,33 +1125,12 @@ export default function SportsCarComparison() {
                           </div>
                           {car.slug && (
                             <div className={styles.expandedActions}>
-                              <div className={styles.expandedActionsRow}>
-                                <FavoriteButton car={car} variant="button" />
-                                <CompareButton car={car} variant="button" />
-                              </div>
-                              <div className={styles.expandedActionsRow}>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    selectCar(car);
-                                  }}
-                                  className={`${styles.selectCarButton} ${isHydrated && selectedCar?.slug === car.slug ? styles.selected : ''}`}
-                                  disabled={isHydrated && selectedCar?.slug === car.slug}
-                                >
-                                  {isHydrated && selectedCar?.slug === car.slug ? (
-                                    <>
-                                      <Icons.checkCircle size={14} /> Selected
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Icons.plus size={14} /> Select This Car
-                                    </>
-                                  )}
-                                </button>
-                                <Link href={`/cars/${car.slug}`} className={styles.viewProfileButton}>
-                                  View Full Profile <Icons.externalLink size={14} />
-                                </Link>
-                              </div>
+                              <CarActionMenu 
+                                car={car} 
+                                variant="compact" 
+                                showLabels={false} 
+                                theme="light"
+                              />
                             </div>
                           )}
                         </div>

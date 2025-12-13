@@ -383,15 +383,4 @@ export default function ScoringInfo({ variant = 'inline' }) {
   );
 }
 
-/**
- * Compact inline trigger (just the link)
- */
-export function ScoringInfoLink() {
-  return (
-    <a href="/about-scoring" className={styles.infoLink}>
-      <InfoIcon size={14} />
-      <span>How we score</span>
-    </a>
-  );
-}
 

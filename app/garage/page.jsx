@@ -10,9 +10,10 @@
  * - Tab system: My Collection, Favorites, Builds
  */
 
-import { useState, useEffect, useRef, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -23,10 +24,12 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import AddVehicleModal from '@/components/AddVehicleModal';
 import AddFavoritesModal from '@/components/AddFavoritesModal';
 import CarImage from '@/components/CarImage';
+import CarActionMenu from '@/components/CarActionMenu';
 import BuildDetailView from '@/components/BuildDetailView';
-import BuildsWorkshop from '@/components/BuildsWorkshop';
 import ServiceLogModal from '@/components/ServiceLogModal';
+import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
 import { carData } from '@/data/cars.js';
+import { calculateWeightedScore } from '@/lib/scoring';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog } from '@/lib/maintenanceService';
 import { decodeVIN } from '@/lib/vinDecoder';
 import { fetchAllSafetyData, getSafetySummary } from '@/lib/nhtsaSafetyService';
@@ -95,6 +98,11 @@ const Icons = {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
       <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  folder: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
     </svg>
   ),
   tool: ({ size = 20 }) => (
@@ -341,9 +349,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   if (!item) return null;
 
   // Determine what data we're showing based on type
-  const car = type === 'builds' ? item.car : (item.matchedCar || item);
+  const car = type === 'projects' ? item.car : (item.matchedCar || item);
   const isOwnedVehicle = type === 'mycars';
-  const isBuild = type === 'builds';
+  const isBuild = type === 'projects';
   const isFavorite = type === 'favorites';
 
   // Get display name
@@ -472,27 +480,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 </button>
               </div>
             )}
-            {/* Quick action buttons */}
-            {panelState === 'details' && car && (
-              <>
-                <button 
-                  onClick={() => setShowPerformance(true)} 
-                  className={styles.headerActionBtn}
-                  title="Plan Modifications"
-                >
-                  <Icons.gauge size={14} />
-                </button>
-                {isFavorite && !isInMyCars && onAddToMyCars && (
-                  <button 
-                    onClick={() => onAddToMyCars(car)} 
-                    className={styles.headerActionBtnOwn}
-                    title="I Own This Car"
-                  >
-                    <Icons.car size={14} />
-                  </button>
-                )}
-              </>
-            )}
             <button 
               className={styles.collapseToggle}
               onClick={() => {
@@ -558,31 +545,26 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               )}
             </div>
 
-            {/* Compact Action Buttons */}
-            <div className={styles.heroActionsCompact}>
+            {/* Action Row - See Details + Action Icons */}
+            <div className={styles.expandedActionsRow}>
+              {/* See Details button */}
+              <button 
+                className={styles.seeDetailsBtn}
+                onClick={() => setPanelState('details')}
+                title="See Details"
+              >
+                <Icons.info size={14} />
+                <span>See Details</span>
+              </button>
+              
+              {/* Compact Action Buttons - All 5 icons for consistency */}
               {car && (
-                <button onClick={() => setPanelState('details')} className={styles.miniAction}>
-                  <Icons.info size={12} />
-                  <span>Details</span>
-                </button>
-              )}
-              {car && (
-                <button onClick={() => setShowPerformance(true)} className={styles.miniActionPrimary}>
-                  <Icons.wrench size={12} />
-                  <span>Mods</span>
-                </button>
-              )}
-              {isFavorite && !isInMyCars && onAddToMyCars && (
-                <button onClick={() => onAddToMyCars(car)} className={styles.miniActionOwn}>
-                  <Icons.car size={12} />
-                  <span>Own</span>
-                </button>
-              )}
-              {isBuild && (
-                <button onClick={() => onAction(item)} className={styles.miniActionPrimary}>
-                  <Icons.tool size={12} />
-                  <span>Plan</span>
-                </button>
+                <CarActionMenu 
+                  car={car} 
+                  variant="compact" 
+                  theme="dark"
+                  hideActions={[]}
+                />
               )}
             </div>
           </div>
@@ -1046,6 +1028,59 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         )}
       </div>
 
+      {/* Quick Action Buttons - Right side */}
+      {panelState !== 'details' && (
+        <div className={styles.quickActionBar}>
+          {/* Details button - available for both My Collection and Favorites */}
+          <button 
+            className={styles.quickActionItem}
+            onClick={() => {
+              setDetailsView('specs');
+              setPanelState('details');
+            }}
+          >
+            <Icons.info size={20} />
+            <span>Details</span>
+          </button>
+          
+          {/* Additional buttons only for My Collection */}
+          {isOwnedVehicle && (
+            <>
+              <button 
+                className={styles.quickActionItem}
+                onClick={() => {
+                  setDetailsView('reference');
+                  setPanelState('details');
+                }}
+              >
+                <Icons.book size={20} />
+                <span>Reference</span>
+              </button>
+              <button 
+                className={styles.quickActionItem}
+                onClick={() => {
+                  setDetailsView('safety');
+                  setPanelState('details');
+                }}
+              >
+                <Icons.shield size={20} />
+                <span>Safety</span>
+              </button>
+              <button 
+                className={styles.quickActionItem}
+                onClick={() => {
+                  setDetailsView('service');
+                  setPanelState('details');
+                }}
+              >
+                <Icons.clipboard size={20} />
+                <span>Service</span>
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
       {/* Badges */}
       {isOwnedVehicle && item.vehicle?.isPrimary && (
         <span className={styles.heroBadge}>Primary Vehicle</span>
@@ -1127,7 +1162,7 @@ function PerformanceOverlay({ car, onClose }) {
         </div>
 
         <div className={styles.overlayFooter}>
-          <Link href={`/performance?car=${car.slug}`} className={styles.overlayLinkPrimary}>
+          <Link href={`/mod-planner?car=${car.slug}`} className={styles.overlayLinkPrimary}>
             <Icons.wrench size={16} />
             Open Full Performance Hub
           </Link>
@@ -1137,8 +1172,39 @@ function PerformanceOverlay({ car, onClose }) {
   );
 }
 
+// Confirmation Modal Component
+function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, confirmLabel = 'Remove', confirmType = 'danger' }) {
+  if (!isOpen) return null;
+  
+  return (
+    <div className={styles.confirmOverlay} onClick={onClose}>
+      <div className={styles.confirmModal} onClick={e => e.stopPropagation()}>
+        <div className={styles.confirmIcon}>
+          <Icons.alert size={32} />
+        </div>
+        <h3 className={styles.confirmTitle}>{title}</h3>
+        <p className={styles.confirmMessage}>{message}</p>
+        <div className={styles.confirmActions}>
+          <button 
+            onClick={onClose} 
+            className={styles.confirmCancelBtn}
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={onConfirm} 
+            className={`${styles.confirmBtn} ${confirmType === 'danger' ? styles.confirmBtnDanger : ''}`}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Thumbnail Strip Component
-function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemove }) {
+function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) {
   const stripRef = useRef(null);
 
   const scrollToSelected = (index) => {
@@ -1162,6 +1228,13 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemove }) {
     scrollToSelected(newIndex);
   };
 
+  const handleRemoveClick = (e, index) => {
+    e.stopPropagation();
+    if (onRemoveItem) {
+      onRemoveItem(index);
+    }
+  };
+
   if (items.length === 0) return null;
 
   return (
@@ -1174,32 +1247,47 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemove }) {
 
       <div className={styles.thumbnailStrip} ref={stripRef}>
         {items.map((item, index) => {
-          const car = type === 'builds' ? item.car : (item.matchedCar || item);
+          const car = type === 'projects' ? item.car : (item.matchedCar || item);
           const isSelected = index === selectedIndex;
           
           // Get display name for tooltip
           const displayName = type === 'mycars' 
             ? (item.vehicle?.nickname || `${item.vehicle?.make} ${item.vehicle?.model}`)
-            : type === 'builds'
+            : type === 'projects'
               ? (item.name || car?.name)
               : car?.name;
 
           return (
-            <button
+            <div
               key={item.id || item.slug || index}
-              onClick={() => onSelect(index)}
-              className={`${styles.thumbnail} ${isSelected ? styles.thumbnailSelected : ''}`}
-              title={displayName}
+              className={`${styles.thumbnailWrapper} ${isSelected ? styles.thumbnailWrapperSelected : ''}`}
             >
-              {car ? (
-                <CarImage car={car} variant="garage" className={styles.thumbnailImage} />
-              ) : (
-                <div className={styles.thumbnailPlaceholder}>
-                  <Icons.car size={24} />
-                </div>
+              <button
+                onClick={() => onSelect(index)}
+                className={`${styles.thumbnail} ${isSelected ? styles.thumbnailSelected : ''}`}
+                title={displayName}
+              >
+                {car ? (
+                  <CarImage car={car} variant="garage" className={styles.thumbnailImage} />
+                ) : (
+                  <div className={styles.thumbnailPlaceholder}>
+                    <Icons.car size={24} />
+                  </div>
+                )}
+                {isSelected && <div className={styles.thumbnailIndicator} />}
+              </button>
+              {/* Delete button on each thumbnail */}
+              {onRemoveItem && (
+                <button 
+                  onClick={(e) => handleRemoveClick(e, index)} 
+                  className={styles.thumbnailDeleteBtn}
+                  title="Remove"
+                  aria-label="Remove from list"
+                >
+                  <Icons.x size={14} />
+                </button>
               )}
-              {isSelected && <div className={styles.thumbnailIndicator} />}
-            </button>
+            </div>
           );
         })}
       </div>
@@ -1207,13 +1295,6 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemove }) {
       {items.length > 1 && (
         <button onClick={handleNext} className={styles.navArrow} aria-label="Next">
           <Icons.chevronRight size={24} />
-        </button>
-      )}
-
-      {/* Remove button - positioned at end of thumbnail strip */}
-      {onRemove && (
-        <button onClick={onRemove} className={styles.thumbnailRemoveButton} title="Remove from list">
-          <Icons.trash size={18} />
         </button>
       )}
     </div>
@@ -1239,33 +1320,115 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   );
 }
 
+// Car Picker Modal for starting new projects on ANY car
+function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Default weights for scoring
+  const defaultWeights = {
+    powerAccel: 1.5,
+    gripCornering: 1.5,
+    braking: 1.2,
+    trackPace: 1.5,
+    drivability: 1.0,
+    reliabilityHeat: 1.0,
+    soundEmotion: 1.2,
+  };
+  
+  // Filter and sort cars
+  const filteredCars = React.useMemo(() => {
+    let results = carData;
+    
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      results = carData.filter(car => 
+        car.name?.toLowerCase().includes(query) ||
+        car.brand?.toLowerCase().includes(query) ||
+        car.category?.toLowerCase().includes(query) ||
+        car.engine?.toLowerCase().includes(query)
+      );
+    }
+    
+    return results
+      .map(car => ({
+        car,
+        score: calculateWeightedScore(car, defaultWeights),
+        buildCount: existingBuilds.filter(b => b.carSlug === car.slug).length
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 30);
+  }, [searchQuery, existingBuilds]);
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.carPickerModal} onClick={e => e.stopPropagation()}>
+        <div className={styles.carPickerHeader}>
+          <h2>Start a New Project</h2>
+          <p>Select any car to plan modifications</p>
+          <button onClick={onClose} className={styles.carPickerClose}>
+            <Icons.x size={24} />
+          </button>
+        </div>
+        
+        <div className={styles.carPickerSearch}>
+          <Icons.search size={18} />
+          <input
+            type="text"
+            placeholder="Search any car..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            autoFocus
+          />
+        </div>
+        
+        <div className={styles.carPickerGrid}>
+          {filteredCars.map(({ car, buildCount }) => (
+            <button
+              key={car.slug}
+              className={styles.carPickerCard}
+              onClick={() => {
+                onSelectCar(car);
+                onClose();
+              }}
+            >
+              <div className={styles.carPickerImage}>
+                <CarImage car={car} variant="card" />
+              </div>
+              <div className={styles.carPickerInfo}>
+                <span className={styles.carPickerName}>{car.name}</span>
+                <span className={styles.carPickerMeta}>{car.hp} hp • {car.priceRange}</span>
+                {buildCount > 0 && (
+                  <span className={styles.carPickerExisting}>{buildCount} existing project{buildCount > 1 ? 's' : ''}</span>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main Garage Component Content
 function GarageContent() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('favorites');
+  const [activeTab, setActiveTab] = useState('mycars');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [isAddFavoritesOpen, setIsAddFavoritesOpen] = useState(false);
   const [addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
+  
+  // Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
+  
   const { isAuthenticated } = useAuth();
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const { builds, deleteBuild, getBuildById } = useSavedBuilds();
   const { vehicles, addVehicle, removeVehicle } = useOwnedVehicles();
-  
-  // Handle URL params for direct build access
-  useEffect(() => {
-    const buildId = searchParams.get('build');
-    if (buildId && builds.length > 0) {
-      const build = getBuildById(buildId);
-      if (build) {
-        setSelectedBuild(build);
-        setActiveTab('builds');
-      }
-    }
-  }, [searchParams, builds, getBuildById]);
 
   // Reset selection when tab changes
   useEffect(() => {
@@ -1301,7 +1464,7 @@ function GarageContent() {
         return vehiclesWithCars;
       case 'favorites':
         return favoriteCars;
-      case 'builds':
+      case 'projects':
         return buildsWithCars;
       default:
         return [];
@@ -1312,6 +1475,7 @@ function GarageContent() {
   const currentItem = currentItems[selectedIndex];
 
   // Handle adding a favorite car to My Collection
+  // When promoting a car from favorites to owned, auto-remove from favorites
   const handleAddFavoriteToMyCars = async (car) => {
     // Auth check removed for testing - will be re-enabled for production
     // if (!isAuthenticated) {
@@ -1346,6 +1510,12 @@ function GarageContent() {
         model,
         matchedCarSlug: car.slug,
       });
+
+      // Auto-remove from favorites when promoted to owned
+      // Collection = cars you OWN, Favorites = cars you WANT (mutually exclusive)
+      if (favorites.some(f => f.slug === car.slug)) {
+        removeFavorite(car.slug);
+      }
     } catch (err) {
       console.error('[GaragePage] Error adding vehicle:', err);
     } finally {
@@ -1353,55 +1523,94 @@ function GarageContent() {
     }
   };
 
-  // Handle remove with confirmation
-  const handleRemove = () => {
-    if (!currentItem) return;
-    
-    // Get confirmation message based on tab
-    let confirmMessage = '';
-    switch (activeTab) {
-      case 'mycars':
-        confirmMessage = 'Remove this vehicle from My Collection?';
-        break;
-      case 'favorites':
-        confirmMessage = 'Remove this car from your favorites?';
-        break;
-      case 'builds':
-        confirmMessage = 'Delete this saved build?';
-        break;
-    }
+  // Open confirmation modal for removal
+  const handleRemoveRequest = (index) => {
+    const itemToRemove = currentItems[index];
+    if (!itemToRemove) return;
+    setConfirmModal({ isOpen: true, index, item: itemToRemove });
+  };
 
-    // Show confirmation dialog
-    if (!window.confirm(confirmMessage)) return;
+  // Get confirmation message based on tab and item
+  const getConfirmationDetails = () => {
+    const item = confirmModal.item;
+    if (!item) return { title: '', message: '' };
     
     switch (activeTab) {
       case 'mycars':
-        removeVehicle(currentItem.vehicle.id);
+        const vehicleName = item.vehicle?.nickname || `${item.vehicle?.year} ${item.vehicle?.make} ${item.vehicle?.model}`;
+        return {
+          title: 'Remove from Collection',
+          message: `Are you sure you want to remove "${vehicleName}" from My Collection?`,
+        };
+      case 'favorites':
+        return {
+          title: 'Remove from Favorites',
+          message: `Are you sure you want to remove "${item.name}" from your favorites?`,
+        };
+      case 'projects':
+        return {
+          title: 'Delete Project',
+          message: `Are you sure you want to delete the project "${item.name || 'Untitled'}"?`,
+        };
+      default:
+        return { title: 'Confirm Removal', message: 'Are you sure you want to remove this item?' };
+    }
+  };
+
+  // Confirm and execute removal
+  const handleConfirmRemove = () => {
+    const { index, item } = confirmModal;
+    if (!item) return;
+    
+    switch (activeTab) {
+      case 'mycars':
+        removeVehicle(item.vehicle.id);
         break;
       case 'favorites':
-        removeFavorite(currentItem.slug);
+        removeFavorite(item.slug);
         break;
-      case 'builds':
-        deleteBuild(currentItem.id);
+      case 'projects':
+        deleteBuild(item.id);
         break;
     }
 
     // Adjust selection if needed
-    if (selectedIndex >= currentItems.length - 1 && selectedIndex > 0) {
+    if (index <= selectedIndex && selectedIndex > 0) {
       setSelectedIndex(selectedIndex - 1);
+    } else if (index === selectedIndex && currentItems.length === 1) {
+      setSelectedIndex(0);
     }
+    
+    // Close modal
+    setConfirmModal({ isOpen: false, index: null, item: null });
   };
 
-  // Handle build selection
-  const handleBuildAction = (build) => {
-    setSelectedBuild(build);
-    window.history.pushState({}, '', `/garage?build=${build.id}`);
+  // Close confirmation modal
+  const handleCancelRemove = () => {
+    setConfirmModal({ isOpen: false, index: null, item: null });
+  };
+
+  // Handle build/mod action - navigates to Tuning Shop
+  const handleBuildAction = (item) => {
+    if (!item) return;
+    
+    // For saved builds - navigate to tuning shop with build ID
+    if (item.id && item.carSlug) {
+      router.push(`/tuning-shop?build=${item.id}`);
+    }
+    // For car items (from favorites or owned) - navigate to tuning shop with car slug
+    else if (item.slug) {
+      router.push(`/tuning-shop?plan=${item.slug}`);
+    }
+    // For owned vehicle items - get the matched car slug
+    else if (item.matchedCar?.slug) {
+      router.push(`/tuning-shop?plan=${item.matchedCar.slug}`);
+    }
   };
   
   const tabs = [
     { id: 'mycars', label: 'My Collection', icon: Icons.car, count: vehicles.length },
     { id: 'favorites', label: 'Favorites', icon: Icons.heart, count: favoriteCars.length },
-    { id: 'builds', label: 'Builds', icon: Icons.wrench, count: buildsWithCars.length },
   ];
 
   const handleAddVehicle = async (vehicleData) => {
@@ -1435,6 +1644,18 @@ function GarageContent() {
   
   return (
     <div className={styles.page}>
+      {/* Optimized Background Image */}
+      <div className={styles.backgroundImageWrapper}>
+        <Image
+          src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp"
+          alt="Garage Background"
+          fill
+          priority
+          quality={75}
+          style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.4 }}
+        />
+      </div>
+
       {/* Compact Header Bar */}
       <div className={styles.headerBar}>
         <div className={styles.headerLeft}>
@@ -1461,22 +1682,14 @@ function GarageContent() {
         </div>
 
         <div className={styles.headerRight}>
-          {/* Header actions removed - using in-page CTA buttons instead */}
+          {/* Settings moved to global header */}
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className={styles.mainContent}>
-        {/* Builds Tab - Uses dedicated workshop layout */}
-        {activeTab === 'builds' ? (
-          <BuildsWorkshop
-            builds={buildsWithCars}
-            cars={carData}
-            onViewDetails={handleBuildAction}
-            onDeleteBuild={deleteBuild}
-          />
-        ) : (
-          /* My Collection & Favorites - Hero display layout */
+        {/* My Collection & Favorites - Hero display layout */}
+        {(activeTab === 'mycars' || activeTab === 'favorites') && (
           currentItems.length > 0 ? (
             <>
               {/* Hero Display */}
@@ -1494,7 +1707,7 @@ function GarageContent() {
                 selectedIndex={selectedIndex}
                 onSelect={setSelectedIndex}
                 type={activeTab}
-                onRemove={handleRemove}
+                onRemoveItem={handleRemoveRequest}
               />
 
               {/* Vehicle Counter */}
@@ -1508,29 +1721,21 @@ function GarageContent() {
             <EmptyState
               icon={tabs.find(t => t.id === activeTab)?.icon || Icons.car}
               title={
-                activeTab === 'mycars' ? 'No Vehicles Yet' :
-                activeTab === 'favorites' ? 'No Favorites Yet' :
-                'No Saved Builds'
+                activeTab === 'mycars' ? 'No Vehicles Yet' : 'No Favorites Yet'
               }
               description={
                 activeTab === 'mycars' 
                   ? 'Add the vehicles you own to track maintenance and get personalized recommendations.'
-                  : activeTab === 'favorites'
-                    ? 'Build your dream garage by adding cars you love. Browse the catalog and tap the heart icon.'
-                    : 'Create and save build configurations in the Mod Planner.'
+                  : 'Build your dream garage by adding cars you love. Browse the catalog and tap the heart icon.'
               }
               actionLabel={
-                activeTab === 'mycars' ? 'Add Your First Car' :
-                activeTab === 'favorites' ? 'Add Your First Favorite' :
-                'Go to Mod Planner'
+                activeTab === 'mycars' ? 'Add Your First Car' : 'Add Your First Favorite'
               }
               onAction={() => {
                 if (activeTab === 'mycars') {
                   setIsAddVehicleOpen(true);
-                } else if (activeTab === 'favorites') {
-                  setIsAddFavoritesOpen(true);
                 } else {
-                  router.push('/mod-planner');
+                  setIsAddFavoritesOpen(true);
                 }
               }}
             />
@@ -1556,6 +1761,24 @@ function GarageContent() {
         onClose={() => setIsAddFavoritesOpen(false)}
         onAdd={handleAddFavorite}
         existingFavorites={favorites}
+      />
+
+      {/* Confirmation Modal for deletions */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        onClose={handleCancelRemove}
+        onConfirm={handleConfirmRemove}
+        title={getConfirmationDetails().title}
+        message={getConfirmationDetails().message}
+        confirmLabel="Remove"
+        confirmType="danger"
+      />
+
+      {/* Onboarding Popup */}
+      <OnboardingPopup 
+        storageKey="autorev_garage_onboarding_dismissed"
+        steps={garageOnboardingSteps}
+        accentColor="var(--sn-accent)"
       />
     </div>
   );

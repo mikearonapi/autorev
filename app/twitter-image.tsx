@@ -9,6 +9,10 @@ export const size = {
 };
 export const contentType = 'image/png';
 
+/**
+ * Twitter Card Image for social sharing
+ * Used when sharing links on Twitter/X
+ */
 export default async function Image() {
   return new ImageResponse(
     (
@@ -20,7 +24,7 @@ export default async function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #0a1628 0%, #1a4d6e 50%, #0f3460 100%)',
+          background: 'linear-gradient(135deg, #0a1628 0%, #1a3a52 50%, #0f3460 100%)',
           fontFamily: 'system-ui, -apple-system, sans-serif',
           position: 'relative',
           overflow: 'hidden',
@@ -60,10 +64,9 @@ export default async function Image() {
             justifyContent: 'center',
             padding: '60px',
             textAlign: 'center',
-            zIndex: 10,
           }}
         >
-          {/* Logo/Brand */}
+          {/* Logo with div-based icon */}
           <div
             style={{
               display: 'flex',
@@ -71,24 +74,81 @@ export default async function Image() {
               marginBottom: '30px',
             }}
           >
+            {/* AutoRev Logo Icon - Div-based */}
             <div
               style={{
-                width: '60px',
-                height: '60px',
-                background: 'linear-gradient(135deg, #e94560, #ff6b6b)',
-                borderRadius: '12px',
+                width: '70px',
+                height: '70px',
+                background: 'linear-gradient(135deg, #0a1628 0%, #1a3a52 100%)',
+                borderRadius: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginRight: '16px',
-                fontSize: '32px',
+                marginRight: '18px',
+                border: '2px solid rgba(255,255,255,0.3)',
+                position: 'relative',
+                overflow: 'hidden',
               }}
             >
-              🏎️
+              {/* Speedometer arc */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '8px',
+                  left: '8px',
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '50%',
+                  border: '4px solid rgba(255,255,255,0.7)',
+                  borderRightColor: 'transparent',
+                  borderBottomColor: 'transparent',
+                }}
+              />
+              
+              {/* Letter A */}
+              <span
+                style={{
+                  fontSize: '36px',
+                  fontWeight: 900,
+                  fontFamily: 'Arial Black, Arial, sans-serif',
+                  color: '#ffffff',
+                  marginTop: '4px',
+                }}
+              >
+                A
+              </span>
+              
+              {/* Red accent */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '14px',
+                  width: '8px',
+                  height: '18px',
+                  background: '#e94560',
+                  borderRadius: '4px',
+                  transform: 'rotate(35deg)',
+                }}
+              />
+              
+              {/* Orange needle */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '32px',
+                  right: '6px',
+                  width: '18px',
+                  height: '5px',
+                  background: 'linear-gradient(90deg, #f5a623, #ff6b6b)',
+                  borderRadius: '2px',
+                  transform: 'rotate(-10deg)',
+                }}
+              />
             </div>
             <span
               style={{
-                fontSize: '36px',
+                fontSize: '42px',
                 fontWeight: 700,
                 color: '#ffffff',
                 letterSpacing: '-0.5px',
@@ -123,7 +183,7 @@ export default async function Image() {
               lineHeight: 1.4,
             }}
           >
-            Find your perfect sports car • Compare ~100 vehicles • Plan your build
+            Find your perfect sports car • Compare 100+ vehicles • Plan your build
           </p>
 
           {/* Feature badges */}
@@ -133,7 +193,7 @@ export default async function Image() {
               gap: '16px',
             }}
           >
-            {['$25K - $100K', 'Car Selector', 'Performance HUB'].map((badge) => (
+            {['$25K - $300K', 'Car Selector', 'Performance Hub'].map((badge) => (
               <div
                 key={badge}
                 style={{
@@ -170,4 +230,3 @@ export default async function Image() {
     }
   );
 }
-

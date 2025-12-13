@@ -401,7 +401,7 @@ export default function CompareModal({ isOpen, onClose }) {
                       )}
                       
                       <div className={styles.carHeaderActions}>
-                        <Link href={`/cars/${car.slug}`} className={styles.viewButton}>
+                        <Link href={`/browse-cars/${car.slug}`} className={styles.viewButton}>
                           View
                           <Icons.externalLink size={12} />
                         </Link>

@@ -8,7 +8,15 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default function Icon() {
+/**
+ * Favicon - Uses the actual AutoRev logo image
+ */
+export default async function Icon() {
+  // Fetch the actual logo image
+  const logoData = await fetch(
+    new URL('../public/images/autorev-logo-trimmed.png', import.meta.url)
+  ).then((res) => res.arrayBuffer());
+
   return new ImageResponse(
     (
       <div
@@ -18,17 +26,17 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #1a4d6e 0%, #0f3460 100%)',
-          borderRadius: '6px',
+          background: '#ffffff',
         }}
       >
-        <div
+        <img
+          src={`data:image/png;base64,${Buffer.from(logoData).toString('base64')}`}
+          width={30}
+          height={30}
           style={{
-            fontSize: '20px',
+            objectFit: 'contain',
           }}
-        >
-          🏎️
-        </div>
+        />
       </div>
     ),
     {
@@ -36,10 +44,3 @@ export default function Icon() {
     }
   );
 }
-
-
-
-
-
-
-

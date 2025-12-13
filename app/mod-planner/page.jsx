@@ -432,7 +432,7 @@ function PerformanceContent() {
                   <p className={styles.emptyStateText}>
                     Add cars to your garage or favorites for quick access to modification planning.
                   </p>
-                  <Link href="/cars" className={styles.emptyStateLink}>
+                  <Link href="/browse-cars" className={styles.emptyStateLink}>
                     Browse Cars
                   </Link>
                 </div>
@@ -443,7 +443,7 @@ function PerformanceContent() {
                 <p className={styles.browseText}>
                   Looking for something specific?
                 </p>
-                <Link href="/cars" className={styles.browseLink}>
+                <Link href="/browse-cars" className={styles.browseLink}>
                   Browse all {cars.length} cars in our catalog <Icons.arrowRight size={16} />
                 </Link>
               </div>

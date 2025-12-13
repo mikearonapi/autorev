@@ -947,3 +947,10 @@ UPDATE cars SET upgrade_recommendations = '{
 -- FROM cars 
 -- WHERE upgrade_recommendations IS NOT NULL
 -- ORDER BY upgrade_recommendations->>'primaryFocus', name;
+
+
+
+
+
+
+

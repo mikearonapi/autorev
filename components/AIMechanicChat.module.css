@@ -1,0 +1,1247 @@
+/* ===========================================
+   AI MECHANIC CHAT - Premium ChatGPT/Claude inspired
+   =========================================== */
+
+/* ----------------------------------------
+   Header Button with Glow Effect
+   ---------------------------------------- */
+.headerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 2px solid #d4a04a;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(212, 160, 74, 0.25);
+  padding: 0;
+  overflow: hidden;
+}
+
+.headerButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(212, 160, 74, 0.4);
+  border-color: #c49a3a;
+}
+
+.headerButtonIcon {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Pulse ring animation - gold/amber for AL */
+.pulseRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: #d4a04a;
+  opacity: 0;
+  animation: pulse 2s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.3; 
+    transform: scale(1.2); 
+  }
+}
+
+.headerButton.headerButtonActive {
+  border-color: #c49a3a;
+  box-shadow: 0 4px 20px rgba(212, 160, 74, 0.4);
+}
+
+.headerButton.headerButtonActive .pulseRing {
+  animation: none;
+  opacity: 0;
+}
+
+/* Tooltip */
+.headerButton::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: #1f2937;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+
+.headerButton::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: #1f2937;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+
+.headerButton:hover::after,
+.headerButton:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ----------------------------------------
+   Floating Button - Bottom Right AI Assistant (AL Mascot)
+   ---------------------------------------- */
+.floatingButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #ffffff;
+  border: 2px solid #d4a04a;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  z-index: 900;
+  padding: 0;
+  overflow: visible;
+}
+
+.floatingButton:hover {
+  transform: scale(1.08);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    0 12px 32px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(212, 160, 74, 0.5);
+  border-color: #c49a3a;
+}
+
+.floatingButton.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+/* Glow ring behind the mascot */
+.glowRing {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 160, 74, 0.4) 0%, rgba(212, 160, 74, 0.1) 50%, transparent 70%);
+  animation: glowPulse 3s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.15); 
+  }
+}
+
+.floatingButton:hover .glowRing {
+  opacity: 1;
+  animation: none;
+  transform: scale(1.2);
+  background: radial-gradient(circle, rgba(212, 160, 74, 0.5) 0%, rgba(212, 160, 74, 0.2) 50%, transparent 70%);
+}
+
+.floatingIcon {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+/* AL Mascot global styles */
+.alMascot {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Wiggle animation - matches FeedbackCorner */
+.floatingButton.wiggle {
+  animation: wiggle 0.8s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { 
+    transform: rotate(0deg); 
+  }
+  10% { 
+    transform: rotate(-12deg); 
+  }
+  20% { 
+    transform: rotate(10deg); 
+  }
+  30% { 
+    transform: rotate(-10deg); 
+  }
+  40% { 
+    transform: rotate(8deg); 
+  }
+  50% { 
+    transform: rotate(-6deg); 
+  }
+  60% { 
+    transform: rotate(4deg); 
+  }
+  70% { 
+    transform: rotate(-2deg); 
+  }
+  80%, 100% { 
+    transform: rotate(0deg); 
+  }
+}
+
+/* Pulse glow during wiggle */
+.floatingButton.wiggle .glowRing {
+  animation: wiggleGlow 0.8s ease-out;
+}
+
+@keyframes wiggleGlow {
+  0% { 
+    opacity: 0.6; 
+    transform: scale(1); 
+  }
+  30% { 
+    opacity: 1; 
+    transform: scale(1.3); 
+  }
+  100% { 
+    opacity: 0.6; 
+    transform: scale(1); 
+  }
+}
+
+/* Tooltip - positioned to the left of the button (matches FeedbackCorner) */
+.floatingButton .tooltip {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  background: #1f2937;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+
+.floatingButton .tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: #1f2937;
+}
+
+.floatingButton:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .floatingButton {
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Hide tooltip on mobile - touch devices don't hover */
+  .floatingButton .tooltip {
+    display: none;
+  }
+  
+  /* Smaller glow on mobile */
+  .glowRing {
+    inset: -4px;
+  }
+}
+
+/* ----------------------------------------
+   Chat Panel - Clean, Premium Design
+   Opens from bottom right corner
+   ---------------------------------------- */
+.chatPanel {
+  position: fixed;
+  bottom: 82px;
+  right: 24px;
+  width: calc(100% - 48px);
+  max-width: 420px;
+  height: calc(100vh - 160px);
+  max-height: 580px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Expanded chat panel - almost full screen */
+.chatPanelExpanded {
+  bottom: 20px;
+  right: 20px;
+  left: 20px;
+  top: 80px;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  border-radius: 20px;
+  box-shadow: 0 25px 80px -12px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 768px) {
+  .chatPanelExpanded {
+    left: 60px;
+    right: 60px;
+    top: 80px;
+    bottom: 40px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .chatPanelExpanded {
+    left: 120px;
+    right: 120px;
+    top: 80px;
+    bottom: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatPanel {
+    left: 10px;
+    right: 10px;
+    bottom: 74px;
+    width: calc(100% - 20px);
+    max-width: none;
+    height: calc(100vh - 160px);
+    max-height: none;
+    border-radius: 12px;
+  }
+  
+  .chatPanelExpanded {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 0;
+  }
+}
+
+/* ----------------------------------------
+   Header - Minimal & Clean
+   ---------------------------------------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #ffffff;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #d4a04a;
+  box-shadow: 0 2px 8px rgba(212, 160, 74, 0.2);
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.headerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.headerBtn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* ----------------------------------------
+   Messages Area
+   ---------------------------------------- */
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #fafafa;
+  min-height: 0;
+}
+
+/* Ensure proper height when not in chatContent wrapper */
+.chatContent .messagesArea {
+  height: 100%;
+}
+
+/* ----------------------------------------
+   Welcome State
+   ---------------------------------------- */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  height: 100%;
+}
+
+.welcomeIcon {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  padding: 0;
+  overflow: visible;
+}
+
+.welcomeIconSvg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #d4a04a;
+  box-shadow: 0 4px 16px rgba(212, 160, 74, 0.25);
+}
+
+.welcomeText {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4b5563;
+  max-width: 320px;
+  margin: 0 0 24px 0;
+}
+
+/* ----------------------------------------
+   Simplified Welcome (no icon/text)
+   ---------------------------------------- */
+.welcomeSimple {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 100%;
+}
+
+.suggestionsTop {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.suggestionsLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+/* ----------------------------------------
+   Suggestions - Clean Pills
+   ---------------------------------------- */
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.suggestionBtn {
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #374151;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.suggestionBtn:hover {
+  background: #f9fafb;
+  border-color: #1a4d6e;
+  color: #1a4d6e;
+}
+
+/* ----------------------------------------
+   Messages
+   ---------------------------------------- */
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.messageIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid #d4a04a;
+  box-shadow: 0 2px 6px rgba(212, 160, 74, 0.15);
+}
+
+.messageContent {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.message.assistant .messageContent {
+  background: #ffffff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px 16px 16px 4px;
+}
+
+.message.user .messageContent {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border-radius: 16px 16px 4px 16px;
+}
+
+.messageContent p {
+  margin: 0 0 8px 0;
+}
+
+.messageContent p:last-child {
+  margin-bottom: 0;
+}
+
+.messageContent strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.message.user .messageContent strong {
+  color: #ffffff;
+}
+
+.messageContent :global(.bullet) {
+  color: #667eea;
+  margin-right: 4px;
+}
+
+.message.user .messageContent :global(.bullet) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Loading icon animation - subtle pulse for AL mascot */
+.loadingIcon {
+  animation: loadingPulse 1s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(0.95); 
+  }
+}
+
+/* Typing indicator */
+.typing {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing span:nth-child(1) { animation-delay: -0.32s; }
+.typing span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Error message */
+.errorMessage {
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #dc2626;
+}
+
+/* ----------------------------------------
+   Input Area - ChatGPT Style
+   ---------------------------------------- */
+.inputArea {
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid #f3f4f6;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 4px 4px 4px 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputWrapper:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input {
+  flex: 1;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  resize: none;
+  min-height: 24px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sendBtn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.sendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #d1d5db;
+}
+
+/* ----------------------------------------
+   Spinner
+   ---------------------------------------- */
+.spinnerIcon {
+  animation: spin 1s linear infinite;
+}
+
+/* ========================================
+   AL INTRO SCREEN
+   ======================================== */
+.introScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 30px;
+  background: linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%);
+  position: relative;
+}
+
+.introCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 50%;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.introCloseBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #374151;
+}
+
+.introContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 320px;
+}
+
+.introMascot {
+  margin-bottom: 28px;
+  animation: introFadeIn 0.5s ease;
+}
+
+.introMascotImg {
+  border: 4px solid #d4a04a !important;
+  box-shadow: 0 8px 32px rgba(212, 160, 74, 0.25), 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes introFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.introTitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.25;
+  margin: 0 0 16px 0;
+  animation: introFadeIn 0.5s ease 0.1s both;
+}
+
+.introTitleAccent {
+  color: #1a4d6e;
+  display: block;
+}
+
+.introDescription {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b7280;
+  margin: 0 0 28px 0;
+  animation: introFadeIn 0.5s ease 0.2s both;
+}
+
+.introStartBtn {
+  width: 100%;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #1a4d6e 0%, #2d6a8a 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.25);
+  animation: introFadeIn 0.5s ease 0.3s both;
+}
+
+.introStartBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26, 77, 110, 0.35);
+}
+
+.introStartBtn:active {
+  transform: translateY(0);
+}
+
+/* Checkbox styling */
+.introCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+  animation: introFadeIn 0.5s ease 0.4s both;
+}
+
+.introCheckbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkboxMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border: 2px solid #d1d5db;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.introCheckbox input:checked ~ .checkboxMark {
+  background: #1a4d6e;
+  border-color: #1a4d6e;
+}
+
+.checkboxMark::after {
+  content: '';
+  display: none;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.introCheckbox input:checked ~ .checkboxMark::after {
+  display: block;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.introCheckbox:hover .checkboxMark {
+  border-color: #9ca3af;
+}
+
+.introCheckbox:hover .checkboxLabel {
+  color: #4b5563;
+}
+
+/* ----------------------------------------
+   Sign In Required Screen
+   ---------------------------------------- */
+.signInScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 30px;
+  background: linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%);
+  position: relative;
+}
+
+.signInContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 320px;
+}
+
+.signInTitle {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.signInDescription {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b7280;
+  margin: 0 0 24px;
+}
+
+.signInFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: rgba(212, 160, 74, 0.08);
+  border-radius: 12px;
+}
+
+.signInFeature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #374151;
+  text-align: left;
+}
+
+.signInFeature svg {
+  flex-shrink: 0;
+  color: #d4a04a;
+}
+
+.signInBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #1a4d6e 0%, #0d3a54 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.25);
+}
+
+.signInBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 77, 110, 0.35);
+}
+
+.signInDivider {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 16px 0;
+}
+
+.joinLink {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #d4a04a;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.joinLink:hover {
+  color: #b8892f;
+  text-decoration: underline;
+}
+
+.signInNote {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 20px;
+}
+
+/* ----------------------------------------
+   Chat Content Layout (with sidebar)
+   ---------------------------------------- */
+.chatContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.chatContentExpanded {
+  flex-direction: row;
+}
+
+/* ----------------------------------------
+   Conversation History Sidebar
+   ---------------------------------------- */
+.historySidebar {
+  width: 280px;
+  min-width: 280px;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.historySidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.historySidebarHeader svg {
+  opacity: 0.7;
+}
+
+.newConversationBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 12px 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #1a4d6e 0%, #2d6a8a 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(26, 77, 110, 0.2);
+}
+
+.newConversationBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.3);
+}
+
+.conversationsList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 8px;
+}
+
+.loadingConversations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.noConversations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.noConversations svg {
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.noConversations p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.conversationItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 4px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.conversationItem:hover {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.conversationItemActive {
+  background: #ffffff;
+  border: 1px solid #d4a04a;
+  box-shadow: 0 2px 8px rgba(212, 160, 74, 0.15);
+}
+
+.conversationTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.conversationItemActive .conversationTitle {
+  color: #1a4d6e;
+}
+
+.conversationMeta {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 768px) {
+  .historySidebar {
+    width: 220px;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .chatContentExpanded {
+    flex-direction: column;
+  }
+  
+  .historySidebar {
+    width: 100%;
+    min-width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .conversationsList {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  
+  .conversationItem {
+    flex-shrink: 0;
+    width: auto;
+    min-width: 160px;
+    max-width: 200px;
+    margin-bottom: 0;
+  }
+}

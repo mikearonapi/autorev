@@ -944,8 +944,12 @@ function ExpertTrackInsights({ car }) {
 
 /**
  * Main Performance HUB component
+ * @param {Object} car - The car data
+ * @param {string} initialBuildId - Optional build ID to load
+ * @param {function} onChangeCar - Callback when Change Car is clicked (if null and hideChangeCar is false, redirects to /mod-planner)
+ * @param {boolean} hideChangeCar - If true, hides the Change Car button (useful in garage context)
  */
-export default function PerformanceHub({ car, initialBuildId = null, onChangeCar = null }) {
+export default function PerformanceHub({ car, initialBuildId = null, onChangeCar = null, hideChangeCar = false }) {
   // Global car selection integration
   const { selectCar, setUpgrades, clearCar, isHydrated } = useCarSelection();
   
@@ -1197,22 +1201,24 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               <div className={styles.priceRange}>
                 {tierInfo.priceRange || '$50-75K'}
               </div>
-              <button 
-                className={styles.changeCarButton}
-                onClick={() => {
-                  clearCar();
-                  if (onChangeCar) {
-                    onChangeCar();
-                  } else {
-                    window.history.pushState({}, '', '/mod-planner');
-                    window.location.href = '/mod-planner';
-                  }
-                }}
-                title="Select a different car"
-              >
-                <Icons.arrowLeft size={16} />
-                <span>Change Car</span>
-              </button>
+              {!hideChangeCar && (
+                <button 
+                  className={styles.changeCarButton}
+                  onClick={() => {
+                    clearCar();
+                    if (onChangeCar) {
+                      onChangeCar();
+                    } else {
+                      window.history.pushState({}, '', '/tuning-shop');
+                      window.location.href = '/tuning-shop';
+                    }
+                  }}
+                  title="Select a different car"
+                >
+                  <Icons.arrowLeft size={16} />
+                  <span>Change Car</span>
+                </button>
+              )}
             </div>
           </div>
           
@@ -1294,7 +1300,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       <main className={styles.hubMain}>
         {/* Title Row with Save Button */}
         <div className={styles.titleRow}>
-          <h2 className={styles.hubTitle}>Performance HUB</h2>
+          <h2 className={styles.hubTitle}>Upgrade Center</h2>
           <button
             className={styles.saveBuildButton}
             onClick={() => {
@@ -1580,10 +1586,10 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
         
         {/* Footer Links */}
         <div className={styles.hubFooter}>
-          <Link href="/how-mods-work" className={styles.footerLink}>
+          <Link href="/encyclopedia" className={styles.footerLink}>
             Learn About Modifications <Icons.chevronRight size={14} />
           </Link>
-          <Link href="/how-mods-work#systems" className={styles.footerLink}>
+          <Link href="/encyclopedia#systems" className={styles.footerLink}>
             Explore Vehicle Systems <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>

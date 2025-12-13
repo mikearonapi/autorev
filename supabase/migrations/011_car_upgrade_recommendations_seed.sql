@@ -441,3 +441,10 @@ UPDATE cars SET upgrade_recommendations = '{
 -- Verify the update
 -- ============================================================================
 -- SELECT slug, upgrade_recommendations->>'primaryFocus' as focus FROM cars WHERE upgrade_recommendations IS NOT NULL;
+
+
+
+
+
+
+
