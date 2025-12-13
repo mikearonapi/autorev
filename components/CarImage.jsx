@@ -122,8 +122,6 @@ export default function CarImage({
           }
           quality={variant === 'garage' ? 90 : 75}
           style={{ objectFit: 'cover' }}
-          // Prioritize hero and garage images
-          priority={(variant === 'hero' || variant === 'garage') && !lazy}
         />
       )}
     </div>
