@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -91,6 +91,7 @@ export default function Header() {
   const [suffixVisible, setSuffixVisible] = useState(true);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const pathname = usePathname();
+  const mobileNavRef = useRef(null);
   
   // Auth
   const { user, profile, isAuthenticated, logout } = useAuth();
@@ -124,10 +125,14 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent body scroll when menu is open
+  // Prevent body scroll when menu is open and reset menu scroll position
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
+      // Reset mobile nav scroll to top when opening
+      if (mobileNavRef.current) {
+        mobileNavRef.current.scrollTop = 0;
+      }
     } else {
       document.body.style.overflow = '';
     }
@@ -290,7 +295,10 @@ export default function Header() {
       </div>
 
       {/* Mobile Navigation Overlay */}
-      <div className={`${styles.mobileNav} ${isMenuOpen ? styles.mobileNavOpen : ''}`}>
+      <div 
+        ref={mobileNavRef}
+        className={`${styles.mobileNav} ${isMenuOpen ? styles.mobileNavOpen : ''}`}
+      >
         <nav className={styles.mobileNavLinks}>
           {navLinks.map(link => (
             link.subLinks ? (
@@ -346,6 +354,42 @@ export default function Header() {
             <SettingsIcon size={20} />
             <span>Settings</span>
           </Link>
+          
+          {/* Mobile Auth Buttons - Only shown when not authenticated */}
+          {!isAuthenticated && (
+            <div className={styles.mobileAuthButtons}>
+              <button 
+                className={styles.mobileLoginBtn}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  authModal.openSignIn();
+                }}
+              >
+                Log In
+              </button>
+              <Link 
+                href="/join" 
+                className={styles.mobileJoinBtn}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Join AutoRev
+              </Link>
+            </div>
+          )}
+          
+          {/* Sign Out for authenticated users */}
+          {isAuthenticated && (
+            <button 
+              className={styles.mobileSignOutBtn}
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleSignOut();
+              }}
+            >
+              <LogoutIcon size={20} />
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
       </div>
 

@@ -462,6 +462,87 @@
   color: var(--color-gray-900);
 }
 
+/* Mobile Auth Buttons */
+.mobileAuthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.mobileLoginBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 12px;
+  color: var(--color-gray-700);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileLoginBtn:hover,
+.mobileLoginBtn:active {
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+  background: rgba(26, 77, 110, 0.05);
+}
+
+.mobileJoinBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--sn-accent, #D4AF37);
+  border: none;
+  border-radius: 12px;
+  color: var(--color-gray-900, #171717);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileJoinBtn:hover,
+.mobileJoinBtn:active {
+  background: var(--sn-accent-light, #E6C54A);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+}
+
+/* Mobile Sign Out Button */
+.mobileSignOutBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: var(--space-md);
+  background: transparent;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileSignOutBtn:hover,
+.mobileSignOutBtn:active {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
 /* Mobile Menu Toggle - Touch-optimized */
 .menuToggle {
   display: flex;
