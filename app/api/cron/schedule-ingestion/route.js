@@ -35,6 +35,9 @@ export async function GET(request) {
       ? vendorKeysParam.split(',').map((s) => s.trim()).filter(Boolean)
       : ['performancebyie', 'eqtuning', 'bmptuning'];
 
+    const offPeakOnly = searchParams.get('offPeakOnly') !== 'false';
+    const spreadOverHours = Number(searchParams.get('spreadOverHours') || 24);
+
     const partsPriority = Number(searchParams.get('partsPriority') || 6);
     const knowledgePriority = Number(searchParams.get('knowledgePriority') || 7);
 
@@ -57,8 +60,8 @@ export async function GET(request) {
     const partsResult = await scrapeJobService.schedulePartsVendorIngestJobs({
       vendorKeys,
       priority: partsPriority,
-      offPeakOnly: true,
-      spreadOverHours: 24,
+      offPeakOnly,
+      spreadOverHours,
       payload: partsPayload,
     });
 
