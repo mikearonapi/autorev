@@ -39,16 +39,18 @@ export async function GET(request) {
     const knowledgePriority = Number(searchParams.get('knowledgePriority') || 7);
 
     const partsPayload = {
-      maxPages: Number(searchParams.get('maxPages') || 20),
+      // Keep each vendor job bounded for serverless execution; ingestion is incremental.
+      maxPages: Number(searchParams.get('maxPages') || 5),
       pageSize: Number(searchParams.get('pageSize') || 250),
       sleepMs: Number(searchParams.get('sleepMs') || 250),
-      maxProducts: Number(searchParams.get('maxProducts') || 2500),
+      maxProducts: Number(searchParams.get('maxProducts') || 400),
     };
 
     const knowledgePayload = {
       mode: 'internal_docs',
       includeDirs: ['docs', 'audit'],
-      maxFiles: Number(searchParams.get('maxFiles') || 40),
+      // Bound runtime; schedule can be repeated.
+      maxFiles: Number(searchParams.get('maxFiles') || 10),
       maxCharsPerFile: Number(searchParams.get('maxCharsPerFile') || 25000),
     };
 
