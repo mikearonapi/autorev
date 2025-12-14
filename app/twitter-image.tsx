@@ -173,9 +173,9 @@ export default async function Image() {
             }}
           >
             <span>98 Sports Cars</span>
-            <span style={{ color: BRAND.gold, fontSize: '18px' }}>◆</span>
+            <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>
             <span>$25K – $300K</span>
-            <span style={{ color: BRAND.gold, fontSize: '18px' }}>◆</span>
+            <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>
             <span>Miatas to GT3s</span>
           </p>
 

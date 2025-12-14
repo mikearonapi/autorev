@@ -116,6 +116,7 @@ const Icons = {
  * Build Summary Header Card
  */
 function BuildSummaryCard({ build, car, complexity }) {
+  const partsCount = (build.parts?.length || build.selectedParts?.length || 0);
   return (
     <div className={styles.summaryCard}>
       <div className={styles.summaryImage}>
@@ -135,6 +136,11 @@ function BuildSummaryCard({ build, car, complexity }) {
             <Icons.wrench size={16} />
             <span className={styles.summaryStatValue}>{build.upgrades?.length || 0}</span>
             <span className={styles.summaryStatLabel}>Upgrades</span>
+          </div>
+          <div className={styles.summaryStat}>
+            <Icons.list size={16} />
+            <span className={styles.summaryStatValue}>{partsCount}</span>
+            <span className={styles.summaryStatLabel}>Parts</span>
           </div>
           <div className={styles.summaryStat}>
             <Icons.bolt size={16} />
@@ -447,6 +453,52 @@ function InstallationNotesSection({ complexity }) {
 }
 
 /**
+ * Selected Parts Section - snapshot list (fitment/pricing)
+ */
+function PartsListSection({ parts }) {
+  if (!Array.isArray(parts) || parts.length === 0) return null;
+
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>
+        <Icons.list size={18} />
+        Selected Parts
+      </h3>
+
+      <div className={styles.partsGrid}>
+        {parts.map((p) => (
+          <div key={p.id} className={styles.partCard}>
+            <div className={styles.partHeader}>
+              <div className={styles.partName}>{p.name}</div>
+              {p.productUrl && (
+                <a className={styles.partLink} href={p.productUrl} target="_blank" rel="noopener noreferrer">
+                  View
+                </a>
+              )}
+            </div>
+            <div className={styles.partMeta}>
+              <span>{p.brandName || '—'}</span>
+              {p.partNumber && <span className={styles.dot}>•</span>}
+              {p.partNumber && <span>PN {p.partNumber}</span>}
+              {p.category && <span className={styles.dot}>•</span>}
+              {p.category && <span>{p.category}</span>}
+            </div>
+            <div className={styles.partBadges}>
+              {p.verified && <span className={styles.badgeVerified}>Verified</span>}
+              {typeof p.confidence === 'number' && <span className={styles.badge}>Conf {Math.round(p.confidence * 100)}%</span>}
+              {p.requiresTune && <span className={styles.badgeWarn}>Requires tune</span>}
+              {p.installDifficulty && <span className={styles.badge}>{p.installDifficulty}</span>}
+              {Number.isFinite(p.priceCents) && <span className={styles.badgePrice}>${Math.round(p.priceCents / 100).toLocaleString()}</span>}
+            </div>
+            {p.fitmentNotes && <div className={styles.partNotes}>{p.fitmentNotes}</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
  * Main BuildDetailView Component
  */
 export default function BuildDetailView({ build, car, onBack }) {
@@ -475,6 +527,39 @@ export default function BuildDetailView({ build, car, onBack }) {
     return validateUpgradeSelection(build.upgrades || [], car);
   }, [build.upgrades, car]);
 
+  const selectedParts = useMemo(() => {
+    const raw = build.parts || build.selectedParts || [];
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .map((p) => {
+        const id = p?.partId || p?.part_id || p?.id;
+        if (!id) return null;
+
+        const latestPrice = p?.latest_price || p?.latestPrice || null;
+        const fitment = p?.fitment || null;
+
+        return {
+          id,
+          name: p?.partName || p?.part_name || p?.name || 'Part',
+          brandName: p?.brandName || p?.brand_name || p?.brand || null,
+          partNumber: p?.partNumber || p?.part_number || null,
+          category: p?.category || null,
+          vendorName: p?.vendorName || p?.vendor_name || latestPrice?.vendor_name || null,
+          productUrl: p?.productUrl || p?.product_url || latestPrice?.product_url || null,
+          currency: p?.currency || latestPrice?.currency || null,
+          priceCents: Number.isFinite(Number(p?.priceCents))
+            ? Number(p.priceCents)
+            : (Number.isFinite(Number(p?.price_cents)) ? Number(p.price_cents) : (Number.isFinite(Number(latestPrice?.price_cents)) ? Number(latestPrice.price_cents) : null)),
+          requiresTune: typeof p?.requiresTune === 'boolean' ? p.requiresTune : (typeof p?.requires_tune === 'boolean' ? p.requires_tune : (typeof fitment?.requires_tune === 'boolean' ? fitment.requires_tune : null)),
+          installDifficulty: p?.installDifficulty || p?.install_difficulty || fitment?.install_difficulty || null,
+          verified: typeof p?.fitmentVerified === 'boolean' ? p.fitmentVerified : (typeof p?.fitment_verified === 'boolean' ? p.fitment_verified : (typeof fitment?.verified === 'boolean' ? fitment.verified : null)),
+          confidence: p?.fitmentConfidence ?? p?.fitment_confidence ?? fitment?.confidence ?? null,
+          fitmentNotes: p?.fitmentNotes || p?.fitment_notes || fitment?.fitment_notes || null,
+        };
+      })
+      .filter(Boolean);
+  }, [build.parts, build.selectedParts]);
+
   return (
     <div className={styles.container}>
       {/* Back Navigation */}
@@ -496,6 +581,9 @@ export default function BuildDetailView({ build, car, onBack }) {
         upgrades={build.upgrades || []} 
         upgradeDetails={upgradeDetails} 
       />
+
+      {/* Selected Parts */}
+      <PartsListSection parts={selectedParts} />
       
       {/* Tools Required */}
       <ToolsSection toolsData={toolsData} />

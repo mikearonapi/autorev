@@ -178,6 +178,26 @@ const UPGRADE_CATEGORIES = [
   { key: 'drivetrain', label: 'Drivetrain', icon: Icons.settings, color: '#f97316' },
 ];
 
+const PART_CATEGORIES = [
+  { value: '', label: 'All Categories' },
+  { value: 'intake', label: 'Intake' },
+  { value: 'exhaust', label: 'Exhaust' },
+  { value: 'tune', label: 'Tune' },
+  { value: 'forced_induction', label: 'Forced Induction' },
+  { value: 'cooling', label: 'Cooling' },
+  { value: 'suspension', label: 'Suspension' },
+  { value: 'brakes', label: 'Brakes' },
+  { value: 'wheels_tires', label: 'Wheels & Tires' },
+  { value: 'aero', label: 'Aero' },
+  { value: 'drivetrain', label: 'Drivetrain' },
+  { value: 'fuel_system', label: 'Fuel System' },
+  { value: 'engine_internal', label: 'Engine Internal' },
+  { value: 'electronics', label: 'Electronics' },
+  { value: 'fluids_filters', label: 'Fluids & Filters' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'other', label: 'Other' },
+];
+
 /**
  * Generate detailed AI recommendation based on car characteristics and database data
  * Returns an object with title and detailed content
@@ -501,6 +521,146 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [conflictNotification, setConflictNotification] = useState(null);
+
+  // -----------------------------------------------------------------------------
+  // Parts Finder (beta) - uses RLS-safe /api/parts/search
+  // -----------------------------------------------------------------------------
+  const [partsQuery, setPartsQuery] = useState('');
+  const [partsCategory, setPartsCategory] = useState('');
+  const [partsVerifiedOnly, setPartsVerifiedOnly] = useState(true);
+  const [partsLoading, setPartsLoading] = useState(false);
+  const [partsError, setPartsError] = useState(null);
+  const [partsResults, setPartsResults] = useState([]);
+  const [selectedParts, setSelectedParts] = useState([]);
+  const [graphLoading, setGraphLoading] = useState(false);
+  const [graphError, setGraphError] = useState(null);
+  const [graphEdges, setGraphEdges] = useState([]);
+
+  useEffect(() => {
+    setPartsQuery('');
+    setPartsCategory('');
+    setPartsVerifiedOnly(true);
+    setPartsError(null);
+    setPartsResults([]);
+    setSelectedParts([]);
+    setGraphError(null);
+    setGraphEdges([]);
+  }, [car.slug]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const q = partsQuery.trim();
+    const shouldFetch = q.length >= 2 || Boolean(partsCategory);
+
+    if (!shouldFetch) {
+      setPartsResults([]);
+      setPartsError(null);
+      return () => { cancelled = true; };
+    }
+
+    const timer = setTimeout(async () => {
+      setPartsLoading(true);
+      setPartsError(null);
+      try {
+        const url = new URL('/api/parts/search', window.location.origin);
+        if (q) url.searchParams.set('q', q);
+        url.searchParams.set('carSlug', car.slug);
+        if (partsCategory) url.searchParams.set('category', partsCategory);
+        if (partsVerifiedOnly) url.searchParams.set('verified', 'true');
+        url.searchParams.set('limit', '10');
+
+        const res = await fetch(url.toString());
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json?.error || 'Failed to search parts');
+
+        const results = Array.isArray(json?.results) ? json.results : [];
+        if (!cancelled) setPartsResults(results);
+      } catch (err) {
+        if (!cancelled) setPartsError(err.message || 'Failed to search parts');
+      } finally {
+        if (!cancelled) setPartsLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [car.slug, partsQuery, partsCategory, partsVerifiedOnly]);
+
+  const addPartToSelection = useCallback((part) => {
+    if (!part?.id) return;
+    setSelectedParts((prev) => {
+      if (prev.some((p) => p.id === part.id)) return prev;
+      return [...prev, part];
+    });
+  }, []);
+
+  const removeSelectedPart = useCallback((partId) => {
+    setSelectedParts((prev) => prev.filter((p) => p.id !== partId));
+  }, []);
+
+  // Fetch relationship edges for selected parts and compute warnings.
+  useEffect(() => {
+    let cancelled = false;
+    const ids = selectedParts.map((p) => p.id).filter(Boolean);
+    if (ids.length === 0) {
+      setGraphEdges([]);
+      setGraphError(null);
+      return () => { cancelled = true; };
+    }
+
+    const timer = setTimeout(async () => {
+      setGraphLoading(true);
+      setGraphError(null);
+      try {
+        const res = await fetch('/api/parts/relationships', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ partIds: ids }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json?.error || 'Failed to load part relationships');
+        if (!cancelled) setGraphEdges(Array.isArray(json?.edges) ? json.edges : []);
+      } catch (err) {
+        if (!cancelled) setGraphError(err.message || 'Failed to load part relationships');
+      } finally {
+        if (!cancelled) setGraphLoading(false);
+      }
+    }, 200);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [selectedParts]);
+
+  const buildChecks = useMemo(() => {
+    const selectedIds = new Set(selectedParts.map((p) => p.id));
+    const conflicts = [];
+    const missing = [];
+    const recommended = [];
+
+    const seen = new Set();
+    for (const e of graphEdges || []) {
+      const a = e?.part?.id;
+      const b = e?.related_part?.id;
+      if (!a || !b) continue;
+      const key = `${e.relation_type}:${a}:${b}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      if (e.relation_type === 'conflicts_with') {
+        if (selectedIds.has(a) && selectedIds.has(b)) conflicts.push(e);
+      } else if (e.relation_type === 'requires') {
+        if (selectedIds.has(a) && !selectedIds.has(b)) missing.push(e);
+      } else if (e.relation_type === 'recommended_with') {
+        if (selectedIds.has(a) && !selectedIds.has(b)) recommended.push(e);
+      }
+    }
+
+    return { conflicts, missing, recommended };
+  }, [graphEdges, selectedParts]);
   
   useEffect(() => {
     setSelectedModules([]);
@@ -514,6 +674,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
       const build = getBuildById(initialBuildId);
       if (build && build.carSlug === car.slug) {
         setSelectedModules(build.upgrades || []);
+        setSelectedParts(build.parts || build.selectedParts || []);
         setSelectedPackage('custom');
         setCurrentBuildId(initialBuildId);
       }
@@ -616,6 +777,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
         carName: car.name,
         name: buildName.trim(),
         selectedUpgrades: effectiveModules,
+        selectedParts,
         totalHpGain: hpGain,
         totalCostLow: totalCost.low,
         totalCostHigh: totalCost.high,
@@ -770,6 +932,166 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
             <ScoreBar label="Comfort" stockScore={profile.stockScores.drivability || 7} upgradedScore={profile.upgradedScores.drivability || 7} />
             <ScoreBar label="Reliability" stockScore={profile.stockScores.reliabilityHeat || 7.5} upgradedScore={profile.upgradedScores.reliabilityHeat || 7.5} />
             <ScoreBar label="Sound" stockScore={profile.stockScores.soundEmotion || 8} upgradedScore={profile.upgradedScores.soundEmotion || 8} />
+          </div>
+
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>Parts Finder (Beta)</h4>
+
+            <div className={styles.partsControls}>
+              <div className={styles.partsSearch}>
+                <input
+                  className={styles.partsInput}
+                  value={partsQuery}
+                  onChange={(e) => setPartsQuery(e.target.value)}
+                  placeholder="Search parts (brand, name, part #)…"
+                />
+              </div>
+              <div className={styles.partsFilters}>
+                <select className={styles.partsSelect} value={partsCategory} onChange={(e) => setPartsCategory(e.target.value)}>
+                  {PART_CATEGORIES.map((c) => (
+                    <option key={c.value || 'all'} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+                <label className={styles.partsCheckbox}>
+                  <input
+                    type="checkbox"
+                    checked={partsVerifiedOnly}
+                    onChange={(e) => setPartsVerifiedOnly(e.target.checked)}
+                  />
+                  <span>Verified only</span>
+                </label>
+              </div>
+            </div>
+
+            {partsError && <div className={styles.partsError}>{partsError}</div>}
+            {partsLoading && <div className={styles.partsHint}>Searching…</div>}
+            {!partsLoading && !partsError && partsResults.length === 0 && (
+              <div className={styles.partsHint}>
+                Type 2+ characters or pick a category to see fitment-aware parts for this car.
+              </div>
+            )}
+
+            {partsResults.length > 0 && (
+              <div className={styles.partsList}>
+                {partsResults.map((p) => {
+                  const price = p?.latest_price?.price_cents ? `$${(p.latest_price.price_cents / 100).toFixed(0)}` : null;
+                  const fit = p?.fitment || null;
+                  const conf = typeof fit?.confidence === 'number' ? Math.round(fit.confidence * 100) : null;
+                  const isSelected = selectedParts.some((sp) => sp.id === p.id);
+
+                  return (
+                    <div key={p.id} className={styles.partsItem}>
+                      <div className={styles.partsMain}>
+                        <div className={styles.partsName}>{p.name}</div>
+                        <div className={styles.partsMeta}>
+                          <span>{p.brand_name || '—'}</span>
+                          {p.part_number && <span className={styles.partsDot}>•</span>}
+                          {p.part_number && <span>PN {p.part_number}</span>}
+                          {p.category && <span className={styles.partsDot}>•</span>}
+                          {p.category && <span>{p.category}</span>}
+                        </div>
+                        <div className={styles.partsBadges}>
+                          {fit?.verified && <span className={styles.partsBadgeVerified}>Verified</span>}
+                          {conf !== null && <span className={styles.partsBadge}>Conf {conf}%</span>}
+                          {fit?.requires_tune && <span className={styles.partsBadgeWarn}>Requires tune</span>}
+                          {fit?.install_difficulty && <span className={styles.partsBadge}>{fit.install_difficulty}</span>}
+                          {price && <span className={styles.partsBadgePrice}>{price}</span>}
+                        </div>
+                      </div>
+                      <div className={styles.partsActions}>
+                        {p?.latest_price?.product_url && (
+                          <a className={styles.partsLink} href={p.latest_price.product_url} target="_blank" rel="noopener noreferrer">
+                            View
+                          </a>
+                        )}
+                        <button
+                          className={styles.partsAddBtn}
+                          onClick={() => addPartToSelection(p)}
+                          disabled={isSelected}
+                          title={isSelected ? 'Already added' : 'Add to selection'}
+                        >
+                          {isSelected ? 'Added' : 'Add'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {selectedParts.length > 0 && (
+              <div className={styles.partsSelected}>
+                <div className={styles.partsSelectedHeader}>
+                  <span>Selected parts ({selectedParts.length})</span>
+                  <span className={styles.partsSelectedNote}>Saving to builds is next.</span>
+                </div>
+                <div className={styles.partsSelectedList}>
+                  {selectedParts.map((p) => (
+                    <div key={p.id} className={styles.partsSelectedItem}>
+                      <span className={styles.partsSelectedName}>{p.name}</span>
+                      <button className={styles.partsRemoveBtn} onClick={() => removeSelectedPart(p.id)} title="Remove">
+                        <Icons.x size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className={styles.partsChecks}>
+                  <div className={styles.partsChecksHeader}>
+                    <span>Build checks</span>
+                    {graphLoading && <span className={styles.partsSelectedNote}>Checking…</span>}
+                  </div>
+
+                  {graphError && <div className={styles.partsError}>{graphError}</div>}
+
+                  {!graphLoading && !graphError && buildChecks.conflicts.length === 0 && buildChecks.missing.length === 0 && (
+                    <div className={styles.partsCheckOk}>No known conflicts/requirements detected (for selected parts).</div>
+                  )}
+
+                  {buildChecks.conflicts.length > 0 && (
+                    <div className={styles.partsCheckBlock}>
+                      <div className={styles.partsCheckTitleBad}>Conflicts</div>
+                      {buildChecks.conflicts.slice(0, 6).map((e) => (
+                        <div key={e.id} className={styles.partsCheckItem}>
+                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part A'}</span>
+                          <span className={styles.partsCheckArrow}>×</span>
+                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Part B'}</span>
+                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {buildChecks.missing.length > 0 && (
+                    <div className={styles.partsCheckBlock}>
+                      <div className={styles.partsCheckTitleWarn}>Requirements</div>
+                      {buildChecks.missing.slice(0, 8).map((e) => (
+                        <div key={e.id} className={styles.partsCheckItem}>
+                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part'}</span>
+                          <span className={styles.partsCheckArrow}>→</span>
+                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Required part'}</span>
+                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {buildChecks.recommended.length > 0 && (
+                    <div className={styles.partsCheckBlock}>
+                      <div className={styles.partsCheckTitle}>Recommended</div>
+                      {buildChecks.recommended.slice(0, 6).map((e) => (
+                        <div key={e.id} className={styles.partsCheckItem}>
+                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part'}</span>
+                          <span className={styles.partsCheckArrow}>+</span>
+                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Recommended part'}</span>
+                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

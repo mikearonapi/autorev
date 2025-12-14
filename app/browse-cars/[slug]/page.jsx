@@ -8,6 +8,7 @@ import { fetchCarBySlug } from '@/lib/carsClient.js';
 import { getCarBySlug as getLocalCarBySlug, tierConfig } from '@/data/cars.js';
 import { calculateScoreBreakdown, getScoreLabel, DEFAULT_WEIGHTS } from '@/lib/scoring.js';
 import { getCarHeroImage, preloadImage } from '@/lib/images.js';
+import { getAvailableUpgrades } from '@/lib/performance.js';
 import CarImage from '@/components/CarImage';
 import ScoringInfo from '@/components/ScoringInfo';
 import ExpertReviews from '@/components/ExpertReviews';
@@ -274,6 +275,11 @@ export default function CarDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Popular parts (fitment-aware) for this car platform
+  const [popularParts, setPopularParts] = useState([]);
+  const [popularPartsLoading, setPopularPartsLoading] = useState(false);
+  const [popularPartsError, setPopularPartsError] = useState(null);
   
   // Car selection integration
   const { selectedCar, selectCar, isHydrated } = useCarSelection();
@@ -334,6 +340,45 @@ export default function CarDetail() {
     loadCar();
     return () => { isMounted = false; };
   }, [slug]);
+
+  // Fetch popular parts when car changes (best-effort)
+  useEffect(() => {
+    let cancelled = false;
+    const carSlug = car?.slug;
+    if (!carSlug) return () => { cancelled = true; };
+
+    const load = async () => {
+      setPopularPartsLoading(true);
+      setPopularPartsError(null);
+      try {
+        const res = await fetch(`/api/parts/popular?carSlug=${encodeURIComponent(carSlug)}&limit=8`);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json?.error || 'Failed to load popular parts');
+        if (!cancelled) setPopularParts(Array.isArray(json?.results) ? json.results : []);
+      } catch (err) {
+        if (!cancelled) {
+          setPopularParts([]);
+          setPopularPartsError(err.message || 'Failed to load popular parts');
+        }
+      } finally {
+        if (!cancelled) setPopularPartsLoading(false);
+      }
+    };
+
+    load();
+    return () => { cancelled = true; };
+  }, [car?.slug]);
+
+  const fallbackPackages = useMemo(() => {
+    if (!car) return [];
+    try {
+      const available = getAvailableUpgrades(car);
+      const pkgs = Array.isArray(available?.packages) ? available.packages : [];
+      return pkgs.filter(p => p.key !== 'stock').slice(0, 3);
+    } catch {
+      return [];
+    }
+  }, [car]);
 
   // Calculate score breakdown
   const scoreBreakdown = useMemo(() => {
@@ -978,6 +1023,95 @@ export default function CarDetail() {
                 )}
               </section>
             )}
+
+            {/* Popular Parts (fitment-aware) */}
+            <section className={styles.contentSection}>
+              <div className={styles.sectionHeader}>
+                <Icons.layers size={22} />
+                <h2>Popular Parts</h2>
+              </div>
+              <p className={styles.sectionSubtext}>
+                Fitment-aware parts for this platform. Verified fitments show first; pricing is best-effort.
+              </p>
+
+              {popularPartsLoading && <div className={styles.partsHint}>Loading popular parts…</div>}
+              {popularPartsError && <div className={styles.partsHintMuted}>{popularPartsError}</div>}
+
+              {!popularPartsLoading && popularParts.length > 0 && (
+                <div className={styles.popularPartsGrid}>
+                  {popularParts.map((p) => {
+                    const fit = p?.fitment || null;
+                    const conf = typeof fit?.confidence === 'number' ? Math.round(fit.confidence * 100) : null;
+                    const price = p?.latest_price?.price_cents ? `$${Math.round(p.latest_price.price_cents / 100).toLocaleString()}` : null;
+                    return (
+                      <div key={p.id} className={styles.partCard}>
+                        <div className={styles.partCardHeader}>
+                          <div className={styles.partTitle}>{p.name}</div>
+                          {p?.latest_price?.product_url && (
+                            <a
+                              className={styles.partLink}
+                              href={p.latest_price.product_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View <Icons.externalLink size={14} />
+                            </a>
+                          )}
+                        </div>
+                        <div className={styles.partMeta}>
+                          <span>{p.brand_name || '—'}</span>
+                          {p.part_number && <span className={styles.dot}>•</span>}
+                          {p.part_number && <span>PN {p.part_number}</span>}
+                          {p.category && <span className={styles.dot}>•</span>}
+                          {p.category && <span>{p.category}</span>}
+                        </div>
+                        <div className={styles.partBadges}>
+                          {fit?.verified && <span className={styles.badgeVerified}>Verified</span>}
+                          {conf !== null && <span className={styles.badge}>Conf {conf}%</span>}
+                          {fit?.requires_tune && <span className={styles.badgeWarn}>Requires tune</span>}
+                          {fit?.install_difficulty && <span className={styles.badge}>{fit.install_difficulty}</span>}
+                          {price && <span className={styles.badgePrice}>{price}</span>}
+                        </div>
+                        {fit?.fitment_notes && <div className={styles.partNotes}>{fit.fitment_notes}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!popularPartsLoading && popularParts.length === 0 && (
+                <div className={styles.fallbackUpgrades}>
+                  <div className={styles.fallbackHeader}>
+                    <strong>No parts yet for this platform.</strong>
+                    <span>Here are the curated upgrade packages instead:</span>
+                  </div>
+                  {fallbackPackages.length > 0 ? (
+                    <div className={styles.fallbackPackagesGrid}>
+                      {fallbackPackages.map((pkg) => (
+                        <div key={pkg.key} className={styles.packageCard}>
+                          <div className={styles.packageName}>{pkg.name}</div>
+                          <div className={styles.packageDesc}>{pkg.description}</div>
+                          <div className={styles.packageMeta}>
+                            <span>{pkg.estimatedCost || '—'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={styles.partsHintMuted}>
+                      Explore upgrade packages in the Tuning Shop.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className={styles.partsCtaRow}>
+                <Link className={styles.partsCta} href={`/tuning-shop?car=${car.slug}`}>
+                  <Icons.tool size={18} />
+                  Open in Tuning Shop
+                </Link>
+              </div>
+            </section>
 
             {/* Major Service Costs */}
             {car.majorServiceCosts && (

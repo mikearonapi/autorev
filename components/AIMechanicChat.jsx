@@ -221,9 +221,28 @@ const Icons = {
 function formatResponse(text) {
   if (!text) return '';
   
-  let formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  const escapeHtml = (s) => String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  // Escape first to avoid injecting arbitrary HTML via model output.
+  let formatted = escapeHtml(text);
+
+  // Simple markdown-ish formatting
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   formatted = formatted.replace(/^• /gm, '<span class="bullet">•</span> ');
   formatted = formatted.replace(/^- /gm, '<span class="bullet">•</span> ');
+
+  // Turn enforced citations into clickable links.
+  // Expected: (Source: https://example.com/...)
+  formatted = formatted.replace(
+    /\(Source:\s*(https?:\/\/[^\s)]+)\)/gi,
+    (_m, url) => `(<a class="sourceLink" href="${url}" target="_blank" rel="noopener noreferrer">Source</a>)`
+  );
+
   formatted = formatted.replace(/\n\n/g, '</p><p>');
   formatted = formatted.replace(/\n/g, '<br/>');
   

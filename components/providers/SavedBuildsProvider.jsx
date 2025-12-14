@@ -59,6 +59,7 @@ function saveLocalBuilds(builds) {
  * @property {string} carName - Car display name
  * @property {string} name - Build name
  * @property {string[]} upgrades - Array of upgrade keys
+ * @property {Array} [parts] - Selected parts (snapshots)
  * @property {number} totalHpGain - Total HP gained
  * @property {number} totalCostLow - Low estimate cost
  * @property {number} totalCostHigh - High estimate cost
@@ -129,6 +130,30 @@ export function SavedBuildsProvider({ children }) {
           carName: build.car_name,
           name: build.build_name,
           upgrades: build.selected_upgrades || [],
+          parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+            id: p.id,
+            partId: p.part_id,
+            quantity: p.quantity,
+            partName: p.part_name,
+            brandName: p.brand_name,
+            partNumber: p.part_number,
+            category: p.category,
+            vendorName: p.vendor_name,
+            productUrl: p.product_url,
+            currency: p.currency,
+            priceCents: p.price_cents,
+            priceRecordedAt: p.price_recorded_at,
+            requiresTune: p.requires_tune,
+            installDifficulty: p.install_difficulty,
+            estimatedLaborHours: p.estimated_labor_hours,
+            fitmentVerified: p.fitment_verified,
+            fitmentConfidence: p.fitment_confidence,
+            fitmentNotes: p.fitment_notes,
+            fitmentSourceUrl: p.fitment_source_url,
+            metadata: p.metadata,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at,
+          })) : [],
           totalHpGain: build.total_hp_gain || 0,
           totalCostLow: build.total_cost_low || 0,
           totalCostHigh: build.total_cost_high || 0,
@@ -185,6 +210,7 @@ export function SavedBuildsProvider({ children }) {
           carName: data.car_name,
           name: data.build_name,
           upgrades: data.selected_upgrades || [],
+          parts: Array.isArray(buildData?.selectedParts) ? buildData.selectedParts : [],
           totalHpGain: data.total_hp_gain || 0,
           totalCostLow: data.total_cost_low || 0,
           totalCostHigh: data.total_cost_high || 0,
@@ -209,6 +235,7 @@ export function SavedBuildsProvider({ children }) {
       carName: buildData.carName,
       name: buildData.name || 'Untitled Build',
       upgrades: buildData.selectedUpgrades || buildData.upgrades || [],
+      parts: buildData.selectedParts || buildData.parts || [],
       totalHpGain: buildData.totalHpGain || 0,
       totalCostLow: buildData.totalCostLow || 0,
       totalCostHigh: buildData.totalCostHigh || 0,
@@ -238,6 +265,7 @@ export function SavedBuildsProvider({ children }) {
               ...build,
               name: data.build_name,
               upgrades: data.selected_upgrades || [],
+              parts: updates?.selectedParts ? updates.selectedParts : build.parts,
               totalHpGain: data.total_hp_gain || 0,
               totalCostLow: data.total_cost_low || 0,
               totalCostHigh: data.total_cost_high || 0,

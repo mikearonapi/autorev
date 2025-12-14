@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node scripts/migrate-and-seed.js",
+    "al:eval": "node scripts/al-eval-regression-tests.mjs",
     "youtube:pipeline": "node scripts/youtube-pipeline.js",
     "youtube:discover": "node scripts/youtube-discovery.js",
     "youtube:transcripts": "node scripts/youtube-transcripts.js",

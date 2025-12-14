@@ -41,9 +41,11 @@ import {
   formatMessagesForClaude,
 } from '@/lib/alConversationService';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
 
 // =============================================================================
 // ENHANCED AUTOMOTIVE SYSTEM PROMPT
@@ -69,14 +71,19 @@ You are deeply knowledgeable in:
 You have access to AutoRev's comprehensive database through these tools:
 - **search_cars**: Find cars by budget, power, type, or any criteria
 - **get_car_details**: Get full specs, scores, and ownership info for any car
+- **get_car_ai_context**: One-call enriched context (specs + safety + pricing + issues + top expert videos)
 - **get_expert_reviews**: Access AI-summaries from top YouTube automotive reviewers
 - **get_known_issues**: Look up common problems and reliability concerns
 - **compare_cars**: Side-by-side comparison with focus on specific aspects
 - **search_encyclopedia**: Find information about mods, car systems, build guides
 - **get_upgrade_info**: Detailed info about specific modifications
+- **search_parts**: Search the parts catalog and fitment (when available)
 - **get_maintenance_schedule**: Service intervals and specifications
 - **recommend_build**: Get upgrade recommendations for specific goals
+- **get_track_lap_times**: Fetch citeable track lap times for a car (when available)
+- **get_dyno_runs**: Fetch citeable dyno runs (baseline/modded) for a car (when available)
 - **search_forums**: (When available) Real owner experiences from forums
+- **search_knowledge**: Search AutoRev’s proprietary knowledge base for citeable excerpts
 
 ## Response Strategy
 1. **Always use tools first** - Don't rely on general knowledge when you have access to our verified database
@@ -84,6 +91,13 @@ You have access to AutoRev's comprehensive database through these tools:
 3. **Cite sources** - "According to Throttle House..." or "Our database shows..."
 4. **Consider the full picture** - Performance, reliability, ownership costs, real-world usability
 5. **Be honest about limitations** - If data isn't available, say so clearly
+
+## Tooling Priority (Performance + Accuracy)
+- For car-specific questions, prefer **get_car_ai_context** over multiple separate lookups.
+- For nuanced claims (reliability patterns, “is this worth it?”, “what do experts actually say?”), use **search_knowledge** and cite the source URLs returned.
+- For track performance (lap times), use **get_track_lap_times** and cite the source URLs returned.
+- For performance gains (dyno/whp/wtq), use **get_dyno_runs** (when available) and cite the source URLs returned.
+- For maintenance questions, use **get_maintenance_schedule**. If you know the user's exact **car_variant_key** (from garage context), pass it as **car_variant_key** to get variant-accurate specs.
 
 ## Automotive-Specific Guidelines
 
@@ -151,6 +165,10 @@ export async function POST(request) {
   }
 
   try {
+    const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
+    const internalEvalHeader = request.headers.get('x-internal-eval-key');
+    const isInternalEval = Boolean(INTERNAL_EVAL_KEY && internalEvalHeader && internalEvalHeader === INTERNAL_EVAL_KEY);
+
     const body = await request.json();
     const {
       message,
@@ -160,6 +178,8 @@ export async function POST(request) {
       currentPage,
       conversationId,
       history = [],
+      planId: requestedPlanId,
+      userVehicleOverride,
     } = body;
 
     if (!message) {
@@ -169,8 +189,8 @@ export async function POST(request) {
       );
     }
 
-    // REQUIRE AUTHENTICATION - AL is only for members
-    if (!userId) {
+    // REQUIRE AUTHENTICATION - AL is only for members (unless internal eval)
+    if (!isInternalEval && !userId) {
       return NextResponse.json({
         response: getAuthRequiredResponse(),
         requiresAuth: true,
@@ -178,26 +198,44 @@ export async function POST(request) {
       }, { status: 401 });
     }
 
-    // Check and potentially refill user's balance
-    if (await needsMonthlyRefill(userId)) {
-      await processMonthlyRefill(userId);
-    }
+    // Billing + balance (skipped for internal eval)
+    let userBalance = null;
+    let plan = null;
+    let costEstimate = null;
 
-    // Get user's current balance and plan
-    const userBalance = await getUserBalance(userId);
-    const plan = getPlan(userBalance.plan);
-    
-    // Estimate cost and check if user has enough balance
-    const costEstimate = estimateQueryCost(message, !!carSlug);
-    
-    // Check if user has enough balance (need at least ~1 cent for a minimal query)
-    if (userBalance.balanceCents < 1) {
-      return NextResponse.json({
-        response: getInsufficientBalanceResponse(userBalance),
-        insufficientBalance: true,
-        currentBalanceCents: userBalance.balanceCents,
-        estimatedCostCents: costEstimate.estimatedCostCentsMax,
-      });
+    if (!isInternalEval) {
+      // Check and potentially refill user's balance
+      if (await needsMonthlyRefill(userId)) {
+        await processMonthlyRefill(userId);
+      }
+
+      // Get user's current balance and plan
+      userBalance = await getUserBalance(userId);
+      plan = getPlan(userBalance.plan);
+
+      // Estimate cost and check if user has enough balance
+      costEstimate = estimateQueryCost(message, !!carSlug);
+
+      // Check if user has enough balance (need at least ~1 cent for a minimal query)
+      if (userBalance.balanceCents < 1) {
+        return NextResponse.json({
+          response: getInsufficientBalanceResponse(userBalance),
+          insufficientBalance: true,
+          currentBalanceCents: userBalance.balanceCents,
+          estimatedCostCents: costEstimate.estimatedCostCentsMax,
+        });
+      }
+    } else {
+      // Internal eval defaults to a permissive plan to allow full tool coverage.
+      const evalPlanId = requestedPlanId || 'tuner';
+      plan = getPlan(evalPlanId);
+      userBalance = {
+        plan: evalPlanId,
+        planName: plan.name,
+        balanceCents: 999999,
+        lastRefillDate: null,
+      };
+      costEstimate = { estimatedCostCentsMax: 0 };
     }
 
     // PARALLEL EXECUTION START
@@ -207,7 +245,7 @@ export async function POST(request) {
     // 2. Start building context (async, heavy) - we'll await this later
     const contextPromise = buildAIContext({
       carSlug,
-      userId,
+      userId: isInternalEval ? null : userId,
       vehicleId,
       currentPage,
       userMessage: message,
@@ -219,6 +257,9 @@ export async function POST(request) {
 
     // Create/Fetch conversation logic
     const conversationPromise = (async () => {
+      if (isInternalEval) {
+        return { id: null, messages: [] };
+      }
       if (conversationId) {
         const convResult = await getConversation(conversationId);
         if (convResult.success && convResult.messages) {
@@ -251,9 +292,18 @@ export async function POST(request) {
     // 5. Await context building
     const context = await contextPromise;
 
+    // Internal eval can inject a synthetic userVehicle to exercise tool logic (no DB dependency).
+    if (isInternalEval && userVehicleOverride && typeof userVehicleOverride === 'object') {
+      context.userVehicle = userVehicleOverride;
+    }
+
     // Wait for message storage to complete (ensure it's saved before we might error out later)
     await messageStoragePromise;
     // PARALLEL EXECUTION END
+
+    // Variant-aware maintenance: keep handy for tool input normalization.
+    const userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
+    const userMatchedCarVariantKey = context?.userVehicle?.matched_car_variant_key || null;
 
     // Format context for the system prompt
     const contextText = formatContextForAI(context);
@@ -284,12 +334,24 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
     }
 
     // Initial Claude API call with tools
+    const usageTotals = { inputTokens: 0, outputTokens: 0, callCount: 0 };
+    const toolTimings = [];
+
+    const trackUsage = (resp) => {
+      usageTotals.callCount += 1;
+      usageTotals.inputTokens += resp?.usage?.input_tokens || 0;
+      usageTotals.outputTokens += resp?.usage?.output_tokens || 0;
+    };
+
+    const cacheScopeKey = `${(isInternalEval ? 'internal-eval' : userId)}:${activeConversationId || 'no_conversation'}`;
+
     let response = await callClaudeWithTools({
       systemPrompt,
       messages,
       tools: availableTools,
       maxTokens: plan.maxResponseTokens,
     });
+    trackUsage(response);
 
     // Process tool calls iteratively
     const toolCallsUsed = [];
@@ -321,14 +383,41 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
         toolCallsUsed.push(toolUse.name);
         
         try {
-          const result = await executeToolCall(toolUse.name, toolUse.input);
+          // Harden tool inputs for variant-accurate maintenance:
+          // If the tool call is for get_maintenance_schedule, and the requested car_slug matches the user's
+          // matched car slug, inject car_variant_key when available (prevents LLM omissions).
+          const normalizedInput = (() => {
+            const input = toolUse.input && typeof toolUse.input === 'object' ? { ...toolUse.input } : {};
+            if (toolUse.name === 'get_maintenance_schedule') {
+              const hasVariantKey = Boolean(input.car_variant_key && String(input.car_variant_key).trim());
+              const requestedSlug = input.car_slug ? String(input.car_slug) : null;
+              const slugMatchesUser = Boolean(requestedSlug && userMatchedCarSlug && requestedSlug === userMatchedCarSlug);
+              if (!hasVariantKey && slugMatchesUser && userMatchedCarVariantKey) {
+                input.car_variant_key = userMatchedCarVariantKey;
+                input.__injected = { car_variant_key: true };
+              }
+            }
+            return input;
+          })();
+
+          const startedAt = Date.now();
+          const meta = { cacheHit: false };
+          const result = await executeToolCall(toolUse.name, normalizedInput, { correlationId, cacheScopeKey, meta });
+          const durationMs = Date.now() - startedAt;
+          toolTimings.push({
+            tool: toolUse.name,
+            durationMs,
+            cacheHit: Boolean(meta.cacheHit),
+            inputKeys: normalizedInput ? Object.keys(normalizedInput) : [],
+          });
+          console.info(`[AL:${correlationId}] tool=${toolUse.name} ms=${durationMs} cacheHit=${Boolean(meta.cacheHit)}`);
           toolResults.push({
             type: 'tool_result',
             tool_use_id: toolUse.id,
             content: JSON.stringify(result),
           });
         } catch (err) {
-          console.error(`[AL] Tool ${toolUse.name} failed:`, err);
+          console.error(`[AL:${correlationId}] Tool ${toolUse.name} failed:`, err);
           toolResults.push({
             type: 'tool_result',
             tool_use_id: toolUse.id,
@@ -350,30 +439,149 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
         tools: availableTools,
         maxTokens: plan.maxResponseTokens,
       });
+      trackUsage(response);
     }
 
     // Extract final text response
     const textBlocks = response.content.filter(block => block.type === 'text');
-    const aiResponse = textBlocks.map(block => block.text).join('\n');
+    let aiResponse = textBlocks.map(block => block.text).join('\n');
 
     if (!aiResponse) {
       throw new Error('No response from AI');
     }
 
-    // Get actual token usage from Claude API response
-    const inputTokens = response.usage?.input_tokens || 0;
-    const outputTokens = response.usage?.output_tokens || 0;
+    // -----------------------------------------------------------------------------
+    // STRICT CITATION POLICY ENFORCEMENT (best-effort)
+    // If query requires evidence-backed claims, ensure search_knowledge was used.
+    // -----------------------------------------------------------------------------
+    const evidenceNeed = (() => {
+      const q = String(message || '').toLowerCase();
+      const hasRel = /\b(reliab|reliability|common issues|known issues|problem|failure|recall|tsb)\b/.test(q);
+      const hasGains = /\b(hp gain|horsepower gain|torque gain|tq gain|dyno|whp|wtq|stage\s*[12]|boost|tune gains)\b/.test(q);
+      const hasCompliance = /\b(carb|emissions|smog|street legal|legal in california|epa|catless)\b/.test(q);
+      const hasLapTimes = /\b(lap time|laptime|lap record|nurburg|nurburgring|ring time)\b/.test(q);
+      return {
+        requires: hasRel || hasGains || hasCompliance || hasLapTimes,
+        hasRel,
+        hasGains,
+        hasCompliance,
+        hasLapTimes,
+      };
+    })();
+
+    if (evidenceNeed.requires) {
+      try {
+        let evidenceText = '';
+
+        // Prefer domain-specific evidence sources when available.
+        if (evidenceNeed.hasLapTimes && carSlug && isToolAvailable(userBalance.plan, 'get_track_lap_times')) {
+          const startedAt = Date.now();
+          const meta = { cacheHit: false };
+          const laps = await executeToolCall('get_track_lap_times', { car_slug: carSlug, limit: 8 }, { correlationId, cacheScopeKey, meta });
+          const durationMs = Date.now() - startedAt;
+          toolCallsUsed.push('get_track_lap_times');
+          toolTimings.push({ tool: 'get_track_lap_times', durationMs, cacheHit: Boolean(meta.cacheHit), inputKeys: ['car_slug', 'limit'] });
+          console.info(`[AL:${correlationId}] citation_enforcement get_track_lap_times ms=${durationMs} cacheHit=${Boolean(meta.cacheHit)}`);
+
+          evidenceText = Array.isArray(laps?.laps)
+            ? laps.laps
+                .filter(r => r?.source_url)
+                .slice(0, 8)
+                .map((r, idx) => `- [${idx + 1}] ${r.source_url}\n  ${r.track?.name || 'Track'}${r.track?.layout_key ? ` (${r.track.layout_key})` : ''}: ${r.lap_time_text || r.lap_time_ms} | tires: ${r.tires || 'unknown'} | stock: ${String(Boolean(r.is_stock))}`)
+                .join('\n')
+            : '';
+        }
+
+        if (!evidenceText && evidenceNeed.hasGains && carSlug && isToolAvailable(userBalance.plan, 'get_dyno_runs')) {
+          const startedAt = Date.now();
+          const meta = { cacheHit: false };
+          const dyno = await executeToolCall('get_dyno_runs', { car_slug: carSlug, limit: 8, include_curve: false }, { correlationId, cacheScopeKey, meta });
+          const durationMs = Date.now() - startedAt;
+          toolCallsUsed.push('get_dyno_runs');
+          toolTimings.push({ tool: 'get_dyno_runs', durationMs, cacheHit: Boolean(meta.cacheHit), inputKeys: ['car_slug', 'limit', 'include_curve'] });
+          console.info(`[AL:${correlationId}] citation_enforcement get_dyno_runs ms=${durationMs} cacheHit=${Boolean(meta.cacheHit)}`);
+
+          evidenceText = Array.isArray(dyno?.runs)
+            ? dyno.runs
+                .filter(r => r?.source_url)
+                .slice(0, 8)
+                .map((r, idx) => `- [${idx + 1}] ${r.source_url}\n  ${r.run_kind || 'run'} | ${r.dyno_type || 'dyno'} ${r.correction ? `(${r.correction})` : ''} | fuel: ${r.fuel || 'unknown'} | peaks: whp=${r.peaks?.peak_whp ?? '—'} wtq=${r.peaks?.peak_wtq ?? '—'} boost=${r.peaks?.boost_psi_max ?? '—'}`)
+                .join('\n')
+            : '';
+        }
+
+        if (!evidenceText && isToolAvailable(userBalance.plan, 'search_knowledge')) {
+          const startedAt = Date.now();
+          const meta = { cacheHit: false };
+          const knowledge = await executeToolCall('search_knowledge', {
+            query: message,
+            car_slug: carSlug || null,
+            limit: 6,
+          }, { correlationId, cacheScopeKey, meta });
+          const durationMs = Date.now() - startedAt;
+          toolCallsUsed.push('search_knowledge');
+          toolTimings.push({ tool: 'search_knowledge', durationMs, cacheHit: Boolean(meta.cacheHit), inputKeys: ['query', 'car_slug', 'limit'] });
+          console.info(`[AL:${correlationId}] citation_enforcement search_knowledge ms=${durationMs} cacheHit=${Boolean(meta.cacheHit)}`);
+
+          evidenceText = Array.isArray(knowledge?.results)
+            ? knowledge.results
+                .filter(r => r?.source?.url && r?.excerpt)
+                .slice(0, 6)
+                .map((r, idx) => `- [${idx + 1}] (${r.source.type || 'source'}) ${r.source.url}\n  ${String(r.excerpt).slice(0, 600)}`)
+                .join('\n')
+            : '';
+        }
+
+        const enforcementSystem = systemPrompt + `
+
+## STRICT CITATION POLICY (ENFORCED)
+- If the user asks about reliability patterns, exact gains, emissions legality, or other compliance/safety claims, you MUST base claims on the Evidence Excerpts below and cite URLs.
+- If evidence is insufficient, say so clearly and avoid making the claim.
+- Citations must be inline as (Source: <url>) near the sentence that relies on it.`;
+
+        const enforcementMessages = [
+          ...messages,
+          { role: 'assistant', content: aiResponse },
+          {
+            role: 'user',
+            content: `Revise your previous answer to comply with the STRICT CITATION POLICY.\n\nEvidence Excerpts:\n${evidenceText || '(No excerpts found; be conservative and state limitations.)'}\n`,
+          },
+        ];
+
+        const revised = await callClaudeWithTools({
+          systemPrompt: enforcementSystem,
+          messages: enforcementMessages,
+          tools: undefined,
+          maxTokens: plan.maxResponseTokens,
+        });
+        trackUsage(revised);
+
+        const revisedTextBlocks = (revised.content || []).filter(block => block.type === 'text');
+        const revisedText = revisedTextBlocks.map(block => block.text).join('\n').trim();
+        if (revisedText) aiResponse = revisedText;
+      } catch (err) {
+        console.warn(`[AL:${correlationId}] citation_enforcement_failed:`, err);
+        // Keep original aiResponse; don't hard-fail the user.
+      }
+    }
+
+    // Get actual token usage across ALL Claude calls
+    const inputTokens = usageTotals.inputTokens;
+    const outputTokens = usageTotals.outputTokens;
     const actualCostCents = calculateTokenCost(inputTokens, outputTokens);
     
     // Deduct from user's balance based on actual token usage
-    const deductResult = await deductUsage(userId, {
-      inputTokens,
-      outputTokens,
-      toolCalls: toolCallsUsed,
-    });
+    let deductResult = { success: true, newBalanceCents: userBalance.balanceCents };
+    if (!isInternalEval) {
+      deductResult = await deductUsage(userId, {
+        inputTokens,
+        outputTokens,
+        toolCalls: toolCallsUsed,
+      });
 
-    if (!deductResult.success && deductResult.error === 'insufficient_balance') {
-      console.warn('[AL] Balance check passed but deduction failed');
+      if (!deductResult.success && deductResult.error === 'insufficient_balance') {
+        console.warn('[AL] Balance check passed but deduction failed');
+      }
     }
 
     // Store assistant response in conversation history
@@ -391,13 +599,16 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
       });
     }
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       response: aiResponse,
       conversationId: activeConversationId,
       context: {
         carName: context.car?.name,
         domains,
         toolsUsed: toolCallsUsed,
+        correlationId,
+        toolTimings,
+        internalEval: isInternalEval,
       },
       usage: {
         costCents: actualCostCents,
@@ -407,8 +618,11 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
         inputTokens,
         outputTokens,
         toolCalls: toolCallsUsed.length,
+        claudeCalls: usageTotals.callCount,
       },
     });
+    res.headers.set('x-correlation-id', correlationId);
+    return res;
 
   } catch (err) {
     console.error('[AL] Error:', err);

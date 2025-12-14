@@ -511,6 +511,69 @@
   gap: 1px;
 }
 
+/* Variant match row (owned vehicles) */
+.variantMatchRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 2px 0 14px;
+  flex-wrap: wrap;
+}
+
+.variantMatchPill {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  min-width: 140px;
+}
+
+.variantMatchLabel {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.variantMatchValue {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+}
+
+.variantMatchLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 165, 100, 0.35);
+  background: rgba(196, 165, 100, 0.16);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.variantMatchLink:hover {
+  transform: translateY(-1px);
+  background: rgba(196, 165, 100, 0.22);
+  border-color: rgba(196, 165, 100, 0.5);
+}
+
+.variantMatchLink span {
+  font-size: 12px;
+}
+
 .specLabel {
   font-size: 9px;
   color: rgba(255, 255, 255, 0.6);

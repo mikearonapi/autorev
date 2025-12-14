@@ -792,6 +792,18 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.messageContent :global(.sourceLink) {
+  color: #1a4d6e;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.messageContent :global(.sourceLink):hover {
+  color: #0d3a54;
+}
+
 /* Mobile messages */
 @media (max-width: 480px) {
   .messages {

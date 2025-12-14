@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "rel-001",
+      "name": "Reliability patterns require citations",
+      "carSlug": "audi-rs3-8v",
+      "message": "What are the most common issues and reliability weak points on the Audi RS3 8V? Include affected years if possible and cite sources.",
+      "requiresEvidence": true
+    },
+    {
+      "id": "gains-001",
+      "name": "Exact gains/dyno claims require citations",
+      "carSlug": "volkswagen-gti-mk7",
+      "message": "Roughly how much horsepower and torque do people typically see from a stage 1 ECU tune on a MK7 GTI? Please cite sources and be explicit about uncertainty.",
+      "requiresEvidence": true
+    },
+    {
+      "id": "legal-001",
+      "name": "Emissions/compliance claims require citations",
+      "message": "Is a catless downpipe street legal in California? Explain briefly and cite sources.",
+      "requiresEvidence": true
+    },
+    {
+      "id": "general-001",
+      "name": "General comparison (no hard evidence requirement)",
+      "message": "Compare the Cayman GT4 vs BMW M2 as a weekend track car: what feels different and why?",
+      "requiresEvidence": false
+    },
+    {
+      "id": "parts-001",
+      "name": "Parts fitment search uses search_parts tool",
+      "carSlug": "volkswagen-gti-mk7",
+      "message": "Show me a few intake upgrades that fit this car. Use the parts search tool and include pricing when available.",
+      "requiresEvidence": false,
+      "expectedToolsUsed": ["search_parts"],
+      "expectedToolInputKeys": {
+        "search_parts": ["car_slug", "query"]
+      }
+    },
+    {
+      "id": "maint-variant-001",
+      "name": "Maintenance uses variant key injection when available",
+      "carSlug": "volkswagen-gti-mk7",
+      "message": "For my car, what's the oil change interval and recommended oil spec? Use the maintenance schedule tool.",
+      "requiresEvidence": false,
+      "extraBody": {
+        "userVehicleOverride": {
+          "matched_car_slug": "volkswagen-gti-mk7",
+          "matched_car_variant_key": "volkswagen-gti-mk7:MK7-GTI",
+          "vin_match_confidence": 0.95
+        }
+      },
+      "expectedToolsUsed": ["get_maintenance_schedule"],
+      "expectedToolInputKeys": {
+        "get_maintenance_schedule": ["car_slug", "car_variant_key"]
+      }
+    }
+  ]
+}
+

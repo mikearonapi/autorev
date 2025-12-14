@@ -109,6 +109,11 @@ function transformVehicle(row) {
     model: row.model,
     trim: row.trim,
     matchedCarSlug: row.matched_car_slug,
+    matchedCarVariantId: row.matched_car_variant_id,
+    matchedCarVariantKey: row.matched_car_variant_key,
+    vinMatchConfidence: row.vin_match_confidence,
+    vinMatchNotes: row.vin_match_notes,
+    vinMatchedAt: row.vin_matched_at,
     nickname: row.nickname,
     color: row.color,
     mileage: row.mileage,
@@ -230,6 +235,50 @@ export function OwnedVehiclesProvider({ children }) {
       if (!error && data) {
         const transformed = transformVehicle(data);
         dispatch({ type: ActionTypes.ADD, payload: transformed });
+
+        // Best-effort: resolve a precise car_variant for this vehicle (even without VIN).
+        // This makes downstream fitment/maintenance/recalls much more accurate.
+        try {
+          const res = await fetch('/api/vin/resolve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              decoded: {
+                success: true,
+                year: transformed.year,
+                make: transformed.make,
+                model: transformed.model,
+                trim: transformed.trim,
+                driveType: null,
+                transmission: null,
+              },
+            }),
+          });
+          const json = await res.json();
+          const match = json?.match || null;
+          if (match?.carVariantId) {
+            // Only accept carSlug overwrite if we don't already have one.
+            const nextCarSlug = transformed.matchedCarSlug || match.carSlug;
+            // If we *do* have a matchedCarSlug, ensure the resolver agrees before applying variant.
+            const canApplyVariant = !transformed.matchedCarSlug || transformed.matchedCarSlug === match.carSlug;
+            if (canApplyVariant) {
+              const { data: updatedRow, error: updErr } = await updateUserVehicle(user.id, transformed.id, {
+                matched_car_slug: nextCarSlug,
+                matched_car_variant_id: match.carVariantId,
+                matched_car_variant_key: match.carVariantKey,
+                vin_match_confidence: match.confidence,
+                vin_match_notes: Array.isArray(match.reasons) ? match.reasons.join(', ') : null,
+                vin_matched_at: new Date().toISOString(),
+              });
+              if (!updErr && updatedRow) {
+                dispatch({ type: ActionTypes.UPDATE, payload: transformVehicle(updatedRow) });
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[OwnedVehiclesProvider] VIN/variant auto-resolve failed:', err);
+        }
+
         return { data: transformed, error: null };
       }
 
@@ -276,6 +325,11 @@ export function OwnedVehiclesProvider({ children }) {
         model: updates.model,
         trim: updates.trim,
         matched_car_slug: updates.matchedCarSlug,
+        matched_car_variant_id: updates.matchedCarVariantId,
+        matched_car_variant_key: updates.matchedCarVariantKey,
+        vin_match_confidence: updates.vinMatchConfidence,
+        vin_match_notes: updates.vinMatchNotes,
+        vin_matched_at: updates.vinMatchedAt,
         nickname: updates.nickname,
         color: updates.color,
         mileage: updates.mileage,
@@ -284,6 +338,8 @@ export function OwnedVehiclesProvider({ children }) {
         is_primary: updates.isPrimary,
         ownership_status: updates.ownershipStatus,
         notes: updates.notes,
+        vin_decode_data: updates.vinDecodeData,
+        vin_decoded_at: updates.vinDecodeData ? new Date().toISOString() : undefined,
       };
 
       // Remove undefined values

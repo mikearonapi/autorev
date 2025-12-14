@@ -30,7 +30,7 @@ export async function GET(request, { params }) {
       plan: balanceInfo.plan,
       planName: balanceInfo.planName,
       monthlyAllocationCents: balanceInfo.monthlyAllocationCents,
-      monthlyAllocationFormatted: formatCentsAsDollars(balanceInfo.monthlyAllocationCents),
+      monthlyAllocationFormatted: balanceInfo.isUnlimited ? '∞' : formatCentsAsDollars(balanceInfo.monthlyAllocationCents),
       spentThisMonthCents: balanceInfo.spentThisMonthCents || 0,
       spentThisMonthFormatted: formatCentsAsDollars(balanceInfo.spentThisMonthCents || 0),
       purchasedCents: balanceInfo.purchasedCents || 0,
@@ -39,6 +39,8 @@ export async function GET(request, { params }) {
       messagesThisMonth: balanceInfo.messagesThisMonth || 0,
       tank: balanceInfo.tank,
       lastRefillDate: balanceInfo.lastRefillDate,
+      // Unlimited/Founder status
+      isUnlimited: balanceInfo.isUnlimited || false,
       // Legacy compatibility (for old UI during transition)
       credits: balanceInfo.balanceCents,
       usedThisMonth: Math.round(balanceInfo.spentThisMonthCents || 0),

@@ -637,6 +637,209 @@
   white-space: nowrap;
 }
 
+.sectionSubtext {
+  margin: -0.6rem 0 1.1rem;
+  color: var(--color-gray-600);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Popular Parts (fitment-aware)
+   -------------------------------------------------------------------------- */
+.popularPartsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .popularPartsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.partCard {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.partCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.partTitle {
+  font-weight: 700;
+  color: var(--color-gray-900);
+  line-height: 1.2;
+}
+
+.partLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--sn-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.partLink:hover {
+  text-decoration: underline;
+}
+
+.partMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  color: var(--color-gray-600);
+  font-size: 0.85rem;
+  margin-bottom: 0.7rem;
+}
+
+.dot {
+  opacity: 0.6;
+}
+
+.partBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.55rem;
+}
+
+.badge,
+.badgeVerified,
+.badgeWarn,
+.badgePrice {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--color-gray-700);
+}
+
+.badgeVerified {
+  border-color: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.badgeWarn {
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.badgePrice {
+  border-color: rgba(196, 165, 100, 0.35);
+  background: rgba(196, 165, 100, 0.16);
+  color: #7c5c12;
+}
+
+.partNotes {
+  color: var(--color-gray-700);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.partsHint {
+  color: var(--color-gray-700);
+  font-weight: 600;
+  padding: 0.4rem 0;
+}
+
+.partsHintMuted {
+  color: var(--color-gray-600);
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+}
+
+.fallbackUpgrades {
+  border: 1px dashed rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.fallbackHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.9rem;
+  color: var(--color-gray-700);
+}
+
+.fallbackPackagesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .fallbackPackagesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.packageCard {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: #fff;
+}
+
+.packageName {
+  font-weight: 800;
+  color: var(--color-gray-900);
+  margin-bottom: 0.35rem;
+}
+
+.packageDesc {
+  color: var(--color-gray-700);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.packageMeta {
+  color: var(--color-gray-600);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.partsCtaRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.partsCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.partsCta:hover {
+  filter: brightness(0.97);
+}
+
 /* --------------------------------------------------------------------------
    Story Section
    -------------------------------------------------------------------------- */

@@ -17,6 +17,18 @@
   ],
   "crons": [
     {
+      "path": "/api/cron/process-scrape-jobs?max=3&delay=15000",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/process-scrape-jobs?max=10&delay=5000",
+      "schedule": "0 3 * * 0"
+    },
+    {
+      "path": "/api/cron/schedule-ingestion",
+      "schedule": "0 2 * * 0"
+    },
+    {
       "path": "/api/cron/youtube-enrichment",
       "schedule": "0 4 * * 1"
     }

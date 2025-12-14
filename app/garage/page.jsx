@@ -30,6 +30,7 @@ import ServiceLogModal from '@/components/ServiceLogModal';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
 import { carData } from '@/data/cars.js';
 import { calculateWeightedScore } from '@/lib/scoring';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog } from '@/lib/maintenanceService';
 import { decodeVIN } from '@/lib/vinDecoder';
 import { fetchAllSafetyData, getSafetySummary } from '@/lib/nhtsaSafetyService';
@@ -225,6 +226,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   // Maintenance data for owned vehicles
   const [maintenanceData, setMaintenanceData] = useState({ specs: null, issues: [], intervals: [] });
   const [loadingMaintenance, setLoadingMaintenance] = useState(false);
+
+  // Variant match display (resolve display_name from car_variants when available)
+  const [variantMeta, setVariantMeta] = useState(null);
   
   // Safety data (recalls, complaints, ratings)
   const [safetyData, setSafetyData] = useState({ recalls: [], complaints: [], investigations: [], safetyRatings: null });
@@ -250,10 +254,11 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       
       const carSlug = item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug;
       if (!carSlug) return;
+      const carVariantKey = item?.vehicle?.matchedCarVariantKey || null;
       
       setLoadingMaintenance(true);
       try {
-        const data = await fetchAllMaintenanceData(carSlug);
+        const data = await fetchAllMaintenanceData(carSlug, { carVariantKey });
         setMaintenanceData(data);
       } catch (err) {
         console.error('[HeroVehicleDisplay] Error loading maintenance:', err);
@@ -263,7 +268,37 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     };
     
     loadMaintenanceData();
-  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
+  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug, item?.vehicle?.matchedCarVariantKey]);
+
+  // Resolve matched variant display_name for UI (best-effort)
+  useEffect(() => {
+    const loadVariantMeta = async () => {
+      if (type !== 'mycars') return;
+      const variantKey = item?.vehicle?.matchedCarVariantKey || null;
+      if (!variantKey) {
+        setVariantMeta(null);
+        return;
+      }
+      if (!isSupabaseConfigured || !supabase) {
+        setVariantMeta({ variant_key: variantKey, display_name: null });
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('car_variants')
+          .select('variant_key,display_name,model_year_start,model_year_end,trim,drivetrain,transmission,engine')
+          .eq('variant_key', variantKey)
+          .maybeSingle();
+        if (error) throw error;
+        setVariantMeta(data || { variant_key: variantKey, display_name: null });
+      } catch (err) {
+        setVariantMeta({ variant_key: variantKey, display_name: null });
+      }
+    };
+
+    loadVariantMeta();
+  }, [type, item?.vehicle?.matchedCarVariantKey]);
   
   // Fetch safety data when vehicle info is available
   useEffect(() => {
@@ -327,6 +362,44 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         vehicleType: decoded.vehicleType,
         raw: decoded.raw,
       });
+
+      // Persist VIN decode + attempt to resolve an exact car_variant match
+      if (isOwnedVehicle && item?.vehicle?.id && typeof onUpdateVehicle === 'function') {
+        try {
+          const res = await fetch('/api/vin/resolve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              decoded: {
+                success: true,
+                year: decoded.year,
+                make: decoded.make,
+                model: decoded.model,
+                trim: decoded.trim,
+                series: decoded.series,
+                driveType: decoded.driveType,
+                transmission: decoded.transmission,
+              },
+            }),
+          });
+          const json = await res.json();
+          const match = json?.match || null;
+
+          await onUpdateVehicle(item.vehicle.id, {
+            vin: decoded.vin,
+            vinDecodeData: decoded.raw,
+            // Do not override a manually-selected car slug unless missing.
+            matchedCarSlug: item.vehicle.matchedCarSlug || match?.carSlug,
+            matchedCarVariantId: match?.carVariantId || null,
+            matchedCarVariantKey: match?.carVariantKey || null,
+            vinMatchConfidence: match?.confidence ?? null,
+            vinMatchNotes: Array.isArray(match?.reasons) ? match.reasons.join(', ') : null,
+            vinMatchedAt: new Date().toISOString(),
+          });
+        } catch (err) {
+          console.warn('[VIN Lookup] Failed to persist VIN/variant match:', err);
+        }
+      }
       
       // Also fetch safety data with the decoded VIN
       if (decoded.year && decoded.make && decoded.model) {
@@ -545,6 +618,37 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               )}
             </div>
 
+            {/* Variant match summary + quick link to reference */}
+            {isOwnedVehicle && (
+              <div className={styles.variantMatchRow}>
+                <div className={styles.variantMatchPill} title={item?.vehicle?.matchedCarVariantKey || 'Not matched'}>
+                  <span className={styles.variantMatchLabel}>Variant</span>
+                  <span className={styles.variantMatchValue}>
+                    {variantMeta?.display_name || item?.vehicle?.matchedCarVariantKey || 'Not matched'}
+                  </span>
+                </div>
+                <div className={styles.variantMatchPill}>
+                  <span className={styles.variantMatchLabel}>Match</span>
+                  <span className={styles.variantMatchValue}>
+                    {typeof item?.vehicle?.vinMatchConfidence === 'number'
+                      ? `${Math.round(item.vehicle.vinMatchConfidence * 100)}%`
+                      : '—'}
+                  </span>
+                </div>
+                <button
+                  className={styles.variantMatchLink}
+                  onClick={() => {
+                    setPanelState('details');
+                    setDetailsView('reference');
+                  }}
+                  title="Open Owner Reference"
+                >
+                  <Icons.book size={14} />
+                  <span>Reference</span>
+                </button>
+              </div>
+            )}
+
             {/* Action Row - See Details + Action Icons */}
             <div className={styles.expandedActionsRow}>
               {/* See Details button */}
@@ -712,6 +816,35 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   >
                     {vinLookupLoading ? 'Loading...' : 'Decode VIN'}
                   </button>
+                </div>
+
+                {/* Variant Match Info */}
+                <div className={styles.detailBlock}>
+                  <h4 className={styles.detailBlockTitle}>Vehicle Match</h4>
+                  <div className={styles.detailBlockItems}>
+                    <div className={styles.detailBlockItem}>
+                      <span>Matched Car</span>
+                      <span>{item?.vehicle?.matchedCarSlug || item?.matchedCar?.slug || 'N/A'}</span>
+                    </div>
+                    <div className={styles.detailBlockItem}>
+                      <span>Variant</span>
+                      <span>{variantMeta?.display_name || item?.vehicle?.matchedCarVariantKey || 'Not matched'}</span>
+                    </div>
+                    <div className={styles.detailBlockItem}>
+                      <span>Confidence</span>
+                      <span>
+                        {typeof item?.vehicle?.vinMatchConfidence === 'number'
+                          ? `${Math.round(item.vehicle.vinMatchConfidence * 100)}%`
+                          : '—'}
+                      </span>
+                    </div>
+                    {item?.vehicle?.vinMatchNotes && (
+                      <div className={styles.detailBlockItem}>
+                        <span>Notes</span>
+                        <span>{item.vehicle.vinMatchNotes}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Main Reference Grid - Same layout as Details */}
@@ -1428,7 +1561,7 @@ function GarageContent() {
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const { builds, deleteBuild, getBuildById } = useSavedBuilds();
-  const { vehicles, addVehicle, removeVehicle } = useOwnedVehicles();
+  const { vehicles, addVehicle, updateVehicle, removeVehicle } = useOwnedVehicles();
 
   // Reset selection when tab changes
   useEffect(() => {
@@ -1699,6 +1832,7 @@ function GarageContent() {
                 onAction={handleBuildAction}
                 onAddToMyCars={handleAddFavoriteToMyCars}
                 isInMyCars={activeTab === 'favorites' && currentItem ? isInMyCars(currentItem.slug) : false}
+                onUpdateVehicle={updateVehicle}
               />
 
               {/* Thumbnail Strip at Bottom */}

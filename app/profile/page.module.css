@@ -488,6 +488,80 @@
 }
 
 /* ============================================
+   FOUNDER BANNER - Unlimited Access
+   ============================================ */
+
+.founderBanner {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.08) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.founderBanner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.founderBanner::after {
+  content: '♾️';
+  position: absolute;
+  top: 50%;
+  right: var(--space-lg);
+  transform: translateY(-50%);
+  font-size: 3rem;
+  opacity: 0.15;
+}
+
+.founderBannerContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  position: relative;
+  z-index: 1;
+}
+
+.founderIcon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.founderTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: #a855f7;
+  margin: 0 0 var(--space-2xs);
+}
+
+.founderMessage {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .founderBannerContent {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .founderBanner::after {
+    display: none;
+  }
+}
+
+/* ============================================
    FORMS
    ============================================ */
 

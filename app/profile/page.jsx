@@ -215,6 +215,7 @@ export default function ProfilePage() {
     plan: 'free',
     tank: { percentage: 100, status: { label: 'Full', color: '#22c55e' } },
     messagesThisMonth: 0,
+    isUnlimited: false,
   });
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -253,20 +254,24 @@ export default function ProfilePage() {
           const fuel = data.balanceCents || 0;
           const monthlyFuel = data.monthlyAllocationCents || plan.allocation.monthlyCents;
           const spentFuel = data.spentThisMonthCents || 0;
+          const isUnlimited = data.isUnlimited || false;
           
           setAlBalance({
             fuel,
             monthlyFuel,
             spentFuel,
             plan: data.plan || currentPlan,
-            planName: data.planName || plan.name,
+            planName: isUnlimited ? 'Founder' : (data.planName || plan.name),
             tank: data.tank || {
-              percentage: 100,
-              status: { label: 'Full', color: '#22c55e' },
-              label: plan.tankLabel,
+              percentage: isUnlimited ? 100 : 100,
+              status: isUnlimited 
+                ? { label: 'Unlimited', color: '#8b5cf6' }
+                : { label: 'Full', color: '#22c55e' },
+              label: isUnlimited ? 'Founder Tank ♾️' : plan.tankLabel,
             },
             purchasedFuel: data.purchasedCents || 0,
             messagesThisMonth: data.messagesThisMonth || 0,
+            isUnlimited,
           });
         } else {
           console.warn('Failed to fetch balance, using defaults');
@@ -559,9 +564,23 @@ export default function ProfilePage() {
                 AL Fuel
               </h2>
               
-              <p className={styles.sectionDescription}>
-                Fuel powers your conversations with AL. Simple questions use less, detailed research uses more.
-              </p>
+              {alBalance.isUnlimited ? (
+                <div className={styles.founderBanner}>
+                  <div className={styles.founderBannerContent}>
+                    <span className={styles.founderIcon}>🎉</span>
+                    <div>
+                      <h3 className={styles.founderTitle}>Unlimited AI/AL Access</h3>
+                      <p className={styles.founderMessage}>
+                        AutoRev has granted you unlimited AI/AL usage. Thanks for being a founder!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className={styles.sectionDescription}>
+                  Fuel powers your conversations with AL. Simple questions use less, detailed research uses more.
+                </p>
+              )}
 
               {/* Fuel Tank Visualization */}
               <div className={styles.gasTankContainer}>
@@ -646,41 +665,43 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Top Up Fuel */}
-              <div className={styles.purchaseSection}>
-                <h3>
-                  <Icons.plus size={18} />
-                  Top Up Fuel
-                </h3>
-                
-                <div className={styles.creditPackages}>
-                  {AL_TOPUP_PACKAGES.map(pkg => (
-                    <div 
-                      key={pkg.id} 
-                      className={`${styles.creditPackage} ${pkg.popular ? styles.creditPackagePopular : ''}`}
-                    >
-                      {pkg.popular && <span className={styles.popularTag}>Popular</span>}
-                      {pkg.savings && <span className={styles.savingsTag}>{pkg.savings}</span>}
-                      
-                      <div className={styles.packageName}>{pkg.label}</div>
-                      <div className={styles.packageCredits}>{pkg.cents} fuel</div>
-                      <div className={styles.packagePrice}>${pkg.price.toFixed(2)}</div>
-                      <p className={styles.packageDescription}>{pkg.description}</p>
-                      
-                      <button
-                        className={styles.purchaseButton}
-                        onClick={() => handlePurchaseTopup(pkg.id)}
-                        disabled={isPurchasing}
+              {/* Top Up Fuel - Hide for unlimited users */}
+              {!alBalance.isUnlimited && (
+                <div className={styles.purchaseSection}>
+                  <h3>
+                    <Icons.plus size={18} />
+                    Top Up Fuel
+                  </h3>
+                  
+                  <div className={styles.creditPackages}>
+                    {AL_TOPUP_PACKAGES.map(pkg => (
+                      <div 
+                        key={pkg.id} 
+                        className={`${styles.creditPackage} ${pkg.popular ? styles.creditPackagePopular : ''}`}
                       >
-                        {isPurchasing ? '...' : 'Buy'}
-                      </button>
-                    </div>
-                  ))}
+                        {pkg.popular && <span className={styles.popularTag}>Popular</span>}
+                        {pkg.savings && <span className={styles.savingsTag}>{pkg.savings}</span>}
+                        
+                        <div className={styles.packageName}>{pkg.label}</div>
+                        <div className={styles.packageCredits}>{pkg.cents} fuel</div>
+                        <div className={styles.packagePrice}>${pkg.price.toFixed(2)}</div>
+                        <p className={styles.packageDescription}>{pkg.description}</p>
+                        
+                        <button
+                          className={styles.purchaseButton}
+                          onClick={() => handlePurchaseTopup(pkg.id)}
+                          disabled={isPurchasing}
+                        >
+                          {isPurchasing ? '...' : 'Buy'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Plan Upgrade Prompt */}
-              {currentPlan === 'free' && (
+              {/* Plan Upgrade Prompt - Hide for unlimited users */}
+              {currentPlan === 'free' && !alBalance.isUnlimited && (
                 <div className={styles.upgradePrompt}>
                   <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
                   <div>

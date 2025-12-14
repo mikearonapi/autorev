@@ -1,0 +1,263 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.header {
+  margin-bottom: 18px;
+}
+
+.header h1 {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+  margin: 14px 0 12px;
+}
+
+@media (max-width: 980px) {
+  .controls { grid-template-columns: 1fr; }
+}
+
+.control label {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 6px;
+}
+
+.control input,
+.control select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  outline: none;
+}
+
+.control button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  color: white;
+  cursor: pointer;
+}
+
+.control button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.bulkBar {
+  display: grid;
+  grid-template-columns: 260px 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin: 10px 0 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 980px) {
+  .bulkBar { grid-template-columns: 1fr; }
+}
+
+.bulkLeft {}
+.bulkTitle {
+  font-size: 13px;
+  font-weight: 700;
+}
+.bulkHint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.bulkFields {
+  display: grid;
+  grid-template-columns: 140px 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 980px) {
+  .bulkFields { grid-template-columns: 1fr; }
+}
+
+.bulkField label {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.bulkField input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  outline: none;
+}
+
+.bulkButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.bulkButtons button {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  color: white;
+  cursor: pointer;
+}
+
+.bulkButtons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.tableWrap {
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 10px;
+  vertical-align: top;
+}
+
+.table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.partName {
+  line-height: 1.2;
+}
+
+.partMeta {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.notes {
+  max-width: 520px;
+}
+
+.chkCol {
+  width: 44px;
+}
+
+.editBlock {
+  display: grid;
+  gap: 8px;
+}
+
+.smallLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.editBlock textarea,
+.editBlock input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  outline: none;
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editActions button {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  color: white;
+  cursor: pointer;
+}
+
+.smallRow {
+  margin-top: 6px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.confInput {
+  width: 90px;
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.empty {
+  padding: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
