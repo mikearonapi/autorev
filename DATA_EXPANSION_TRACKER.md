@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 50% (49/98) | Lap Times 56% (55/98)
+> **Current**: Dyno 57% (56/98) | Lap Times 63% (62/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 53 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 49 | 50 | 🔴 |
-| Lap Times | 65 | 90 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 55 | 50 | 🟢 |
+| Dyno Runs | 29 | 60 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 56 | 50 | 🟢 |
+| Lap Times | 65 | 97 | 100+ | 🔴 |
+| Unique Cars (Lap) | 30 | 62 | 50 | 🟢 |
 
 ---
 
@@ -91,15 +91,15 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| NA Miata | `na-miata` | ⬜ | ⬜ | |
-| NB Miata | `nb-miata` | ⬜ | ⬜ | |
-| NC Miata | `nc-miata` | ⬜ | ⬜ | |
-| ND1 Miata | `nd1-miata` | ⬜ | ⬜ | |
-| ND2 Miata | `nd2-miata` | ⬜ | ⬜ | |
-| GR86 | `gr86` | ⬜ | ⬜ | |
-| BRZ | `brz` | ⬜ | ⬜ | |
+| NA Miata | `na-miata` | ✅ | ✅ | Dyno: https://www.edmunds.com/mazda/mx-5-miata/1994/long-term-road-test/1994-mazda-mx-5-miata-baseline-dyno-test.html ; Lap: https://fastestlaps.com/models/mazda-mx-5-miata-1996 (Willow Springs) |
+| NB Miata | `nb-miata` | ✅ | ✅ | Dyno: https://www.virkki.com/jyri/miata/jyri_dyno.html (whp only) ; Lap: https://fastestlaps.com/tests/hdk24ru4btvg |
+| NC Miata | `nc-miata` | ✅ | ✅ | Dyno: https://www.hpacademy.com/forum/practical-dyno-tuning/show/jason-and-his-turbocharged-usdm-mazda-mx-5-miata/ ; Lap: https://fastestlaps.com/tests/uorh9ij1leob |
+| ND1 Miata | `nd1-miata` | ✅ | ✅ | Dyno: https://www.facebook.com/EngineeringExplained/posts/dyno-time-impressive-gains-for-an-all-stock-motor-tune-baseline-run-measured-145/4078370215539002/ ; Lap: https://fastestlaps.com/tests/ll8d1l4m99ll (Streets of Willow Extended) |
+| ND2 Miata | `nd2-miata` | ✅ | ✅ | Dyno: https://grassrootsmotorsports.com/news/grm-first-mazda-miata-nd2-dyno/ ; Lap: https://fastestlaps.com/tests/b84sk51lzmf9 |
+| GR86 | `gr86` | ✅ | ✅ | Dyno: https://www.topspeed.com/cars/car-news/a-dyno-test-reveals-how-much-power-the-toyota-gr86-actually-makes/ ; Lap: https://fastestlaps.com/tests/rid9shvnlrd8 |
+| BRZ | `brz` | ✅ | ✅ | Dyno: https://www.stockwhp.com/subaru ; Lap: https://fastestlaps.com/tests/8izk9mphdtlj |
 
-**Batch 6 Status**: 0/7 complete
+**Batch 6 Status**: 7/7 complete
 
 ---
 
@@ -143,6 +143,7 @@
 | 2025-12-15 | Priority Batch 3 (Corvette) | 3 | 3 | 3 | Added dyno + lap time sources (Nürburgring Nordschleife + Nürburgring GP). |
 | 2025-12-15 | Priority Batch 4 (JDM Icons) | 4 | 3 | 4 | Added lap times for all 4; dyno data missing for Supra Mk4 (marked ❌). |
 | 2025-12-15 | Priority Batch 5 (Mercedes-AMG) | 4 | 4 | 4 | Added dyno + lap time sources (Nürburgring + Hockenheim Short). |
+| 2025-12-15 | Priority Batch 6 (Miata/86) | 7 | 7 | 7 | Added dyno + lap time sources (Tsukuba, Nürburgring, and Willow Springs). |
 
 ---
 

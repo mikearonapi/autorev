@@ -33,6 +33,8 @@ VALUES
   ('circuit-of-the-americas', 'Circuit of the Americas', 'USA', 'Texas', 5.513, 'asphalt', 'https://circuitoftheamericas.com/'),
   ('tsukuba-circuit', 'Tsukuba Circuit', 'Japan', 'Ibaraki', 2.045, 'asphalt', 'https://www.jasc.or.jp/'),
   ('suzuka-circuit', 'Suzuka Circuit', 'Japan', 'Mie', 5.807, 'asphalt', 'https://www.suzukacircuit.jp/'),
+  ('willow-springs', 'Willow Springs International Raceway (Big Willow)', 'USA', 'California', NULL, 'asphalt', 'https://www.willowspringsraceway.com/'),
+  ('streets-of-willow', 'Streets of Willow', 'USA', 'California', NULL, 'asphalt', 'https://www.willowspringsraceway.com/'),
   ('buttonwillow-raceway', 'Buttonwillow Raceway Park', 'USA', 'California', 4.18, 'asphalt', 'https://buttonwillowraceway.com/'),
   ('top-gear-test-track', 'Top Gear Test Track (Dunsfold Aerodrome)', 'United Kingdom', 'Surrey', NULL, 'asphalt', 'https://www.dunsfoldaerodrome.co.uk/')
 ON CONFLICT (slug) DO NOTHING;
@@ -1303,6 +1305,324 @@ WHERE c.slug = 'amg-gt' AND tv.slug = 'nurburgring-nordschleife'
   AND NOT EXISTS (
     SELECT 1 FROM car_track_lap_times lt
     WHERE lt.car_slug = 'amg-gt' AND lt.track_id = tv.id AND lt.lap_time_ms = 453040
+  );
+
+-- ============================================================================
+-- Priority Batch 6 (Miata/86): DYNO + LAP TIME DATA (7 cars)
+-- ============================================================================
+-- NA Miata dyno (Edmunds baseline dyno test)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'na-miata',
+  'baseline',
+  'Dynojet',
+  NULL,
+  NULL,
+  true,
+  97,
+  96,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Edmunds baseline dyno test: 1994 Miata recorded 97 hp and 96 lb-ft at the wheels.',
+  'https://www.edmunds.com/mazda/mx-5-miata/1994/long-term-road-test/1994-mazda-mx-5-miata-baseline-dyno-test.html',
+  0.80,
+  false
+FROM cars c
+WHERE c.slug = 'na-miata'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'na-miata' AND run_kind = 'baseline');
+
+-- NB Miata dyno (wheel hp reported; torque not provided)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nb-miata',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  95,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Jyri’s Miata dyno page reports stock 1999 Miata at ~95 whp (torque not captured in citation).',
+  'https://www.virkki.com/jyri/miata/jyri_dyno.html',
+  0.55,
+  false
+FROM cars c
+WHERE c.slug = 'nb-miata'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'nb-miata' AND run_kind = 'baseline');
+
+-- NC Miata dyno (Dynojet figures reported)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nc-miata',
+  'baseline',
+  'Dynojet',
+  NULL,
+  NULL,
+  true,
+  141,
+  126,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'HP Academy forum post cites stock NC Miata around 141 whp / 126 wtq on Dynojet.',
+  'https://www.hpacademy.com/forum/practical-dyno-tuning/show/jason-and-his-turbocharged-usdm-mazda-mx-5-miata/',
+  0.60,
+  false
+FROM cars c
+WHERE c.slug = 'nc-miata'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'nc-miata' AND run_kind = 'baseline');
+
+-- ND1 Miata dyno (Engineering Explained baseline)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nd1-miata',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  145,
+  140,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Engineering Explained post: baseline run measured 145 whp / 140 wtq (stock ND1).',
+  'https://www.facebook.com/EngineeringExplained/posts/dyno-time-impressive-gains-for-an-all-stock-motor-tune-baseline-run-measured-145/4078370215539002/',
+  0.65,
+  false
+FROM cars c
+WHERE c.slug = 'nd1-miata'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'nd1-miata' AND run_kind = 'baseline');
+
+-- ND2 Miata dyno (GRM)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nd2-miata',
+  'baseline',
+  'Dynojet',
+  NULL,
+  NULL,
+  true,
+  168,
+  149,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Grassroots Motorsports dyno: stock 2019 ND2 Miata produced 168 whp / 149 wtq.',
+  'https://grassrootsmotorsports.com/news/grm-first-mazda-miata-nd2-dyno/',
+  0.80,
+  false
+FROM cars c
+WHERE c.slug = 'nd2-miata'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'nd2-miata' AND run_kind = 'baseline');
+
+-- Toyota GR86 dyno (FTspeed data via TopSpeed write-up)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'gr86',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  216,
+  171,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'TopSpeed write-up cites FTspeed dyno runs: peak ~215.54 whp / 170.87 wtq (rounded).',
+  'https://www.topspeed.com/cars/car-news/a-dyno-test-reveals-how-much-power-the-toyota-gr86-actually-makes/',
+  0.60,
+  false
+FROM cars c
+WHERE c.slug = 'gr86'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'gr86' AND run_kind = 'baseline');
+
+-- Subaru BRZ dyno (StockWHP entry)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'brz',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  160,
+  132,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'StockWHP listing for 2013 BRZ: 160 whp / 132 wtq.',
+  'https://www.stockwhp.com/subaru',
+  0.65,
+  false
+FROM cars c
+WHERE c.slug = 'brz'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'brz' AND run_kind = 'baseline');
+
+-- NA Miata lap time (Willow Springs)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'na-miata',
+  tv.id,
+  112100,
+  '1:52.100',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps model page lists Willow Springs lap time.',
+  'https://fastestlaps.com/models/mazda-mx-5-miata-1996',
+  0.50,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'na-miata' AND tv.slug = 'willow-springs'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'na-miata' AND lt.track_id = tv.id AND lt.lap_time_ms = 112100
+  );
+
+-- NB Miata lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nb-miata',
+  tv.id,
+  73200,
+  '1:13.200',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/hdk24ru4btvg',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'nb-miata' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'nb-miata' AND lt.track_id = tv.id AND lt.lap_time_ms = 73200
+  );
+
+-- NC Miata lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nc-miata',
+  tv.id,
+  71850,
+  '1:11.850',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/uorh9ij1leob',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'nc-miata' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'nc-miata' AND lt.track_id = tv.id AND lt.lap_time_ms = 71850
+  );
+
+-- ND1 Miata lap time (Streets of Willow Extended; stored in notes)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nd1-miata',
+  tv.id,
+  90390,
+  '1:30.390',
+  true,
+  NULL,
+  '{"layout":"extended"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Streets of Willow Extended; flying start).',
+  'https://fastestlaps.com/tests/ll8d1l4m99ll',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'nd1-miata' AND tv.slug = 'streets-of-willow'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'nd1-miata' AND lt.track_id = tv.id AND lt.lap_time_ms = 90390
+  );
+
+-- ND2 Miata lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'nd2-miata',
+  tv.id,
+  73500,
+  '1:13.500',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/b84sk51lzmf9',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'nd2-miata' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'nd2-miata' AND lt.track_id = tv.id AND lt.lap_time_ms = 73500
+  );
+
+-- Toyota GR86 lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'gr86',
+  tv.id,
+  507300,
+  '8:27.300',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/rid9shvnlrd8',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'gr86' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'gr86' AND lt.track_id = tv.id AND lt.lap_time_ms = 507300
+  );
+
+-- Subaru BRZ lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'brz',
+  tv.id,
+  523600,
+  '8:43.600',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/8izk9mphdtlj',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'brz' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'brz' AND lt.track_id = tv.id AND lt.lap_time_ms = 523600
   );
 
 -- ============================================================================
