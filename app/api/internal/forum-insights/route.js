@@ -300,8 +300,7 @@ export async function POST(request) {
   }
 }
 
-// Config for longer execution time
-export const config = {
-  maxDuration: 300 // 5 minutes max
-};
+// Route segment config for longer execution time
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
+export const maxDuration = 300; // 5 minutes max
 

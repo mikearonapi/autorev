@@ -169,8 +169,7 @@ export async function GET(request) {
   }
 }
 
-// Vercel cron configuration
-export const config = {
-  maxDuration: 300 // 5 minutes max execution
-};
+// Route segment config for longer execution time
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
+export const maxDuration = 300; // 5 minutes max execution
 
