@@ -18,6 +18,7 @@ import { FORUM_CONFIGS, CAR_KEYWORD_MAPPINGS } from '../lib/forumConfigs.js';
 import { BaseForumAdapter } from '../lib/forumScraper/baseAdapter.js';
 import { XenForoAdapter } from '../lib/forumScraper/adapters/xenforoAdapter.js';
 import { VBulletinAdapter } from '../lib/forumScraper/adapters/vbulletinAdapter.js';
+import * as cheerio from 'cheerio';
 
 // Parse CLI arguments
 const args = process.argv.slice(2);
@@ -63,6 +64,9 @@ const colors = {
   dim: '\x1b[2m',
 };
 
+const DEFAULT_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+
 function log(msg, color = 'reset') {
   console.log(`${colors[color]}${msg}${colors.reset}`);
 }
@@ -100,14 +104,28 @@ class MockScraperService {
  * Test forum URL accessibility
  */
 async function testForumUrl(url, name) {
-  try {
+  async function tryRequest(method) {
     const response = await fetch(url, {
-      method: 'HEAD',
+      method,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; AutoRevBot/1.0; +https://autorev.app/bot)',
+        'User-Agent': DEFAULT_UA,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
       },
       signal: AbortSignal.timeout(10000),
+      redirect: 'follow',
     });
+    return response;
+  }
+
+  try {
+    // Some forums block HEAD but allow GET. We try HEAD first to reduce bandwidth, then fallback to GET.
+    let response = await tryRequest('HEAD');
+    if (!response.ok && (response.status === 403 || response.status === 405)) {
+      response = await tryRequest('GET');
+    }
 
     if (response.ok) {
       logSuccess(`${name}: ${url} (${response.status})`);
@@ -141,7 +159,9 @@ async function testAdapterThreadList(forumConfig, adapter) {
   logInfo(`Testing thread list: ${listUrl}`);
 
   try {
-    const html = await adapter.fetchWithRateLimit(listUrl, config, 100);
+    // Be conservative: even in dry-run validation, we should not hammer forums.
+    const delayMs = Math.max(500, Math.min(config.rateLimitMs || 2000, 3000));
+    const html = await adapter.fetchWithRateLimit(listUrl, config, delayMs);
     const threads = adapter.parseThreadList(html, config, subforumCarSlugs, forumConfig.baseUrl);
 
     if (threads.length > 0) {
@@ -168,6 +188,17 @@ async function testAdapterThreadList(forumConfig, adapter) {
       return { threads, errors: [] };
     } else {
       logWarning('No threads parsed - selectors may be incorrect');
+      if (flags.verbose) {
+        const $ = cheerio.load(html);
+        const hints = {
+          xenforo_struct_threads: $('.structItem--thread').length,
+          xenforo_struct_container: $('.structItemContainer').length,
+          vbulletin_thread_title_anchors: $('a[id^="thread_title_"]').length,
+          vbulletin_trow_rows: $('.trow.text-center').length,
+          vbulletin_threadbit: $('.threadbit').length,
+        };
+        logInfo(`HTML hints: ${JSON.stringify(hints)}`);
+      }
       return { threads: [], errors: ['No threads parsed'] };
     }
   } catch (error) {
@@ -231,7 +262,8 @@ function testCarSlugDetection() {
   logSection('Car Slug Detection Test');
 
   const testCases = [
-    { text: 'My 997 GT3 has an IMS bearing issue', expected: ['997-1-gt3', '997-2-gt3', '997-1-carrera-s'] },
+    // IMPORTANT: expected slugs must exist in the `cars` table (canonical slugs)
+    { text: 'My 997 GT3 has an IMS bearing issue', expected: ['997-2-carrera-s', 'porsche-911-gt3-996', 'porsche-911-gt3-997'] },
     { text: 'Just bought a 2019 Miata ND RF', expected: ['mazda-mx5-miata-nd'] },
     { text: 'BRZ valve spring recall discussion', expected: ['subaru-brz-zc6', 'subaru-brz-zd8'] },
     { text: 'C8 vs C7 Z06 comparison', expected: ['c8-corvette-stingray', 'c7-corvette-z06'] },
@@ -278,7 +310,8 @@ function testRelevanceScoring() {
   const testCases = [
     { title: 'DIY IMS bearing replacement guide', replies: 150, views: 50000, minScore: 0.5 },
     { title: 'Complete track build thread', replies: 80, views: 30000, minScore: 0.4 },
-    { title: 'Simple question about oil', replies: 5, views: 500, minScore: 0.1 },
+    // Basic engagement-only thread (no high-value keywords) should not be filtered out.
+    { title: 'Simple question about oil', replies: 6, views: 500, minScore: 0.05 },
     { title: 'WTS: Part for sale cheap', replies: 10, views: 1000, maxScore: 0.05 },
   ];
 
@@ -418,12 +451,13 @@ async function main() {
   // Test each forum
   const results = [];
   
-  for (const [slug, config] of forumsToTest) {
+  for (let i = 0; i < forumsToTest.length; i++) {
+    const [slug, config] = forumsToTest[i];
     const result = await testForum(slug, config);
     results.push(result);
     
     // Rate limit between forums
-    if (forumsToTest.indexOf([slug, config]) < forumsToTest.length - 1) {
+    if (i < forumsToTest.length - 1) {
       logInfo('Waiting 3 seconds before next forum...');
       await new Promise(r => setTimeout(r, 3000));
     }

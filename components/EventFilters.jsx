@@ -1,0 +1,258 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import styles from './EventFilters.module.css';
+import EventCategoryPill from './EventCategoryPill';
+import PremiumGate from './PremiumGate';
+import LocationAutocomplete from './LocationAutocomplete';
+
+// Icons
+const Icons = {
+  search: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </svg>
+  ),
+  calendar: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  ),
+  filter: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+    </svg>
+  ),
+  list: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"/>
+      <line x1="8" y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6" x2="3.01" y2="6"/>
+      <line x1="3" y1="12" x2="3.01" y2="12"/>
+      <line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+  ),
+  map: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+      <line x1="8" y1="2" x2="8" y2="18"/>
+      <line x1="16" y1="6" x2="16" y2="22"/>
+    </svg>
+  ),
+  grid: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7"/>
+      <rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  ),
+  lock: ({ size = 12 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+  ),
+  garage: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/>
+      <path d="M3 21h18"/>
+      <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/>
+      <path d="M10 9h4"/>
+    </svg>
+  ),
+};
+
+export default function EventFilters({
+  initialFilters = {},
+  onFilterChange,
+  eventTypes = [],
+  showCategoryPills = false,
+  showLocationInput = false,
+  showDateRange = false,
+  showCarFilters = false,
+  showViewToggle = false,
+  currentView = 'list',
+  onViewChange,
+  garageBrands = [],
+  isAuthenticated = false,
+  userTier = 'free',
+}) {
+  const [filters, setFilters] = useState(initialFilters);
+
+  const handleChange = (key, value) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
+
+  // Handle location changes from autocomplete
+  const handleLocationChange = (newLocation) => {
+    handleChange('location', newLocation);
+  };
+
+  const handleClear = () => {
+    const cleared = {
+      location: '',
+      type: '',
+      start_date: '',
+      end_date: '',
+      is_track_event: false,
+      is_free: false,
+      brand: '',
+      for_my_cars: false,
+    };
+    setFilters(cleared);
+    onFilterChange(cleared);
+  };
+
+  const canUsePremiumFeatures = ['collector', 'tuner', 'admin'].includes(userTier);
+
+  return (
+    <div className={styles.filters}>
+      {/* Category Pills */}
+      {showCategoryPills && (
+        <div className={styles.categoryRow}>
+          <EventCategoryPill 
+            category={{ name: 'All Events', slug: '' }}
+            isActive={!filters.type}
+            onClick={() => handleChange('type', '')}
+          />
+          {eventTypes.map(type => (
+            <EventCategoryPill 
+              key={type.id}
+              category={type}
+              isActive={filters.type === type.slug}
+              onClick={() => handleChange('type', type.slug)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Main Filter Bar */}
+      <div className={styles.filterRow}>
+        {/* Location Search with Autocomplete */}
+        {showLocationInput && (
+          <LocationAutocomplete
+            value={filters.location || ''}
+            onChange={handleLocationChange}
+            placeholder="ZIP code or City, State"
+            className={styles.locationAutocomplete}
+          />
+        )}
+
+        {/* Region Select */}
+        <select 
+          value={filters.region || ''} 
+          onChange={(e) => handleChange('region', e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="">All Regions</option>
+          <option value="northeast">Northeast</option>
+          <option value="southeast">Southeast</option>
+          <option value="midwest">Midwest</option>
+          <option value="southwest">Southwest</option>
+          <option value="west">West</option>
+        </select>
+
+        {/* Date Range */}
+        {showDateRange && (
+          <div className={styles.dateRange}>
+            <input
+              type="date"
+              value={filters.start_date || ''}
+              onChange={(e) => handleChange('start_date', e.target.value)}
+              className={styles.dateInput}
+              placeholder="Start Date"
+            />
+            <span className={styles.dateSeparator}>to</span>
+            <input
+              type="date"
+              value={filters.end_date || ''}
+              onChange={(e) => handleChange('end_date', e.target.value)}
+              className={styles.dateInput}
+              placeholder="End Date"
+            />
+          </div>
+        )}
+
+        {/* Clear Filters */}
+        <button onClick={handleClear} className={styles.clearBtn}>
+          <Icons.filter size={14} />
+          Clear
+        </button>
+
+        {/* View Toggle */}
+        {showViewToggle && (
+          <div className={styles.viewToggle}>
+            <button
+              onClick={() => onViewChange('list')}
+              className={`${styles.viewBtn} ${currentView === 'list' ? styles.viewBtnActive : ''}`}
+            >
+              <Icons.list />
+              List
+            </button>
+            <button
+              onClick={() => canUsePremiumFeatures ? onViewChange('map') : null}
+              className={`${styles.viewBtn} ${currentView === 'map' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
+              title={!canUsePremiumFeatures ? "Collector tier required" : "Map View"}
+            >
+              <Icons.map />
+              Map
+              {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
+            </button>
+            <button
+              onClick={() => canUsePremiumFeatures ? onViewChange('calendar') : null}
+              className={`${styles.viewBtn} ${currentView === 'calendar' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
+              title={!canUsePremiumFeatures ? "Collector tier required" : "Calendar View"}
+            >
+              <Icons.calendar />
+              Calendar
+              {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Toggles Row */}
+      <div className={styles.toggleRow}>
+        <label className={styles.toggleLabel}>
+          <input
+            type="checkbox"
+            checked={filters.is_track_event || false}
+            onChange={(e) => handleChange('is_track_event', e.target.checked)}
+            className={styles.toggleCheckbox}
+          />
+          <span className={styles.toggleText}>Track Events Only</span>
+        </label>
+
+        <label className={styles.toggleLabel}>
+          <input
+            type="checkbox"
+            checked={filters.is_free || false}
+            onChange={(e) => handleChange('is_free', e.target.checked)}
+            className={styles.toggleCheckbox}
+          />
+          <span className={styles.toggleText}>Free Events Only</span>
+        </label>
+
+        {showCarFilters && isAuthenticated && (
+          <PremiumGate feature="eventsForMyCars" fallback={null}>
+            <button
+              onClick={() => handleChange('for_my_cars', !filters.for_my_cars)}
+              className={`${styles.garageFilterBtn} ${filters.for_my_cars ? styles.garageFilterBtnActive : ''}`}
+            >
+              <Icons.garage />
+              Events for My Cars
+            </button>
+          </PremiumGate>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -6,14 +6,15 @@
 
 ## Overview
 
-AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 16 tools that let it search the AutoRev database, knowledge base, parts catalog, and community insights from enthusiast forums.
+AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 17 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, and car events.
 
 | Attribute | Value |
 |-----------|-------|
 | **Model** | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
-| **Tools** | 16 |
+| **Tools** | 17 |
 | **Knowledge Base** | 547 document chunks with vector embeddings |
 | **Community Insights** | Forum-extracted insights (Rennlist, Bimmerpost, etc.) |
+| **Events** | Cars & Coffee, track days, car shows, and more |
 | **Pricing** | Token-based (mirrors Anthropic costs) |
 
 > **Last Synced:** December 15, 2024
@@ -55,7 +56,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 
 ---
 
-## Tools (16 Total)
+## Tools (17 Total)
 
 ### Tool Access by Tier
 
@@ -64,6 +65,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 | `search_cars` | ✓ | ✓ | ✓ |
 | `get_car_details` | ✓ | ✓ | ✓ |
 | `get_car_ai_context` | ✓ | ✓ | ✓ |
+| `search_events` | ✓ | ✓ | ✓ |
 | `get_expert_reviews` | — | ✓ | ✓ |
 | `get_known_issues` | — | ✓ | ✓ |
 | `compare_cars` | — | ✓ | ✓ |
@@ -133,7 +135,36 @@ Get comprehensive details about a specific car.
 
 ---
 
-### 4. `get_expert_reviews`
+### 4. `search_events`
+Search for car events like track days, Cars & Coffee, car shows, autocross, and meetups.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `location` | string | Yes | ZIP code, city/state, or state code |
+| `radius` | number | No | Search radius in miles (default 50, max 500) |
+| `event_type` | enum | No | cars-and-coffee, track-day, car-show, autocross, etc. |
+| `is_track_event` | boolean | No | Filter to track events only |
+| `brand` | string | No | Filter by car brand affinity |
+| `car_slug` | string | No | Filter by specific car affinity |
+| `start_after` | string | No | ISO date string for events after this date |
+| `limit` | number | No | Max results (default 5, max 20) |
+
+**Returns:** Events with name, type, date, location, cost, URL, and car affinities
+
+**Example Queries:**
+```
+"Find track days near 22033" → Track events within radius of ZIP
+"Cars and coffee events in Austin, TX" → Location-based search
+"Porsche meetups in California" → Brand-specific events
+"BMW M3 events near me" → Car-specific events
+```
+
+**Best Practice:** When users mention location in their profile, AL uses it as the default for event searches. Use this tool to help users find relevant car events and meetups near them.
+
+---
+
+### 5. `get_expert_reviews`
 Get YouTube reviews and AI-processed summaries.
 
 **Parameters:**
@@ -147,7 +178,7 @@ Get YouTube reviews and AI-processed summaries.
 
 ---
 
-### 5. `get_known_issues`
+### 6. `get_known_issues`
 Get common problems and reliability concerns.
 
 **Parameters:**
@@ -160,7 +191,7 @@ Get common problems and reliability concerns.
 
 ---
 
-### 6. `compare_cars`
+### 7. `compare_cars`
 Side-by-side comparison of multiple cars.
 
 **Parameters:**
@@ -173,7 +204,7 @@ Side-by-side comparison of multiple cars.
 
 ---
 
-### 7. `search_encyclopedia`
+### 8. `search_encyclopedia`
 Search the AutoRev encyclopedia for automotive education, modifications, and build guides.
 
 **Parameters:**
@@ -205,7 +236,7 @@ Search the AutoRev encyclopedia for automotive education, modifications, and bui
 
 ---
 
-### 8. `get_upgrade_info`
+### 9. `get_upgrade_info`
 Detailed information about a specific modification.
 
 **Parameters:**
@@ -218,7 +249,7 @@ Detailed information about a specific modification.
 
 ---
 
-### 9. `search_forums`
+### 10. `search_forums`
 Search automotive forums (placeholder - not fully implemented).
 
 **Parameters:**
@@ -232,7 +263,7 @@ Search automotive forums (placeholder - not fully implemented).
 
 ---
 
-### 10. `search_parts`
+### 11. `search_parts`
 Search the parts catalog with optional car fitment.
 
 **Parameters:**
@@ -247,7 +278,7 @@ Search the parts catalog with optional car fitment.
 
 ---
 
-### 11. `get_maintenance_schedule`
+### 12. `get_maintenance_schedule`
 Get maintenance specs and schedules.
 
 **Parameters:**
@@ -261,7 +292,7 @@ Get maintenance specs and schedules.
 
 ---
 
-### 12. `recommend_build`
+### 13. `recommend_build`
 Get upgrade recommendations for a specific goal.
 
 **Parameters:**
@@ -276,7 +307,7 @@ Get upgrade recommendations for a specific goal.
 
 ---
 
-### 13. `search_knowledge`
+### 14. `search_knowledge`
 Search the vector knowledge base with citations.
 
 **Parameters:**
@@ -293,7 +324,7 @@ Search the vector knowledge base with citations.
 
 ---
 
-### 14. `get_track_lap_times`
+### 15. `get_track_lap_times`
 Get citeable track lap times.
 
 **Parameters:**
@@ -306,7 +337,7 @@ Get citeable track lap times.
 
 ---
 
-### 15. `get_dyno_runs`
+### 16. `get_dyno_runs`
 Get citeable dyno data.
 
 **Parameters:**
@@ -320,7 +351,7 @@ Get citeable dyno data.
 
 ---
 
-### 16. `search_community_insights`
+### 17. `search_community_insights`
 Search community-sourced insights extracted from enthusiast forums.
 
 **Parameters:**
@@ -380,6 +411,7 @@ AL automatically detects which automotive domain a question relates to and prior
 | track | track, lap, HPDE | get_track_lap_times |
 | comparison | vs, compare, better | compare_cars |
 | ownership | long-term, high mileage, costs | search_community_insights |
+| events | meetup, cars and coffee, track day, car show | search_events |
 
 ---
 

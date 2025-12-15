@@ -10,6 +10,7 @@
 |----------|-------|
 | Providers | 6 |
 | Feature Components | 15 |
+| Events Components | 7 |
 | UI Components | 12 |
 | Modals | 5 |
 | Layout | 4 |
@@ -165,6 +166,94 @@ Major feature implementations.
 ### `TunabilityBadge`
 **File:** `components/TunabilityBadge.jsx`
 **Purpose:** Display tunability rating badge
+
+---
+
+## Events Components (7)
+
+Event discovery and management components.
+
+### `EventCard`
+**File:** `components/EventCard.jsx`
+**Purpose:** Display event preview in list/grid
+**Props:**
+- `event` - Event object with name, date, location, type
+- `featured` - Boolean for featured styling
+- `isSaved` - Boolean for saved state
+- `onSaveToggle` - Callback for save toggle
+- `showSaveButton` - Boolean to show/hide save button
+
+### `EventCategoryPill`
+**File:** `components/EventCategoryPill.jsx`
+**Purpose:** Clickable category filter pill
+**Props:**
+- `category` - Category object with name, icon, slug
+- `count` - Optional event count
+- `isActive` - Boolean for active state
+- `onClick` - Click handler
+
+### `EventFilters`
+**File:** `components/EventFilters.jsx`
+**Purpose:** Comprehensive event filtering UI
+**Props:**
+- `initialFilters` - Initial filter state
+- `onFilterChange` - Callback when filters change
+- `eventTypes` - Array of available event types
+- `showCategoryPills` - Show category pill row
+- `showLocationInput` - Show location search
+- `showDateRange` - Show date range picker
+- `showCarFilters` - Show "Events for My Cars" (gated)
+- `showViewToggle` - Show List/Map/Calendar toggle
+- `currentView` - Current view mode
+- `onViewChange` - View change callback
+
+### `EventCalendarView`
+**File:** `components/EventCalendarView.jsx`
+**Purpose:** Monthly calendar grid view of events
+**Tier:** Collector+
+**Props:**
+- `events` - Array of events
+- `month` - Display month (0-11)
+- `year` - Display year
+- `onDateClick` - Date click handler
+
+### `EventMap`
+**File:** `components/EventMap.jsx`
+**Purpose:** Geographic map view of events
+**Tier:** Collector+
+**Props:**
+- `events` - Array of events with lat/lng
+- `onEventSelect` - Event selection callback
+- `selectedEvent` - Currently selected event
+- `height` - Map height
+**Features:**
+- OpenStreetMap tiles (dark theme)
+- Marker clustering
+- Event list sidebar
+- Selected event popup
+
+### `SaveEventButton`
+**File:** `components/SaveEventButton.jsx`
+**Purpose:** Reusable save/unsave event button with auth/tier gating
+**Tier:** Collector+ (prompts upgrade for free users)
+**Props:**
+- `eventId` - Event ID
+- `eventSlug` - Event slug
+- `eventName` - Event name for confirmation
+- `isSaved` - Current saved state
+- `onSaveChange` - Callback when saved state changes
+
+### `AddToCalendarButton`
+**File:** `components/AddToCalendarButton.jsx`
+**Purpose:** Dropdown to export event to calendar services
+**Tier:** Collector+
+**Props:**
+- `event` - Full event object
+**Exports to:**
+- Google Calendar
+- Apple Calendar (.ics)
+- Outlook Calendar
+- Generic ICS download
 
 ---
 
@@ -436,4 +525,5 @@ Layout
 ---
 
 *See [PAGES.md](PAGES.md) for page-level documentation.*
+
 

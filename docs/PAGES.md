@@ -40,6 +40,11 @@
 | Ownership | Fuel economy, costs, parts preview, known issues | Free |
 | Expert Reviews | YouTube videos, AI consensus | Free |
 
+**Events Integration:**
+- Shows upcoming events featuring this car or brand (sidebar section)
+- Links to `/events?brand=X` for more events
+- Component: `CarEventsSection`
+
 ### Car Selector (`/car-selector`)
 | Attribute | Value |
 |-----------|-------|
@@ -63,7 +68,7 @@
 |-----------|-------|
 | **Purpose** | User's saved favorites and owned vehicles |
 | **Tier** | Free (favorites), Collector (owned vehicles) |
-| **Key Components** | FavoritesProvider, OwnedVehiclesProvider, AddVehicleModal |
+| **Key Components** | FavoritesProvider, OwnedVehiclesProvider, AddVehicleModal, GarageEventsSection |
 | **Views** | Favorites, Owned Vehicles (with sub-tabs) |
 
 **Owned Vehicle Sub-Tabs:**
@@ -74,6 +79,13 @@
 | Reference | Oil specs, fluid capacities | Collector |
 | Service | Service log tracking | Collector |
 | Value | Market value, price history | Collector |
+
+**Events Integration (Collector+):**
+- Shows upcoming events relevant to user's owned vehicles
+- Queries events by car brand/slug matching garage vehicles
+- Falls back to favorites' brands if no owned vehicles
+- Links to `/events?brand=X` for full event listings
+- Component: `GarageEventsSection`
 
 ### Garage Compare (`/garage/compare`)
 | Attribute | Value |
@@ -165,6 +177,100 @@ Technical Reference (Legacy)
 | **Tier** | Authenticated |
 | **Data Sources** | `user_profiles` |
 
+### Community (`/community`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Community hub landing page - events, resources, and future forum/clubs |
+| **Tier** | Free |
+| **Key Components** | Hero section, EventCard, EventCategoryPill grid, CTAs |
+| **Data Sources** | `events`, `event_types`, `event_car_affinities` |
+
+**Features:**
+- Featured events carousel
+- Event category grid (quick filter links)
+- Upcoming events near user (if location available)
+- CTAs to browse all events
+
+### Community Events (`/community/events`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Discover car events (Cars & Coffee, track days, shows, auctions) |
+| **Tier** | Free (List view), Collector+ (Map/Calendar views) |
+| **Key Components** | EventCard, EventFilters, EventCalendarView, EventMap |
+| **Data Sources** | `events`, `event_types`, `event_car_affinities` |
+
+**Features:**
+- **Three View Modes:**
+  - List (Free) - Grid of EventCards
+  - Map (Collector+) - Geographic view with clustering
+  - Calendar (Collector+) - Monthly calendar grid
+- **Filters (EventFilters component):**
+  - Category pills (quick event type selection)
+  - Location (ZIP, city/state, region, scope)
+  - Date range picker
+  - Track Events Only toggle
+  - Free Events Only toggle
+  - "Events for My Cars" (Collector+ with garage data)
+- Featured events highlighted
+- Pagination
+- Save events (Collector+)
+
+### Community Event Detail (`/community/events/[slug]`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Full event details with location, dates, and car affinities |
+| **Tier** | Free |
+| **Key Components** | SaveEventButton, AddToCalendarButton, Related EventCards |
+| **Data Sources** | `events`, `event_types`, `event_car_affinities`, `cars` |
+
+**Features:**
+- Hero image with overlay
+- Full event information (date/time, location, description, cost)
+- Google Maps integration (external link)
+- Car/brand affinity badges with links
+- Save button (Collector+ tier)
+- Add to Calendar dropdown (Collector+ tier, Google/Apple/Outlook/ICS)
+- Share functionality
+- Related events (same type or region)
+- CTA to external source/registration
+
+### Events (Legacy - `/events`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Redirects to `/community/events` |
+| **Tier** | Free |
+| **Note** | Legacy route maintained for backwards compatibility |
+
+### Submit Event (`/events/submit`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | User-submitted events for moderation review |
+| **Tier** | Authenticated |
+| **Key Components** | Event submission form with validation |
+| **Data Sources** | Writes to `event_submissions` |
+
+**Features:**
+- Full form with event details (name, type, URL, dates, location)
+- Client-side validation (URL format, date logic)
+- Character counts for description
+- Success confirmation message
+- Auth modal prompt for unauthenticated users
+
+### Saved Events (`/events/saved`)
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | User's bookmarked events collection |
+| **Tier** | Collector+ |
+| **Key Components** | EventCard grid, PremiumGate |
+| **Data Sources** | `event_saves`, `events`, `event_types` |
+
+**Features:**
+- Displays user's saved events
+- Same card format as main events page
+- Empty state with browse CTA
+- Excludes expired events by default
+- Tier gating with upgrade prompt
+
 ### Contact (`/contact`)
 | Attribute | Value |
 |-----------|-------|
@@ -207,6 +313,7 @@ All require admin authentication.
 | `/internal/manual-entry` | Manual data entry |
 | `/internal/feedback` | User feedback review |
 | `/internal/qa` | Quality assurance reports |
+| `/internal/events` | Event submission moderation |
 
 ---
 
@@ -269,6 +376,12 @@ Links to relevant pages
 ├── browse-cars/
 │   └── [slug]/              # Car detail
 ├── car-selector/
+├── community/               # Community hub (NEW)
+│   └── events/              # Event discovery
+│       └── [slug]/          # Event detail
+├── events/                   # Legacy events routes
+│   ├── saved/               # User's saved events
+│   └── submit/              # Submit new event
 ├── garage/
 │   └── compare/
 ├── tuning-shop/
@@ -289,10 +402,12 @@ Links to relevant pages
     ├── knowledge/
     ├── manual-entry/
     ├── feedback/
-    └── qa/
+    ├── qa/
+    └── events/              # Event moderation
 ```
 
 ---
 
 *See [API.md](API.md) for API routes.*
+
 

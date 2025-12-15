@@ -1,0 +1,5550 @@
+[{
+  "_id": {
+    "$oid": "67f6aef6e9c8627336014083"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "Integra",
+  "trim": "LS 2dr Coupe Automatic",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c8627336014089"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "SLX",
+  "trim": "Base 4dr 4x4 Automatic",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Axle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Automatic Transmission Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Drive Belts",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Air Cleaner/Element",
+        "Replace Axle Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Power Steering Fluid",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Automatic Transmission Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Axle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Automatic Transmission Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Inspect A/C Condenser",
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Drive Belts",
+        "Inspect Exhaust System",
+        "Inspect Fuel Hoses",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Fuel Tank",
+        "Inspect Fuel Tank Cap",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Radiator Core",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Air Cleaner/Element",
+        "Replace Axle Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Power Steering Fluid",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Automatic Transmission Fluid",
+        "Replace Axle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Drive Belts",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Air Cleaner/Element",
+        "Replace Axle Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Power Steering Fluid",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Automatic Transmission Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Exhaust System",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Axle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Flange",
+        "Inspect Exhaust System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Lubricate Driveshaft/Propeller Shaft",
+        "Replace Automatic Transmission Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Inspect A/C Condenser",
+        "Inspect Brake Calipers",
+        "Inspect Brake Discs/Rotors",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake Pads",
+        "Inspect Brake Pedal",
+        "Inspect Cruise Control Linkage & Hoses",
+        "Inspect Drive Belts",
+        "Inspect Exhaust System",
+        "Inspect Fuel Hoses",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Fuel Tank",
+        "Inspect Fuel Tank Cap",
+        "Inspect Heater Hoses",
+        "Inspect Parking Brake",
+        "Inspect Radiator Core",
+        "Inspect Shift-On-The-Fly-System",
+        "Inspect Starter Safety Switch",
+        "Inspect Steering Operation",
+        "Inspect Suspension",
+        "Lubricate Accelerator Linkage",
+        "Lubricate Chassis' Body Nuts & Bolts",
+        "Replace Air Cleaner/Element",
+        "Replace Axle Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Power Steering Fluid",
+        "Replace Transfer Case Fluid",
+        "Rotate Tires"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c862733601408a"
+  },
+  "year": 1999,
+  "make": "Audi",
+  "model": "A4",
+  "trim": "2.8 Avant 4dr Station Wagon Automatic",
+  "maintenance": [
+    {
+      "mileage": 2500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 5000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 10000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 20000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 25000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 35000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 40000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 50000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 55000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 65000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 70000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Replace Timing Belt Tension Roller",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 80000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 85000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 95000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 100000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 110000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 115000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 135000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Replace Timing Belt Tension Roller",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 150000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 165000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 180000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c862733601408d"
+  },
+  "year": 1999,
+  "make": "Audi",
+  "model": "A4",
+  "trim": "2.8 Avant 4dr Station Wagon Manual",
+  "maintenance": [
+    {
+      "mileage": 2500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 5000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 10000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 20000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 25000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 35000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 40000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 50000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 55000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 65000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 70000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Replace Timing Belt Tension Roller",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 80000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 85000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 95000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 100000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 110000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 115000,
+      "service_items": [
+        "Clean Plenum Chamber Water",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Fluid Levels",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Reset Service Interval Indicator/Display"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 135000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Drive Belts",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Replace Timing Belt Tension Roller",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 150000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 165000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    },
+    {
+      "mileage": 180000,
+      "service_items": [
+        "Adjust Headlights",
+        "Clean Plenum Chamber Water",
+        "Clean/Lubricate Sunroof Rails",
+        "Inspect A/C System",
+        "Inspect Automatic Shiftlock And Park/Neutral Switch",
+        "Inspect Automatic Transaxle Fluid",
+        "Inspect Battery Fluid Level",
+        "Inspect Brake System",
+        "Inspect Driveshaft Boots",
+        "Inspect Electrical System",
+        "Inspect Engine Compartment",
+        "Inspect Exhaust System",
+        "Inspect Final Drive Oil",
+        "Inspect Fluid Levels",
+        "Inspect Front Axle",
+        "Inspect Heating And Ventilation System",
+        "Inspect Manual Transaxle Gearshift Mechanism And Clutch",
+        "Inspect Manual Transmission Fluid",
+        "Inspect On-Board Diagnostics",
+        "Inspect Power Accessories",
+        "Inspect Power Steering Fluid",
+        "Inspect Tire Pressure",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Cabin Air Filter",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Reset Service Interval Indicator/Display",
+        "Road-Test Vehicle"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c8627336014086"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "NSX",
+  "trim": "Alex Zanardi Edition 2dr Coupe Manual",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Fuel Filter",
+        "Replace Timing Belt"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Replace Timing Belt"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Fuel Filter",
+        "Replace Timing Belt"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c8627336014088"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "NSX",
+  "trim": "Base 2dr Coupe Manual",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Fuel Filter",
+        "Replace Timing Belt"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Spark Plugs",
+        "Replace Timing Belt"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Clean Air Cleaner/Element",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Front Brake System",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Drive Belts",
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Front Brake System",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Rear Brake System",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Fuel Filter",
+        "Replace Timing Belt"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c862733601407d"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "Integra",
+  "trim": "GS 2dr Coupe Automatic",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c862733601407e"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "Integra",
+  "trim": "GS 2dr Coupe Manual",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c862733601407f"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "Integra",
+  "trim": "GS 4dr Sedan Automatic",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67f6aef6e9c8627336014085"
+  },
+  "year": 1999,
+  "make": "Acura",
+  "model": "Integra",
+  "trim": "LS 4dr Sedan Automatic",
+  "maintenance": [
+    {
+      "mileage": 3750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 7500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 11250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 15000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 18750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 22500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 26250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 30000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 33750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 37500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 41250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 45000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Brake Fluid",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 48750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 52500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 56250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 60000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 63750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 67500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 71250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 75000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 78750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 82500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 86250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 90000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Brake Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 93750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 97500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 101250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 105000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Air Cleaner/Element",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Idle Speed",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Coolant",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 108750,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 112500,
+      "service_items": [
+        "Inspect Brake System",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Rotate Tires"
+      ]
+    },
+    {
+      "mileage": 116250,
+      "service_items": [
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter"
+      ]
+    },
+    {
+      "mileage": 120000,
+      "service_items": [
+        "Adjust Parking Brake",
+        "Clean Antenna Mast",
+        "Inspect Brake Hoses & Lines",
+        "Inspect Brake Lines & Cables",
+        "Inspect Brake System",
+        "Inspect Drive Belts",
+        "Inspect Driveshaft/Propeller Shaft Dust Boots",
+        "Inspect Engine Cooling System Hoses & Clamps",
+        "Inspect Exhaust System",
+        "Inspect Fluid & Lubricant Levels",
+        "Inspect Fuel Lines",
+        "Inspect Fuel Lines & Connections",
+        "Inspect Steering Gear/Rack",
+        "Inspect Steering Rack Boots",
+        "Inspect Suspension Components",
+        "Inspect Tie Rod Ends",
+        "Inspect Valve Clearance",
+        "Inspect Vehicle Underbody",
+        "Inspect Water Pump",
+        "Lubricate Door Hinges & Locks",
+        "Replace Air Cleaner/Element",
+        "Replace Automatic Transaxle Fluid",
+        "Replace Engine Oil",
+        "Replace Engine Oil Filter",
+        "Replace Manual Transaxle Fluid",
+        "Replace Spark Plugs",
+        "Replace Timing Belt",
+        "Rotate Tires"
+      ]
+    }
+  ]
+}]

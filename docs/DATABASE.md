@@ -51,8 +51,9 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | YouTube | 4 | 4 | 0 |
 | Track Data | 2 | 1 | 1 |
 | Forum Intelligence | 5 | 1 | 4 |
+| Events | 6 | 3 | 3 |
 | System | 4 | 3 | 1 |
-| **Total** | **57** | **41** | **16** |
+| **Total** | **63** | **44** | **19** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
@@ -505,6 +506,57 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | **Purpose** | Links insights to multiple supporting forum threads |
 | **Key Fields** | `insight_id`, `thread_id`, `thread_url`, `forum_slug`, `relevance_score`, `extracted_quotes[]` |
 | **Used By** | Insight consolidation, citation tracking |
+
+---
+
+## Events (6 tables)
+
+> **NEW:** Car events aggregator feature - Cars & Coffee, track days, shows, auctions.
+
+### `event_types` — Event taxonomy
+| Status | **10 rows** (seeded) |
+|--------|----------------------|
+| **Purpose** | Categories of car events |
+| **Key Fields** | `slug`, `name`, `description`, `icon` (emoji), `sort_order`, `is_track_event` |
+| **Seeded Types** | cars-and-coffee, car-show, club-meetup, cruise, autocross, track-day, time-attack, industry, auction, other |
+| **Used By** | Events API, event filtering |
+
+### `events` — Core event data
+| Status | **15 rows** (seeded) |
+|--------|----------------------|
+| **Purpose** | Car events with location, dates, and details |
+| **Key Fields** | `slug`, `name`, `description`, `event_type_id`, `start_date`, `end_date`, `start_time`, `end_time`, `timezone` |
+| **Location Fields** | `venue_name`, `address`, `city`, `state`, `zip`, `country`, `latitude`, `longitude`, `region`, `scope` |
+| **Meta Fields** | `source_url`, `source_name`, `registration_url`, `image_url`, `cost_text`, `is_free`, `status`, `featured` |
+| **Used By** | Events pages, /api/events |
+
+### `event_car_affinities` — Event-car/brand links
+| Status | **15 rows** (seeded) |
+|--------|----------------------|
+| **Purpose** | Links events to specific cars or brands (e.g., Porsche-only events) |
+| **Key Fields** | `event_id`, `car_id` (nullable), `brand` (nullable), `affinity_type` (featured/welcome/exclusive) |
+| **Used By** | Event filtering by car affinity, event detail pages |
+
+### `event_saves` — User saved events
+| Status | **0 rows** (empty) |
+|--------|-------------------|
+| **Purpose** | User-bookmarked events |
+| **Key Fields** | `user_id`, `event_id`, `notes` |
+| **Future Use** | Event saving feature (Phase 2) |
+
+### `event_submissions` — User-submitted events
+| Status | **0 rows** (empty) |
+|--------|-------------------|
+| **Purpose** | User-submitted events pending moderation |
+| **Key Fields** | `user_id`, `name`, `event_type_slug`, `source_url`, `start_date`, `city`, `state`, `status`, `reviewed_by`, `rejection_reason` |
+| **Future Use** | Event submission form (Phase 2) |
+
+### `event_sources` — Automated ingestion config
+| Status | **0 rows** (empty) |
+|--------|-------------------|
+| **Purpose** | Configuration for automated event data sources |
+| **Key Fields** | `name`, `source_type` (api/scrape/rss/manual), `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active` |
+| **Future Use** | Automated event ingestion (Phase 3) |
 
 ---
 

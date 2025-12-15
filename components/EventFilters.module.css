@@ -1,0 +1,245 @@
+/* EventFilters - On-Brand Styling */
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Category Pills Row */
+.categoryRow {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.categoryRow::-webkit-scrollbar {
+  display: none;
+}
+
+/* Main Filter Row */
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* Location Autocomplete */
+.locationAutocomplete {
+  flex: 1;
+  min-width: 200px;
+  max-width: 350px;
+}
+
+/* Selects */
+.filterSelect {
+  padding: var(--space-sm) var(--space-md);
+  padding-right: calc(var(--space-md) + 16px);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-sm) center;
+  color: var(--color-gray-900);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  min-width: 120px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--sn-primary);
+}
+
+/* Date Range */
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.dateInput {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: var(--sn-primary);
+}
+
+.dateSeparator {
+  color: var(--color-gray-400);
+  font-size: var(--font-size-sm);
+}
+
+/* View Toggle */
+.viewToggle {
+  display: flex;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  margin-left: auto;
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.viewBtn:hover {
+  color: var(--color-gray-900);
+}
+
+.viewBtnActive {
+  background: var(--color-white);
+  color: var(--sn-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.viewBtnLocked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lockIcon {
+  margin-left: var(--space-xs);
+}
+
+/* Toggle Row */
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+}
+
+.toggleCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--sn-primary);
+}
+
+.toggleText {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+}
+
+/* Garage Filter */
+.garageFilterBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.garageFilterBtn:hover {
+  background: var(--color-gray-50);
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+}
+
+.garageFilterBtnActive {
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border-color: var(--sn-primary);
+}
+
+.garageFilterBtnActive:hover {
+  background: var(--sn-primary-dark);
+  border-color: var(--sn-primary-dark);
+  color: var(--color-white);
+}
+
+/* Clear Filters */
+.clearBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clearBtn:hover {
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
+}
+
+/* Results Info */
+.resultsInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin-left: auto;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .locationAutocomplete {
+    max-width: none;
+  }
+
+  .viewToggle {
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .filterSelect {
+    width: 100%;
+  }
+}

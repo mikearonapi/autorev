@@ -1,0 +1,347 @@
+/* EventCard - Premium Styling */
+
+.cardWrapper {
+  position: relative;
+  height: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border: 1px solid var(--color-gray-200);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--sn-primary);
+}
+
+/* Image Section */
+.imageContainer {
+  position: relative;
+  aspect-ratio: 16/10;
+  background: var(--color-gray-100);
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.placeholderImage {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-400);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+  opacity: 0.6;
+}
+
+/* Badges */
+.badges {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  display: flex;
+  gap: var(--space-xs);
+  z-index: 10;
+}
+
+.typeBadge {
+  padding: var(--space-2xs) var(--space-sm);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-900);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.featuredBadge {
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--sn-gold);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Date Box */
+.dateBox {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+  line-height: 1;
+}
+
+.dateMonth {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--sn-primary);
+  margin-bottom: 2px;
+}
+
+.dateDay {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+/* Actions */
+.cardActions {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 20;
+}
+
+/* Override date box position if save button is present */
+.cardWrapper:has(.cardActions) .dateBox {
+  right: auto;
+  left: var(--space-sm);
+  top: auto;
+  bottom: var(--space-sm);
+}
+
+/* Content */
+.content {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-sm);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+}
+
+.detailRow svg {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
+}
+
+.detailText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.cost {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.cost.free {
+  color: var(--color-success);
+}
+
+.brandBadge {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-600);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.viewLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--sn-primary);
+  transition: color var(--transition-fast);
+}
+
+.card:hover .viewLink {
+  color: var(--sn-primary-dark);
+}
+
+/* Compact Mode */
+.compactWrapper .imageContainer {
+  aspect-ratio: 16/9;
+}
+
+.compactWrapper .placeholderIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.compactWrapper .content {
+  padding: var(--space-sm);
+}
+
+.compactWrapper .title {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-xs);
+  -webkit-line-clamp: 1;
+}
+
+.compactWrapper .details {
+  gap: 2px;
+  margin-bottom: var(--space-xs);
+}
+
+.compactWrapper .detailRow {
+  font-size: var(--font-size-xs);
+}
+
+.compactWrapper .detailRow svg {
+  width: 12px;
+  height: 12px;
+}
+
+.compactWrapper .footer {
+  padding-top: var(--space-xs);
+}
+
+.compactWrapper .cost {
+  font-size: var(--font-size-xs);
+}
+
+.compactWrapper .viewLink {
+  font-size: var(--font-size-xs);
+}
+
+.compactWrapper .viewLink svg {
+  width: 12px;
+  height: 12px;
+}
+
+.compactWrapper .dateBox {
+  width: 40px;
+  height: 40px;
+}
+
+.compactWrapper .dateMonth {
+  font-size: 8px;
+}
+
+.compactWrapper .dateDay {
+  font-size: 14px;
+}
+
+.compactWrapper .typeBadge {
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+.compactWrapper .cardActions {
+  top: var(--space-xs);
+  right: var(--space-xs);
+}
+
+/* Skeleton Loading State */
+.skeleton {
+  pointer-events: none;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonTitle {
+  height: 20px;
+  width: 80%;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonText {
+  height: 14px;
+  width: 100%;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-xs);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

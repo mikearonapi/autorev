@@ -1,6 +1,6 @@
 # AutoRev API Reference
 
-> Complete reference for all 43 API routes
+> Complete reference for all 46 API routes
 >
 > **Last Synced:** December 15, 2024
 
@@ -12,9 +12,10 @@
 |----------|--------|---------------|
 | Car Data | 17 | No |
 | Parts | 3 | No |
-| Users/AL | 4 | Yes |
+| Events | 6 | Mixed |
+| Users/AL | 5 | Yes |
 | VIN | 3 | Yes |
-| Internal | 8 | Admin |
+| Internal | 10 | Admin |
 | Cron | 5 | API Key |
 | Other | 3 | Varies |
 
@@ -398,6 +399,268 @@
 
 ---
 
+## Events Routes (3)
+
+### `GET /api/events`
+**Purpose:** List/search upcoming car events with filtering
+
+**Query Params:**
+- `zip` - ZIP code for location filtering
+- `radius` - Radius in miles for distance search (requires zip, default 50, max 500)
+- `city` - City name (supports partial match)
+- `state` - State code (e.g., "CA", "TX")
+- `region` - Region name (Northeast, Southeast, Midwest, Southwest, West)
+- `scope` - Event scope (local, regional, national)
+- `type` - Event type slug (e.g., "cars-and-coffee", "track-day")
+- `is_track_event` - Filter to track events only (boolean)
+- `is_free` - Filter to free events only (boolean)
+- `brand` - Filter by car brand affinity
+- `car_slug` - Filter by specific car affinity
+- `start_after` - ISO date string, events after this date
+- `start_before` - ISO date string, events before this date
+- `limit` - Max results (default 20, max 100)
+- `offset` - Pagination offset (default 0)
+- `sort` - Sort order: "date", "featured", or "distance" (default "date")
+
+**Response:**
+```json
+{
+  "events": [
+    {
+      "id": "uuid",
+      "slug": "cars-coffee-malibu-jan-2025",
+      "name": "Malibu Cars & Coffee",
+      "description": "Monthly morning meetup...",
+      "distance_miles": 12.5,
+      "event_type": {
+        "slug": "cars-and-coffee",
+        "name": "Cars & Coffee",
+        "icon": "☕",
+        "is_track_event": false
+      },
+      "start_date": "2025-01-18",
+      "end_date": null,
+      "start_time": "07:30:00",
+      "end_time": "10:00:00",
+      "timezone": "America/Los_Angeles",
+      "venue_name": "PCH Meetup Spot",
+      "city": "Malibu",
+      "state": "CA",
+      "zip": "90265",
+      "region": "West",
+      "scope": "local",
+      "source_url": "https://...",
+      "source_name": "Malibu Cars & Coffee",
+      "registration_url": null,
+      "image_url": "https://...",
+      "cost_text": "Free",
+      "is_free": true,
+      "featured": true,
+      "car_affinities": [
+        { "car_id": null, "car_slug": null, "car_name": null, "brand": "Porsche", "affinity_type": "featured" }
+      ]
+    }
+  ],
+  "total": 15,
+  "limit": 20,
+  "offset": 0,
+  "searchCenter": {
+    "latitude": 38.8977,
+    "longitude": -77.0365,
+    "radius": 50,
+    "zip": "22033"
+  }
+}
+```
+
+**Notes:**
+- Only returns events where `status='approved'` AND `start_date >= today`
+- Sorted by `featured DESC, start_date ASC` by default
+- When `zip` and `radius` are provided, performs geocoded radius search
+- `distance_miles` field included in events when radius search is used
+- `searchCenter` object included in response when radius search is used
+- Events without latitude/longitude are excluded from radius search results
+
+**Tables:** `events`, `event_types`, `event_car_affinities`
+
+---
+
+### `GET /api/events/[slug]`
+**Purpose:** Get single event details by slug
+
+**Response:**
+```json
+{
+  "event": {
+    "id": "uuid",
+    "slug": "cars-coffee-malibu-jan-2025",
+    "name": "Malibu Cars & Coffee",
+    "description": "...",
+    "event_type": { "slug": "cars-and-coffee", "name": "Cars & Coffee", "description": "...", "icon": "☕", "is_track_event": false },
+    "start_date": "2025-01-18",
+    "end_date": null,
+    "start_time": "07:30:00",
+    "end_time": "10:00:00",
+    "timezone": "America/Los_Angeles",
+    "venue_name": "PCH Meetup Spot",
+    "address": "22000 Pacific Coast Hwy",
+    "city": "Malibu",
+    "state": "CA",
+    "zip": "90265",
+    "country": "USA",
+    "latitude": 34.0259,
+    "longitude": -118.7798,
+    "region": "West",
+    "scope": "local",
+    "source_url": "https://...",
+    "source_name": "Malibu Cars & Coffee",
+    "registration_url": null,
+    "image_url": "https://...",
+    "cost_text": "Free",
+    "is_free": true,
+    "featured": true,
+    "car_affinities": [...]
+  }
+}
+```
+
+**Error Responses:**
+- `404` - Event not found or not approved
+
+**Tables:** `events`, `event_types`, `event_car_affinities`
+
+---
+
+### `GET /api/events/types`
+**Purpose:** Get all event types for filtering
+
+**Response:**
+```json
+{
+  "types": [
+    { "slug": "cars-and-coffee", "name": "Cars & Coffee", "description": "Morning car meetups", "icon": "☕", "is_track_event": false, "sort_order": 1 },
+    { "slug": "track-day", "name": "Track Day / HPDE", "description": "High Performance Driver Education", "icon": "🏁", "is_track_event": true, "sort_order": 6 }
+  ]
+}
+```
+
+**Table:** `event_types`
+
+---
+
+### `POST /api/events/submit`
+**Purpose:** Submit an event for review (user submission)
+
+**Auth:** Required
+
+**Request:**
+```json
+{
+  "name": "Sunset Cars & Coffee",
+  "event_type_slug": "cars-and-coffee",
+  "source_url": "https://example.com/event",
+  "start_date": "2025-03-15",
+  "end_date": null,
+  "venue_name": "Downtown Plaza",
+  "city": "Austin",
+  "state": "TX",
+  "description": "Monthly morning meetup for car enthusiasts"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "submissionId": "uuid",
+  "message": "Event submitted successfully. It will be reviewed within 48 hours."
+}
+```
+
+**Error Responses:**
+- `400` - Validation error (missing fields, invalid URL, past date)
+- `401` - Authentication required
+
+**Table:** `event_submissions`
+
+---
+
+### `POST /api/events/[slug]/save`
+**Purpose:** Save (bookmark) an event
+
+**Auth:** Required (Collector+ tier)
+
+**Response:**
+```json
+{
+  "saved": true,
+  "alreadySaved": false
+}
+```
+
+**Error Responses:**
+- `401` - Authentication required
+- `403` - Requires Collector tier
+- `404` - Event not found or not approved
+
+**Table:** `event_saves`
+
+---
+
+### `DELETE /api/events/[slug]/save`
+**Purpose:** Unsave (remove bookmark from) an event
+
+**Auth:** Required
+
+**Response:**
+```json
+{
+  "saved": false
+}
+```
+
+**Table:** `event_saves`
+
+---
+
+### `GET /api/users/[userId]/saved-events`
+**Purpose:** Get user's saved events
+
+**Auth:** Required (must be own user ID)
+
+**Query Params:**
+- `includeExpired` (boolean, default: false): Include events with past start dates
+
+**Response:**
+```json
+{
+  "savedEvents": [
+    {
+      "saved_at": "2025-01-15T10:30:00Z",
+      "notes": "Don't forget to bring the 911",
+      "event": {
+        "id": "uuid",
+        "slug": "cars-coffee-malibu-jan-2025",
+        "name": "Malibu Cars & Coffee",
+        "event_type": { "slug": "cars-and-coffee", "name": "Cars & Coffee", "icon": "☕" },
+        "start_date": "2025-01-18",
+        "city": "Malibu",
+        "state": "CA",
+        "...": "full event object"
+      }
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- `401` - Authentication required
+- `403` - Cannot access other user's saved events
+
+**Tables:** `event_saves`, `events`
+
+---
+
 ## Users/AL Routes (4)
 
 ### `POST /api/ai-mechanic`
@@ -512,9 +775,107 @@
 
 ---
 
-## Internal Routes (7)
+## Internal Routes (10)
 
 All require admin authentication.
+
+### Event Moderation
+
+### `GET /api/internal/events/submissions`
+**Purpose:** List event submissions for moderation
+
+**Query Params:**
+- `status` (string): Filter by status (`pending`, `approved`, `rejected`, `all`)
+- `limit` (number, default: 20): Max results
+- `offset` (number, default: 0): Pagination offset
+
+**Response:**
+```json
+{
+  "submissions": [
+    {
+      "id": "uuid",
+      "user_id": "uuid",
+      "name": "Sunset Cars & Coffee",
+      "event_type_slug": "cars-and-coffee",
+      "source_url": "https://...",
+      "start_date": "2025-03-15",
+      "city": "Austin",
+      "state": "TX",
+      "status": "pending",
+      "created_at": "2025-01-10T14:00:00Z",
+      "user_profiles": {
+        "email": "user@example.com",
+        "display_name": "John D."
+      }
+    }
+  ],
+  "total": 15
+}
+```
+
+**Table:** `event_submissions`
+
+---
+
+### `POST /api/internal/events/submissions`
+**Purpose:** Approve a submission and create an event
+
+**Request:**
+```json
+{
+  "submissionId": "uuid",
+  "eventData": {
+    "name": "Sunset Cars & Coffee",
+    "event_type_id": "uuid",
+    "start_date": "2025-03-15",
+    "city": "Austin",
+    "state": "TX",
+    "source_url": "https://...",
+    "is_free": true,
+    "featured": false
+  },
+  "carAffinities": [
+    { "brand": "Porsche", "affinity_type": "welcome" }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "event": {
+    "id": "uuid",
+    "slug": "sunset-cars-coffee-austin"
+  }
+}
+```
+
+**Tables:** `events`, `event_submissions`, `event_car_affinities`
+
+---
+
+### `POST /api/internal/events/submissions/[id]/reject`
+**Purpose:** Reject a submission
+
+**Request:**
+```json
+{
+  "reason": "Duplicate event"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true
+}
+```
+
+**Table:** `event_submissions`
+
+---
 
 | Route | Purpose |
 |-------|---------|
@@ -562,7 +923,7 @@ All require admin authentication.
 
 ---
 
-## Cron Routes (5)
+## Cron Routes (6)
 
 Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 
@@ -574,6 +935,7 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 | `/api/cron/refresh-recalls` | Refresh NHTSA recall data | Weekly (Sun 2:30 AM UTC) |
 | `/api/cron/youtube-enrichment` | Process YouTube queue | Weekly (Mon 4:00 AM UTC) |
 | `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Tue, Fri 5:00 AM UTC) |
+| `/api/cron/refresh-events` | Fetch events from external sources | Weekly (Mon 6:00 AM UTC) |
 
 ### `GET /api/cron/refresh-recalls`
 **Purpose:** Refresh NHTSA recall data for all cars
@@ -598,6 +960,55 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 ```
 
 **Table:** `car_recalls`
+
+---
+
+### `GET /api/cron/refresh-events`
+**Purpose:** Fetch events from external sources, deduplicate, geocode, and insert into database
+
+**Auth:** Bearer token or `x-vercel-cron: true`
+
+**Query Params:**
+- `source` - Specific source name to run (default: all active)
+- `limit` - Max events per source (default: 100)
+- `dryRun` - If "true", don't write to DB
+- `skipGeocode` - If "true", skip geocoding step
+
+**Response:**
+```json
+{
+  "success": true,
+  "dryRun": false,
+  "sourcesProcessed": 1,
+  "eventsDiscovered": 45,
+  "eventsCreated": 12,
+  "eventsUpdated": 0,
+  "eventsExpired": 3,
+  "eventsDeduplicated": 30,
+  "eventsGeocoded": 10,
+  "errors": [],
+  "sourceResults": [
+    {
+      "name": "MotorsportReg",
+      "eventsDiscovered": 45,
+      "eventsCreated": 12,
+      "eventsDeduplicated": 30,
+      "errors": []
+    }
+  ],
+  "durationMs": 65000,
+  "ranAt": "2024-12-16T06:00:00.000Z"
+}
+```
+
+**Notes:**
+- Fetches from configured sources in `event_sources` table
+- Deduplicates by source_url and name+date+city similarity
+- Geocodes events missing latitude/longitude
+- Auto-approves events from trusted sources
+- Marks past events as expired
+
+**Tables:** `events`, `event_sources`, `event_types`
 
 ---
 
@@ -802,6 +1213,41 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 
 ### `GET /auth/callback`
 **Purpose:** Supabase auth callback handler
+
+---
+
+## External API Dependencies
+
+AutoRev routes integrate with external APIs for data enrichment. See [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) for complete documentation.
+
+### Google Cloud APIs
+
+| External API | Internal Routes Using It | Status |
+|--------------|-------------------------|--------|
+| YouTube Data API v3 | `/api/cron/youtube-enrichment` | ✅ Integrated |
+| Places API | Future: track venue enrichment | 🔲 Enabled |
+| Maps JavaScript API | Future: client-side maps | 🔲 Enabled |
+| Geocoding API | Future: `/api/events` radius search | 🔲 Enabled |
+| Custom Search API | Future: AL `search_forums` tool | 🔲 Enabled |
+| Cloud Vision API | Future: `/api/vin/decode` image upload | 🔲 Enabled |
+| Cloud Natural Language | Future: YouTube enrichment | 🔲 Enabled |
+| Cloud Speech-to-Text | Future: transcript generation | 🔲 Enabled |
+| Sheets API | Future: admin import/export | 🔲 Enabled |
+
+### Government APIs
+
+| External API | Internal Routes Using It |
+|--------------|-------------------------|
+| NHTSA Recalls API | `/api/cron/refresh-recalls`, `/api/cars/[slug]/safety` |
+| NHTSA Ratings API | `/api/cars/[slug]/safety-ratings` |
+| EPA Fuel Economy API | `/api/cars/[slug]/fuel-economy` |
+
+### Third-Party Services
+
+| Service | Internal Routes Using It |
+|---------|-------------------------|
+| Anthropic Claude | `/api/ai-mechanic` |
+| OpenAI Embeddings | `/api/internal/knowledge/ingest` |
 
 ---
 

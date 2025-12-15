@@ -256,25 +256,48 @@ Tier defaults to 'free'
 
 ## External Integrations
 
-### YouTube API
-- **Purpose:** Fetch video metadata
-- **Used By:** Expert reviews enrichment
-- **Rate Limits:** Quota-based
+AutoRev integrates with multiple external APIs for data enrichment. See [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) for complete Google API documentation.
 
-### NHTSA API
-- **Purpose:** Safety ratings, recalls
-- **Used By:** Safety data enrichment
-- **Rate Limits:** None (government API)
+### Google Cloud APIs (9 Enabled)
 
-### EPA API
-- **Purpose:** Fuel economy data
-- **Used By:** Fuel economy enrichment
-- **Rate Limits:** None
+| API | Status | Primary Use |
+|-----|--------|-------------|
+| YouTube Data API v3 | ✅ Integrated | Expert Reviews enrichment |
+| Places API | 🔲 Enabled | Track venue enrichment |
+| Maps JavaScript API | 🔲 Enabled | Interactive maps |
+| Geocoding API | 🔲 Enabled | Address → coordinates |
+| Custom Search API | 🔲 Enabled | AL forum search |
+| Cloud Vision API | 🔲 Enabled | VIN-from-photo OCR |
+| Cloud Natural Language | 🔲 Enabled | Content analysis |
+| Cloud Speech-to-Text | 🔲 Enabled | Transcript generation |
+| Sheets API | 🔲 Enabled | Bulk data import/export |
+
+**Environment Variables:**
+- `GOOGLE_API_KEY` — Server-side key (YouTube, Places, Vision, etc.)
+- `NEXT_PUBLIC_GOOGLE_MAPS_KEY` — Client-side key (Maps JavaScript)
+- `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` — Search engine ID
+
+### Government APIs
+
+| API | Purpose | Rate Limits |
+|-----|---------|-------------|
+| **NHTSA** | Safety ratings, recalls | None (government) |
+| **EPA** | Fuel economy data | None |
 
 ### Scraped Sources
-- **Bring a Trailer:** Auction results
-- **Cars.com:** Listing prices
-- **Hagerty:** Insurance values
+
+| Source | Data Type |
+|--------|-----------|
+| Bring a Trailer | Auction results |
+| Cars.com | Listing prices |
+| Hagerty | Insurance values |
+
+### AI Services
+
+| Service | Purpose | Model |
+|---------|---------|-------|
+| **Anthropic Claude** | AL assistant | Claude Sonnet 4 |
+| **OpenAI** | Embeddings | text-embedding-3-small |
 
 ---
 
@@ -371,4 +394,5 @@ try {
 ---
 
 *See [DATABASE.md](DATABASE.md) for complete schema and [API.md](API.md) for route documentation.*
+
 

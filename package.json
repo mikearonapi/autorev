@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test",
+    "test": "node --test \"lib/**/*.test.js\" \"scripts/**/*.test.js\"",
     "seed": "node scripts/migrate-and-seed.js",
     "gen:seed-multi-brand-migration": "node scripts/generateSeedMultiBrandMigration.mjs",
     "test:gen:seed-multi-brand-migration": "node scripts/testGenerateSeedMultiBrandMigration.mjs",
@@ -20,7 +20,12 @@
     "youtube:transcripts": "node scripts/youtube-transcripts.js",
     "youtube:ai": "node scripts/youtube-ai-processing.js",
     "youtube:consensus": "node scripts/youtube-aggregate-consensus.js",
-    "youtube:curated": "node scripts/youtube-browser-discovery.js"
+    "youtube:curated": "node scripts/youtube-browser-discovery.js",
+    "audit:events:mece": "node scripts/audit-events-mece.js",
+    "audit:events:urls": "node scripts/validate-event-urls.js",
+    "audit:events:quality": "node scripts/audit-events-quality.js",
+    "audit:events": "node scripts/audit-events-all.js",
+    "events:enrich:2026": "node scripts/enrich-events-2026-from-sources.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

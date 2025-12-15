@@ -1,0 +1,222 @@
+[
+  {
+    "vehicle": "BMW M4 F82 (2017)",
+    "vin": "WBS3R9C50GK340908",
+    "endpoints": {
+      "vinDecode": {
+        "success": true,
+        "year": 2016,
+        "make": "BMW",
+        "model": "M4",
+        "trim": "M4",
+        "engine": "3.0L Twin Turbo I6 425hp 406ft. lbs.",
+        "transmission": "7-Speed Double Clutch",
+        "data": {
+          "api": {
+            "name": "api.auto.dev",
+            "description": "🗂️ Vehicle VIN Decode",
+            "url": "https://api.auto.dev/vin",
+            "account": "https://api.auto.dev/account",
+            "docs": "https://docs.auto.dev/v2/products/vin-decode",
+            "type": "data",
+            "from": "https://auto.dev"
+          },
+          "links": {
+            "home": "https://api.auto.dev",
+            "self": "https://api.auto.dev/vin/WBS3R9C50GK340908",
+            "prev": "https://api.auto.dev/vin"
+          },
+          "vin": "WBS3R9C50GK340908",
+          "vinValid": true,
+          "wmi": "WBS",
+          "origin": "Germany",
+          "squishVin": "WBS3R9C5GK",
+          "checkDigit": "0",
+          "checksum": false,
+          "type": "Passenger cars",
+          "make": "BMW",
+          "model": "M4",
+          "trim": "M4",
+          "style": "2dr Coupe",
+          "engine": "3.0L Twin Turbo I6 425hp 406ft. lbs.",
+          "drive": "RWD",
+          "transmission": "7-Speed Double Clutch",
+          "vehicle": {
+            "vin": "WBS3R9C50GK340908",
+            "year": 2016,
+            "make": "BMW",
+            "model": "M4",
+            "manufacturer": "BMW M GmbH Gesellschaft fuer"
+          },
+          "examples": {
+            "2025 Ford Explorer Active": "https://api.auto.dev/vin/1FMUK7DHXSGA27345",
+            "2025 Subaru Outback Premium": "https://api.auto.dev/vin/4S4BTADC0S3143859",
+            "2013 Ford Focus SE": "https://api.auto.dev/vin/1FADP3F23DL333360"
+          },
+          "discover": {
+            "📋 Specifications": "https://api.auto.dev/specs/WBS3R9C50GK340908",
+            "🏗️ OEM Build Data": "https://api.auto.dev/build/WBS3R9C50GK340908",
+            "🚘 Vehicle Listings": "https://api.auto.dev/listings/WBS3R9C50GK340908",
+            "📷 Vehicle Photos": "https://api.auto.dev/photos/WBS3R9C50GK340908",
+            "📈 Current Interest Rates": "https://api.auto.dev/apr/WBS3R9C50GK340908",
+            "💳 Vehicle Payments": "https://api.auto.dev/payments/WBS3R9C50GK340908",
+            "⚠️ Vehicle Recalls": "https://api.auto.dev/recalls/WBS3R9C50GK340908",
+            "🔓 Open Vehicle Recalls": "https://api.auto.dev/openrecalls/WBS3R9C50GK340908",
+            "🧾 Vehicle Taxes & Fees": "https://api.auto.dev/taxes/WBS3R9C50GK340908",
+            "💸 Total Cost of Ownership": "https://api.auto.dev/tco/WBS3R9C50GK340908"
+          },
+          "actions": {
+            "Toggle Link Domains": "https://api.auto.dev/vin/WBS3R9C50GK340908?domains=true"
+          },
+          "user": {
+            "name": "Mike Aron",
+            "email": "mike@mikearon.com",
+            "image": "",
+            "authenticated": true,
+            "plan": "Starter",
+            "userAgent": "node",
+            "ip": "2600:4040:403d:bd00:a566:f801:cf86:24d6",
+            "isp": "Verizon Business",
+            "flag": "🇺🇸",
+            "zipcode": "20177",
+            "city": "Leesburg",
+            "region": "Virginia",
+            "country": "United States",
+            "continent": "North America",
+            "requestId": "9ae75857890082c6-IAD",
+            "localTime": "12/15/2025, 11:33:51 AM",
+            "timezone": "America/New_York",
+            "edgeLocation": "Ashburn",
+            "edgeDistanceMiles": 13,
+            "latencyMilliseconds": 3,
+            "recentInteractions": 0,
+            "trustScore": 99,
+            "serviceLatency": 49
+          }
+        }
+      },
+      "specs": {
+        "success": false,
+        "error": "API Error 402: {\"status\":402,\"error\":\"Payment Required\",\"upgradeLink\":\"https://auto.dev/pricing?tier=Growth\"}"
+      },
+      "build": {
+        "success": false,
+        "error": "API Error 402: {\"status\":402,\"error\":\"Payment Required\",\"upgradeLink\":\"https://auto.dev/pricing?tier=Growth\"}"
+      },
+      "listings": {
+        "success": false,
+        "error": "API Error 400: {\"api\":{\"name\":\"api.auto.dev\",\"description\":\"🚘 Vehicle Listings\",\"url\":\"https://api.auto.dev/listings\",\"account\":\"https://api.auto.dev/account\",\"docs"
+      }
+    }
+  },
+  {
+    "vehicle": "Porsche 911 GT3 (2010)",
+    "vin": "WP0AC2A91AS783054",
+    "endpoints": {
+      "vinDecode": {
+        "success": true,
+        "year": 2010,
+        "make": "Porsche",
+        "model": "911",
+        "trim": "2dr Cpe GT3 RS",
+        "engine": "3.8, Flat 6 Cylinder Engine",
+        "transmission": "6-speed manual transmission;Transmission oil cooler;",
+        "data": {
+          "api": {
+            "name": "api.auto.dev",
+            "description": "🗂️ Vehicle VIN Decode",
+            "url": "https://api.auto.dev/vin",
+            "account": "https://api.auto.dev/account",
+            "docs": "https://docs.auto.dev/v2/products/vin-decode",
+            "type": "data",
+            "from": "https://auto.dev"
+          },
+          "links": {
+            "home": "https://api.auto.dev",
+            "self": "https://api.auto.dev/vin/WP0AC2A91AS783054",
+            "prev": "https://api.auto.dev/vin"
+          },
+          "vin": "WP0AC2A91AS783054",
+          "vinValid": true,
+          "wmi": "WP0",
+          "origin": "Germany",
+          "squishVin": "WP0AC2A9AS",
+          "checkDigit": "1",
+          "checksum": false,
+          "type": "Passenger Car",
+          "make": "Porsche",
+          "model": "911",
+          "trim": "2dr Cpe GT3 RS",
+          "style": "3.8, Flat 6 Cylinder Engine",
+          "engine": "3.8, Flat 6 Cylinder Engine",
+          "drive": "RearWheelDrive",
+          "transmission": "6-speed manual transmission;Transmission oil cooler;",
+          "vehicle": {
+            "vin": "WP0AC2A91AS783054",
+            "year": 2010,
+            "make": "Porsche",
+            "model": "911",
+            "manufacturer": "Dr Ing HCF Porsch Ag"
+          },
+          "examples": {
+            "2024 Ford F-150 XL": "https://api.auto.dev/vin/1FTFW1L50RKD02525",
+            "2025 Subaru Forester Touring": "https://api.auto.dev/vin/JF2SLDTC9SH429303",
+            "2024 Ford Expedition XLT": "https://api.auto.dev/vin/1FMJU1H88REA76666"
+          },
+          "discover": {
+            "📋 Specifications": "https://api.auto.dev/specs/WP0AC2A91AS783054",
+            "🏗️ OEM Build Data": "https://api.auto.dev/build/WP0AC2A91AS783054",
+            "🚘 Vehicle Listings": "https://api.auto.dev/listings/WP0AC2A91AS783054",
+            "📷 Vehicle Photos": "https://api.auto.dev/photos/WP0AC2A91AS783054",
+            "📈 Current Interest Rates": "https://api.auto.dev/apr/WP0AC2A91AS783054",
+            "💳 Vehicle Payments": "https://api.auto.dev/payments/WP0AC2A91AS783054",
+            "⚠️ Vehicle Recalls": "https://api.auto.dev/recalls/WP0AC2A91AS783054",
+            "🔓 Open Vehicle Recalls": "https://api.auto.dev/openrecalls/WP0AC2A91AS783054",
+            "🧾 Vehicle Taxes & Fees": "https://api.auto.dev/taxes/WP0AC2A91AS783054",
+            "💸 Total Cost of Ownership": "https://api.auto.dev/tco/WP0AC2A91AS783054"
+          },
+          "actions": {
+            "Toggle Link Domains": "https://api.auto.dev/vin/WP0AC2A91AS783054?domains=true"
+          },
+          "user": {
+            "name": "Mike Aron",
+            "email": "mike@mikearon.com",
+            "image": "",
+            "authenticated": true,
+            "plan": "Starter",
+            "userAgent": "node",
+            "ip": "2600:4040:403d:bd00:a566:f801:cf86:24d6",
+            "isp": "Verizon Business",
+            "flag": "🇺🇸",
+            "zipcode": "20177",
+            "city": "Leesburg",
+            "region": "Virginia",
+            "country": "United States",
+            "continent": "North America",
+            "requestId": "9ae75862fb1682c6-IAD",
+            "localTime": "12/15/2025, 11:33:53 AM",
+            "timezone": "America/New_York",
+            "edgeLocation": "Ashburn",
+            "edgeDistanceMiles": 13,
+            "latencyMilliseconds": 3,
+            "recentInteractions": 0,
+            "trustScore": 99,
+            "serviceLatency": 24
+          }
+        }
+      },
+      "specs": {
+        "success": false,
+        "error": "API Error 402: {\"status\":402,\"error\":\"Payment Required\",\"upgradeLink\":\"https://auto.dev/pricing?tier=Growth\"}"
+      },
+      "build": {
+        "success": false,
+        "error": "API Error 402: {\"status\":402,\"error\":\"Payment Required\",\"upgradeLink\":\"https://auto.dev/pricing?tier=Growth\"}"
+      },
+      "listings": {
+        "success": false,
+        "error": "API Error 400: {\"api\":{\"name\":\"api.auto.dev\",\"description\":\"🚘 Vehicle Listings\",\"url\":\"https://api.auto.dev/listings\",\"account\":\"https://api.auto.dev/account\",\"docs"
+      }
+    }
+  }
+]

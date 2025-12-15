@@ -10,6 +10,7 @@ const TOOLS = [
   { href: '/internal/lap-times', title: 'Track Lap Times', desc: 'Curate citeable lap times with conditions + source URL.' },
   { href: '/internal/dyno', title: 'Dyno Runs', desc: 'Curate citeable dyno runs with peaks/conditions + source URL.' },
   { href: '/internal/variant-maintenance', title: 'Variant Maintenance Overrides', desc: 'Override maintenance specs by car_variants.variant_key (VIN-matched vehicles).' },
+  { href: '/internal/events', title: 'Event Moderation', desc: 'Review and approve user-submitted car events.' },
 ];
 
 export default function InternalHomePage() {
@@ -34,5 +35,6 @@ export default function InternalHomePage() {
     </div>
   );
 }
+
 
 

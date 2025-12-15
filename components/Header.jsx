@@ -41,6 +41,7 @@ const ChevronIcon = () => (
 // - Your Sports Car Match: Interactive car selection tool
 // - My Garage: Personal user area (collection & favorites)
 // - Tuning Shop: Mod planner & projects
+// - Community: Events, Forums, Clubs (future)
 // - Encyclopedia: Automotive Education
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -48,6 +49,15 @@ const navLinks = [
   { href: '/car-selector', label: 'Your Sports Car Match' },
   { href: '/garage', label: 'My Garage' },
   { href: '/tuning-shop', label: 'Tuning Shop' },
+  { 
+    href: '/community', 
+    label: 'Community',
+    subLinks: [
+      { href: '/community/events', label: 'Events' },
+      { href: '/events/saved', label: 'Saved Events' },
+      { href: '/events/submit', label: 'Submit Event' },
+    ],
+  },
   { href: '/encyclopedia', label: 'Encyclopedia' },
 ];
 
@@ -232,8 +242,8 @@ export default function Header() {
                   <Image
                     src={avatarUrl}
                     alt={displayName || 'Profile'}
-                    width={36}
-                    height={36}
+                    width={28}
+                    height={28}
                     className={styles.profileAvatarImage}
                   />
                 ) : (

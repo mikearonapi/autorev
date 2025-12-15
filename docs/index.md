@@ -15,6 +15,7 @@
 | Work with AL assistant | [AL.md](AL.md) |
 | Understand components | [COMPONENTS.md](COMPONENTS.md) |
 | See all features | [FEATURES.md](FEATURES.md) |
+| Work with Google Cloud APIs | [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) |
 | Non-technical overview | [OWNER_GUIDE.md](OWNER_GUIDE.md) |
 | Image requirements | [image-inventory.md](image-inventory.md) |
 
@@ -31,6 +32,7 @@
 | `AL.md` | ~450 | AI assistant, 15 tools, prompts |
 | `COMPONENTS.md` | ~350 | All 46 React components |
 | `FEATURES.md` | ~350 | Marketing feature descriptions |
+| `GOOGLE_CLOUD_APIS.md` | ~350 | 9 Google APIs, env vars, costs |
 | `OWNER_GUIDE.md` | ~400 | Non-technical stakeholder guide |
 | `image-inventory.md` | ~200 | Required images list |
 
@@ -92,4 +94,5 @@ Currently **beta** - all features unlocked for authenticated users.
 ---
 
 *Navigate to specific documents above for detailed reference.*
+
 

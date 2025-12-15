@@ -1,0 +1,322 @@
+[
+    {
+        "year": 2019,
+        "make": "Chevrolet",
+        "model": "Spark",
+        "trim": "1LT CVT 4dr Hatchback CVT",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$6,768",
+                "Private Party": "$9,109",
+                "Dealer Retail": "$11,186"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$6,149",
+                "Private Party": "$8,262",
+                "Dealer Retail": "$10,129"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$7,244",
+                "Private Party": "$9,761",
+                "Dealer Retail": "$11,999"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$7,530",
+                "Private Party": "$10,152",
+                "Dealer Retail": "$12,487"
+            }
+        ]
+    },
+    {
+        "year": 2020,
+        "make": "Hyundai",
+        "model": "Kona Electric",
+        "trim": "Limited 4dr Front-Wheel Drive Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$12,294",
+                "Private Party": "$14,678",
+                "Dealer Retail": "$16,970"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$11,446",
+                "Private Party": "$13,625",
+                "Dealer Retail": "$15,705"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$12,946",
+                "Private Party": "$15,489",
+                "Dealer Retail": "$17,943"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$13,338",
+                "Private Party": "$15,975",
+                "Dealer Retail": "$18,527"
+            }
+        ]
+    },
+    {
+        "year": 2016,
+        "make": "Honda",
+        "model": "HR V",
+        "trim": "EX-L 4dr Front-Wheel Drive CVT",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$8,733",
+                "Private Party": "$9,922",
+                "Dealer Retail": "$10,747"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$7,676",
+                "Private Party": "$8,651",
+                "Dealer Retail": "$9,295"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$9,546",
+                "Private Party": "$10,900",
+                "Dealer Retail": "$11,865"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$10,034",
+                "Private Party": "$11,486",
+                "Dealer Retail": "$12,535"
+            }
+        ]
+    },
+    {
+        "year": 2018,
+        "make": "Chrysler",
+        "model": "300",
+        "trim": "S 4dr All-wheel Drive Sedan Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$12,145",
+                "Private Party": "$14,789",
+                "Dealer Retail": "$16,952"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$11,144",
+                "Private Party": "$13,545",
+                "Dealer Retail": "$15,497"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$12,915",
+                "Private Party": "$15,746",
+                "Dealer Retail": "$18,072"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$13,376",
+                "Private Party": "$16,320",
+                "Dealer Retail": "$18,743"
+            }
+        ]
+    },
+    {
+        "year": 2016,
+        "make": "Ford",
+        "model": "F 150",
+        "trim": "XLT 4x4 Regular Cab Styleside 6.5 ft. box 122 in. WB Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$13,021",
+                "Private Party": "$14,812",
+                "Dealer Retail": "$16,057"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$11,937",
+                "Private Party": "$13,527",
+                "Dealer Retail": "$14,608"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$13,855",
+                "Private Party": "$15,800",
+                "Dealer Retail": "$17,171"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$14,355",
+                "Private Party": "$16,393",
+                "Dealer Retail": "$17,840"
+            }
+        ]
+    },
+    {
+        "year": 2019,
+        "make": "Ford",
+        "model": "Transit Connect",
+        "trim": "Titanium Passenger Wagon LWB Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$12,602",
+                "Private Party": "$15,772",
+                "Dealer Retail": "$18,582"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$11,725",
+                "Private Party": "$14,645",
+                "Dealer Retail": "$17,220"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$13,276",
+                "Private Party": "$16,638",
+                "Dealer Retail": "$19,631"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$13,681",
+                "Private Party": "$17,158",
+                "Dealer Retail": "$20,259"
+            }
+        ]
+    },
+    {
+        "year": 2016,
+        "make": "Ford",
+        "model": "Transit 150",
+        "trim": "Base Low Roof Cargo Van 130 in. WB Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$7,625",
+                "Private Party": "$10,438",
+                "Dealer Retail": "$12,393"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$8,458",
+                "Private Party": "$11,667",
+                "Dealer Retail": "$13,959"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$6,948",
+                "Private Party": "$9,438",
+                "Dealer Retail": "$11,120"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$8,145",
+                "Private Party": "$11,206",
+                "Dealer Retail": "$13,371"
+            }
+        ]
+    },
+    {
+        "year": 2015,
+        "make": "Volvo",
+        "model": "V60",
+        "trim": "T5 Premier 4dr Front-wheel Drive Wagon Automatic",
+        "market_value": [
+            {
+                "Condition": "Clean",
+                "Trade-In": "$5,289",
+                "Private Party": "$7,834",
+                "Dealer Retail": "$9,489"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$4,456",
+                "Private Party": "$6,519",
+                "Dealer Retail": "$7,800"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$5,506",
+                "Private Party": "$8,176",
+                "Dealer Retail": "$9,930"
+            },
+            {
+                "Condition": "Average",
+                "Trade-In": "$4,927",
+                "Private Party": "$7,262",
+                "Dealer Retail": "$8,755"
+            }
+        ]
+    },
+    {
+        "year": 2016,
+        "make": "Ford",
+        "model": "Expedition EL",
+        "trim": "King Ranch 4dr 4x2 Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$9,226",
+                "Private Party": "$12,031",
+                "Dealer Retail": "$13,980"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$8,600",
+                "Private Party": "$11,161",
+                "Dealer Retail": "$12,904"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$9,707",
+                "Private Party": "$12,701",
+                "Dealer Retail": "$14,808"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$9,995",
+                "Private Party": "$13,103",
+                "Dealer Retail": "$15,305"
+            }
+        ]
+    },
+    {
+        "year": 2016,
+        "make": "Ford",
+        "model": "F 150",
+        "trim": "XLT 4x2 SuperCab Styleside 6.5 ft. box 145 in. WB Automatic",
+        "market_value": [
+            {
+                "Condition": "Average",
+                "Trade-In": "$10,819",
+                "Private Party": "$13,224",
+                "Dealer Retail": "$14,896"
+            },
+            {
+                "Condition": "Rough",
+                "Trade-In": "$9,918",
+                "Private Party": "$12,077",
+                "Dealer Retail": "$13,552"
+            },
+            {
+                "Condition": "Clean",
+                "Trade-In": "$11,512",
+                "Private Party": "$14,106",
+                "Dealer Retail": "$15,930"
+            },
+            {
+                "Condition": "Outstanding",
+                "Trade-In": "$11,927",
+                "Private Party": "$14,636",
+                "Dealer Retail": "$16,550"
+            }
+        ]
+    }
+]

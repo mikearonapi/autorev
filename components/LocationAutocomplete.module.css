@@ -1,0 +1,194 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* Light yellow/gold themed input - key input on events page */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fffbeb;
+  border: 2px solid var(--sn-gold, #d4af37);
+  border-radius: var(--radius-md, 8px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--sn-gold-dark, #b8941f);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--sn-gold-dark, #b8941f);
+  pointer-events: none;
+}
+
+.input {
+  flex: 1;
+  padding: 10px 36px 10px 40px;
+  border: none;
+  background: transparent;
+  color: var(--color-gray-900, #1a1a1a);
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--color-gray-500, #666);
+}
+
+/* Google Places Element Wrapper */
+.googlePlacesWrapper {
+  flex: 1;
+  padding-left: 40px;
+  padding-right: 36px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+/* Style the Google PlaceAutocompleteElement */
+.googlePlacesWrapper :global(gmp-place-autocomplete) {
+  width: 100%;
+  --gmp-theme-background-surface: transparent;
+  --gmp-theme-text-color-primary: var(--color-gray-900, #1a1a1a);
+  --gmp-theme-text-color-placeholder: var(--color-gray-500, #666);
+  font-family: var(--font-primary, Inter, sans-serif);
+  font-size: 14px;
+}
+
+.googlePlacesWrapper :global(gmp-place-autocomplete input) {
+  border: none !important;
+  background: transparent !important;
+  padding: 10px 0 !important;
+  font-size: 14px !important;
+  color: var(--color-gray-900, #1a1a1a) !important;
+}
+
+.clearBtn {
+  position: absolute;
+  right: 8px;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: var(--color-gray-500, #666);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.clearBtn:hover {
+  color: var(--color-gray-900, #1a1a1a);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.loadingSpinner {
+  position: absolute;
+  right: 36px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-gray-300, #ccc);
+  border-top-color: var(--sn-gold, #d4af37);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Suggestions dropdown - Light theme */
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-white, #fff);
+  border: 1px solid var(--color-gray-200, #e5e5e5);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.suggestionItem:hover,
+.suggestionItem.highlighted {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.locationIcon {
+  color: var(--color-gray-400, #888);
+  flex-shrink: 0;
+}
+
+.suggestionText {
+  flex: 1;
+  font-size: 14px;
+  color: var(--color-gray-900, #1a1a1a);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestionZip {
+  font-size: 12px;
+  color: var(--color-gray-500, #666);
+  background: var(--color-gray-100, #f5f5f5);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Google attribution (required by ToS) */
+.attribution {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 12px;
+  border-top: 1px solid var(--color-gray-100, #f0f0f0);
+  margin-top: 4px;
+}
+
+.attribution img {
+  opacity: 0.7;
+}
+
+/* Scrollbar styling */
+.suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300, #d4d4d4);
+  border-radius: 3px;
+}
+
+.suggestions::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400, #a3a3a3);
+}
+

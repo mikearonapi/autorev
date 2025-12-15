@@ -1,0 +1,117 @@
+/* AddToCalendarButton - On-Brand Styling */
+
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.triggerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.triggerBtn:hover {
+  background: var(--color-gray-50);
+  border-color: var(--sn-primary);
+  color: var(--sn-primary);
+}
+
+.triggerIcon {
+  display: flex;
+  align-items: center;
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-xs);
+  transition: transform var(--transition-fast);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 0;
+  min-width: 200px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: none;
+  border: none;
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background: var(--color-gray-50);
+  color: var(--sn-primary);
+}
+
+.dropdownIcon {
+  display: flex;
+  align-items: center;
+  color: var(--color-gray-400);
+}
+
+.dropdownItem:hover .dropdownIcon {
+  color: var(--sn-primary);
+}
+
+/* Gated state */
+.gatedBtn {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gatedBtn:hover {
+  background: var(--color-white);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-700);
+}
+
+.upgradeHint {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-warning-light);
+  border-top: 1px solid var(--color-gray-100);
+  font-size: var(--font-size-xs);
+  color: var(--color-warning);
+  text-align: center;
+}
+
+.upgradeHint a {
+  color: var(--color-warning);
+  font-weight: 600;
+  text-decoration: underline;
+}

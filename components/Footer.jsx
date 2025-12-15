@@ -29,6 +29,8 @@ export default function Footer() {
     { href: '/browse-cars', label: 'Browse Cars' },
     { href: '/car-selector', label: 'Your Sportscar Match' },
     { href: '/tuning-shop', label: 'Tuning Shop' },
+    { href: '/community', label: 'Community' },
+    { href: '/community/events', label: 'Events' },
     { href: '/encyclopedia', label: 'Encyclopedia' },
     { href: '/garage', label: 'My Garage' },
     { href: '/contact', label: 'Contact' },

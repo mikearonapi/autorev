@@ -1,0 +1,241 @@
+/* GarageEventsSection.module.css */
+
+.section {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  font-size: 1.25rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sn-text, #f0f0f0);
+  margin: 0;
+}
+
+.seeAllLink {
+  font-size: 0.8rem;
+  color: var(--sn-accent, #60a5fa);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.seeAllLink:hover {
+  color: var(--sn-accent-hover, #93c5fd);
+  text-decoration: underline;
+}
+
+/* Events List */
+.eventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Compact Event Card */
+.compactCard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.compactCard:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+}
+
+/* Date Badge */
+.dateBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--sn-accent, #60a5fa) 0%, #3b82f6 100%);
+  border-radius: 6px;
+  padding: 0.25rem;
+}
+
+.dateDay {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.dateMonth {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Event Info */
+.eventInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.eventType {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--sn-text-muted, #a0a0a0);
+  margin-bottom: 0.25rem;
+}
+
+.eventName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sn-text, #f0f0f0);
+  margin: 0 0 0.15rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventLocation {
+  font-size: 0.75rem;
+  color: var(--sn-text-muted, #a0a0a0);
+}
+
+/* Event Meta */
+.eventMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.cost {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--sn-text-muted, #a0a0a0);
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+
+.costFree {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.loadingCard {
+  height: 62px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty State */
+.empty {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  opacity: 0.6;
+}
+
+.emptyText {
+  font-size: 0.85rem;
+  color: var(--sn-text-muted, #a0a0a0);
+  margin: 0 0 0.75rem 0;
+}
+
+.browseLink {
+  font-size: 0.85rem;
+  color: var(--sn-accent, #60a5fa);
+  text-decoration: none;
+}
+
+.browseLink:hover {
+  text-decoration: underline;
+}
+
+/* Error State */
+.error {
+  text-align: center;
+  padding: 1rem;
+  color: var(--sn-text-muted, #a0a0a0);
+  font-size: 0.85rem;
+}
+
+.error button {
+  background: none;
+  border: none;
+  color: var(--sn-accent, #60a5fa);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .section {
+    padding: 1rem;
+  }
+  
+  .compactCard {
+    padding: 0.625rem;
+  }
+  
+  .eventName {
+    font-size: 0.8rem;
+  }
+}
+

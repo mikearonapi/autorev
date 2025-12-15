@@ -124,12 +124,14 @@
 - **Research**: "What are the common issues with the FD RX-7?"
 - **Recommend parts**: "Best coilovers for autocross BRZ?"
 - **Explain**: "Should I get an ECU tune?"
+- **Find events**: "Track days near San Francisco" or "Porsche meetups in Texas"
 
 ### AL Tools
 | Tool | What It Does | Tier |
 |------|--------------|------|
 | Search Cars | Find cars by criteria | Free |
 | Get Details | Pull car specs | Free |
+| Search Events | Find car events near you | Free |
 | Known Issues | Common problems | Free |
 | Knowledge Search | Deep documentation | Collector |
 | Maintenance Specs | Oil/fluid specs | Collector |
@@ -165,6 +167,60 @@
 - Watch directly or on YouTube
 
 **Available to**: Everyone (Free)
+
+---
+
+## 📅 Events — Find Car Events Near You
+
+**Discover Cars & Coffee meetups, track days, car shows, and more**
+
+### Event Types
+- **Cars & Coffee**: Morning car meetups
+- **Car Shows**: Concours, judged shows, display events
+- **Club Meetups**: Brand/model-specific gatherings
+- **Cruise / Drive**: Group drives, canyon runs, rallies
+- **Autocross**: Timed competition on closed course
+- **Track Day / HPDE**: High Performance Driver Education
+- **Time Attack**: Competitive timed lapping
+- **Industry Events**: SEMA, PRI, auto shows
+- **Auctions**: Car auctions
+
+### Search & Filter
+- Location: ZIP code, city/state, or region
+- Scope: Local, Regional, National
+- Event type filtering
+- Track events toggle
+- Free events toggle
+- Car/brand affinity filtering
+
+### Event Details
+- Full event description
+- Date and time with timezone
+- Venue information with Google Maps link
+- Cost information
+- Registration/source links
+- Car/brand affinities (clickable links to car pages)
+- Related events
+
+### Cross-Feature Integration
+- **AL Integration**: Ask AL to find events using `search_events` tool
+- **My Garage Integration**: Upcoming events section shows events for your cars (Collector+)
+- **Car Detail Integration**: See events featuring a specific car or brand
+- **Deep Linking**: `/events?brand=Porsche`, `/events?type=track-day`, `/events?car=718-cayman-gt4`
+- **"Events for Your Cars" filter**: Quick filter on events page for authenticated users with garage cars
+
+### User Actions
+| Action | Tier |
+|--------|------|
+| Browse events | Free |
+| Submit events | Free (authenticated) |
+| Save/bookmark events | Collector |
+
+**Available to**: Everyone (Free)
+
+**Phase 3 Features:**
+- Automated event ingestion from trusted sources
+- Radius-based location search with ZIP geocoding
 
 ---
 
@@ -343,8 +399,10 @@ The Encyclopedia is organized by automotive system, not by upgrade type. Learn t
 | **Encyclopedia topics** | **136** |
 | **Automotive systems** | **9** |
 | **Components** | **52** |
+| **Event types** | **10** |
+| **Sample events** | **15** |
 
-> **Last updated:** December 14, 2024
+> **Last updated:** December 15, 2024
 
 ---
 

@@ -1,0 +1,245 @@
+/* EventCalendarView - On-Brand Styling */
+
+.container {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.monthYear {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.navButtons {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.navBtn:hover {
+  background: var(--sn-primary);
+  border-color: var(--sn-primary);
+  color: var(--color-white);
+}
+
+/* Calendar Grid */
+.calendar {
+  padding: var(--space-md);
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: var(--space-sm);
+}
+
+.weekday {
+  padding: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.day {
+  position: relative;
+  min-height: 80px;
+  padding: var(--space-xs);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+@media (min-width: 768px) {
+  .day {
+    min-height: 100px;
+    padding: var(--space-sm);
+  }
+}
+
+.day:hover {
+  border-color: var(--sn-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.dayOtherMonth {
+  background: var(--color-gray-50);
+}
+
+.dayOtherMonth .dayNumber {
+  color: var(--color-gray-300);
+}
+
+.dayToday {
+  border-color: var(--sn-gold);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.dayHasEvents {
+  background: rgba(26, 77, 110, 0.03);
+}
+
+.dayNumber {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-xs);
+}
+
+.dayToday .dayNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--sn-gold);
+  border-radius: 50%;
+  color: var(--color-gray-900);
+}
+
+/* Events in Day */
+.dayEvents {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dayEvent {
+  padding: 2px var(--space-xs);
+  background: var(--sn-primary);
+  border-radius: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.dayEvent:hover {
+  background: var(--sn-primary-dark);
+}
+
+.moreEvents {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-top: 2px;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--color-gray-300);
+  margin-bottom: var(--space-md);
+}
+
+.emptyState h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-sm);
+}
+
+.emptyState p {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+/* Gated State */
+.gatedState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  background: var(--color-gray-50);
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.gatedIcon {
+  color: var(--sn-gold);
+  margin-bottom: var(--space-md);
+}
+
+.gatedState h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-sm);
+}
+
+.gatedState p {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--space-md);
+}
+
+.upgradeBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.upgradeBtn:hover {
+  background: var(--sn-primary-dark);
+}
