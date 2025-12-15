@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 43% (42/98) | Lap Times 48% (47/98)
+> **Current**: Dyno 46% (45/98) | Lap Times 52% (51/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 46 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 42 | 50 | 🔴 |
-| Lap Times | 65 | 82 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 47 | 50 | 🔴 |
+| Dyno Runs | 29 | 49 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 45 | 50 | 🔴 |
+| Lap Times | 65 | 86 | 100+ | 🔴 |
+| Unique Cars (Lap) | 30 | 51 | 50 | 🟢 |
 
 ---
 
@@ -65,12 +65,12 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| Honda S2000 | `s2000-ap1` | ⬜ | ⬜ | |
-| Supra Mk4 | `supra-mk4-turbo` | ⬜ | ⬜ | |
-| Evo 8/9/X | `evo-x` | ⬜ | ⬜ | |
-| RX-7 FD | `rx7-fd` | ⬜ | ⬜ | |
+| Honda S2000 | `s2000-ap1` | ✅ | ✅ | Dyno: https://www.motortrend.com/how-to/0405it-2001-honda-s2000-dyno ; Lap: https://fastestlaps.com/tests/gl39ssb8nz9f |
+| Supra Mk4 | `supra-mk4-turbo` | ❌ | ✅ | ❌ No dyno (wheel whp+wtq) found with a stable citeable source; Lap: https://fastestlaps.com/tests/v8onf504f9b4 |
+| Evo 8/9/X | `evo-x` | ✅ | ✅ | Dyno: https://www.motortrend.com/how-to/modp-1005-evo-x-aem-intake/ ; Lap: https://fastestlaps.com/tests/kvhcvuck9ai1 (Buttonwillow East Loop) |
+| RX-7 FD | `rx7-fd` | ✅ | ✅ | Dyno: https://www.motortrend.com/how-to/impp-0812-top-ten-power-pages ; Lap: https://fastestlaps.com/tests/m7lzez8j9nmc |
 
-**Batch 4 Status**: 0/4 complete
+**Batch 4 Status**: 4/4 complete
 
 ---
 
@@ -141,6 +141,7 @@
 | 2025-12-14 | Priority Batch 1 (BMW M Cars) | 8 | 8 | 8 | Added dyno + lap time sources (mostly Nürburgring Nordschleife; Top Gear track for Z4 M). |
 | 2025-12-15 | Priority Batch 2 (Porsche) | 6 | 6 | 6 | Added dyno + lap time sources (mostly Nürburgring Nordschleife). |
 | 2025-12-15 | Priority Batch 3 (Corvette) | 3 | 3 | 3 | Added dyno + lap time sources (Nürburgring Nordschleife + Nürburgring GP). |
+| 2025-12-15 | Priority Batch 4 (JDM Icons) | 4 | 3 | 4 | Added lap times for all 4; dyno data missing for Supra Mk4 (marked ❌). |
 
 ---
 

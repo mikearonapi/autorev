@@ -961,13 +961,171 @@ WHERE c.slug = 'c6-corvette-gs' AND tv.slug = 'nurburgring-gp'
   );
 
 -- ============================================================================
+-- Priority Batch 4 (JDM Icons): DYNO + LAP TIME DATA (4 cars)
+-- ============================================================================
+-- Honda S2000 AP1 dyno (MotorTrend / Import Tuner dyno test)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  's2000-ap1',
+  'baseline',
+  'Dynojet',
+  NULL,
+  NULL,
+  true,
+  201,
+  117,
+  '{}'::jsonb,
+  '{"dyno_model":"Dynojet 248E"}'::jsonb,
+  'MotorTrend dyno test (Import Tuner): stock 2001 S2000 made 201.1 whp and 116.6 wtq (rounded).',
+  'https://www.motortrend.com/how-to/0405it-2001-honda-s2000-dyno',
+  0.85,
+  false
+FROM cars c
+WHERE c.slug = 's2000-ap1'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 's2000-ap1' AND run_kind = 'baseline');
+
+-- Mitsubishi Evo X dyno (MotorTrend baseline figure)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'evo-x',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  261,
+  277,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'MotorTrend AEM intake article includes stock baseline dyno: 261 whp / 277 wtq.',
+  'https://www.motortrend.com/how-to/modp-1005-evo-x-aem-intake/',
+  0.80,
+  false
+FROM cars c
+WHERE c.slug = 'evo-x'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'evo-x' AND run_kind = 'baseline');
+
+-- Mazda RX-7 FD dyno (MotorTrend wheel figures)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'rx7-fd',
+  'baseline',
+  'Dynojet',
+  NULL,
+  NULL,
+  true,
+  231,
+  200,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'MotorTrend wheel figures for stock RX-7 FD: 230.9 whp / 199.7 wtq (rounded).',
+  'https://www.motortrend.com/how-to/impp-0812-top-ten-power-pages',
+  0.65,
+  false
+FROM cars c
+WHERE c.slug = 'rx7-fd'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'rx7-fd' AND run_kind = 'baseline');
+
+-- Honda S2000 AP1 lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  's2000-ap1',
+  tv.id,
+  69310,
+  '1:09.310',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/gl39ssb8nz9f',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 's2000-ap1' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 's2000-ap1' AND lt.track_id = tv.id AND lt.lap_time_ms = 69310
+  );
+
+-- Toyota Supra Mk4 Turbo lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'supra-mk4-turbo',
+  tv.id,
+  68430,
+  '1:08.430',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/v8onf504f9b4',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'supra-mk4-turbo' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'supra-mk4-turbo' AND lt.track_id = tv.id AND lt.lap_time_ms = 68430
+  );
+
+-- Mitsubishi Evo X lap time (Buttonwillow East Loop; stored as note/condition)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'evo-x',
+  tv.id,
+  57600,
+  '57.600',
+  true,
+  NULL,
+  '{"layout":"east-loop"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Buttonwillow East Loop).',
+  'https://fastestlaps.com/tests/kvhcvuck9ai1',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'evo-x' AND tv.slug = 'buttonwillow-raceway'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'evo-x' AND lt.track_id = tv.id AND lt.lap_time_ms = 57600
+  );
+
+-- Mazda RX-7 FD lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'rx7-fd',
+  tv.id,
+  68700,
+  '1:08.700',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/m7lzez8j9nmc',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'rx7-fd' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'rx7-fd' AND lt.track_id = tv.id AND lt.lap_time_ms = 68700
+  );
+
+-- ============================================================================
 -- REMAINING CARS NEEDING DATA (for future expansion):
 -- 
 -- DYNO DATA STILL NEEDED:
 -- - porsche-911-gt3-996 (older GT3)
--- - honda-s2000 (iconic NA)
--- - mazda-rx7-fd3s (rotary)
--- - toyota-supra-mk4-a80-turbo (2JZ legend)
 -- - nissan-370z-nismo, nissan-350z
 -- - lexus-rc-f, lexus-lc-500
 -- - mercedes-amg-c63-w205, mercedes-c63-amg-w204
@@ -976,7 +1134,6 @@ WHERE c.slug = 'c6-corvette-gs' AND tv.slug = 'nurburgring-gp'
 -- LAP TIME DATA STILL NEEDED:
 -- - Porsche Cayman variants (981, 987)
 -- - Lotus Exige, Elise
--- - Mitsubishi Evo X
 -- - Dodge Viper
 -- - Cadillac CTS-V
 -- ============================================================================
