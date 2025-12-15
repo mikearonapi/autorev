@@ -1492,6 +1492,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                     Clear all
                   </button>
                 )}
+                {/* CF-005: Auto-save indicator so users know changes persist */}
+                <span className={styles.autoSaveIndicator}>
+                  <Icons.check size={12} />
+                  Auto-saved
+                </span>
               </div>
             )}
           </div>
@@ -1589,7 +1594,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           <Link href="/encyclopedia" className={styles.footerLink}>
             Learn About Modifications <Icons.chevronRight size={14} />
           </Link>
-          <Link href="/encyclopedia#systems" className={styles.footerLink}>
+          <Link href="/encyclopedia?topic=systems" className={styles.footerLink}>
             Explore Vehicle Systems <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>

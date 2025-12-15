@@ -41,6 +41,7 @@ import CarImage from './CarImage';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
+import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
 // Compact Icons
 const Icons = {
@@ -1093,6 +1094,10 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
               </div>
             )}
           </div>
+
+          {/* Performance Intelligence - Dyno & Lap Times (Tuner tier) */}
+          <DynoDataSection carSlug={car?.slug} carName={car?.name} />
+          <LapTimesSection carSlug={car?.slug} carName={car?.name} />
         </div>
       </div>
       

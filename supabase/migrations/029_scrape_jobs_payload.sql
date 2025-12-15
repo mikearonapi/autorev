@@ -14,3 +14,4 @@ ALTER TABLE scrape_jobs
 CREATE INDEX IF NOT EXISTS idx_scrape_jobs_source_key ON scrape_jobs(source_key);
 CREATE INDEX IF NOT EXISTS idx_scrape_jobs_job_type ON scrape_jobs(job_type);
 
+

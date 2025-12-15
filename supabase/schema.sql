@@ -11,7 +11,7 @@
 -- Data Ownership:
 --   - Supabase holds MUTABLE BUSINESS DATA (cars, leads, packages, image URLs)
 --   - Local files hold IMMUTABLE PRODUCT LOGIC (scoring formulas, category definitions)
---   - See docs/data-model.md for full documentation
+--   - See docs/DATABASE.md for full documentation
 
 -- ============================================================================
 -- Enable UUID extension if not already enabled

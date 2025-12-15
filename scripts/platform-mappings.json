@@ -1,0 +1,445 @@
+{
+  "version": "2025-12-15",
+  "notes": "Car-to-platform groupings used by scripts/populate-known-issues.js. Each platform defines one or more reference vehicles used to source issues from NHTSA (api.nhtsa.gov) and CarComplaints.com.",
+  "platforms": [
+    {
+      "id": "vag_ea888",
+      "name": "VAG EA888 (platform bucket)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Volkswagen", "model": "GTI", "year": 2017 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Volkswagen/GTI/"
+        }
+      ],
+      "cars": [
+        "volkswagen-golf-r-mk7",
+        "volkswagen-golf-r-mk8",
+        "volkswagen-gti-mk7",
+        "audi-rs3-8v",
+        "audi-rs3-8y",
+        "audi-tt-rs-8j",
+        "audi-tt-rs-8s",
+        "audi-rs5-b8",
+        "audi-rs5-b9"
+      ]
+    },
+    {
+      "id": "gm_lt_ls",
+      "name": "GM LT/LS",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Chevrolet", "model": "Corvette", "year": 2017 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Chevrolet/Corvette/"
+        },
+        {
+          "nhtsa": { "make": "Chevrolet", "model": "Camaro", "year": 2018 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Chevrolet/Camaro/"
+        }
+      ],
+      "cars": [
+        "c8-corvette-stingray",
+        "c7-corvette-grand-sport",
+        "c7-corvette-z06",
+        "chevrolet-corvette-c6-z06",
+        "chevrolet-corvette-c6-grand-sport",
+        "chevrolet-corvette-c5-z06",
+        "camaro-zl1",
+        "camaro-ss-1le",
+        "cadillac-cts-v-gen2",
+        "cadillac-cts-v-gen3"
+      ]
+    },
+    {
+      "id": "subaru_ej_fa_sti",
+      "name": "Subaru EJ/FA (STI)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Subaru", "model": "WRX", "year": 2015 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Subaru/WRX/"
+        }
+      ],
+      "cars": [
+        "subaru-wrx-sti-gd",
+        "subaru-wrx-sti-gr-gv",
+        "subaru-wrx-sti-va"
+      ]
+    },
+    {
+      "id": "mitsubishi_evo",
+      "name": "Mitsubishi Evo (4G63/4B11)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Mitsubishi", "model": "Lancer", "year": 2006 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Mitsubishi/Lancer/"
+        }
+      ],
+      "cars": [
+        "mitsubishi-lancer-evo-8-9",
+        "mitsubishi-lancer-evo-x"
+      ]
+    },
+    {
+      "id": "mazda_miata",
+      "name": "Mazda Miata (NA/NB/NC/ND)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Mazda", "model": "MX-5 Miata", "year": 2016 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Mazda/MX-5_Miata/"
+        }
+      ],
+      "cars": [
+        "mazda-mx5-miata-na",
+        "mazda-mx5-miata-nb",
+        "mazda-mx5-miata-nc",
+        "mazda-mx5-miata-nd"
+      ]
+    },
+    {
+      "id": "toyota_86_brz",
+      "name": "Toyota 86 / Subaru BRZ",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Subaru", "model": "BRZ", "year": 2013 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Subaru/BRZ/"
+        },
+        {
+          "nhtsa": { "make": "Scion", "model": "FR-S", "year": 2013 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Scion/FR-S/"
+        }
+      ],
+      "cars": [
+        "toyota-86-scion-frs",
+        "toyota-gr86",
+        "subaru-brz-zc6",
+        "subaru-brz-zd8"
+      ]
+    },
+    {
+      "id": "toyota_supra",
+      "name": "Toyota Supra (2JZ/B58)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Toyota", "model": "Supra", "year": 2021 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Toyota/Supra/"
+        }
+      ],
+      "cars": [
+        "toyota-gr-supra",
+        "toyota-supra-mk4-a80-turbo"
+      ]
+    },
+    {
+      "id": "mazda_rotary_13b",
+      "name": "Mazda RX-7 (13B Rotary)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Mazda", "model": "RX-7", "year": 1994 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Mazda/RX-7/"
+        }
+      ],
+      "cars": [
+        "mazda-rx7-fd3s"
+      ]
+    },
+    {
+      "id": "nissan_vq_vr_bucket",
+      "name": "Nissan VQ/VR (platform bucket)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Nissan", "model": "350Z", "year": 2006 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Nissan/350Z/"
+        },
+        {
+          "nhtsa": { "make": "Nissan", "model": "370Z", "year": 2016 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Nissan/370Z/"
+        },
+        {
+          "nhtsa": { "make": "Nissan", "model": "GT-R", "year": 2012 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Nissan/GT-R/"
+        }
+      ],
+      "cars": [
+        "nissan-350z",
+        "nissan-370z-nismo",
+        "nissan-z-rz34",
+        "nissan-gt-r",
+        "nissan-300zx-twin-turbo-z32"
+      ]
+    },
+    {
+      "id": "ford_coyote_ecoboost",
+      "name": "Ford Coyote/EcoBoost",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Ford", "model": "Mustang", "year": 2015 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Ford/Mustang/"
+        },
+        {
+          "nhtsa": { "make": "Ford", "model": "Focus", "year": 2017 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Ford/Focus/"
+        }
+      ],
+      "cars": [
+        "mustang-gt-pp2",
+        "ford-mustang-boss-302",
+        "shelby-gt350",
+        "shelby-gt500",
+        "ford-focus-rs"
+      ]
+    },
+    {
+      "id": "dodge_hemi",
+      "name": "Dodge Hemi",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Dodge", "model": "Challenger", "year": 2016 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Dodge/Challenger/"
+        },
+        {
+          "nhtsa": { "make": "Dodge", "model": "Charger", "year": 2016 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Dodge/Charger/"
+        }
+      ],
+      "cars": [
+        "dodge-challenger-srt-392",
+        "dodge-challenger-hellcat",
+        "dodge-charger-srt-392",
+        "dodge-charger-hellcat"
+      ]
+    },
+    {
+      "id": "bmw_s_engines",
+      "name": "BMW S-engines",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "BMW", "model": "M3", "year": 2011 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/BMW/M3/"
+        },
+        {
+          "nhtsa": { "make": "BMW", "model": "M5", "year": 2013 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/BMW/M5/"
+        }
+      ],
+      "cars": [
+        "bmw-m2-competition",
+        "bmw-m3-e46",
+        "bmw-m3-e92",
+        "bmw-m3-f80",
+        "bmw-m4-f82",
+        "bmw-m5-e39",
+        "bmw-m5-e60",
+        "bmw-m5-f10-competition",
+        "bmw-m5-f90-competition",
+        "bmw-z4m-e85-e86"
+      ]
+    },
+    {
+      "id": "bmw_n54_n55",
+      "name": "BMW N54/N55",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "BMW", "model": "335i", "year": 2011 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/BMW/335i/"
+        }
+      ],
+      "cars": [
+        "bmw-1m-coupe-e82"
+      ]
+    },
+    {
+      "id": "mercedes_amg",
+      "name": "Mercedes AMG (M156/M177 bucket)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Mercedes-Benz", "model": "C-Class", "year": 2013 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Mercedes-Benz/C-Class/"
+        },
+        {
+          "nhtsa": { "make": "Mercedes-Benz", "model": "E-Class", "year": 2014 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Mercedes-Benz/E-Class/"
+        }
+      ],
+      "cars": [
+        "mercedes-c63-amg-w204",
+        "mercedes-amg-c63-w205",
+        "mercedes-amg-e63-w212",
+        "mercedes-amg-e63s-w213",
+        "mercedes-amg-gt"
+      ]
+    },
+    {
+      "id": "porsche_ma1_9a1_bucket",
+      "name": "Porsche MA1/9A1 (platform bucket)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Porsche", "model": "Cayman", "year": 2010 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Porsche/Cayman/"
+        },
+        {
+          "nhtsa": { "make": "Porsche", "model": "911", "year": 2008 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Porsche/911/"
+        }
+      ],
+      "cars": [
+        "718-cayman-gt4",
+        "718-cayman-gts-40",
+        "981-cayman-gts",
+        "981-cayman-s",
+        "987-2-cayman-s",
+        "991-1-carrera-s",
+        "997-2-carrera-s",
+        "porsche-911-turbo-997-1",
+        "porsche-911-turbo-997-2",
+        "porsche-911-gt3-996",
+        "porsche-911-gt3-997"
+      ]
+    },
+    {
+      "id": "audi_lambo_v10",
+      "name": "Audi/Lamborghini V10",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Audi", "model": "R8", "year": 2014 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Audi/R8/"
+        },
+        {
+          "nhtsa": { "make": "Lamborghini", "model": "Gallardo", "year": 2008 }
+        }
+      ],
+      "cars": [
+        "audi-r8-v8",
+        "audi-r8-v10",
+        "lamborghini-gallardo"
+      ]
+    },
+    {
+      "id": "lotus",
+      "name": "Lotus (Elise/Exige/Evora/Emira)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Lotus", "model": "Evora", "year": 2012 }
+        }
+      ],
+      "cars": [
+        "lotus-elise-s2",
+        "lotus-exige-s",
+        "lotus-evora-s",
+        "lotus-evora-gt",
+        "lotus-emira"
+      ]
+    },
+    {
+      "id": "alfa",
+      "name": "Alfa Romeo",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Alfa Romeo", "model": "Giulia", "year": 2018 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Alfa_Romeo/Giulia/"
+        }
+      ],
+      "cars": [
+        "alfa-romeo-4c",
+        "alfa-romeo-giulia-quadrifoglio"
+      ]
+    },
+    {
+      "id": "jaguar_f_type",
+      "name": "Jaguar F-Type",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Jaguar", "model": "F-Type", "year": 2016 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Jaguar/F-Type/"
+        }
+      ],
+      "cars": [
+        "jaguar-f-type-r",
+        "jaguar-f-type-v6-s"
+      ]
+    },
+    {
+      "id": "aston_martin_v8_vantage",
+      "name": "Aston Martin V8 Vantage",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Aston Martin", "model": "V8 Vantage", "year": 2012 }
+        }
+      ],
+      "cars": [
+        "aston-martin-v8-vantage"
+      ]
+    },
+    {
+      "id": "maserati_granturismo",
+      "name": "Maserati GranTurismo",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Maserati", "model": "GranTurismo", "year": 2012 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Maserati/GranTurismo/"
+        }
+      ],
+      "cars": [
+        "maserati-granturismo"
+      ]
+    },
+    {
+      "id": "lexus_v8",
+      "name": "Lexus V8 (RC F / LC 500)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Lexus", "model": "RC F", "year": 2017 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Lexus/RC_F/"
+        }
+      ],
+      "cars": [
+        "lexus-lc-500",
+        "lexus-rc-f"
+      ]
+    },
+    {
+      "id": "honda_k_series_bucket",
+      "name": "Honda K-series (bucket)",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Honda", "model": "Civic", "year": 2018 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Honda/Civic/"
+        },
+        {
+          "nhtsa": { "make": "Honda", "model": "S2000", "year": 2004 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Honda/S2000/"
+        }
+      ],
+      "cars": [
+        "honda-civic-type-r-fk8",
+        "honda-civic-type-r-fl5",
+        "honda-s2000",
+        "acura-integra-type-r-dc2"
+      ]
+    },
+    {
+      "id": "dodge_viper_v10",
+      "name": "Dodge Viper V10",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Dodge", "model": "Viper", "year": 2006 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Dodge/Viper/"
+        }
+      ],
+      "cars": [
+        "dodge-viper"
+      ]
+    },
+    {
+      "id": "tesla_ev",
+      "name": "Tesla EV",
+      "referenceVehicles": [
+        {
+          "nhtsa": { "make": "Tesla", "model": "Model 3", "year": 2020 },
+          "carComplaintsModelUrl": "https://www.carcomplaints.com/Tesla/Model_3/"
+        }
+      ],
+      "cars": [
+        "tesla-model-3-performance"
+      ]
+    }
+  ]
+}

@@ -16,6 +16,11 @@ const Icons = {
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   ),
+  minus: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  ),
   car: ({ size = 32 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.3 1 12.1 1 13v3c0 .6.4 1 1 1h2"/>
@@ -75,6 +80,34 @@ const Icons = {
       <path d="M18 10h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1"/>
       <path d="M6 8h6"/>
       <path d="M6 12h6"/>
+    </svg>
+  ),
+  search: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="M21 21l-4.35-4.35"/>
+    </svg>
+  ),
+  shield: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  ),
+  dollar: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    </svg>
+  ),
+  tool: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+  gauge: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10H12V2z"/>
+      <path d="M12 12L19.5 4.5"/>
     </svg>
   ),
 };
@@ -155,6 +188,101 @@ const communityBenefits = [
     icon: Icons.star,
     title: 'Share Your Journey',
     description: 'Document your ownership experience and inspire others with your builds and discoveries.',
+  },
+];
+
+// Detailed feature breakdown for transparency
+const featureCategories = [
+  {
+    id: 'discovery',
+    name: 'Car Discovery & Research',
+    icon: Icons.search,
+    features: [
+      { name: 'Full sports car database (98+ cars)', free: true, collector: true, tuner: true },
+      { name: 'Car Selector with personalized matching', free: true, collector: true, tuner: true },
+      { name: 'Detailed specs, history & heritage', free: true, collector: true, tuner: true },
+      { name: 'Complete buying guides', free: true, collector: true, tuner: true },
+      { name: 'AI-curated expert video reviews', free: true, collector: true, tuner: true },
+      { name: 'EPA fuel economy data', free: true, collector: true, tuner: true },
+      { name: 'NHTSA & IIHS safety ratings', free: true, collector: true, tuner: true },
+      { name: 'Price by model year (best value years)', free: true, collector: true, tuner: true },
+      { name: 'Side-by-side comparison tool', free: false, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'garage',
+    name: 'My Garage & Collections',
+    icon: Icons.garage,
+    features: [
+      { name: 'Save cars to your garage', free: true, collector: true, tuner: true },
+      { name: 'Add notes to saved cars', free: true, collector: true, tuner: true },
+      { name: 'Organize into custom collections', free: false, collector: true, tuner: true },
+      { name: 'VIN decode → exact variant identification', free: false, collector: true, tuner: true },
+      { name: "Owner's Reference (oil specs, capacities)", free: false, collector: true, tuner: true },
+      { name: 'Maintenance schedules for your car', free: false, collector: true, tuner: true },
+      { name: 'Service log tracking', free: false, collector: true, tuner: true },
+      { name: 'Service reminders', free: false, collector: true, tuner: true },
+      { name: 'Export your garage data', free: false, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'market',
+    name: 'Market Value & Tracking',
+    icon: Icons.dollar,
+    features: [
+      { name: 'General price guides', free: true, collector: true, tuner: true },
+      { name: 'Market position (rising/stable/falling)', free: true, collector: true, tuner: true },
+      { name: 'Bring a Trailer recent sales', free: false, collector: true, tuner: true },
+      { name: 'Cars.com current listings data', free: false, collector: true, tuner: true },
+      { name: 'Hagerty insurance values', free: false, collector: true, tuner: true },
+      { name: 'Price history trends over time', free: false, collector: true, tuner: true },
+      { name: 'VIN-specific active recall alerts', free: false, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'performance',
+    name: 'Performance Data',
+    icon: Icons.gauge,
+    features: [
+      { name: 'Track lap times preview (2 samples)', free: true, collector: true, tuner: true },
+      { name: 'Popular parts preview (3 items)', free: true, collector: true, tuner: true },
+      { name: 'Full lap times library (all tracks)', free: false, collector: false, tuner: true },
+      { name: 'Dyno database (real HP/torque)', free: false, collector: false, tuner: true },
+      { name: 'Full parts catalog with fitments', free: false, collector: false, tuner: true },
+      { name: 'Part compatibility verification', free: false, collector: false, tuner: true },
+    ],
+  },
+  {
+    id: 'builds',
+    name: 'Tuning Shop & Build Projects',
+    icon: Icons.tool,
+    features: [
+      { name: 'Browse upgrade packages', free: true, collector: true, tuner: true },
+      { name: 'View recommended mods by tier', free: true, collector: true, tuner: true },
+      { name: 'Save and organize build projects', free: false, collector: false, tuner: true },
+      { name: 'Build cost calculator', free: false, collector: false, tuner: true },
+      { name: 'HP/torque gain projections', free: false, collector: false, tuner: true },
+      { name: 'Mod stack compatibility checking', free: false, collector: false, tuner: true },
+      { name: 'PDF export of build plans', free: false, collector: false, tuner: true },
+      { name: 'Early access to new features', free: false, collector: false, tuner: true },
+    ],
+  },
+  {
+    id: 'ai',
+    name: 'AL — Your AI Co-Pilot',
+    icon: Icons.robot,
+    features: [
+      { name: 'Monthly AI conversations', free: '~25', collector: '~75', tuner: '~150' },
+      { name: 'Car recommendations', free: true, collector: true, tuner: true },
+      { name: 'Common issues & solutions', free: true, collector: true, tuner: true },
+      { name: 'Basic specs & questions', free: true, collector: true, tuner: true },
+      { name: 'Deep reliability research', free: false, collector: true, tuner: true },
+      { name: 'Ownership cost analysis', free: false, collector: true, tuner: true },
+      { name: 'Knowledge base search', free: false, collector: true, tuner: true },
+      { name: 'Personalized build recommendations', free: false, collector: false, tuner: true },
+      { name: 'Parts compatibility questions', free: false, collector: false, tuner: true },
+      { name: 'Priority response time', free: false, collector: false, tuner: true },
+    ],
   },
 ];
 
@@ -324,6 +452,82 @@ export default function JoinPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Detailed Feature Breakdown */}
+      <section className={styles.featureBreakdown}>
+        <div className={styles.container}>
+          <div className={styles.breakdownHeader}>
+            <h2>Full Feature <span className={styles.accent}>Breakdown</span></h2>
+            <p>Everything included in each tier — we believe in transparency</p>
+          </div>
+
+          {/* Tier headers */}
+          <div className={styles.breakdownTable}>
+            <div className={styles.tableHeader}>
+              <div className={styles.tableHeaderCell}>Features</div>
+              <div className={`${styles.tableHeaderCell} ${styles.tierHeader}`}>
+                <span className={styles.tierHeaderName}>Free</span>
+                <span className={styles.tierHeaderPrice}>$0</span>
+              </div>
+              <div className={`${styles.tableHeaderCell} ${styles.tierHeader} ${styles.tierHeaderCollector}`}>
+                <span className={styles.tierHeaderName}>Collector</span>
+                <span className={styles.tierHeaderPrice}>$4.99/mo</span>
+              </div>
+              <div className={`${styles.tableHeaderCell} ${styles.tierHeader} ${styles.tierHeaderTuner}`}>
+                <span className={styles.tierHeaderName}>Tuner</span>
+                <span className={styles.tierHeaderPrice}>$9.99/mo</span>
+              </div>
+            </div>
+
+            {/* Feature categories */}
+            {featureCategories.map((category) => (
+              <div key={category.id} className={styles.tableCategory}>
+                <div className={styles.categoryHeader}>
+                  <category.icon size={18} />
+                  <span>{category.name}</span>
+                </div>
+                {category.features.map((feature, idx) => (
+                  <div key={idx} className={styles.tableRow}>
+                    <div className={styles.featureName}>{feature.name}</div>
+                    <div className={styles.featureCell}>
+                      {typeof feature.free === 'string' ? (
+                        <span className={styles.featureLimit}>{feature.free}</span>
+                      ) : feature.free ? (
+                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                      ) : (
+                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                      )}
+                    </div>
+                    <div className={styles.featureCell}>
+                      {typeof feature.collector === 'string' ? (
+                        <span className={styles.featureLimit}>{feature.collector}</span>
+                      ) : feature.collector ? (
+                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                      ) : (
+                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                      )}
+                    </div>
+                    <div className={styles.featureCell}>
+                      {typeof feature.tuner === 'string' ? (
+                        <span className={styles.featureLimit}>{feature.tuner}</span>
+                      ) : feature.tuner ? (
+                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                      ) : (
+                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <p className={styles.breakdownNote}>
+            <Icons.sparkle size={14} />
+            <span>During beta, all features are unlocked for free. Pricing applies after launch.</span>
+          </p>
         </div>
       </section>
 

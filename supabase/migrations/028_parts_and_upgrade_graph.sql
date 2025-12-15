@@ -314,3 +314,4 @@ CREATE POLICY "upgrade_key_parts_select_public"
 -- Reads are public. Writes should happen server-side with service role key.
 -- (No explicit insert/update policies = blocked for anon/auth unless bypass.)
 
+

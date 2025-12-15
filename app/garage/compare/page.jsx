@@ -160,7 +160,7 @@ export default function ComparePage() {
                   <div className={styles.carHeaderContent}>
                     <span className={styles.carName}>{car.name}</span>
                     <div className={styles.carHeaderActions}>
-                      <Link href={`/cars/${car.slug}`} className={styles.viewLink}>
+                      <Link href={`/browse-cars/${car.slug}`} className={styles.viewLink}>
                         View
                       </Link>
                       <button

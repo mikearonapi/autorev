@@ -290,72 +290,20 @@ async function updateCarPerformanceData() {
 
 /**
  * Seed upgrade education data
+ * 
+ * DEPRECATED: The upgrade_education database table does not exist.
+ * All upgrade education data is served from the static file data/upgradeEducation.js.
+ * See DATABASE.md for details.
+ * 
+ * This function is retained for backwards compatibility but will skip execution.
  */
 async function seedUpgradeEducation() {
-  console.log('\n📚 Seeding upgrade education data...');
+  console.log('\n📚 Upgrade Education Data');
   console.log('   ' + '-'.repeat(50));
-  
-  // Import upgrade education data
-  const { upgradeDetails, upgradeCategories } = await import('../data/upgradeEducation.js');
-  
-  // Map local category keys to database category keys
-  const categoryMap = {
-    'power': 'power-engine',
-    'exhaust': 'exhaust-sound',
-    'suspension': 'suspension-handling',
-    'brakes': 'brakes',
-    'wheels': 'wheels-tires',
-    'cooling': 'cooling',
-    'aero': 'aero',
-    'electronics': 'electronics-tuning',
-  };
-  
-  let successCount = 0;
-  let errorCount = 0;
-  
-  for (const [key, upgrade] of Object.entries(upgradeDetails)) {
-    const record = {
-      key: upgrade.key,
-      name: upgrade.name,
-      slug: upgrade.key,
-      category: categoryMap[upgrade.category] || upgrade.category,
-      short_description: upgrade.shortDescription,
-      cost_range: upgrade.cost?.range || '$0',
-      cost_low: upgrade.cost?.low || 0,
-      cost_high: upgrade.cost?.high || 0,
-      difficulty: upgrade.difficulty || 'Moderate',
-      install_time: upgrade.installTime || 'Varies',
-      full_description: upgrade.fullDescription || '',
-      how_it_works: upgrade.howItWorks || '',
-      expected_gains: upgrade.expectedGains || {},
-      pros: upgrade.pros || [],
-      cons: upgrade.cons || [],
-      best_for: upgrade.bestFor || [],
-      works_well_with: upgrade.worksWellWith || [],
-      considerations: upgrade.considerations || '',
-      applicable_car_types: upgrade.applicableCarTypes || ['all'],
-    };
-    
-    try {
-      const { error } = await supabase
-        .from('upgrade_education')
-        .upsert(record, { onConflict: 'key' });
-      
-      if (error) {
-        console.log(`   ⚠️  ${upgrade.name}: ${error.message}`);
-        errorCount++;
-      } else {
-        console.log(`   ✅ ${upgrade.name}`);
-        successCount++;
-      }
-    } catch (err) {
-      console.log(`   ❌ ${upgrade.key}: ${err.message}`);
-      errorCount++;
-    }
-  }
-  
-  console.log(`\n   📊 Summary: ${successCount} seeded, ${errorCount} errors`);
-  return successCount > 0;
+  console.log('   ⚠️  SKIPPED: The upgrade_education database table does not exist.');
+  console.log('   ℹ️  Upgrade education data is served from static file: data/upgradeEducation.js');
+  console.log('   ℹ️  See DATABASE.md for authoritative schema documentation.');
+  return true;
 }
 
 /**

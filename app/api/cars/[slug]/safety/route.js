@@ -309,3 +309,4 @@ function generateSafetySummary(data) {
   
   return summary;
 }
+

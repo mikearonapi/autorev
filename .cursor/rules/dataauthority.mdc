@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+Data authority rules:
+
+- DATABASE.md defines canonical schemas and column names
+- API.md defines response shapes and contracts
+- Never invent fields, tables, or response properties
+- Empty tables are intentional and future-facing
+
+If data does not exist, propose schema changes instead of guessing.

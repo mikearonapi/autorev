@@ -208,3 +208,4 @@ const DATA_TEMPLATES = {
     cargoSpace: 'number - Cargo volume (cu ft)',
   },
 };
+

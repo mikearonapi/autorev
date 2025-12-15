@@ -44,8 +44,12 @@ export const maxDuration = 300; // 5 minutes max for Vercel Pro
 export async function GET(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
+  const vercelCron = request.headers.get('x-vercel-cron');
+
   if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (vercelCron !== 'true') {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   }
 
   try {

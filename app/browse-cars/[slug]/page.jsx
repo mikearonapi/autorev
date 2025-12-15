@@ -14,6 +14,8 @@ import ScoringInfo from '@/components/ScoringInfo';
 import ExpertReviews from '@/components/ExpertReviews';
 import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import CarActionMenu from '@/components/CarActionMenu';
+import { LapTimesSection } from '@/components/PerformanceData';
+import { FuelEconomySection, SafetyRatingsSection, PriceByYearSection } from '@/components/CarDetailSections';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -917,6 +919,12 @@ export default function CarDetail() {
               </section>
             )}
 
+            {/* Price by Model Year (from database) */}
+            <PriceByYearSection carSlug={car.slug} carName={car.name} />
+
+            {/* Safety Ratings (NHTSA/IIHS) - Part of buying research */}
+            <SafetyRatingsSection carSlug={car.slug} />
+
             {/* Alternatives */}
             {(car.directCompetitors || car.ifYouWantMore || car.ifYouWantLess) && (
               <section className={styles.contentSection}>
@@ -996,6 +1004,9 @@ export default function CarDetail() {
             ============================================================ */}
         {activeTab === 'ownership' && (
           <div className={styles.tabPanel}>
+
+            {/* Fuel Economy (EPA data) */}
+            <FuelEconomySection carSlug={car.slug} />
 
             {/* Annual Costs */}
             {car.annualOwnershipCost && (
@@ -1112,6 +1123,9 @@ export default function CarDetail() {
                 </Link>
               </div>
             </section>
+
+            {/* Track Lap Times (Teaser) */}
+            <LapTimesSection carSlug={car.slug} carName={car.name} isTeaser={true} />
 
             {/* Major Service Costs */}
             {car.majorServiceCosts && (

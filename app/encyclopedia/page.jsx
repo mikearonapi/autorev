@@ -288,7 +288,7 @@ function NavTreeItem({ item, level = 0, selectedId, onSelect, expandedKeys, onTo
 
 function Sidebar({ selectedId, onSelect, isOpen, onClose }) {
   const navTree = useMemo(() => getNavigationTree(), []);
-  const [expandedKeys, setExpandedKeys] = useState(new Set(['systems', 'modifications', 'guides']));
+  const [expandedKeys, setExpandedKeys] = useState(new Set(['automotive', 'modifications', 'guides']));
 
   const handleToggle = (key) => {
     setExpandedKeys(prev => {
@@ -308,8 +308,13 @@ function Sidebar({ selectedId, onSelect, isOpen, onClose }) {
       const parts = selectedId.split('.');
       if (parts.length > 1) {
         const type = parts[0];
-        if (type === 'system' || type === 'component') {
-          setExpandedKeys(prev => new Set([...prev, 'systems', `system.${parts[1]}`]));
+        // Handle new automotive hierarchy (auto.system.component or topic.slug)
+        if (type === 'auto' || type === 'topic') {
+          setExpandedKeys(prev => new Set([...prev, 'automotive', `auto.${parts[1]}`]));
+        // Handle legacy system/component routes (still supported for deep links)
+        } else if (type === 'system' || type === 'component') {
+          // Redirect to equivalent automotive section if possible
+          setExpandedKeys(prev => new Set([...prev, 'automotive']));
         } else if (type === 'mod' || type === 'category') {
           const mod = upgradeDetails[parts.slice(1).join('.')];
           if (mod) {
@@ -499,6 +504,82 @@ function ArticleSection({ section, onNavigate }) {
         </div>
       );
 
+    // NEW: Automotive component list (for system pages)
+    case 'automotiveComponentList':
+      return (
+        <div className={styles.sectionComponentList}>
+          {section.content.map((component) => (
+            <button
+              key={component.id}
+              className={styles.componentCard}
+              onClick={() => onNavigate(component.id)}
+            >
+              <h4 className={styles.componentName}>{component.name}</h4>
+              <p className={styles.componentDesc}>{component.description}</p>
+              {component.topicCount > 0 && (
+                <span className={styles.componentUnit}>{component.topicCount} topics</span>
+              )}
+            </button>
+          ))}
+        </div>
+      );
+
+    // NEW: Topic list (for component pages)
+    case 'topicList':
+      return (
+        <div className={styles.sectionTopicList}>
+          {section.content.map((topic) => (
+            <button
+              key={topic.id}
+              className={`${styles.topicCard} ${topic.status === 'stub' ? styles.topicCardStub : ''}`}
+              onClick={() => onNavigate(topic.id)}
+            >
+              <div className={styles.topicCardHeader}>
+                <h4 className={styles.topicName}>{topic.name}</h4>
+                {topic.status === 'stub' && (
+                  <span className={styles.stubBadge}>Coming Soon</span>
+                )}
+              </div>
+              <p className={styles.topicDefinition}>{topic.definition}</p>
+            </button>
+          ))}
+        </div>
+      );
+
+    // NEW: Topic links (for modification pages)
+    case 'topicLinks':
+      return (
+        <div className={styles.sectionTopicLinks}>
+          {section.content.map((topic) => (
+            <button
+              key={topic.id}
+              className={styles.topicLinkChip}
+              onClick={() => onNavigate(topic.id)}
+            >
+              <Icons.book size={14} />
+              <span>{topic.name}</span>
+            </button>
+          ))}
+        </div>
+      );
+
+    // NEW: Upgrade links (for topic pages)
+    case 'upgradeLinks':
+      return (
+        <div className={styles.sectionUpgradeLinks}>
+          {section.content.map((upgrade) => (
+            <button
+              key={upgrade.key}
+              className={styles.upgradeLinkChip}
+              onClick={() => onNavigate(`mod.${upgrade.key}`)}
+            >
+              <Icons.wrench size={14} />
+              <span>{upgrade.name}</span>
+            </button>
+          ))}
+        </div>
+      );
+
     case 'modificationList':
       return (
         <div className={styles.sectionModList}>
@@ -588,6 +669,51 @@ function ArticleSection({ section, onNavigate }) {
         </div>
       );
 
+    // NEW: Modification potential section with structured content
+    case 'modPotential':
+      return (
+        <div className={styles.sectionModPotential}>
+          {section.content.summary && (
+            <p className={styles.modPotentialSummary}>{section.content.summary}</p>
+          )}
+          {section.content.gains && (
+            <div className={styles.modPotentialItem}>
+              <span className={styles.modPotentialLabel}>What You Gain:</span>
+              <p>{section.content.gains}</p>
+            </div>
+          )}
+          {section.content.considerations && (
+            <div className={styles.modPotentialItem}>
+              <span className={styles.modPotentialLabel}>Considerations:</span>
+              <p>{section.content.considerations}</p>
+            </div>
+          )}
+        </div>
+      );
+
+    // NEW: Technical specifications merged from Technical Reference
+    case 'technicalSpecs':
+      return (
+        <div className={styles.sectionTechnicalSpecs}>
+          {section.content.specifications.map((spec, index) => (
+            <div key={index} className={styles.technicalSpecItem}>
+              <div className={styles.technicalSpecHeader}>
+                <h4 className={styles.technicalSpecName}>{spec.name}</h4>
+                {spec.unit && (
+                  <span className={styles.technicalSpecUnit}>({spec.unit})</span>
+                )}
+              </div>
+              <p className={styles.technicalSpecDesc}>{spec.description}</p>
+              {spec.applicableEngines && (
+                <span className={styles.technicalSpecEngines}>
+                  Applies to: {spec.applicableEngines.join(', ')}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+
     default:
       return null;
   }
@@ -600,6 +726,30 @@ function ArticleSection({ section, onNavigate }) {
 function ArticleView({ article, onNavigate }) {
   if (!article) return null;
 
+  // Determine icon based on content type
+  const renderIcon = () => {
+    switch (article.type) {
+      case CONTENT_TYPES.AUTOMOTIVE_SYSTEM:
+      case CONTENT_TYPES.AUTOMOTIVE_COMPONENT:
+      case CONTENT_TYPES.SYSTEM:
+      case CONTENT_TYPES.COMPONENT:
+        return <Icons.cog size={24} />;
+      case CONTENT_TYPES.TOPIC:
+        return <Icons.book size={24} />;
+      case CONTENT_TYPES.MODIFICATION:
+      case CONTENT_TYPES.CATEGORY:
+        return <Icons.wrench size={24} />;
+      case CONTENT_TYPES.BUILD_GUIDE:
+        return <Icons.map size={24} />;
+      default:
+        return <Icons.book size={24} />;
+    }
+  };
+
+  // Show summary for topics and modifications
+  const showSummary = article.type === CONTENT_TYPES.MODIFICATION || 
+                      article.type === CONTENT_TYPES.TOPIC;
+
   return (
     <article className={styles.article}>
       <Breadcrumb items={article.breadcrumb} onNavigate={onNavigate} />
@@ -609,21 +759,20 @@ function ArticleView({ article, onNavigate }) {
           className={styles.articleIcon}
           style={{ backgroundColor: article.color || '#6b7280' }}
         >
-          {article.type === CONTENT_TYPES.SYSTEM && <Icons.cog size={24} />}
-          {article.type === CONTENT_TYPES.COMPONENT && <Icons.cog size={24} />}
-          {article.type === CONTENT_TYPES.MODIFICATION && <Icons.wrench size={24} />}
-          {article.type === CONTENT_TYPES.CATEGORY && <Icons.wrench size={24} />}
-          {article.type === CONTENT_TYPES.BUILD_GUIDE && <Icons.map size={24} />}
+          {renderIcon()}
         </div>
         <div className={styles.articleHeaderContent}>
           <h1 className={styles.articleTitle}>{article.title}</h1>
           {article.subtitle && (
             <p className={styles.articleSubtitle}>{article.subtitle}</p>
           )}
+          {article.metadata?.status === 'stub' && (
+            <span className={styles.articleStubBadge}>Content Coming Soon</span>
+          )}
         </div>
       </header>
 
-      {article.summary && article.type === CONTENT_TYPES.MODIFICATION && (
+      {article.summary && showSummary && (
         <div className={styles.articleSummary}>
           <p>{article.summary}</p>
         </div>
@@ -674,7 +823,7 @@ function HomeView({ onNavigate }) {
         {navTree.map((section) => (
           <div key={section.key} className={styles.homeSection}>
             <div className={styles.homeSectionHeader}>
-              {section.key === 'systems' && <Icons.cog size={20} />}
+              {section.key === 'automotive' && <Icons.cog size={20} />}
               {section.key === 'modifications' && <Icons.wrench size={20} />}
               {section.key === 'guides' && <Icons.map size={20} />}
               <h2 className={styles.homeSectionTitle}>{section.title}</h2>
@@ -736,13 +885,13 @@ function PageBanner() {
         </div>
         <div className={styles.bannerStats}>
           <div className={styles.bannerStat}>
-            <span className={styles.bannerStatNumber}>{stats.systems}</span>
+            <span className={styles.bannerStatNumber}>{stats.automotiveSystems}</span>
             <span className={styles.bannerStatLabel}>Systems</span>
           </div>
           <div className={styles.bannerStatDivider} />
           <div className={styles.bannerStat}>
-            <span className={styles.bannerStatNumber}>{stats.components}</span>
-            <span className={styles.bannerStatLabel}>Components</span>
+            <span className={styles.bannerStatNumber}>{stats.topics}</span>
+            <span className={styles.bannerStatLabel}>Topics</span>
           </div>
           <div className={styles.bannerStatDivider} />
           <div className={styles.bannerStat}>

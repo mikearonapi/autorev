@@ -68,6 +68,11 @@ const Icons = {
       <path d="M5 12h14"/>
       <path d="m12 5 7 7-7 7"/>
     </svg>
+  ),
+  spinner: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
   )
 };
 
@@ -336,13 +341,13 @@ export default function CarActionMenu({
         {!hideActions.includes('own') && (
           <div className={styles.tooltipWrapper}>
             <button 
-              className={`${styles.compactBtn} ${isOwned ? styles.active : ''}`}
+              className={`${styles.compactBtn} ${isOwned ? styles.active : ''} ${isAdding ? styles.loading : ''}`}
               onClick={handleAddToCollection}
               disabled={isOwned || isAdding}
               aria-label={isOwned ? 'Owned' : 'Add to Collection'}
             >
-              {isOwned ? <Icons.check size={14} /> : <Icons.car size={14} />}
-              <span className={styles.tooltip}>{isOwned ? 'In Your Collection' : 'You Own This'}</span>
+              {isAdding ? <Icons.spinner size={14} /> : isOwned ? <Icons.check size={14} /> : <Icons.car size={14} />}
+              <span className={styles.tooltip}>{isAdding ? 'Adding...' : isOwned ? 'In Your Collection' : 'Add to My Collection'}</span>
             </button>
           </div>
         )}
@@ -407,13 +412,13 @@ export default function CarActionMenu({
     >
       <div className={styles.tooltipWrapper}>
         <button 
-          className={`${styles.actionBtn} ${isOwned ? styles.active : ''}`}
+          className={`${styles.actionBtn} ${isOwned ? styles.active : ''} ${isAdding ? styles.loading : ''}`}
           onClick={handleAddToCollection}
           disabled={isOwned || isAdding}
         >
-          {isOwned ? <Icons.check size={16} /> : <Icons.car size={16} />}
-          {showLabels && <span>{isOwned ? 'Owned' : 'Own'}</span>}
-          <span className={styles.tooltip}>{isOwned ? 'In Your Collection' : 'You Own This'}</span>
+          {isAdding ? <Icons.spinner size={16} /> : isOwned ? <Icons.check size={16} /> : <Icons.car size={16} />}
+          {showLabels && <span>{isAdding ? 'Adding...' : isOwned ? 'Owned' : 'Own'}</span>}
+          <span className={styles.tooltip}>{isAdding ? 'Adding...' : isOwned ? 'In Your Collection' : 'Add to My Collection'}</span>
         </button>
       </div>
       

@@ -148,7 +148,7 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
       {displayCars.map((car, index) => (
         <Link 
           key={`${car.slug}-${rowIndex}-${index}`}
-          href={`/cars/${car.slug}`}
+          href={`/browse-cars/${car.slug}`}
           className={styles.carCard}
         >
           <div className={styles.imageWrapper}>

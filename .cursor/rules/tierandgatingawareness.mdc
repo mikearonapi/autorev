@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+AutoRev uses tier-based feature gating.
+
+Tiers:
+- free → collector → tuner → admin
+
+Rules:
+- Always respect tier access defined in tierAccess and documentation
+- Do NOT bypass gates unless IS_BETA is explicitly referenced
+- UI components must use PremiumGate for gated features
+- APIs must enforce auth and tier checks where applicable
+
+If unsure whether a feature is gated, STOP and ask.

@@ -1768,6 +1768,21 @@
   border-color: var(--color-gray-400);
 }
 
+/* CF-005: Auto-save indicator */
+.autoSaveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-success, #22c55e);
+  font-weight: 500;
+}
+
+.autoSaveIndicator svg {
+  flex-shrink: 0;
+}
+
 /* Considerations Section */
 .considerationsSection {
   margin-top: var(--space-lg);
@@ -3218,6 +3233,40 @@
     padding: 6px 12px;
     font-size: 12px;
     min-height: 32px;
+  }
+  
+  /* CF-007: Ensure performance dashboard and metrics are visible */
+  .dashboardPanel {
+    padding: var(--space-sm);
+    overflow: visible;
+  }
+  
+  .metricsSection,
+  .scoresSection {
+    margin-bottom: var(--space-md);
+  }
+  
+  .metricRow {
+    padding: var(--space-xs) 0;
+  }
+  
+  .sectionTitle {
+    font-size: 11px;
+    margin-bottom: var(--space-sm);
+  }
+  
+  /* Make module categories more prominent on mobile */
+  .moduleCategory {
+    padding: var(--space-sm);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .moduleCategoryTitle {
+    font-size: 11px;
+    margin-bottom: var(--space-sm);
+    color: var(--sn-accent, #D4AF37);
   }
 }
 

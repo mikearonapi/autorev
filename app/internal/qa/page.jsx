@@ -124,7 +124,7 @@ export default function QAPage() {
                   {car.reviewCount} expert review{car.reviewCount !== 1 ? 's' : ''}
                 </span>
               </div>
-              <Link href={`/cars/${car.slug}`} className={styles.viewLink}>
+              <Link href={`/browse-cars/${car.slug}`} className={styles.viewLink}>
                 View Page →
               </Link>
             </div>

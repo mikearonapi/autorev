@@ -367,3 +367,51 @@
   visibility: visible;
   transform: translateX(-50%) translateY(-2px);
 }
+
+/* ===========================================
+   MOBILE TOUCH OPTIMIZATION
+   Ensure 44px minimum touch targets on mobile
+   =========================================== */
+
+@media (max-width: 767px) {
+  /* Enlarge compact buttons for touch */
+  .compactBtn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  /* Slightly larger action buttons */
+  .actionBtn {
+    padding: 10px 14px;
+    min-height: 40px;
+  }
+  
+  /* Hide tooltips on touch devices - they don't work well */
+  .tooltip {
+    display: none;
+  }
+}
+
+/* Touch devices - ensure active states instead of hover */
+@media (hover: none) and (pointer: coarse) {
+  .compactBtn:active:not(:disabled),
+  .actionBtn:active:not(:disabled) {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+  
+  /* Disable hover transform on touch */
+  .actionBtn:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  /* Loading state animation */
+  .loading svg {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

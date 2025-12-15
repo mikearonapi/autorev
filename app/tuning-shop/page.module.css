@@ -1811,8 +1811,27 @@
 }
 
 @media (max-width: 768px) {
+  /* CF-007: Fix mobile layout - allow content to scroll and be visible */
+  .page {
+    height: auto;
+    min-height: calc(100vh - var(--header-height-mobile));
+    min-height: calc(100dvh - var(--header-height-mobile));
+    overflow-y: auto;
+  }
+  
+  .mainContent {
+    overflow: visible;
+    flex: none;
+  }
+  
+  .hubContainer {
+    overflow: visible;
+    flex: none;
+  }
+  
   .upgradeCenter {
     padding: 16px;
+    overflow: visible;
   }
   
   .sectionTitleGroup h2, .sectionTitle h2 {

@@ -482,3 +482,4 @@ COMMENT ON TABLE car_expert_reviews IS 'Reviews from automotive publications';
 COMMENT ON TABLE car_auction_results IS 'Detailed auction results from BaT';
 COMMENT ON TABLE scrape_jobs IS 'Job queue for data scraping operations';
 COMMENT ON TABLE car_manual_data IS 'Manually entered data for sources we cannot scrape';
+

@@ -1,0 +1,437 @@
+/**
+ * Car Detail Sections Styles
+ * Fuel Economy, Safety Ratings, Price by Year
+ */
+
+.section {
+  background: var(--bg-secondary, #1a1a1a);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader svg {
+  color: var(--sn-accent, #c4a564);
+}
+
+.sectionHeader h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.sourceTag {
+  font-size: 0.65rem;
+  color: var(--text-muted, #888);
+  background: rgba(255,255,255,0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: var(--text-muted, #888);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   Fuel Economy Styles
+   ========================================== */
+.efficiencyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.mpgCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--bg-tertiary, #252525);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mpgCardPrimary {
+  background: rgba(196, 165, 100, 0.1);
+  border-color: rgba(196, 165, 100, 0.3);
+}
+
+.mpgValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  line-height: 1;
+}
+
+.mpgCardPrimary .mpgValue {
+  color: var(--sn-accent, #c4a564);
+}
+
+.mpgLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-tertiary, #252525);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  grid-column: span 1;
+}
+
+.statCard svg {
+  color: var(--sn-accent, #c4a564);
+  flex-shrink: 0;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.statLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted, #888);
+}
+
+.ghgScore {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.ghg1, .ghg2, .ghg3 { background: #ef4444; }
+.ghg4, .ghg5 { background: #f97316; }
+.ghg6, .ghg7 { background: #eab308; }
+.ghg8, .ghg9 { background: #22c55e; }
+.ghg10 { background: #10b981; }
+
+.evInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, #333);
+}
+
+.evBadge {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.evRange {
+  color: var(--text-muted, #888);
+  font-size: 0.85rem;
+}
+
+.fuelType {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+}
+
+/* ==========================================
+   Safety Ratings Styles
+   ========================================== */
+.safetyGrade {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.gradeA { background: #10b981; color: white; }
+.gradeB { background: #22c55e; color: white; }
+.gradeC { background: #eab308; color: black; }
+.gradeD { background: #f97316; color: white; }
+.gradeF { background: #ef4444; color: white; }
+
+.safetyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.safetyCard {
+  background: var(--bg-tertiary, #252525);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.safetyCardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--text-primary, #fff);
+}
+
+.iihsBadge {
+  font-size: 0.55rem;
+  background: #22c55e;
+  color: white;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.safetyOverall {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.starRating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+  color: var(--sn-accent, #c4a564);
+}
+
+.ratingLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+}
+
+.safetyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.safetyRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.safetyRow > span:first-child {
+  color: var(--text-muted, #888);
+}
+
+.iihsRating {
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  text-transform: capitalize;
+}
+
+.safetyStats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.safetyStat {
+  flex: 1;
+  text-align: center;
+}
+
+.safetyStatValue {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+}
+
+.safetyStatLabel {
+  font-size: 0.65rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+}
+
+.safetyStatWarn .safetyStatValue {
+  color: #f97316;
+}
+
+.openRecallWarning {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+/* ==========================================
+   Price by Year Styles
+   ========================================== */
+.bestValueBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  color: #10b981;
+  font-size: 0.9rem;
+}
+
+.priceTable {
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.priceTableHeader {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--bg-tertiary, #252525);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #888);
+}
+
+.priceTableRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--border-color, #333);
+  font-size: 0.85rem;
+  align-items: center;
+}
+
+.priceTableRow:hover {
+  background: var(--bg-tertiary, #252525);
+}
+
+.priceTableRowBest {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.priceYear {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.bestBadge {
+  font-size: 0.55rem;
+  background: #10b981;
+  color: white;
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.priceAvg {
+  font-weight: 600;
+  color: var(--sn-accent, #c4a564);
+}
+
+.priceRange {
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+}
+
+.priceSample {
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+}
+
+.moreYears {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .efficiencyGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .efficiencyGrid .mpgCard:nth-child(3) {
+    grid-column: span 2;
+  }
+  
+  .safetyGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .priceTableHeader,
+  .priceTableRow {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .priceTableHeader span:nth-child(3),
+  .priceTableHeader span:nth-child(4),
+  .priceTableRow span:nth-child(3),
+  .priceTableRow span:nth-child(4) {
+    display: none;
+  }
+}
+

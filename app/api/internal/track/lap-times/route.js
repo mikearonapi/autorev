@@ -1,20 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const INTERNAL_ADMIN_KEY = process.env.INTERNAL_ADMIN_KEY;
 
 const supabase = (supabaseUrl && supabaseServiceKey)
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null;
-
-function requireAdmin(request) {
-  if (!INTERNAL_ADMIN_KEY) return { ok: false, error: 'INTERNAL_ADMIN_KEY not configured' };
-  const provided = request.headers.get('x-internal-admin-key');
-  if (!provided || provided !== INTERNAL_ADMIN_KEY) return { ok: false, error: 'Unauthorized' };
-  return { ok: true };
-}
 
 function slugify(s) {
   return String(s || '')
@@ -210,4 +203,5 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
   }
 }
+
 

@@ -13,11 +13,12 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
-  fetchUserSavedBuilds,
-  saveUserBuild,
-  updateUserBuild,
-  deleteUserBuild,
+  fetchUserProjects,
+  saveUserProject,
+  updateUserProject,
+  deleteUserProject,
 } from '@/lib/userDataService';
+import { hasAccess, IS_BETA } from '@/lib/tierAccess';
 
 // LocalStorage key for guest builds
 const STORAGE_KEY = 'autorev_saved_builds';
@@ -89,7 +90,8 @@ const SavedBuildsContext = createContext(null);
  * Saved Builds Provider Component
  */
 export function SavedBuildsProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, profile } = useAuth();
+  const userTier = profile?.subscription_tier || 'free';
   const [builds, setBuilds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -116,7 +118,7 @@ export function SavedBuildsProvider({ children }) {
     setIsLoading(true);
     
     try {
-      const { data, error } = await fetchUserSavedBuilds(user.id);
+      const { data, error } = await fetchUserProjects(user.id);
       
       if (error) {
         console.error('[SavedBuildsProvider] Error fetching builds:', error);
@@ -194,14 +196,28 @@ export function SavedBuildsProvider({ children }) {
   }, [builds, isHydrated, isAuthenticated]);
 
   /**
+   * Check if user can save builds based on tier
+   * Tuner tier required for saving build projects (but free during beta)
+   */
+  const canSaveBuilds = IS_BETA ? isAuthenticated : hasAccess(userTier, 'buildProjects', isAuthenticated);
+
+  /**
    * Save a new build
    */
   const saveBuild = useCallback(async (buildData) => {
+    // Check tier access (bypassed during beta)
+    if (!IS_BETA && !canSaveBuilds) {
+      return { 
+        data: null, 
+        error: { message: 'Upgrade to Tuner tier to save build projects' } 
+      };
+    }
+
     // If authenticated, save to Supabase
     if (isAuthenticated && user?.id) {
       setIsLoading(true);
       
-      const { data, error } = await saveUserBuild(user.id, buildData);
+      const { data, error } = await saveUserProject(user.id, buildData);
       
       if (!error && data) {
         const newBuild = {
@@ -248,7 +264,7 @@ export function SavedBuildsProvider({ children }) {
     
     setBuilds(prev => [newBuild, ...prev]);
     return { data: newBuild, error: null };
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, canSaveBuilds]);
 
   /**
    * Update an existing build
@@ -256,7 +272,7 @@ export function SavedBuildsProvider({ children }) {
   const updateBuildHandler = useCallback(async (buildId, updates) => {
     // If authenticated, update in Supabase
     if (isAuthenticated && user?.id) {
-      const { data, error } = await updateUserBuild(user.id, buildId, updates);
+      const { data, error } = await updateUserProject(user.id, buildId, updates);
       
       if (!error && data) {
         setBuilds(prev => prev.map(build => {
@@ -303,7 +319,7 @@ export function SavedBuildsProvider({ children }) {
   const deleteBuildHandler = useCallback(async (buildId) => {
     // If authenticated, delete from Supabase
     if (isAuthenticated && user?.id) {
-      const { error } = await deleteUserBuild(user.id, buildId);
+      const { error } = await deleteUserProject(user.id, buildId);
       
       if (!error) {
         setBuilds(prev => prev.filter(build => build.id !== buildId));
@@ -334,13 +350,15 @@ export function SavedBuildsProvider({ children }) {
   const value = {
     builds,
     isLoading,
-    canSave: true, // Now supports localStorage for guests
+    canSave: canSaveBuilds, // Tier-gated (Tuner tier required, free during beta)
     saveBuild,
     updateBuild: updateBuildHandler,
     deleteBuild: deleteBuildHandler,
     getBuildById,
     getBuildsByCarSlug,
     refreshBuilds: fetchBuilds,
+    userTier,
+    isBeta: IS_BETA,
   };
 
   return (

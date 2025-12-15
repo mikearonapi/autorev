@@ -31,9 +31,11 @@ import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingP
 import { carData } from '@/data/cars.js';
 import { calculateWeightedScore } from '@/lib/scoring';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog } from '@/lib/maintenanceService';
+import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateServiceLog, deleteServiceLog } from '@/lib/maintenanceService';
 import { decodeVIN } from '@/lib/vinDecoder';
-import { fetchAllSafetyData, getSafetySummary } from '@/lib/nhtsaSafetyService';
+import { getSafetySummary } from '@/lib/nhtsaSafetyService';
+import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
+import MarketValueSection from '@/components/MarketValueSection';
 
 // Icons
 const Icons = {
@@ -110,6 +112,12 @@ const Icons = {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 21h4l13-13a2.83 2.83 0 0 0-4-4L3 17v4z"/>
       <path d="M14.5 5.5L18.5 9.5"/>
+    </svg>
+  ),
+  dollar: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
     </svg>
   ),
   settings: ({ size = 20 }) => (
@@ -190,6 +198,12 @@ const Icons = {
       <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
   ),
+  edit: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+  ),
 };
 
 // Brand Logo Component - displays brand name with consistent gold color
@@ -208,7 +222,7 @@ function BrandLogo({ brand }) {
 
 // Hero Vehicle Display Component
 // Progressive disclosure: Collapsed → Expanded (key info) → Full Details/Owner Dashboard
-function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle }) {
+function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, userId }) {
   // Panel states: 'collapsed', 'expanded', 'details'
   const [panelState, setPanelState] = useState('collapsed');
   const [showPerformance, setShowPerformance] = useState(false);
@@ -238,6 +252,8 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const [serviceLogs, setServiceLogs] = useState([]);
   const [loadingServiceLogs, setLoadingServiceLogs] = useState(false);
   const [showServiceLogModal, setShowServiceLogModal] = useState(false);
+  const [editingLog, setEditingLog] = useState(null);
+  const [deletingLogId, setDeletingLogId] = useState(null);
   
   // Initialize VIN from vehicle data
   useEffect(() => {
@@ -311,13 +327,21 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       
       setLoadingSafety(true);
       try {
-        const data = await fetchAllSafetyData({
-          vin: vehicle.vin,
-          year: vehicle.year,
-          make: vehicle.make,
-          model: vehicle.model,
+        const res = await fetch('/api/vin/safety', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vin: vehicle.vin,
+            year: vehicle.year,
+            make: vehicle.make,
+            model: vehicle.model,
+          }),
         });
-        setSafetyData(data);
+        const json = await res.json().catch(() => null);
+        if (!res.ok) {
+          throw new Error(json?.error || 'Failed to fetch safety data');
+        }
+        setSafetyData(json || { recalls: [], complaints: [], investigations: [], safetyRatings: null });
       } catch (err) {
         console.error('[HeroVehicleDisplay] Error loading safety data:', err);
       } finally {
@@ -327,6 +351,32 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     
     loadSafetyData();
   }, [type, panelState, detailsView, item?.vehicle]);
+
+  // Fetch service logs from database when service tab is opened
+  useEffect(() => {
+    const loadServiceLogs = async () => {
+      if (type !== 'mycars') return;
+      if (panelState !== 'details' || detailsView !== 'service') return;
+      
+      const vehicleId = item?.vehicle?.id;
+      if (!vehicleId || !userId) return;
+      
+      setLoadingServiceLogs(true);
+      try {
+        const { data, error } = await fetchUserServiceLogs(vehicleId, userId);
+        if (error) {
+          console.error('[HeroVehicleDisplay] Error loading service logs:', error);
+        }
+        setServiceLogs(data || []);
+      } catch (err) {
+        console.error('[HeroVehicleDisplay] Unexpected error loading service logs:', err);
+      } finally {
+        setLoadingServiceLogs(false);
+      }
+    };
+    
+    loadServiceLogs();
+  }, [type, panelState, detailsView, item?.vehicle?.id, userId]);
   
   // VIN Lookup handler - uses real NHTSA API
   const handleVinLookup = async () => {
@@ -403,13 +453,20 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       
       // Also fetch safety data with the decoded VIN
       if (decoded.year && decoded.make && decoded.model) {
-        const safety = await fetchAllSafetyData({
-          vin: decoded.vin,
-          year: decoded.year,
-          make: decoded.make,
-          model: decoded.model,
+        const res = await fetch('/api/vin/safety', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vin: decoded.vin,
+            year: decoded.year,
+            make: decoded.make,
+            model: decoded.model,
+          }),
         });
-        setSafetyData(safety);
+        const json = await res.json().catch(() => null);
+        if (res.ok) {
+          setSafetyData(json || { recalls: [], complaints: [], investigations: [], safetyRatings: null });
+        }
       }
     } catch (err) {
       console.error('[VIN Lookup] Error:', err);
@@ -417,6 +474,62 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     } finally {
       setVinLookupLoading(false);
     }
+  };
+
+  // Service log handlers
+  const handleSaveServiceLog = async (logData) => {
+    const vehicleId = item?.vehicle?.id;
+    if (!vehicleId || !userId) {
+      throw new Error('Vehicle or user information missing');
+    }
+
+    if (editingLog) {
+      // Update existing log
+      const { data, error } = await updateServiceLog(editingLog.id, userId, logData);
+      if (error) {
+        console.error('[ServiceLog] Update error:', error);
+        throw error;
+      }
+      // Update local state
+      setServiceLogs(prev => prev.map(log => log.id === editingLog.id ? data : log));
+      setEditingLog(null);
+    } else {
+      // Add new log
+      const { data, error } = await addServiceLog(vehicleId, userId, logData);
+      if (error) {
+        console.error('[ServiceLog] Add error:', error);
+        throw error;
+      }
+      // Prepend to local state (most recent first)
+      setServiceLogs(prev => [data, ...prev]);
+    }
+  };
+
+  const handleEditServiceLog = (log) => {
+    setEditingLog(log);
+    setShowServiceLogModal(true);
+  };
+
+  const handleDeleteServiceLog = async (logId) => {
+    if (!userId) return;
+    
+    setDeletingLogId(logId);
+    try {
+      const { error } = await deleteServiceLog(logId, userId);
+      if (error) {
+        console.error('[ServiceLog] Delete error:', error);
+        return;
+      }
+      // Remove from local state
+      setServiceLogs(prev => prev.filter(log => log.id !== logId));
+    } finally {
+      setDeletingLogId(null);
+    }
+  };
+
+  const handleCloseServiceLogModal = () => {
+    setShowServiceLogModal(false);
+    setEditingLog(null);
   };
   
   if (!item) return null;
@@ -542,6 +655,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 >
                   <Icons.shield size={12} />
                   <span>Safety</span>
+                </button>
+                <button 
+                  className={`${styles.headerToggleBtn} ${detailsView === 'value' ? styles.headerToggleActive : ''}`}
+                  onClick={() => setDetailsView('value')}
+                  title="Market Value"
+                >
+                  <Icons.dollar size={12} />
+                  <span>Value</span>
                 </button>
                 <button 
                   className={`${styles.headerToggleBtn} ${detailsView === 'service' ? styles.headerToggleActive : ''}`}
@@ -796,9 +917,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </>
             )}
 
-            {/* Owner's Reference View - Only for My Collection */}
+            {/* Owner's Reference View - Only for My Collection (Collector+ tier) */}
             {isOwnedVehicle && detailsView === 'reference' && (
-              <>
+              <PremiumGate feature="ownerReference" variant="compact">
                 {/* VIN Lookup - Compact inline */}
                 <div className={styles.vinLookupCompact}>
                   <input
@@ -961,12 +1082,12 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 <p className={styles.referenceNote}>
                   Values shown are estimates. Verify with your owner's manual or VIN decode.
                 </p>
-              </>
+              </PremiumGate>
             )}
 
-            {/* Safety View - Recalls, TSBs, Complaints, Safety Ratings */}
+            {/* Safety View - Recalls, TSBs, Complaints, Safety Ratings (Collector+ tier) */}
             {isOwnedVehicle && detailsView === 'safety' && (
-              <>
+              <PremiumGate feature="safetyData" variant="compact">
                 {loadingSafety ? (
                   <div className={styles.loadingState}>
                     <Icons.loader size={24} className={styles.spinnerIcon} />
@@ -1087,12 +1208,12 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     </p>
                   </>
                 )}
-              </>
+              </PremiumGate>
             )}
 
-            {/* Service Log View */}
+            {/* Service Log View (Collector+ tier) */}
             {isOwnedVehicle && detailsView === 'service' && (
-              <>
+              <PremiumGate feature="serviceLog" variant="compact">
                 {/* Add Service Button */}
                 <div className={styles.serviceLogHeader}>
                   <h4 className={styles.detailBlockTitle}>
@@ -1100,7 +1221,10 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     Service History
                   </h4>
                   <button 
-                    onClick={() => setShowServiceLogModal(true)}
+                    onClick={() => {
+                      setEditingLog(null);
+                      setShowServiceLogModal(true);
+                    }}
                     className={styles.addServiceBtn}
                   >
                     <Icons.plus size={14} />
@@ -1108,7 +1232,12 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   </button>
                 </div>
 
-                {serviceLogs.length === 0 ? (
+                {loadingServiceLogs ? (
+                  <div className={styles.emptyServiceLog}>
+                    <LoadingSpinner size="small" />
+                    <p>Loading service records...</p>
+                  </div>
+                ) : serviceLogs.length === 0 ? (
                   <div className={styles.emptyServiceLog}>
                     <Icons.clipboard size={48} />
                     <p>No service records yet</p>
@@ -1116,7 +1245,10 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       Track oil changes, tire rotations, and other maintenance to stay on top of your vehicle's health.
                     </p>
                     <button 
-                      onClick={() => setShowServiceLogModal(true)}
+                      onClick={() => {
+                        setEditingLog(null);
+                        setShowServiceLogModal(true);
+                      }}
                       className={styles.firstServiceBtn}
                     >
                       <Icons.plus size={16} />
@@ -1141,11 +1273,32 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                             <span className={styles.serviceLogMiles}>{log.odometer_reading.toLocaleString()} mi</span>
                           )}
                           {log.total_cost && (
-                            <span className={styles.serviceLogCost}>${log.total_cost}</span>
+                            <span className={styles.serviceLogCost}>${Number(log.total_cost).toFixed(2)}</span>
                           )}
                           {log.notes && (
                             <p className={styles.serviceLogNotes}>{log.notes}</p>
                           )}
+                        </div>
+                        <div className={styles.serviceLogActions}>
+                          <button 
+                            className={styles.serviceLogEditBtn}
+                            onClick={() => handleEditServiceLog(log)}
+                            title="Edit service record"
+                          >
+                            <Icons.edit size={14} />
+                          </button>
+                          <button 
+                            className={styles.serviceLogDeleteBtn}
+                            onClick={() => handleDeleteServiceLog(log.id)}
+                            disabled={deletingLogId === log.id}
+                            title="Delete service record"
+                          >
+                            {deletingLogId === log.id ? (
+                              <LoadingSpinner size="tiny" />
+                            ) : (
+                              <Icons.trash size={14} />
+                            )}
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -1155,7 +1308,15 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 <p className={styles.referenceNote}>
                   Keep your service records up to date for accurate maintenance reminders.
                 </p>
-              </>
+              </PremiumGate>
+            )}
+
+            {/* Market Value View - Only for My Collection (Collector+ tier) */}
+            {isOwnedVehicle && detailsView === 'value' && (
+              <MarketValueSection 
+                carSlug={item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug}
+                carName={item?.matchedCar?.name || car?.name}
+              />
             )}
           </div>
         )}
@@ -1234,28 +1395,15 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       {showServiceLogModal && isOwnedVehicle && (
         <ServiceLogModal
           isOpen={showServiceLogModal}
-          onClose={() => setShowServiceLogModal(false)}
+          onClose={handleCloseServiceLogModal}
           vehicleInfo={{
             year: item.vehicle?.year,
             make: item.vehicle?.make,
             model: item.vehicle?.model,
             currentMileage: item.vehicle?.mileage,
           }}
-          onSave={async (logData) => {
-            // For now, just add to local state
-            // In production, this would call addServiceLog with proper user/vehicle IDs
-            const newLog = {
-              id: Date.now().toString(),
-              service_date: logData.serviceDate,
-              service_type: logData.serviceType,
-              service_category: logData.serviceCategory,
-              odometer_reading: logData.mileage,
-              total_cost: logData.totalCost,
-              notes: logData.notes,
-              performed_by: logData.performedBy,
-            };
-            setServiceLogs(prev => [newLog, ...prev]);
-          }}
+          editingLog={editingLog}
+          onSave={handleSaveServiceLog}
         />
       )}
     </div>
@@ -1557,7 +1705,7 @@ function GarageContent() {
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const { builds, deleteBuild, getBuildById } = useSavedBuilds();
@@ -1833,6 +1981,7 @@ function GarageContent() {
                 onAddToMyCars={handleAddFavoriteToMyCars}
                 isInMyCars={activeTab === 'favorites' && currentItem ? isInMyCars(currentItem.slug) : false}
                 onUpdateVehicle={updateVehicle}
+                userId={user?.id}
               />
 
               {/* Thumbnail Strip at Bottom */}

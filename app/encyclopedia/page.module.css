@@ -1359,12 +1359,274 @@
   font-size: 0.8125rem;
   color: var(--enc-text-secondary);
   transition: all 0.15s ease;
+  /* CF-001: Ensure good touch target on mobile */
+  min-height: 44px;
+  -webkit-tap-highlight-color: rgba(26, 77, 110, 0.2);
+  touch-action: manipulation;
 }
 
-.homeSectionCardMore:hover {
+.homeSectionCardMore:hover,
+.homeSectionCardMore:active {
   border-color: var(--enc-primary);
   color: var(--enc-primary);
   background: rgba(26, 77, 110, 0.05);
+}
+
+/* CF-001: Active state for touch feedback on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .homeSectionCardMore:active {
+    transform: scale(0.98);
+  }
+}
+
+/* =============================================================================
+   TOPIC SECTIONS (NEW HIERARCHY)
+   ============================================================================= */
+
+/* Topic list for component pages */
+.sectionTopicList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .sectionTopicList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.topicCard {
+  display: block;
+  padding: 1rem;
+  background: var(--enc-surface);
+  border: 1px solid var(--enc-border);
+  border-radius: var(--enc-radius);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.topicCard:hover {
+  border-color: var(--enc-primary);
+  box-shadow: var(--enc-shadow);
+  transform: translateY(-1px);
+}
+
+.topicCardStub {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.topicCardStub:hover {
+  opacity: 0.9;
+}
+
+.topicCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.topicName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--enc-text);
+  margin: 0;
+}
+
+.stubBadge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--enc-warning);
+  background: rgba(217, 119, 6, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.topicDefinition {
+  font-size: 0.8125rem;
+  color: var(--enc-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Topic links (shown in modification articles) */
+.sectionTopicLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.topicLinkChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(26, 77, 110, 0.05);
+  border: 1px solid rgba(26, 77, 110, 0.2);
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  color: var(--enc-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.topicLinkChip:hover {
+  background: rgba(26, 77, 110, 0.1);
+  border-color: var(--enc-primary);
+}
+
+.topicLinkChip svg {
+  opacity: 0.7;
+}
+
+/* Upgrade links (shown in topic articles) */
+.sectionUpgradeLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.upgradeLinkChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  color: var(--enc-text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.upgradeLinkChip:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--enc-accent);
+}
+
+.upgradeLinkChip svg {
+  color: var(--enc-accent);
+}
+
+/* CF-011: Modification Potential Section - Made more visually distinct */
+.sectionModPotential {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(26, 77, 110, 0.04) 0%, rgba(26, 77, 110, 0.01) 100%);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid rgba(26, 77, 110, 0.1);
+}
+
+.modPotentialSummary {
+  font-size: 0.9375rem;
+  color: var(--enc-text);
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+}
+
+.modPotentialItem {
+  padding: 0.75rem 1rem;
+  background: rgba(26, 77, 110, 0.03);
+  border-left: 3px solid var(--enc-primary);
+  border-radius: 0 6px 6px 0;
+}
+
+.modPotentialLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--enc-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.375rem;
+}
+
+.modPotentialItem p {
+  font-size: 0.875rem;
+  color: var(--enc-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Article stub badge */
+.articleStubBadge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--enc-warning);
+  background: rgba(217, 119, 6, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+}
+
+/* =============================================================================
+   TECHNICAL SPECIFICATIONS SECTION (Merged from Technical Reference)
+   ============================================================================= */
+
+.sectionTechnicalSpecs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.technicalSpecItem {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(26, 77, 110, 0.03) 0%, rgba(26, 77, 110, 0.06) 100%);
+  border: 1px solid rgba(26, 77, 110, 0.1);
+  border-radius: var(--enc-radius);
+}
+
+.technicalSpecHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.technicalSpecName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--enc-primary);
+  margin: 0;
+}
+
+.technicalSpecUnit {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--enc-text-muted);
+  font-family: var(--enc-font-mono);
+}
+
+.technicalSpecDesc {
+  font-size: 0.875rem;
+  color: var(--enc-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.technicalSpecEngines {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--enc-text-secondary);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--enc-radius-sm);
 }
 
 /* =============================================================================

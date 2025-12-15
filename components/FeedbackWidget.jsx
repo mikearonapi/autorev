@@ -3,14 +3,13 @@
 /**
  * FeedbackWidget Component
  * 
- * Floating feedback button that expands into a form for users to submit:
- * - What they like
- * - What they don't like
- * - Feature requests
- * - Bug reports
- * - Car requests (new cars for the database)
+ * Enhanced beta feedback collection widget with:
+ * - Category classification (Bug, Feature, Data Issue, General, Praise)
+ * - Severity tracking for bugs (Blocking, Major, Minor)
+ * - Auto-capture of context (page, car, browser, user tier)
+ * - Optional rating and email for follow-up
+ * - Progressive disclosure to minimize friction
  * 
- * Now supports contextual prompts based on the page.
  * All feedback is stored in Supabase for analytics and tracking.
  * Supports both authenticated and anonymous submissions.
  */
@@ -32,6 +31,7 @@ export function useFeedback() {
     return {
       openFeedback: () => console.warn('[useFeedback] No FeedbackProvider found'),
       openCarRequest: () => console.warn('[useFeedback] No FeedbackProvider found'),
+      openBugReport: () => console.warn('[useFeedback] No FeedbackProvider found'),
     };
   }
   return context;
@@ -41,20 +41,32 @@ export function FeedbackProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [feedbackConfig, setFeedbackConfig] = useState({
     context: null,
+    preselectedCategory: null,
     preselectedType: null,
     customHint: null,
   });
 
-  const openFeedback = useCallback(({ context = null, preselectedType = null, customHint = null } = {}) => {
-    setFeedbackConfig({ context, preselectedType, customHint });
+  const openFeedback = useCallback(({ context = null, preselectedCategory = null, preselectedType = null, customHint = null } = {}) => {
+    setFeedbackConfig({ context, preselectedCategory, preselectedType, customHint });
     setIsOpen(true);
   }, []);
 
   const openCarRequest = useCallback((customHint = null) => {
     setFeedbackConfig({ 
       context: 'car-request', 
+      preselectedCategory: 'feature',
       preselectedType: 'car_request', 
       customHint: customHint || "Tell us which car you'd like to see added to our database." 
+    });
+    setIsOpen(true);
+  }, []);
+
+  const openBugReport = useCallback((customHint = null) => {
+    setFeedbackConfig({ 
+      context: 'bug-report', 
+      preselectedCategory: 'bug',
+      preselectedType: 'bug', 
+      customHint: customHint || "Describe what went wrong and we'll fix it ASAP." 
     });
     setIsOpen(true);
   }, []);
@@ -63,15 +75,16 @@ export function FeedbackProvider({ children }) {
     setIsOpen(false);
     // Reset config after close animation
     setTimeout(() => {
-      setFeedbackConfig({ context: null, preselectedType: null, customHint: null });
+      setFeedbackConfig({ context: null, preselectedCategory: null, preselectedType: null, customHint: null });
     }, 300);
   }, []);
 
   return (
-    <FeedbackContext.Provider value={{ openFeedback, openCarRequest, closeFeedback, isOpen }}>
+    <FeedbackContext.Provider value={{ openFeedback, openCarRequest, openBugReport, closeFeedback, isOpen }}>
       {children}
       <FeedbackWidget
         context={feedbackConfig.context}
+        preselectedCategory={feedbackConfig.preselectedCategory}
         preselectedType={feedbackConfig.preselectedType}
         customHint={feedbackConfig.customHint}
         isExternalOpen={isOpen}
@@ -82,7 +95,10 @@ export function FeedbackProvider({ children }) {
   );
 }
 
-// Icons
+// ============================================================================
+// ICONS
+// ============================================================================
+
 const Icons = {
   messageSquare: ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -93,23 +109,6 @@ const Icons = {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="18" y1="6" x2="6" y2="18"/>
       <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  ),
-  heart: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-    </svg>
-  ),
-  thumbsDown: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
-    </svg>
-  ),
-  lightbulb: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 18h6"/>
-      <path d="M10 22h4"/>
-      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
     </svg>
   ),
   bug: ({ size = 20 }) => (
@@ -123,6 +122,30 @@ const Icons = {
       <path d="M22 17h-3"/>
     </svg>
   ),
+  lightbulb: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18h6"/>
+      <path d="M10 22h4"/>
+      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
+    </svg>
+  ),
+  database: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+    </svg>
+  ),
+  message: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </svg>
+  ),
+  heart: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  ),
   check: ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
@@ -134,25 +157,48 @@ const Icons = {
       <polygon points="22 2 15 22 11 13 2 9 22 2"/>
     </svg>
   ),
+  star: ({ size = 20, filled = false }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+  ),
+  alertTriangle: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  info: ({ size = 14 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
 };
 
-// Car request icon
-const Icons_car = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-    <circle cx="7" cy="17" r="2"/>
-    <path d="M9 17h6"/>
-    <circle cx="17" cy="17" r="2"/>
-  </svg>
-);
+// ============================================================================
+// CATEGORY & SEVERITY OPTIONS
+// ============================================================================
 
-const feedbackTypes = [
-  { id: 'like', label: 'Something I love', icon: Icons.heart, color: '#ef4444' },
-  { id: 'dislike', label: 'Could be better', icon: Icons.thumbsDown, color: '#f59e0b' },
-  { id: 'feature', label: 'Feature request', icon: Icons.lightbulb, color: '#10b981' },
-  { id: 'bug', label: 'Bug report', icon: Icons.bug, color: '#8b5cf6' },
-  { id: 'car_request', label: 'Request a car', icon: Icons_car, color: '#3b82f6' },
+const categories = [
+  { id: 'bug', label: 'Bug Report', icon: Icons.bug, color: '#ef4444', description: 'Something is broken' },
+  { id: 'feature', label: 'Feature Request', icon: Icons.lightbulb, color: '#10b981', description: 'I have an idea' },
+  { id: 'data', label: 'Data Issue', icon: Icons.database, color: '#f59e0b', description: 'Wrong or missing data' },
+  { id: 'general', label: 'General', icon: Icons.message, color: '#6b7280', description: 'Other feedback' },
+  { id: 'praise', label: 'Praise', icon: Icons.heart, color: '#ec4899', description: 'Something I love' },
 ];
+
+const severities = [
+  { id: 'blocking', label: 'Blocking', description: "Can't use the feature at all", color: '#ef4444' },
+  { id: 'major', label: 'Major', description: 'Significant impact on usage', color: '#f59e0b' },
+  { id: 'minor', label: 'Minor', description: 'Annoying but workable', color: '#6b7280' },
+];
+
+// ============================================================================
+// HELPERS
+// ============================================================================
 
 // Generate or get session ID for anonymous tracking
 function getSessionId() {
@@ -174,71 +220,99 @@ function getBrowserInfo() {
     os: /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : /iOS/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : 'Other',
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     language: navigator.language,
+    userAgent: ua,
   };
+}
+
+// Extract car slug from URL
+function getCarContextFromUrl(url) {
+  if (!url) return null;
+  const carMatch = url.match(/\/browse-cars\/([^/?#]+)/);
+  return carMatch ? carMatch[1] : null;
+}
+
+// Extract feature context from URL
+function getFeatureContextFromUrl(url) {
+  if (!url) return null;
+  const pathname = new URL(url).pathname;
+  
+  if (pathname.includes('/tuning-shop')) return 'tuning-shop';
+  if (pathname.includes('/garage')) return 'garage';
+  if (pathname.includes('/browse-cars')) return 'browse-cars';
+  if (pathname.includes('/encyclopedia')) return 'encyclopedia';
+  if (pathname.includes('/compare')) return 'compare';
+  if (pathname.includes('/al') || pathname.includes('/ai-mechanic')) return 'ai-mechanic';
+  
+  return pathname.split('/')[1] || 'home';
 }
 
 /**
  * Contextual prompts based on page/section
- * Pages can pass context to show relevant hints
  */
 const contextualHints = {
   'browse-cars': {
     title: 'Car Browser Feedback',
     hint: "Can't find a car you're looking for? Let us know!",
-    defaultType: null,
   },
   'garage': {
     title: 'Garage Feedback',
     hint: 'How can we improve your garage experience?',
-    defaultType: null,
   },
   'tuning-shop': {
     title: 'Tuning Shop Feedback',
     hint: 'Missing an upgrade option or have suggestions?',
-    defaultType: null,
   },
   'car-request': {
     title: 'Request a Car',
     hint: "Tell us which car you'd like to see in our database.",
-    defaultType: 'car_request',
+  },
+  'bug-report': {
+    title: 'Report a Bug',
+    hint: "Describe what went wrong and we'll fix it ASAP.",
   },
   default: {
     title: 'Share Your Feedback',
     hint: null,
-    defaultType: null,
   },
 };
 
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 export default function FeedbackWidget({ 
-  context = null,           // Page context: 'browse-cars', 'garage', 'tuning-shop', 'car-request'
-  preselectedType = null,   // Pre-select a feedback type
-  customHint = null,        // Custom hint text
-  buttonLabel = 'Feedback', // Custom button label
-  showButton = true,        // Whether to show the floating button (false if triggered externally)
-  isExternalOpen = false,   // External control for open state
-  onExternalClose = null,   // Callback when closing (for external control)
+  context = null,
+  preselectedCategory = null,
+  preselectedType = null,
+  customHint = null,
+  buttonLabel = 'Feedback',
+  showButton = true,
+  isExternalOpen = false,
+  onExternalClose = null,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [feedbackType, setFeedbackType] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [severity, setSeverity] = useState(null);
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState(null);
   
   // Get auth context
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, userTier } = useAuth();
   
   // Handle external open state
   useEffect(() => {
     if (isExternalOpen) {
       setIsOpen(true);
-      // Set preselected type if provided
-      if (preselectedType) {
-        setFeedbackType(preselectedType);
+      if (preselectedCategory) {
+        setCategory(preselectedCategory);
       }
     }
-  }, [isExternalOpen, preselectedType]);
+  }, [isExternalOpen, preselectedCategory]);
   
   // Get contextual config
   const contextConfig = contextualHints[context] || contextualHints.default;
@@ -254,24 +328,35 @@ export default function FeedbackWidget({
   // Reset form when closing
   useEffect(() => {
     if (!isOpen) {
-      // Delay reset to allow animation
       const timer = setTimeout(() => {
-        setFeedbackType(preselectedType || null);
+        setCategory(preselectedCategory || null);
+        setSeverity(null);
         setMessage('');
         setEmail('');
+        setRating(0);
         setError(null);
         if (isSuccess) setIsSuccess(false);
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, isSuccess, preselectedType]);
+  }, [isOpen, isSuccess, preselectedCategory]);
 
-  // Handle form submission - saves to database
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!feedbackType || !message.trim()) {
-      setError('Please select a feedback type and enter your message.');
+    if (!category) {
+      setError('Please select a category.');
+      return;
+    }
+
+    if (!message.trim()) {
+      setError('Please enter your feedback message.');
+      return;
+    }
+
+    if (category === 'bug' && !severity) {
+      setError('Please select a severity level for the bug.');
       return;
     }
 
@@ -279,15 +364,26 @@ export default function FeedbackWidget({
     setError(null);
 
     try {
-      // Collect comprehensive context for analytics
+      const pageUrl = window.location.href;
+      
       const feedbackPayload = {
-        feedbackType,
-        message: message.trim(),
+        // New beta fields
+        category,
+        severity: category === 'bug' ? severity : null,
+        rating: rating > 0 ? rating : null,
+        featureContext: getFeatureContextFromUrl(pageUrl),
+        carContext: getCarContextFromUrl(pageUrl),
+        
+        // User info
+        userId: user?.id || null,
+        userTier: userTier || null,
         email: email || (user?.email) || null,
-        pageUrl: window.location.href,
+        
+        // Common fields
+        message: message.trim(),
+        pageUrl,
         pageTitle: document.title,
         sessionId: getSessionId(),
-        userId: user?.id || null,
         browserInfo: getBrowserInfo(),
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
@@ -304,19 +400,33 @@ export default function FeedbackWidget({
         throw new Error(errorData.error || 'Failed to submit feedback');
       }
 
-      const result = await response.json();
-
       setIsSuccess(true);
       
       // Auto-close after success
       setTimeout(() => {
-        setIsOpen(false);
+        handleClose();
       }, 2500);
     } catch (err) {
       console.error('[FeedbackWidget] Error:', err);
-      setError('Failed to submit feedback. Please try again.');
+      setError(err.message || 'Failed to submit feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Get placeholder text based on category
+  const getPlaceholder = () => {
+    switch (category) {
+      case 'bug':
+        return 'Describe what happened, what you expected, and steps to reproduce...';
+      case 'feature':
+        return 'Describe the feature you\'d like to see...';
+      case 'data':
+        return 'Which data is wrong or missing? Include car name if applicable...';
+      case 'praise':
+        return 'What do you love about AutoRev?';
+      default:
+        return 'Share your thoughts...';
     }
   };
 
@@ -358,8 +468,12 @@ export default function FeedbackWidget({
                 <div className={styles.successIcon}>
                   <Icons.check size={32} />
                 </div>
-                <p>Your feedback has been received!</p>
-                <p className={styles.successSubtext}>We appreciate you taking the time to help us improve.</p>
+                <p>Thanks for sharing your feedback!</p>
+                <p className={styles.successSubtext}>
+                  {category === 'bug' && severity === 'blocking' 
+                    ? "We'll prioritize this and get back to you ASAP."
+                    : "We'll review your feedback and use it to improve AutoRev."}
+                </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className={styles.form}>
@@ -370,48 +484,72 @@ export default function FeedbackWidget({
                   </p>
                 )}
 
-                {/* Feedback Type Selection */}
-                <div className={styles.typeSelection}>
-                  <label className={styles.label}>What type of feedback?</label>
-                  <div className={styles.typeGrid}>
-                    {feedbackTypes.map((type) => {
-                      const Icon = type.icon;
+                {/* Category Selection */}
+                <div className={styles.field}>
+                  <label className={styles.label}>What's this about?</label>
+                  <div className={styles.categoryGrid}>
+                    {categories.map((cat) => {
+                      const Icon = cat.icon;
                       return (
                         <button
-                          key={type.id}
+                          key={cat.id}
                           type="button"
-                          className={`${styles.typeButton} ${feedbackType === type.id ? styles.typeButtonActive : ''}`}
-                          onClick={() => setFeedbackType(type.id)}
+                          className={`${styles.categoryButton} ${category === cat.id ? styles.categoryButtonActive : ''}`}
+                          onClick={() => {
+                            setCategory(cat.id);
+                            if (cat.id !== 'bug') setSeverity(null);
+                          }}
                           style={{ 
-                            '--type-color': type.color,
-                            borderColor: feedbackType === type.id ? type.color : undefined,
-                            background: feedbackType === type.id ? `${type.color}15` : undefined,
+                            '--cat-color': cat.color,
+                            borderColor: category === cat.id ? cat.color : undefined,
+                            background: category === cat.id ? `${cat.color}15` : undefined,
                           }}
                         >
                           <Icon size={18} />
-                          <span>{type.label}</span>
+                          <span className={styles.categoryLabel}>{cat.label}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
+                {/* Severity (only for bugs) */}
+                {category === 'bug' && (
+                  <div className={styles.field}>
+                    <label className={styles.label}>
+                      <Icons.alertTriangle size={16} />
+                      <span>How severe is this?</span>
+                    </label>
+                    <div className={styles.severityGrid}>
+                      {severities.map((sev) => (
+                        <button
+                          key={sev.id}
+                          type="button"
+                          className={`${styles.severityButton} ${severity === sev.id ? styles.severityButtonActive : ''}`}
+                          onClick={() => setSeverity(sev.id)}
+                          style={{ 
+                            '--sev-color': sev.color,
+                            borderColor: severity === sev.id ? sev.color : undefined,
+                            background: severity === sev.id ? `${sev.color}15` : undefined,
+                          }}
+                        >
+                          <span className={styles.severityLabel}>{sev.label}</span>
+                          <span className={styles.severityDesc}>{sev.description}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Message */}
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="feedback-message">
-                    Tell us more
+                    Tell us more <span className={styles.required}>*</span>
                   </label>
                   <textarea
                     id="feedback-message"
                     className={styles.textarea}
-                    placeholder={
-                      feedbackType === 'like' ? "What do you love about AutoRev?" :
-                      feedbackType === 'dislike' ? "What could we improve?" :
-                      feedbackType === 'feature' ? "What feature would you like to see?" :
-                      feedbackType === 'bug' ? "Please describe the issue you encountered..." :
-                      feedbackType === 'car_request' ? "Which car would you like us to add? Include year, make, model (e.g., 2020 Toyota GR Supra)" :
-                      "Share your thoughts..."
-                    }
+                    placeholder={getPlaceholder()}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
@@ -419,7 +557,7 @@ export default function FeedbackWidget({
                   />
                 </div>
 
-                {/* Optional Email */}
+                {/* Email (optional) */}
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="feedback-email">
                     Email <span className={styles.optional}>(optional)</span>
@@ -428,30 +566,75 @@ export default function FeedbackWidget({
                     id="feedback-email"
                     type="email"
                     className={styles.input}
-                    placeholder="your@email.com"
+                    placeholder={user?.email || 'your@email.com'}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  <p className={styles.hint}>Include your email if you'd like us to follow up.</p>
+                  <p className={styles.hint}>
+                    <Icons.info size={12} />
+                    <span>Only if you'd like us to follow up</span>
+                  </p>
+                </div>
+
+                {/* Rating (optional) */}
+                <div className={styles.field}>
+                  <label className={styles.label}>
+                    How's your experience? <span className={styles.optional}>(optional)</span>
+                  </label>
+                  <div className={styles.ratingContainer}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        className={styles.starButton}
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        aria-label={`Rate ${star} stars`}
+                      >
+                        <Icons.star 
+                          size={24} 
+                          filled={star <= (hoverRating || rating)} 
+                        />
+                      </button>
+                    ))}
+                    {rating > 0 && (
+                      <span className={styles.ratingText}>
+                        {rating === 5 ? 'Excellent!' : 
+                         rating === 4 ? 'Great!' : 
+                         rating === 3 ? 'Good' : 
+                         rating === 2 ? 'Fair' : 'Poor'}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Error */}
                 {error && (
-                  <p className={styles.error}>{error}</p>
+                  <div className={styles.error}>
+                    <Icons.alertTriangle size={16} />
+                    <span>{error}</span>
+                  </div>
                 )}
+
+                {/* Auto-captured context note */}
+                <div className={styles.autoCapture}>
+                  <Icons.info size={12} />
+                  <span>Auto-captured: page, browser, {getCarContextFromUrl(typeof window !== 'undefined' ? window.location.href : '') ? 'car context' : 'context'}</span>
+                </div>
 
                 {/* Submit */}
                 <button
                   type="submit"
                   className={styles.submitButton}
-                  disabled={isSubmitting || !feedbackType || !message.trim()}
+                  disabled={isSubmitting || !category || !message.trim() || (category === 'bug' && !severity)}
                 >
                   {isSubmitting ? (
                     <span>Sending...</span>
                   ) : (
                     <>
                       <Icons.send size={16} />
-                      <span>Send Feedback</span>
+                      <span>Submit Feedback</span>
                     </>
                   )}
                 </button>
@@ -463,4 +646,3 @@ export default function FeedbackWidget({
     </>
   );
 }
-

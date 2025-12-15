@@ -75,12 +75,15 @@ export async function GET(request) {
 export async function POST(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
-  
+  const vercelCron = request.headers.get('x-vercel-cron');
+
   if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    if (vercelCron !== 'true') {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
   }
   
   try {
@@ -168,3 +171,4 @@ export async function POST(request) {
     );
   }
 }
+

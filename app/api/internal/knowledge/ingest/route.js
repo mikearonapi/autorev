@@ -1,72 +1,33 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { 
+  chunkText, 
+  generateEmbedding as generateEmbeddingUtil, 
+  toPgVectorLiteral, 
+  getEmbeddingModel,
+  isEmbeddingConfigured 
+} from '@/lib/embeddingUtils';
+import { requireAdmin } from '@/lib/adminAuth';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const INTERNAL_ADMIN_KEY = process.env.INTERNAL_ADMIN_KEY;
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_EMBEDDING_MODEL = process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small'; // 1536 dims
+const OPENAI_EMBEDDING_MODEL = getEmbeddingModel();
 
 const supabase = (supabaseUrl && supabaseServiceKey)
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null;
 
-function chunkText(text, { maxChars = 1400, overlapChars = 200 } = {}) {
-  const clean = String(text || '').replace(/\s+/g, ' ').trim();
-  if (!clean) return [];
-
-  const chunks = [];
-  let start = 0;
-  while (start < clean.length) {
-    const end = Math.min(clean.length, start + maxChars);
-    const chunk = clean.slice(start, end).trim();
-    if (chunk) chunks.push(chunk);
-    if (end >= clean.length) break;
-    start = Math.max(0, end - overlapChars);
-  }
-  return chunks;
-}
-
+/**
+ * Wrapper for embedding generation that throws on error.
+ * @param {string} text
+ * @returns {Promise<number[]>}
+ */
 async function generateEmbedding(text) {
-  const res = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: OPENAI_EMBEDDING_MODEL,
-      input: String(text || '').slice(0, 8000),
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `OpenAI embeddings failed (${res.status})`);
-  }
-
-  const data = await res.json();
-  const embedding = data?.data?.[0]?.embedding;
-  if (!Array.isArray(embedding)) throw new Error('OpenAI embeddings returned no vector');
-  return embedding;
-}
-
-function toPgVectorLiteral(vec) {
-  return `[${vec.join(',')}]`;
-}
-
-function requireAdmin(request) {
-  if (!INTERNAL_ADMIN_KEY) {
-    return { ok: false, error: 'INTERNAL_ADMIN_KEY not configured' };
-  }
-  const provided = request.headers.get('x-internal-admin-key');
-  if (!provided || provided !== INTERNAL_ADMIN_KEY) {
-    return { ok: false, error: 'Unauthorized' };
-  }
-  return { ok: true };
+  const result = await generateEmbeddingUtil(text);
+  if (result.error) throw new Error(result.error);
+  return result.embedding;
 }
 
 /**
@@ -91,7 +52,7 @@ export async function POST(request) {
     if (!supabase) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
     }
-    if (!OPENAI_API_KEY) {
+    if (!isEmbeddingConfigured()) {
       return NextResponse.json({ error: 'OPENAI_API_KEY not configured' }, { status: 503 });
     }
 
@@ -225,4 +186,5 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
   }
 }
+
 

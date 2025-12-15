@@ -69,7 +69,9 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
   }, [isOpen]);
 
   const handleClose = useCallback(() => {
-    if (dontShowAgain && storageKey) {
+    // CF-004: Always save dismissed state on any close action (not just "don't show again")
+    // This prevents the modal from persisting across navigation
+    if (storageKey) {
       localStorage.setItem(storageKey, 'true');
     }
     
@@ -78,7 +80,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
     } else {
       setInternalIsOpen(false);
     }
-  }, [dontShowAgain, storageKey, isControlled, controlledOnClose]);
+  }, [storageKey, isControlled, controlledOnClose]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
