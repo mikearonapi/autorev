@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 34% (33/98) | Lap Times 39% (38/98)
+> **Current**: Dyno 40% (39/98) | Lap Times 45% (44/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 37 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 33 | 50 | 🔴 |
-| Lap Times | 65 | 73 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 38 | 50 | 🔴 |
+| Dyno Runs | 29 | 43 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 39 | 50 | 🔴 |
+| Lap Times | 65 | 79 | 100+ | 🔴 |
+| Unique Cars (Lap) | 30 | 44 | 50 | 🔴 |
 
 ---
 
@@ -38,14 +38,14 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| 718 GT4 | `718-cayman-gt4` | ⬜ | ⬜ | |
-| 981/987 Caymans | `981-cayman-s` | ⬜ | ⬜ | |
-| 991/997 Carreras | `997-carrera-s` | ⬜ | ⬜ | |
-| 996 GT3 | `996-gt3` | ⬜ | ⬜ | |
-| 997 GT3 | `997-gt3` | ⬜ | ⬜ | |
-| 997 Turbo | `997-turbo` | ⬜ | ⬜ | |
+| 718 GT4 | `718-cayman-gt4` | ✅ | ✅ | Dyno: https://soulpp.com/2021/09/02/dyno-results-718-gt4-soul-race-exhaust-system/ ; Lap: https://fastestlaps.com/tests/2cpzzuo093p7 |
+| 981/987 Caymans | `981-cayman-s` | ✅ | ✅ | Dyno: https://rennlist.com/forums/981-forum/1349390-fvd-tune-dyno-results.html ; Lap: https://fastestlaps.com/tests/83jde6r4fcho |
+| 991/997 Carreras | `997-carrera-s` | ✅ | ✅ | Dyno: https://greenh2.wordpress.com/2010/05/26/dyno-comp-built-2010-porsche-997-s/ ; Lap: https://fastestlaps.com/tests/ln99cfrim8la |
+| 996 GT3 | `996-gt3` | ✅ | ✅ | Dyno: https://www.dragtimes.com/Porsche--GT3-Dyno-Sheets.html ; Lap: https://fastestlaps.com/tests/lt1cmp64f2r5 |
+| 997 GT3 | `997-gt3` | ✅ | ✅ | Dyno: https://www.dragtimes.com/2007-Porsche-GT3-Dyno-Results-Graphs-11151.html ; Lap: https://fastestlaps.com/tests/14ibi3f7cjko |
+| 997 Turbo | `997-turbo` | ✅ | ✅ | Dyno: https://www.stockwhp.com/porsche ; Lap: https://fastestlaps.com/tests/3fig6fu594ga |
 
-**Batch 2 Status**: 0/6 complete
+**Batch 2 Status**: 6/6 complete
 
 ---
 
@@ -139,6 +139,7 @@
 | Date | Batch | Cars Added | Dyno Added | Laps Added | Notes |
 |------|-------|------------|------------|------------|-------|
 | 2025-12-14 | Priority Batch 1 (BMW M Cars) | 8 | 8 | 8 | Added dyno + lap time sources (mostly Nürburgring Nordschleife; Top Gear track for Z4 M). |
+| 2025-12-15 | Priority Batch 2 (Porsche) | 6 | 6 | 6 | Added dyno + lap time sources (mostly Nürburgring Nordschleife). |
 
 ---
 

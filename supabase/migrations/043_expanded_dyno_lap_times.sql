@@ -552,6 +552,276 @@ WHERE c.slug = 'bmw-1m-coupe' AND tv.slug = 'nurburgring-nordschleife'
   );
 
 -- ============================================================================
+-- Priority Batch 2 (Porsche): DYNO DATA (6 cars)
+-- ============================================================================
+-- 718 Cayman GT4 (SOUL race exhaust dyno result)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '718-cayman-gt4',
+  'modded',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  373,
+  293,
+  '{"mods":["SOUL Race Exhaust System"]}'::jsonb,
+  '{}'::jsonb,
+  'SOUL Performance dyno results for 718 GT4 with SOUL race exhaust (wheel figures).',
+  'https://soulpp.com/2021/09/02/dyno-results-718-gt4-soul-race-exhaust-system/',
+  0.65,
+  false
+FROM cars c
+WHERE c.slug = '718-cayman-gt4'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '718-cayman-gt4' AND run_kind = 'modded');
+
+-- 981 Cayman S (baseline from dyno comparison before tune)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '981-cayman-s',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  276,
+  235,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Rennlist dyno results post; using baseline (before tune) wheel figures (rounded to integers).',
+  'https://rennlist.com/forums/981-forum/1349390-fvd-tune-dyno-results.html',
+  0.70,
+  false
+FROM cars c
+WHERE c.slug = '981-cayman-s'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '981-cayman-s' AND run_kind = 'baseline');
+
+-- 997 Carrera S (stock wheel numbers reported)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-carrera-s',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  308,
+  248,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Reported stock wheel numbers for 997 Carrera S (context: build post).',
+  'https://greenh2.wordpress.com/2010/05/26/dyno-comp-built-2010-porsche-997-s/',
+  0.55,
+  false
+FROM cars c
+WHERE c.slug = '997-carrera-s'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '997-carrera-s' AND run_kind = 'baseline');
+
+-- 996 GT3 (Mustang AWD dyno sheet listing)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '996-gt3',
+  'baseline',
+  'Mustang',
+  NULL,
+  NULL,
+  true,
+  372,
+  276,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'DragTimes dyno sheet listing: 2005 Porsche GT3 shows 372.20 whp / 275.60 wtq (Mustang AWD dyno).',
+  'https://www.dragtimes.com/Porsche--GT3-Dyno-Sheets.html',
+  0.60,
+  false
+FROM cars c
+WHERE c.slug = '996-gt3'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '996-gt3' AND run_kind = 'baseline');
+
+-- 997 GT3 (DynoJet dyno results)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-gt3',
+  'baseline',
+  'DynoJet',
+  NULL,
+  NULL,
+  true,
+  386,
+  283,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'DragTimes dyno results page: stock 2007 Porsche GT3 shows 386 whp / 283 wtq on DynoJet.',
+  'https://www.dragtimes.com/2007-Porsche-GT3-Dyno-Results-Graphs-11151.html',
+  0.70,
+  false
+FROM cars c
+WHERE c.slug = '997-gt3'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '997-gt3' AND run_kind = 'baseline');
+
+-- 997 Turbo (wheel figures via stockwhp; attributed to Cobb Tuning)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-turbo',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  425,
+  468,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'StockWHP listing for 2008 911 Turbo: 425 whp / 468 wtq (attributed to Cobb Tuning).',
+  'https://www.stockwhp.com/porsche',
+  0.55,
+  false
+FROM cars c
+WHERE c.slug = '997-turbo'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '997-turbo' AND run_kind = 'baseline');
+
+-- ============================================================================
+-- Priority Batch 2 (Porsche): LAP TIME DATA (6 cars)
+-- ============================================================================
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '718-cayman-gt4',
+  tv.id,
+  448000,
+  '7:28.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/2cpzzuo093p7',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '718-cayman-gt4' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '718-cayman-gt4' AND lt.track_id = tv.id AND lt.lap_time_ms = 448000
+  );
+
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '981-cayman-s',
+  tv.id,
+  475000,
+  '7:55.000',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry.',
+  'https://fastestlaps.com/tests/83jde6r4fcho',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '981-cayman-s' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '981-cayman-s' AND lt.track_id = tv.id AND lt.lap_time_ms = 475000
+  );
+
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-carrera-s',
+  tv.id,
+  479000,
+  '7:59.000',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry.',
+  'https://fastestlaps.com/tests/ln99cfrim8la',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '997-carrera-s' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '997-carrera-s' AND lt.track_id = tv.id AND lt.lap_time_ms = 479000
+  );
+
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '996-gt3',
+  tv.id,
+  474000,
+  '7:54.000',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry.',
+  'https://fastestlaps.com/tests/lt1cmp64f2r5',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '996-gt3' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '996-gt3' AND lt.track_id = tv.id AND lt.lap_time_ms = 474000
+  );
+
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-gt3',
+  tv.id,
+  468000,
+  '7:48.000',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry.',
+  'https://fastestlaps.com/tests/14ibi3f7cjko',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '997-gt3' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '997-gt3' AND lt.track_id = tv.id AND lt.lap_time_ms = 468000
+  );
+
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '997-turbo',
+  tv.id,
+  459000,
+  '7:39.000',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry.',
+  'https://fastestlaps.com/tests/3fig6fu594ga',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '997-turbo' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '997-turbo' AND lt.track_id = tv.id AND lt.lap_time_ms = 459000
+  );
+
+-- ============================================================================
 -- REMAINING CARS NEEDING DATA (for future expansion):
 -- 
 -- DYNO DATA STILL NEEDED:
