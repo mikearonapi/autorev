@@ -28,6 +28,7 @@ INSERT INTO track_venues (slug, name, country, region, length_km, surface, websi
 VALUES
   ('nurburgring-nordschleife', 'Nürburgring Nordschleife', 'Germany', 'Rhineland-Palatinate', 20.832, 'asphalt', 'https://www.nuerburgring.de/'),
   ('nurburgring-gp', 'Nürburgring GP', 'Germany', 'Rhineland-Palatinate', 5.148, 'asphalt', 'https://www.nuerburgring.de/'),
+  ('hockenheim-short', 'Hockenheimring (Short)', 'Germany', 'Baden-Württemberg', NULL, 'asphalt', 'https://www.hockenheimring.de/'),
   ('spa-francorchamps', 'Circuit de Spa-Francorchamps', 'Belgium', 'Wallonia', 7.004, 'asphalt', 'https://www.spa-francorchamps.be/'),
   ('circuit-of-the-americas', 'Circuit of the Americas', 'USA', 'Texas', 5.513, 'asphalt', 'https://circuitoftheamericas.com/'),
   ('tsukuba-circuit', 'Tsukuba Circuit', 'Japan', 'Ibaraki', 2.045, 'asphalt', 'https://www.jasc.or.jp/'),
@@ -1122,13 +1123,195 @@ WHERE c.slug = 'rx7-fd' AND tv.slug = 'tsukuba-circuit'
   );
 
 -- ============================================================================
+-- Priority Batch 5 (Mercedes-AMG): DYNO + LAP TIME DATA (4 cars)
+-- ============================================================================
+-- C63 AMG W204 dyno (DynoJet)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c63-amg-w204',
+  'baseline',
+  'DynoJet',
+  NULL,
+  NULL,
+  true,
+  381,
+  364,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'DragTimes blog: 2008 C63 AMG dyno run shows 380.67 whp / 364.30 wtq (rounded).',
+  'https://www.dragtimes.com/blog/2008-mercedes-benz-c63-amg-on-the-dyno',
+  0.80,
+  false
+FROM cars c
+WHERE c.slug = 'c63-amg-w204'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'c63-amg-w204' AND run_kind = 'baseline');
+
+-- C63 AMG W205 dyno (OE Tuning baseline)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c63-amg-w205',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  391,
+  353,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'OE Tuning W205 C63S dyno results: baseline ~390.8 wHp / 352.6 wTq (rounded).',
+  'https://oetuning.com/blog/w205-c63s-amg-dyno-results/',
+  0.75,
+  false
+FROM cars c
+WHERE c.slug = 'c63-amg-w205'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'c63-amg-w205' AND run_kind = 'baseline');
+
+-- E63 AMG dyno (stock run as reported)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'e63-amg',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  532,
+  507,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'MBClub forum post: stock dyno run reported at 532.25 whp / 507.31 wtq (rounded).',
+  'https://forums.mbclub.co.uk/threads/back-to-business-e63-amg-remap-dyno.212170/',
+  0.65,
+  false
+FROM cars c
+WHERE c.slug = 'e63-amg'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'e63-amg' AND run_kind = 'baseline');
+
+-- AMG GT dyno (RENNtech Dynojet figures)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'amg-gt',
+  'baseline',
+  'DynoJet',
+  NULL,
+  NULL,
+  true,
+  506,
+  451,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'RENNtech listing includes Dynojet measurements for AMG GT: ~506 whp / 451 wtq.',
+  'https://www.renntechmercedes.com/index.php/products/mb/amg-gt/amg-gt-190/gt-2015/gt-2016/ecu-amg-gt-pfl-detail',
+  0.75,
+  false
+FROM cars c
+WHERE c.slug = 'amg-gt'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'amg-gt' AND run_kind = 'baseline');
+
+-- C63 AMG W204 lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c63-amg-w204',
+  tv.id,
+  493000,
+  '8:13.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/f9oelkcf9ntv',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'c63-amg-w204' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'c63-amg-w204' AND lt.track_id = tv.id AND lt.lap_time_ms = 493000
+  );
+
+-- C63 AMG W205 lap time (Hockenheim Short)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c63-amg-w205',
+  tv.id,
+  71900,
+  '1:11.900',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Hockenheim Short).',
+  'https://fastestlaps.com/tests/p8fj582cildu',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'c63-amg-w205' AND tv.slug = 'hockenheim-short'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'c63-amg-w205' AND lt.track_id = tv.id AND lt.lap_time_ms = 71900
+  );
+
+-- E63 AMG lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'e63-amg',
+  tv.id,
+  490000,
+  '8:10.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/56lh5z1j3ii8',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'e63-amg' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'e63-amg' AND lt.track_id = tv.id AND lt.lap_time_ms = 490000
+  );
+
+-- AMG GT lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'amg-gt',
+  tv.id,
+  453040,
+  '7:33.040',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (AMG GT S).',
+  'https://fastestlaps.com/tests/fs8nr5bk24l5',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'amg-gt' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'amg-gt' AND lt.track_id = tv.id AND lt.lap_time_ms = 453040
+  );
+
+-- ============================================================================
 -- REMAINING CARS NEEDING DATA (for future expansion):
 -- 
 -- DYNO DATA STILL NEEDED:
 -- - porsche-911-gt3-996 (older GT3)
 -- - nissan-370z-nismo, nissan-350z
 -- - lexus-rc-f, lexus-lc-500
--- - mercedes-amg-c63-w205, mercedes-c63-amg-w204
 -- - audi-r8-v10, audi-rs5-b9
 --
 -- LAP TIME DATA STILL NEEDED:

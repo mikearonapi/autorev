@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 46% (45/98) | Lap Times 52% (51/98)
+> **Current**: Dyno 50% (49/98) | Lap Times 56% (55/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 49 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 45 | 50 | 🔴 |
-| Lap Times | 65 | 86 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 51 | 50 | 🟢 |
+| Dyno Runs | 29 | 53 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 49 | 50 | 🔴 |
+| Lap Times | 65 | 90 | 100+ | 🔴 |
+| Unique Cars (Lap) | 30 | 55 | 50 | 🟢 |
 
 ---
 
@@ -78,12 +78,12 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| C63 W204 | `c63-amg-w204` | ⬜ | ⬜ | |
-| C63 W205 | `c63-amg-w205` | ⬜ | ⬜ | |
-| E63 variants | `e63-amg` | ⬜ | ⬜ | |
-| AMG GT | `amg-gt` | ⬜ | ⬜ | |
+| C63 W204 | `c63-amg-w204` | ✅ | ✅ | Dyno: https://www.dragtimes.com/blog/2008-mercedes-benz-c63-amg-on-the-dyno ; Lap: https://fastestlaps.com/tests/f9oelkcf9ntv |
+| C63 W205 | `c63-amg-w205` | ✅ | ✅ | Dyno: https://oetuning.com/blog/w205-c63s-amg-dyno-results/ ; Lap: https://fastestlaps.com/tests/p8fj582cildu (Hockenheim Short) |
+| E63 variants | `e63-amg` | ✅ | ✅ | Dyno: https://forums.mbclub.co.uk/threads/back-to-business-e63-amg-remap-dyno.212170/ ; Lap: https://fastestlaps.com/tests/56lh5z1j3ii8 |
+| AMG GT | `amg-gt` | ✅ | ✅ | Dyno: https://www.renntechmercedes.com/index.php/products/mb/amg-gt/amg-gt-190/gt-2015/gt-2016/ecu-amg-gt-pfl-detail ; Lap: https://fastestlaps.com/tests/fs8nr5bk24l5 |
 
-**Batch 5 Status**: 0/4 complete
+**Batch 5 Status**: 4/4 complete
 
 ---
 
@@ -142,6 +142,7 @@
 | 2025-12-15 | Priority Batch 2 (Porsche) | 6 | 6 | 6 | Added dyno + lap time sources (mostly Nürburgring Nordschleife). |
 | 2025-12-15 | Priority Batch 3 (Corvette) | 3 | 3 | 3 | Added dyno + lap time sources (Nürburgring Nordschleife + Nürburgring GP). |
 | 2025-12-15 | Priority Batch 4 (JDM Icons) | 4 | 3 | 4 | Added lap times for all 4; dyno data missing for Supra Mk4 (marked ❌). |
+| 2025-12-15 | Priority Batch 5 (Mercedes-AMG) | 4 | 4 | 4 | Added dyno + lap time sources (Nürburgring + Hockenheim Short). |
 
 ---
 
