@@ -27,6 +27,7 @@
 INSERT INTO track_venues (slug, name, country, region, length_km, surface, website)
 VALUES
   ('nurburgring-nordschleife', 'Nürburgring Nordschleife', 'Germany', 'Rhineland-Palatinate', 20.832, 'asphalt', 'https://www.nuerburgring.de/'),
+  ('nurburgring-gp', 'Nürburgring GP', 'Germany', 'Rhineland-Palatinate', 5.148, 'asphalt', 'https://www.nuerburgring.de/'),
   ('spa-francorchamps', 'Circuit de Spa-Francorchamps', 'Belgium', 'Wallonia', 7.004, 'asphalt', 'https://www.spa-francorchamps.be/'),
   ('circuit-of-the-americas', 'Circuit of the Americas', 'USA', 'Texas', 5.513, 'asphalt', 'https://circuitoftheamericas.com/'),
   ('tsukuba-circuit', 'Tsukuba Circuit', 'Japan', 'Ibaraki', 2.045, 'asphalt', 'https://www.jasc.or.jp/'),
@@ -819,6 +820,144 @@ WHERE c.slug = '997-turbo' AND tv.slug = 'nurburgring-nordschleife'
   AND NOT EXISTS (
     SELECT 1 FROM car_track_lap_times lt
     WHERE lt.car_slug = '997-turbo' AND lt.track_id = tv.id AND lt.lap_time_ms = 459000
+  );
+
+-- ============================================================================
+-- Priority Batch 3 (Corvette): DYNO + LAP TIME DATA (3 cars)
+-- ============================================================================
+-- C5 Z06 dyno (Edmunds long-term dyno tested)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c5-corvette-z06',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  382,
+  375,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'Edmunds long-term dyno tested (wheel figures): peak 382 hp @ 6200 rpm and 375 lb-ft @ 4900 rpm.',
+  'https://www.edmunds.com/chevrolet/corvette/2002/long-term-road-test/2002-chevrolet-corvette-z06-nice-bulges.html',
+  0.85,
+  false
+FROM cars c
+WHERE c.slug = 'c5-corvette-z06'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'c5-corvette-z06' AND run_kind = 'baseline');
+
+-- C6 Z06 dyno (MotorTrend baseline figure referenced in supercharger feature)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c6-corvette-z06',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  450,
+  427,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'MotorTrend feature references typical stock output around 450 rwhp / 427 lb-ft at wheels for C6 Z06 (LS7).',
+  'https://www.motortrend.com/features/vemp-1105-c6-corvette-z06-supercharger',
+  0.80,
+  false
+FROM cars c
+WHERE c.slug = 'c6-corvette-z06'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'c6-corvette-z06' AND run_kind = 'baseline');
+
+-- C6 Grand Sport dyno (LS1Tech: stock + modded; use stock baseline)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c6-corvette-gs',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  373,
+  367,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'LS1Tech dyno thread reports stock 2013 Grand Sport M6 at 373 rwhp / 367 rwtq (wheel figures).',
+  'https://ls1tech.com/forums/dynamometer-results-comparisons/1916426-2013-corvette-grandsport-m6-dyno-results.html',
+  0.75,
+  false
+FROM cars c
+WHERE c.slug = 'c6-corvette-gs'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'c6-corvette-gs' AND run_kind = 'baseline');
+
+-- C5 Z06 lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c5-corvette-z06',
+  tv.id,
+  476000,
+  '7:56.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/6ldnr11kjgjs',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'c5-corvette-z06' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'c5-corvette-z06' AND lt.track_id = tv.id AND lt.lap_time_ms = 476000
+  );
+
+-- C6 Z06 lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c6-corvette-z06',
+  tv.id,
+  458000,
+  '7:38.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (flying lap).',
+  'https://fastestlaps.com/tests/15cgddml4per',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'c6-corvette-z06' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'c6-corvette-z06' AND lt.track_id = tv.id AND lt.lap_time_ms = 458000
+  );
+
+-- C6 Grand Sport lap time (Nürburgring GP)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'c6-corvette-gs',
+  tv.id,
+  140700,
+  '2:20.700',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Nürburgring GP).',
+  'https://fastestlaps.com/tests/bloj954sujd2',
+  0.60,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'c6-corvette-gs' AND tv.slug = 'nurburgring-gp'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'c6-corvette-gs' AND lt.track_id = tv.id AND lt.lap_time_ms = 140700
   );
 
 -- ============================================================================

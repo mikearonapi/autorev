@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 40% (39/98) | Lap Times 45% (44/98)
+> **Current**: Dyno 43% (42/98) | Lap Times 48% (47/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 43 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 39 | 50 | 🔴 |
-| Lap Times | 65 | 79 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 44 | 50 | 🔴 |
+| Dyno Runs | 29 | 46 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 42 | 50 | 🔴 |
+| Lap Times | 65 | 82 | 100+ | 🔴 |
+| Unique Cars (Lap) | 30 | 47 | 50 | 🔴 |
 
 ---
 
@@ -53,11 +53,11 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| C5 Z06 | `c5-corvette-z06` | ⬜ | ⬜ | |
-| C6 Z06 | `c6-corvette-z06` | ⬜ | ⬜ | |
-| C6 Grand Sport | `c6-corvette-gs` | ⬜ | ⬜ | |
+| C5 Z06 | `c5-corvette-z06` | ✅ | ✅ | Dyno: https://www.edmunds.com/chevrolet/corvette/2002/long-term-road-test/2002-chevrolet-corvette-z06-nice-bulges.html ; Lap: https://fastestlaps.com/tests/6ldnr11kjgjs |
+| C6 Z06 | `c6-corvette-z06` | ✅ | ✅ | Dyno: https://www.motortrend.com/features/vemp-1105-c6-corvette-z06-supercharger ; Lap: https://fastestlaps.com/tests/15cgddml4per |
+| C6 Grand Sport | `c6-corvette-gs` | ✅ | ✅ | Dyno: https://ls1tech.com/forums/dynamometer-results-comparisons/1916426-2013-corvette-grandsport-m6-dyno-results.html ; Lap: https://fastestlaps.com/tests/bloj954sujd2 |
 
-**Batch 3 Status**: 0/3 complete
+**Batch 3 Status**: 3/3 complete
 
 ---
 
@@ -140,6 +140,7 @@
 |------|-------|------------|------------|------------|-------|
 | 2025-12-14 | Priority Batch 1 (BMW M Cars) | 8 | 8 | 8 | Added dyno + lap time sources (mostly Nürburgring Nordschleife; Top Gear track for Z4 M). |
 | 2025-12-15 | Priority Batch 2 (Porsche) | 6 | 6 | 6 | Added dyno + lap time sources (mostly Nürburgring Nordschleife). |
+| 2025-12-15 | Priority Batch 3 (Corvette) | 3 | 3 | 3 | Added dyno + lap time sources (Nürburgring Nordschleife + Nürburgring GP). |
 
 ---
 
