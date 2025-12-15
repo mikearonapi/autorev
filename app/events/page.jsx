@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -70,7 +70,7 @@ const Icons = {
   ),
 };
 
-export default function EventsPage() {
+function EventsPageContent() {
   // Auth & Navigation
   const { isAuthenticated, user, profile } = useAuth();
   const authModal = useAuthModal();
@@ -661,6 +661,44 @@ export default function EventsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// Loading fallback for Suspense boundary
+function EventsPageLoading() {
+  return (
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.heroOverlay} />
+        <div className={styles.heroContent}>
+          <span className={styles.badge}>Events</span>
+          <h1 className={styles.heroTitle}>
+            Find Your <span className={styles.titleAccent}>Next Event</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Discover Cars & Coffee meetups, track days, car shows, and more near you
+          </p>
+        </div>
+      </section>
+      <section className={styles.eventsSection}>
+        <div className={styles.eventsContainer}>
+          <div className={styles.eventsGrid}>
+            {[...Array(6)].map((_, i) => (
+              <EventCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Wrap with Suspense to allow static generation with useSearchParams
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<EventsPageLoading />}>
+      <EventsPageContent />
+    </Suspense>
   );
 }
 
