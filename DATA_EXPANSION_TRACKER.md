@@ -1,7 +1,7 @@
 # AutoRev Data Expansion Tracker
 
 > **Goal**: Achieve 50%+ coverage for dyno data and lap times
-> **Current**: Dyno 57% (56/98) | Lap Times 63% (62/98)
+> **Current**: Dyno 61% (60/98) | Lap Times 67% (66/98)
 > **Target**: Dyno 50% (50 cars) | Lap Times 50% (50 cars)
 
 ---
@@ -10,10 +10,10 @@
 
 | Metric | Start | Current | Target | Status |
 |--------|-------|---------|--------|--------|
-| Dyno Runs | 29 | 60 | 65+ | 🔴 |
-| Unique Cars (Dyno) | 25 | 56 | 50 | 🟢 |
-| Lap Times | 65 | 97 | 100+ | 🔴 |
-| Unique Cars (Lap) | 30 | 62 | 50 | 🟢 |
+| Dyno Runs | 29 | 64 | 65+ | 🔴 |
+| Unique Cars (Dyno) | 25 | 60 | 50 | 🟢 |
+| Lap Times | 65 | 101 | 100+ | 🟢 |
+| Unique Cars (Lap) | 30 | 66 | 50 | 🟢 |
 
 ---
 
@@ -107,12 +107,12 @@
 
 | Car | Slug | Dyno | Lap Times | Notes |
 |-----|------|------|-----------|-------|
-| 350Z HR | `350z-hr` | ⬜ | ⬜ | |
-| 370Z NISMO | `370z-nismo` | ⬜ | ⬜ | |
-| Z R34 | `z-r34` | ⬜ | ⬜ | |
-| 300ZX | `300zx` | ⬜ | ⬜ | |
+| 350Z HR | `350z-hr` | ✅ | ✅ | Dyno: https://www.stockwhp.com/nissan ; Lap: https://fastestlaps.com/tests/7bsi9n88mpue |
+| 370Z NISMO | `370z-nismo` | ✅ | ✅ | Dyno: https://www.stockwhp.com/nissan ; Lap: https://fastestlaps.com/tests/lhad5gvfs7ud (Hockenheim Short) |
+| Z R34 | `z-r34` | ✅ | ✅ | Dyno: https://www.gtr.co.uk/threads/stock-power-fiqures-for-r34-gtr-anyone.11584/ (whp only) ; Lap: https://fastestlaps.com/tests/gcn28llk77ns (low confidence) |
+| 300ZX | `300zx` | ✅ | ✅ | Dyno: https://www.300zx-owners.club/forums/topic/17950-dynotest/ ; Lap: https://fastestlaps.com/tests/483bh8s9orrh |
 
-**Batch 7 Status**: 0/4 complete
+**Batch 7 Status**: 4/4 complete
 
 ---
 
@@ -144,6 +144,7 @@
 | 2025-12-15 | Priority Batch 4 (JDM Icons) | 4 | 3 | 4 | Added lap times for all 4; dyno data missing for Supra Mk4 (marked ❌). |
 | 2025-12-15 | Priority Batch 5 (Mercedes-AMG) | 4 | 4 | 4 | Added dyno + lap time sources (Nürburgring + Hockenheim Short). |
 | 2025-12-15 | Priority Batch 6 (Miata/86) | 7 | 7 | 7 | Added dyno + lap time sources (Tsukuba, Nürburgring, and Willow Springs). |
+| 2025-12-15 | Priority Batch 7 (Nissan Z / GTR) | 4 | 4 | 4 | Added dyno + lap time sources (Nürburgring, Hockenheim Short, Tsukuba). |
 
 ---
 

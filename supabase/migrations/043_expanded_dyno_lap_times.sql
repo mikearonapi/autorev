@@ -1626,11 +1626,193 @@ WHERE c.slug = 'brz' AND tv.slug = 'nurburgring-nordschleife'
   );
 
 -- ============================================================================
+-- Priority Batch 7 (Nissan Z / GTR): DYNO + LAP TIME DATA (4 cars)
+-- ============================================================================
+-- 350Z HR dyno (StockWHP Nissan listing)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '350z-hr',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  270,
+  237,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'StockWHP Nissan listing for 2008 350Z (HR): highest recorded 270 whp / 237 wtq.',
+  'https://www.stockwhp.com/nissan',
+  0.60,
+  false
+FROM cars c
+WHERE c.slug = '350z-hr'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '350z-hr' AND run_kind = 'baseline');
+
+-- 370Z NISMO dyno (StockWHP Nissan listing)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '370z-nismo',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  290,
+  231,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'StockWHP Nissan listing: 370Z Nismo shows ~290 whp / 231 wtq.',
+  'https://www.stockwhp.com/nissan',
+  0.60,
+  false
+FROM cars c
+WHERE c.slug = '370z-nismo'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '370z-nismo' AND run_kind = 'baseline');
+
+-- R34 GT-R dyno (wheel hp reported; torque not provided)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'z-r34',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  308,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'GT-R forum thread reports stock 2000 R34 GT-R making ~308 hp at all four wheels (torque not provided).',
+  'https://www.gtr.co.uk/threads/stock-power-fiqures-for-r34-gtr-anyone.11584/',
+  0.45,
+  false
+FROM cars c
+WHERE c.slug = 'z-r34'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = 'z-r34' AND run_kind = 'baseline');
+
+-- 300ZX dyno (stock TT dynotest)
+INSERT INTO car_dyno_runs (car_id, car_slug, run_kind, dyno_type, correction, fuel, is_wheel, peak_whp, peak_wtq, modifications, conditions, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '300zx',
+  'baseline',
+  NULL,
+  NULL,
+  NULL,
+  true,
+  241,
+  312,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  '300ZX Owners Club dynotest reports stock TT at 241 whp and 423 Nm torque (~312 lb-ft).',
+  'https://www.300zx-owners.club/forums/topic/17950-dynotest/',
+  0.55,
+  false
+FROM cars c
+WHERE c.slug = '300zx'
+  AND NOT EXISTS (SELECT 1 FROM car_dyno_runs WHERE car_slug = '300zx' AND run_kind = 'baseline');
+
+-- 350Z HR lap time (Nürburgring Nordschleife)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '350z-hr',
+  tv.id,
+  506000,
+  '8:26.000',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Sport Auto).',
+  'https://fastestlaps.com/tests/7bsi9n88mpue',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '350z-hr' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '350z-hr' AND lt.track_id = tv.id AND lt.lap_time_ms = 506000
+  );
+
+-- 370Z NISMO lap time (Hockenheim Short)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '370z-nismo',
+  tv.id,
+  75600,
+  '1:15.600',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Hockenheim Short).',
+  'https://fastestlaps.com/tests/lhad5gvfs7ud',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '370z-nismo' AND tv.slug = 'hockenheim-short'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '370z-nismo' AND lt.track_id = tv.id AND lt.lap_time_ms = 75600
+  );
+
+-- R34 GT-R lap time (Nürburgring Nordschleife; low confidence)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  'z-r34',
+  tv.id,
+  508100,
+  '8:28.100',
+  true,
+  NULL,
+  '{"start":"flying"}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (source disputed in comments; treat as low-confidence).',
+  'https://fastestlaps.com/tests/gcn28llk77ns',
+  0.35,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = 'z-r34' AND tv.slug = 'nurburgring-nordschleife'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = 'z-r34' AND lt.track_id = tv.id AND lt.lap_time_ms = 508100
+  );
+
+-- 300ZX lap time (Tsukuba)
+INSERT INTO car_track_lap_times (car_id, car_slug, track_id, lap_time_ms, lap_time_text, is_stock, tires, conditions, modifications, notes, source_url, confidence, verified)
+SELECT
+  c.id,
+  '300zx',
+  tv.id,
+  73010,
+  '1:13.010',
+  true,
+  NULL,
+  '{}'::jsonb,
+  '{}'::jsonb,
+  'FastestLaps entry (Tsukuba).',
+  'https://fastestlaps.com/tests/483bh8s9orrh',
+  0.55,
+  false
+FROM cars c, track_venues tv
+WHERE c.slug = '300zx' AND tv.slug = 'tsukuba-circuit'
+  AND NOT EXISTS (
+    SELECT 1 FROM car_track_lap_times lt
+    WHERE lt.car_slug = '300zx' AND lt.track_id = tv.id AND lt.lap_time_ms = 73010
+  );
+
+-- ============================================================================
 -- REMAINING CARS NEEDING DATA (for future expansion):
 -- 
 -- DYNO DATA STILL NEEDED:
 -- - porsche-911-gt3-996 (older GT3)
--- - nissan-370z-nismo, nissan-350z
 -- - lexus-rc-f, lexus-lc-500
 -- - audi-r8-v10, audi-rs5-b9
 --
