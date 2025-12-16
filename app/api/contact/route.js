@@ -29,11 +29,11 @@ export async function POST(request) {
 
     // Format interest for display
     const interestLabels = {
-      'car-selector': 'Car Selector Questions',
-      'performance': 'Performance HUB / Build Planning',
-      'education': 'Learning About Upgrades',
+      'al-question': 'Question about AL (AI)',
+      'car-selector': 'Car Selector Help',
+      'bug-report': 'Bug or Issue',
+      'feature-request': 'Feature Suggestion',
       'general': 'General Question',
-      'other': 'Something Else',
     };
 
     const interestDisplay = interest ? interestLabels[interest] || interest : 'Not specified';

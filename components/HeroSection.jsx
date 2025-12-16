@@ -5,6 +5,7 @@ import Image from 'next/image';
 import styles from '@/app/page.module.css';
 import { carData } from '@/data/cars.js';
 import upgradeDetails from '@/data/upgradeEducation.js';
+import { usePlatformStats } from '@/hooks/usePlatformStats';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 
 // Hero image - Dodge Viper overhead shot
@@ -19,10 +20,13 @@ export default function HeroSection() {
   
   // Auth modal (for potential future use)
   const authModal = useAuthModal();
+  
+  // Platform stats from database (with fallbacks to local data)
+  const { stats } = usePlatformStats();
 
-  // Dynamic stats pulled from actual data
+  // Dynamic stats pulled from database or local fallback
   const quickStats = useMemo(() => {
-    const carCount = carData?.length || 98;
+    const carCount = stats?.cars || carData?.length || 98;
     const upgradeCount = Object.keys(upgradeDetails || {}).length || 77;
     
     return [
@@ -31,7 +35,7 @@ export default function HeroSection() {
       { value: 'Miatas to GT3s', label: 'From', suffix: '', isText: true },
       { value: 'Every Service', label: 'Know', suffix: '', isText: true },
     ];
-  }, []);
+  }, [stats]);
 
   // Cycle through brand suffixes every 1.5 seconds
   useEffect(() => {

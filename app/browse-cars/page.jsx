@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
@@ -101,11 +102,32 @@ function getUniqueCategories(carList) {
 }
 
 export default function CarCatalog() {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
+  
+  // Get filter options
+  const makes = useMemo(() => getUniqueMakes(cars), []);
+  
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    const brandParam = searchParams.get('brand');
+    if (brandParam) {
+      // Find the matching make from available makes (case-insensitive)
+      const matchingMake = makes.find(
+        make => make.toLowerCase() === brandParam.toLowerCase()
+      );
+      if (matchingMake) {
+        setSelectedMake(matchingMake);
+      }
+    } else {
+      // No brand parameter - reset to show all makes
+      setSelectedMake('all');
+    }
+  }, [searchParams, makes]);
   
   // Favorites functionality
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -173,8 +195,6 @@ export default function CarCatalog() {
     }
   };
 
-  // Get filter options
-  const makes = useMemo(() => getUniqueMakes(cars), []);
   const categories = useMemo(() => getUniqueCategories(cars), []);
   const tiers = Object.keys(tierConfig);
 

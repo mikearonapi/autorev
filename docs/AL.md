@@ -13,6 +13,7 @@ AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has 
 | **Model** | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
 | **Tools** | 17 |
 | **Knowledge Base** | 547 document chunks with vector embeddings |
+| **Encyclopedia** | 136 topics with semantic search (vectorized) |
 | **Community Insights** | Forum-extracted insights (Rennlist, Bimmerpost, etc.) |
 | **Events** | Cars & Coffee, track days, car shows, and more |
 | **Pricing** | Token-based (mirrors Anthropic costs) |
@@ -205,34 +206,44 @@ Side-by-side comparison of multiple cars.
 ---
 
 ### 8. `search_encyclopedia`
-Search the AutoRev encyclopedia for automotive education, modifications, and build guides.
+Search the AutoRev encyclopedia using **SEMANTIC SEARCH** over 136 comprehensive automotive topics. This is the primary tool for educational questions about how cars work.
+
+**NOW WITH SEMANTIC SEARCH:** Encyclopedia topics are vectorized for natural language queries. Ask questions like "how does a turbo work?" and get relevant results based on meaning, not just keywords.
 
 **Parameters:**
 | Param | Type | Required | Description |
 |-------|------|----------|-------------|
-| `query` | string | Yes | Search query |
+| `query` | string | Yes | Natural language query (e.g., "how does a turbocharger increase power") |
 | `category` | enum | No | `all`, `automotive`, `topics`, `modifications`, `build_guides`, `systems` (legacy), `components` (legacy) |
 
 **Categories Explained:**
-| Category | What It Searches |
-|----------|-----------------|
-| `all` | Everything in the encyclopedia |
-| `automotive` | New hierarchy: systems, components, and topics |
-| `topics` | Individual educational topics (bore, stroke, cam profiles, etc.) |
-| `modifications` | Upgrade articles (cold-air-intake, coilovers, etc.) |
-| `build_guides` | Goal-based build paths (More Power, Better Handling, etc.) |
-| `systems` | Legacy: includes old systems + new automotive systems |
-| `components` | Legacy: includes old components + new topics |
+| Category | What It Searches | Search Method |
+|----------|-----------------|---------------|
+| `all` | Everything in the encyclopedia | Semantic (vectorized) |
+| `automotive` | Systems, components, and topics | Semantic |
+| `topics` | 136 educational topics (bore, stroke, turbos, etc.) | Semantic |
+| `modifications` | Upgrade articles (cold-air-intake, coilovers, etc.) | Keyword |
+| `build_guides` | Goal-based build paths (More Power, Better Handling, etc.) | Keyword |
+| `systems` | Legacy: includes old systems + new automotive systems | Keyword |
+| `components` | Legacy: includes old components + new topics | Keyword |
 
-**Example Queries:**
+**Example Queries (Semantic Search):**
 ```
-"What is bore and stroke?" → topics about engine fundamentals
-"How does a turbo work?" → turbo-fundamentals topic
-"What's a good first mod?" → modification articles
-"Track day build" → build_guides for track prep
+"How does a turbocharger work?" → turbo-fundamentals, boost-control topics
+"What is bore and stroke?" → bore, stroke, displacement topics
+"Explain camshaft timing" → camshaft, valvetrain, valve-timing topics
+"Why do I need an intercooler?" → intercooler-types topic
+"Difference between coilovers and springs" → coilovers, spring-rate-basics topics
 ```
 
-**Returns:** Matching articles with id, title, subtitle, type, section
+**Returns:**
+- `searchMethod`: "semantic" or "keyword"
+- `similarity`: Match score (for semantic results)
+- `url`: Direct link to encyclopedia topic
+- `relatedTopics`: Connected topics for deeper learning
+- `relatedUpgrades`: Modification articles related to the topic
+
+**Best Practice:** Use this tool FIRST for any educational/conceptual question about automotive systems, before using general knowledge.
 
 ---
 
@@ -412,6 +423,7 @@ AL automatically detects which automotive domain a question relates to and prior
 | comparison | vs, compare, better | compare_cars |
 | ownership | long-term, high mileage, costs | search_community_insights |
 | events | meetup, cars and coffee, track day, car show | search_events |
+| **education** | how, what, why, explain, work, learn | **search_encyclopedia**, get_upgrade_info, search_knowledge |
 
 ---
 

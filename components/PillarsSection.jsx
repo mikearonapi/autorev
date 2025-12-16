@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Button from '@/components/Button';
 import OnboardingPopup, { garageOnboardingSteps, tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
+import { usePlatformStats } from '@/hooks/usePlatformStats';
 import styles from '@/app/page.module.css';
 import { carData } from '@/data/cars.js';
 
@@ -53,10 +54,13 @@ const BookIcon = () => (
 export default function PillarsSection() {
   const [activeOnboarding, setActiveOnboarding] = useState(null);
   
-  // Get dynamic car count from database
-  const carCount = carData?.length || 98;
+  // Platform stats from database (with fallback to local data)
+  const { stats } = usePlatformStats();
+  
+  // Get dynamic car count from database or local fallback
+  const carCount = stats?.cars || carData?.length || 98;
 
-  const pillars = [
+  const pillars = useMemo(() => [
     {
       icon: <ExploreIcon />,
       title: 'Browse Cars',
@@ -99,7 +103,7 @@ export default function PillarsSection() {
       href: '/encyclopedia',
       accent: 'primary'
     }
-  ];
+  ], [carCount]);
 
   const handleOpenOnboarding = (key) => {
     setActiveOnboarding(key);

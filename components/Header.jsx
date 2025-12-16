@@ -37,16 +37,21 @@ const ChevronIcon = () => (
 );
 
 // Navigation links - KISS principles: clear, direct names that match URLs
-// - Browse Cars: Explore our car catalog
-// - Your Sports Car Match: Interactive car selection tool
+// - Cars: Dropdown for Browse Cars & Sports Car Match (no dedicated page)
 // - My Garage: Personal user area (collection & favorites)
 // - Tuning Shop: Mod planner & projects
 // - Community: Events, Forums, Clubs (future)
 // - Encyclopedia: Automotive Education
+// - AutoRev AI: AI-powered automotive assistant
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/browse-cars', label: 'Browse Cars' },
-  { href: '/car-selector', label: 'Your Sports Car Match' },
+  { 
+    label: 'Cars',
+    subLinks: [
+      { href: '/browse-cars', label: 'Browse Cars' },
+      { href: '/car-selector', label: 'Your Sports Car Match' },
+    ],
+  },
   { href: '/garage', label: 'My Garage' },
   { href: '/tuning-shop', label: 'Tuning Shop' },
   { 
@@ -59,6 +64,7 @@ const navLinks = [
     ],
   },
   { href: '/encyclopedia', label: 'Encyclopedia' },
+  { href: '/al', label: 'AutoRev AI' },
 ];
 
 // AL Mascot Avatar for mobile menu
@@ -227,14 +233,24 @@ export default function Header() {
         <nav className={styles.desktopNav}>
           {navLinks.map(link => (
             link.subLinks ? (
-              <div key={link.href} className={styles.navDropdown}>
-                <Link
-                  href={link.href}
-                  className={`${styles.navLink} ${isActive(link.href) || link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
-                >
-                  {link.label}
-                  <ChevronIcon />
-                </Link>
+              <div key={link.href || link.label} className={styles.navDropdown}>
+                {link.href ? (
+                  <Link
+                    href={link.href}
+                    className={`${styles.navLink} ${isActive(link.href) || link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
+                  >
+                    {link.label}
+                    <ChevronIcon />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className={`${styles.navLink} ${styles.navLinkDropdown} ${link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
+                  >
+                    {link.label}
+                    <ChevronIcon />
+                  </button>
+                )}
                 <div className={styles.dropdownMenu}>
                   {link.subLinks.map(subLink => (
                     <Link
@@ -342,13 +358,19 @@ export default function Header() {
         <nav className={styles.mobileNavLinks}>
           {navLinks.map(link => (
             link.subLinks ? (
-              <div key={link.href} className={styles.mobileNavGroup}>
-                <Link
-                  href={link.href}
-                  className={`${styles.mobileNavLink} ${isActive(link.href) ? styles.mobileNavLinkActive : ''}`}
-                >
-                  {link.label}
-                </Link>
+              <div key={link.href || link.label} className={styles.mobileNavGroup}>
+                {link.href ? (
+                  <Link
+                    href={link.href}
+                    className={`${styles.mobileNavLink} ${isActive(link.href) ? styles.mobileNavLinkActive : ''}`}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <span className={`${styles.mobileNavLink} ${styles.mobileNavLabel}`}>
+                    {link.label}
+                  </span>
+                )}
                 <div className={styles.mobileSubLinks}>
                   {link.subLinks.map(subLink => (
                     <Link

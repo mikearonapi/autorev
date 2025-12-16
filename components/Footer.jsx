@@ -1,90 +1,188 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
+import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient';
 
-// Brand suffix rotation: Revival → Revelation → Revolution
-const brandSuffixes = ['ival', 'elation', 'olution'];
+// Navigation sections
+const footerSections = [
+  {
+    title: 'Research',
+    links: [
+      { label: 'Browse Cars', href: '/browse-cars' },
+      { label: 'Car Selector', href: '/car-selector' },
+      { label: 'Encyclopedia', href: '/encyclopedia' },
+    ],
+  },
+  {
+    title: 'Ownership',
+    links: [
+      { label: 'My Garage', href: '/garage' },
+      { label: 'Tuning Shop', href: '/tuning-shop' },
+      { label: 'AutoRev AI', href: '/al' },
+    ],
+  },
+  {
+    title: 'Community',
+    links: [
+      { label: 'Events', href: '/community/events' },
+      { label: 'Submit Event', href: '/events/submit' },
+      { label: 'Community Hub', href: '/community' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'Join AutoRev', href: '/join' },
+      { label: 'Contact', href: '/contact' },
+    ],
+  },
+];
+
+// Popular brands
+const popularBrands = [
+  { name: 'Porsche', slug: 'porsche' },
+  { name: 'BMW', slug: 'bmw' },
+  { name: 'Audi', slug: 'audi' },
+  { name: 'Chevrolet', slug: 'chevrolet' },
+  { name: 'Lotus', slug: 'lotus' },
+  { name: 'Ferrari', slug: 'ferrari' },
+];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [suffixIndex, setSuffixIndex] = useState(0);
-  const [suffixVisible, setSuffixVisible] = useState(true);
+  const [email, setEmail] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  // Cycle through brand suffixes every 1.5 seconds
-  useEffect(() => {
-    const cycleInterval = setInterval(() => {
-      setSuffixVisible(false);
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!email.trim()) return;
+    
+    setStatus('loading');
+    setErrorMsg('');
+
+    const result = await submitLead({
+      email: email.trim(),
+      source: LEAD_SOURCES.NEWSLETTER,
+      metadata: {
+        signup_location: 'footer',
+      },
+    });
+
+    if (result.success) {
+      setStatus('success');
+      setEmail('');
+      // Reset after 3 seconds
+      setTimeout(() => setStatus('idle'), 3000);
+    } else {
+      setStatus('error');
+      setErrorMsg(result.error || 'Something went wrong');
+      // Reset after 4 seconds
       setTimeout(() => {
-        setSuffixIndex((prev) => (prev + 1) % brandSuffixes.length);
-        setSuffixVisible(true);
-      }, 300);
-    }, 1500);
-
-    return () => clearInterval(cycleInterval);
-  }, []);
-
-  const mainLinks = [
-    { href: '/browse-cars', label: 'Browse Cars' },
-    { href: '/car-selector', label: 'Your Sportscar Match' },
-    { href: '/tuning-shop', label: 'Tuning Shop' },
-    { href: '/community', label: 'Community' },
-    { href: '/community/events', label: 'Events' },
-    { href: '/encyclopedia', label: 'Encyclopedia' },
-    { href: '/garage', label: 'My Garage' },
-    { href: '/contact', label: 'Contact' },
-  ];
-
-  const legalLinks = [
-    { href: '/privacy', label: 'Privacy' },
-    { href: '/terms', label: 'Terms' },
-  ];
+        setStatus('idle');
+        setErrorMsg('');
+      }, 4000);
+    }
+  };
 
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* Top Row: Brand + Navigation */}
-        <div className={styles.topRow}>
-          <Link href="/" className={styles.brand}>
-            <span className={styles.brandName}>
-              Auto<span className={styles.brandRev}>Rev</span>
-              <span className={`${styles.brandSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>
-                {brandSuffixes[suffixIndex]}
+        {/* Top Section: Brand + Nav Columns */}
+        <div className={styles.topSection}>
+          {/* Brand & Newsletter */}
+          <div className={styles.brandColumn}>
+            <Link href="/" className={styles.logo}>
+              <span className={styles.logoText}>
+                Auto<span className={styles.logoAccent}>Rev</span>
               </span>
-            </span>
-          </Link>
+            </Link>
+            <p className={styles.tagline}>
+              The sports car encyclopedia for enthusiasts.
+            </p>
 
-          <nav className={styles.mainNav} aria-label="Footer navigation">
-            {mainLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={styles.navLink}>
-                {link.label}
-              </Link>
+            {/* Compact Newsletter */}
+            {status === 'success' ? (
+              <p className={styles.newsletterSuccess}>✓ You're subscribed!</p>
+            ) : (
+              <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder={isFocused ? "Enter email" : "Get updates"}
+                  className={styles.newsletterInput}
+                  required
+                  disabled={status === 'loading'}
+                  aria-label="Email for newsletter"
+                />
+                <button 
+                  type="submit" 
+                  className={styles.newsletterBtn}
+                  disabled={status === 'loading'}
+                >
+                  {status === 'loading' ? '...' : '→'}
+                </button>
+              </form>
+            )}
+            {status === 'error' && errorMsg && (
+              <p className={styles.newsletterError}>{errorMsg}</p>
+            )}
+          </div>
+
+          {/* Navigation Columns */}
+          <div className={styles.navColumns}>
+            {footerSections.map((section) => (
+              <div key={section.title} className={styles.navColumn}>
+                <h3 className={styles.columnTitle}>{section.title}</h3>
+                <ul className={styles.columnLinks}>
+                  {section.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className={styles.columnLink}>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </nav>
+          </div>
         </div>
 
         {/* Divider */}
         <div className={styles.divider} />
 
-        {/* Bottom Row: Copyright + Legal */}
-        <div className={styles.bottomRow}>
-          <p className={styles.copyright}>
-            © {currentYear} AutoRev. All rights reserved.
-          </p>
-
-          <nav className={styles.legalNav} aria-label="Legal links">
-            {legalLinks.map((link, index) => (
-              <span key={link.href}>
-                <Link href={link.href} className={styles.legalLink}>
-                  {link.label}
+        {/* Bottom Section: Brands + Legal */}
+        <div className={styles.bottomSection}>
+          <nav className={styles.brandsNav} aria-label="Popular brands">
+            {popularBrands.map((brand, i) => (
+              <span key={brand.slug}>
+                <Link href={`/browse-cars?brand=${brand.slug}`} className={styles.brandLink}>
+                  {brand.name}
                 </Link>
-                {index < legalLinks.length - 1 && (
-                  <span className={styles.separator}>·</span>
-                )}
+                {i < popularBrands.length - 1 && <span className={styles.brandSep}>·</span>}
               </span>
             ))}
+            <span className={styles.brandSep}>·</span>
+            <Link href="/browse-cars" className={styles.brandLinkAll}>
+              All Cars →
+            </Link>
           </nav>
+
+          <div className={styles.legalRow}>
+            <p className={styles.copyright}>© {currentYear} AutoRev</p>
+            <nav className={styles.legalLinks} aria-label="Legal">
+              <Link href="/privacy" className={styles.legalLink}>Privacy</Link>
+              <span className={styles.legalSep}>·</span>
+              <Link href="/terms" className={styles.legalLink}>Terms</Link>
+            </nav>
+          </div>
         </div>
       </div>
     </footer>

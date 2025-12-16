@@ -193,7 +193,7 @@ const valueProps = [
   {
     icon: Icons.search,
     title: 'Research',
-    description: 'Specs, reviews, and buying guides for 98 sports cars.',
+    description: `Specs, reviews, and buying guides for ${CAR_COUNT} sports cars.`,
   },
   {
     icon: Icons.garage,
@@ -214,7 +214,7 @@ const featureCategories = [
     name: 'Browse Cars & Find Your Match',
     icon: Icons.search,
     features: [
-      { name: 'Full 98-car sports car database', free: true, collector: true, tuner: true },
+      { name: `Full ${CAR_COUNT}-car sports car database`, free: true, collector: true, tuner: true },
       { name: 'Car Selector quiz with personalized matches', free: true, collector: true, tuner: true },
       { name: 'Specs, known issues & buying guides', free: true, collector: true, tuner: true },
       { name: 'Expert video reviews & safety ratings', free: true, collector: true, tuner: true },

@@ -127,6 +127,14 @@
   font-weight: 600;
 }
 
+/* Nav link styled as button for dropdown-only items (no page) */
+.navLinkDropdown {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 /* Desktop Dropdown */
 .navDropdown {
   position: relative;
@@ -617,6 +625,16 @@
 .mobileNavLinkActive {
   color: var(--sn-primary);
   background: rgba(26, 77, 110, 0.05);
+}
+
+/* Mobile nav label for dropdown-only items (no page link) */
+.mobileNavLabel {
+  color: var(--color-gray-500);
+  cursor: default;
+}
+
+.mobileNavLabel:active {
+  background: transparent;
 }
 
 /* Mobile Navigation Group with Sublinks */
