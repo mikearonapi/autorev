@@ -22,6 +22,7 @@
 import { NextResponse } from 'next/server';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -43,6 +44,7 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const startTime = Date.now();
   const { searchParams } = new URL(request.url);
   const mode = searchParams.get('mode') || 'both';
   const forumSlug = searchParams.get('forum') || null;
@@ -157,10 +159,19 @@ export async function GET(request) {
     results.completedAt = new Date().toISOString();
     results.success = results.errors.length === 0;
 
+    notifyCronCompletion('Forum Scrape', {
+      duration: Date.now() - startTime,
+      processed: (results.scrape?.threadsScraped || 0) + (results.extract?.threadsProcessed || 0),
+      succeeded: results.extract?.insightsExtracted || results.scrape?.threadsScraped || 0,
+      failed: results.errors.length,
+      errors: results.errors.length,
+    });
+
     return NextResponse.json(results);
 
   } catch (error) {
     console.error('[ForumCron] Fatal error:', error);
+    notifyCronFailure('Forum Scrape', error, { phase: 'fatal' });
     return NextResponse.json({
       error: 'Forum scrape cron failed',
       message: error.message,

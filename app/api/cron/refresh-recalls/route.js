@@ -16,6 +16,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -52,6 +53,8 @@ export async function GET(request) {
   if (!isSupabaseConfigured || !supabaseServiceRole) {
     return NextResponse.json({ error: 'Database not configured', code: 'DB_NOT_CONFIGURED' }, { status: 503 });
   }
+
+  const startedAt = Date.now();
 
   try {
     const { searchParams } = new URL(request.url);
@@ -105,6 +108,14 @@ export async function GET(request) {
       durationMs,
     };
 
+    notifyCronCompletion('Refresh Recalls', {
+      duration: durationMs,
+      processed: summary.carsProcessed,
+      succeeded: summary.carsProcessed - summary.carsWithErrors,
+      failed: summary.carsWithErrors,
+      errors: summary.carsWithErrors,
+    });
+
     return NextResponse.json({
       success: true,
       summary,
@@ -113,6 +124,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] refresh-recalls error:', err);
+    notifyCronFailure('Refresh Recalls', err, { phase: 'processing' });
     return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
   }
 }

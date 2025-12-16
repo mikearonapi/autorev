@@ -12,6 +12,7 @@
 
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -26,6 +27,8 @@ export async function GET(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const startTime = Date.now();
 
   try {
     const { searchParams } = new URL(request.url);
@@ -74,6 +77,14 @@ export async function GET(request) {
       payload: knowledgePayload,
     });
 
+    notifyCronCompletion('Schedule Ingestion', {
+      duration: Date.now() - startTime,
+      processed: (partsResult?.jobs?.length || partsResult?.scheduledJobs || 0) + 1,
+      succeeded: 2,
+      failed: 0,
+      created: (partsResult?.jobs?.length || partsResult?.scheduledJobs || 0) + 1,
+    });
+
     return NextResponse.json({
       success: true,
       scheduledAt: new Date().toISOString(),
@@ -82,6 +93,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] schedule-ingestion error:', err);
+    notifyCronFailure('Schedule Ingestion', err, { phase: 'processing' });
     return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
   }
 }

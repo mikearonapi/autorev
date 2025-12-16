@@ -26,6 +26,7 @@ import {
   upsertComplaintRows,
   replaceComplaintsForCar,
 } from '@/lib/complaintService';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -204,6 +205,14 @@ export async function GET(request) {
 
     console.log('[Cron] refresh-complaints completed:', summary);
 
+    notifyCronCompletion('Refresh Complaints', {
+      duration: durationMs,
+      processed: summary.carsProcessed,
+      succeeded: summary.totalInserted + summary.totalUpdated,
+      failed: summary.carsWithErrors,
+      errors: summary.carsWithErrors,
+    });
+
     return NextResponse.json({
       success: true,
       summary,
@@ -212,6 +221,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] refresh-complaints error:', err);
+    notifyCronFailure('Refresh Complaints', err, { phase: 'processing' });
     return NextResponse.json(
       { error: 'Failed', message: err.message },
       { status: 500 }

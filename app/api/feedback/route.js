@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { notifyFeedback } from '@/lib/discord';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -81,12 +82,23 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({ 
-      success: true, 
-      data: { 
+    // Fire-and-forget Discord notification (no await)
+    const userTier = body.userTier || null;
+    notifyFeedback({
+      id: data.id,
+      category: body.category,
+      severity: body.severity,
+      message: body.message,
+      page_url: body.pageUrl,
+      user_tier: userTier,
+    });
+
+    return Response.json({
+      success: true,
+      data: {
         id: data.id,
         created_at: data.created_at,
-      } 
+      }
     });
   } catch (err) {
     console.error('[Feedback API] Unexpected error:', err);

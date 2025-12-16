@@ -22,6 +22,7 @@ import { fetchFromSource } from '@/lib/eventSourceFetchers';
 import { deduplicateBatch } from '@/lib/eventDeduplication';
 import { batchGeocodeEvents } from '@/lib/geocodingService';
 import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -357,10 +358,19 @@ export async function GET(request) {
     
     results.durationMs = Date.now() - startedAt;
     
+    notifyCronCompletion('Refresh Events', {
+      duration: results.durationMs || (Date.now() - startedAt),
+      processed: results.eventsDiscovered,
+      succeeded: results.eventsCreated,
+      failed: results.errors.length,
+      errors: results.errors.length,
+    });
+
     return NextResponse.json(results);
     
   } catch (err) {
     console.error('[refresh-events] Critical error:', err);
+    notifyCronFailure('Refresh Events', err, { phase: 'processing' });
     return NextResponse.json({
       ...results,
       success: false,

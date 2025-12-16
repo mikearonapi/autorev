@@ -224,7 +224,7 @@ function interpolateTemplate(template, stats) {
 }
 
 export default function PageClient() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, profile } = useAuth();
   const authModal = useAuthModal();
   const { openChat } = useAIChat();
   const [accordionOpen, setAccordionOpen] = useState(() => toolGroups.map(() => false));
@@ -401,6 +401,7 @@ export default function PageClient() {
           <h2>See the Difference</h2>
           <p>Same question. Very different answers.</p>
         </div>
+        {/* Desktop table */}
         <div className={styles.tableWrapper}>
           <table className={styles.compareTable}>
             <thead>
@@ -420,6 +421,24 @@ export default function PageClient() {
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Mobile cards */}
+        <div className={styles.comparisonCards}>
+          {comparisonRows.map((row) => (
+            <div key={row.question} className={styles.comparisonCard}>
+              <div className={styles.comparisonQuestion}>{row.question}</div>
+              <div className={styles.responseComparison}>
+                <div className={styles.responseBlock}>
+                  <span className={`${styles.responseLabel} ${styles.chatgptLabel}`}>🤷 ChatGPT says</span>
+                  <p className={`${styles.responseText} ${styles.genericAnswer}`}>{row.generic}</p>
+                </div>
+                <div className={styles.responseBlock}>
+                  <span className={`${styles.responseLabel} ${styles.alLabel}`}>✓ AL says</span>
+                  <p className={`${styles.responseText} ${styles.alAnswer}`}>{interpolateTemplate(row.alTemplate, stats)}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -479,6 +498,7 @@ export default function PageClient() {
           <h2>Pricing by Tier</h2>
           <p>Based on typical token usage. Actual conversations depend on query complexity.</p>
         </div>
+        {/* Desktop table */}
         <div className={styles.pricingTable}>
           <div className={styles.pricingHead}>
             <div />
@@ -494,6 +514,33 @@ export default function PageClient() {
               <div>{row.tuner}</div>
             </div>
           ))}
+        </div>
+        {/* Mobile cards */}
+        <div className={styles.pricingCards}>
+          {[
+            { id: 'free', name: 'Free', summary: tierRows[0]?.free || '~15-20', values: tierRows.map((row) => ({ label: row.label, value: row.free })) },
+            { id: 'collector', name: 'Collector', summary: tierRows[0]?.collector || '~70-80', values: tierRows.map((row) => ({ label: row.label, value: row.collector })) },
+            { id: 'tuner', name: 'Tuner', summary: tierRows[0]?.tuner || '~175-200', values: tierRows.map((row) => ({ label: row.label, value: row.tuner })) },
+          ].map((tier) => {
+            const isCurrent = profile?.subscription_tier === tier.id;
+            return (
+              <div key={tier.id} className={`${styles.pricingCard} ${isCurrent ? styles.activeTier : ''}`}>
+                <div className={styles.pricingCardHeader}>
+                  <div className={styles.pricingCardTitle}>{tier.name}</div>
+                  {isCurrent && <span className={styles.currentTierBadge}>Current plan</span>}
+                </div>
+                <div className={styles.pricingCardSummary}>{tier.summary}</div>
+                <ul className={styles.pricingCardList}>
+                  {tier.values.map((entry) => (
+                    <li key={`${tier.id}-${entry.label}`}>
+                      <span className={styles.pricingItemLabel}>{entry.label}</span>
+                      <span className={styles.pricingItemValue}>{entry.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </section>
 

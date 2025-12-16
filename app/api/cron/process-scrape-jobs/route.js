@@ -17,6 +17,7 @@
 
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 // Cron secret for authorization
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -40,6 +41,8 @@ export async function GET(request) {
     }
   }
   
+  const startTime = Date.now();
+
   try {
     // Parse parameters
     const { searchParams } = new URL(request.url);
@@ -54,6 +57,14 @@ export async function GET(request) {
       delayBetweenJobs,
     });
     
+    notifyCronCompletion('Process Scrape Jobs', {
+      duration: Date.now() - startTime,
+      processed: result.processed || result.jobsProcessed || 0,
+      succeeded: result.succeeded || result.completed || 0,
+      failed: result.failed || (result.errors ? result.errors.length : 0),
+      errors: result.errors ? result.errors.length : 0,
+    });
+
     return NextResponse.json({
       success: true,
       ...result,
@@ -61,6 +72,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] Error processing jobs:', err);
+    notifyCronFailure('Process Scrape Jobs', err, { phase: 'processing' });
     return NextResponse.json(
       { error: 'Failed to process jobs', message: err.message },
       { status: 500 }

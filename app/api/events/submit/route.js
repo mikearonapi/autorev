@@ -10,6 +10,7 @@
 import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { notifyEventSubmission } from '@/lib/discord';
 
 /**
  * Validate URL format
@@ -153,8 +154,16 @@ export async function POST(request) {
       );
     }
     
-    // TODO: Send notification to admin when submission is created
-    // TODO: Add notification stub for when submission is approved/rejected
+    // Fire-and-forget Discord notification
+    notifyEventSubmission({
+      id: submission.id,
+      name: body.name,
+      event_type_slug: body.event_type_slug,
+      start_date: body.start_date,
+      city: body.city,
+      state: body.state,
+      source_url: body.source_url,
+    });
     
     return NextResponse.json({
       success: true,

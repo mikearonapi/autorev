@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { notifyContact } from '@/lib/discord';
 
 const CONTACT_EMAIL = 'contact@autorev.app';
 
@@ -99,6 +100,14 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+
+    // Fire-and-forget Discord notification
+    notifyContact({
+      name: body.name,
+      email: body.email,
+      interest: body.interest,
+      message: body.message,
+    });
 
     return Response.json({ success: true, data: { id: data?.id } });
   } catch (err) {

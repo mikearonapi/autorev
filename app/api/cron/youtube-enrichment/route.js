@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 import { google } from 'googleapis';
 import { YoutubeTranscript } from 'youtube-transcript';
 import Anthropic from '@anthropic-ai/sdk';
+import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -54,9 +55,17 @@ export async function GET(request) {
 
   try {
     const results = await runEnrichmentPipeline();
+    notifyCronCompletion('YouTube Enrichment', {
+      duration: results.duration,
+      processed: results.discovery?.videosFound || 0,
+      succeeded: results.discovery?.videosAdded || 0,
+      failed: results.ai?.failed || 0,
+      errors: results.transcripts?.failed || 0,
+    });
     return Response.json({ success: true, results });
   } catch (error) {
     console.error('YouTube enrichment cron failed:', error);
+    notifyCronFailure('YouTube Enrichment', error, { phase: 'pipeline' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

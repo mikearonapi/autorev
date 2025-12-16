@@ -8,6 +8,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { notifySignup } from '@/lib/discord';
 
 export async function GET(request) {
   const requestUrl = new URL(request.url);
@@ -58,6 +59,22 @@ export async function GET(request) {
         return NextResponse.redirect(
           new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
         );
+      }
+
+      // Fire-and-forget Discord notification for new signups (within 60s of creation)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const createdAt = new Date(user.created_at);
+        const now = new Date();
+        const isNewUser = (now - createdAt) < 60000;
+
+        if (isNewUser) {
+          notifySignup({
+            id: user.id,
+            email: user.email,
+            provider: user.app_metadata?.provider || 'email',
+          });
+        }
       }
     } catch (err) {
       console.error('[Auth Callback] Unexpected error:', err);
