@@ -2,7 +2,11 @@
  * Garage Layout - SEO Metadata
  * 
  * Provides metadata for the Garage page since the main page is a client component.
+ * Note: Garage is a user-specific page so we use noindex for privacy.
  */
+
+import SchemaOrg from '@/components/SchemaOrg';
+import { generateBreadcrumbSchema } from '@/lib/seoUtils';
 
 export const metadata = {
   title: 'My Garage | Save Cars & Builds',
@@ -30,10 +34,25 @@ export const metadata = {
   alternates: {
     canonical: '/garage',
   },
+  // Don't index user-specific pages
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function GarageLayout({ children }) {
-  return children;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'My Garage', url: '/garage' },
+  ]);
+
+  return (
+    <>
+      <SchemaOrg schema={breadcrumbSchema} />
+      {children}
+    </>
+  );
 }
 
 

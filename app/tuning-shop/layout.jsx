@@ -1,9 +1,15 @@
 /**
- * Tuning Shop Layout - SEO Metadata
+ * Tuning Shop Layout - SEO Metadata + Structured Data
  * 
  * Provides metadata for the Tuning Shop page (modification planning).
  * URL: /tuning-shop
  */
+
+import SchemaOrg from '@/components/SchemaOrg';
+import { 
+  generateBreadcrumbSchema, 
+  generateWebApplicationSchema 
+} from '@/lib/seoUtils';
 
 export const metadata = {
   title: 'Tuning Shop | Plan Performance Builds & Modifications',
@@ -41,5 +47,22 @@ export const metadata = {
 };
 
 export default function TuningShopLayout({ children }) {
-  return children;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Tuning Shop', url: '/tuning-shop' },
+  ]);
+
+  const webAppSchema = generateWebApplicationSchema({
+    name: 'AutoRev Tuning Shop',
+    description: 'Interactive modification planner to configure upgrades, estimate costs, and plan your perfect performance build.',
+    path: '/tuning-shop',
+    applicationCategory: 'AutomotiveApplication',
+  });
+
+  return (
+    <>
+      <SchemaOrg schemas={[breadcrumbSchema, webAppSchema]} />
+      {children}
+    </>
+  );
 }

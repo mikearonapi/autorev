@@ -1,13 +1,25 @@
 /**
- * Encyclopedia Layout - Automotive Education
+ * Encyclopedia Layout - Automotive Education + SEO
  * 
  * Comprehensive guide to car systems, modifications, and build paths.
  * URL: /encyclopedia
+ * 
+ * Provides:
+ * - Static metadata for the encyclopedia landing page
+ * - Article schema (schema.org/Article)
+ * - BreadcrumbList schema
  */
+
+import SchemaOrg from '@/components/SchemaOrg';
+import { 
+  generateBreadcrumbSchema,
+  generateArticleSchema,
+  SITE_URL,
+} from '@/lib/seoUtils';
 
 export const metadata = {
   title: 'Automotive Encyclopedia | Learn About Cars, Mods & Performance',
-  description: 'Your comprehensive guide to understanding how cars work, what modifications do, and how to build your perfect machine. Explore vehicle systems, performance upgrades, and goal-based build paths.',
+  description: 'Your comprehensive guide to understanding how cars work, what modifications do, and how to build your perfect machine. 9 systems, 136 topics, 49 mods explained.',
   keywords: [
     'automotive encyclopedia',
     'automotive education',
@@ -24,10 +36,14 @@ export const metadata = {
     'turbo explained',
     'car build guide',
     'track car preparation',
+    'engine components',
+    'drivetrain explained',
+    'exhaust system',
+    'cooling system',
   ],
   openGraph: {
     title: 'Automotive Encyclopedia | AutoRev',
-    description: 'Your comprehensive guide to car systems, modifications, and build paths. Learn how cars work and how to make them better.',
+    description: 'Your comprehensive guide to car systems, modifications, and build paths. 9 systems, 136 topics, 49 mods explained.',
     url: '/encyclopedia',
     type: 'website',
   },
@@ -41,15 +57,27 @@ export const metadata = {
 };
 
 export default function EncyclopediaLayout({ children }) {
-  return children;
+  // Breadcrumb schema
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Encyclopedia', url: '/encyclopedia' },
+  ]);
+
+  // Article schema for the encyclopedia as educational content
+  const articleSchema = generateArticleSchema({
+    title: 'Automotive Encyclopedia',
+    description: 'Comprehensive guide to understanding automotive systems, modifications, and performance upgrades. From engine fundamentals to advanced tuning concepts.',
+    path: '/encyclopedia',
+    keywords: ['automotive education', 'car systems', 'modifications', 'performance upgrades'],
+  });
+
+  const schemas = [breadcrumbSchema, articleSchema];
+
+  return (
+    <>
+      {/* JSON-LD Structured Data */}
+      <SchemaOrg schemas={schemas} />
+      {children}
+    </>
+  );
 }
-
-
-
-
-
-
-
-
-
-

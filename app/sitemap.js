@@ -1,82 +1,226 @@
-// Dynamic sitemap generation for SEO
-// This file automatically generates sitemap.xml at /sitemap.xml
+/**
+ * Dynamic Sitemap Generation for SEO
+ * 
+ * Generates sitemap.xml at /sitemap.xml including:
+ * - Static pages (home, browse, car selector, etc.)
+ * - All car detail pages (from cars table)
+ * - Event pages (from events table)
+ * - Encyclopedia topics (from static data)
+ * 
+ * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
+ */
 
 import { carData } from '@/data/cars.js';
+import { createClient } from '@supabase/supabase-js';
+import { getNavigationTree } from '@/lib/encyclopediaData';
 
-const siteUrl = 'https://autorev.app';
+const SITE_URL = 'https://autorev.app';
+
+// Supabase client for fetching dynamic data
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
+
+/**
+ * Fetch approved events from database.
+ * @returns {Promise<Array>}
+ */
+async function fetchEvents() {
+  try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('slug, updated_at')
+      .eq('status', 'approved')
+      .gte('start_date', new Date().toISOString().split('T')[0])
+      .order('start_date', { ascending: true })
+      .limit(500);
+
+    if (error) {
+      console.warn('[Sitemap] Error fetching events:', error.message);
+      return [];
+    }
+
+    return data || [];
+  } catch (err) {
+    console.warn('[Sitemap] Error fetching events:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Get encyclopedia topic slugs from navigation tree.
+ * @returns {Array<string>}
+ */
+function getEncyclopediaTopics() {
+  try {
+    const navTree = getNavigationTree();
+    const topics = [];
+
+    // Traverse the navigation tree to get all topic keys
+    function collectTopicKeys(items, depth = 0) {
+      for (const item of items) {
+        // Include items that look like navigable topics
+        if (item.key && !item.key.includes('automotive') && 
+            !item.key.includes('modifications') && 
+            !item.key.includes('guides')) {
+          topics.push(item.key);
+        }
+        if (item.children && item.children.length > 0) {
+          collectTopicKeys(item.children, depth + 1);
+        }
+      }
+    }
+
+    collectTopicKeys(navTree);
+    return topics;
+  } catch (err) {
+    console.warn('[Sitemap] Error getting encyclopedia topics:', err.message);
+    return [];
+  }
+}
 
 export default async function sitemap() {
-  // Static pages - ordered by priority
+  const now = new Date();
+
+  // ==========================================================================
+  // STATIC PAGES
+  // ==========================================================================
   const staticPages = [
     {
-      url: siteUrl,
-      lastModified: new Date(),
+      url: SITE_URL,
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
-      url: `${siteUrl}/browse-cars`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/browse-cars`,
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/car-selector`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/car-selector`,
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/join`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/community`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/community/events`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/join`,
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.85,
     },
     {
-      url: `${siteUrl}/tuning-shop`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/tuning-shop`,
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/encyclopedia`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      url: `${SITE_URL}/encyclopedia`,
+      lastModified: now,
+      changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/garage`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/garage`,
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/contact`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/mod-planner`,
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/privacy`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/contact`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/events/submit`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${SITE_URL}/privacy`,
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
-      url: `${siteUrl}/terms`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/terms`,
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
   ];
 
-  // Dynamic car detail pages
+  // ==========================================================================
+  // CAR DETAIL PAGES (from static carData - 98 cars)
+  // ==========================================================================
   const carPages = carData.map((car) => ({
-    url: `${siteUrl}/browse-cars/${car.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/browse-cars/${car.slug}`,
+    lastModified: now,
     changeFrequency: 'monthly',
     priority: 0.7,
   }));
 
-  return [...staticPages, ...carPages];
+  // ==========================================================================
+  // EVENT PAGES (from database)
+  // ==========================================================================
+  const events = await fetchEvents();
+  const eventPages = events.map((event) => ({
+    url: `${SITE_URL}/community/events/${event.slug}`,
+    lastModified: event.updated_at ? new Date(event.updated_at) : now,
+    changeFrequency: 'weekly',
+    priority: 0.6,
+  }));
+
+  // ==========================================================================
+  // ENCYCLOPEDIA TOPIC PAGES
+  // ==========================================================================
+  const encyclopediaTopics = getEncyclopediaTopics();
+  const encyclopediaPages = encyclopediaTopics.map((topicKey) => ({
+    url: `${SITE_URL}/encyclopedia?topic=${encodeURIComponent(topicKey)}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.5,
+  }));
+
+  // ==========================================================================
+  // COMBINE ALL PAGES
+  // ==========================================================================
+  const allPages = [
+    ...staticPages,
+    ...carPages,
+    ...eventPages,
+    ...encyclopediaPages,
+  ];
+
+  console.log(`[Sitemap] Generated: ${staticPages.length} static, ${carPages.length} cars, ${eventPages.length} events, ${encyclopediaPages.length} encyclopedia topics`);
+
+  return allPages;
 }
