@@ -769,5 +769,97 @@ These providers manage global state across the application.
 
 ---
 
+## /join Page Feature Breakdown (User-Facing)
+
+This section documents exactly what is displayed on the `/join` page feature table. Keep this in sync with `app/join/page.jsx`.
+
+### Browse Cars & Find Your Match
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Full 98-car sports car database | ✓ | ✓ | ✓ |
+| Car Selector quiz with personalized matches | ✓ | ✓ | ✓ |
+| Specs, known issues & buying guides | ✓ | ✓ | ✓ |
+| Expert video reviews & safety ratings | ✓ | ✓ | ✓ |
+| Side-by-side comparison (up to 4 cars) | ✓ | ✓ | ✓ |
+
+### My Garage
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Save favorite cars | ✓ | ✓ | ✓ |
+| Save cars you own | ✓ | ✓ | ✓ |
+
+#### My Garage Intelligence (Collector+)
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| VIN Decode — identify your exact variant | — | ✓ | ✓ |
+| Owner's Reference — oil specs, capacities, fluids | — | ✓ | ✓ |
+| Maintenance schedules & service intervals | — | ✓ | ✓ |
+| Service log — track your maintenance history | — | ✓ | ✓ |
+| Recall alerts — active recalls for your VIN | — | ✓ | ✓ |
+| Price guides & market position | — | ✓ | ✓ |
+
+### Tuning Shop
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Browse upgrade packages & mod tiers | ✓ | ✓ | ✓ |
+| Performance projections (HP/torque gains) | ✓ | ✓ | ✓ |
+| Popular parts preview | ✓ | ✓ | ✓ |
+| Full parts catalog with car-specific fitments | — | — | ✓ |
+| Save & organize build projects | — | — | ✓ |
+| Build cost calculator | — | — | ✓ |
+
+### Community
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Browse & submit car events | ✓ | ✓ | ✓ |
+| Map & calendar views | — | ✓ | ✓ |
+| Save events & export to calendar | — | ✓ | ✓ |
+
+### Encyclopedia
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Automotive systems education | ✓ | ✓ | ✓ |
+| Modification guides & explanations | ✓ | ✓ | ✓ |
+| Build paths & learning guides | ✓ | ✓ | ✓ |
+
+### AL — AI Mechanic
+
+| Feature | Free | Collector | Tuner |
+|---------|:----:|:---------:|:-----:|
+| Monthly conversations | ~25 | ~75 | ~150 |
+| Car search & basic questions | ✓ | ✓ | ✓ |
+| Reviews, reliability & maintenance lookup | — | ✓ | ✓ |
+| Build recommendations & parts search | — | — | ✓ |
+
+---
+
+### Tier Card Summaries
+
+**Free** — Research any sports car
+- Full 98-car database
+- Specs, reviews & buying guides
+- Side-by-side comparison
+- AL: ~25/mo, Car search & basic questions
+
+**Collector** — Own & maintain your car
+- Garage Intelligence system
+- VIN decode, specs & service logs
+- Maintenance schedules & recalls
+- AL: ~75/mo, Reviews, reliability & maintenance
+
+**Tuner** — Build & modify your car
+- Full parts catalog & fitments
+- Save build projects
+- Build cost calculator
+- AL: ~150/mo, Build advice & parts search
+
+---
+
 *This catalog supersedes marketing claims in FEATURES.md and should be used as the source of truth for the /join page.*
 
