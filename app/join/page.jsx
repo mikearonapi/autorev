@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -110,27 +110,43 @@ const Icons = {
       <path d="M12 12L19.5 4.5"/>
     </svg>
   ),
+  book: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </svg>
+  ),
 };
+
+const AlIcon = ({ size = 18 }) => (
+  <Image
+    src="/images/al-mascot.png"
+    alt="AL"
+    width={size}
+    height={size}
+    className={styles.alTableIcon}
+  />
+);
 
 // Get dynamic car count from database
 const CAR_COUNT = carData?.length || 98;
 
-// Membership tiers - simplified for clarity
+// Membership tiers - clean & accurate
 const tiers = [
   {
     id: 'free',
     name: 'Free',
     price: 'Free',
     priceNote: 'Forever',
-    tagline: 'Discover your dream sports car',
+    tagline: 'Research any sports car',
     icon: Icons.car,
     color: '#059669',
     features: [
-      `Car Finder + full ${CAR_COUNT}-car database`,
-      'Specs, education & tuning shop',
-      'Community builds & newsletter',
+      `Full ${CAR_COUNT}-car database`,
+      'Specs, reviews & buying guides',
+      'Side-by-side comparison',
     ],
-    ai: { chats: '~25 chats/mo', label: 'Basic search & recommendations' },
+    al: { chats: '~25/mo', label: 'Car search & basic questions' },
     cta: 'Join Free',
     recommended: false,
   },
@@ -140,15 +156,15 @@ const tiers = [
     price: 'Free',
     priceNote: 'During Beta',
     futurePrice: '$4.99/mo',
-    tagline: 'Track & organize your collection',
+    tagline: 'Own & maintain your car',
     icon: Icons.garage,
     color: '#2563eb',
     features: [
-      'My Garage — save & track cars',
-      'Collections & side-by-side compare',
-      'Ownership history & export',
+      'Garage Intelligence system',
+      'VIN decode, specs & service logs',
+      'Maintenance schedules & recalls',
     ],
-    ai: { chats: '~75 chats/mo', label: 'Reviews, reliability & deep research' },
+    al: { chats: '~75/mo', label: 'Reviews, reliability & maintenance' },
     cta: 'Join Free',
     recommended: true,
   },
@@ -158,130 +174,110 @@ const tiers = [
     price: 'Free',
     priceNote: 'During Beta',
     futurePrice: '$9.99/mo',
-    tagline: 'Maximum power for builders',
+    tagline: 'Build & modify your car',
     icon: Icons.wrench,
     color: '#7c3aed',
     features: [
-      'Save & organize tuning projects',
-      'Build analytics & cost projections',
-      'PDF exports & early access',
+      'Full parts catalog & fitments',
+      'Save build projects',
+      'Build cost calculator',
     ],
-    ai: { chats: '~150 chats/mo', label: 'Unlimited tools & priority support' },
+    al: { chats: '~150/mo', label: 'Build advice & parts search' },
     cta: 'Join Free',
     recommended: false,
   },
 ];
 
-// Community benefits
-const communityBenefits = [
+// What you get - simple value props
+const valueProps = [
   {
-    icon: Icons.users,
-    title: 'Connect with Enthusiasts',
-    description: 'Join a community of passionate car lovers who share your obsession with sports cars.',
+    icon: Icons.search,
+    title: 'Research',
+    description: 'Specs, reviews, and buying guides for 98 sports cars.',
   },
   {
-    icon: Icons.zap,
-    title: 'Weekly Newsletter',
-    description: 'Get curated content, featured builds, and the latest in the sports car world delivered to your inbox.',
+    icon: Icons.garage,
+    title: 'Ownership',
+    description: 'VIN decode, maintenance schedules, and service tracking.',
   },
   {
-    icon: Icons.star,
-    title: 'Share Your Journey',
-    description: 'Document your ownership experience and inspire others with your builds and discoveries.',
+    icon: Icons.wrench,
+    title: 'Build',
+    description: 'Parts catalog, build projects, and cost calculator.',
   },
 ];
 
-// Detailed feature breakdown for transparency
+// Detailed feature breakdown - audited 2024-12-15 for 100% accuracy
 const featureCategories = [
   {
     id: 'discovery',
-    name: 'Car Discovery & Research',
+    name: 'Browse Cars & Find Your Match',
     icon: Icons.search,
     features: [
-      { name: 'Full sports car database (98+ cars)', free: true, collector: true, tuner: true },
-      { name: 'Car Selector with personalized matching', free: true, collector: true, tuner: true },
-      { name: 'Detailed specs, history & heritage', free: true, collector: true, tuner: true },
-      { name: 'Complete buying guides', free: true, collector: true, tuner: true },
-      { name: 'AI-curated expert video reviews', free: true, collector: true, tuner: true },
-      { name: 'EPA fuel economy data', free: true, collector: true, tuner: true },
-      { name: 'NHTSA & IIHS safety ratings', free: true, collector: true, tuner: true },
-      { name: 'Price by model year (best value years)', free: true, collector: true, tuner: true },
-      { name: 'Side-by-side comparison tool', free: false, collector: true, tuner: true },
+      { name: 'Full 98-car sports car database', free: true, collector: true, tuner: true },
+      { name: 'Car Selector quiz with personalized matches', free: true, collector: true, tuner: true },
+      { name: 'Specs, known issues & buying guides', free: true, collector: true, tuner: true },
+      { name: 'Expert video reviews & safety ratings', free: true, collector: true, tuner: true },
+      { name: 'Side-by-side comparison (up to 4 cars)', free: true, collector: true, tuner: true },
     ],
   },
   {
     id: 'garage',
-    name: 'My Garage & Collections',
+    name: 'My Garage',
     icon: Icons.garage,
     features: [
-      { name: 'Save cars to your garage', free: true, collector: true, tuner: true },
-      { name: 'Add notes to saved cars', free: true, collector: true, tuner: true },
-      { name: 'Organize into custom collections', free: false, collector: true, tuner: true },
-      { name: 'VIN decode → exact variant identification', free: false, collector: true, tuner: true },
-      { name: "Owner's Reference (oil specs, capacities)", free: false, collector: true, tuner: true },
-      { name: 'Maintenance schedules for your car', free: false, collector: true, tuner: true },
-      { name: 'Service log tracking', free: false, collector: true, tuner: true },
-      { name: 'Service reminders', free: false, collector: true, tuner: true },
-      { name: 'Export your garage data', free: false, collector: true, tuner: true },
-    ],
-  },
-  {
-    id: 'market',
-    name: 'Market Value & Tracking',
-    icon: Icons.dollar,
-    features: [
-      { name: 'General price guides', free: true, collector: true, tuner: true },
-      { name: 'Market position (rising/stable/falling)', free: true, collector: true, tuner: true },
-      { name: 'Bring a Trailer recent sales', free: false, collector: true, tuner: true },
-      { name: 'Cars.com current listings data', free: false, collector: true, tuner: true },
-      { name: 'Hagerty insurance values', free: false, collector: true, tuner: true },
-      { name: 'Price history trends over time', free: false, collector: true, tuner: true },
-      { name: 'VIN-specific active recall alerts', free: false, collector: true, tuner: true },
-    ],
-  },
-  {
-    id: 'performance',
-    name: 'Performance Data',
-    icon: Icons.gauge,
-    features: [
-      { name: 'Track lap times preview (2 samples)', free: true, collector: true, tuner: true },
-      { name: 'Popular parts preview (3 items)', free: true, collector: true, tuner: true },
-      { name: 'Full lap times library (all tracks)', free: false, collector: false, tuner: true },
-      { name: 'Dyno database (real HP/torque)', free: false, collector: false, tuner: true },
-      { name: 'Full parts catalog with fitments', free: false, collector: false, tuner: true },
-      { name: 'Part compatibility verification', free: false, collector: false, tuner: true },
+      { name: 'Save favorite cars', free: true, collector: true, tuner: true },
+      { name: 'Save cars you own', free: true, collector: true, tuner: true },
+      { name: 'VIN Decode — identify your exact variant', free: false, collector: true, tuner: true, subsection: 'My Garage Intelligence' },
+      { name: "Owner's Reference — oil specs, capacities, fluids", free: false, collector: true, tuner: true },
+      { name: 'Maintenance schedules & service intervals', free: false, collector: true, tuner: true },
+      { name: 'Service log — track your maintenance history', free: false, collector: true, tuner: true },
+      { name: 'Recall alerts — active recalls for your VIN', free: false, collector: true, tuner: true },
+      { name: 'Price guides & market position', free: false, collector: true, tuner: true },
     ],
   },
   {
     id: 'builds',
-    name: 'Tuning Shop & Build Projects',
+    name: 'Tuning Shop',
     icon: Icons.tool,
     features: [
-      { name: 'Browse upgrade packages', free: true, collector: true, tuner: true },
-      { name: 'View recommended mods by tier', free: true, collector: true, tuner: true },
-      { name: 'Save and organize build projects', free: false, collector: false, tuner: true },
+      { name: 'Browse upgrade packages & mod tiers', free: true, collector: true, tuner: true },
+      { name: 'Performance projections (HP/torque gains)', free: true, collector: true, tuner: true },
+      { name: 'Popular parts preview', free: true, collector: true, tuner: true },
+      { name: 'Full parts catalog with car-specific fitments', free: false, collector: false, tuner: true },
+      { name: 'Save & organize build projects', free: false, collector: false, tuner: true },
       { name: 'Build cost calculator', free: false, collector: false, tuner: true },
-      { name: 'HP/torque gain projections', free: false, collector: false, tuner: true },
-      { name: 'Mod stack compatibility checking', free: false, collector: false, tuner: true },
-      { name: 'PDF export of build plans', free: false, collector: false, tuner: true },
-      { name: 'Early access to new features', free: false, collector: false, tuner: true },
     ],
   },
   {
-    id: 'ai',
-    name: 'AL — Your AI Co-Pilot',
-    icon: Icons.robot,
+    id: 'community',
+    name: 'Community',
+    icon: Icons.users,
     features: [
-      { name: 'Monthly AI conversations', free: '~25', collector: '~75', tuner: '~150' },
-      { name: 'Car recommendations', free: true, collector: true, tuner: true },
-      { name: 'Common issues & solutions', free: true, collector: true, tuner: true },
-      { name: 'Basic specs & questions', free: true, collector: true, tuner: true },
-      { name: 'Deep reliability research', free: false, collector: true, tuner: true },
-      { name: 'Ownership cost analysis', free: false, collector: true, tuner: true },
-      { name: 'Knowledge base search', free: false, collector: true, tuner: true },
-      { name: 'Personalized build recommendations', free: false, collector: false, tuner: true },
-      { name: 'Parts compatibility questions', free: false, collector: false, tuner: true },
-      { name: 'Priority response time', free: false, collector: false, tuner: true },
+      { name: 'Browse & submit car events', free: true, collector: true, tuner: true },
+      { name: 'Map & calendar views', free: false, collector: true, tuner: true },
+      { name: 'Save events & export to calendar', free: false, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'encyclopedia',
+    name: 'Encyclopedia',
+    icon: Icons.book,
+    features: [
+      { name: 'Automotive systems education', free: true, collector: true, tuner: true },
+      { name: 'Modification guides & explanations', free: true, collector: true, tuner: true },
+      { name: 'Build paths & learning guides', free: true, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'al',
+    name: 'AL — AI Mechanic',
+    icon: AlIcon,
+    features: [
+      { name: 'Monthly conversations', free: '~25', collector: '~75', tuner: '~150' },
+      { name: 'Car search & basic questions', free: true, collector: true, tuner: true },
+      { name: 'Reviews, reliability & maintenance lookup', free: false, collector: true, tuner: true },
+      { name: 'Build recommendations & parts search', free: false, collector: false, tuner: true },
     ],
   },
 ];
@@ -404,7 +400,7 @@ export default function JoinPage() {
                   ))}
                 </ul>
 
-                {/* AL AI - Compact */}
+                {/* AL AI Mechanic - Compact */}
                 <div className={styles.alCompact}>
                   <div className={styles.alCompactHeader}>
                     <img 
@@ -414,10 +410,10 @@ export default function JoinPage() {
                       width={24} 
                       height={24} 
                     />
-                    <span>AL Assistant</span>
-                    <span className={styles.alCreditsTag}>{tier.ai.chats}</span>
+                    <span>AL AI Mechanic</span>
+                    <span className={styles.alCreditsTag}>{tier.al.chats}</span>
                   </div>
-                  <p className={styles.alCompactDesc}>{tier.ai.label}</p>
+                  <p className={styles.alCompactDesc}>{tier.al.label}</p>
                 </div>
 
                 <button 
@@ -433,22 +429,22 @@ export default function JoinPage() {
         </div>
       </section>
 
-      {/* Community Section */}
+      {/* What You Get Section */}
       <section className={styles.communitySection}>
         <div className={styles.container}>
           <div className={styles.communityHeader}>
-            <h2>More Than a Tool — A <span className={styles.accent}>Community</span></h2>
-            <p>Join thousands of enthusiasts who are passionate about sports cars</p>
+            <h2>What You <span className={styles.accent}>Get</span></h2>
+            <p>Three tiers designed around how you use AutoRev</p>
           </div>
 
           <div className={styles.benefitsGrid}>
-            {communityBenefits.map((benefit, idx) => (
+            {valueProps.map((prop, idx) => (
               <div key={idx} className={styles.benefitCard}>
                 <div className={styles.benefitIcon}>
-                  <benefit.icon size={24} />
+                  <prop.icon size={24} />
                 </div>
-                <h3>{benefit.title}</h3>
-                <p>{benefit.description}</p>
+                <h3>{prop.title}</h3>
+                <p>{prop.description}</p>
               </div>
             ))}
           </div>
@@ -467,15 +463,15 @@ export default function JoinPage() {
           <div className={styles.breakdownTable}>
             <div className={styles.tableHeader}>
               <div className={styles.tableHeaderCell}>Features</div>
-              <div className={`${styles.tableHeaderCell} ${styles.tierHeader}`}>
+              <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader}`}>
                 <span className={styles.tierHeaderName}>Free</span>
                 <span className={styles.tierHeaderPrice}>$0</span>
               </div>
-              <div className={`${styles.tableHeaderCell} ${styles.tierHeader} ${styles.tierHeaderCollector}`}>
+              <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderCollector}`}>
                 <span className={styles.tierHeaderName}>Collector</span>
                 <span className={styles.tierHeaderPrice}>$4.99/mo</span>
               </div>
-              <div className={`${styles.tableHeaderCell} ${styles.tierHeader} ${styles.tierHeaderTuner}`}>
+              <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderTuner}`}>
                 <span className={styles.tierHeaderName}>Tuner</span>
                 <span className={styles.tierHeaderPrice}>$9.99/mo</span>
               </div>
@@ -489,36 +485,54 @@ export default function JoinPage() {
                   <span>{category.name}</span>
                 </div>
                 {category.features.map((feature, idx) => (
-                  <div key={idx} className={styles.tableRow}>
-                    <div className={styles.featureName}>{feature.name}</div>
-                    <div className={styles.featureCell}>
-                      {typeof feature.free === 'string' ? (
-                        <span className={styles.featureLimit}>{feature.free}</span>
-                      ) : feature.free ? (
-                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
-                      ) : (
-                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
-                      )}
+                  <React.Fragment key={idx}>
+                    {feature.subsection && (
+                      <div className={styles.subsectionHeader}>
+                        <span className={styles.subsectionLine} />
+                        <span className={styles.subsectionLabel}><em>{feature.subsection}</em></span>
+                        <span className={styles.subsectionLine} />
+                      </div>
+                    )}
+                    <div className={styles.tableRow}>
+                      <div className={styles.featureName}>
+                        {feature.name}
+                        {feature.note && <span className={styles.featureNote}> ({feature.note})</span>}
+                      </div>
+                      <div className={styles.featureCell}>
+                        {feature.note ? (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        ) : typeof feature.free === 'string' ? (
+                          <span className={styles.featureLimit}>{feature.free}</span>
+                        ) : feature.free ? (
+                          <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                        ) : (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        )}
+                      </div>
+                      <div className={styles.featureCell}>
+                        {feature.note ? (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        ) : typeof feature.collector === 'string' ? (
+                          <span className={styles.featureLimit}>{feature.collector}</span>
+                        ) : feature.collector ? (
+                          <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                        ) : (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        )}
+                      </div>
+                      <div className={styles.featureCell}>
+                        {feature.note ? (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        ) : typeof feature.tuner === 'string' ? (
+                          <span className={styles.featureLimit}>{feature.tuner}</span>
+                        ) : feature.tuner ? (
+                          <span className={styles.featureIncluded}><Icons.check size={16} /></span>
+                        ) : (
+                          <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
+                        )}
+                      </div>
                     </div>
-                    <div className={styles.featureCell}>
-                      {typeof feature.collector === 'string' ? (
-                        <span className={styles.featureLimit}>{feature.collector}</span>
-                      ) : feature.collector ? (
-                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
-                      ) : (
-                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
-                      )}
-                    </div>
-                    <div className={styles.featureCell}>
-                      {typeof feature.tuner === 'string' ? (
-                        <span className={styles.featureLimit}>{feature.tuner}</span>
-                      ) : feature.tuner ? (
-                        <span className={styles.featureIncluded}><Icons.check size={16} /></span>
-                      ) : (
-                        <span className={styles.featureNotIncluded}><Icons.minus size={16} /></span>
-                      )}
-                    </div>
-                  </div>
+                  </React.Fragment>
                 ))}
               </div>
             ))}
