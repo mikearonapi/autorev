@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -101,7 +101,7 @@ function getUniqueCategories(carList) {
   return Array.from(categories).sort();
 }
 
-export default function CarCatalog() {
+function CarCatalogContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState('all');
@@ -479,5 +479,39 @@ export default function CarCatalog() {
         defaultMode={authModal.defaultMode}
       />
     </div>
+  );
+}
+
+export default function CarCatalog() {
+  return (
+    <Suspense fallback={
+      <div className={styles.catalogPage}>
+        <section className={styles.hero}>
+          <div className={styles.heroImageWrapper}>
+            <Image
+              src={heroImageUrl}
+              alt="Enthusiast sports cars on track"
+              fill
+              priority
+              quality={85}
+              className={styles.heroImage}
+              sizes="100vw"
+            />
+          </div>
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              Browse.<br />
+              <span className={styles.titleAccent}>Discover.</span>
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Loading...
+            </p>
+          </div>
+        </section>
+      </div>
+    }>
+      <CarCatalogContent />
+    </Suspense>
   );
 }
