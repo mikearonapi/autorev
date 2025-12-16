@@ -7,7 +7,9 @@ import Footer from '../Footer';
 
 // Mock next/link
 jest.mock('next/link', () => {
-  return ({ children, href }) => <a href={href}>{children}</a>;
+  const MockLink = ({ children, href }) => <a href={href}>{children}</a>;
+  MockLink.displayName = 'Link';
+  return MockLink;
 });
 
 describe('Footer', () => {
