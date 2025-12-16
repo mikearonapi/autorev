@@ -32,3 +32,4 @@ CREATE INDEX IF NOT EXISTS idx_parts_part_number_trgm
   ON parts USING GIN (part_number gin_trgm_ops);
 
 
+

@@ -386,23 +386,25 @@ The Encyclopedia is organized by automotive system, not by upgrade type. Learn t
 |--------|-------|
 | Cars in database | 98 |
 | Data points per car | 139 columns |
-| Parts in catalog | **642** |
-| Part fitments | **836** |
-| Recall campaigns | **241** |
-| Dyno runs | **29** |
-| Lap times | **65** |
-| Known issues | **154** |
+| Parts in catalog | 642 |
+| Part fitments | 836 |
+| Recall campaigns | **469** |
+| Dyno runs | 29 |
+| Lap times | 65 |
+| Known issues | **1,211** |
 | YouTube reviews | 288 |
-| Track venues | **21** |
-| Maintenance specs | **98 cars** (100%) |
+| Track venues | 21 |
+| Maintenance specs | 98 cars (100%) |
 | Service intervals | 976 |
-| **Encyclopedia topics** | **136** |
-| **Automotive systems** | **9** |
-| **Components** | **52** |
-| **Event types** | **10** |
-| **Sample events** | **15** |
+| Community insights | **1,226** |
+| Forum sources | **14** |
+| Encyclopedia topics | 136 |
+| Automotive systems | 9 |
+| Components | 52 |
+| Event types | 10 |
+| Events | **940** |
 
-> **Last updated:** December 15, 2024
+> **Last Verified:** December 15, 2024 — MCP-verified live query
 
 ---
 

@@ -255,12 +255,19 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const [editingLog, setEditingLog] = useState(null);
   const [deletingLogId, setDeletingLogId] = useState(null);
   
-  // Initialize VIN from vehicle data
+  // Initialize VIN from vehicle data (reset all VIN state when vehicle changes)
   useEffect(() => {
+    // Always reset VIN state when the selected vehicle changes
+    // This prevents VIN from one car persisting on another
+    setVinData(null);
+    setVinError(null);
+    
     if (type === 'mycars' && item?.vehicle?.vin) {
       setVinInput(item.vehicle.vin);
+    } else {
+      setVinInput('');
     }
-  }, [type, item?.vehicle?.vin]);
+  }, [type, item?.vehicle?.id]); // Key off vehicle ID, not just VIN
   
   // Fetch maintenance data for owned vehicles (when in expanded or details state)
   useEffect(() => {

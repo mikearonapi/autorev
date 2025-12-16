@@ -408,7 +408,7 @@
   text-align: center;
 }
 
-/* Responsive */
+/* Responsive - CF-010: Mobile grid collapse patterns */
 @media (max-width: 768px) {
   .efficiencyGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -434,4 +434,29 @@
     display: none;
   }
 }
+
+/* Very small screens (375px) - single column for efficiency */
+@media (max-width: 480px) {
+  .efficiencyGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .efficiencyGrid .mpgCard:nth-child(3) {
+    grid-column: span 1;
+  }
+  
+  .section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .mpgValue {
+    font-size: 1.5rem;
+  }
+  
+  .sectionHeader h2 {
+    font-size: 1rem;
+  }
+}
+
 

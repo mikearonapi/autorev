@@ -3268,6 +3268,23 @@
     margin-bottom: var(--space-sm);
     color: var(--sn-accent, #D4AF37);
   }
+
+  /* Simplify dense grids on small screens */
+  .metricsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .modulesGridFull {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .performanceSection,
+  .scoresSection {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
 }
 
 /* Tablet */

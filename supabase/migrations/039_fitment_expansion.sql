@@ -359,3 +359,4 @@ BEGIN
   RAISE NOTICE 'Cars with mappings: %', v_car_count;
   RAISE NOTICE '============================================================';
 END $$;
+

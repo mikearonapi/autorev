@@ -271,6 +271,7 @@ export async function POST(request) {
         featured: eventData?.featured || false,
         submitted_by: submission.user_id,
         approved_at: new Date().toISOString(),
+        last_verified_at: new Date().toISOString(),
       })
       .select()
       .single();

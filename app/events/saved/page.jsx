@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import EventCard, { EventCardSkeleton } from '@/components/EventCard';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useAuthModal } from '@/components/AuthModal';
+import AuthModal from '@/components/AuthModal';
 import PremiumGate from '@/components/PremiumGate';
-import { hasTierAccess, IS_BETA, FEATURES } from '@/lib/tierAccess';
+import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
 
 // Icons
 const Icons = {
@@ -24,11 +25,17 @@ const Icons = {
       <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
   ),
+  user: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
 };
 
 export default function SavedEventsPage() {
-  const router = useRouter();
-  const { isAuthenticated, user, profile, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, user, profile, session, isLoading: authLoading } = useAuth();
+  const authModal = useAuthModal();
   const userTier = profile?.subscription_tier || 'free';
   const canAccessSavedEvents = IS_BETA || hasTierAccess(userTier, 'collector');
   
@@ -36,15 +43,7 @@ export default function SavedEventsPage() {
   const [savedEvents, setSavedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [savingEventSlug, setSavingEventSlug] = useState(null);
   const [includeExpired, setIncludeExpired] = useState(false);
-  
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/events');
-    }
-  }, [authLoading, isAuthenticated, router]);
   
   // Fetch saved events
   useEffect(() => {
@@ -62,8 +61,14 @@ export default function SavedEventsPage() {
         if (includeExpired) {
           params.set('includeExpired', 'true');
         }
-        
-        const res = await fetch(`/api/users/${user.id}/saved-events?${params.toString()}`);
+
+        const headers = {};
+        // Include Bearer token when available (client auth may not be cookie-based).
+        if (session?.access_token) {
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
+
+        const res = await fetch(`/api/users/${user.id}/saved-events?${params.toString()}`, { headers });
         
         if (!res.ok) {
           throw new Error('Failed to fetch saved events');
@@ -80,43 +85,34 @@ export default function SavedEventsPage() {
     }
     
     fetchSavedEvents();
-  }, [isAuthenticated, user?.id, canAccessSavedEvents, includeExpired]);
+  }, [isAuthenticated, user?.id, canAccessSavedEvents, includeExpired, session?.access_token]);
   
-  // Handle unsave
-  const handleSaveToggle = useCallback(async (eventSlug) => {
-    setSavingEventSlug(eventSlug);
-    
-    // Optimistic removal
-    setSavedEvents(prev => prev.filter(se => se.event.slug !== eventSlug));
-    
-    try {
-      const res = await fetch(`/api/events/${eventSlug}/save`, {
-        method: 'DELETE',
-      });
-      
-      if (!res.ok) {
-        // Revert on error - refetch
-        const refetchRes = await fetch(`/api/users/${user.id}/saved-events${includeExpired ? '?includeExpired=true' : ''}`);
-        const data = await refetchRes.json();
-        setSavedEvents(data.savedEvents || []);
-      }
-    } catch (err) {
-      console.error('[SavedEvents] Error unsaving:', err);
-      // Refetch to get correct state
-      const refetchRes = await fetch(`/api/users/${user.id}/saved-events${includeExpired ? '?includeExpired=true' : ''}`);
-      const data = await refetchRes.json();
-      setSavedEvents(data.savedEvents || []);
-    } finally {
-      setSavingEventSlug(null);
+  // Handle unsave - called by SaveEventButton after it makes the API call
+  const handleSaveToggle = useCallback((eventSlug, isSaved) => {
+    if (!isSaved) {
+      setSavedEvents(prev => prev.filter(se => se.event.slug !== eventSlug));
     }
-  }, [user?.id, includeExpired]);
+  }, []);
   
   // Loading state (auth)
   if (authLoading) {
     return (
       <div className={styles.page}>
+        <header className={styles.hero}>
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
+            <span className={styles.badge}>My Events</span>
+            <h1 className={styles.heroTitle}>
+              <span className={styles.titleAccent}>Saved</span> Events
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Events you&apos;ve bookmarked for later
+            </p>
+          </div>
+        </header>
         <div className={styles.container}>
           <div className={styles.loadingState}>
+            <div className={styles.spinner} />
             <p>Loading...</p>
           </div>
         </div>
@@ -124,16 +120,62 @@ export default function SavedEventsPage() {
     );
   }
   
-  // Not authenticated - will redirect
+  // Not authenticated - show sign in prompt
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className={styles.page}>
+        <header className={styles.hero}>
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
+            <span className={styles.badge}>My Events</span>
+            <h1 className={styles.heroTitle}>
+              <span className={styles.titleAccent}>Saved</span> Events
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Sign in to see your bookmarked events
+            </p>
+          </div>
+        </header>
+        
+        <div className={styles.container}>
+          <div className={styles.signInPrompt}>
+            <div className={styles.signInIcon}>
+              <Icons.user size={48} />
+            </div>
+            <h3>Sign in to view saved events</h3>
+            <p>
+              Create an account or sign in to save events and access them anytime.
+            </p>
+            <div className={styles.signInActions}>
+              <button 
+                onClick={() => authModal.openSignIn()}
+                className={styles.signInButton}
+              >
+                Sign In
+              </button>
+              <Link href="/join" className={styles.joinButton}>
+                Create Account
+              </Link>
+            </div>
+            <Link href="/community/events" className={styles.browseLink}>
+              ← Browse Events
+            </Link>
+          </div>
+        </div>
+        
+        <AuthModal 
+          isOpen={authModal.isOpen} 
+          onClose={authModal.close}
+          defaultMode={authModal.defaultMode}
+        />
+      </div>
+    );
   }
   
-  // Tier gate
+  // Tier gate (only shows if not in beta and user doesn't have collector tier)
   if (!canAccessSavedEvents) {
     return (
       <div className={styles.page}>
-        {/* Hero Header */}
         <header className={styles.hero}>
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
@@ -219,7 +261,7 @@ export default function SavedEventsPage() {
             <p>
               Browse events and click the heart icon to save them for later.
             </p>
-            <Link href="/events" className={styles.browseButton}>
+            <Link href="/community/events" className={styles.browseButton}>
               Browse Events
             </Link>
           </div>
@@ -235,7 +277,6 @@ export default function SavedEventsPage() {
                 featured={savedEvent.event.featured}
                 isSaved={true}
                 onSaveToggle={handleSaveToggle}
-                savingInProgress={savingEventSlug === savedEvent.event.slug}
                 showSaveButton={true}
               />
             ))}
@@ -245,4 +286,3 @@ export default function SavedEventsPage() {
     </div>
   );
 }
-

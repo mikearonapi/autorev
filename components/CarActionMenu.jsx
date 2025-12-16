@@ -229,8 +229,11 @@ export default function CarActionMenu({
   // Handle View Profile
   const handleViewProfile = (e) => {
     e?.stopPropagation?.();
-    // Don't prevent default if it's a link, but we use router.push for buttons
-    if (e.target.tagName !== 'A') {
+    // For button elements, navigate programmatically
+    // Link elements will handle navigation themselves
+    const isLink = e?.currentTarget?.tagName === 'A' || e?.target?.closest('a');
+    if (!isLink) {
+      e?.preventDefault?.();
       router.push(`/browse-cars/${car.slug}`);
     }
     onAction?.('view-profile', car);

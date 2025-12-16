@@ -1,8 +1,8 @@
 # AutoRev Database Schema
 
-> Complete reference for all 57 database tables
+> Complete reference for all 65 database tables
 >
-> **Last Synced:** December 15, 2024 — MCP-verified
+> **Last Verified:** December 15, 2024 — MCP-verified live query (Row counts audited)
 
 ---
 
@@ -19,22 +19,30 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **YouTube Intelligence** | 288 videos with AI-extracted pros/cons/summaries |
 | **Parts + Fitments** | 642 parts with 836 verified car-specific fitments |
 | **Maintenance Specs** | 130 columns of oil, fluid, tire specs per car |
-| **Recall Data** | 241 NHTSA recall campaigns linked to cars |
+| **Recall Data** | 469 NHTSA recall campaigns linked to cars |
+| **Community Insights** | 1,226 forum-extracted insights (⚠️ Porsche-only currently) |
+| **Events** | 55 car events (⚠️ needs re-ingestion) |
 
 ---
 
 ## Data Coverage Dashboard
 
-| Data Type | Coverage | Cars Covered | Notes |
-|-----------|----------|--------------|-------|
-| **Core Specs** | 100% | 98/98 | HP, price, images, all scores |
-| **Fuel Economy** | 100% | 98/98 | EPA data |
-| **Safety Ratings** | 100% | 98/98 | NHTSA + IIHS |
-| **Maintenance Specs** | 100% | 98/98 | 130 columns per car |
-| **Known Issues** | 51% | 50/98 | Prioritized by reliability score |
-| **Recall Data** | 30% | 29/98 | NHTSA campaigns |
-| **Market Pricing** | 10% | 10/98 | Expansion in progress |
-| **Part Fitments** | ~15% | ~15/98 | Multi-brand expansion needed |
+| Data Type | Coverage | Cars/Records | Gap Priority |
+|-----------|----------|--------------|--------------|
+| **Core Specs** | ✅ 100% | 98/98 | — |
+| **Fuel Economy** | ✅ 100% | 98/98 | — |
+| **Safety Ratings** | ✅ 100% | 98/98 | — |
+| **Maintenance Specs** | ✅ 100% | 98/98 | — |
+| **Service Intervals** | ✅ 100% | 976 records | — |
+| **Known Issues** | ✅ 100% | 1,201 records | — |
+| **Recall Data** | ~50% | 469 records | P2 |
+| **Market Pricing** | ⚠️ 10% | 10/98 cars | P1 - Critical |
+| **Part Fitments** | ⚠️ ~15% | 836 fitments | P1 - Critical |
+| **Dyno Runs** | ⚠️ ~30% | 29 runs | P2 |
+| **Lap Times** | ⚠️ ~20% | 65 records | P2 |
+| **Community Insights** | ⚠️ 10% cars | 1,226 insights | P1 - Porsche only |
+| **Events** | ⚠️ Low | 55 events | P1 - Needs re-ingestion |
+| **YouTube Reviews** | ~60% | 288 videos | P3 |
 
 ---
 
@@ -42,7 +50,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 
 | Category | Tables | Populated | Empty |
 |----------|--------|-----------|-------|
-| Core Car Data | 15 | 13 | 2 |
+| Core Car Data | 16 | 14 | 2 |
 | Parts & Upgrades | 8 | 7 | 1 |
 | User Data | 9 | 5 | 4 |
 | Maintenance | 3 | 3 | 0 |
@@ -50,19 +58,19 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Knowledge Base | 2 | 2 | 0 |
 | YouTube | 4 | 4 | 0 |
 | Track Data | 2 | 1 | 1 |
-| Forum Intelligence | 5 | 1 | 4 |
+| Forum Intelligence | 5 | 5 | 0 |
 | Events | 6 | 3 | 3 |
-| System | 4 | 3 | 1 |
-| **Total** | **63** | **44** | **19** |
+| System | 5 | 4 | 1 |
+| **Total** | **65** | **51** | **14** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
 
 ---
 
-## Core Car Data (15 tables)
+## Core Car Data (16 tables)
 
-> **Note:** Row counts updated December 14, 2024 via MCP Supabase query.
+> **Note:** Row counts verified December 15, 2024 via MCP Supabase query.
 
 ### `cars` — Main vehicle database
 | Status | **98 rows** |
@@ -77,49 +85,50 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Status | **102 rows** |
 |--------|-------------|
 | **Purpose** | Specific year/trim combinations for VIN matching |
-| **Key Fields** | `id`, `car_id`, `car_slug`, `variant_key`, `model_year`, `trim_level`, `engine_code` |
+| **Key Fields** | `id`, `car_id`, `variant_key`, `display_name`, `model_year_start`, `model_year_end`, `trim`, `drivetrain`, `transmission`, `engine` |
 | **Used By** | VIN decode, variant-specific maintenance |
 
 ### `car_fuel_economy` — EPA fuel data
-| Status | **98 rows** |
-|--------|------------|
+| Status | **98 rows** ✅ |
+|--------|--------------|
 | **Purpose** | EPA efficiency data |
 | **Key Fields** | `car_slug`, `city_mpg`, `highway_mpg`, `combined_mpg`, `fuel_type`, `annual_fuel_cost`, `co2_emissions`, `ghg_score`, `is_electric`, `is_hybrid`, `ev_range` |
 | **Used By** | Car detail Ownership tab, AL |
 
 ### `car_safety_data` — NHTSA/IIHS ratings
-| Status | **98 rows** |
-|--------|------------|
+| Status | **98 rows** ✅ |
+|--------|--------------|
 | **Purpose** | Safety ratings from NHTSA and IIHS |
 | **Key Fields** | `car_slug`, `nhtsa_overall_rating`, `nhtsa_front_crash_rating`, `nhtsa_side_crash_rating`, `nhtsa_rollover_rating`, `recall_count`, `complaint_count`, `iihs_overall`, `iihs_top_safety_pick`, `safety_score`, `safety_grade` |
 | **Used By** | Car detail Buying tab, AL |
 
 ### `car_issues` — Known problems
-| Status | **154 rows** |
-|--------|-------------|
+| Status | **1,201 rows** ✅ |
+|--------|------------------|
 | **Purpose** | Documented known issues and common problems |
 | **Key Fields** | `car_slug`, `title`, `kind`, `severity`, `affected_years_text`, `description`, `symptoms`, `prevention`, `fix_description`, `estimated_cost_text`, `source_url` |
 | **Used By** | Car detail, AL `get_known_issues` tool |
 
 ### `car_market_pricing` — Current market values
-| Status | **10 rows** |
-|--------|------------|
+| Status | **10 rows** ⚠️ |
+|--------|----------------|
 | **Purpose** | Aggregated market values from BaT, Cars.com, Hagerty |
-| **Key Fields** | `car_slug`, `avg_price`, `min_price`, `max_price`, `bat_avg`, `carscom_avg`, `hagerty_condition_1` through `hagerty_condition_4`, `trend_direction`, `confidence` |
+| **Key Fields** | `car_slug`, `bat_avg_price`, `bat_median_price`, `carscom_avg_price`, `hagerty_concours`, `hagerty_excellent`, `hagerty_good`, `hagerty_fair`, `consensus_price`, `market_trend` |
 | **Used By** | My Garage Value tab, AL |
+| **Gap Note** | Only 10/98 cars have pricing data. P1 priority for expansion. |
 
 ### `car_market_pricing_years` — Price by model year
-| Status | **23 rows** |
-|--------|-------------|
+| Status | **23 rows** ⚠️ |
+|--------|---------------|
 | **Purpose** | Market pricing broken down by model year |
-| **Key Fields** | `car_slug`, `model_year`, `avg_price`, `min_price`, `max_price`, `sample_size`, `avg_mileage` |
+| **Key Fields** | `car_slug`, `source`, `year`, `median_price`, `average_price`, `min_price`, `max_price`, `listing_count` |
 | **Used By** | Car detail Buying tab |
 
 ### `car_price_history` — Historical trends
 | Status | **7 rows** |
 |--------|-----------|
 | **Purpose** | Price tracking over time |
-| **Key Fields** | `car_slug`, `recorded_at`, `avg_price`, `min_price`, `max_price`, `sample_size` |
+| **Key Fields** | `car_slug`, `source`, `price`, `recorded_at` |
 | **Used By** | My Garage Value tab (Collector tier) |
 
 ### `car_dyno_runs` — Real dyno data
@@ -133,64 +142,70 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Status | **65 rows** |
 |--------|------------|
 | **Purpose** | Real lap times from actual track sessions |
-| **Key Fields** | `car_slug`, `track_venue_id`, `layout_key`, `lap_time_ms`, `lap_time_text`, `session_date`, `is_stock`, `tires`, `conditions`, `modifications`, `source_url`, `verified` |
+| **Key Fields** | `car_slug`, `track_id`, `lap_time_ms`, `lap_time_text`, `session_date`, `is_stock`, `tires`, `conditions`, `modifications`, `source_url`, `verified` |
 | **Used By** | Tuning Shop (Tuner tier), AL `get_track_lap_times` tool |
 
 ### `car_expert_reviews` — Expert review metadata
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Structured expert review data (separate from YouTube) |
 | **Future Use** | Written reviews, magazine content |
 
 ### `car_manual_data` — Manual spec data
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Manually entered specifications |
 | **Future Use** | Override/supplement automated data |
 
 ### `car_recalls` — Recall information
-| Status | **241 rows** |
-|--------|--------------|
+| Status | **469 rows** ✅ |
+|--------|----------------|
 | **Purpose** | NHTSA recall campaign data per car |
-| **Key Fields** | `car_slug`, `recall_campaign_number`, `recall_date`, `component`, `summary`, `consequence`, `remedy`, `manufacturer`, `source_url`, `is_incomplete` |
+| **Key Fields** | `car_slug`, `campaign_number`, `recall_campaign_number`, `recall_date`, `component`, `summary`, `consequence`, `remedy`, `manufacturer`, `source_url`, `is_incomplete` |
 | **Used By** | Car detail pages, AL `get_known_issues` tool |
 
 ### `car_auction_results` — Auction sale data
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Individual auction results (BaT, etc.) |
 | **Future Use** | Detailed market analysis, price justification |
+
+### `car_slug_aliases` — Slug redirects
+| Status | **23 rows** |
+|--------|------------|
+| **Purpose** | Map alternate slugs to canonical car slugs |
+| **Key Fields** | `alias`, `canonical_slug` |
+| **Used By** | URL redirects, search normalization |
 
 ### `car_known_issues` — DEPRECATED
 | Status | **Does not exist as table** |
 |--------|----------------------------|
 | **Note** | This was documented but never created. AL `get_known_issues` uses `car_issues` and `vehicle_known_issues` tables instead. |
-| **Used By** | AL queries `car_issues` table directly |
 
 ---
 
 ## Parts & Upgrades (8 tables)
 
 ### `parts` — Parts catalog
-| Status | **642 rows** |
-|--------|-------------|
+| Status | **642 rows** ✅ |
+|--------|----------------|
 | **Purpose** | Aftermarket and OEM+ parts database |
 | **Key Fields** | `id`, `name`, `brand_name`, `part_number`, `category`, `description`, `quality_tier`, `street_legal`, `is_active`, `source_urls` |
 | **Categories** | intake, exhaust, tune, suspension, brakes, cooling, etc. |
 | **Used By** | Tuning Shop, AL `search_parts` tool |
 
 ### `part_fitments` — Car-to-part mapping
-| Status | **836 rows** |
-|--------|-------------|
+| Status | **836 rows** ✅ |
+|--------|----------------|
 | **Purpose** | Which parts fit which cars |
-| **Key Fields** | `part_id`, `car_id`, `fitment_notes`, `requires_tune`, `install_difficulty`, `estimated_labor_hours`, `verified`, `confidence`, `source_url` |
+| **Key Fields** | `part_id`, `car_id`, `car_variant_id`, `fitment_notes`, `requires_tune`, `install_difficulty`, `estimated_labor_hours`, `verified`, `confidence`, `source_url` |
 | **Used By** | Parts search with car filter |
 
 ### `part_pricing_snapshots` — Price tracking
-| Status | **173 rows** |
+| Status | **172 rows** |
 |--------|-------------|
 | **Purpose** | Historical price data from vendors |
-| **Key Fields** | `part_id`, `price_cents`, `currency`, `recorded_at`, `product_url`, `vendor_name` |
+| **Key Fields** | `part_id`, `vendor_name`, `vendor_url`, `product_url`, `currency`, `price_cents`, `in_stock`, `recorded_at` |
 | **Used By** | AL parts recommendations, build cost estimates |
 
 ### `part_relationships` — Compatibility
@@ -206,34 +221,27 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Status | **3 rows** |
 |--------|----------|
 | **Purpose** | Brand information |
-| **Key Fields** | `name`, `quality_tier`, `website_url` |
+| **Key Fields** | `name`, `website`, `country`, `notes` |
 
 ### `upgrade_keys` — Upgrade reference
 | Status | **49 rows** |
 |--------|------------|
 | **Purpose** | Canonical upgrade definitions |
-| **Key Fields** | `key`, `name`, `category`, `description` |
+| **Key Fields** | `key`, `name`, `category`, `description`, `typical_cost_low`, `typical_cost_high` |
 | **Used By** | Encyclopedia, AL upgrade info |
 
 ### `upgrade_packages` — Curated bundles
 | Status | **42 rows** |
 |--------|------------|
 | **Purpose** | Pre-built upgrade packages (Street Sport, Track Pack, Time Attack) |
-| **Key Fields** | `name`, `tier`, `category`, `estimated_cost_low`, `estimated_cost_high`, `performance_deltas` |
+| **Key Fields** | `name`, `tier`, `category`, `estimated_cost_low`, `estimated_cost_high`, delta fields for performance |
 | **Used By** | Tuning Shop package selection |
 
 ### `upgrade_key_parts` — Package contents
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Link upgrade_keys to specific parts |
 | **Future Use** | Show actual parts in upgrade packages |
-
-### `upgrade_education` — STATIC DATA (Not a database table)
-| Status | **Static file: `data/upgradeEducation.js`** |
-|--------|---------------------------------------------|
-| **Note** | This data is NOT stored in the database. It's a static JavaScript file with 49 upgrade education entries. |
-| **Key Fields** | `key`, `slug`, `name`, `category`, `description`, `difficulty`, `skill_required`, `estimated_time`, `tools_needed`, `pros`, `cons`, `tips` |
-| **Used By** | Encyclopedia, Tuning Shop |
 
 ### Encyclopedia Hierarchy — STATIC DATA (Not database tables)
 
@@ -241,37 +249,10 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 | File | Purpose | Record Count |
 |------|---------|--------------|
-| `lib/encyclopediaHierarchy.js` | System → Topic structure | 10 systems, 136 topics (100% complete) |
+| `lib/encyclopediaHierarchy.js` | System → Topic structure | 9 systems, 136 topics (100% complete) |
 | `data/upgradeEducation.js` | Modification articles | 49 entries |
 | `lib/educationData.js` | Build goals and paths | 6 goals, 6 paths |
 | `data/connectedTissueMatrix.js` | Legacy systems/nodes (still used) | 14 systems, ~60 nodes |
-
-**Encyclopedia Topic Structure:**
-```javascript
-{
-  slug: 'bore',
-  name: 'Bore',
-  component: 'engine-block',
-  system: 'engine',
-  definition: '...',
-  howItWorks: '...',
-  whyItMatters: '...',
-  modPotential: '...',           // optional
-  relatedUpgradeKeys: ['...'],   // links to upgrade_education
-  status: 'complete' | 'stub'
-}
-```
-
-**Upgrade Key Mapping:**
-The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing upgrade keys to relevant topics:
-```javascript
-{
-  'cold-air-intake': ['intake-design', 'map-maf-sensors'],
-  'coilovers': ['coilover-adjustment'],
-  'ecu-tune': ['ecu-basics', 'ignition-timing', 'flash-standalone'],
-  // ... 49 total mappings
-}
-```
 
 ---
 
@@ -281,63 +262,60 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | Status | **2 rows** |
 |--------|----------|
 | **Purpose** | User preferences and subscription tier |
-| **Key Fields** | `id` (auth.users FK), `display_name`, `subscription_tier`, `preferences` |
+| **Key Fields** | `id` (auth.users FK), `display_name`, `avatar_url`, `subscription_tier`, `preferred_units`, `email_notifications` |
 | **Used By** | Auth, tier gating |
 
 ### `user_favorites` — Saved cars
-| Status | **3 rows** |
+| Status | **10 rows** |
 |--------|----------|
 | **Purpose** | Cars saved to garage favorites |
-| **Key Fields** | `user_id`, `car_slug`, `notes`, `created_at` |
+| **Key Fields** | `user_id`, `car_slug`, `car_id`, `car_name`, `notes`, `created_at` |
 | **Used By** | My Garage favorites |
 
 ### `user_projects` — Build projects
 | Status | **4 rows** |
 |--------|----------|
 | **Purpose** | User's saved build projects |
-| **Key Fields** | `user_id`, `car_slug`, `name`, `goal`, `budget`, `status` |
+| **Key Fields** | `user_id`, `car_slug`, `car_id`, `project_name`, `selected_upgrades`, `total_hp_gain`, `total_cost_low`, `total_cost_high` |
 | **Used By** | Tuning Shop builds (Tuner tier) |
 
 ### `user_feedback` — User feedback
-| Status | **1+ rows** |
-|--------|-------------|
+| Status | **2 rows** |
+|--------|-----------|
 | **Purpose** | Beta and user feedback submitted through FeedbackWidget |
-| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email` |
-| **Beta Fields** | `category` (bug/feature/data/general/praise), `severity` (blocking/major/minor for bugs), `rating` (1-5), `user_tier`, `feature_context`, `resolved_at`, `resolved_by` |
-| **Auto-Captured** | `browser_info` (JSONB), `screen_width`, `screen_height`, `session_id` |
-| **Admin Fields** | `status`, `priority`, `internal_notes`, `assigned_to` |
+| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email`, `category`, `severity`, `rating`, `user_tier`, `feature_context`, `status` |
 | **Used By** | FeedbackWidget, FeedbackCorner, internal admin page |
 
 ### `user_vehicles` — Owned vehicles
-| Status | **2 rows** |
+| Status | **4 rows** |
 |--------|----------|
 | **Purpose** | User's owned vehicles with VIN |
-| **Key Fields** | `user_id`, `car_slug`, `variant_id`, `vin`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
+| **Key Fields** | `user_id`, `matched_car_slug`, `matched_car_id`, `matched_car_variant_id`, `vin`, `year`, `make`, `model`, `trim`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
 | **Used By** | Collector tier ownership features, My Garage |
 
 ### `user_service_logs` — Service records
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Maintenance history for owned vehicles |
-| **Key Fields** | `user_vehicle_id`, `service_type`, `service_date`, `mileage`, `cost`, `notes`, `shop_name` |
+| **Key Fields** | `user_vehicle_id`, `service_type`, `service_date`, `odometer_reading`, `performed_by`, `shop_name`, `parts_cost`, `labor_cost`, `total_cost` |
 | **Future Use** | Collector tier service tracking |
 
 ### `user_project_parts` — Build part selections
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Parts added to build projects |
-| **Key Fields** | `project_id`, `part_id`, `quantity`, `status`, `notes` |
+| **Key Fields** | `project_id`, `part_id`, `quantity`, `part_name`, `brand_name`, `price_cents` |
 | **Future Use** | Tuner tier build details |
 
 ### `user_compare_lists` — Compare sessions
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Saved comparison lists |
 | **Future Use** | Collector tier compare feature |
 
 ### `user_activity` — Activity tracking
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | User engagement analytics |
 | **Future Use** | Usage insights |
 
@@ -346,25 +324,25 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 ## Maintenance (3 tables)
 
 ### `vehicle_maintenance_specs` — Fluid/capacity specs
-| Status | **98 rows** |
-|--------|------------|
+| Status | **98 rows** ✅ |
+|--------|--------------|
 | **Purpose** | Oil, coolant, brake fluid, tire specs per car |
 | **Columns** | 130 columns (comprehensive!) |
 | **Key Fields** | `car_slug`, `oil_type`, `oil_viscosity`, `oil_capacity_liters`, `oil_change_interval_miles`, `coolant_type`, `brake_fluid_type`, `tire_size_front`, `tire_size_rear`, `tire_pressure_front_psi` |
 | **Used By** | Owner's Reference, AL `get_maintenance_schedule` tool |
 
 ### `vehicle_service_intervals` — Service schedules
-| Status | **976 rows** |
-|--------|-------------|
+| Status | **976 rows** ✅ |
+|--------|---------------|
 | **Purpose** | When each service is due |
-| **Key Fields** | `car_slug`, `service_name`, `interval_miles`, `interval_months`, `category`, `estimated_cost_low`, `estimated_cost_high` |
+| **Key Fields** | `car_slug`, `service_name`, `service_description`, `interval_miles`, `interval_months`, `dealer_cost_low`, `dealer_cost_high`, `diy_cost_low`, `diy_cost_high`, `is_critical` |
 | **Used By** | Service reminders |
 
 ### `vehicle_known_issues` — Common problems
 | Status | **89 rows** |
 |--------|------------|
-| **Purpose** | Duplicate/legacy of `car_issues` |
-| **Note** | May be consolidated with `car_issues` |
+| **Purpose** | Structured known issues (complements `car_issues`) |
+| **Key Fields** | `car_slug`, `issue_type`, `issue_title`, `issue_description`, `severity`, `fix_description`, `estimated_repair_cost_low`, `estimated_repair_cost_high` |
 
 ---
 
@@ -374,29 +352,29 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | Status | **7 rows** |
 |--------|----------|
 | **Purpose** | AL conversation metadata |
-| **Key Fields** | `id`, `user_id`, `title`, `car_context_slug`, `message_count`, `created_at`, `last_message_at` |
+| **Key Fields** | `id`, `user_id`, `title`, `summary`, `initial_car_slug`, `message_count`, `total_credits_used`, `last_message_at` |
 
 ### `al_messages` — Chat messages
 | Status | **33 rows** |
 |--------|-----------|
 | **Purpose** | Individual messages in conversations |
-| **Key Fields** | `conversation_id`, `role` (user/assistant), `content`, `tool_calls`, `token_count_input`, `token_count_output`, `cost_cents` |
+| **Key Fields** | `conversation_id`, `role` (user/assistant), `content`, `tool_calls`, `credits_used`, `response_tokens`, `sequence_number` |
 
 ### `al_user_credits` — Credit balances
 | Status | **2 rows** |
 |--------|----------|
 | **Purpose** | User's AL usage balance in cents |
-| **Key Fields** | `user_id`, `balance_cents`, `lifetime_spent_cents`, `lifetime_earned_cents`, `plan_id` |
+| **Key Fields** | `user_id`, `subscription_tier`, `balance_cents`, `purchased_cents`, `spent_cents_this_month`, `input_tokens_this_month`, `output_tokens_this_month`, `is_unlimited` |
 
 ### `al_usage_logs` — Usage tracking
 | Status | **3 rows** |
 |--------|----------|
 | **Purpose** | Detailed AL usage logging |
-| **Key Fields** | `user_id`, `message_id`, `input_tokens`, `output_tokens`, `cost_cents`, `tool_calls_count` |
+| **Key Fields** | `user_id`, `credits_used`, `tool_calls`, `input_tokens`, `output_tokens`, `cost_cents`, `model` |
 
 ### `al_credit_purchases` — Purchase history
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Credit/top-up purchase records |
 | **Future Use** | Payment integration |
 
@@ -408,14 +386,13 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | Status | **54 rows** |
 |--------|------------|
 | **Purpose** | Ingested documents (guides, transcripts) |
-| **Key Fields** | `id`, `title`, `url`, `source_type`, `car_id`, `content_hash` |
+| **Key Fields** | `id`, `source_type`, `source_url`, `source_title`, `license`, `raw_text`, `metadata` |
 
 ### `document_chunks` — Vector embeddings
-| Status | **547 rows** |
-|--------|-------------|
+| Status | **547 rows** ✅ |
+|--------|---------------|
 | **Purpose** | Chunked content with embeddings for semantic search |
-| **Key Fields** | `document_id` (FK→source_documents), `chunk_index`, `chunk_text`, `embedding`, `topic` |
-| **Columns** | `id`, `document_id` (FK→source_documents), `car_id`, `car_slug`, `chunk_index`, `chunk_text`, `chunk_tokens`, `topic`, `embedding_model`, `embedding` (vector), `metadata` (JSONB), `created_at`, `updated_at` |
+| **Key Fields** | `document_id` (FK→source_documents), `car_id`, `car_slug`, `chunk_index`, `chunk_text`, `chunk_tokens`, `topic`, `embedding_model`, `embedding` (vector) |
 | **Used By** | AL `search_knowledge` tool |
 | **Note** | Column is `document_id` (not `source_document_id`) |
 
@@ -424,29 +401,30 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 ## YouTube (4 tables)
 
 ### `youtube_videos` — Video metadata
-| Status | **288 rows** |
-|--------|-------------|
+| Status | **288 rows** ✅ |
+|--------|----------------|
 | **Purpose** | YouTube video details and AI summaries |
-| **Key Fields** | `youtube_id`, `title`, `channel_name`, `url`, `duration_seconds`, `summary`, `one_line_take`, `key_points`, `pros_mentioned`, `cons_mentioned`, `notable_quotes` |
+| **Key Fields** | `video_id`, `url`, `title`, `channel_id`, `channel_name`, `duration_seconds`, `view_count`, `summary`, `one_line_take`, `key_points`, `pros_mentioned`, `cons_mentioned`, `notable_quotes`, `quality_score` |
 
 ### `youtube_video_car_links` — Video-to-car mapping
 | Status | **291 rows** |
 |--------|-------------|
 | **Purpose** | Which videos are about which cars |
-| **Key Fields** | `video_id`, `car_id`, `relevance_score`, `review_type` |
+| **Key Fields** | `video_id`, `car_slug`, `car_id`, `role`, sentiment fields, `match_confidence` |
 | **Used By** | Expert Reviews tab |
 
 ### `youtube_channels` — Channel metadata
 | Status | **12 rows** |
 |--------|------------|
 | **Purpose** | Trusted YouTube channels |
-| **Key Fields** | `channel_id`, `name`, `trust_score`, `expertise_areas` |
+| **Key Fields** | `channel_id`, `channel_name`, `channel_handle`, `credibility_tier`, `content_focus`, `primary_brands`, `auto_ingest` |
 | **Channels** | Throttle House, Savagegeese, Doug DeMuro, etc. |
 
 ### `youtube_ingestion_queue` — Processing queue
 | Status | **2 rows** |
 |--------|----------|
 | **Purpose** | Videos pending AI processing |
+| **Key Fields** | `video_id`, `video_url`, `channel_id`, `discovered_via`, `target_car_slug`, `status`, `priority`, `attempts` |
 
 ---
 
@@ -456,53 +434,55 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | Status | **21 rows** |
 |--------|------------|
 | **Purpose** | Track/circuit metadata |
-| **Key Fields** | `slug`, `name`, `location`, `country`, `length_meters`, `turns` |
+| **Key Fields** | `slug`, `name`, `country`, `region`, `city`, `length_km`, `surface`, `website` |
 
 ### `track_layouts` — Layout variants
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Different configurations per track |
+| **Key Fields** | `track_id`, `layout_key`, `name`, `length_km`, `turns`, `direction` |
 | **Future Use** | Multiple layouts per venue |
 
 ---
 
 ## Forum Intelligence (5 tables)
 
-> **NEW:** Forum scraping and community insight extraction system.
+> Forum scraping and community insight extraction system — **NOW ACTIVE**
 
 ### `forum_sources` — Forum registry
-| Status | **6 rows** (seeded) |
-|--------|---------------------|
+| Status | **14 rows** ✅ |
+|--------|---------------|
 | **Purpose** | Registry of forums to scrape with configuration |
-| **Key Fields** | `slug`, `name`, `base_url`, `platform` (xenforo/vbulletin), `car_brands[]`, `car_slugs[]`, `scrape_config` (JSONB), `priority`, `is_active`, `last_scraped_at`, `total_threads_scraped`, `total_insights_extracted` |
-| **Seeded Forums** | Rennlist, Bimmerpost, Miata.net, FT86Club, CorvetteForum, VWVortex |
+| **Key Fields** | `slug`, `name`, `base_url`, `car_brands[]`, `car_slugs[]`, `scrape_config` (JSONB), `priority`, `is_active`, `last_scraped_at`, `total_threads_scraped`, `total_insights_extracted` |
+| **Forums** | Rennlist, Bimmerpost, Miata.net, FT86Club, CorvetteForum, VWVortex, and more |
 | **Used By** | Forum scraper cron job |
 
 ### `forum_scrape_runs` — Scrape session tracking
-| Status | **0 rows** (operational) |
-|--------|--------------------------|
+| Status | **10 rows** |
+|--------|------------|
 | **Purpose** | Track each scraping session for debugging |
-| **Key Fields** | `forum_source_id`, `car_slug`, `run_type` (discovery/targeted/backfill), `status` (pending/running/completed/failed), `threads_found`, `threads_scraped`, `posts_scraped`, `insights_extracted`, `error_message` |
+| **Key Fields** | `forum_source_id`, `car_slug`, `run_type`, `status`, `threads_found`, `threads_scraped`, `posts_scraped`, `insights_extracted`, `error_message` |
 | **Used By** | Forum scraper, internal monitoring |
 
 ### `forum_scraped_threads` — Raw scraped content
-| Status | **0 rows** (staging) |
-|--------|----------------------|
-| **Purpose** | Raw scraped forum threads awaiting AI extraction |
-| **Key Fields** | `thread_url` (unique), `thread_title`, `subforum`, `posts` (JSONB array), `processing_status` (pending/processing/completed/failed/no_insights), `relevance_score`, `car_slugs_detected[]` |
+| Status | **175 rows** |
+|--------|-------------|
+| **Purpose** | Raw scraped forum threads awaiting/completed AI extraction |
+| **Key Fields** | `thread_url`, `thread_title`, `subforum`, `posts` (JSONB), `processing_status`, `relevance_score`, `car_slugs_detected[]`, `insights_extracted`, `quality_score` |
 | **Used By** | Insight extractor, internal processing |
 
 ### `community_insights` — Extracted insights (THE VALUE OUTPUT)
-| Status | **0 rows** (building) |
-|--------|-----------------------|
+| Status | **1,226 rows** ⚠️ |
+|--------|------------------|
 | **Purpose** | Structured insights extracted from forum content |
-| **Key Fields** | `car_slug`, `insight_type`, `title`, `summary`, `details` (JSONB), `confidence` (0-1), `consensus_strength` (strong/moderate/single_source), `source_forum`, `source_urls[]`, `embedding` (vector 1536) |
+| **Key Fields** | `car_slug`, `car_id`, `insight_type`, `title`, `summary`, `details` (JSONB), `confidence`, `consensus_strength`, `source_forum`, `source_urls[]`, `embedding` (vector) |
 | **Insight Types** | `known_issue`, `maintenance_tip`, `modification_guide`, `troubleshooting`, `buying_guide`, `performance_data`, `reliability_report`, `cost_insight`, `comparison` |
 | **Used By** | AL `search_community_insights` tool |
+| **Gap Note** | Currently only Porsche models have insights (10/98 cars). 88 cars have zero community insights. P1 priority for expansion to other brands. |
 
 ### `community_insight_sources` — Multi-source tracking
-| Status | **0 rows** (junction) |
-|--------|-----------------------|
+| Status | **1,226 rows** |
+|--------|---------------|
 | **Purpose** | Links insights to multiple supporting forum threads |
 | **Key Fields** | `insight_id`, `thread_id`, `thread_url`, `forum_slug`, `relevance_score`, `extracted_quotes[]` |
 | **Used By** | Insight consolidation, citation tracking |
@@ -511,110 +491,152 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 
 ## Events (6 tables)
 
-> **NEW:** Car events aggregator feature - Cars & Coffee, track days, shows, auctions.
+> Car events aggregator feature - Cars & Coffee, track days, shows, auctions — **NOW ACTIVE**
 
 ### `event_types` — Event taxonomy
-| Status | **10 rows** (seeded) |
-|--------|----------------------|
+| Status | **10 rows** ✅ |
+|--------|---------------|
 | **Purpose** | Categories of car events |
 | **Key Fields** | `slug`, `name`, `description`, `icon` (emoji), `sort_order`, `is_track_event` |
-| **Seeded Types** | cars-and-coffee, car-show, club-meetup, cruise, autocross, track-day, time-attack, industry, auction, other |
+| **Types** | cars-and-coffee, car-show, club-meetup, cruise, autocross, track-day, time-attack, industry, auction, other |
 | **Used By** | Events API, event filtering |
 
 ### `events` — Core event data
-| Status | **15 rows** (seeded) |
-|--------|----------------------|
+| Status | **55 rows** ⚠️ |
+|--------|----------------|
 | **Purpose** | Car events with location, dates, and details |
+| **Gap Note** | Events count dropped from ~940 to 55. Requires re-ingestion from sources. |
 | **Key Fields** | `slug`, `name`, `description`, `event_type_id`, `start_date`, `end_date`, `start_time`, `end_time`, `timezone` |
 | **Location Fields** | `venue_name`, `address`, `city`, `state`, `zip`, `country`, `latitude`, `longitude`, `region`, `scope` |
 | **Meta Fields** | `source_url`, `source_name`, `registration_url`, `image_url`, `cost_text`, `is_free`, `status`, `featured` |
 | **Used By** | Events pages, /api/events |
 
 ### `event_car_affinities` — Event-car/brand links
-| Status | **15 rows** (seeded) |
-|--------|----------------------|
-| **Purpose** | Links events to specific cars or brands (e.g., Porsche-only events) |
+| Status | **0 rows** ⬜ |
+|--------|------------|
+| **Purpose** | Links events to specific cars or brands |
 | **Key Fields** | `event_id`, `car_id` (nullable), `brand` (nullable), `affinity_type` (featured/welcome/exclusive) |
 | **Used By** | Event filtering by car affinity, event detail pages |
 
 ### `event_saves` — User saved events
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | User-bookmarked events |
 | **Key Fields** | `user_id`, `event_id`, `notes` |
-| **Future Use** | Event saving feature (Phase 2) |
+| **Future Use** | Event saving feature active but no saves yet |
 
 ### `event_submissions` — User-submitted events
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | User-submitted events pending moderation |
 | **Key Fields** | `user_id`, `name`, `event_type_slug`, `source_url`, `start_date`, `city`, `state`, `status`, `reviewed_by`, `rejection_reason` |
-| **Future Use** | Event submission form (Phase 2) |
+| **Future Use** | Event submission form active but no submissions yet |
 
 ### `event_sources` — Automated ingestion config
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **13 rows** ✅ |
+|--------|-------------|
 | **Purpose** | Configuration for automated event data sources |
-| **Key Fields** | `name`, `source_type` (api/scrape/rss/manual), `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active` |
-| **Future Use** | Automated event ingestion (Phase 3) |
+| **Key Fields** | `name`, `source_type`, `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active`, `last_run_at`, `last_run_events` |
+| **Used By** | Automated event ingestion cron |
 
 ---
 
-## System (4 tables + 1 materialized view)
+## System (5 tables + 2 materialized views)
 
 ### `cars_stats` — Aggregated car statistics (Materialized View)
 | Status | **3 rows** |
 |--------|-----------|
-| **Type** | Materialized view (not a table) |
+| **Type** | Materialized view |
 | **Purpose** | Pre-computed aggregate statistics by engine layout category |
-| **Key Fields** | `category` (Front-Engine/Mid-Engine/Rear-Engine), `count`, `avg_price`, `avg_hp`, `min_price`, `max_price`, `avg_0_60` |
-| **Used By** | Dashboard statistics, internal analytics |
+| **Key Fields** | `category` (Front-Engine/Mid-Engine/Rear-Engine), `count`, `avg_price`, `avg_hp` |
+| **Used By** | Dashboard statistics |
 
 ### `scrape_jobs` — Data ingestion jobs
-| Status | **107 rows** |
+| Status | **124 rows** |
 |--------|-------------|
 | **Purpose** | Track scraping/enrichment jobs |
-| **Key Fields** | `id`, `source`, `car_slug`, `status`, `result`, `error` |
+| **Key Fields** | `id`, `job_type`, `car_slug`, `car_id`, `status`, `priority`, `sources_attempted[]`, `sources_succeeded[]`, `error_message` |
 
 ### `fitment_tag_mappings` — Fitment normalization
 | Status | **124 rows** |
 |--------|-------------|
 | **Purpose** | Map vendor fitment tags to cars |
+| **Key Fields** | `vendor_key`, `tag`, `tag_kind`, `car_id`, `car_variant_id`, `confidence` |
 
 ### `leads` — Contact submissions
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Contact form submissions |
-| **Key Fields** | `email`, `name`, `source`, `interest`, `message`, `car_slug` |
+| **Key Fields** | `email`, `name`, `source`, `car_interest_slug`, `car_interest_id`, `metadata` |
 
 ### `car_variant_maintenance_overrides` — Variant-specific specs
-| Status | **0 rows** (empty) |
-|--------|-------------------|
+| Status | **0 rows** ⬜ |
+|--------|---------------|
 | **Purpose** | Override maintenance specs for specific variants |
 | **Future Use** | E.g., different oil capacity for Competition vs base |
+
+### Views (not tables)
+
+| View | Purpose | Type |
+|------|---------|------|
+| `al_user_balance` | User balance calculation | View |
+| `feedback_bug_triage` | Bug feedback filtering | View |
+| `feedback_by_tier` | Feedback aggregated by tier | View |
+
+---
+
+## Known Data Gaps & Expansion Priorities
+
+### P1 — Critical (Feature Blocking)
+
+| Gap | Current | Target | Affected Features | Strategy |
+|-----|---------|--------|-------------------|----------|
+| **Market Pricing** | 10/98 cars | 98/98 | My Garage Value tab | Expand BaT/Cars.com scrapers |
+| **Part Fitments** | 836 fitments (~15% coverage) | Full catalog | Parts search, Build planner | Multi-vendor ingestion pipeline |
+| **Community Insights** | 10/98 cars (Porsche only) | 98/98 | AL tool, car detail | Expand forum scraping to BMW, Nissan, etc. |
+| **Events** | 55 events | 500+ | Events pages | Re-run event source ingestion |
+
+### P2 — Important (Feature Enhancement)
+
+| Gap | Current | Target | Affected Features | Strategy |
+|-----|---------|--------|-------------------|----------|
+| **Dyno Data** | 29 runs | 200+ | Tuning Shop, AL | Community submissions, forum extraction |
+| **Lap Times** | 65 records | 300+ | Performance benchmarks | Fastestlaps.com, community |
+| **Recall Coverage** | 469 campaigns (~50% cars) | 100% cars | Safety pages | Weekly NHTSA refresh |
+
+### P3 — Nice to Have
+
+| Gap | Current | Target | Affected Features | Strategy |
+|-----|---------|--------|-------------------|----------|
+| **YouTube Videos** | 288 videos | 500+ | Expert Reviews | Expand channel list |
+| **Price History** | 7 records | Time series data | Value trends | BaT historical data |
 
 ---
 
 ## Data Population Summary
 
 ### Well Populated (80%+ coverage)
-- `cars` (98/98) — 100%
-- `car_safety_data` (98/98) — 100%
-- `vehicle_maintenance_specs` (98/98) — 100%
-- `car_fuel_economy` (98/98) — 100%
-- `car_issues` (154 records)
-- `car_recalls` (241 records)
+- ✅ `cars` (98/98) — 100%
+- ✅ `car_safety_data` (98/98) — 100%
+- ✅ `car_fuel_economy` (98/98) — 100%
+- ✅ `vehicle_maintenance_specs` (98/98) — 100%
+- ✅ `vehicle_service_intervals` (976 records)
+- ✅ `car_issues` (1,201 records)
+- ✅ `car_recalls` (469 records, 69/98 cars)
+- ⚠️ `community_insights` (1,226 records — **Porsche-only, 10/98 cars**)
+- ⚠️ `events` (55 events — **needs re-ingestion**)
 
 ### Significantly Expanded
 - `parts` (642 records)
 - `part_fitments` (836 records)
-- `car_dyno_runs` (29 records)
-- `car_track_lap_times` (65 records)
+- `forum_scraped_threads` (175 threads)
 - `fitment_tag_mappings` (124 records)
 
 ### Partially Populated
-- `car_market_pricing` (10/98 cars)
-- `car_market_pricing_years` (23 records)
+- ⚠️ `car_market_pricing` (10/98 cars)
+- ⚠️ `car_market_pricing_years` (23 records)
+- ⚠️ `car_dyno_runs` (29 records)
+- ⚠️ `car_track_lap_times` (65 records)
 
 ### Empty (Future Use)
 | Table | Future Purpose |
@@ -628,6 +650,8 @@ The `upgradeKeyToTopics` map in `lib/encyclopediaHierarchy.js` links existing up
 | `track_layouts` | Multiple track configurations |
 | `upgrade_key_parts` | Link upgrades to specific parts |
 | `al_credit_purchases` | Payment integration |
+| `event_saves` | User bookmarked events |
+| `event_submissions` | User submitted events |
 
 ---
 
@@ -671,8 +695,12 @@ AutoRev uses PostgreSQL functions for complex queries. These are called via `sup
 | `get_data_freshness(p_car_slug)` | Check when data was last updated | QA, staleness checks |
 | `get_quick_car_stats()` | Dashboard statistics | Admin dashboard |
 | `get_feedback_counts()` | Feedback analytics | Feedback review |
+| `get_feedback_summary()` | Feedback summary stats | Feedback review |
+| `resolve_feedback(p_feedback_id, ...)` | Mark feedback resolved | Admin |
+| `get_unresolved_bugs()` | Get unresolved bug reports | Admin |
 | `resolve_car_and_variant_from_vin_decode(...)` | Match VIN decode to car/variant | VIN decode flow |
 | `parse_years_range(p_years)` | Parse "2015-2020" to year array | Data normalization |
+| `normalize_car_slug(p_slug)` | Normalize slug for lookup | Slug resolution |
 
 ### Triggers
 
@@ -680,12 +708,14 @@ AutoRev uses PostgreSQL functions for complex queries. These are called via `sup
 |----------|---------|------------|
 | `handle_new_user()` | Initialize user profile, AL credits | `auth.users` INSERT |
 | `update_updated_at_column()` | Auto-update `updated_at` | Various tables UPDATE |
+| `update_timestamp()` | Auto-update timestamp | Various tables |
+| `update_events_updated_at()` | Events timestamp update | `events` UPDATE |
 
 ---
 
 ## Foreign Key Relationships
 
-The database uses 64 foreign key constraints. Key relationship patterns:
+The database uses 80+ foreign key constraints. Key relationship patterns:
 
 ### Cars as Central Entity
 
@@ -709,6 +739,7 @@ The database uses 64 foreign key constraints. Key relationship patterns:
    car_fuel_economy   car_safety_data   car_issues
    car_recalls        car_market_*      car_dyno_runs
    car_track_lap_times                  youtube_video_car_links
+   community_insights                   events (via car_affinities)
 ```
 
 ### Parts Relationships
@@ -762,10 +793,13 @@ favorites  vehicles    projects     conversations
 | **Fuel Economy** | EPA API | On demand | `/api/cars/[slug]/fuel-economy` |
 | **Safety Ratings** | NHTSA API | On demand | `/api/cars/[slug]/safety` |
 | **Recalls** | NHTSA API | Weekly (Sun 2:30am) | `/api/cron/refresh-recalls` |
+| **Complaints** | NHTSA API | Weekly (Sun 4am) | `/api/cron/refresh-complaints` |
 | **YouTube Videos** | YouTube Data API | Weekly (Mon 4am) | `/api/cron/youtube-enrichment` |
 | **Parts Catalog** | Vendor APIs (Shopify) | Weekly (Sun 2am) | `/api/cron/schedule-ingestion` |
 | **Market Pricing** | Scrapers (BaT, Cars.com) | Manual | Scrape jobs |
 | **Knowledge Base** | Manual ingestion | As needed | `/api/internal/knowledge/ingest` |
+| **Forum Insights** | Forum scrapers | Bi-weekly (Tue, Fri 5am) | `/api/cron/forum-scrape` |
+| **Events** | API + scrapers | Weekly (Mon 6am) | `/api/cron/refresh-events` |
 
 ---
 
@@ -779,9 +813,11 @@ Critical indexes for query performance:
 | `cars` | `cars_search_vector_idx` | GIN | Full-text search |
 | `cars` | `cars_embedding_idx` | HNSW | Vector similarity |
 | `document_chunks` | `document_chunks_embedding_idx` | HNSW | Knowledge base search |
+| `community_insights` | embedding index | HNSW | Insight similarity search |
 | `part_fitments` | `idx_part_fitments_car_id` | BTREE | Parts by car |
 | `part_fitments` | `idx_part_fitments_part_id` | BTREE | Fitments by part |
 | `youtube_video_car_links` | `idx_youtube_video_car_links_car_id` | BTREE | Videos by car |
+| `events` | location indexes | BTREE | Geographic search |
 
 ---
 
@@ -789,7 +825,7 @@ Critical indexes for query performance:
 
 | Table Pattern | Policy | Access |
 |---------------|--------|--------|
-| `cars`, `parts`, `youtube_*` | Public read | Anyone can read |
+| `cars`, `parts`, `youtube_*`, `events` | Public read | Anyone can read |
 | `user_*` | User owns row | `auth.uid() = user_id` |
 | `al_conversations`, `al_messages` | User owns row | `auth.uid() = user_id` |
 | Internal tables (`scrape_jobs`) | Service role only | Admin/cron only |
@@ -805,14 +841,14 @@ For reference, here are the column counts per table:
 | `cars` | **139** | Most comprehensive — specs, scores, AI embeddings |
 | `vehicle_maintenance_specs` | **130** | Oil, coolant, brake fluid, tires, etc. |
 | `youtube_videos` | **39** | Video metadata + AI-extracted insights |
+| `events` | **33** | Event details + location + metadata |
 | `upgrade_packages` | **30** | Package configs + performance deltas |
 | `car_dyno_runs` | **30** | Dyno measurements + mod context |
 | `car_market_pricing` | **30** | Multi-source price aggregation |
 | `car_safety_data` | **29** | NHTSA + IIHS ratings |
+| `community_insights` | **26** | Forum-extracted insights + embedding |
 | `user_vehicles` | **26** | VIN, ownership, mileage tracking |
 
 ---
 
 *See [API.md](API.md) for how to access this data.*
-
-

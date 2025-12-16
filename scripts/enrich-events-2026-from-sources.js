@@ -20,8 +20,9 @@ import 'dotenv/config';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 
-import { fetchFromSource, getRegionFromState } from '../lib/eventSourceFetchers/index.js';
+import { fetchFromSource } from '../lib/eventSourceFetchers/index.js';
 import { deduplicateBatch } from '../lib/eventDeduplication.js';
+import { buildEventRows } from '../lib/eventsIngestion/buildEventRows.js';
 
 dotenv.config({ path: '.env.local' });
 
@@ -37,22 +38,6 @@ function parseArgs(argv) {
     out[k] = v;
   }
   return out;
-}
-
-function generateSlug(name, city, startDate) {
-  const base = String(name || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .substring(0, 50);
-
-  const location = String(city || 'usa')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .substring(0, 20);
-
-  const date = String(startDate || '').replace(/-/g, '').substring(0, 8);
-  return `${base}-${location}-${date}`.substring(0, 80);
 }
 
 async function main() {
@@ -123,6 +108,9 @@ async function main() {
   }
   const existingEventsList = existingEvents || [];
   const existingSlugSet = new Set(existingEventsList.map((e) => e.slug));
+  const existingSlugByConflictKey = new Map(
+    existingEventsList.map((e) => [`${String(e.source_url || '').trim()}|${String(e.start_date || '').trim()}`, e.slug])
+  );
 
   let totalDiscovered = 0;
   let totalUnique = 0;
@@ -131,6 +119,37 @@ async function main() {
 
   for (const source of sourcesFound) {
     console.log(`\n--- Source: ${source.name} ---`);
+    const nowIso = new Date().toISOString();
+
+    // Create scrape job for provenance
+    const { data: jobRow, error: jobErr } = await supabase
+      .from('scrape_jobs')
+      .insert({
+        job_type: 'events_enrich_2026',
+        status: 'running',
+        priority: 5,
+        source_key: source.name,
+        started_at: nowIso,
+        sources_attempted: [source.name],
+        job_payload: {
+          kind: 'events_enrich_2026',
+          source_id: source.id,
+          source_name: source.name,
+          rangeStart,
+          rangeEnd,
+          limit,
+          dryRun,
+        },
+      })
+      .select('id')
+      .single();
+
+    if (jobErr || !jobRow?.id) {
+      console.error(`❌ Failed to create scrape_job for ${source.name}:`, jobErr?.message || 'unknown error');
+      continue;
+    }
+    const scrapeJobId = jobRow.id;
+
     const { events: rawEvents, errors } = await fetchFromSource(source, {
       limit,
       dryRun: false, // fetch even in dryRun so we can preview counts
@@ -142,73 +161,101 @@ async function main() {
       for (const e of errors) allErrors.push(`[${source.name}] ${e}`);
     }
 
-    // Deduplicate vs existing (URL/name/date/city logic)
-    const { unique, duplicates } = deduplicateBatch(rawEvents, existingEventsList);
-    totalUnique += unique.length;
-    console.log(`discovered: ${rawEvents.length}, duplicates: ${duplicates.length}, unique: ${unique.length}`);
+    // Observability: compute duplicates vs existing, but DO NOT drop them.
+    const { duplicates: duplicatesVsExisting } = deduplicateBatch(rawEvents, existingEventsList);
 
-    // Prepare rows
-    const rows = [];
-    for (const ev of unique) {
-      const eventTypeId =
-        (ev.event_type_slug && eventTypeIdBySlug.get(ev.event_type_slug)) || otherTypeId || null;
+    // Deduplicate only within this batch so we can upsert + refresh provenance for existing events.
+    const { unique: uniqueWithinBatch } = deduplicateBatch(rawEvents, []);
+    totalUnique += uniqueWithinBatch.length;
+    console.log(
+      `discovered: ${rawEvents.length}, existing_matches: ${duplicatesVsExisting.length}, to_upsert: ${uniqueWithinBatch.length}`
+    );
 
-      const region = ev.region || (ev.state ? getRegionFromState(ev.state) : null);
-      const baseSlug = generateSlug(ev.name, ev.city, ev.start_date);
-      let slug = baseSlug;
-      let counter = 1;
-      while (existingSlugSet.has(slug)) {
-        slug = `${baseSlug}-${counter}`;
-        counter += 1;
-      }
-      existingSlugSet.add(slug);
-
-      rows.push({
-        slug,
-        name: ev.name,
-        description: ev.description,
-        event_type_id: eventTypeId,
-        start_date: ev.start_date,
-        end_date: ev.end_date,
-        start_time: ev.start_time,
-        end_time: ev.end_time,
-        timezone: ev.timezone || 'America/New_York',
-        venue_name: ev.venue_name,
-        address: ev.address,
-        city: ev.city,
-        state: ev.state,
-        zip: ev.zip,
-        country: ev.country || 'USA',
-        latitude: ev.latitude,
-        longitude: ev.longitude,
-        region,
-        scope: ev.scope || 'local',
-        source_url: ev.source_url,
-        source_name: source.name,
-        registration_url: ev.registration_url,
-        image_url: ev.image_url,
-        cost_text: ev.cost_text,
-        is_free: Boolean(ev.is_free),
-        status: 'approved',
-        featured: false,
-      });
-    }
+    // Prepare rows (with provenance)
+    const rows = buildEventRows({
+      events: uniqueWithinBatch,
+      source,
+      eventTypeIdBySlug,
+      otherTypeId,
+      existingSlugs: existingSlugSet,
+      existingSlugByConflictKey,
+      verifiedAtIso: nowIso,
+      scrapeJobId,
+    });
 
     if (dryRun) {
       console.log(`[DRY RUN] Would insert ${rows.length} events for ${source.name}`);
+      await supabase
+        .from('scrape_jobs')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          sources_succeeded: [source.name],
+          job_payload: {
+            kind: 'events_enrich_2026',
+            source_id: source.id,
+            source_name: source.name,
+            discovered: rawEvents.length,
+          deduplicated: duplicatesVsExisting.length,
+            would_upsert: rows.length,
+            dryRun: true,
+            finished_at: new Date().toISOString(),
+          },
+        })
+        .eq('id', scrapeJobId);
       continue;
     }
 
     if (rows.length === 0) continue;
-    const { data: inserted, error: insertErr } = await supabase.from('events').insert(rows).select('id');
+    const { data: inserted, error: insertErr } = await supabase
+      .from('events')
+      .upsert(rows, { onConflict: 'source_url,start_date' })
+      .select('id');
     if (insertErr) {
       console.error(`❌ Insert failed for ${source.name}:`, insertErr.message);
       allErrors.push(`[${source.name}] Insert failed: ${insertErr.message}`);
+      await supabase
+        .from('scrape_jobs')
+        .update({
+          status: 'failed',
+          completed_at: new Date().toISOString(),
+          sources_failed: [source.name],
+          error_message: insertErr.message,
+          job_payload: {
+            kind: 'events_enrich_2026',
+            source_id: source.id,
+            source_name: source.name,
+            discovered: rawEvents.length,
+          deduplicated: duplicatesVsExisting.length,
+            attempted_upsert: rows.length,
+            error: insertErr.message,
+            finished_at: new Date().toISOString(),
+          },
+        })
+        .eq('id', scrapeJobId);
       continue;
     }
     const insertedCount = inserted?.length || 0;
     totalInserted += insertedCount;
     console.log(`inserted: ${insertedCount}`);
+
+    await supabase
+      .from('scrape_jobs')
+      .update({
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+        sources_succeeded: [source.name],
+        job_payload: {
+          kind: 'events_enrich_2026',
+          source_id: source.id,
+          source_name: source.name,
+          discovered: rawEvents.length,
+          deduplicated: duplicatesVsExisting.length,
+          upserted: insertedCount,
+          finished_at: new Date().toISOString(),
+        },
+      })
+      .eq('id', scrapeJobId);
   }
 
   console.log('\n═══════════════════════════════════════════════════════════════');

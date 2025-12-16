@@ -2,17 +2,29 @@
    SERVICE LOG MODAL
    =========================================== */
 
+/* CF-003: Mobile-first modal overlay with safe area support */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Bottom sheet on mobile */
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 0;
   animation: fadeIn 0.2s ease;
+  /* Prevent scroll blocking issues on Android */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Center modal on tablet+ */
+@media (min-width: 641px) {
+  .overlay {
+    align-items: center;
+    padding: 20px;
+  }
 }
 
 @keyframes fadeIn {
@@ -20,18 +32,30 @@
   to { opacity: 1; }
 }
 
+/* CF-003: Safe area support for notched devices */
 .modal {
   position: relative;
   width: 100%;
   max-width: 640px;
-  max-height: 90vh;
+  max-height: 95vh;
+  max-height: 95dvh;
   background: linear-gradient(145deg, rgba(30, 32, 38, 0.98), rgba(20, 22, 28, 0.98));
-  border-radius: 16px;
+  border-radius: 16px 16px 0 0; /* Bottom sheet on mobile */
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s ease;
+  /* Safe area support */
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0));
+}
+
+/* Full border radius on tablet+ */
+@media (min-width: 641px) {
+  .modal {
+    max-height: 90vh;
+    border-radius: 16px;
+  }
 }
 
 @keyframes slideUp {
@@ -65,27 +89,39 @@
   margin: 0;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .closeBtn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.08);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: rgba(255, 255, 255, 0.6);
   font-size: 24px;
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 10;
 }
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .closeBtn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 /* Form */
@@ -423,6 +459,7 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 
 
 

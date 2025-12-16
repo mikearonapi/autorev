@@ -117,8 +117,38 @@ export default function Header() {
   
   // Handle sign out
   const handleSignOut = async () => {
-    setShowProfileDropdown(false);
-    await logout();
+    try {
+      setShowProfileDropdown(false);
+      await logout();
+    } catch (error) {
+      console.error('[Header] Sign out error:', error);
+    }
+  };
+
+  // Handle mobile login - ensures menu closes even if auth modal fails
+  const handleMobileLogin = () => {
+    try {
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('[Header] Error closing menu:', error);
+    }
+    // Always try to open auth modal regardless of menu close success
+    authModal.openSignIn();
+  };
+
+  // Handle mobile sign out - ensures menu closes even if logout fails
+  const handleMobileSignOut = async () => {
+    try {
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('[Header] Error closing menu:', error);
+    }
+    // Always try to sign out regardless of menu close success
+    try {
+      await handleSignOut();
+    } catch (error) {
+      console.error('[Header] Error signing out:', error);
+    }
   };
 
   // Close menu on route change
@@ -370,10 +400,7 @@ export default function Header() {
             <div className={styles.mobileAuthButtons}>
               <button 
                 className={styles.mobileLoginBtn}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  authModal.openSignIn();
-                }}
+                onClick={handleMobileLogin}
               >
                 Log In
               </button>
@@ -391,10 +418,7 @@ export default function Header() {
           {isAuthenticated && (
             <button 
               className={styles.mobileSignOutBtn}
-              onClick={() => {
-                setIsMenuOpen(false);
-                handleSignOut();
-              }}
+              onClick={handleMobileSignOut}
             >
               <LogoutIcon size={20} />
               <span>Sign Out</span>

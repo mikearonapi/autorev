@@ -160,7 +160,7 @@ export default function EventDetailPage() {
     checkSavedStatus();
   }, [isAuthenticated, user?.id, canSaveEvents, slug]);
 
-  // Handle save toggle
+  // Handle save toggle for main event (direct button, not SaveEventButton)
   const handleSaveToggle = useCallback(async () => {
     if (!isAuthenticated) {
       openSignIn();
@@ -194,40 +194,20 @@ export default function EventDetailPage() {
     }
   }, [isAuthenticated, canSaveEvents, isSaved, slug, openSignIn]);
 
-  // Handle related event save toggle
-  const handleRelatedSaveToggle = useCallback(async (eventSlug, shouldSave) => {
-    if (!isAuthenticated) {
-      openSignIn();
-      return;
-    }
-    
-    if (!canSaveEvents) {
-      return;
-    }
-    
-    try {
-      const method = shouldSave ? 'POST' : 'DELETE';
-      const res = await fetch(`/api/events/${eventSlug}/save`, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
-      
-      if (res.ok) {
-        setSavedEventSlugs(prev => {
-          const newSet = new Set(prev);
-          if (shouldSave) {
-            newSet.add(eventSlug);
-          } else {
-            newSet.delete(eventSlug);
-          }
-          return newSet;
-        });
+  // Handle related event save toggle - called by SaveEventButton after it makes the API call
+  // SaveEventButton handles auth checks, tier checks, and API calls internally
+  const handleRelatedSaveToggle = useCallback((eventSlug, isSaved) => {
+    // Update local saved events tracking
+    setSavedEventSlugs(prev => {
+      const newSet = new Set(prev);
+      if (isSaved) {
+        newSet.add(eventSlug);
+      } else {
+        newSet.delete(eventSlug);
       }
-    } catch (err) {
-      console.error('[EventDetailPage] Error toggling related save:', err);
-    }
-  }, [isAuthenticated, canSaveEvents, openSignIn]);
+      return newSet;
+    });
+  }, []);
 
   // Fetch event data
   useEffect(() => {

@@ -17,7 +17,7 @@ AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has 
 | **Events** | Cars & Coffee, track days, car shows, and more |
 | **Pricing** | Token-based (mirrors Anthropic costs) |
 
-> **Last Synced:** December 15, 2024
+> **Last Verified:** December 15, 2024 — MCP-verified against `lib/alConfig.js` and `lib/alTools.js`
 
 ---
 
@@ -71,7 +71,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 | `compare_cars` | — | ✓ | ✓ |
 | `search_encyclopedia` | — | ✓ | ✓ |
 | `get_upgrade_info` | — | ✓ | ✓ |
-| `search_forums` | — | ✓ | ✓ |
+| `search_forums` | — | ✓ | ✓ | *(stub - not implemented)* |
 | `search_parts` | — | ✓ | ✓ |
 | `get_maintenance_schedule` | — | ✓ | ✓ |
 | `search_knowledge` | — | ✓ | ✓ |

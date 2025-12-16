@@ -202,3 +202,4 @@ INSERT INTO car_issues (
 - Include source URLs for verification
 - Severity distribution should be realistic (not all Critical)
 - Prefer issues that AL can use to help buyers make informed decisions
+

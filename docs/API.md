@@ -1,8 +1,8 @@
 # AutoRev API Reference
 
-> Complete reference for all 46 API routes
+> Complete reference for all 55 API routes
 >
-> **Last Synced:** December 15, 2024
+> **Last Verified:** December 15, 2024 — MCP-verified file listing
 
 ---
 
@@ -10,18 +10,18 @@
 
 | Category | Routes | Auth Required |
 |----------|--------|---------------|
-| Car Data | 17 | No |
+| Car Data | 18 | No |
 | Parts | 3 | No |
 | Events | 6 | Mixed |
-| Users/AL | 5 | Yes |
+| Users/AL | 4 | Yes |
 | VIN | 3 | Yes |
 | Internal | 10 | Admin |
-| Cron | 5 | API Key |
-| Other | 3 | Varies |
+| Cron | 7 | API Key |
+| Other | 4 | Varies |
 
 ---
 
-## Car Data Routes (17)
+## Car Data Routes (18)
 
 ### `GET /api/cars`
 **Purpose:** List all cars with basic info
@@ -399,7 +399,7 @@
 
 ---
 
-## Events Routes (3)
+## Events Routes (6)
 
 ### `GET /api/events`
 **Purpose:** List/search upcoming car events with filtering
@@ -923,19 +923,118 @@ All require admin authentication.
 
 ---
 
-## Cron Routes (6)
+## Cron Routes (7 unique, 10 scheduled)
 
 Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 
 | Route | Purpose | Schedule |
 |-------|---------|----------|
-| `/api/cron/schedule-ingestion` | Queue enrichment jobs | Weekly (Sun 2:00 AM UTC) |
+| `/api/cron/schedule-ingestion` | Queue parts ingestion jobs | Weekly (Sun 2:00 AM UTC) |
 | `/api/cron/process-scrape-jobs` | Process scrape queue | Every 15 min (`*/15 * * * *`) |
 | `/api/cron/process-scrape-jobs` | Weekly batch processing | Weekly (Sun 3:00 AM UTC) |
 | `/api/cron/refresh-recalls` | Refresh NHTSA recall data | Weekly (Sun 2:30 AM UTC) |
+| `/api/cron/refresh-complaints` | Refresh NHTSA complaint data | Weekly (Sun 4:00 AM UTC) |
 | `/api/cron/youtube-enrichment` | Process YouTube queue | Weekly (Mon 4:00 AM UTC) |
-| `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Tue, Fri 5:00 AM UTC) |
+| `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Tue 5:00 AM UTC) |
+| `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Fri 5:00 AM UTC) |
 | `/api/cron/refresh-events` | Fetch events from external sources | Weekly (Mon 6:00 AM UTC) |
+
+### `GET /api/cron/schedule-ingestion`
+**Purpose:** Queue parts ingestion jobs from vendor APIs (MAPerformance Shopify, etc.)
+
+**Auth:** Bearer token or `x-vercel-cron: true`
+
+**Query Params:**
+- `source` - Specific vendor to process (default: all configured)
+- `limit` - Max products per vendor (default: 100)
+- `dryRun` - If "true", don't create jobs
+
+**Response:**
+```json
+{
+  "success": true,
+  "jobsCreated": 15,
+  "sources": ["maperformance"],
+  "timestamp": "2024-12-15T02:00:00.000Z"
+}
+```
+
+**Flow:** Creates `scrape_jobs` entries → consumed by `process-scrape-jobs`
+
+**Table:** `scrape_jobs`
+
+---
+
+### `GET /api/cron/process-scrape-jobs`
+**Purpose:** Process queued scrape/enrichment jobs
+
+**Auth:** Bearer token or `x-vercel-cron: true`
+
+**Query Params:**
+- `max` - Max jobs to process (default: 3 for 15-min, 10 for weekly)
+- `delay` - Delay between jobs in ms (default: 15000 for 15-min, 5000 for weekly)
+- `type` - Job type filter (parts, knowledge, enrichment)
+
+**Response:**
+```json
+{
+  "processed": 3,
+  "succeeded": 3,
+  "failed": 0,
+  "remaining": 12,
+  "jobs": [
+    { "id": "uuid", "type": "parts", "status": "completed" }
+  ],
+  "durationMs": 45000
+}
+```
+
+**Notes:**
+- Runs every 15 min with `max=3` (incremental processing)
+- Runs weekly Sun 3am with `max=10` (batch catch-up)
+- Supports parts ingestion, knowledge base updates, car enrichment
+
+**Tables:** `scrape_jobs`, `parts`, `part_fitments`, `part_pricing_snapshots`
+
+---
+
+### `GET /api/cron/youtube-enrichment`
+**Purpose:** Discover new YouTube videos and process AI summaries
+
+**Auth:** Bearer token or `x-vercel-cron: true`
+
+**Query Params:**
+- `channel` - Specific channel to process (default: all active)
+- `limit` - Max videos to discover per channel (default: 10)
+- `processLimit` - Max videos to AI-process (default: 5)
+- `skipDiscovery` - If "true", only process existing queue
+
+**Response:**
+```json
+{
+  "discovery": {
+    "channelsChecked": 12,
+    "videosDiscovered": 8,
+    "videosQueued": 5
+  },
+  "processing": {
+    "videosProcessed": 5,
+    "summariesGenerated": 5,
+    "carLinksCreated": 7
+  },
+  "durationMs": 120000
+}
+```
+
+**Flow:**
+1. Checks trusted channels in `youtube_channels` for new uploads
+2. Queues new videos in `youtube_ingestion_queue`
+3. Processes queue: transcribes → AI summarizes → extracts pros/cons/quotes
+4. Creates car links in `youtube_video_car_links`
+
+**Tables:** `youtube_channels`, `youtube_ingestion_queue`, `youtube_videos`, `youtube_video_car_links`
+
+---
 
 ### `GET /api/cron/refresh-recalls`
 **Purpose:** Refresh NHTSA recall data for all cars
@@ -960,6 +1059,31 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 ```
 
 **Table:** `car_recalls`
+
+---
+
+### `GET /api/cron/refresh-complaints`
+**Purpose:** Refresh NHTSA complaint data for all cars
+
+**Auth:** Bearer token or `x-vercel-cron: true`
+
+**Query Params:**
+- `limitCars` - Max cars to process (default: all)
+- `skipCars` - Skip first N cars
+- `concurrency` - Parallel requests (default: 3)
+
+**Response:**
+```json
+{
+  "startedAt": "2024-12-14T04:00:00.000Z",
+  "totalCars": 98,
+  "processed": 98,
+  "totalComplaints": 125,
+  "durationMs": 30000
+}
+```
+
+**Updates:** `car_safety_data.complaint_count`
 
 ---
 
@@ -1113,7 +1237,7 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 
 ---
 
-## Other Routes (3)
+## Other Routes (4)
 
 ### `POST /api/contact`
 **Purpose:** Submit contact form
@@ -1206,6 +1330,19 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
   "status": "resolved",
   "resolved": true,
   "internalNotes": "Fixed in v1.2"
+}
+```
+
+---
+
+### `GET /api/health`
+**Purpose:** Health check endpoint for monitoring
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-12-15T00:00:00.000Z"
 }
 ```
 

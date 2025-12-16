@@ -64,3 +64,4 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch cars' }, { status: 500 });
   }
 }
+

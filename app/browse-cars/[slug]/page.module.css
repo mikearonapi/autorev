@@ -533,6 +533,9 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.75rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabNavInner::-webkit-scrollbar {
@@ -553,6 +556,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  scroll-snap-align: start;
 }
 
 .tabButton:hover {
@@ -2534,5 +2538,13 @@
 
   .scoreGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  .tabButton {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.7rem;
+    gap: 0.3rem;
   }
 }

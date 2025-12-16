@@ -28,6 +28,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   width: 32px;
   height: 32px;
   background: rgba(255, 255, 255, 0.08);
@@ -36,6 +37,14 @@
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.closeBtn::before {
+  content: '';
+  position: absolute;
+  inset: -6px; /* expands hit area to 44px */
 }
 
 .closeBtn:hover {
@@ -360,6 +369,7 @@
     margin: 8px 0;
   }
 }
+
 
 
 

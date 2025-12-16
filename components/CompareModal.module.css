@@ -1,5 +1,6 @@
 /* CompareModal.module.css */
 
+/* CF-003: Mobile-first modal with safe area support */
 .overlay {
   position: fixed;
   inset: 0;
@@ -7,11 +8,21 @@
   backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Bottom sheet on mobile */
   justify-content: center;
-  padding: 2rem;
+  padding: 0;
   animation: fadeIn 0.2s ease;
   overflow: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Center on tablet+ */
+@media (min-width: 769px) {
+  .overlay {
+    align-items: center;
+    padding: 2rem;
+  }
 }
 
 @keyframes fadeIn {
@@ -19,18 +30,31 @@
   to { opacity: 1; }
 }
 
+/* CF-003: Safe area support for modal */
 .modal {
   background: #1a1d24;
-  border-radius: 1rem;
+  border-radius: 1rem 1rem 0 0; /* Bottom sheet on mobile */
   width: 100%;
   max-width: 1000px;
-  max-height: calc(100vh - 4rem);
+  max-height: 95vh;
+  max-height: 95dvh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   animation: slideUp 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
   margin: auto;
+  /* Safe area support */
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0));
+}
+
+/* Full border radius on tablet+ */
+@media (min-width: 769px) {
+  .modal {
+    border-radius: 1rem;
+    max-height: calc(100vh - 4rem);
+    padding-bottom: 0;
+  }
 }
 
 @keyframes slideUp {
@@ -98,22 +122,35 @@
   color: white;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .closeButton {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .closeButton:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .closeButton:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 /* Content */

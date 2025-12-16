@@ -75,7 +75,6 @@ export default function EventCard({
   featured, 
   isSaved, 
   onSaveToggle,
-  savingInProgress,
   showSaveButton = true,
   compact = false
 }) {
@@ -114,7 +113,7 @@ export default function EventCard({
             eventName={name}
             isSaved={isSaved}
             onSaveChange={onSaveToggle}
-            loading={savingInProgress}
+            theme="light"
           />
         </div>
       )}

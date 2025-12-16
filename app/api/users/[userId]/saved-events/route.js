@@ -9,12 +9,41 @@
  */
 
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+
+function getBearerToken(request) {
+  const header = request.headers.get('authorization') || request.headers.get('Authorization');
+  if (!header) return null;
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match?.[1] || null;
+}
+
+function createSupabaseForBearer(bearerToken) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) return null;
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+      },
+    },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+}
 
 export async function GET(request, { params }) {
   try {
     const { userId } = await params;
+    
+    console.log('[API/users/saved-events] GET request for userId:', userId);
     
     if (!userId) {
       return NextResponse.json(
@@ -23,11 +52,20 @@ export async function GET(request, { params }) {
       );
     }
     
-    // Get authenticated user
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get authenticated user (support both cookie-based SSR sessions and Bearer token auth)
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken ? createSupabaseForBearer(bearerToken) : createRouteHandlerClient({ cookies });
+
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Authentication service not configured' },
+        { status: 503 }
+      );
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json(

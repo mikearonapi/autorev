@@ -280,3 +280,4 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_user_vehicles_matched_car_id ON user_vehicles(matched_car_id);
 
 
+

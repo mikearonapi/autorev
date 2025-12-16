@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { supabase } from '@/lib/supabase';
 import styles from './AuthModal.module.css';
 
 /**
@@ -152,6 +153,43 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
       setIsSubmitting(false);
     } else {
       setSuccess('Check your email to confirm your account!');
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle forgot password
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+
+    if (!email.trim()) {
+      setError('Please enter your email address');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setError('Email reset is not available at this time');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`
+      });
+
+      if (error) {
+        setError(error.message || 'Failed to send reset email');
+        setIsSubmitting(false);
+      } else {
+        setSuccess('Password reset link sent to your email!');
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      console.error('[AuthModal] Forgot password error:', err);
+      setError('Failed to send reset email. Please try again.');
       setIsSubmitting(false);
     }
   };
@@ -336,7 +374,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
         )}
 
         {mode === 'forgot' && (
-          <form onSubmit={(e) => { e.preventDefault(); /* TODO: implement */ }} className={styles.form}>
+          <form onSubmit={handleForgotPassword} className={styles.form}>
             <div className={styles.inputGroup}>
               <label htmlFor="reset-email">Email</label>
               <div className={styles.inputWrapper}>
@@ -377,12 +415,12 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
             {mode === 'signin' ? (
               <>
                 Don&apos;t have an account?{' '}
-                <button onClick={() => setMode('signup')}>Sign up</button>
+                <button type="button" onClick={() => setMode('signup')}>Sign up</button>
               </>
             ) : (
               <>
                 Already have an account?{' '}
-                <button onClick={() => setMode('signin')}>Sign in</button>
+                <button type="button" onClick={() => setMode('signin')}>Sign in</button>
               </>
             )}
           </p>

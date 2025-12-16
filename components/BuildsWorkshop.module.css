@@ -1051,7 +1051,13 @@
   .buildName {
     font-size: 14px;
   }
+
+  /* Reduce stats grid to 2 columns on very small screens for readability */
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
 
 
 

@@ -1,16 +1,27 @@
 /* AuthModal - Mobile First */
 
+/* CF-003: Mobile-first modal with safe area support */
 .container {
   position: fixed;
   inset: 0;
   z-index: 1100;
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Bottom sheet on mobile */
   justify-content: center;
-  padding: var(--space-md);
+  padding: 0;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease;
+  /* Prevent scroll blocking issues on Android */
+  overscroll-behavior: contain;
+}
+
+/* Center modal on tablet+ */
+@media (min-width: 481px) {
+  .container {
+    align-items: center;
+    padding: var(--space-md);
+  }
 }
 
 @keyframes fadeIn {
@@ -18,17 +29,33 @@
   to { opacity: 1; }
 }
 
+/* CF-003: Safe area inset support for notched devices */
 .modal {
   position: relative;
   width: 100%;
   max-width: 400px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--color-white);
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
   padding: var(--space-xl);
+  /* Safe area support */
+  padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom, 0));
+}
+
+/* Mobile-first: bottom sheet style on small screens */
+@media (max-width: 480px) {
+  .modal {
+    max-width: 100%;
+    max-height: 95vh;
+    max-height: 95dvh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    margin-top: auto;
+  }
 }
 
 @keyframes slideUp {
@@ -42,13 +69,13 @@
   }
 }
 
-/* Close Button */
+/* Close Button - CF-001: Touch target compliance */
 .closeBtn {
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,11 +85,22 @@
   color: var(--color-gray-600);
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 10;
 }
 
 .closeBtn:hover {
   background: var(--color-gray-200);
   color: var(--color-gray-800);
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .closeBtn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 /* Header */

@@ -140,20 +140,23 @@
   gap: 4px;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .compactBtn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--btn-text);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .compactBtn:hover:not(:disabled) {
@@ -185,23 +188,34 @@
   position: relative;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .dropdownTrigger {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--btn-text);
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .dropdownTrigger:hover {
   background: var(--btn-hover-bg);
   color: var(--btn-hover-text);
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .dropdownTrigger:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 .dropdownBackdrop {
@@ -370,20 +384,32 @@
 
 /* ===========================================
    MOBILE TOUCH OPTIMIZATION
-   Ensure 44px minimum touch targets on mobile
+   CF-001: Ensure 44px minimum touch targets
    =========================================== */
 
 @media (max-width: 767px) {
-  /* Enlarge compact buttons for touch */
+  /* Buttons already 44px - maintain size */
   .compactBtn {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
   
-  /* Slightly larger action buttons */
+  /* Ensure action buttons meet touch target */
   .actionBtn {
-    padding: 10px 14px;
-    min-height: 40px;
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+  
+  /* Dropdown trigger */
+  .dropdownTrigger {
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Dropdown items need proper touch targets */
+  .dropdownItem {
+    padding: 12px 14px;
+    min-height: 44px;
   }
   
   /* Hide tooltips on touch devices - they don't work well */
@@ -395,7 +421,8 @@
 /* Touch devices - ensure active states instead of hover */
 @media (hover: none) and (pointer: coarse) {
   .compactBtn:active:not(:disabled),
-  .actionBtn:active:not(:disabled) {
+  .actionBtn:active:not(:disabled),
+  .dropdownTrigger:active {
     transform: scale(0.95);
     opacity: 0.9;
   }
@@ -403,6 +430,11 @@
   /* Disable hover transform on touch */
   .actionBtn:hover:not(:disabled) {
     transform: none;
+  }
+  
+  .dropdownItem:active:not(:disabled) {
+    background: var(--btn-bg);
+    transform: scale(0.98);
   }
   
   /* Loading state animation */

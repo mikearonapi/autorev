@@ -203,8 +203,9 @@ export default function CommunityEventDetailPage() {
     checkSaved();
   }, [isAuthenticated, user?.id, slug]);
 
-  // Handle save change
-  const handleSaveChange = useCallback((newSavedState) => {
+  // Handle save change - called by SaveEventButton after it makes the API call
+  // SaveEventButton passes (eventSlug, isSaved)
+  const handleSaveChange = useCallback((eventSlug, newSavedState) => {
     setIsSaved(newSavedState);
   }, []);
 

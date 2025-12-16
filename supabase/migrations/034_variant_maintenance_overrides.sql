@@ -93,3 +93,4 @@ $$;
 GRANT EXECUTE ON FUNCTION get_car_maintenance_summary_variant(TEXT) TO anon, authenticated;
 
 
+

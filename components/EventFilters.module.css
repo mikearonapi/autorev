@@ -6,18 +6,75 @@
   gap: var(--space-md);
 }
 
-/* Category Pills Row */
+/* Category Pills Row - CF-005: Horizontal scroll with indicators */
 .categoryRow {
+  position: relative;
   display: flex;
   gap: var(--space-sm);
   overflow-x: auto;
+  overflow-y: hidden;
   padding-bottom: var(--space-xs);
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  /* Add padding for scroll indicators */
+  padding-right: 32px;
+  margin-right: -32px;
 }
 
 .categoryRow::-webkit-scrollbar {
   display: none;
+}
+
+/* Scroll snap for pills */
+.categoryRow > * {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+/* Right scroll indicator gradient */
+.categoryRowWrapper {
+  position: relative;
+}
+
+.categoryRowWrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: var(--space-xs);
+  width: 48px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-white, #fff) 60%);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.categoryRowWrapper.scrolledEnd::after {
+  opacity: 0;
+}
+
+/* Left scroll indicator gradient */
+.categoryRowWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: var(--space-xs);
+  width: 32px;
+  background: linear-gradient(90deg, var(--color-white, #fff) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Dark theme variant */
+.categoryRowWrapper.dark::after {
+  background: linear-gradient(90deg, transparent 0%, var(--color-gray-900, #171717) 60%);
+}
+
+.categoryRowWrapper.dark::before {
+  background: linear-gradient(90deg, var(--color-gray-900, #171717) 0%, transparent 70%);
 }
 
 /* Main Filter Row */
@@ -87,7 +144,7 @@
   font-size: var(--font-size-sm);
 }
 
-/* View Toggle */
+/* View Toggle - CF-001: Touch target compliance */
 .viewToggle {
   display: flex;
   background: var(--color-gray-100);
@@ -101,6 +158,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
+  min-width: 44px;
+  min-height: 44px;
   padding: var(--space-sm) var(--space-md);
   background: transparent;
   border: none;
@@ -111,6 +170,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .viewBtn:hover {
@@ -241,5 +302,154 @@
 
   .filterSelect {
     width: 100%;
+    /* CF-001: Ensure select has proper touch target height */
+    min-height: 44px;
   }
+  
+  /* CF-001: Date inputs touch compliance */
+  .dateInput {
+    min-height: 44px;
+  }
+  
+  /* CF-005: Better scroll indicators on mobile */
+  .categoryRowWrapper::after {
+    width: 40px;
+  }
+}
+
+/* Touch device active states */
+@media (hover: none) and (pointer: coarse) {
+  .viewBtn:active:not(.viewBtnLocked) {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+}
+
+/* Upgrade Modal */
+.upgradeModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: var(--space-md);
+}
+
+.upgradeModal {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: var(--space-xl);
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.upgradeModalClose {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+.upgradeModalClose:hover {
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
+}
+
+.upgradeModalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--sn-accent);
+  border-radius: var(--radius-lg);
+  color: var(--color-white);
+  margin: 0 auto var(--space-md);
+}
+
+.upgradeModalTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-sm);
+}
+
+.upgradeModalDescription {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin: 0 0 var(--space-xl);
+}
+
+.upgradeModalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.upgradeModalUpgradeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-xl);
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upgradeModalUpgradeBtn:hover {
+  background: var(--sn-primary-dark);
+  transform: translateY(-1px);
+}
+
+.upgradeModalDismissBtn {
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  color: var(--color-gray-600);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.upgradeModalDismissBtn:hover {
+  color: var(--color-gray-900);
 }

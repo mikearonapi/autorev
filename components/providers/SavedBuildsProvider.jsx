@@ -130,7 +130,7 @@ export function SavedBuildsProvider({ children }) {
           id: build.id,
           carSlug: build.car_slug,
           carName: build.car_name,
-          name: build.build_name,
+          name: build.project_name,
           upgrades: build.selected_upgrades || [],
           parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
             id: p.id,
@@ -224,7 +224,7 @@ export function SavedBuildsProvider({ children }) {
           id: data.id,
           carSlug: data.car_slug,
           carName: data.car_name,
-          name: data.build_name,
+          name: data.project_name,
           upgrades: data.selected_upgrades || [],
           parts: Array.isArray(buildData?.selectedParts) ? buildData.selectedParts : [],
           totalHpGain: data.total_hp_gain || 0,
@@ -279,7 +279,7 @@ export function SavedBuildsProvider({ children }) {
           if (build.id === buildId) {
             return {
               ...build,
-              name: data.build_name,
+              name: data.project_name,
               upgrades: data.selected_upgrades || [],
               parts: updates?.selectedParts ? updates.selectedParts : build.parts,
               totalHpGain: data.total_hp_gain || 0,

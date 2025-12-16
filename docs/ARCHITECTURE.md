@@ -1,6 +1,8 @@
 # AutoRev Architecture
 
 > How the system works
+>
+> **Last Verified:** December 15, 2024 — MCP-verified audit
 
 ---
 
@@ -22,7 +24,7 @@
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │            COMPONENTS (46 files)                         │    │
+│  │            COMPONENTS (53 files)                         │    │
 │  │  • Providers (Auth, Favorites, Compare, etc.)           │    │
 │  │  • UI Components (Header, Footer, CarImage, etc.)       │    │
 │  │  • Feature Components (PerformanceHub, ExpertReviews)   │    │
@@ -32,7 +34,7 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     API LAYER (41 routes)                        │
+│                     API LAYER (55 routes)                        │
 │                                                                  │
 │  /api/cars/*          Car data (specs, safety, pricing)         │
 │  /api/parts/*         Parts catalog and search                  │
@@ -65,8 +67,8 @@
 │  │   SUPABASE      │  │   CLAUDE AI     │  │  EXTERNAL APIs  │ │
 │  │   (PostgreSQL)  │  │   (Anthropic)   │  │                 │ │
 │  │                 │  │                 │  │  • YouTube API  │ │
-│  │   52 tables     │  │   AL Assistant  │  │  • NHTSA        │ │
-│  │   pgvector      │  │   15 tools      │  │  • EPA          │ │
+│  │   65 tables     │  │   AL Assistant  │  │  • NHTSA        │ │
+│  │   pgvector      │  │   17 tools      │  │  • EPA          │ │
 │  │   RLS enabled   │  │   token billing │  │  • BaT scraping │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
@@ -336,11 +338,26 @@ Critical indexes for performance:
 
 ## Cron Jobs
 
-| Job | Schedule | Purpose |
-|-----|----------|---------|
-| `schedule-ingestion` | Daily | Queue cars for enrichment |
-| `process-scrape-jobs` | Hourly | Process scrape queue |
-| `youtube-enrichment` | Every 6h | Process YouTube queue |
+All scheduled via `vercel.json`. Auth requires `CRON_SECRET` Bearer token or `x-vercel-cron: true` header.
+
+| Job | Schedule | Cron Expression | Purpose |
+|-----|----------|-----------------|---------|
+| `schedule-ingestion` | Sun 2:00 AM UTC | `0 2 * * 0` | Queue parts ingestion from vendor APIs |
+| `process-scrape-jobs` | Every 15 min | `*/15 * * * *` | Process scrape queue (incremental) |
+| `process-scrape-jobs` | Sun 3:00 AM UTC | `0 3 * * 0` | Process scrape queue (weekly batch) |
+| `refresh-recalls` | Sun 2:30 AM UTC | `30 2 * * 0` | Fetch NHTSA recall data for all cars |
+| `refresh-complaints` | Sun 4:00 AM UTC | `0 4 * * 0` | Fetch NHTSA complaint data for all cars |
+| `youtube-enrichment` | Mon 4:00 AM UTC | `0 4 * * 1` | Discover videos, process AI summaries |
+| `forum-scrape` | Tue, Fri 5:00 AM UTC | `0 5 * * 2,5` | Scrape forums + extract community insights |
+| `refresh-events` | Mon 6:00 AM UTC | `0 6 * * 1` | Fetch events from external sources |
+
+**Data Flow:**
+```
+schedule-ingestion → creates scrape_jobs → process-scrape-jobs consumes
+youtube-enrichment → youtube_ingestion_queue → AI processing
+forum-scrape → forum_scraped_threads → community_insights
+refresh-events → events table (auto-approve, geocode, dedupe)
+```
 
 ---
 
@@ -365,15 +382,33 @@ try {
 
 ## Environment Variables
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Service role (server) |
-| `ANTHROPIC_API_KEY` | Yes | Claude AI |
-| `OPENAI_API_KEY` | Recommended | Embeddings |
-| `YOUTUBE_API_KEY` | Optional | YouTube API |
-| `BLOB_READ_WRITE_TOKEN` | Optional | Vercel Blob |
+### Required
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key (client-side) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role (server-side) |
+| `ANTHROPIC_API_KEY` | Claude AI for AL assistant |
+
+### Recommended
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENAI_API_KEY` | Embeddings for knowledge base search |
+| `CRON_SECRET` | Auth token for cron job endpoints |
+| `YOUTUBE_API_KEY` | YouTube Data API for video discovery |
+
+### Optional / Google Cloud
+
+| Variable | Purpose |
+|----------|---------|
+| `GOOGLE_API_KEY` | Server-side Google APIs (Places, Vision) |
+| `NEXT_PUBLIC_GOOGLE_MAPS_KEY` | Client-side Maps JavaScript API |
+| `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` | Custom Search for forum search |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob for image storage |
+
+See [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) for complete Google API setup.
 
 ---
 

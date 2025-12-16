@@ -18,9 +18,10 @@
 
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { fetchFromSource, getRegionFromState } from '@/lib/eventSourceFetchers';
-import { isDuplicateEvent, deduplicateBatch } from '@/lib/eventDeduplication';
-import { geocodeEvent, batchGeocodeEvents } from '@/lib/geocodingService';
+import { fetchFromSource } from '@/lib/eventSourceFetchers';
+import { deduplicateBatch } from '@/lib/eventDeduplication';
+import { batchGeocodeEvents } from '@/lib/geocodingService';
+import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -32,22 +33,6 @@ function isAuthorized(request) {
   if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
   const vercelCron = request.headers.get('x-vercel-cron');
   return vercelCron === 'true';
-}
-
-/**
- * Generate a slug from event name
- */
-function generateSlug(name, city, startDate) {
-  const base = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .substring(0, 50);
-  
-  const location = city?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'usa';
-  const date = startDate?.replace(/-/g, '').substring(0, 6) || '';
-  
-  return `${base}-${location}-${date}`.substring(0, 80);
 }
 
 export async function GET(request) {
@@ -135,8 +120,11 @@ export async function GET(request) {
     }
     
     const existingEventsList = existingEvents || [];
+    const existingSlugByConflictKey = new Map(
+      existingEventsList.map((e) => [`${String(e.source_url || '').trim()}|${String(e.start_date || '').trim()}`, e.slug])
+    );
     
-    // 3. Process each source
+    // 3. Process each source (create a scrape_jobs record per source for provenance)
     for (const source of sources) {
       const sourceResult = {
         name: source.name,
@@ -148,6 +136,37 @@ export async function GET(request) {
       };
       
       try {
+        // Create provenance job
+        const nowIso = new Date().toISOString();
+        const { data: jobRow, error: jobErr } = await supabaseServiceRole
+          .from('scrape_jobs')
+          .insert({
+            job_type: 'events_refresh',
+            status: 'running',
+            priority: 5,
+            source_key: source.name,
+            started_at: nowIso,
+            sources_attempted: [source.name],
+            job_payload: {
+              kind: 'events_refresh',
+              source_id: source.id,
+              source_name: source.name,
+              limit: limit || 100,
+              rangeStart: rangeStart || null,
+              rangeEnd: rangeEnd || null,
+              dryRun,
+              skipGeocode,
+            },
+          })
+          .select('id')
+          .single();
+
+        if (jobErr || !jobRow?.id) {
+          throw new Error(`Failed to create scrape_job for ${source.name}: ${jobErr?.message || 'unknown error'}`);
+        }
+
+        const scrapeJobId = jobRow.id;
+
         console.log(`[refresh-events] Fetching from ${source.name}...`);
         
         // Fetch events from source
@@ -172,75 +191,37 @@ export async function GET(request) {
           continue;
         }
         
-        // Deduplicate against existing events
-        const { unique, duplicates } = deduplicateBatch(rawEvents, existingEventsList);
-        
-        sourceResult.eventsDeduplicated = duplicates.length;
-        results.eventsDeduplicated += duplicates.length;
-        
-        if (duplicates.length > 0) {
-          console.log(`[refresh-events] ${duplicates.length} duplicates found from ${source.name}`);
+        // For observability: compute duplicates vs existing, but DO NOT drop them.
+        // We need to re-verify existing events and stamp provenance.
+        const { unique: uniqueVsExisting, duplicates: duplicatesVsExisting } = deduplicateBatch(
+          rawEvents,
+          existingEventsList
+        );
+
+        sourceResult.eventsDeduplicated = duplicatesVsExisting.length;
+        results.eventsDeduplicated += duplicatesVsExisting.length;
+
+        if (duplicatesVsExisting.length > 0) {
+          console.log(
+            `[refresh-events] ${duplicatesVsExisting.length} existing matches (will upsert + refresh provenance) from ${source.name}`
+          );
         }
-        
-        // Process unique events
-        const eventsToCreate = [];
-        
-        for (const event of unique) {
-          // Map event_type_slug -> event_type_id (fallback to 'other')
-          const eventTypeId =
-            (event.event_type_slug && eventTypeIdBySlug.get(event.event_type_slug)) ||
-            otherTypeId ||
-            null;
-          
-          // Determine region from state if not provided
-          const region = event.region || getRegionFromState(event.state);
-          
-          // Generate slug
-          const slug = generateSlug(event.name, event.city, event.start_date);
-          
-          // Check for slug collision
-          let finalSlug = slug;
-          const existingSlugs = new Set([
-            ...existingEventsList.map(e => e.slug),
-            ...eventsToCreate.map(e => e.slug),
-          ]);
-          
-          let counter = 1;
-          while (existingSlugs.has(finalSlug)) {
-            finalSlug = `${slug}-${counter}`;
-            counter++;
-          }
-          
-          eventsToCreate.push({
-            slug: finalSlug,
-            name: event.name,
-            description: event.description,
-            event_type_id: eventTypeId,
-            start_date: event.start_date,
-            end_date: event.end_date,
-            start_time: event.start_time,
-            end_time: event.end_time,
-            timezone: event.timezone || 'America/New_York',
-            venue_name: event.venue_name,
-            address: event.address,
-            city: event.city,
-            state: event.state,
-            zip: event.zip,
-            country: event.country || 'USA',
-            latitude: event.latitude,
-            longitude: event.longitude,
-            region,
-            scope: event.scope || 'local',
-            source_url: event.source_url,
-            source_name: source.name,
-            registration_url: event.registration_url,
-            image_url: event.image_url,
-            cost_text: event.cost_text,
-            is_free: event.is_free || false,
-            status: 'approved', // Auto-approve from trusted sources
-            featured: false,
-          });
-        }
+
+        // Deduplicate only within this batch to avoid conflicting upserts
+        const { unique: uniqueWithinBatch } = deduplicateBatch(rawEvents, []);
+
+        // Build DB rows w/ provenance (and keep existing slugs stable)
+        const existingSlugs = new Set(existingEventsList.map((e) => e.slug));
+        const eventsToCreate = buildEventRows({
+          events: uniqueWithinBatch,
+          source,
+          eventTypeIdBySlug,
+          otherTypeId,
+          existingSlugs,
+          existingSlugByConflictKey,
+          verifiedAtIso: nowIso,
+          scrapeJobId,
+        });
         
         // Geocode events if needed
         if (!skipGeocode && !dryRun && eventsToCreate.length > 0) {
@@ -269,13 +250,13 @@ export async function GET(request) {
           console.log(`[refresh-events] Geocoded ${geocodedCount} events`);
         }
         
-        // Insert events
+        // Insert / upsert events
         if (!dryRun && eventsToCreate.length > 0) {
           console.log(`[refresh-events] Inserting ${eventsToCreate.length} events...`);
           
           const { data: insertedEvents, error: insertErr } = await supabaseServiceRole
             .from('events')
-            .insert(eventsToCreate)
+            .upsert(eventsToCreate, { onConflict: 'source_url,start_date' })
             .select('id, slug');
           
           if (insertErr) {
@@ -291,6 +272,31 @@ export async function GET(request) {
           sourceResult.eventsCreated = eventsToCreate.length;
           results.eventsCreated += eventsToCreate.length;
           console.log(`[refresh-events] [DRY RUN] Would create ${eventsToCreate.length} events from ${source.name}`);
+        }
+
+        // Mark scrape job completed
+        if (!dryRun) {
+          const completedAtIso = new Date().toISOString();
+          await supabaseServiceRole
+            .from('scrape_jobs')
+            .update({
+              status: sourceResult.errors.length > 0 ? 'failed' : 'completed',
+              completed_at: completedAtIso,
+              sources_succeeded: sourceResult.errors.length > 0 ? [] : [source.name],
+              sources_failed: sourceResult.errors.length > 0 ? [source.name] : [],
+              error_message: sourceResult.errors.length > 0 ? sourceResult.errors.slice(0, 5).join(' | ') : null,
+              job_payload: {
+                kind: 'events_refresh',
+                source_id: source.id,
+                source_name: source.name,
+                discovered: sourceResult.eventsDiscovered,
+                deduplicated: sourceResult.eventsDeduplicated,
+                created_or_updated: sourceResult.eventsCreated,
+                errors: sourceResult.errors,
+                finished_at: completedAtIso,
+              },
+            })
+            .eq('id', scrapeJobId);
         }
         
         // Update source's last_run fields

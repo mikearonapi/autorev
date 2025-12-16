@@ -140,3 +140,4 @@ $$;
 GRANT EXECUTE ON FUNCTION get_car_dyno_runs(TEXT, INTEGER, BOOLEAN) TO anon, authenticated;
 
 
+

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './EventFilters.module.css';
 import EventCategoryPill from './EventCategoryPill';
 import PremiumGate from './PremiumGate';
@@ -84,6 +85,7 @@ export default function EventFilters({
   userTier = 'free',
 }) {
   const [filters, setFilters] = useState(initialFilters);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const handleChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
@@ -112,6 +114,18 @@ export default function EventFilters({
   };
 
   const canUsePremiumFeatures = ['collector', 'tuner', 'admin'].includes(userTier);
+
+  // Handle premium feature clicks for non-premium users
+  const handlePremiumFeatureClick = (featureName) => {
+    if (canUsePremiumFeatures) {
+      // User has access, proceed with view change
+      if (featureName === 'map') onViewChange('map');
+      if (featureName === 'calendar') onViewChange('calendar');
+    } else {
+      // Show upgrade modal
+      setShowUpgradeModal(featureName);
+    }
+  };
 
   return (
     <div className={styles.filters}>
@@ -146,18 +160,21 @@ export default function EventFilters({
           />
         )}
 
-        {/* Region Select */}
+        {/* Region Select - 8 regions for better geographic filtering */}
         <select 
           value={filters.region || ''} 
           onChange={(e) => handleChange('region', e.target.value)}
           className={styles.filterSelect}
         >
           <option value="">All Regions</option>
-          <option value="northeast">Northeast</option>
-          <option value="southeast">Southeast</option>
-          <option value="midwest">Midwest</option>
-          <option value="southwest">Southwest</option>
-          <option value="west">West</option>
+          <option value="New England">New England</option>
+          <option value="Mid-Atlantic">Mid-Atlantic</option>
+          <option value="Southeast">Southeast</option>
+          <option value="Great Lakes">Great Lakes</option>
+          <option value="Plains">Plains</option>
+          <option value="Southwest">Southwest</option>
+          <option value="Mountain">Mountain</option>
+          <option value="Pacific">Pacific</option>
         </select>
 
         {/* Date Range */}
@@ -198,18 +215,18 @@ export default function EventFilters({
               List
             </button>
             <button
-              onClick={() => canUsePremiumFeatures ? onViewChange('map') : null}
+              onClick={() => handlePremiumFeatureClick('map')}
               className={`${styles.viewBtn} ${currentView === 'map' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-              title={!canUsePremiumFeatures ? "Collector tier required" : "Map View"}
+              title={!canUsePremiumFeatures ? "Upgrade to Collector for Map View" : "Map View"}
             >
               <Icons.map />
               Map
               {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
             </button>
             <button
-              onClick={() => canUsePremiumFeatures ? onViewChange('calendar') : null}
+              onClick={() => handlePremiumFeatureClick('calendar')}
               className={`${styles.viewBtn} ${currentView === 'calendar' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-              title={!canUsePremiumFeatures ? "Collector tier required" : "Calendar View"}
+              title={!canUsePremiumFeatures ? "Upgrade to Collector for Calendar View" : "Calendar View"}
             >
               <Icons.calendar />
               Calendar
@@ -253,6 +270,47 @@ export default function EventFilters({
           </PremiumGate>
         )}
       </div>
+
+      {/* Upgrade Modal for Premium Features */}
+      {showUpgradeModal && (
+        <div className={styles.upgradeModalOverlay} onClick={() => setShowUpgradeModal(false)}>
+          <div className={styles.upgradeModal} onClick={(e) => e.stopPropagation()}>
+            <button 
+              className={styles.upgradeModalClose}
+              onClick={() => setShowUpgradeModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className={styles.upgradeModalIcon}>
+              {showUpgradeModal === 'map' ? <Icons.map size={32} /> : <Icons.calendar size={32} />}
+            </div>
+            <h3 className={styles.upgradeModalTitle}>
+              {showUpgradeModal === 'map' ? 'Map View' : 'Calendar View'}
+            </h3>
+            <p className={styles.upgradeModalDescription}>
+              {showUpgradeModal === 'map' 
+                ? 'See events on an interactive map with location clustering and easy discovery.'
+                : 'View events in a monthly calendar layout to plan your car meet schedule.'}
+              {' '}This feature is available for Collector members and above.
+            </p>
+            <div className={styles.upgradeModalActions}>
+              <Link 
+                href="/join" 
+                className={styles.upgradeModalUpgradeBtn}
+              >
+                Upgrade to Collector
+              </Link>
+              <button 
+                onClick={() => setShowUpgradeModal(false)}
+                className={styles.upgradeModalDismissBtn}
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

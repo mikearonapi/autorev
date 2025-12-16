@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -40,7 +40,7 @@ const Icons = {
 function EventsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, user, profile } = useAuth();
+  const { isAuthenticated, user, profile, session } = useAuth();
   const userTier = profile?.subscription_tier || 'free';
 
   // State
@@ -52,6 +52,9 @@ function EventsContent() {
   const [eventTypes, setEventTypes] = useState([]);
   const [garageBrands, setGarageBrands] = useState([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
+  
+  // Saved events tracking
+  const [savedEventSlugs, setSavedEventSlugs] = useState(new Set());
   
   // View state (List, Map, Calendar)
   const [view, setView] = useState('list');
@@ -75,13 +78,21 @@ function EventsContent() {
     for_my_cars: false,
   });
 
-  // Fetch event types and garage brands on mount
+  // Fetch event types, garage brands, and saved events on mount
   useEffect(() => {
     async function fetchMetadata() {
       try {
-        const [typesRes, userRes] = await Promise.all([
+        const authHeaders = {};
+        // Saved events is an authenticated endpoint; our client auth may be localStorage-based,
+        // so forward a Bearer token when available.
+        if (session?.access_token) {
+          authHeaders.Authorization = `Bearer ${session.access_token}`;
+        }
+
+        const [typesRes, userRes, savedRes] = await Promise.all([
           fetch('/api/events/types'),
-          isAuthenticated && user?.id ? fetch(`/api/users/${user.id}/garage`) : Promise.resolve(null)
+          isAuthenticated && user?.id ? fetch(`/api/users/${user.id}/garage`, { headers: authHeaders }) : Promise.resolve(null),
+          isAuthenticated && user?.id ? fetch(`/api/users/${user.id}/saved-events?includeExpired=true`, { headers: authHeaders }) : Promise.resolve(null)
         ]);
 
         if (typesRes.ok) {
@@ -94,12 +105,31 @@ function EventsContent() {
           const brands = new Set(data.vehicles?.map(v => v.make) || []);
           setGarageBrands(Array.from(brands));
         }
+
+        if (savedRes && savedRes.ok) {
+          const data = await savedRes.json();
+          const slugs = new Set((data.savedEvents || []).map(se => se.event?.slug).filter(Boolean));
+          setSavedEventSlugs(slugs);
+        }
       } catch (err) {
         console.error('Failed to fetch metadata:', err);
       }
     }
     fetchMetadata();
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, session?.access_token]);
+
+  // Handle save toggle - called by SaveEventButton after API call
+  const handleSaveToggle = useCallback((eventSlug, isSaved) => {
+    setSavedEventSlugs(prev => {
+      const newSet = new Set(prev);
+      if (isSaved) {
+        newSet.add(eventSlug);
+      } else {
+        newSet.delete(eventSlug);
+      }
+      return newSet;
+    });
+  }, []);
 
   // Fetch events when filters or page change
   useEffect(() => {
@@ -287,6 +317,8 @@ function EventsContent() {
                       key={event.id} 
                       event={event} 
                       showSaveButton={true}
+                      isSaved={savedEventSlugs.has(event.slug)}
+                      onSaveToggle={handleSaveToggle}
                       compact
                     />
                   ))}

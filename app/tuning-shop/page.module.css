@@ -149,25 +149,35 @@
   }
 }
 
-/* Settings Button */
+/* Settings Button - CF-001: Touch target compliance */
 .settingsBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .settingsBtn:hover {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .settingsBtn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 /* Tab Pills - Matches Garage */
@@ -181,11 +191,12 @@
   flex-shrink: 0;
 }
 
+/* CF-001: Touch target compliance - minimum 44px on all devices */
 .tabPill {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -196,22 +207,30 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   /* Ensure touch-friendly tap target */
-  min-height: 36px;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 @media (min-width: 480px) {
   .tabPill {
-    padding: 8px 14px;
+    padding: 10px 16px;
     font-size: 13px;
-    min-height: 40px;
   }
 }
 
 @media (min-width: 768px) {
   .tabPill {
-    padding: 10px 16px;
+    padding: 12px 18px;
     font-size: 14px;
-    min-height: 44px;
+  }
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .tabPill:active:not(.tabPillDisabled) {
+    transform: scale(0.97);
+    opacity: 0.9;
   }
 }
 
@@ -240,7 +259,7 @@
   padding: 0 5px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 9px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -726,7 +745,7 @@
 }
 
 .projectStats span {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #d4af37;
 }
@@ -777,7 +796,7 @@
 .carImage { position: relative; width: 100%; height: 140px; overflow: hidden; }
 .carImage img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 .carCard:hover .carImage img { transform: scale(1.05); }
-.carBadge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); border-radius: 6px; font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.9); }
+.carBadge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); border-radius: 6px; font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.9); }
 .carBadge svg { color: #d4af37; }
 .carInfo { padding: 14px; }
 .carInfo h4 { font-size: 15px; font-weight: 600; color: #ffffff; margin: 0 0 6px; }
@@ -832,7 +851,7 @@
 }
 
 .analyticsLabel {
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -959,7 +978,7 @@
   color: #ffffff;
 }
 
-/* View Toggle */
+/* View Toggle - CF-001: Touch target compliance */
 .viewToggle {
   display: flex;
   background: rgba(255, 255, 255, 0.05);
@@ -972,13 +991,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .viewToggle button:hover {
@@ -989,6 +1010,14 @@
 .viewToggle button.active {
   color: #d4af37;
   background: rgba(212, 175, 55, 0.15);
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .viewToggle button:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 /* Compare Mode Bar */
@@ -1124,7 +1153,7 @@
 }
 
 .statLabel {
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
 }
@@ -1236,23 +1265,26 @@
   color: #d4af37;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .deleteBtn {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
+  top: 8px;
+  right: 8px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.7);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s ease;
   z-index: 5;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .projectFullCard:hover .deleteBtn {
@@ -1262,6 +1294,17 @@
 .deleteBtn:hover {
   background: rgba(220, 38, 38, 0.9);
   color: #ffffff;
+}
+
+/* Always show delete button on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .deleteBtn {
+    opacity: 1;
+  }
+  
+  .deleteBtn:active {
+    transform: scale(0.95);
+  }
 }
 
 /* Project Date */
@@ -1402,7 +1445,7 @@
   padding: 2px 8px;
   background: rgba(74, 222, 128, 0.15);
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   color: #4ade80;
@@ -1566,6 +1609,7 @@
    CAR PICKER MODAL
    =========================================== */
 
+/* CF-003: Mobile-first modal with safe area support */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -1575,22 +1619,45 @@
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Bottom sheet on mobile */
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* Center on tablet+ */
+@media (min-width: 641px) {
+  .modalOverlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+/* CF-003: Safe area support for modal */
 .modal {
   width: 100%;
   max-width: 600px;
-  max-height: 80vh;
+  max-height: 95vh;
+  max-height: 95dvh;
   background: #1a1b1e;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border-radius: 20px 20px 0 0; /* Bottom sheet on mobile */
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Safe area support */
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0));
+}
+
+/* Full border radius on tablet+ */
+@media (min-width: 641px) {
+  .modal {
+    border-radius: 20px;
+    max-height: 80vh;
+    padding-bottom: 0;
+  }
 }
 
 .modalHeader {
@@ -1608,9 +1675,10 @@
   margin: 0;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .closeBtn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1620,11 +1688,21 @@
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
+}
+
+/* Active state for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .closeBtn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
 }
 
 .searchBox {
@@ -1897,7 +1975,7 @@
   }
   
   .analyticsLabel {
-    font-size: 10px;
+    font-size: 12px;
   }
   
   .filterSelect,

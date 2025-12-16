@@ -32,3 +32,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_car_recalls_recall_campaign_number
   ON car_recalls(car_slug, recall_campaign_number)
   WHERE recall_campaign_number IS NOT NULL;
 
+

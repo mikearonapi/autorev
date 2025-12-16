@@ -1,6 +1,8 @@
 # AutoRev Components
 
-> Reference for all 46 React components
+> Reference for all 53 React components
+>
+> **Last Verified:** December 15, 2024 — MCP-verified file listing
 
 ---
 
@@ -12,9 +14,10 @@
 | Feature Components | 15 |
 | Events Components | 7 |
 | UI Components | 12 |
+| Gate Components | 3 |
 | Modals | 5 |
-| Layout | 4 |
-| Utility | 4 |
+| Action Components | 4 |
+| Utility | 1 |
 
 ---
 
@@ -406,7 +409,7 @@ User action handlers.
 
 ---
 
-## Utility Components (2)
+## Utility Components (1)
 
 ### `OnboardingPopup`
 **File:** `components/OnboardingPopup.jsx`

@@ -50,3 +50,4 @@ test('at least one platform includes CarComplaints sourcing', () => {
   const hasCc = mappings.platforms.some(p => (p.referenceVehicles || []).some(r => r?.carComplaintsModelUrl));
   assert.ok(hasCc, 'expected at least one carComplaintsModelUrl');
 });
+
