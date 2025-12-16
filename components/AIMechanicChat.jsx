@@ -58,6 +58,67 @@ export function useAIChat() {
   return useContext(AIChatContext);
 }
 
+// Domain-aware loading messages
+const LOADING_MESSAGES = {
+  modifications: [
+    "Searching the parts catalog...",
+    "Looking up mod compatibility...",
+    "Checking upgrade options...",
+  ],
+  performance: [
+    "Pulling dyno data...",
+    "Looking up performance specs...",
+    "Checking power numbers...",
+  ],
+  reliability: [
+    "Checking known issues...",
+    "Searching community insights...",
+    "Looking up reliability reports...",
+  ],
+  maintenance: [
+    "Looking up maintenance specs...",
+    "Checking service intervals...",
+    "Finding fluid specifications...",
+  ],
+  buying: [
+    "Checking market values...",
+    "Looking up buyer's guides...",
+    "Researching ownership costs...",
+  ],
+  track: [
+    "Searching lap times...",
+    "Looking up track data...",
+    "Checking performance records...",
+  ],
+  events: [
+    "Searching car events...",
+    "Finding meetups nearby...",
+    "Looking up track days...",
+  ],
+  education: [
+    "Searching the encyclopedia...",
+    "Looking up technical info...",
+    "Finding educational content...",
+  ],
+  comparison: [
+    "Comparing specifications...",
+    "Analyzing differences...",
+    "Looking up competitor data...",
+  ],
+  general: [
+    "Thinking...",
+    "Looking this up...",
+    "Searching our database...",
+  ],
+};
+
+// Get a loading message based on detected domains
+function getLoadingMessage(domains = []) {
+  const domain = domains[0] || 'general';
+  const messages = LOADING_MESSAGES[domain] || LOADING_MESSAGES.general;
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
 // Page-specific context configurations
 const PAGE_CONTEXT_CONFIG = {
   'browse': {
@@ -263,6 +324,17 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState(null);
   
+  // Streaming state
+  const [streamingContent, setStreamingContent] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState('Thinking...');
+  const [currentTool, setCurrentTool] = useState(null);
+  const [detectedDomains, setDetectedDomains] = useState([]);
+  
+  // Feedback state
+  const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
+  const [showFeedbackInput, setShowFeedbackInput] = useState(null); // messageIndex for expanded feedback
+  const [feedbackText, setFeedbackText] = useState('');
+  
   // Intro screen state
   const [showIntro, setShowIntro] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -443,6 +515,18 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
+  // Ref for aborting streaming requests on unmount
+  const abortControllerRef = useRef(null);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+  
   const sendMessage = async (messageText = input) => {
     if (!messageText.trim() || isLoading) return;
     
@@ -450,15 +534,26 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setInput('');
     setError(null);
     setSuggestions([]);
+    setStreamingContent('');
+    setCurrentTool(null);
+    setLoadingMessage('Thinking...');
     
     const newMessages = [...messages, { role: 'user', content: userMessage }];
     setMessages(newMessages);
     setIsLoading(true);
     
+    // Create abort controller for this request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+    
     try {
-      const response = await fetch('/api/ai-mechanic', {
+      // Use streaming API
+      const response = await fetch('/api/ai-mechanic?stream=true', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
+        },
         body: JSON.stringify({
           message: userMessage,
           carSlug: selectedCar?.slug,
@@ -467,28 +562,203 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           context: getPageContext(),
           conversationId: currentConversationId,
           history: messages.slice(-6),
+          stream: true,
         }),
+        signal,
       });
       
-      const data = await response.json();
+      // Check if we got a streaming response
+      const contentType = response.headers.get('content-type');
       
-      if (data.error) {
-        throw new Error(data.fallbackResponse || data.error);
+      if (contentType?.includes('text/event-stream')) {
+        // Handle SSE streaming
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullContent = '';
+        let messageId = null;
+        
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            // Check if aborted
+            if (signal.aborted) {
+              reader.cancel();
+              break;
+            }
+            
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            
+            for (const line of lines) {
+              // Skip event type lines (we determine type from data shape)
+              if (line.startsWith('event: ')) continue;
+              
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  
+                  // Handle different event types based on data shape
+                  if (data.domains) {
+                    // Connected event with domains
+                    setDetectedDomains(data.domains || []);
+                    setLoadingMessage(getLoadingMessage(data.domains));
+                    if (data.conversationId && !currentConversationId) {
+                      setCurrentConversationId(data.conversationId);
+                    }
+                  } else if (data.content !== undefined) {
+                    // Text delta
+                    fullContent += data.content;
+                    setStreamingContent(fullContent);
+                  } else if (data.tool) {
+                    // Tool start/result
+                    if (data.success === undefined) {
+                      // Tool start
+                      setCurrentTool(data.tool);
+                      setLoadingMessage(getToolLoadingMessage(data.tool));
+                    } else {
+                      // Tool result
+                      setCurrentTool(null);
+                    }
+                  } else if (data.usage) {
+                    // Done event
+                    if (data.conversationId) {
+                      setCurrentConversationId(data.conversationId);
+                    }
+                    messageId = data.messageId;
+                  } else if (data.message && !data.content) {
+                    // Error event
+                    throw new Error(data.message);
+                  }
+                } catch (parseErr) {
+                  // Skip invalid JSON (might be partial), but rethrow actual errors
+                  if (parseErr.message && !parseErr.message.includes('JSON')) {
+                    throw parseErr;
+                  }
+                }
+              }
+            }
+          }
+        } finally {
+          // Ensure reader is released
+          reader.releaseLock();
+        }
+        
+        // Finalize the message (only if not aborted)
+        if (fullContent && !signal.aborted) {
+          setMessages([...newMessages, { 
+            role: 'assistant', 
+            content: fullContent,
+            messageId,
+          }]);
+          setStreamingContent('');
+        }
+      } else {
+        // Fallback to non-streaming response
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.fallbackResponse || data.error);
+        }
+        
+        if (data.conversationId && !currentConversationId) {
+          setCurrentConversationId(data.conversationId);
+        }
+        
+        setMessages([...newMessages, { role: 'assistant', content: data.response }]);
       }
-      
-      // Update conversation ID if a new one was created
-      if (data.conversationId && !currentConversationId) {
-        setCurrentConversationId(data.conversationId);
-      }
-      
-      setMessages([...newMessages, { role: 'assistant', content: data.response }]);
       
     } catch (err) {
+      // Don't show error for aborted requests (user navigated away or sent new message)
+      if (err.name === 'AbortError') {
+        console.info('[AI] Request aborted');
+        return;
+      }
       console.error('[AI] Error:', err);
       setError(err.message || 'Failed to get response. Please try again.');
       setMessages(messages);
+      setStreamingContent('');
     } finally {
       setIsLoading(false);
+      setCurrentTool(null);
+      abortControllerRef.current = null;
+    }
+  };
+  
+  // Get a friendly loading message for a tool
+  const getToolLoadingMessage = (toolName) => {
+    const toolMessages = {
+      'search_cars': 'Searching cars...',
+      'get_car_details': 'Loading car details...',
+      'get_car_ai_context': 'Getting car info...',
+      'get_expert_reviews': 'Checking expert reviews...',
+      'get_known_issues': 'Looking up known issues...',
+      'compare_cars': 'Comparing cars...',
+      'search_encyclopedia': 'Searching encyclopedia...',
+      'get_upgrade_info': 'Getting upgrade info...',
+      'search_parts': 'Searching parts catalog...',
+      'get_maintenance_schedule': 'Checking maintenance...',
+      'search_knowledge': 'Searching knowledge base...',
+      'get_track_lap_times': 'Looking up lap times...',
+      'get_dyno_runs': 'Fetching dyno data...',
+      'search_community_insights': 'Checking community insights...',
+      'search_events': 'Finding car events...',
+      'recommend_build': 'Building recommendations...',
+    };
+    return toolMessages[toolName] || 'Working on it...';
+  };
+  
+  // Handle feedback submission
+  const handleFeedback = async (messageIndex, rating) => {
+    const message = messages[messageIndex];
+    if (!message || !user?.id) return;
+    
+    setFeedbackGiven(prev => ({ ...prev, [messageIndex]: rating }));
+    
+    // If negative, show text input
+    if (rating === 'negative') {
+      setShowFeedbackInput(messageIndex);
+      return;
+    }
+    
+    // Submit positive feedback immediately
+    try {
+      await fetch('/api/ai-mechanic/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversationId,
+          messageIndex,
+          rating,
+          userId: user?.id,
+        }),
+      });
+    } catch (err) {
+      console.warn('[AI Feedback] Failed to submit:', err);
+    }
+  };
+  
+  // Submit negative feedback with text
+  const submitNegativeFeedback = async (messageIndex) => {
+    try {
+      await fetch('/api/ai-mechanic/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversationId,
+          messageIndex,
+          rating: 'negative',
+          feedbackText: feedbackText,
+          userId: user?.id,
+        }),
+      });
+      setShowFeedbackInput(null);
+      setFeedbackText('');
+    } catch (err) {
+      console.warn('[AI Feedback] Failed to submit:', err);
     }
   };
 
@@ -754,27 +1024,104 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                             <ALMascot size={28} />
                           </div>
                         )}
-                        <div 
-                          className={styles.messageContent}
-                          dangerouslySetInnerHTML={
-                            msg.role === 'assistant' 
-                              ? { __html: formatResponse(msg.content) }
-                              : undefined
-                          }
-                        >
-                          {msg.role === 'user' ? msg.content : null}
+                        <div className={styles.messageWrapper}>
+                          <div 
+                            className={styles.messageContent}
+                            dangerouslySetInnerHTML={
+                              msg.role === 'assistant' 
+                                ? { __html: formatResponse(msg.content) }
+                                : undefined
+                            }
+                          >
+                            {msg.role === 'user' ? msg.content : null}
+                          </div>
+                          
+                          {/* Feedback buttons for assistant messages */}
+                          {msg.role === 'assistant' && (
+                            <div className={styles.feedbackRow}>
+                              {feedbackGiven[i] ? (
+                                <span className={styles.feedbackThanks}>
+                                  {feedbackGiven[i] === 'positive' ? '👍 Thanks!' : '👎 Thanks for the feedback'}
+                                </span>
+                              ) : (
+                                <>
+                                  <button
+                                    className={styles.feedbackBtn}
+                                    onClick={() => handleFeedback(i, 'positive')}
+                                    title="Good response"
+                                  >
+                                    👍
+                                  </button>
+                                  <button
+                                    className={styles.feedbackBtn}
+                                    onClick={() => handleFeedback(i, 'negative')}
+                                    title="Bad response"
+                                  >
+                                    👎
+                                  </button>
+                                </>
+                              )}
+                              
+                              {/* Expanded feedback input for negative feedback */}
+                              {showFeedbackInput === i && (
+                                <div className={styles.feedbackInputRow}>
+                                  <input
+                                    type="text"
+                                    className={styles.feedbackInput}
+                                    placeholder="What was wrong? (optional)"
+                                    value={feedbackText}
+                                    onChange={(e) => setFeedbackText(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        submitNegativeFeedback(i);
+                                      }
+                                    }}
+                                  />
+                                  <button
+                                    className={styles.feedbackSubmitBtn}
+                                    onClick={() => submitNegativeFeedback(i)}
+                                  >
+                                    Send
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
                     
-                    {isLoading && (
+                    {/* Streaming response */}
+                    {isLoading && streamingContent && (
+                      <div className={`${styles.message} ${styles.assistant}`}>
+                        <div className={styles.messageIcon}>
+                          <ALMascot size={28} />
+                        </div>
+                        <div 
+                          className={styles.messageContent}
+                          dangerouslySetInnerHTML={{ __html: formatResponse(streamingContent) }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Loading indicator with contextual message */}
+                    {isLoading && !streamingContent && (
                       <div className={`${styles.message} ${styles.assistant}`}>
                         <div className={styles.messageIcon}>
                           <ALMascot size={28} className={styles.loadingIcon} />
                         </div>
                         <div className={styles.messageContent}>
-                          <div className={styles.typing}>
-                            <span></span><span></span><span></span>
+                          <div className={styles.loadingState}>
+                            <div className={styles.loadingText}>{loadingMessage}</div>
+                            {currentTool && (
+                              <div className={styles.toolIndicator}>
+                                <Icons.sparkle size={12} />
+                                <span>{currentTool.replace(/_/g, ' ')}</span>
+                              </div>
+                            )}
+                            <div className={styles.typing}>
+                              <span></span><span></span><span></span>
+                            </div>
                           </div>
                         </div>
                       </div>

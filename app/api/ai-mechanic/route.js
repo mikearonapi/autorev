@@ -10,6 +10,7 @@
  * - Rich context from our car database
  * - Expert review integration
  * - Encyclopedia and modification knowledge
+ * - STREAMING responses for better UX
  * 
  * @route POST /api/ai-mechanic
  */
@@ -42,10 +43,81 @@ import {
 } from '@/lib/alConversationService';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { notifyALConversation } from '@/lib/discord';
+
+// Stream encoding helper
+const encoder = new TextEncoder();
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
+
+// =============================================================================
+// STREAMING HELPERS
+// =============================================================================
+
+/**
+ * Send a Server-Sent Event to the stream
+ */
+function sendSSE(controller, eventType, data) {
+  const event = `event: ${eventType}\ndata: ${JSON.stringify(data)}\n\n`;
+  controller.enqueue(encoder.encode(event));
+}
+
+/**
+ * Call Claude API with streaming enabled
+ * Returns an async generator that yields events
+ */
+async function* streamClaudeResponse({ systemPrompt, messages, tools, maxTokens }) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: ANTHROPIC_MODEL,
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages,
+      tools: tools?.length > 0 ? tools : undefined,
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error('[AL] Claude streaming API error:', error);
+    throw new Error('Failed to get AI response');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          yield parsed;
+        } catch (e) {
+          // Skip invalid JSON
+        }
+      }
+    }
+  }
+}
 
 // =============================================================================
 // ENHANCED AUTOMOTIVE SYSTEM PROMPT
@@ -161,6 +233,281 @@ You're enthusiastic but not over-the-top. You get genuinely excited about great 
 - **Explicit Context**: If a carSlug is provided in the request (e.g. user is on a specific car page), prioritize that car as the context over their garage vehicle.`;
 
 // =============================================================================
+// STREAMING RESPONSE HANDLER
+// =============================================================================
+
+async function handleStreamingResponse({
+  correlationId,
+  message,
+  context,
+  contextText,
+  domains,
+  plan,
+  userBalance,
+  isInternalEval,
+  existingMessages,
+  activeConversationId,
+  carSlug,
+  userId,
+}) {
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        // Send initial connection event with detected domains
+        sendSSE(controller, 'connected', { 
+          correlationId, 
+          domains,
+          conversationId: activeConversationId,
+        });
+
+        // Filter tools based on user's plan
+        const availableTools = AL_TOOLS.filter(tool => 
+          plan.toolAccess === 'all' || plan.toolAccess.includes(tool.name)
+        );
+
+        // Build system prompt
+        const systemPrompt = AUTOMOTIVE_SYSTEM_PROMPT + contextText + `
+
+## Current Context
+- User Plan: ${plan.name} (${formatCentsAsDollars(userBalance.balanceCents)} balance)
+- Detected Topics: ${domains.join(', ')}
+${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
+
+        // Format messages for Claude
+        let messages;
+        if (existingMessages.length > 0) {
+          messages = formatMessagesForClaude(existingMessages);
+          messages.push({ role: 'user', content: message });
+        } else {
+          messages = [{ role: 'user', content: message }];
+        }
+
+        const usageTotals = { inputTokens: 0, outputTokens: 0, callCount: 0 };
+        const toolCallsUsed = [];
+        let fullResponse = '';
+        let currentToolUse = null;
+        let toolUseBuffer = [];
+        let iterationCount = 0;
+        const maxIterations = plan.maxToolCallsPerMessage;
+        const cacheScopeKey = `${isInternalEval ? 'internal-eval' : userId}:${activeConversationId || 'no_conversation'}`;
+
+        // Stream the initial response
+        let needsToolProcessing = true;
+        
+        while (needsToolProcessing && iterationCount < maxIterations) {
+          iterationCount++;
+          fullResponse = '';
+          toolUseBuffer = [];
+          currentToolUse = null;
+          let stopReason = null;
+
+          // Stream Claude response
+          for await (const event of streamClaudeResponse({
+            systemPrompt,
+            messages,
+            tools: availableTools,
+            maxTokens: plan.maxResponseTokens,
+          })) {
+            // Handle different event types
+            if (event.type === 'message_start') {
+              usageTotals.callCount += 1;
+              if (event.message?.usage) {
+                usageTotals.inputTokens += event.message.usage.input_tokens || 0;
+              }
+            } else if (event.type === 'content_block_start') {
+              if (event.content_block?.type === 'tool_use') {
+                currentToolUse = {
+                  id: event.content_block.id,
+                  name: event.content_block.name,
+                  input: '',
+                };
+                // Send tool_use_start event
+                sendSSE(controller, 'tool_start', { 
+                  tool: event.content_block.name,
+                  id: event.content_block.id,
+                });
+              }
+            } else if (event.type === 'content_block_delta') {
+              if (event.delta?.type === 'text_delta') {
+                const text = event.delta.text || '';
+                fullResponse += text;
+                // Stream the text to client
+                sendSSE(controller, 'text', { content: text });
+              } else if (event.delta?.type === 'input_json_delta') {
+                // Accumulate tool input JSON
+                if (currentToolUse) {
+                  currentToolUse.input += event.delta.partial_json || '';
+                }
+              }
+            } else if (event.type === 'content_block_stop') {
+              if (currentToolUse) {
+                // Parse the accumulated JSON input
+                try {
+                  currentToolUse.input = JSON.parse(currentToolUse.input || '{}');
+                } catch (e) {
+                  currentToolUse.input = {};
+                }
+                toolUseBuffer.push(currentToolUse);
+                currentToolUse = null;
+              }
+            } else if (event.type === 'message_delta') {
+              if (event.usage) {
+                usageTotals.outputTokens += event.usage.output_tokens || 0;
+              }
+              if (event.delta?.stop_reason) {
+                stopReason = event.delta.stop_reason;
+              }
+            }
+          }
+
+          // Check if we need to process tools
+          if (stopReason === 'tool_use' && toolUseBuffer.length > 0) {
+            // Process tool calls
+            const toolResults = [];
+            
+            for (const toolUse of toolUseBuffer) {
+              if (!isToolAvailable(userBalance.plan, toolUse.name)) {
+                toolResults.push({
+                  type: 'tool_result',
+                  tool_use_id: toolUse.id,
+                  content: JSON.stringify({ 
+                    error: 'This tool requires a higher subscription tier',
+                    upgrade_required: true,
+                  }),
+                });
+                continue;
+              }
+
+              toolCallsUsed.push(toolUse.name);
+
+              try {
+                const meta = { cacheHit: false };
+                const result = await executeToolCall(toolUse.name, toolUse.input, { 
+                  correlationId, 
+                  cacheScopeKey, 
+                  meta 
+                });
+                
+                // Send tool result event
+                sendSSE(controller, 'tool_result', { 
+                  tool: toolUse.name,
+                  id: toolUse.id,
+                  success: true,
+                });
+
+                toolResults.push({
+                  type: 'tool_result',
+                  tool_use_id: toolUse.id,
+                  content: JSON.stringify(result),
+                });
+              } catch (err) {
+                console.error(`[AL:${correlationId}] Tool ${toolUse.name} failed:`, err);
+                sendSSE(controller, 'tool_result', { 
+                  tool: toolUse.name,
+                  id: toolUse.id,
+                  success: false,
+                  error: err.message,
+                });
+                toolResults.push({
+                  type: 'tool_result',
+                  tool_use_id: toolUse.id,
+                  content: JSON.stringify({ error: 'Tool execution failed', message: err.message }),
+                });
+              }
+            }
+
+            // Continue conversation with tool results
+            // Build assistant message with tool uses
+            const assistantContent = [];
+            if (fullResponse) {
+              assistantContent.push({ type: 'text', text: fullResponse });
+            }
+            for (const tu of toolUseBuffer) {
+              assistantContent.push({
+                type: 'tool_use',
+                id: tu.id,
+                name: tu.name,
+                input: tu.input,
+              });
+            }
+
+            messages = [
+              ...messages,
+              { role: 'assistant', content: assistantContent },
+              { role: 'user', content: toolResults },
+            ];
+          } else {
+            // No more tools needed
+            needsToolProcessing = false;
+          }
+        }
+
+        // Calculate actual cost
+        const actualCostCents = calculateTokenCost(usageTotals.inputTokens, usageTotals.outputTokens);
+
+        // Deduct usage (non-blocking for streaming)
+        let newBalanceCents = userBalance.balanceCents;
+        if (!isInternalEval) {
+          const deductResult = await deductUsage(userId, {
+            inputTokens: usageTotals.inputTokens,
+            outputTokens: usageTotals.outputTokens,
+            toolCalls: toolCallsUsed,
+          });
+          newBalanceCents = deductResult.newBalanceCents ?? userBalance.balanceCents;
+        }
+
+        // Store assistant response in conversation history
+        if (activeConversationId && fullResponse) {
+          await addMessage(activeConversationId, {
+            role: 'assistant',
+            content: fullResponse,
+            toolCalls: toolCallsUsed,
+            costCents: actualCostCents,
+            inputTokens: usageTotals.inputTokens,
+            outputTokens: usageTotals.outputTokens,
+            carContextSlug: carSlug,
+            carContextName: context.car?.name,
+            dataSources: toolCallsUsed.map(tool => ({ type: 'tool', name: tool })),
+          });
+        }
+
+        // Send final metadata event
+        sendSSE(controller, 'done', {
+          conversationId: activeConversationId,
+          usage: {
+            costCents: actualCostCents,
+            costFormatted: formatCentsAsDollars(actualCostCents),
+            remainingBalanceCents: newBalanceCents,
+            remainingBalanceFormatted: formatCentsAsDollars(newBalanceCents),
+            inputTokens: usageTotals.inputTokens,
+            outputTokens: usageTotals.outputTokens,
+            toolCalls: toolCallsUsed.length,
+          },
+          toolsUsed: toolCallsUsed,
+        });
+
+        controller.close();
+      } catch (error) {
+        console.error('[AL] Streaming error:', error);
+        sendSSE(controller, 'error', { 
+          message: error.message || 'Streaming failed',
+        });
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'X-Correlation-Id': correlationId,
+    },
+  });
+}
+
+// =============================================================================
 // MAIN API HANDLER
 // =============================================================================
 
@@ -177,6 +524,11 @@ export async function POST(request) {
     const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
     const internalEvalHeader = request.headers.get('x-internal-eval-key');
     const isInternalEval = Boolean(INTERNAL_EVAL_KEY && internalEvalHeader && internalEvalHeader === INTERNAL_EVAL_KEY);
+    
+    // Check if streaming is requested
+    const url = new URL(request.url);
+    const streamRequested = url.searchParams.get('stream') === 'true' || 
+                           request.headers.get('accept')?.includes('text/event-stream');
 
     const body = await request.json();
     const {
@@ -189,7 +541,11 @@ export async function POST(request) {
       history = [],
       planId: requestedPlanId,
       userVehicleOverride,
+      stream: bodyStream,
     } = body;
+    
+    // Allow streaming to be requested via body as well
+    const useStreaming = streamRequested || bodyStream === true;
 
     if (!message) {
       return NextResponse.json(
@@ -263,6 +619,7 @@ export async function POST(request) {
     // 3. Handle conversation setup (async)
     let activeConversationId = conversationId;
     let existingMessages = [];
+    let createdNewConversation = false;
 
     // Create/Fetch conversation logic
     const conversationPromise = (async () => {
@@ -290,6 +647,9 @@ export async function POST(request) {
     const convData = await conversationPromise;
     activeConversationId = convData.id;
     existingMessages = convData.messages;
+    if (!conversationId && convData.id) {
+      createdNewConversation = true;
+    }
 
     // 4. Store user message (async) - can run in parallel with context completion
     const messageStoragePromise = activeConversationId ? addMessage(activeConversationId, {
@@ -309,6 +669,37 @@ export async function POST(request) {
     // Wait for message storage to complete (ensure it's saved before we might error out later)
     await messageStoragePromise;
     // PARALLEL EXECUTION END
+
+    // Fire-and-forget Discord notification for new conversations only
+    if (createdNewConversation && body.message) {
+      const carContext = body.carContext?.name || body.carContext?.slug;
+      notifyALConversation({
+        id: activeConversationId,
+        firstMessage: body.message,
+        carContext,
+        userTier: userBalance?.plan,
+      });
+    }
+
+    // =============================================================================
+    // STREAMING MODE
+    // =============================================================================
+    if (useStreaming) {
+      return handleStreamingResponse({
+        correlationId,
+        message,
+        context,
+        contextText: formatContextForAI(context),
+        domains,
+        plan,
+        userBalance,
+        isInternalEval,
+        existingMessages,
+        activeConversationId,
+        carSlug,
+        userId,
+      });
+    }
 
     // Variant-aware maintenance: keep handy for tool input normalization.
     const userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
