@@ -390,20 +390,20 @@
 @media (max-width: 767px) {
   /* Buttons already 44px - maintain size */
   .compactBtn {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
   
   /* Ensure action buttons meet touch target */
   .actionBtn {
-    padding: 12px 16px;
-    min-height: 44px;
+    padding: 10px 14px;
+    min-height: 40px;
   }
   
   /* Dropdown trigger */
   .dropdownTrigger {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
   
   /* Dropdown items need proper touch targets */

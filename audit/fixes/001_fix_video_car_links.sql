@@ -52,3 +52,4 @@ SELECT
 FROM youtube_video_car_links yvcl
 JOIN cars c ON c.id = yvcl.car_id
 WHERE yvcl.video_id IN ('P-pstZGg9Y8', 'EEkE6Qwj9cQ');
+

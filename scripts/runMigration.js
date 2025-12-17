@@ -136,3 +136,4 @@ const migrationFile = process.argv[2] || 'supabase/migrations/021_enriched_car_d
 runMigration(migrationFile);
 
 
+

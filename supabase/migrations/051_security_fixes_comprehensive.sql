@@ -532,3 +532,4 @@ $function$;
 
 -- Keep as-is since it's intentional aggregate data
 COMMENT ON MATERIALIZED VIEW cars_stats IS 'Public aggregate car statistics - intentionally accessible';
+

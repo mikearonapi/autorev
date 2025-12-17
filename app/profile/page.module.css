@@ -1543,6 +1543,340 @@
   to { transform: rotate(360deg); }
 }
 
+/* ============================================
+   YOUR DATA - Data Transparency & Clearing
+   ============================================ */
+
+.dataTransparency {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.dataTransparency h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: white;
+  margin: 0 0 var(--space-md);
+}
+
+.dataInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.dataInfoCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.dataInfoIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: var(--radius-md);
+  color: #D4AF37;
+  flex-shrink: 0;
+}
+
+.dataInfoCard h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: white;
+  margin: 0 0 2px;
+}
+
+.dataInfoCard p {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.protectionList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md);
+}
+
+.protectionList li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: var(--space-xs);
+}
+
+.protectionList li svg {
+  color: #22c55e;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.privacyLink {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: var(--space-md) 0 0;
+}
+
+.privacyLink a {
+  color: #D4AF37;
+  text-decoration: underline;
+}
+
+.privacyLink a:hover {
+  color: #B8962E;
+}
+
+/* Clear Data Section */
+.clearDataSection {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.clearDataSection h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: white;
+  margin: 0 0 var(--space-xs);
+}
+
+.clearDataDescription {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 var(--space-md);
+}
+
+.clearDataGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.clearDataCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  gap: var(--space-md);
+}
+
+.clearDataInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.clearDataInfo svg {
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.clearDataInfo h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: white;
+  margin: 0 0 2px;
+}
+
+.clearDataInfo p {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.clearButton {
+  padding: var(--space-xs) var(--space-md);
+  background: transparent;
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.clearButton:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #f87171;
+}
+
+.clearButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Clear All Section */
+.clearAllSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  gap: var(--space-md);
+}
+
+.clearAllInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.clearAllInfo svg {
+  color: #f87171;
+  flex-shrink: 0;
+}
+
+.clearAllInfo h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: white;
+  margin: 0 0 2px;
+}
+
+.clearAllInfo p {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.clearAllButton {
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.clearAllButton:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #f87171;
+}
+
+.clearAllButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Confirmation Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-md);
+}
+
+.modal {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: white;
+  margin: 0 0 var(--space-sm);
+}
+
+.modal p {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 var(--space-lg);
+  line-height: 1.6;
+}
+
+.modal p strong {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+.modalCancel {
+  padding: var(--space-sm) var(--space-lg);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalCancel:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.modalConfirm {
+  padding: var(--space-sm) var(--space-lg);
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalConfirm:hover:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
+}
+
+.modalConfirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Mobile adjustments */
 @media (max-width: 640px) {
   .gasTankStats {
@@ -1572,5 +1906,40 @@
   
   .statsRow {
     grid-template-columns: 1fr;
+  }
+
+  .dataInfoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .clearDataGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .clearDataCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .clearButton {
+    width: 100%;
+  }
+
+  .clearAllSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .clearAllButton {
+    width: 100%;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .modalCancel,
+  .modalConfirm {
+    width: 100%;
   }
 }

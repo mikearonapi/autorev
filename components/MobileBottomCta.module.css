@@ -14,8 +14,8 @@
   padding-bottom: env(safe-area-inset-bottom, 0);
   /* Slide in animation */
   animation: slideUp 0.3s ease-out;
-  /* Only show on mobile */
-  display: block;
+  /* Hidden on mobile per new design */
+  display: none;
 }
 
 @media (min-width: 768px) {

@@ -248,3 +248,4 @@ RESEND_API_KEY=your_resend_key
 - [API.md](/docs/API.md) - API endpoints (needs update)
 - Community page: http://localhost:3000/community
 - AL page: http://localhost:3000/al
+

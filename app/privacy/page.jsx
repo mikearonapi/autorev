@@ -210,17 +210,7 @@ export default function PrivacyPolicy() {
             </li>
           </ul>
 
-          <h3>3.4 Data Scraping Sources (No Personal Data Shared)</h3>
-          <p>We aggregate publicly available automotive data from:</p>
-          <ul>
-            <li><strong>Bring a Trailer:</strong> Auction results for market pricing data</li>
-            <li><strong>Cars.com:</strong> Listing prices for market value analysis</li>
-            <li><strong>Hagerty:</strong> Insurance valuation data</li>
-            <li><strong>Enthusiast forums:</strong> Rennlist, Bimmerpost, Miata.net, etc. (public posts only)</li>
-          </ul>
-          <p>We do not share your personal information with these sources.</p>
-
-          <h3>3.5 Payment Processing (Future)</h3>
+          <h3>3.4 Payment Processing (Future)</h3>
           <p>
             If we implement credit purchases or paid subscriptions, we will integrate with a payment processor 
             (e.g., Stripe) that will handle all payment card information. We will not store payment card details 
@@ -235,10 +225,10 @@ export default function PrivacyPolicy() {
           <ul>
             <li><strong>Account data:</strong> Retained as long as your account is active</li>
             <li><strong>Owned vehicles and garage:</strong> Retained until you delete them or close your account</li>
-            <li><strong>AL conversation history:</strong> Retained for 2 years or until account deletion</li>
+            <li><strong>AL conversation history:</strong> Retained until you delete it or close your account</li>
             <li><strong>Feedback submissions:</strong> Retained indefinitely for product improvement (anonymized where possible)</li>
             <li><strong>Analytics and logs:</strong> Retained for 90 days, then aggregated or deleted</li>
-            <li><strong>Contact form submissions:</strong> Retained for 2 years or until request is resolved</li>
+            <li><strong>Contact form submissions:</strong> Retained until request is resolved</li>
           </ul>
 
           <h3>4.2 How to Delete Your Data</h3>
@@ -246,6 +236,7 @@ export default function PrivacyPolicy() {
           <ul>
             <li><strong>Individual items:</strong> Delete favorite cars, build projects, or service logs directly from your garage</li>
             <li><strong>Owned vehicles:</strong> Remove vehicles from your garage using the delete option</li>
+            <li><strong>Clear specific data:</strong> Use the "Clear My Data" feature in your profile settings to selectively remove favorites, vehicles, projects, or AL history</li>
             <li><strong>Full account deletion:</strong> Email us at <strong>contact@autorev.app</strong> with "Delete My Account" in the subject line. 
             We will delete your account and all associated data within 30 days.</li>
           </ul>
@@ -536,6 +527,7 @@ export default function PrivacyPolicy() {
     </main>
   );
 }
+
 
 
 

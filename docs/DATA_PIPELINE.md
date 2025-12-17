@@ -297,3 +297,4 @@ Track in `reports/data_completeness_audit.json`:
 ---
 
 *See [DATABASE.md](DATABASE.md) for schema details and [DATA_GAPS.md](DATA_GAPS.md) for gap analysis.*
+

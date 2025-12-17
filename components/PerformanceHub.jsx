@@ -26,6 +26,10 @@ import {
   getUpgradeSummary,
   performanceCategories,
 } from '@/lib/performance.js';
+import { 
+  calculateSmartHpGain, 
+  getConflictSummary,
+} from '@/lib/upgradeCalculator.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { upgradeTiers } from '@/data/performanceCategories.js';
 import { tierConfig } from '@/data/cars.js';
@@ -211,7 +215,7 @@ const packageDescriptions = {
 /**
  * Package Description Component - Explains what each tier does
  */
-function PackageDescription({ packageKey, packages, showUpgrade, totalCost, hpGain }) {
+function PackageDescription({ packageKey, packages, showUpgrade, totalCost, hpGain, stockHp, projectedHp }) {
   const desc = packageDescriptions[packageKey] || packageDescriptions.stock;
   const currentPkg = packages?.find(p => p.key === packageKey);
   
@@ -227,7 +231,13 @@ function PackageDescription({ packageKey, packages, showUpgrade, totalCost, hpGa
             {hpGain > 0 && (
               <div className={styles.packageStat}>
                 <Icons.bolt size={14} />
-                <span className={styles.packageStatValue}>+{hpGain} HP</span>
+                {/* Stock → Projected format */}
+                <span className={styles.packageStatValue}>
+                  <span className={styles.stockHpValue}>{stockHp}</span>
+                  <span className={styles.hpArrow}>→</span>
+                  <span className={styles.projectedHpValue}>{projectedHp}</span>
+                  <span className={styles.hpGainBadge}>(+{hpGain})</span>
+                </span>
               </div>
             )}
             {totalCost?.low > 0 && (
@@ -1053,6 +1063,18 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
     [car, activeUpgradeKeys]
   );
   
+  // Smart HP calculation with diminishing returns and overlap detection
+  const smartHp = useMemo(() => 
+    calculateSmartHpGain(car, activeUpgradeKeys),
+    [car, activeUpgradeKeys]
+  );
+  
+  // Conflict summary for UI display
+  const conflictSummary = useMemo(() => 
+    getConflictSummary(smartHp.conflicts),
+    [smartHp.conflicts]
+  );
+  
   // Get score comparison for bars
   const scoreComparison = useMemo(() => 
     getScoreComparison(profile.stockScores, profile.upgradedScores),
@@ -1130,10 +1152,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       carName: car.name,
       buildName: buildName.trim(),
       selectedUpgrades: effectiveSelectedModules,
-      totalHpGain: profile.upgradedMetrics.hp - profile.stockMetrics.hp,
+      // Use smart HP calculation for realistic gains
+      totalHpGain: smartHp.totalGain,
       totalCostLow: totalCost.low,
       totalCostHigh: totalCost.high,
-      finalHp: profile.upgradedMetrics.hp,
+      finalHp: smartHp.projectedHp,
     };
     
     try {
@@ -1374,7 +1397,9 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             packages={availableUpgrades.packages}
             showUpgrade={showUpgrade}
             totalCost={totalCost}
-            hpGain={profile.upgradedMetrics.hp - profile.stockMetrics.hp}
+            hpGain={smartHp.totalGain}
+            stockHp={smartHp.stockHp}
+            projectedHp={smartHp.projectedHp}
           />
         </div>
 
@@ -1386,6 +1411,36 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           onUpgradeClick={setSelectedUpgradeForModal}
         />
 
+        {/* Overlap Warnings - Smart detection of conflicting/redundant mods */}
+        {conflictSummary.hasConflicts && (
+          <div className={styles.overlapWarnings}>
+            <div className={styles.overlapHeader}>
+              <Icons.alertTriangle size={16} />
+              <span>Build Optimization Notes</span>
+              {smartHp.adjustmentAmount > 0 && (
+                <span className={styles.adjustmentBadge}>
+                  ~{smartHp.adjustmentAmount} HP adjusted
+                </span>
+              )}
+            </div>
+            <div className={styles.overlapList}>
+              {smartHp.conflicts.map((conflict, idx) => (
+                <div 
+                  key={idx} 
+                  className={`${styles.overlapItem} ${styles[conflict.severity]}`}
+                >
+                  {conflict.severity === 'warning' ? (
+                    <Icons.alertTriangle size={14} />
+                  ) : (
+                    <Icons.info size={14} className={styles.infoIcon} />
+                  )}
+                  <span>{conflict.message}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Expert Track Insights - What reviewers say */}
         <ExpertTrackInsights car={car} />
 
@@ -1393,12 +1448,12 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
         <div className={styles.performanceSection}>
           <h4 className={styles.sectionTitle}>Performance Metrics</h4>
           
-          {/* Power (HP) */}
+          {/* Power (HP) - Using smart calculation with diminishing returns */}
           <RealMetricRow
             icon={Icons.bolt}
             label="Power"
-            stockValue={profile.stockMetrics.hp || car.hp}
-            upgradedValue={profile.upgradedMetrics.hp}
+            stockValue={smartHp.stockHp}
+            upgradedValue={smartHp.projectedHp}
             unit=" hp"
             isLowerBetter={false}
           />

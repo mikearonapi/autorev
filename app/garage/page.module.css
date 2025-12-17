@@ -1457,6 +1457,27 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.proConList {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proItem,
+.conItem {
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+  word-break: break-word;
+}
+
+.conItem {
+  color: rgba(255, 255, 255, 0.78);
+}
+
 .prosConsBlock {
   flex: 1;
   min-width: 0;
@@ -1470,6 +1491,16 @@
   .prosConsRow {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .proConList {
+    gap: 8px;
+  }
+
+  .proItem,
+  .conItem {
+    font-size: 12px;
+    line-height: 1.5;
   }
 }
 
@@ -2070,6 +2101,13 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .thumbnailContainer {
+    padding: 12px;
+    gap: 6px;
+  }
+}
+
 @media (min-width: 768px) {
   .thumbnailContainer {
     padding: 16px 100px 16px 32px;
@@ -2096,6 +2134,14 @@
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .navArrow {
+    width: 34px;
+    height: 34px;
+    margin: 0;
+  }
 }
 
 @media (min-width: 768px) {

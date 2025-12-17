@@ -220,6 +220,10 @@ export default function ProfilePage() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState(false);
 
+  // Data clearing state
+  const [clearingData, setClearingData] = useState(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(null);
+
   // Current plan (mock - would come from backend)
   const currentPlan = profile?.subscription_tier || 'free';
 
@@ -362,6 +366,39 @@ export default function ProfilePage() {
     router.push('/');
   };
 
+  // Handle data clearing
+  const handleClearData = async (scope) => {
+    if (!user?.id) return;
+    
+    setClearingData(scope);
+    try {
+      const response = await fetch(`/api/users/${user.id}/clear-data`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ scope }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        alert(`Successfully cleared: ${data.cleared.join(', ')}`);
+        setShowClearConfirm(null);
+        
+        // Refresh the page to update counts
+        window.location.reload();
+      } else {
+        alert(`Failed to clear data: ${data.error || data.message || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Failed to clear data:', err);
+      alert('Failed to clear data. Please try again.');
+    } finally {
+      setClearingData(null);
+    }
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -389,6 +426,7 @@ export default function ProfilePage() {
     { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
     { id: 'subscription', label: 'Subscription', icon: Icons.crown },
     { id: 'billing', label: 'Billing', icon: Icons.creditCard },
+    { id: 'data', label: 'Your Data', icon: Icons.shield },
     { id: 'notifications', label: 'Notifications', icon: Icons.bell },
     { id: 'security', label: 'Security', icon: Icons.shield },
   ];
@@ -839,6 +877,224 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </>
+              )}
+            </section>
+          )}
+
+          {/* Your Data Tab */}
+          {activeTab === 'data' && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <Icons.shield size={20} />
+                Your Data
+              </h2>
+              
+              <p className={styles.sectionDescription}>
+                Manage the data associated with your account. You can selectively clear data while keeping your account active.
+              </p>
+
+              {/* Data Transparency */}
+              <div className={styles.dataTransparency}>
+                <h3>What We Store</h3>
+                <div className={styles.dataInfoGrid}>
+                  <div className={styles.dataInfoCard}>
+                    <div className={styles.dataInfoIcon}>
+                      <Icons.user size={20} />
+                    </div>
+                    <div>
+                      <h4>Account</h4>
+                      <p>Email, display name, preferences</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.dataInfoCard}>
+                    <div className={styles.dataInfoIcon}>
+                      <Icons.heart size={20} />
+                    </div>
+                    <div>
+                      <h4>Favorites</h4>
+                      <p>Cars you've saved to your garage</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.dataInfoCard}>
+                    <div className={styles.dataInfoIcon}>
+                      <Icons.wrench size={20} />
+                    </div>
+                    <div>
+                      <h4>Vehicles</h4>
+                      <p>Cars you own, including VIN if provided</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.dataInfoCard}>
+                    <div className={styles.dataInfoIcon}>
+                      <Icons.settings size={20} />
+                    </div>
+                    <div>
+                      <h4>Projects</h4>
+                      <p>Your tuning/build configurations</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.dataInfoCard}>
+                    <div className={styles.dataInfoIcon}>
+                      <Icons.bot size={20} />
+                    </div>
+                    <div>
+                      <h4>AL Conversations</h4>
+                      <p>Your chat history with our AI assistant</p>
+                    </div>
+                  </div>
+                </div>
+
+                <h3 style={{ marginTop: 'var(--space-xl)' }}>How We Protect It</h3>
+                <ul className={styles.protectionList}>
+                  <li>
+                    <Icons.check size={16} />
+                    All data encrypted in transit (HTTPS) and at rest
+                  </li>
+                  <li>
+                    <Icons.check size={16} />
+                    Authentication via Supabase Auth (industry standard)
+                  </li>
+                  <li>
+                    <Icons.check size={16} />
+                    We never sell your personal data
+                  </li>
+                  <li>
+                    <Icons.check size={16} />
+                    VIN data is only used for vehicle identification
+                  </li>
+                </ul>
+
+                <p className={styles.privacyLink}>
+                  Read our full <Link href="/privacy">Privacy Policy</Link>
+                </p>
+              </div>
+
+              {/* Clear Data Actions */}
+              <div className={styles.clearDataSection}>
+                <h3>Clear Your Data</h3>
+                <p className={styles.clearDataDescription}>
+                  Remove specific data from your account. Your account will remain active.
+                </p>
+
+                <div className={styles.clearDataGrid}>
+                  <div className={styles.clearDataCard}>
+                    <div className={styles.clearDataInfo}>
+                      <Icons.heart size={20} />
+                      <div>
+                        <h4>Clear Favorites</h4>
+                        <p>{favoritesCount} saved car{favoritesCount !== 1 ? 's' : ''}</p>
+                      </div>
+                    </div>
+                    <button
+                      className={styles.clearButton}
+                      onClick={() => setShowClearConfirm('favorites')}
+                      disabled={clearingData === 'favorites' || favoritesCount === 0}
+                    >
+                      {clearingData === 'favorites' ? 'Clearing...' : 'Clear'}
+                    </button>
+                  </div>
+
+                  <div className={styles.clearDataCard}>
+                    <div className={styles.clearDataInfo}>
+                      <Icons.wrench size={20} />
+                      <div>
+                        <h4>Clear Vehicles</h4>
+                        <p>Owned vehicles & service logs</p>
+                      </div>
+                    </div>
+                    <button
+                      className={styles.clearButton}
+                      onClick={() => setShowClearConfirm('vehicles')}
+                      disabled={clearingData === 'vehicles'}
+                    >
+                      {clearingData === 'vehicles' ? 'Clearing...' : 'Clear'}
+                    </button>
+                  </div>
+
+                  <div className={styles.clearDataCard}>
+                    <div className={styles.clearDataInfo}>
+                      <Icons.settings size={20} />
+                      <div>
+                        <h4>Clear Projects</h4>
+                        <p>{builds.length} saved build{builds.length !== 1 ? 's' : ''}</p>
+                      </div>
+                    </div>
+                    <button
+                      className={styles.clearButton}
+                      onClick={() => setShowClearConfirm('projects')}
+                      disabled={clearingData === 'projects' || builds.length === 0}
+                    >
+                      {clearingData === 'projects' ? 'Clearing...' : 'Clear'}
+                    </button>
+                  </div>
+
+                  <div className={styles.clearDataCard}>
+                    <div className={styles.clearDataInfo}>
+                      <Icons.bot size={20} />
+                      <div>
+                        <h4>Clear AL History</h4>
+                        <p>All conversations & messages</p>
+                      </div>
+                    </div>
+                    <button
+                      className={styles.clearButton}
+                      onClick={() => setShowClearConfirm('al_history')}
+                      disabled={clearingData === 'al_history'}
+                    >
+                      {clearingData === 'al_history' ? 'Clearing...' : 'Clear'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Clear All */}
+                <div className={styles.clearAllSection}>
+                  <div className={styles.clearAllInfo}>
+                    <Icons.trash size={20} />
+                    <div>
+                      <h4>Clear All My Data</h4>
+                      <p>This removes all your saved data but keeps your account active.</p>
+                    </div>
+                  </div>
+                  <button
+                    className={styles.clearAllButton}
+                    onClick={() => setShowClearConfirm('all')}
+                    disabled={clearingData === 'all'}
+                  >
+                    {clearingData === 'all' ? 'Clearing...' : 'Clear All Data'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirmation Modal */}
+              {showClearConfirm && (
+                <div className={styles.modalOverlay} onClick={() => setShowClearConfirm(null)}>
+                  <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                    <h3>Confirm Data Deletion</h3>
+                    <p>
+                      Are you sure you want to clear your <strong>{showClearConfirm === 'all' ? 'all data' : showClearConfirm}</strong>?
+                      This action cannot be undone.
+                    </p>
+                    <div className={styles.modalActions}>
+                      <button
+                        className={styles.modalCancel}
+                        onClick={() => setShowClearConfirm(null)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className={styles.modalConfirm}
+                        onClick={() => handleClearData(showClearConfirm)}
+                        disabled={clearingData}
+                      >
+                        {clearingData ? 'Clearing...' : 'Yes, Clear Data'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               )}
             </section>
           )}

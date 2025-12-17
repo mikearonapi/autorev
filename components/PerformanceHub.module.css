@@ -3807,3 +3807,107 @@
   cursor: not-allowed;
 }
 
+/* ============================================================================
+   Stock → Projected HP Display Styles
+   ============================================================================ */
+
+.stockHpValue {
+  color: var(--color-gray-500);
+  font-weight: 500;
+}
+
+.hpArrow {
+  margin: 0 4px;
+  color: var(--color-gray-400);
+  font-weight: 400;
+}
+
+.projectedHpValue {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.hpGainBadge {
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: var(--color-success-light);
+  color: var(--color-success);
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================================
+   Overlap/Conflict Warnings Section
+   ============================================================================ */
+
+.overlapWarnings {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.overlapHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.overlapHeader svg {
+  color: var(--color-warning);
+}
+
+.adjustmentBadge {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  border-radius: var(--radius-full);
+}
+
+.overlapList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.overlapItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.overlapItem svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.overlapItem.warning {
+  background: var(--color-warning-light);
+  color: var(--color-gray-800);
+}
+
+.overlapItem.warning svg {
+  color: var(--color-warning);
+}
+
+.overlapItem.info {
+  background: var(--color-info-light);
+  color: var(--color-gray-700);
+}
+
+.overlapItem.info svg {
+  color: var(--color-info);
+}
+

@@ -156,3 +156,4 @@ export function WebApplicationSchema({ name, description, path, applicationCateg
   const schema = generateWebApplicationSchema({ name, description, path, applicationCategory });
   return <SchemaOrg schema={schema} />;
 }
+

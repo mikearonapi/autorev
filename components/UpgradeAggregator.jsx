@@ -4,11 +4,17 @@
  * Upgrade Aggregator Component
  * 
  * A sticky summary panel that shows the current build's total stats:
- * - Total HP gained
+ * - Stock HP → Projected HP (+gain) format
  * - Total cost
  * - $/HP efficiency
  * - Number of upgrades
+ * - Conflict warnings for overlapping mods
  * - Quick actions (Save Build, Clear All)
+ * 
+ * Uses smart HP calculation with:
+ * - Diminishing returns for same-category mods
+ * - Stage tune overlap detection
+ * - Category-based gain caps
  * 
  * Designed to work with the Performance Hub and global car selection state.
  * 
@@ -19,6 +25,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import styles from './UpgradeAggregator.module.css';
 import { useCarSelection, useBuildSummary } from '@/components/providers/CarSelectionProvider';
+import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/upgradeCalculator.js';
 
 // Icons
 const Icons = {
@@ -68,6 +75,20 @@ const Icons = {
       <polyline points="12 5 19 12 12 19"/>
     </svg>
   ),
+  alertTriangle: ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  info: ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
 };
 
 /**
@@ -114,33 +135,58 @@ export default function UpgradeAggregator({
   variant = 'compact',
   className = '',
 }) {
-  // Calculate totals from upgrades
+  // Calculate totals from upgrades using smart HP calculation
   const buildStats = useMemo(() => {
-    let totalHpGain = 0;
+    // Get upgrade keys for smart calculation
+    const upgradeKeys = selectedUpgrades.map(u => u.key).filter(Boolean);
+    
+    // Use smart HP calculation with diminishing returns and overlap handling
+    const hpResult = calculateSmartHpGain(car, upgradeKeys);
+    
+    // Still calculate torque the simple way (no complex overlap for torque)
     let totalTorqueGain = 0;
-    let upgradeCount = 0;
-
     selectedUpgrades.forEach(upgrade => {
-      if (upgrade.metricChanges?.hpGain) {
-        totalHpGain += upgrade.metricChanges.hpGain;
-      }
       if (upgrade.metricChanges?.torqueGain) {
         totalTorqueGain += upgrade.metricChanges.torqueGain;
       }
-      upgradeCount++;
     });
 
     const avgCost = (totalCost.low + totalCost.high) / 2;
-    const costPerHp = totalHpGain > 0 ? Math.round(avgCost / totalHpGain) : 0;
+    const costPerHp = hpResult.totalGain > 0 ? Math.round(avgCost / hpResult.totalGain) : 0;
+    
+    // Get conflict summary for UI
+    const conflictSummary = getConflictSummary(hpResult.conflicts);
+    
+    // Format HP display strings
+    const hpDisplay = formatHpDisplay(hpResult);
 
     return {
-      totalHpGain,
+      // Smart HP values
+      totalHpGain: hpResult.totalGain,
+      rawHpGain: hpResult.rawGain, // Unadjusted for comparison
+      adjustmentAmount: hpResult.adjustmentAmount,
+      stockHp: hpResult.stockHp,
+      finalHp: hpResult.projectedHp,
+      hpDisplay, // Formatted strings for UI
+      
+      // Torque (simple sum)
       totalTorqueGain,
-      upgradeCount,
+      finalTorque: (car?.torque || 0) + totalTorqueGain,
+      
+      // Costs
       avgCost,
       costPerHp,
-      finalHp: (car?.hp || 0) + totalHpGain,
-      finalTorque: (car?.torque || 0) + totalTorqueGain,
+      
+      // Counts
+      upgradeCount: selectedUpgrades.length,
+      
+      // Conflicts
+      conflicts: hpResult.conflicts,
+      conflictSummary,
+      hasConflicts: conflictSummary.hasConflicts,
+      
+      // Per-upgrade breakdown
+      breakdown: hpResult.breakdown,
     };
   }, [selectedUpgrades, totalCost, car]);
 
@@ -153,10 +199,14 @@ export default function UpgradeAggregator({
     return (
       <div className={`${styles.aggregatorCompact} ${className}`}>
         <div className={styles.compactStats}>
+          {/* Stock → Projected HP format */}
           <div className={styles.compactStat}>
             <Icons.zap size={16} />
-            <span className={styles.compactValue}>{formatHP(buildStats.totalHpGain)}</span>
+            <span className={styles.compactValue}>
+              {buildStats.stockHp} → {buildStats.finalHp}
+            </span>
             <span className={styles.compactLabel}>HP</span>
+            <span className={styles.compactGain}>(+{buildStats.totalHpGain})</span>
           </div>
           <div className={styles.compactDivider} />
           <div className={styles.compactStat}>
@@ -172,6 +222,13 @@ export default function UpgradeAggregator({
             </div>
           )}
         </div>
+        {/* Conflict warning badge */}
+        {buildStats.hasConflicts && buildStats.conflictSummary.warningCount > 0 && (
+          <div className={styles.compactConflictBadge} title={buildStats.conflicts[0]?.message}>
+            <Icons.alertTriangle size={14} />
+            <span>{buildStats.conflictSummary.warningCount} overlap{buildStats.conflictSummary.warningCount > 1 ? 's' : ''}</span>
+          </div>
+        )}
       </div>
     );
   }
@@ -189,16 +246,25 @@ export default function UpgradeAggregator({
 
       {/* Stats Grid */}
       <div className={styles.statsGrid}>
-        {/* Power */}
+        {/* Power - Stock → Projected format */}
         <div className={styles.statCard}>
           <div className={styles.statIcon} style={{ '--stat-color': '#e74c3c' }}>
             <Icons.zap size={20} />
           </div>
           <div className={styles.statContent}>
-            <span className={styles.statLabel}>Power Gain</span>
-            <span className={styles.statValue}>{formatHP(buildStats.totalHpGain)} hp</span>
+            <span className={styles.statLabel}>Projected Power</span>
+            <span className={styles.statValue}>
+              <span className={styles.stockValue}>{buildStats.stockHp}</span>
+              <span className={styles.arrowSeparator}>→</span>
+              <span className={styles.projectedValue}>{buildStats.finalHp} hp</span>
+            </span>
             <span className={styles.statSubtext}>
-              {car?.hp || 0} → {buildStats.finalHp} hp
+              +{buildStats.totalHpGain} hp gain
+              {buildStats.adjustmentAmount > 5 && (
+                <span className={styles.adjustmentNote}>
+                  ({buildStats.adjustmentAmount} hp adjusted for overlap)
+                </span>
+              )}
             </span>
           </div>
         </div>
@@ -233,6 +299,25 @@ export default function UpgradeAggregator({
           </div>
         </div>
       </div>
+
+      {/* Conflict Warnings */}
+      {buildStats.hasConflicts && (
+        <div className={styles.conflictWarnings}>
+          {buildStats.conflicts.map((conflict, idx) => (
+            <div 
+              key={idx} 
+              className={`${styles.conflictItem} ${styles[conflict.severity]}`}
+            >
+              {conflict.severity === 'warning' ? (
+                <Icons.alertTriangle size={14} />
+              ) : (
+                <Icons.info size={14} />
+              )}
+              <span className={styles.conflictMessage}>{conflict.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Torque (if applicable) */}
       {buildStats.totalTorqueGain > 0 && (

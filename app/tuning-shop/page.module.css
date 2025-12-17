@@ -276,7 +276,16 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* Desktop: hidden to let child views handle scroll */
+}
+
+/* Mobile: Allow mainContent to scroll */
+@media (max-width: 767px) {
+  .mainContent {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* Hub Container - for UpgradeCenter */

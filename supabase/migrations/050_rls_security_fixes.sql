@@ -101,3 +101,4 @@ CREATE POLICY "user_activity_service_role_insert" ON user_activity
 -- FROM pg_policies
 -- WHERE schemaname = 'public'
 -- ORDER BY tablename, policyname;
+

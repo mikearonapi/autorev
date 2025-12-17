@@ -361,6 +361,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
   // Fetch service logs from database when service tab is opened
   useEffect(() => {
+    let timeoutId;
+    let isMounted = true;
+    
     const loadServiceLogs = async () => {
       if (type !== 'mycars') return;
       if (panelState !== 'details' || detailsView !== 'service') return;
@@ -370,19 +373,48 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       
       setLoadingServiceLogs(true);
       try {
-        const { data, error } = await fetchUserServiceLogs(vehicleId, userId);
+        // Create a timeout promise that rejects after 10 seconds
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            reject(new Error('Request timeout - loading service records took too long'));
+          }, 10000);
+        });
+        
+        // Race between the fetch and the timeout
+        const result = await Promise.race([
+          fetchUserServiceLogs(vehicleId, userId),
+          timeoutPromise
+        ]);
+        
+        // Clear timeout if fetch succeeded
+        if (timeoutId) clearTimeout(timeoutId);
+        
+        if (!isMounted) return;
+        
+        const { data, error } = result;
         if (error) {
           console.error('[HeroVehicleDisplay] Error loading service logs:', error);
         }
         setServiceLogs(data || []);
       } catch (err) {
         console.error('[HeroVehicleDisplay] Unexpected error loading service logs:', err);
+        if (isMounted) {
+          // Set empty array on error so UI shows "No service records" instead of hanging
+          setServiceLogs([]);
+        }
       } finally {
-        setLoadingServiceLogs(false);
+        if (isMounted) {
+          setLoadingServiceLogs(false);
+        }
       }
     };
     
     loadServiceLogs();
+    
+    return () => {
+      isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [type, panelState, detailsView, item?.vehicle?.id, userId]);
   
   // VIN Lookup handler - uses real NHTSA API
@@ -549,7 +581,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
   // Get display name
   const displayName = isOwnedVehicle 
-    ? (item.vehicle?.nickname || `${item.vehicle?.year} ${item.vehicle?.make} ${item.vehicle?.model}`)
+    ? (item.vehicle?.nickname || `${item.vehicle?.make} ${item.vehicle?.model}`)
     : isBuild 
       ? (item.name || `${car?.name} Build`)
       : car?.name;

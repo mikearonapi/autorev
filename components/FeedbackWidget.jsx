@@ -366,8 +366,21 @@ export default function FeedbackWidget({
     try {
       const pageUrl = window.location.href;
       
+      // Map category to feedback_type for API compatibility
+      const feedbackTypeMap = {
+        'bug': 'bug',
+        'feature': 'feature',
+        'data': 'other',
+        'general': 'other',
+        'praise': 'like',
+      };
+      
       const feedbackPayload = {
-        // New beta fields
+        // API required fields
+        feedback_type: feedbackTypeMap[category] || 'other',
+        message: message.trim(),
+        
+        // New beta fields (stored in metadata)
         category,
         severity: category === 'bug' ? severity : null,
         rating: rating > 0 ? rating : null,
@@ -380,13 +393,14 @@ export default function FeedbackWidget({
         email: email || (user?.email) || null,
         
         // Common fields
-        message: message.trim(),
-        pageUrl,
-        pageTitle: document.title,
-        sessionId: getSessionId(),
-        browserInfo: getBrowserInfo(),
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
+        page_url: pageUrl,
+        page_title: document.title,
+        metadata: {
+          sessionId: getSessionId(),
+          browserInfo: getBrowserInfo(),
+          screenWidth: window.innerWidth,
+          screenHeight: window.innerHeight,
+        },
       };
 
       const response = await fetch('/api/feedback', {

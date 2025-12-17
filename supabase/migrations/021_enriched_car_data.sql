@@ -484,3 +484,4 @@ COMMENT ON TABLE scrape_jobs IS 'Job queue for data scraping operations';
 COMMENT ON TABLE car_manual_data IS 'Manually entered data for sources we cannot scrape';
 
 
+

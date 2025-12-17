@@ -301,12 +301,29 @@ export default function SportsCarComparison() {
   // Fetch car data on mount
   useEffect(() => {
     let isMounted = true;
+    let timeoutId;
     
     async function loadCars() {
       try {
         setIsLoading(true);
         setLoadError(null);
-        const cars = await fetchCars();
+        
+        // Create a timeout promise that rejects after 10 seconds
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            reject(new Error('Request timeout - loading took too long'));
+          }, 10000);
+        });
+        
+        // Race between the fetch and the timeout
+        const cars = await Promise.race([
+          fetchCars(),
+          timeoutPromise
+        ]);
+        
+        // Clear timeout if fetch succeeded
+        if (timeoutId) clearTimeout(timeoutId);
+        
         if (isMounted) {
           setCarData(cars);
           setIsLoading(false);
@@ -314,7 +331,10 @@ export default function SportsCarComparison() {
       } catch (err) {
         console.error('[SportsCarComparison] Error loading cars:', err);
         if (isMounted) {
-          setLoadError('Failed to load vehicle data. Using cached data.');
+          const errorMsg = err.message?.includes('timeout') 
+            ? 'Loading timed out. Using cached data.' 
+            : 'Failed to load vehicle data. Using cached data.';
+          setLoadError(errorMsg);
           setCarData(localCarData); // Fallback to local data
           setIsLoading(false);
         }
@@ -325,6 +345,7 @@ export default function SportsCarComparison() {
     
     return () => {
       isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
 

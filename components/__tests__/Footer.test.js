@@ -50,3 +50,4 @@ describe('Footer', () => {
     expect(container.querySelectorAll('nav').length).toBeGreaterThan(0);
   });
 });
+

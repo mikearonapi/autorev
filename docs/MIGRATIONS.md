@@ -292,3 +292,4 @@ Error: permission denied for table ...
 *See [DATABASE.md](DATABASE.md) for table schemas and [SCRIPTS.md](SCRIPTS.md) for migration scripts.*
 
 
+

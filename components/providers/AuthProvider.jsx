@@ -56,6 +56,7 @@ export function AuthProvider({ children }) {
   // Handle auth state changes
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
+      console.log('[AuthProvider] Supabase not configured, skipping auth init');
       setState(prev => ({ ...prev, isLoading: false }));
       return;
     }
@@ -63,10 +64,25 @@ export function AuthProvider({ children }) {
     // Get initial session
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log('[AuthProvider] Initializing auth, checking session...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('[AuthProvider] Session error:', sessionError);
+        }
+        
+        console.log('[AuthProvider] Session check result:', {
+          hasSession: !!session,
+          userId: session?.user?.id?.slice(0, 8) + '...',
+          expiresAt: session?.expires_at,
+        });
         
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
+          console.log('[AuthProvider] User authenticated, profile loaded:', {
+            userId: session.user.id.slice(0, 8) + '...',
+            tier: profile?.subscription_tier,
+          });
           setState({
             user: session.user,
             profile,
@@ -75,6 +91,7 @@ export function AuthProvider({ children }) {
             isAuthenticated: true,
           });
         } else {
+          console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
             ...defaultAuthState,
             isLoading: false,
@@ -90,6 +107,12 @@ export function AuthProvider({ children }) {
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (event, session) => {
+      console.log('[AuthProvider] Auth state change:', {
+        event,
+        hasSession: !!session,
+        userId: session?.user?.id?.slice(0, 8) + '...',
+      });
+      
       if (event === 'SIGNED_IN' && session?.user) {
         const profile = await fetchProfile(session.user.id);
         

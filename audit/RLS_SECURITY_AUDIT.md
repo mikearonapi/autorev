@@ -390,3 +390,4 @@ All RLS fixes verified:
 1. **`target_cities`** - ✅ RLS enabled, public read + service_role write
 2. **`leads`** - ✅ UPDATE restricted to service_role only
 3. **`user_activity`** - ✅ INSERT restricted to own user or service_role
+
