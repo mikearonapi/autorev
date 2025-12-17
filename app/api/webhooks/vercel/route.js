@@ -70,5 +70,5 @@ export async function POST(request) {
 
 // Vercel may send GET to verify endpoint
 export async function GET() {
-  return NextResponse.json({ status: 'ok', endpoint: 'vercel-webhook' });
+  return NextResponse.json({ status: 'ok', endpoint: 'vercel-webhook', timestamp: new Date().toISOString() });
 }
