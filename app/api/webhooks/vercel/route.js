@@ -25,19 +25,25 @@ export async function POST(request) {
       return NextResponse.json({ message: 'Event ignored', eventType }, { status: 200 });
     }
 
-    const deployment = payload.payload || payload.deployment || payload;
+    // Vercel webhook structure: { type, payload: { deployment: { meta: {...} } } }
+    // Or sometimes: { type, payload: { meta: {...} } }
+    const innerPayload = payload.payload || payload;
+    const deployment = innerPayload.deployment || innerPayload;
+    const meta = deployment.meta || innerPayload.meta || {};
     
-    console.log('[Vercel Webhook] Processing deployment:', JSON.stringify(deployment, null, 2).slice(0, 500));
+    console.log('[Vercel Webhook] Inner payload keys:', Object.keys(innerPayload));
+    console.log('[Vercel Webhook] Deployment keys:', Object.keys(deployment));
+    console.log('[Vercel Webhook] Meta:', JSON.stringify(meta, null, 2));
     
-    // Extract relevant info - handle various Vercel payload formats
-    const projectName = deployment.name || deployment.project?.name || payload.project?.name || 'AutoRev';
-    const url = deployment.url 
-      ? (deployment.url.startsWith('http') ? deployment.url : `https://${deployment.url}`)
+    // Extract relevant info from meta (GitHub integration populates these)
+    const projectName = deployment.name || innerPayload.name || payload.name || 'AutoRev';
+    const url = deployment.url || innerPayload.url
+      ? `https://${deployment.url || innerPayload.url}`
       : null;
-    const commitMessage = deployment.meta?.githubCommitMessage || deployment.gitSource?.message || payload.git?.commitMessage || 'No commit message';
-    const commitSha = deployment.meta?.githubCommitSha?.slice(0, 7) || deployment.gitSource?.sha?.slice(0, 7) || payload.git?.commitSha?.slice(0, 7) || '';
-    const branch = deployment.meta?.githubCommitRef || deployment.gitSource?.ref || payload.git?.commitRef || 'main';
-    const author = deployment.meta?.githubCommitAuthorName || deployment.creator?.username || payload.git?.commitAuthorName || 'Unknown';
+    const commitMessage = meta.githubCommitMessage || meta.commitMessage || 'No commit message';
+    const commitSha = (meta.githubCommitSha || meta.commitSha || '').slice(0, 7);
+    const branch = meta.githubCommitRef || meta.branch || 'main';
+    const author = meta.githubCommitAuthorName || meta.githubCommitAuthorLogin || deployment.creator?.username || 'Unknown';
 
     // Build Discord embed
     const embed = {
