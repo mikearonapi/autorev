@@ -45,3 +45,4 @@ Next.js 14 • Supabase • Claude AI • Vercel
 ---
 
 © 2024 AutoRev
+
