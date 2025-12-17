@@ -82,16 +82,25 @@ export async function POST(request) {
       );
     }
 
-    // Fire-and-forget Discord notification (no await)
-    const userTier = body.userTier || null;
+    // Fire-and-forget Discord notification (don't await to avoid blocking response)
+    // Map feedback_type to category for Discord display
+    const categoryMap = {
+      'like': 'Praise',
+      'dislike': 'Dislike', 
+      'feature': 'Feature Request',
+      'bug': 'Bug Report',
+      'question': 'Question',
+      'other': 'Other',
+    };
+    
     notifyFeedback({
       id: data.id,
-      category: body.category,
+      category: body.category || categoryMap[feedback_type] || feedback_type,
       severity: body.severity,
       message: body.message,
-      page_url: body.pageUrl,
-      user_tier: userTier,
-    });
+      page_url: body.page_url || page_url, // Use snake_case to match widget
+      user_tier: body.userTier || null,
+    }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
 
     return Response.json({
       success: true,
