@@ -678,7 +678,7 @@ export async function POST(request) {
         firstMessage: body.message,
         carContext,
         userTier: userBalance?.plan,
-      });
+      }).catch(err => console.error('[AL API] Discord notification failed:', err));
     }
 
     // =============================================================================

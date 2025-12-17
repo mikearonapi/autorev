@@ -107,7 +107,7 @@ export async function POST(request) {
       email: body.email,
       interest: body.interest,
       message: body.message,
-    });
+    }).catch(err => console.error('[Contact API] Discord notification failed:', err));
 
     return Response.json({ success: true, data: { id: data?.id } });
   } catch (err) {

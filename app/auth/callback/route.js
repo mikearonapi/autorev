@@ -73,7 +73,7 @@ export async function GET(request) {
             id: user.id,
             email: user.email,
             provider: user.app_metadata?.provider || 'email',
-          });
+          }).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
         }
       }
     } catch (err) {

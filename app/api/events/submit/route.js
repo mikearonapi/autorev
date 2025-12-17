@@ -163,7 +163,7 @@ export async function POST(request) {
       city: body.city,
       state: body.state,
       source_url: body.source_url,
-    });
+    }).catch(err => console.error('[Events Submit] Discord notification failed:', err));
     
     return NextResponse.json({
       success: true,
