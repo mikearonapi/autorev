@@ -937,7 +937,7 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 | `/api/cron/youtube-enrichment` | Process YouTube queue | Weekly (Mon 4:00 AM UTC) |
 | `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Tue 5:00 AM UTC) |
 | `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Fri 5:00 AM UTC) |
-| `/api/cron/refresh-events` | Fetch events from external sources | Weekly (Mon 6:00 AM UTC) |
+| `/api/cron/refresh-events` | Fetch events from external sources | Daily (6:00 AM UTC) |
 
 ### `GET /api/cron/schedule-ingestion`
 **Purpose:** Queue parts ingestion jobs from vendor APIs (MAPerformance Shopify, etc.)

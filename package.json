@@ -25,7 +25,9 @@
     "audit:events:urls": "node scripts/validate-event-urls.js",
     "audit:events:quality": "node scripts/audit-events-quality.js",
     "audit:events": "node scripts/audit-events-all.js",
-    "events:enrich:2026": "node scripts/enrich-events-2026-from-sources.js"
+    "events:enrich:2026": "node scripts/enrich-events-2026-from-sources.js",
+    "events:test": "node scripts/test-events-refresh.js",
+    "events:refresh": "node scripts/test-events-refresh.js --all --limit=50"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

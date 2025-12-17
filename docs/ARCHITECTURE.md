@@ -349,7 +349,7 @@ All scheduled via `vercel.json`. Auth requires `CRON_SECRET` Bearer token or `x-
 | `refresh-complaints` | Sun 4:00 AM UTC | `0 4 * * 0` | Fetch NHTSA complaint data for all cars |
 | `youtube-enrichment` | Mon 4:00 AM UTC | `0 4 * * 1` | Discover videos, process AI summaries |
 | `forum-scrape` | Tue, Fri 5:00 AM UTC | `0 5 * * 2,5` | Scrape forums + extract community insights |
-| `refresh-events` | Mon 6:00 AM UTC | `0 6 * * 1` | Fetch events from external sources |
+| `refresh-events` | Daily 6:00 AM UTC | `0 6 * * *` | Fetch events from external sources |
 
 **Data Flow:**
 ```

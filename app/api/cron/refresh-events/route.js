@@ -18,11 +18,11 @@
 
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { fetchFromSource } from '@/lib/eventSourceFetchers';
+import { fetchFromSource, getFetcher } from '@/lib/eventSourceFetchers';
 import { deduplicateBatch } from '@/lib/eventDeduplication';
 import { batchGeocodeEvents } from '@/lib/geocodingService';
 import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
-import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -39,15 +39,60 @@ function isAuthorized(request) {
 export async function GET(request) {
   // Auth check
   if (!isAuthorized(request)) {
+    console.error('[refresh-events] Unauthorized request. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron header:', request.headers.get('x-vercel-cron'));
     return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
 
   if (!isSupabaseConfigured || !supabaseServiceRole) {
-    return NextResponse.json({ error: 'Database not configured', code: 'DB_NOT_CONFIGURED' }, { status: 503 });
+    console.error('[refresh-events] Database not configured. isSupabaseConfigured:', isSupabaseConfigured, 'supabaseServiceRole:', Boolean(supabaseServiceRole));
+    return NextResponse.json({ 
+      error: 'Database not configured', 
+      code: 'DB_NOT_CONFIGURED',
+      debug: {
+        isSupabaseConfigured,
+        hasServiceRole: Boolean(supabaseServiceRole),
+        hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+        hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+        hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+      }
+    }, { status: 503 });
   }
 
   const startedAt = Date.now();
   const { searchParams } = new URL(request.url);
+  
+  // Diagnostic mode - returns system health without running the full cron
+  const diagnosticMode = searchParams.get('diagnostic') === 'true';
+  if (diagnosticMode) {
+    try {
+      const { data: sources, error: sourcesErr } = await supabaseServiceRole
+        .from('event_sources')
+        .select('id, name, is_active, last_run_at, last_run_status, last_run_events');
+      
+      const diagnostics = {
+        timestamp: new Date().toISOString(),
+        config: {
+          hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+          hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+          hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+          hasCronSecret: Boolean(process.env.CRON_SECRET),
+          isSupabaseConfigured,
+          hasServiceRoleClient: Boolean(supabaseServiceRole),
+        },
+        sources: (sources || []).map(s => ({
+          ...s,
+          normalized_name: s.name.toLowerCase().replace(/[^a-z]/g, ''),
+          has_fetcher: Boolean(getFetcher(s.name)),
+        })),
+        sourcesError: sourcesErr?.message || null,
+        availableFetchers: ['motorsportreg', 'scca', 'pca', 'eventbrite', 'eventbritesearch', 'carsandcoffeeevents', 'facebookevents', 'rideology', 'trackvenue', 'ical'],
+      };
+      
+      return NextResponse.json(diagnostics);
+    } catch (err) {
+      return NextResponse.json({ error: err.message, code: 'DIAGNOSTIC_FAILED' }, { status: 500 });
+    }
+  }
   
   const sourceFilter = searchParams.get('source');
   const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit'), 10) : null;
@@ -107,7 +152,15 @@ export async function GET(request) {
       });
     }
     
-    console.log(`[refresh-events] Processing ${sources.length} source(s)`);
+    console.log(`[refresh-events] Processing ${sources.length} source(s):`, sources.map(s => ({ id: s.id, name: s.name, is_active: s.is_active })));
+    
+    // Log fetcher availability for each source
+    for (const source of sources) {
+      const fetcher = getFetcher(source.name);
+      if (!fetcher) {
+        console.warn(`[refresh-events] ⚠️ No fetcher found for source "${source.name}" (normalized: "${source.name.toLowerCase().replace(/[^a-z]/g, '')}")`);
+      }
+    }
     
     // 2. Get existing events for deduplication
     const { data: existingEvents, error: existingErr } = await supabaseServiceRole
@@ -358,12 +411,20 @@ export async function GET(request) {
     
     results.durationMs = Date.now() - startedAt;
     
-    notifyCronCompletion('Refresh Events', {
+    notifyCronEnrichment('Events Calendar Refresh', {
       duration: results.durationMs || (Date.now() - startedAt),
-      processed: results.eventsDiscovered,
-      succeeded: results.eventsCreated,
-      failed: results.errors.length,
+      table: 'events',
+      recordsAdded: results.eventsCreated,
+      recordsUpdated: results.eventsUpdated,
+      recordsProcessed: results.eventsDiscovered,
+      sourcesChecked: results.sourcesProcessed,
       errors: results.errors.length,
+      details: [
+        { label: '🔍 Events Found', value: results.eventsDiscovered },
+        { label: '📍 Geocoded', value: results.eventsGeocoded },
+        { label: '🔄 Deduplicated', value: results.eventsDeduplicated },
+        { label: '⏰ Expired', value: results.eventsExpired },
+      ],
     });
 
     return NextResponse.json(results);

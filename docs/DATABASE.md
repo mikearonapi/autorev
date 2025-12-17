@@ -536,8 +536,9 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | Status | **13 rows** ✅ |
 |--------|-------------|
 | **Purpose** | Configuration for automated event data sources |
-| **Key Fields** | `name`, `source_type`, `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active`, `last_run_at`, `last_run_events` |
+| **Key Fields** | `name`, `source_type`, `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active`, `last_run_at`, `last_run_status`, `last_run_events` |
 | **Used By** | Automated event ingestion cron |
+| **Note** | Source names must normalize to match fetcher keys (e.g., "MotorsportReg" → "motorsportreg"). See `lib/eventSourceFetchers/index.js` for available fetchers. |
 
 ---
 
