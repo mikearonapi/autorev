@@ -449,6 +449,34 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     }
   }, [isOpen, pathname, contextConfig.suggestions, messages.length, showIntro]);
   
+  // Lock body scroll when chat is open on mobile to prevent page scrolling
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    
+    // Check if mobile viewport
+    const isMobileViewport = window.innerWidth <= 480;
+    
+    if (isOpen && isMobileViewport) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Restore scroll position when chat closes
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+  
   // Fetch conversation history when expanded and authenticated
   useEffect(() => {
     const fetchConversations = async () => {

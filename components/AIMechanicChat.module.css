@@ -372,22 +372,25 @@
   }
 }
 
-/* Mobile phones */
+/* Mobile phones - FULL SCREEN layout for better mobile UX */
 @media (max-width: 480px) {
   .chatPanel {
-    left: 10px;
-    right: 10px;
-    bottom: 74px;
-    /* Use top positioning instead of height to ensure header is visible */
-    top: calc(env(safe-area-inset-top, 0px) + 60px);
-    width: calc(100% - 20px);
+    /* Full screen on mobile - no gaps */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: env(safe-area-inset-top, 0px);
+    width: 100%;
     max-width: none;
     height: auto;
     max-height: none;
-    border-radius: 12px;
+    border-radius: 0;
+    /* Slide up from bottom on mobile */
+    animation: mobileSlideUp 0.3s ease;
   }
   
   .chatPanelExpanded {
+    /* Already full screen, no change needed */
     left: 0;
     right: 0;
     top: env(safe-area-inset-top, 0px);
@@ -396,16 +399,27 @@
   }
 }
 
-/* Small phones (iPhone SE, etc.) */
+@keyframes mobileSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Small phones (iPhone SE, etc.) - also full screen */
 @media (max-width: 375px) {
   .chatPanel {
-    left: 8px;
-    right: 8px;
-    bottom: 70px;
-    top: calc(env(safe-area-inset-top, 0px) + 56px);
-    width: calc(100% - 16px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: env(safe-area-inset-top, 0px);
+    width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 0;
   }
 }
 
@@ -505,29 +519,36 @@
   color: #111827;
 }
 
-/* Mobile header */
+/* Mobile header - optimized for full-screen mode */
 @media (max-width: 480px) {
   .header {
-    padding: 12px 14px;
+    padding: 14px 16px;
+    /* Add safe area padding for notched devices */
+    padding-top: max(14px, env(safe-area-inset-top, 0px));
+    min-height: 60px;
+    border-bottom: 1px solid #e5e7eb;
   }
   
   .headerIcon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
   }
   
   .headerTitle {
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 600;
   }
   
   .headerActions {
-    gap: 2px;
+    gap: 4px;
   }
   
   .headerBtn {
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 8px;
   }
 }
 
@@ -569,24 +590,32 @@
   height: 100%;
 }
 
-/* Mobile messages area */
+/* Mobile messages area - full screen optimized */
 @media (max-width: 480px) {
   .messagesArea {
-    padding: 16px;
+    padding: 20px 16px;
+    background: #fafafa;
   }
   
   .welcomeSimple {
-    padding: 16px;
+    padding: 24px 16px;
+  }
+  
+  .suggestionsLabel {
+    font-size: 15px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
   }
 }
 
 @media (max-width: 375px) {
   .messagesArea {
-    padding: 12px;
+    padding: 16px 12px;
   }
   
   .welcomeSimple {
-    padding: 12px;
+    padding: 20px 12px;
   }
 }
 
@@ -1222,30 +1251,33 @@
   background: #d1d5db;
 }
 
-/* Mobile input optimizations */
+/* Mobile input optimizations - full screen mode */
 @media (max-width: 480px) {
   .inputArea {
-    padding: 12px;
-    /* Add safe area padding for devices with home indicator */
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 12px 16px;
+    /* Add generous safe area padding for devices with home indicator */
+    padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
   }
   
   .inputWrapper {
-    border-radius: 14px;
-    padding: 3px 3px 3px 14px;
+    border-radius: 24px;
+    padding: 4px 4px 4px 16px;
+    background: #f3f4f6;
   }
   
   .input {
     font-size: 16px;
-    padding: 9px 0;
+    padding: 10px 0;
   }
   
   .sendBtn {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
-    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
   }
 }
 
@@ -1910,9 +1942,21 @@
   .historySidebar {
     width: 100%;
     min-width: 100%;
-    max-height: 200px;
+    max-height: 180px;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+  }
+  
+  .historySidebarHeader {
+    padding: 12px 16px 8px;
+    font-size: 12px;
+  }
+  
+  .newConversationBtn {
+    margin: 0 12px 8px;
+    padding: 8px 12px;
+    font-size: 13px;
   }
   
   .conversationsList {
@@ -1922,13 +1966,46 @@
     overflow-y: hidden;
     gap: 8px;
     padding: 8px 12px;
+    -webkit-overflow-scrolling: touch;
   }
   
   .conversationItem {
     flex-shrink: 0;
     width: auto;
-    min-width: 160px;
-    max-width: 200px;
+    min-width: 140px;
+    max-width: 180px;
     margin-bottom: 0;
+    padding: 10px 12px;
+  }
+  
+  .conversationTitle {
+    font-size: 13px;
+    -webkit-line-clamp: 1;
+  }
+  
+  .conversationMeta {
+    font-size: 11px;
+  }
+  
+  .noConversations {
+    padding: 20px;
+    flex-direction: row;
+    gap: 8px;
+  }
+  
+  .noConversations svg {
+    margin-bottom: 0;
+  }
+  
+  .noConversations p {
+    font-size: 13px;
+  }
+}
+
+/* Mobile phones - hide expand button since default is already full screen */
+@media (max-width: 480px) {
+  /* In mobile, default is already full-screen, so "expand" just shows history */
+  .chatPanelExpanded .historySidebar {
+    max-height: 160px;
   }
 }
