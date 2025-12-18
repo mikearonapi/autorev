@@ -411,7 +411,7 @@
     overflow-y: auto;
   }
   
-  /* CF-009: Ensure details panel fills mobile screen properly */
+  /* CF-009: Ensure details panel fills mobile screen properly with scroll */
   .specPanel_details {
     left: 8px;
     right: 8px;
@@ -419,8 +419,13 @@
     bottom: 8px;
     width: auto;
     max-width: none;
+    /* Use fixed positioning with defined bounds so content can scroll */
     max-height: none;
     height: auto;
+    /* CRITICAL: Allow scrolling within the panel on mobile */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -451,12 +456,14 @@
   /* Width stays the same */
 }
 
-/* Details state - wider panel to fit all content without scrolling */
+/* Details state - wider panel with scrollable content */
 .specPanel_details {
   width: calc(100% - 48px);
   max-width: 1100px;
   max-height: calc(100% - 60px);
-  overflow-y: visible;
+  /* Content must scroll within panel, not overflow outside */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 @media (min-width: 1400px) {
@@ -798,11 +805,19 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   max-height: calc(100vh - 300px);
   overflow-y: auto;
-  overflow-x: visible;
+  overflow-x: hidden;
 }
 
-/* In expanded state (not details), allow tooltip overflow */
+/* In expanded state (not details), keep scroll behavior */
 .specPanel_expanded .specPanelBody {
+  /* Keep overflow-y: auto to allow scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* In details state, let parent panel handle scrolling */
+.specPanel_details .specPanelBody {
+  max-height: none;
   overflow: visible;
 }
 
@@ -827,6 +842,16 @@
 /* Collapsed State - hides the body */
 .specPanel_collapsed .specPanelBody {
   display: none;
+}
+
+/* Mobile: Ensure panel body scrolls properly within details panel */
+@media (max-width: 767px) {
+  .specPanel_details .specPanelBody {
+    /* Let panel body content flow naturally, parent handles scroll */
+    max-height: none;
+    overflow: visible;
+    padding-bottom: 20px; /* Extra padding for scroll comfort */
+  }
 }
 
 /* ===========================================
