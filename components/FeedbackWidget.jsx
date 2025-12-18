@@ -506,7 +506,7 @@ export default function FeedbackWidget({
 
                 {/* Category Selection */}
                 <div className={styles.field}>
-                  <label className={styles.label}>What's this about?</label>
+                  <label className={styles.label}>What's this about? <span className={styles.required}>*</span></label>
                   <div className={styles.categoryGrid}>
                     {categories.map((cat) => {
                       const Icon = cat.icon;
@@ -538,7 +538,7 @@ export default function FeedbackWidget({
                   <div className={styles.field}>
                     <label className={styles.label}>
                       <Icons.alertTriangle size={16} />
-                      <span>How severe is this?</span>
+                      <span>How severe is this? <span className={styles.required}>*</span></span>
                     </label>
                     <div className={styles.severityGrid}>
                       {severities.map((sev) => (
