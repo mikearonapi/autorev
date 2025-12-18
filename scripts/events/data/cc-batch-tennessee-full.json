@@ -1,0 +1,65 @@
+{
+  "batch": "Tennessee Full Coverage",
+  "venues": [
+    {
+      "name": "Germantown Cars and Coffee Memphis",
+      "city": "Germantown",
+      "state": "TN",
+      "venue_name": "Germantown Performing Arts Center",
+      "address": "1801 Exeter Road",
+      "zip": "38138",
+      "lat": 35.0868,
+      "lng": -89.8100,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://memphis.kidsoutandabout.com/"
+    },
+    {
+      "name": "On The Edge Cars and Coffee Memphis",
+      "city": "Memphis",
+      "state": "TN",
+      "venue_name": "Edge Motor Museum",
+      "address": "627 Monroe Ave",
+      "zip": "38103",
+      "lat": 35.1395,
+      "lng": -90.0534,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.memphisbritishcars.org/"
+    },
+    {
+      "name": "Harper Auto Square Cars & Coffee Knoxville",
+      "city": "Knoxville",
+      "state": "TN",
+      "venue_name": "West Town Mall",
+      "address": "7600 Kingston Pike",
+      "zip": "37919",
+      "lat": 35.9280,
+      "lng": -84.0277,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://www.harpercarsandcoffee.com/"
+    },
+    {
+      "name": "Chattanooga Cars and Coffee",
+      "city": "Chattanooga",
+      "state": "TN",
+      "venue_name": "Riverfront Parkway",
+      "address": "900 Riverfront Parkway",
+      "zip": "37402",
+      "lat": 35.0566,
+      "lng": -85.3097,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://chattanoogacarsandcoffee.com/"
+    },
+    {
+      "name": "Cars and Coffee Clarksville",
+      "city": "Clarksville",
+      "state": "TN",
+      "venue_name": "Clarksville",
+      "address": "Clarksville, TN",
+      "zip": "37040",
+      "lat": 36.5298,
+      "lng": -87.3595,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

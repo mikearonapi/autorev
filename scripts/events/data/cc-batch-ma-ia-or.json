@@ -1,0 +1,101 @@
+{
+  "batch": "Massachusetts, Iowa, Oregon Expansion",
+  "venues": [
+    {
+      "name": "Cars and Coffee Cape Cod",
+      "city": "Hyannis",
+      "state": "MA",
+      "venue_name": "Hyannis",
+      "address": "Hyannis, MA",
+      "zip": "02601",
+      "lat": 41.6529,
+      "lng": -70.2827,
+      "recurrence": "Every Sunday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Worcester MA",
+      "city": "Worcester",
+      "state": "MA",
+      "venue_name": "Worcester",
+      "address": "Worcester, MA",
+      "zip": "01608",
+      "lat": 42.2626,
+      "lng": -71.8023,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Springfield MA",
+      "city": "West Springfield",
+      "state": "MA",
+      "venue_name": "West Springfield",
+      "address": "West Springfield, MA",
+      "zip": "01089",
+      "lat": 42.1073,
+      "lng": -72.6203,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Des Moines",
+      "city": "West Des Moines",
+      "state": "IA",
+      "venue_name": "Westown Parkway",
+      "address": "7300 Westown Parkway",
+      "zip": "50266",
+      "lat": 41.5772,
+      "lng": -93.7611,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.carsandcoffeedsm.com/"
+    },
+    {
+      "name": "Cedar Rapids Cars and Coffee",
+      "city": "Cedar Rapids",
+      "state": "IA",
+      "venue_name": "Hawkeye Downs",
+      "address": "4400 6th St SW",
+      "zip": "52404",
+      "lat": 41.9430,
+      "lng": -91.6804,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://www.iowamustangsunstabled.com/"
+    },
+    {
+      "name": "Iowa City Cars and Coffee",
+      "city": "Coralville",
+      "state": "IA",
+      "venue_name": "Hy-Vee 2",
+      "address": "Forevergreen and 965",
+      "zip": "52241",
+      "lat": 41.6914,
+      "lng": -91.5804,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.iowacitycarsandcoffee.com/"
+    },
+    {
+      "name": "Medford Cars & Coffee",
+      "city": "Medford",
+      "state": "OR",
+      "venue_name": "Southern Oregon Orthopedics",
+      "address": "2780 E. Barnett Road",
+      "zip": "97504",
+      "lat": 42.3265,
+      "lng": -122.8356,
+      "recurrence": "Every Saturday",
+      "source_url": "https://medfordcarsncoffee.com/"
+    },
+    {
+      "name": "Bend Cars & Coffee 27th Street",
+      "city": "Bend",
+      "state": "OR",
+      "venue_name": "27th Street",
+      "address": "1270 NE 27th St",
+      "zip": "97701",
+      "lat": 44.0582,
+      "lng": -121.2951,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.bendcarsandcoffee.com/"
+    }
+  ]
+}

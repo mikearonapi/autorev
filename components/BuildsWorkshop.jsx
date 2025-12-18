@@ -601,8 +601,8 @@ function EmptyState({ onCreateBuild }) {
  * Main BuildsWorkshop Component
  */
 export default function BuildsWorkshop({ 
-  builds, 
-  cars,
+  builds = [], 
+  cars = [],
   onViewDetails, 
   onDeleteBuild,
   onNewProject,
@@ -676,6 +676,7 @@ export default function BuildsWorkshop({
   
   // Handle delete with confirmation
   const handleDelete = useCallback((build) => {
+    if (typeof window === 'undefined') return;
     if (window.confirm(`Delete "${build.name}"? This cannot be undone.`)) {
       onDeleteBuild?.(build.id);
     }

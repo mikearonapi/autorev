@@ -157,3 +157,5 @@ export function WebApplicationSchema({ name, description, path, applicationCateg
   return <SchemaOrg schema={schema} />;
 }
 
+
+

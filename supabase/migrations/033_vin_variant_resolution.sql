@@ -156,3 +156,5 @@ GRANT EXECUTE ON FUNCTION resolve_car_and_variant_from_vin_decode(TEXT, TEXT, IN
 
 
 
+
+

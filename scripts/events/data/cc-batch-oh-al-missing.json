@@ -1,0 +1,113 @@
+{
+  "batch": "Ohio and Alabama Missing Cities",
+  "venues": [
+    {
+      "name": "Cars and Coffee Findlay",
+      "city": "Findlay",
+      "state": "OH",
+      "venue_name": "Gabe's Parking Lot",
+      "address": "Gabe's Parking Lot Findlay",
+      "zip": "45840",
+      "lat": 41.0442,
+      "lng": -83.6499,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.flagcitycorvettes.com/"
+    },
+    {
+      "name": "Cars & Coffee Car Nation Zanesville",
+      "city": "Zanesville",
+      "state": "OH",
+      "venue_name": "Car Nation Auto Sales",
+      "address": "2706 Maple Ave",
+      "zip": "43701",
+      "lat": 39.9403,
+      "lng": -82.0132,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Lima Cars & Coffee",
+      "city": "Lima",
+      "state": "OH",
+      "venue_name": "Lima",
+      "address": "Lima, OH",
+      "zip": "45801",
+      "lat": 40.7428,
+      "lng": -84.1053,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Mansfield Cars & Coffee",
+      "city": "Mansfield",
+      "state": "OH",
+      "venue_name": "Mansfield",
+      "address": "Mansfield, OH",
+      "zip": "44902",
+      "lat": 40.7589,
+      "lng": -82.5155,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Piqua Cars and Coffee",
+      "city": "Piqua",
+      "state": "OH",
+      "venue_name": "Piqua",
+      "address": "Piqua, OH",
+      "zip": "45356",
+      "lat": 40.1445,
+      "lng": -84.2424,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Sidney Cars and Coffee",
+      "city": "Sidney",
+      "state": "OH",
+      "venue_name": "Sidney",
+      "address": "Sidney, OH",
+      "zip": "45365",
+      "lat": 40.2842,
+      "lng": -84.1555,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Marion Cars and Coffee",
+      "city": "Marion",
+      "state": "OH",
+      "venue_name": "Marion",
+      "address": "Marion, OH",
+      "zip": "43302",
+      "lat": 40.5887,
+      "lng": -83.1285,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Montgomery Cars & Coffee Alabama",
+      "city": "Montgomery",
+      "state": "AL",
+      "venue_name": "Montgomery",
+      "address": "Montgomery, AL",
+      "zip": "36104",
+      "lat": 32.3792,
+      "lng": -86.3077,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Tuscaloosa Cars and Coffee",
+      "city": "Tuscaloosa",
+      "state": "AL",
+      "venue_name": "Tuscaloosa",
+      "address": "Tuscaloosa, AL",
+      "zip": "35401",
+      "lat": 33.2098,
+      "lng": -87.5692,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

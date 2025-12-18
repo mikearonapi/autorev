@@ -264,3 +264,5 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Server-
 - Whether all ESLint disables are justified and documented
 - If database query patterns are optimized
 - Whether error boundaries are implemented anywhere in the application
+
+

@@ -1,0 +1,101 @@
+{
+  "batch": "Colorado, New Mexico, Iowa Missing Cities",
+  "venues": [
+    {
+      "name": "Cars and Coffee North Colorado Springs",
+      "city": "Colorado Springs",
+      "state": "CO",
+      "venue_name": "Asbury Wealth Partners",
+      "address": "6385 Corporate Dr",
+      "zip": "80919",
+      "lat": 38.9290,
+      "lng": -104.7935,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "PPAC Cars Coffee Cruise Colorado Springs",
+      "city": "Colorado Springs",
+      "state": "CO",
+      "venue_name": "Kairos Coffee House",
+      "address": "505 Popes Bluff Trl",
+      "zip": "80907",
+      "lat": 38.8753,
+      "lng": -104.8263,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://happeningnext.com/"
+    },
+    {
+      "name": "Southwest Grill Cars & Coffee Pueblo",
+      "city": "Pueblo",
+      "state": "CO",
+      "venue_name": "Southwest Grill",
+      "address": "1000 W US Highway 50",
+      "zip": "81008",
+      "lat": 38.2999,
+      "lng": -104.6269,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Cars and Coffee Santa Fe",
+      "city": "Santa Fe",
+      "state": "NM",
+      "venue_name": "Kakawa Chocolate House",
+      "address": "1050 Paseo De Peralta",
+      "zip": "87501",
+      "lat": 35.6870,
+      "lng": -105.9378,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.carsandcoffeesantafe.com/"
+    },
+    {
+      "name": "Cruces Car Show Fiesta Las Cruces",
+      "city": "Las Cruces",
+      "state": "NM",
+      "venue_name": "Sisbarro GMC",
+      "address": "425 West Boutz Road",
+      "zip": "88005",
+      "lat": 32.3224,
+      "lng": -106.7636,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://www.575cars.com/"
+    },
+    {
+      "name": "Cars & Coffee Albuquerque Heights",
+      "city": "Albuquerque",
+      "state": "NM",
+      "venue_name": "Albuquerque Heights",
+      "address": "Albuquerque, NM",
+      "zip": "87110",
+      "lat": 35.1107,
+      "lng": -106.5696,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee LeClaire Davenport",
+      "city": "Le Claire",
+      "state": "IA",
+      "venue_name": "298 N Front St",
+      "address": "298 N Front St",
+      "zip": "52753",
+      "lat": 41.5983,
+      "lng": -90.3454,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars and Coffee Des Moines",
+      "city": "Des Moines",
+      "state": "IA",
+      "venue_name": "Starbucks Merle Hay Rd",
+      "address": "3830 Merle Hay Rd",
+      "zip": "50310",
+      "lat": 41.6195,
+      "lng": -93.6769,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://allevents.in/"
+    }
+  ]
+}

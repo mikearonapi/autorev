@@ -61,6 +61,7 @@ const SpinnerIcon = ({ size = 14 }) => (
  * @param {Function} [props.onSaveChange] - Callback when save state changes: (eventSlug, isSaved) => void
  * @param {string} [props.theme] - 'auto' | 'light' | 'dark'
  * @param {string} [props.variant] - 'default' | 'compact' | 'with-label'
+ * @param {string} [props.size] - 'default' | 'small' - smaller button for dense layouts
  * @param {boolean} [props.showLabel] - Whether to show label text
  */
 export default function SaveEventButton({
@@ -71,6 +72,7 @@ export default function SaveEventButton({
   onSaveChange,
   theme = 'auto',
   variant = 'default',
+  size = 'default',
   showLabel = false,
 }) {
   const { isAuthenticated, user, profile, session } = useAuth();
@@ -167,7 +169,7 @@ export default function SaveEventButton({
     }
   }, [isAuthenticated, canSave, isSaved, isLoading, eventSlug, onSaveChange, openSignIn, session?.access_token]);
 
-  const iconSize = variant === 'compact' ? 14 : 14;
+  const iconSize = size === 'small' ? 12 : 14;
 
   return (
     <>
@@ -177,7 +179,7 @@ export default function SaveEventButton({
       >
         <div className={styles.tooltipWrapper}>
           <button 
-            className={`${styles.actionBtn} ${isSaved ? styles.activeFavorite : ''} ${isLoading ? styles.loading : ''} ${variant === 'with-label' ? styles.withLabel : ''}`}
+            className={`${styles.actionBtn} ${isSaved ? styles.activeFavorite : ''} ${isLoading ? styles.loading : ''} ${variant === 'with-label' ? styles.withLabel : ''} ${size === 'small' ? styles.smallBtn : ''}`}
             onClick={handleClick}
             onTouchEnd={handleClick}
             disabled={isLoading}

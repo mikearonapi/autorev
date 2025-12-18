@@ -72,24 +72,24 @@ export function CarSelectionProvider({ children }) {
   const [state, dispatch] = useReducer(carSelectionReducer, defaultState);
 
   // Hydrate from localStorage on mount (client-side only)
-  useEffect(() => {
-    const storedState = loadState();
-    if (storedState.selectedCar) {
-      // Restore state from localStorage
+useEffect(() => {
+  const storedState = loadState() || {};
+  if (storedState.selectedCar) {
+    // Restore state from localStorage
+    dispatch({ 
+      type: ActionTypes.SET_CAR, 
+      payload: storedState.selectedCar,
+      preserveUpgrades: false,
+    });
+    if (storedState.appliedUpgrades?.length > 0) {
       dispatch({ 
-        type: ActionTypes.SET_CAR, 
-        payload: storedState.selectedCar,
-        preserveUpgrades: false,
+        type: ActionTypes.SET_UPGRADES, 
+        payload: storedState.appliedUpgrades,
       });
-      if (storedState.appliedUpgrades?.length > 0) {
-        dispatch({ 
-          type: ActionTypes.SET_UPGRADES, 
-          payload: storedState.appliedUpgrades,
-        });
-      }
     }
-    setIsHydrated(true);
-  }, []);
+  }
+  setIsHydrated(true);
+}, []);
 
   /**
    * Select a car (pass full car data, will be trimmed for storage)

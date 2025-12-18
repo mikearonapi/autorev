@@ -116,7 +116,7 @@ const Icons = {
  * Build Summary Header Card
  */
 function BuildSummaryCard({ build, car, complexity }) {
-  const partsCount = (build.parts?.length || build.selectedParts?.length || 0);
+  const partsCount = (build?.parts?.length || build?.selectedParts?.length || 0);
   return (
     <div className={styles.summaryCard}>
       <div className={styles.summaryImage}>
@@ -124,9 +124,9 @@ function BuildSummaryCard({ build, car, complexity }) {
       </div>
       <div className={styles.summaryContent}>
         <div className={styles.summaryHeader}>
-          <h2 className={styles.buildName}>{build.name}</h2>
+          <h2 className={styles.buildName}>{build?.name || 'Untitled Build'}</h2>
           <span className={styles.buildDate}>
-            Saved {new Date(build.createdAt).toLocaleDateString()}
+            Saved {build?.createdAt ? new Date(build.createdAt).toLocaleDateString() : '—'}
           </span>
         </div>
         <p className={styles.carName}>{car.name}</p>
@@ -134,7 +134,7 @@ function BuildSummaryCard({ build, car, complexity }) {
         <div className={styles.summaryStats}>
           <div className={styles.summaryStat}>
             <Icons.wrench size={16} />
-            <span className={styles.summaryStatValue}>{build.upgrades?.length || 0}</span>
+            <span className={styles.summaryStatValue}>{build?.upgrades?.length || 0}</span>
             <span className={styles.summaryStatLabel}>Upgrades</span>
           </div>
           <div className={styles.summaryStat}>
@@ -144,7 +144,7 @@ function BuildSummaryCard({ build, car, complexity }) {
           </div>
           <div className={styles.summaryStat}>
             <Icons.bolt size={16} />
-            <span className={styles.summaryStatValue}>+{build.totalHpGain || 0}</span>
+            <span className={styles.summaryStatValue}>+{build?.totalHpGain || 0}</span>
             <span className={styles.summaryStatLabel}>HP Gain</span>
           </div>
           <div className={styles.summaryStat}>
@@ -154,7 +154,7 @@ function BuildSummaryCard({ build, car, complexity }) {
           </div>
           <div className={styles.summaryStat}>
             <Icons.dollar size={16} />
-            <span className={styles.summaryStatValue}>${(build.totalCostLow || 0).toLocaleString()}</span>
+            <span className={styles.summaryStatValue}>${(Number(build?.totalCostLow) || 0).toLocaleString()}</span>
             <span className={styles.summaryStatLabel}>Est. Cost</span>
           </div>
         </div>
@@ -502,33 +502,36 @@ function PartsListSection({ parts }) {
  * Main BuildDetailView Component
  */
 export default function BuildDetailView({ build, car, onBack }) {
+  const buildUpgrades = Array.isArray(build?.upgrades) ? build.upgrades : [];
+  const safeCar = car || {};
+
   // Resolve upgrade keys to full upgrade objects
   const upgradeDetails = useMemo(() => {
-    return (build.upgrades || []).map(key => getUpgradeByKey(key)).filter(Boolean);
-  }, [build.upgrades]);
+    return buildUpgrades.map(key => getUpgradeByKey(key)).filter(Boolean);
+  }, [buildUpgrades]);
   
   // Calculate build complexity
   const complexity = useMemo(() => {
-    return calculateBuildComplexity(build.upgrades || []);
-  }, [build.upgrades]);
+    return calculateBuildComplexity(buildUpgrades);
+  }, [buildUpgrades]);
   
   // Get tools required
   const toolsData = useMemo(() => {
-    return getToolsForBuild(build.upgrades || []);
-  }, [build.upgrades]);
+    return getToolsForBuild(buildUpgrades);
+  }, [buildUpgrades]);
   
   // Get system impacts
   const impacts = useMemo(() => {
-    return getSystemImpactOverview(build.upgrades || []);
-  }, [build.upgrades]);
+    return getSystemImpactOverview(buildUpgrades);
+  }, [buildUpgrades]);
   
   // Validate build
   const validation = useMemo(() => {
-    return validateUpgradeSelection(build.upgrades || [], car);
-  }, [build.upgrades, car]);
+    return validateUpgradeSelection(buildUpgrades, safeCar);
+  }, [buildUpgrades, safeCar]);
 
   const selectedParts = useMemo(() => {
-    const raw = build.parts || build.selectedParts || [];
+    const raw = build?.parts || build?.selectedParts || [];
     if (!Array.isArray(raw)) return [];
     return raw
       .map((p) => {
@@ -558,7 +561,11 @@ export default function BuildDetailView({ build, car, onBack }) {
         };
       })
       .filter(Boolean);
-  }, [build.parts, build.selectedParts]);
+  }, [build?.parts, build?.selectedParts]);
+
+  if (!build || !car) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>

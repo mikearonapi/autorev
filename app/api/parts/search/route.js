@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getPublicClient, isConfigured } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-function getPublicDbClient() {
-  if (!supabaseUrl || !supabaseAnonKey) return null;
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-}
 
 function clampInt(v, min, max, fallback) {
   const n = Number(v);
@@ -35,7 +25,7 @@ function parseBool(v) {
  */
 export async function GET(request) {
   try {
-    const client = getPublicDbClient();
+    const client = getPublicClient();
     if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const { searchParams } = new URL(request.url);
@@ -167,6 +157,8 @@ export async function GET(request) {
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
   }
 }
+
+
 
 
 

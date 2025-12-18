@@ -1,0 +1,120 @@
+{
+  "description": "MotorsportReg Organization IDs for event fetching",
+  "source": "Discovered from MSR calendar embeds and websites",
+  "updated": "2024-12-17",
+  "note": "IDs can be simple integers or UUIDs depending on when org was created",
+  "organizations": [
+    {
+      "name": "NASA Northeast",
+      "id": "89",
+      "type": "hpde",
+      "region": "Northeast",
+      "verified": true
+    },
+    {
+      "name": "NASA NorCal",
+      "id": "90",
+      "type": "hpde",
+      "region": "West",
+      "verified": false
+    },
+    {
+      "name": "NASA SoCal",
+      "id": "91",
+      "type": "hpde",
+      "region": "West",
+      "verified": false
+    },
+    {
+      "name": "NASA Southeast",
+      "id": "92",
+      "type": "hpde",
+      "region": "Southeast",
+      "verified": false
+    },
+    {
+      "name": "NASA Great Lakes",
+      "id": "93",
+      "type": "hpde",
+      "region": "Midwest",
+      "verified": false
+    },
+    {
+      "name": "NASA Texas",
+      "id": "94",
+      "type": "hpde",
+      "region": "Southwest",
+      "verified": false
+    },
+    {
+      "name": "NASA Mid-Atlantic",
+      "id": "95",
+      "type": "hpde",
+      "region": "Northeast",
+      "verified": false
+    },
+    {
+      "name": "NASA Rocky Mountain",
+      "id": "96",
+      "type": "hpde",
+      "region": "West",
+      "verified": false
+    },
+    {
+      "name": "NASA Utah",
+      "id": "97",
+      "type": "hpde",
+      "region": "West",
+      "verified": false
+    },
+    {
+      "name": "NASA Arizona",
+      "id": "98",
+      "type": "hpde",
+      "region": "Southwest",
+      "verified": false
+    },
+    {
+      "name": "Chin Track Days",
+      "id": "1",
+      "type": "hpde",
+      "region": "National",
+      "verified": false
+    },
+    {
+      "name": "Hooked On Driving",
+      "id": "2",
+      "type": "hpde",
+      "region": "National",
+      "verified": false
+    },
+    {
+      "name": "TrackDaze",
+      "id": "3",
+      "type": "hpde",
+      "region": "Southeast",
+      "verified": false
+    },
+    {
+      "name": "PCA National",
+      "id": "100",
+      "type": "club",
+      "region": "National",
+      "verified": false
+    },
+    {
+      "name": "BMW CCA",
+      "id": "200",
+      "type": "club",
+      "region": "National",
+      "verified": false
+    },
+    {
+      "name": "SCCA",
+      "id": "300",
+      "type": "autocross",
+      "region": "National",
+      "verified": false
+    }
+  ]
+}

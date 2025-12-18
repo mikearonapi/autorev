@@ -204,6 +204,17 @@ const PART_CATEGORIES = [
  * Returns an object with title and detailed content
  */
 function generateDetailedRecommendation(car, stockMetrics, selectedPackage) {
+  // Defensive: handle missing car gracefully
+  if (!car || !car.slug) {
+    return {
+      primaryText: 'Select a car to see upgrade recommendations.',
+      focusArea: null,
+      platformInsights: [],
+      watchOuts: [],
+      hasDetailedData: false,
+    };
+  }
+  
   const carSlug = car.slug;
   
   // Try to get car-specific recommendations from our data file
@@ -477,11 +488,27 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
                 className={`${styles.upgradeRow} ${isSelected ? styles.upgradeRowSelected : ''} ${hasConflict ? styles.upgradeRowConflict : ''}`}
               >
                 <button
+                  type="button"
                   className={styles.upgradeToggle}
-                  onClick={() => isCustomMode && onToggle(upgrade.key, upgrade.name, replacementInfo)}
+                  onClick={(e) => {
+                    // Prevent any default behavior
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Only proceed if in custom mode
+                    if (!isCustomMode) {
+                      return;
+                    }
+                    
+                    // Call the toggle handler
+                    onToggle(upgrade.key, upgrade.name, replacementInfo);
+                  }}
                   disabled={!isCustomMode}
+                  aria-label={`${isSelected ? 'Deselect' : 'Select'} ${upgrade.name}`}
+                  aria-checked={isSelected}
+                  role="checkbox"
                 >
-                  <span className={styles.checkbox}>
+                  <span className={styles.checkbox} aria-hidden="true">
                     {isSelected && <Icons.check size={10} />}
                   </span>
                   <span className={styles.upgradeName}>{upgrade.name}</span>
@@ -494,12 +521,18 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
                     <Icons.swap size={10} />
                   </span>
                 )}
-                <button className={styles.infoBtn} onClick={() => onInfoClick(upgrade)}><Icons.info size={12} /></button>
+                <button type="button" className={styles.infoBtn} onClick={() => onInfoClick(upgrade)} aria-label={`View ${upgrade.name} details`}>
+                  <Icons.info size={12} />
+                </button>
               </div>
             );
           })}
         </div>
-        {!isCustomMode && <div className={styles.popupFooter}>Switch to Custom mode to modify</div>}
+        {!isCustomMode && (
+          <div className={styles.popupFooter}>
+            💡 Switch to "Custom" package above to toggle individual upgrades
+          </div>
+        )}
       </div>
     </div>
   );
@@ -512,6 +545,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
   
+  // All useState hooks must be called unconditionally (before any early returns)
   const [selectedPackage, setSelectedPackage] = useState('stock');
   const [selectedModules, setSelectedModules] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -523,9 +557,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const [saveError, setSaveError] = useState(null);
   const [conflictNotification, setConflictNotification] = useState(null);
 
-  // -----------------------------------------------------------------------------
-  // Parts Finder (beta) - uses RLS-safe /api/parts/search
-  // -----------------------------------------------------------------------------
+  // Parts Finder state (beta)
   const [partsQuery, setPartsQuery] = useState('');
   const [partsCategory, setPartsCategory] = useState('');
   const [partsVerifiedOnly, setPartsVerifiedOnly] = useState(true);
@@ -537,6 +569,14 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const [graphError, setGraphError] = useState(null);
   const [graphEdges, setGraphEdges] = useState([]);
 
+  // Defensive: use safe car slug for effects - prevents crashes if car is undefined
+  const safeCarSlug = car?.slug || '';
+
+  // -----------------------------------------------------------------------------
+  // Parts Finder (beta) - uses RLS-safe /api/parts/search
+  // Reset parts state when car changes
+  // -----------------------------------------------------------------------------
+
   useEffect(() => {
     setPartsQuery('');
     setPartsCategory('');
@@ -546,12 +586,14 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     setSelectedParts([]);
     setGraphError(null);
     setGraphEdges([]);
-  }, [car.slug]);
+  }, [safeCarSlug]);
 
   useEffect(() => {
     let cancelled = false;
     const q = partsQuery.trim();
-    const shouldFetch = q.length >= 2 || Boolean(partsCategory);
+    // Guard: skip fetch if no car
+  const hasWindow = typeof window !== 'undefined';
+  const shouldFetch = hasWindow && safeCarSlug && (q.length >= 2 || Boolean(partsCategory));
 
     if (!shouldFetch) {
       setPartsResults([]);
@@ -565,7 +607,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
       try {
         const url = new URL('/api/parts/search', window.location.origin);
         if (q) url.searchParams.set('q', q);
-        url.searchParams.set('carSlug', car.slug);
+        url.searchParams.set('carSlug', safeCarSlug);
         if (partsCategory) url.searchParams.set('category', partsCategory);
         if (partsVerifiedOnly) url.searchParams.set('verified', 'true');
         url.searchParams.set('limit', '10');
@@ -587,7 +629,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [car.slug, partsQuery, partsCategory, partsVerifiedOnly]);
+  }, [safeCarSlug, partsQuery, partsCategory, partsVerifiedOnly]);
 
   const addPartToSelection = useCallback((part) => {
     if (!part?.id) return;
@@ -663,26 +705,32 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     return { conflicts, missing, recommended };
   }, [graphEdges, selectedParts]);
   
+  // Reset upgrade state when car changes
   useEffect(() => {
     setSelectedModules([]);
     setSelectedPackage('stock');
     setCurrentBuildId(null);
     setActiveCategory(null);
-  }, [car.slug]);
+  }, [safeCarSlug]);
   
+  // Load initial build if provided
   useEffect(() => {
-    if (initialBuildId) {
+    if (initialBuildId && safeCarSlug) {
       const build = getBuildById(initialBuildId);
-      if (build && build.carSlug === car.slug) {
+      if (build && build.carSlug === safeCarSlug) {
         setSelectedModules(build.upgrades || []);
         setSelectedParts(build.parts || build.selectedParts || []);
         setSelectedPackage('custom');
         setCurrentBuildId(initialBuildId);
       }
     }
-  }, [initialBuildId, getBuildById, car.slug]);
+  }, [initialBuildId, getBuildById, safeCarSlug]);
   
-  const availableUpgrades = useMemo(() => getAvailableUpgrades(car), [car]);
+  // Guard: return empty upgrades structure if no car
+  const availableUpgrades = useMemo(() => {
+    if (!car) return { packages: [], modulesByCategory: {} };
+    return getAvailableUpgrades(car);
+  }, [car]);
   
   const packageUpgrades = useMemo(() => {
     if (selectedPackage === 'stock') return [];
@@ -697,15 +745,35 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     return packageUpgrades;
   }, [selectedPackage, selectedModules, packageUpgrades]);
   
-  const profile = useMemo(() => getPerformanceProfile(car, effectiveModules), [car, effectiveModules]);
-  const totalCost = useMemo(() => calculateTotalCost(profile.selectedUpgrades, car), [profile.selectedUpgrades, car]);
+  // Guard: return safe defaults if no car
+  const profile = useMemo(() => {
+    if (!car) {
+      return {
+        stockMetrics: { hp: 0, zeroToSixty: 0, braking60To0: 0, lateralG: 0 },
+        upgradedMetrics: { hp: 0, zeroToSixty: 0, braking60To0: 0, lateralG: 0 },
+        stockScores: { drivability: 0, reliabilityHeat: 0, soundEmotion: 0 },
+        upgradedScores: { drivability: 0, reliabilityHeat: 0, soundEmotion: 0 },
+        selectedUpgrades: [],
+      };
+    }
+    return getPerformanceProfile(car, effectiveModules);
+  }, [car, effectiveModules]);
+  
+  const totalCost = useMemo(() => {
+    if (!car) return { low: 0, high: 0, confidence: 'estimated', confidencePercent: 0 };
+    return calculateTotalCost(profile.selectedUpgrades, car);
+  }, [profile.selectedUpgrades, car]);
   
   const hpGain = profile.upgradedMetrics.hp - profile.stockMetrics.hp;
   const showUpgrade = selectedPackage !== 'stock';
   const isCustomMode = selectedPackage === 'custom';
   
-  // Tunability & Recommendations
-  const tunability = useMemo(() => calculateTunability(car), [car]);
+  // Tunability & Recommendations (with guards for missing car)
+  const tunability = useMemo(() => {
+    if (!car) return { score: 0, label: 'Unknown' };
+    return calculateTunability(car);
+  }, [car]);
+  
   const detailedRecommendation = useMemo(() => {
     return generateDetailedRecommendation(car, profile.stockMetrics, selectedPackage);
   }, [car, profile.stockMetrics, selectedPackage]);
@@ -804,6 +872,37 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     }
   };
   
+  // Early return AFTER all hooks to satisfy React Rules of Hooks
+  // This ensures hooks are called in the same order on every render
+  if (!car || !safeCarSlug) {
+    console.warn('[UpgradeCenter] Missing or invalid car prop');
+    return (
+      <div className={styles.section}>
+        <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '40px' }}>
+          Unable to load upgrade center. Please select a car.
+        </p>
+        {onChangeCar && (
+          <button 
+            onClick={onChangeCar}
+            style={{ 
+              margin: '0 auto', 
+              display: 'block', 
+              padding: '12px 24px',
+              background: 'linear-gradient(135deg, #d4af37, #b8973a)',
+              border: 'none',
+              borderRadius: '8px',
+              color: '#000',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Select a Car
+          </button>
+        )}
+      </div>
+    );
+  }
+
   const tierInfo = tierConfig[car.tier] || {};
   const activeCategoryData = UPGRADE_CATEGORIES.find(c => c.key === activeCategory);
   
@@ -978,18 +1077,18 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
                   const price = p?.latest_price?.price_cents ? `$${(p.latest_price.price_cents / 100).toFixed(0)}` : null;
                   const fit = p?.fitment || null;
                   const conf = typeof fit?.confidence === 'number' ? Math.round(fit.confidence * 100) : null;
-                  const isSelected = selectedParts.some((sp) => sp.id === p.id);
+                  const isSelected = selectedParts.some((sp) => sp?.id === p?.id);
 
                   return (
-                    <div key={p.id} className={styles.partsItem}>
+                    <div key={p?.id || Math.random()} className={styles.partsItem}>
                       <div className={styles.partsMain}>
-                        <div className={styles.partsName}>{p.name}</div>
+                        <div className={styles.partsName}>{p?.name || 'Unknown part'}</div>
                         <div className={styles.partsMeta}>
-                          <span>{p.brand_name || '—'}</span>
-                          {p.part_number && <span className={styles.partsDot}>•</span>}
-                          {p.part_number && <span>PN {p.part_number}</span>}
-                          {p.category && <span className={styles.partsDot}>•</span>}
-                          {p.category && <span>{p.category}</span>}
+                          <span>{p?.brand_name || '—'}</span>
+                          {p?.part_number && <span className={styles.partsDot}>•</span>}
+                          {p?.part_number && <span>PN {p.part_number}</span>}
+                          {p?.category && <span className={styles.partsDot}>•</span>}
+                          {p?.category && <span>{p.category}</span>}
                         </div>
                         <div className={styles.partsBadges}>
                           {fit?.verified && <span className={styles.partsBadgeVerified}>Verified</span>}

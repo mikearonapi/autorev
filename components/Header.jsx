@@ -164,6 +164,7 @@ export default function Header() {
 
   // Handle scroll for header shadow
   useEffect(() => {
+  if (typeof window === 'undefined') return;
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
@@ -173,6 +174,7 @@ export default function Header() {
 
   // Prevent body scroll when menu is open and reset menu scroll position
   useEffect(() => {
+  if (typeof document === 'undefined') return;
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
       // Reset mobile nav scroll to top when opening

@@ -1,0 +1,149 @@
+{
+  "batch": "Fix Critical Gaps - VA, CO",
+  "venues": [
+    {
+      "name": "Cars and Coffee Norfolk",
+      "city": "Norfolk",
+      "state": "VA",
+      "venue_name": "Black Rifle Coffee Company",
+      "address": "216 East Little Creek Road",
+      "zip": "23505",
+      "lat": 36.9081,
+      "lng": -76.2675,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://www.ccchr.org/"
+    },
+    {
+      "name": "Cars and Coffee Chesapeake",
+      "city": "Chesapeake",
+      "state": "VA",
+      "venue_name": "Everbowl",
+      "address": "1244 Greenbrier Pkwy #570",
+      "zip": "23320",
+      "lat": 36.7682,
+      "lng": -76.2275,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.ccchr.org/"
+    },
+    {
+      "name": "Classic Cars and Coffee Portsmouth",
+      "city": "Portsmouth",
+      "state": "VA",
+      "venue_name": "Portsmouth Art Cultural Center",
+      "address": "420 High Street",
+      "zip": "23704",
+      "lat": 36.8354,
+      "lng": -76.2983,
+      "recurrence": "Every Saturday",
+      "source_url": "https://portsvaevents.com/"
+    },
+    {
+      "name": "Cars and Coffee Hanover VA",
+      "city": "Hanover",
+      "state": "VA",
+      "venue_name": "Green Top Sporting Goods",
+      "address": "10150 Lakeridge Pkwy",
+      "zip": "23116",
+      "lat": 37.6207,
+      "lng": -77.3697,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars and Coffee Fredericksburg VA",
+      "city": "Fredericksburg",
+      "state": "VA",
+      "venue_name": "224 Washington St",
+      "address": "224 Washington St",
+      "zip": "22401",
+      "lat": 38.3032,
+      "lng": -77.4605,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars and Coffee Alexandria",
+      "city": "Alexandria",
+      "state": "VA",
+      "venue_name": "Alexandria",
+      "address": "Alexandria, VA",
+      "zip": "22314",
+      "lat": 38.8048,
+      "lng": -77.0469,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Arlington",
+      "city": "Arlington",
+      "state": "VA",
+      "venue_name": "Arlington",
+      "address": "Arlington, VA",
+      "zip": "22201",
+      "lat": 38.8799,
+      "lng": -77.1068,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Aurora CO",
+      "city": "Aurora",
+      "state": "CO",
+      "venue_name": "The Gritty Shop",
+      "address": "695 Billings St",
+      "zip": "80011",
+      "lat": 39.7294,
+      "lng": -104.8319,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.thegrittyco.com/"
+    },
+    {
+      "name": "Cars Coffee Aurora Highlands",
+      "city": "Watkins",
+      "state": "CO",
+      "venue_name": "Winged Melody Park",
+      "address": "3900 E-470",
+      "zip": "80137",
+      "lat": 39.7389,
+      "lng": -104.5833,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://theaurorahighlands.com/"
+    },
+    {
+      "name": "Cars and Coffee Boulder",
+      "city": "Boulder",
+      "state": "CO",
+      "venue_name": "1515 Greenbriar Blvd",
+      "address": "1515 Greenbriar Blvd",
+      "zip": "80305",
+      "lat": 39.9774,
+      "lng": -105.2553,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.fhscarclub.com/"
+    },
+    {
+      "name": "Highlands Ranch Cars and Coffee",
+      "city": "Highlands Ranch",
+      "state": "CO",
+      "venue_name": "Lost Coffee Backcountry",
+      "address": "10420 Backcountry Dr",
+      "zip": "80126",
+      "lat": 39.5500,
+      "lng": -105.0167,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Northern Colorado Cars and Coffee",
+      "city": "Fort Collins",
+      "state": "CO",
+      "venue_name": "Fort Collins",
+      "address": "Fort Collins, CO",
+      "zip": "80521",
+      "lat": 40.5853,
+      "lng": -105.0844,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.motoralert.com/"
+    }
+  ]
+}

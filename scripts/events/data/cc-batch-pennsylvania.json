@@ -1,0 +1,41 @@
+{
+  "batch": "Pennsylvania Expansion - Pittsburgh, Allentown",
+  "venues": [
+    {
+      "name": "Pittsburgh Cars N Coffee",
+      "city": "Warrendale",
+      "state": "PA",
+      "venue_name": "Generoasta Coffee",
+      "address": "Generoasta Coffee",
+      "zip": "15086",
+      "lat": 40.6362,
+      "lng": -80.0925,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://pghcnc.com/"
+    },
+    {
+      "name": "Cars & Coffee Lehigh Valley",
+      "city": "Bethlehem",
+      "state": "PA",
+      "venue_name": "SteelStacks",
+      "address": "SteelStacks campus",
+      "zip": "18015",
+      "lat": 40.6126,
+      "lng": -75.3729,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://www.steelstacks.org/"
+    },
+    {
+      "name": "Cars & Coffee Lancaster",
+      "city": "Lancaster",
+      "state": "PA",
+      "venue_name": "Lancaster",
+      "address": "Lancaster, PA",
+      "zip": "17601",
+      "lat": 40.0379,
+      "lng": -76.3055,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

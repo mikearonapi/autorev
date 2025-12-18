@@ -1,0 +1,137 @@
+{
+  "batch": "California Missing Cities Coverage",
+  "venues": [
+    {
+      "name": "Stockton Cars & Coffee",
+      "city": "Stockton",
+      "state": "CA",
+      "venue_name": "West Lane Bowl",
+      "address": "3900 N West Lane",
+      "zip": "95205",
+      "lat": 37.9792,
+      "lng": -121.3153,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.visitstockton.org/"
+    },
+    {
+      "name": "Pharaohs of Visalia Cars and Coffee",
+      "city": "Visalia",
+      "state": "CA",
+      "venue_name": "Mary's Vineyard Shopping Center",
+      "address": "1447 E. Noble Ave",
+      "zip": "93292",
+      "lat": 36.3302,
+      "lng": -119.2700,
+      "recurrence": "Every Saturday",
+      "source_url": "https://randydavis.pages.dev/"
+    },
+    {
+      "name": "Cars At The Pointe Fresno",
+      "city": "Fresno",
+      "state": "CA",
+      "venue_name": "Campus Pointe",
+      "address": "Campus Pointe",
+      "zip": "93710",
+      "lat": 36.8133,
+      "lng": -119.7510,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.302coyotes.com/"
+    },
+    {
+      "name": "Emma Jean's Cars and Coffee Victorville",
+      "city": "Victorville",
+      "state": "CA",
+      "venue_name": "Emma Jean's Holland Burger",
+      "address": "17143 N D St",
+      "zip": "92394",
+      "lat": 34.5362,
+      "lng": -117.2928,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.idrivesocal.com/"
+    },
+    {
+      "name": "Steak N Shake Car Cruise Victorville",
+      "city": "Victorville",
+      "state": "CA",
+      "venue_name": "Steak n Shake",
+      "address": "12160 Mariposa Rd",
+      "zip": "92395",
+      "lat": 34.4897,
+      "lng": -117.3432,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://www.idrivesocal.com/"
+    },
+    {
+      "name": "Santa Maria Cars and Coffee",
+      "city": "Santa Maria",
+      "state": "CA",
+      "venue_name": "Santa Maria",
+      "address": "Santa Maria, CA",
+      "zip": "93454",
+      "lat": 34.9530,
+      "lng": -120.4357,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Shasta Classics Show Shine Redding",
+      "city": "Redding",
+      "state": "CA",
+      "venue_name": "Hobby Lobby",
+      "address": "Hobby Lobby parking lot",
+      "zip": "96003",
+      "lat": 40.5865,
+      "lng": -122.3917,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.shastaclassicscarclub.com/"
+    },
+    {
+      "name": "Porterville Cars and Coffee",
+      "city": "Porterville",
+      "state": "CA",
+      "venue_name": "Porterville",
+      "address": "Porterville, CA",
+      "zip": "93257",
+      "lat": 36.0652,
+      "lng": -119.0168,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Hanford Cars and Coffee",
+      "city": "Hanford",
+      "state": "CA",
+      "venue_name": "Hanford",
+      "address": "Hanford, CA",
+      "zip": "93230",
+      "lat": 36.3275,
+      "lng": -119.6457,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Apple Valley Cars and Coffee",
+      "city": "Apple Valley",
+      "state": "CA",
+      "venue_name": "Apple Valley",
+      "address": "Apple Valley, CA",
+      "zip": "92307",
+      "lat": 34.5008,
+      "lng": -117.1858,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Tulare Cars and Coffee",
+      "city": "Tulare",
+      "state": "CA",
+      "venue_name": "Tulare",
+      "address": "Tulare, CA",
+      "zip": "93274",
+      "lat": 36.2077,
+      "lng": -119.3473,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

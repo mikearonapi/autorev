@@ -249,3 +249,5 @@ RESEND_API_KEY=your_resend_key
 - Community page: http://localhost:3000/community
 - AL page: http://localhost:3000/al
 
+
+

@@ -8,10 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { getServiceClient } from '@/lib/supabaseServer';
 
 /**
  * POST /api/ai-mechanic/feedback
@@ -42,8 +39,11 @@ export async function POST(request) {
       );
     }
 
-    // Create Supabase client with service role for insert
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Get shared Supabase client with service role for insert
+    const supabase = getServiceClient();
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
 
     // Map rating to numeric value for the rating column
     const ratingValue = rating === 'positive' ? 5 : 1;
@@ -128,7 +128,10 @@ export async function GET(request) {
     );
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = getServiceClient();
+  if (!supabase) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+  }
 
   const { data, error } = await supabase
     .from('user_feedback')
@@ -150,4 +153,6 @@ export async function GET(request) {
     feedback: data || [],
   });
 }
+
+
 

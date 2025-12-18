@@ -16,6 +16,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ErrorBoundary, { CompactFallback } from '@/components/ErrorBoundary';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
@@ -178,6 +179,13 @@ const Icons = {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+  ),
+  alertTriangle: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
   ),
   analytics: ({ size = 20 }) => (
@@ -605,11 +613,12 @@ function TuningShopContent() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
-  const { isAuthenticated } = useAuth();
+  // Hooks with defensive fallbacks
+  const { isAuthenticated } = useAuth() || {};
   const authModal = useAuthModal();
-  const { favorites } = useFavorites();
-  const { builds, deleteBuild, getBuildById } = useSavedBuilds();
-  const { vehicles } = useOwnedVehicles();
+  const { favorites = [] } = useFavorites() || {};
+  const { builds = [], deleteBuild, getBuildById } = useSavedBuilds() || {};
+  const { vehicles = [] } = useOwnedVehicles() || {};
   
   // Handle URL params for direct build access
   useEffect(() => {
@@ -968,11 +977,29 @@ function TuningShopContent() {
         {activeTab === 'upgrades' && (
           selectedCar ? (
             <div className={styles.hubContainer}>
-              <UpgradeCenter 
-                car={selectedCar} 
-                initialBuildId={currentBuildId}
-                onChangeCar={handleBackToSelect}
-              />
+              <ErrorBoundary 
+                name="UpgradeCenter"
+                featureContext="tuning-shop"
+                fallback={({ error, onRetry }) => (
+                  <div className={styles.errorFallback}>
+                    <div className={styles.errorContent}>
+                      <Icons.alertTriangle size={32} />
+                      <h3>Upgrade Center Error</h3>
+                      <p>Something went wrong loading the upgrade center.</p>
+                      <div className={styles.errorActions}>
+                        <button onClick={onRetry} className={styles.retryBtn}>Try Again</button>
+                        <button onClick={handleBackToSelect} className={styles.backBtn}>Select Another Car</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              >
+                <UpgradeCenter 
+                  car={selectedCar} 
+                  initialBuildId={currentBuildId}
+                  onChangeCar={handleBackToSelect}
+                />
+              </ErrorBoundary>
             </div>
           ) : (
             <div className={styles.selectPrompt}>
@@ -1197,12 +1224,14 @@ function TuningShopLoading() {
   );
 }
 
-// Main export
+// Main export with error boundary protection
 export default function TuningShopPage() {
   return (
-    <Suspense fallback={<TuningShopLoading />}>
-      <TuningShopContent />
-    </Suspense>
+    <ErrorBoundary name="TuningShopPage" featureContext="tuning-shop">
+      <Suspense fallback={<TuningShopLoading />}>
+        <TuningShopContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 

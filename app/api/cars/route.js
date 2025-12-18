@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { logServerError } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars
@@ -54,15 +55,18 @@ export async function GET(request) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('[API/cars] Error:', error);
+      console.error('[API/cars] Supabase error:', error);
       throw error;
     }
 
     return NextResponse.json({ cars: data || [] });
   } catch (err) {
     console.error('[API/cars] Error:', err);
+    await logServerError(err, request, { apiRoute: '/api/cars' });
     return NextResponse.json({ error: 'Failed to fetch cars' }, { status: 500 });
   }
 }
+
+
 
 

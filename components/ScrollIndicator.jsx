@@ -12,6 +12,7 @@ export default function ScrollIndicator({ className = '' }) {
 
   // Hide the indicator once user scrolls past a threshold
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const handleScroll = () => {
       const scrollY = window.scrollY;
       // Fade out after scrolling 100px
@@ -23,6 +24,7 @@ export default function ScrollIndicator({ className = '' }) {
   }, []);
 
   const handleClick = () => {
+    if (typeof window === 'undefined') return;
     // Scroll down smoothly by viewport height minus header
     window.scrollBy({
       top: window.innerHeight * 0.8,
@@ -55,6 +57,8 @@ export default function ScrollIndicator({ className = '' }) {
     </button>
   );
 }
+
+
 
 
 

@@ -74,6 +74,7 @@ export default function FeedbackAdminPage() {
   const [categoryStats, setCategoryStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedIds, setExpandedIds] = useState(new Set());
   
   // Filters
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -126,6 +127,17 @@ export default function FeedbackAdminPage() {
       return tierMatch;
     });
   }, [feedback, tierFilter]);
+
+  // Group occurrences by error hash for auto-errors
+  const occurrenceByHash = useMemo(() => {
+    const counts = {};
+    feedback.forEach((item) => {
+      const hash = item.error_metadata?.errorHash || item.error_metadata?.error_hash;
+      if (!hash) return;
+      counts[hash] = (counts[hash] || 0) + 1;
+    });
+    return counts;
+  }, [feedback]);
 
   // Toggle selection
   const toggleSelection = (id) => {
@@ -315,6 +327,7 @@ export default function FeedbackAdminPage() {
               <option value="data">📊 Data Issue</option>
               <option value="general">💬 General</option>
               <option value="praise">❤️ Praise</option>
+              <option value="auto-error">⚙️ Auto-Error</option>
             </select>
           </div>
           
@@ -549,6 +562,49 @@ export default function FeedbackAdminPage() {
                     </span>
                   )}
                 </div>
+
+                {item.category === 'auto-error' && (
+                  <div className={styles.errorDetailsCard}>
+                    <div className={styles.errorDetailsHeader}>
+                      <span className={styles.contextItem}>
+                        🔁 Occurrences: {(() => {
+                          const hash = item.error_metadata?.errorHash || item.error_metadata?.error_hash;
+                          return hash ? occurrenceByHash[hash] || 1 : 1;
+                        })()}
+                      </span>
+                      {item.error_metadata?.apiRoute && (
+                        <span className={styles.contextItem}>
+                          🌐 {item.error_metadata.apiRoute}
+                        </span>
+                      )}
+                      {item.error_metadata?.errorCode && (
+                        <span className={styles.contextItem}>
+                          ⚠️ {item.error_metadata.errorCode}
+                        </span>
+                      )}
+                    </div>
+                    <details
+                      className={styles.errorDetailsBody}
+                      open={expandedIds.has(item.id)}
+                      onToggle={(e) => {
+                        setExpandedIds(prev => {
+                          const next = new Set(prev);
+                          if (e.target.open) {
+                            next.add(item.id);
+                          } else {
+                            next.delete(item.id);
+                          }
+                          return next;
+                        });
+                      }}
+                    >
+                      <summary>View error metadata</summary>
+                      <pre className={styles.errorMetadataPre}>
+                        {JSON.stringify(item.error_metadata, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+                )}
               </div>
             </div>
           ))
@@ -562,6 +618,8 @@ export default function FeedbackAdminPage() {
     </div>
   );
 }
+
+
 
 
 

@@ -44,6 +44,7 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { notifyALConversation } from '@/lib/discord';
+import { logServerError } from '@/lib/serverErrorLogger';
 
 // Stream encoding helper
 const encoder = new TextEncoder();
@@ -1026,6 +1027,14 @@ ${context.car ? `- Currently viewing: ${context.car.name}` : ''}`;
 
   } catch (err) {
     console.error('[AL] Error:', err);
+    
+    // Log server-side error with full stack trace
+    await logServerError(err, request, {
+      apiRoute: '/api/ai-mechanic',
+      featureContext: 'al-chat',
+      severity: 'major',
+    });
+    
     return NextResponse.json(
       { 
         error: 'Failed to process request',

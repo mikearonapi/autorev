@@ -174,7 +174,7 @@ export default function GarageEventsSection({ vehicles = [], favorites = [] }) {
           <LoadingState />
         ) : error ? (
           <div className={styles.error}>
-            <p>Unable to load events. <button onClick={() => window.location.reload()}>Try again</button></p>
+            <p>Unable to load events. <button onClick={() => { if (typeof window !== 'undefined') window.location.reload(); }}>Try again</button></p>
           </div>
         ) : events.length === 0 ? (
           <EmptyState hasVehicles={hasVehicles} />

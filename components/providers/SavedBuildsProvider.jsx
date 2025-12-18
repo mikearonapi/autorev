@@ -107,83 +107,89 @@ export function SavedBuildsProvider({ children }) {
   /**
    * Fetch builds from Supabase
    */
-  const fetchBuilds = useCallback(async () => {
-    if (!isAuthenticated || !user?.id) {
-      // Not authenticated - load from localStorage
-      const localBuilds = loadLocalBuilds();
-      setBuilds(localBuilds);
-      return;
-    }
+const fetchBuilds = useCallback(async (cancelledRef = { current: false }) => {
+  if (!isAuthenticated || !user?.id) {
+    // Not authenticated - load from localStorage
+    const localBuilds = loadLocalBuilds();
+    if (!cancelledRef.current) setBuilds(localBuilds);
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
+  
+  try {
+    const { data, error } = await fetchUserProjects(user.id);
     
-    try {
-      const { data, error } = await fetchUserProjects(user.id);
+    if (error) {
+      console.error('[SavedBuildsProvider] Error fetching builds:', error);
+      // Fall back to localStorage
+      const localBuilds = loadLocalBuilds();
+      if (!cancelledRef.current) setBuilds(localBuilds);
+    } else if (data) {
+      const transformedBuilds = data.map(build => ({
+        id: build.id,
+        carSlug: build.car_slug,
+        carName: build.car_name,
+        name: build.project_name,
+        upgrades: build.selected_upgrades || [],
+        parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+          id: p.id,
+          partId: p.part_id,
+          quantity: p.quantity,
+          partName: p.part_name,
+          brandName: p.brand_name,
+          partNumber: p.part_number,
+          category: p.category,
+          vendorName: p.vendor_name,
+          productUrl: p.product_url,
+          currency: p.currency,
+          priceCents: p.price_cents,
+          priceRecordedAt: p.price_recorded_at,
+          requiresTune: p.requires_tune,
+          installDifficulty: p.install_difficulty,
+          estimatedLaborHours: p.estimated_labor_hours,
+          fitmentVerified: p.fitment_verified,
+          fitmentConfidence: p.fitment_confidence,
+          fitmentNotes: p.fitment_notes,
+          fitmentSourceUrl: p.fitment_source_url,
+          metadata: p.metadata,
+          createdAt: p.created_at,
+          updatedAt: p.updated_at,
+        })) : [],
+        totalHpGain: build.total_hp_gain || 0,
+        totalCostLow: build.total_cost_low || 0,
+        totalCostHigh: build.total_cost_high || 0,
+        finalHp: build.final_hp,
+        notes: build.notes,
+        isFavorite: build.is_favorite || false,
+        createdAt: build.created_at,
+        updatedAt: build.updated_at,
+      }));
       
-      if (error) {
-        console.error('[SavedBuildsProvider] Error fetching builds:', error);
-        // Fall back to localStorage
-        const localBuilds = loadLocalBuilds();
-        setBuilds(localBuilds);
-      } else if (data) {
-        const transformedBuilds = data.map(build => ({
-          id: build.id,
-          carSlug: build.car_slug,
-          carName: build.car_name,
-          name: build.project_name,
-          upgrades: build.selected_upgrades || [],
-          parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
-            id: p.id,
-            partId: p.part_id,
-            quantity: p.quantity,
-            partName: p.part_name,
-            brandName: p.brand_name,
-            partNumber: p.part_number,
-            category: p.category,
-            vendorName: p.vendor_name,
-            productUrl: p.product_url,
-            currency: p.currency,
-            priceCents: p.price_cents,
-            priceRecordedAt: p.price_recorded_at,
-            requiresTune: p.requires_tune,
-            installDifficulty: p.install_difficulty,
-            estimatedLaborHours: p.estimated_labor_hours,
-            fitmentVerified: p.fitment_verified,
-            fitmentConfidence: p.fitment_confidence,
-            fitmentNotes: p.fitment_notes,
-            fitmentSourceUrl: p.fitment_source_url,
-            metadata: p.metadata,
-            createdAt: p.created_at,
-            updatedAt: p.updated_at,
-          })) : [],
-          totalHpGain: build.total_hp_gain || 0,
-          totalCostLow: build.total_cost_low || 0,
-          totalCostHigh: build.total_cost_high || 0,
-          finalHp: build.final_hp,
-          notes: build.notes,
-          isFavorite: build.is_favorite || false,
-          createdAt: build.created_at,
-          updatedAt: build.updated_at,
-        }));
-        
+      if (!cancelledRef.current) {
         setBuilds(transformedBuilds);
         syncedRef.current = true;
       }
-    } catch (err) {
-      console.error('[SavedBuildsProvider] Unexpected error:', err);
-      // Fall back to localStorage
-      const localBuilds = loadLocalBuilds();
-      setBuilds(localBuilds);
-    } finally {
-      setIsLoading(false);
     }
-  }, [isAuthenticated, user?.id]);
+  } catch (err) {
+    console.error('[SavedBuildsProvider] Unexpected error:', err);
+    // Fall back to localStorage
+    const localBuilds = loadLocalBuilds();
+    if (!cancelledRef.current) setBuilds(localBuilds);
+  } finally {
+    if (!cancelledRef.current) setIsLoading(false);
+  }
+}, [isAuthenticated, user?.id]);
 
   // Fetch builds when auth state changes
-  useEffect(() => {
-    if (authLoading || !isHydrated) return;
-    fetchBuilds();
-  }, [fetchBuilds, authLoading, isHydrated]);
+useEffect(() => {
+  if (authLoading || !isHydrated) return;
+  const cancelledRef = { current: false };
+  fetchBuilds(cancelledRef);
+  return () => {
+    cancelledRef.current = true;
+  };
+}, [fetchBuilds, authLoading, isHydrated]);
 
   // Save to localStorage when builds change (for guests)
   useEffect(() => {

@@ -1,0 +1,77 @@
+{
+  "batch": "Ohio Expansion - Cleveland, Columbus, Canton",
+  "venues": [
+    {
+      "name": "Cars and Coffee Cleveland North Olmsted",
+      "city": "North Olmsted",
+      "state": "OH",
+      "venue_name": "Porsche North Olmsted",
+      "address": "Porsche North Olmsted",
+      "zip": "44070",
+      "lat": 41.4156,
+      "lng": -81.9234,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://carsandcoffeecle.com/"
+    },
+    {
+      "name": "Cars Coffee Charity Solon",
+      "city": "Solon",
+      "state": "OH",
+      "venue_name": "RollHouse Solon",
+      "address": "RollHouse Solon",
+      "zip": "44139",
+      "lat": 41.3898,
+      "lng": -81.4412,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://www.carsandcoffeecleveland.net/"
+    },
+    {
+      "name": "Cars and Coffee Uniontown",
+      "city": "Uniontown",
+      "state": "OH",
+      "venue_name": "Uniontown",
+      "address": "Uniontown, OH",
+      "zip": "44685",
+      "lat": 40.9753,
+      "lng": -81.4076,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Columbus Cars and Coffee",
+      "city": "Columbus",
+      "state": "OH",
+      "venue_name": "Various Locations",
+      "address": "Columbus, OH",
+      "zip": "43215",
+      "lat": 39.9612,
+      "lng": -82.9988,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.columbuscarsandcoffee.com/"
+    },
+    {
+      "name": "Columbus Cars & Coffee Westerville",
+      "city": "Westerville",
+      "state": "OH",
+      "venue_name": "Starbucks Westerville",
+      "address": "Starbucks Westerville",
+      "zip": "43081",
+      "lat": 40.1259,
+      "lng": -82.9291,
+      "recurrence": "Every Sunday",
+      "source_url": "https://columbuscarsandcoffee.net/"
+    },
+    {
+      "name": "Downtown Canton Cars and Coffee",
+      "city": "Canton",
+      "state": "OH",
+      "venue_name": "Downtown Canton",
+      "address": "5th St NW and Cleveland Ave",
+      "zip": "44702",
+      "lat": 40.7989,
+      "lng": -81.3784,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://minervamotorclub.com/"
+    }
+  ]
+}

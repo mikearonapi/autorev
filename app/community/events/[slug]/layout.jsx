@@ -110,3 +110,5 @@ export default async function EventDetailLayout({ children, params }) {
   );
 }
 
+
+

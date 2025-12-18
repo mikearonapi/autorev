@@ -7,6 +7,17 @@ import EventCategoryPill from './EventCategoryPill';
 import PremiumGate from './PremiumGate';
 import LocationAutocomplete from './LocationAutocomplete';
 
+// Radius options in miles
+const RADIUS_OPTIONS = [
+  { value: 25, label: '25 miles' },
+  { value: 50, label: '50 miles' },
+  { value: 100, label: '100 miles' },
+  { value: 150, label: '150 miles' },
+  { value: 200, label: '200 miles' },
+  { value: 300, label: '300 miles' },
+  { value: 500, label: '500 miles' },
+];
+
 // Icons
 const Icons = {
   search: ({ size = 16 }) => (
@@ -86,6 +97,8 @@ export default function EventFilters({
 }) {
   const [filters, setFilters] = useState(initialFilters);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  // Track if location has coordinates from Google Places
+  const [locationCoords, setLocationCoords] = useState(null);
 
   const handleChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
@@ -93,14 +106,37 @@ export default function EventFilters({
     onFilterChange(newFilters);
   };
 
-  // Handle location changes from autocomplete
-  const handleLocationChange = (newLocation) => {
-    handleChange('location', newLocation);
+  // Handle location changes from autocomplete (now includes optional coordinates)
+  const handleLocationChange = (newLocation, coords = null) => {
+    setLocationCoords(coords);
+    
+    // Build the filter update
+    const updates = { location: newLocation };
+    
+    // If we have coordinates from Google Places, include them
+    if (coords?.lat && coords?.lng) {
+      updates.locationLat = coords.lat;
+      updates.locationLng = coords.lng;
+    } else {
+      // Clear coordinates if location changed without coords
+      updates.locationLat = null;
+      updates.locationLng = null;
+    }
+    
+    const newFilters = { ...filters, ...updates };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
+
+  // Handle radius changes
+  const handleRadiusChange = (newRadius) => {
+    handleChange('radius', parseInt(newRadius, 10));
   };
 
   const handleClear = () => {
     const cleared = {
       location: '',
+      radius: 50, // Reset to default
       type: '',
       start_date: '',
       end_date: '',
@@ -108,8 +144,11 @@ export default function EventFilters({
       is_free: false,
       brand: '',
       for_my_cars: false,
+      locationLat: null,
+      locationLng: null,
     };
     setFilters(cleared);
+    setLocationCoords(null);
     onFilterChange(cleared);
   };
 
@@ -158,6 +197,22 @@ export default function EventFilters({
             placeholder="ZIP code or City, State"
             className={styles.locationAutocomplete}
           />
+        )}
+
+        {/* Radius/Distance Select - Only show when location is entered */}
+        {showLocationInput && (
+          <select 
+            value={filters.radius || 50} 
+            onChange={(e) => handleRadiusChange(e.target.value)}
+            className={styles.filterSelect}
+            title="Search radius from location"
+          >
+            {RADIUS_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         )}
 
         {/* Region Select - 8 regions for better geographic filtering */}

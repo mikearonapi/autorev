@@ -102,3 +102,5 @@ CREATE POLICY "user_activity_service_role_insert" ON user_activity
 -- WHERE schemaname = 'public'
 -- ORDER BY tablename, policyname;
 
+
+

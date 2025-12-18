@@ -1,0 +1,65 @@
+{
+  "batch": "Utah Expansion",
+  "venues": [
+    {
+      "name": "Cars and Coffee Utah Lehi",
+      "city": "Lehi",
+      "state": "UT",
+      "venue_name": "Young Living Headquarters",
+      "address": "1538 W Sandalwood Drive",
+      "zip": "84043",
+      "lat": 40.3916,
+      "lng": -111.8507,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeeutah.com/"
+    },
+    {
+      "name": "Sunset Cars and Coffee Sandy",
+      "city": "Sandy",
+      "state": "UT",
+      "venue_name": "Sunset Coffee",
+      "address": "7978 South 1300 East",
+      "zip": "84094",
+      "lat": 40.5685,
+      "lng": -111.8570,
+      "recurrence": "Every Saturday",
+      "source_url": "https://utahcarczar.com/"
+    },
+    {
+      "name": "12th Street Cars and Coffee Ogden",
+      "city": "Ogden",
+      "state": "UT",
+      "venue_name": "12th Street",
+      "address": "1085 W 12th Street",
+      "zip": "84404",
+      "lat": 41.2230,
+      "lng": -111.9897,
+      "recurrence": "4th Sunday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars and Coffee Syracuse UT",
+      "city": "Syracuse",
+      "state": "UT",
+      "venue_name": "Beans & Brew",
+      "address": "1137 W Antelope Drive",
+      "zip": "84075",
+      "lat": 41.0893,
+      "lng": -112.0644,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://utahcarczar.com/"
+    },
+    {
+      "name": "Envision Cars and Coffee Murray",
+      "city": "Murray",
+      "state": "UT",
+      "venue_name": "Envision",
+      "address": "4894 S Commerce Dr",
+      "zip": "84107",
+      "lat": 40.6461,
+      "lng": -111.8988,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://utahcarczar.com/"
+    }
+  ]
+}

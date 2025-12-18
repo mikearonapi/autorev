@@ -1,0 +1,161 @@
+{
+  "batch": "Atlanta Suburbs, Phoenix Metro, Colorado",
+  "venues": [
+    {
+      "name": "BMW of Gwinnett Place Cars & Coffee",
+      "city": "Duluth",
+      "state": "GA",
+      "venue_name": "BMW of Gwinnett Place",
+      "address": "BMW of Gwinnett Place Duluth",
+      "zip": "30096",
+      "lat": 33.9519,
+      "lng": -84.1446,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://www.bmwofgwinnettplace.com/"
+    },
+    {
+      "name": "Marietta Cars & Coffee",
+      "city": "Kennesaw",
+      "state": "GA",
+      "venue_name": "Town Center at Cobb",
+      "address": "Town Center at Cobb",
+      "zip": "30144",
+      "lat": 33.9937,
+      "lng": -84.5497,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Alpharetta Cars & Coffee",
+      "city": "Alpharetta",
+      "state": "GA",
+      "venue_name": "North Point Mall",
+      "address": "North Point Mall",
+      "zip": "30022",
+      "lat": 34.0554,
+      "lng": -84.2746,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Penske Automall Cars and Coffee Scottsdale",
+      "city": "Scottsdale",
+      "state": "AZ",
+      "venue_name": "Penske Racing Museum",
+      "address": "7191 East Chauncey Lane",
+      "zip": "85054",
+      "lat": 33.6251,
+      "lng": -111.9214,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://arizonacarsandcoffee.com/"
+    },
+    {
+      "name": "Fourtillfour Cars and Coffee Scottsdale",
+      "city": "Scottsdale",
+      "state": "AZ",
+      "venue_name": "Fourtillfour Café",
+      "address": "7105 East 1st Avenue",
+      "zip": "85251",
+      "lat": 33.4942,
+      "lng": -111.9261,
+      "recurrence": "Every Saturday",
+      "source_url": "https://arizonacarsandcoffee.com/"
+    },
+    {
+      "name": "Mesa Cars and Coffee",
+      "city": "Mesa",
+      "state": "AZ",
+      "venue_name": "Village Square at Dana Park",
+      "address": "1850 S. Val Vista Dr",
+      "zip": "85204",
+      "lat": 33.3942,
+      "lng": -111.7430,
+      "recurrence": "Every Saturday",
+      "source_url": "https://arizonacarsandcoffee.com/"
+    },
+    {
+      "name": "Cars & Coffee at Central Mesa",
+      "city": "Mesa",
+      "state": "AZ",
+      "venue_name": "Central Christian Church",
+      "address": "933 North Lindsay Road",
+      "zip": "85213",
+      "lat": 33.4309,
+      "lng": -111.7194,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://arizonacarsandcoffee.com/"
+    },
+    {
+      "name": "Gilbert Cars and Coffee",
+      "city": "Gilbert",
+      "state": "AZ",
+      "venue_name": "Verde at Cooley Station",
+      "address": "3945 E Williams Field Road",
+      "zip": "85295",
+      "lat": 33.3103,
+      "lng": -111.7403,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.discovergilbert.com/"
+    },
+    {
+      "name": "Storm Mountain Motors Cars and Coffee Loveland",
+      "city": "Loveland",
+      "state": "CO",
+      "venue_name": "Storm Mountain Motors",
+      "address": "4270 Byrd Drive",
+      "zip": "80538",
+      "lat": 40.4005,
+      "lng": -105.0750,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.stormmountainmotors.com/"
+    },
+    {
+      "name": "Northern Colorado Cars & Coffee",
+      "city": "Loveland",
+      "state": "CO",
+      "venue_name": "Promenade Shops at Centerra",
+      "address": "Promenade Shops at Centerra",
+      "zip": "80538",
+      "lat": 40.4005,
+      "lng": -105.0750,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://www.nococarsandcoffee.com/"
+    },
+    {
+      "name": "Longmont Cars and Coffee",
+      "city": "Longmont",
+      "state": "CO",
+      "venue_name": "Moe's Bagels",
+      "address": "225 Main Street",
+      "zip": "80501",
+      "lat": 40.1672,
+      "lng": -105.1019,
+      "recurrence": "Every Saturday",
+      "source_url": "https://coloradocarculture.com/"
+    },
+    {
+      "name": "Cars and Coffee Colorado Springs",
+      "city": "Colorado Springs",
+      "state": "CO",
+      "venue_name": "Colorado Springs",
+      "address": "Colorado Springs, CO",
+      "zip": "80903",
+      "lat": 38.8339,
+      "lng": -104.8214,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Fort Collins Cars & Coffee",
+      "city": "Fort Collins",
+      "state": "CO",
+      "venue_name": "Fort Collins",
+      "address": "Fort Collins, CO",
+      "zip": "80521",
+      "lat": 40.5853,
+      "lng": -105.0844,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

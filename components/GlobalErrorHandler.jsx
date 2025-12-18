@@ -5,6 +5,7 @@ import { logError } from '@/lib/errorLogger';
 
 export function GlobalErrorHandler({ children }) {
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const handleUnhandledRejection = (event) => {
       logError(event?.reason || new Error('Unhandled Promise Rejection'), {
         errorType: 'unhandled_exception',

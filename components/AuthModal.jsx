@@ -83,6 +83,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
 
   // Handle escape key
   useEffect(() => {
+  if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
         onClose();
@@ -94,6 +95,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
 
   // Prevent body scroll
   useEffect(() => {
+  if (typeof document === 'undefined') return;
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -177,7 +179,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`
+        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/reset-password` : undefined
       });
 
       if (error) {

@@ -57,6 +57,45 @@
   to { transform: rotate(360deg); }
 }
 
+/* Error State */
+.errorState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 8px;
+  color: var(--text-muted, #888);
+}
+
+.errorState svg {
+  color: #dc3545;
+  flex-shrink: 0;
+}
+
+.retryButton {
+  background: var(--sn-accent, #c4a564);
+  color: #000;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.retryButton:hover {
+  background: #d4b574;
+  transform: scale(1.02);
+}
+
+.retryButton:active {
+  transform: scale(0.98);
+}
+
 /* ==========================================
    Fuel Economy Styles
    ========================================== */
@@ -458,6 +497,8 @@
     font-size: 1rem;
   }
 }
+
+
 
 
 

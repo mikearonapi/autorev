@@ -89,25 +89,50 @@ function StarRating({ rating, max = 5, label }) {
 }
 
 /**
+ * Error Alert Component for failed data loads
+ */
+function DataLoadError({ message, onRetry }) {
+  return (
+    <div className={styles.errorState}>
+      <Icons.alertTriangle size={20} />
+      <span>{message || 'Failed to load data'}</span>
+      {onRetry && (
+        <button className={styles.retryButton} onClick={onRetry}>
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+}
+
+/**
  * Fuel Economy Section
  */
 export function FuelEconomySection({ carSlug }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const fetchData = async () => {
+    if (!carSlug) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/cars/${carSlug}/efficiency`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setData(json.efficiency);
+    } catch (err) {
+      console.error('[FuelEconomySection] Error:', err);
+      setError('Unable to load fuel economy data');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchData = async () => {
-      if (!carSlug) return;
-      try {
-        const res = await fetch(`/api/cars/${carSlug}/efficiency`);
-        const json = await res.json();
-        setData(json.efficiency);
-      } catch (err) {
-        console.error('[FuelEconomySection] Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [carSlug]);
   
@@ -122,6 +147,18 @@ export function FuelEconomySection({ carSlug }) {
           <Icons.loader size={20} className={styles.spinner} />
           <span>Loading efficiency data...</span>
         </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.fuel size={22} />
+          <h2>Fuel Economy</h2>
+        </div>
+        <DataLoadError message={error} onRetry={fetchData} />
       </div>
     );
   }
@@ -209,20 +246,28 @@ export function FuelEconomySection({ carSlug }) {
 export function SafetyRatingsSection({ carSlug }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const fetchData = async () => {
+    if (!carSlug) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/cars/${carSlug}/safety-ratings`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setData(json.safety);
+    } catch (err) {
+      console.error('[SafetyRatingsSection] Error:', err);
+      setError('Unable to load safety data');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchData = async () => {
-      if (!carSlug) return;
-      try {
-        const res = await fetch(`/api/cars/${carSlug}/safety-ratings`);
-        const json = await res.json();
-        setData(json.safety);
-      } catch (err) {
-        console.error('[SafetyRatingsSection] Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [carSlug]);
   
@@ -237,6 +282,18 @@ export function SafetyRatingsSection({ carSlug }) {
           <Icons.loader size={20} className={styles.spinner} />
           <span>Loading safety data...</span>
         </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.shield size={22} />
+          <h2>Safety Ratings</h2>
+        </div>
+        <DataLoadError message={error} onRetry={fetchData} />
       </div>
     );
   }
@@ -360,20 +417,28 @@ export function SafetyRatingsSection({ carSlug }) {
 export function PriceByYearSection({ carSlug, carName }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const fetchData = async () => {
+    if (!carSlug) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/cars/${carSlug}/price-by-year`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error('[PriceByYearSection] Error:', err);
+      setError('Unable to load pricing data');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchData = async () => {
-      if (!carSlug) return;
-      try {
-        const res = await fetch(`/api/cars/${carSlug}/price-by-year`);
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error('[PriceByYearSection] Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [carSlug]);
   
@@ -388,6 +453,18 @@ export function PriceByYearSection({ carSlug, carName }) {
           <Icons.loader size={20} className={styles.spinner} />
           <span>Loading pricing data...</span>
         </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.dollar size={22} />
+          <h2>Price by Model Year</h2>
+        </div>
+        <DataLoadError message={error} onRetry={fetchData} />
       </div>
     );
   }
@@ -451,6 +528,8 @@ export default {
   SafetyRatingsSection,
   PriceByYearSection,
 };
+
+
 
 
 

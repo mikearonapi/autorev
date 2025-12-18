@@ -1,0 +1,53 @@
+{
+  "batch": "Louisiana Expansion",
+  "venues": [
+    {
+      "name": "Cars & Coffee NOLA Motorsports",
+      "city": "Avondale",
+      "state": "LA",
+      "venue_name": "NOLA Motorsports Park",
+      "address": "11075 Nicolle Blvd",
+      "zip": "70094",
+      "lat": 29.9038,
+      "lng": -90.1953,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://nolamotor.com/"
+    },
+    {
+      "name": "BMCNO Cars and Coffee New Orleans",
+      "city": "New Orleans",
+      "state": "LA",
+      "venue_name": "Chateau Coffee Café",
+      "address": "139 Allen Toussaint Blvd",
+      "zip": "70124",
+      "lat": 30.0048,
+      "lng": -90.0909,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.bmcno.org/"
+    },
+    {
+      "name": "BMCNO Cars and Coffee Baton Rouge",
+      "city": "Baton Rouge",
+      "state": "LA",
+      "venue_name": "The Warehouse Restaurant",
+      "address": "12328 S Choctaw Dr",
+      "zip": "70815",
+      "lat": 30.4160,
+      "lng": -91.0557,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.bmcno.org/"
+    },
+    {
+      "name": "Cars and Coffee Shreveport",
+      "city": "Bossier City",
+      "state": "LA",
+      "venue_name": "MyR35s Performance",
+      "address": "90 Greenacres Boulevard",
+      "zip": "71111",
+      "lat": 32.5168,
+      "lng": -93.7322,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://happeningnext.com/"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "batch": "More Regions - Colorado, Bay Area, Delaware Valley",
+  "venues": [
+    {
+      "name": "Cars and Coffee North Colorado Springs",
+      "city": "Colorado Springs",
+      "state": "CO",
+      "venue_name": "Asbury Wealth Partners",
+      "address": "6385 Corporate Dr",
+      "zip": "80919",
+      "lat": 38.9339,
+      "lng": -104.7893,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Northern Colorado Cars & Coffee",
+      "city": "Loveland",
+      "state": "CO",
+      "venue_name": "Promenade Shops at Centerra",
+      "address": "Promenade Shops at Centerra",
+      "zip": "80538",
+      "lat": 40.4046,
+      "lng": -105.0144,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://www.nococarsandcoffee.com/"
+    },
+    {
+      "name": "Parker Cars & Coffee",
+      "city": "Parker",
+      "state": "CO",
+      "venue_name": "Parker",
+      "address": "Parker, CO",
+      "zip": "80134",
+      "lat": 39.5186,
+      "lng": -104.7614,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "North Wilmington Cars & Coffee",
+      "city": "Wilmington",
+      "state": "DE",
+      "venue_name": "Brandywine Commons II",
+      "address": "1400 Rocky Run Parkway",
+      "zip": "19803",
+      "lat": 39.8089,
+      "lng": -75.5405,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "BMW CCA Cars & Coffee San Francisco",
+      "city": "Daly City",
+      "state": "CA",
+      "venue_name": "Krispy Kreme Donuts",
+      "address": "1575 Sullivan Avenue",
+      "zip": "94015",
+      "lat": 37.6556,
+      "lng": -122.4719,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.bmwcca.org/"
+    },
+    {
+      "name": "BMW CCA Cars & Coffee South Bay",
+      "city": "Mountain View",
+      "state": "CA",
+      "venue_name": "BMW of Mountain View",
+      "address": "BMW of Mountain View",
+      "zip": "94043",
+      "lat": 37.4030,
+      "lng": -122.0740,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://www.bmwcca.org/"
+    },
+    {
+      "name": "BMW CCA Cars & Coffee North Bay",
+      "city": "Santa Rosa",
+      "state": "CA",
+      "venue_name": "North Bay Bavarian",
+      "address": "North Bay Bavarian",
+      "zip": "95403",
+      "lat": 38.4505,
+      "lng": -122.7150,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.bmwcca.org/"
+    },
+    {
+      "name": "Niles Flying A Classics and Coffee",
+      "city": "Fremont",
+      "state": "CA",
+      "venue_name": "Niles Flying A",
+      "address": "37810 Niles Blvd",
+      "zip": "94536",
+      "lat": 37.5771,
+      "lng": -121.9765,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://www.goldengatev8.org/"
+    }
+  ]
+}

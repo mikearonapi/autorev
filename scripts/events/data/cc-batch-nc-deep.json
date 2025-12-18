@@ -1,0 +1,65 @@
+{
+  "batch": "North Carolina Deep Dive",
+  "venues": [
+    {
+      "name": "Asheville Cars & Coffee",
+      "city": "Asheville",
+      "state": "NC",
+      "venue_name": "Asheville",
+      "address": "Asheville, NC",
+      "zip": "28801",
+      "lat": 35.5951,
+      "lng": -82.5515,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Fayetteville",
+      "city": "Hope Mills",
+      "state": "NC",
+      "venue_name": "Millstone Towne Centre",
+      "address": "Millstone Towne Centre",
+      "zip": "28348",
+      "lat": 35.0216,
+      "lng": -78.9506,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.rideology.io/"
+    },
+    {
+      "name": "Cars & Coffee Cary",
+      "city": "Cary",
+      "state": "NC",
+      "venue_name": "Millpond Village Shopping Center",
+      "address": "Kildaire Farm Rd and Ten Ten Rd",
+      "zip": "27518",
+      "lat": 35.7200,
+      "lng": -78.7811,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.corvettesinternational.com/"
+    },
+    {
+      "name": "Cars and Coffee Apex",
+      "city": "Apex",
+      "state": "NC",
+      "venue_name": "Sweetwater Town Center",
+      "address": "2701 Lawnview Lane",
+      "zip": "27539",
+      "lat": 35.7078,
+      "lng": -78.8347,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://audiclubna.org/"
+    },
+    {
+      "name": "Cars and Coffee High Point",
+      "city": "High Point",
+      "state": "NC",
+      "venue_name": "High Point",
+      "address": "High Point, NC",
+      "zip": "27260",
+      "lat": 35.9557,
+      "lng": -80.0053,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

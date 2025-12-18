@@ -282,9 +282,10 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ### `user_feedback` — User feedback
 | Status | **2 rows** |
 |--------|-----------|
-| **Purpose** | Beta and user feedback submitted through FeedbackWidget |
-| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email`, `category`, `severity`, `rating`, `user_tier`, `feature_context`, `status` |
-| **Used By** | FeedbackWidget, FeedbackCorner, internal admin page |
+| **Purpose** | Beta and user feedback submitted through FeedbackWidget, plus automatic error logging |
+| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email`, `category`, `severity`, `rating`, `user_tier`, `feature_context`, `status`, `error_metadata` |
+| **Auto-Error Support** | `category = 'auto-error'` with `error_metadata` JSONB for client-side error capture |
+| **Used By** | FeedbackWidget, FeedbackCorner, internal admin page, ErrorBoundary |
 
 ### `user_vehicles` — Owned vehicles
 | Status | **4 rows** |
@@ -819,6 +820,8 @@ Critical indexes for query performance:
 | `part_fitments` | `idx_part_fitments_part_id` | BTREE | Fitments by part |
 | `youtube_video_car_links` | `idx_youtube_video_car_links_car_id` | BTREE | Videos by car |
 | `events` | location indexes | BTREE | Geographic search |
+| `user_feedback` | `idx_user_feedback_auto_errors` | BTREE (partial) | Auto-error filtering |
+| `user_feedback` | `idx_user_feedback_unresolved_auto_errors` | BTREE (partial) | Unresolved auto-errors |
 
 ---
 

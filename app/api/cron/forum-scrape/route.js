@@ -22,7 +22,7 @@
 import { NextResponse } from 'next/server';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
-import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -159,12 +159,19 @@ export async function GET(request) {
     results.completedAt = new Date().toISOString();
     results.success = results.errors.length === 0;
 
-    notifyCronCompletion('Forum Scrape', {
+    notifyCronEnrichment('Forum Community Insights', {
       duration: Date.now() - startTime,
-      processed: (results.scrape?.threadsScraped || 0) + (results.extract?.threadsProcessed || 0),
-      succeeded: results.extract?.insightsExtracted || results.scrape?.threadsScraped || 0,
-      failed: results.errors.length,
+      table: 'community_insights',
+      recordsAdded: results.extract?.insightsExtracted || 0,
+      recordsProcessed: results.scrape?.threadsScraped || 0,
+      sourcesChecked: results.scrape?.forums?.length || 0,
       errors: results.errors.length,
+      details: [
+        { label: '📋 Threads Scraped', value: results.scrape?.threadsScraped || 0 },
+        { label: '📝 Posts Collected', value: results.scrape?.postsScraped || 0 },
+        { label: '💡 Insights Extracted', value: results.extract?.insightsExtracted || 0 },
+        { label: '🗂️ Forums Checked', value: results.scrape?.forums?.length || 0 },
+      ],
     });
 
     return NextResponse.json(results);

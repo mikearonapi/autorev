@@ -26,7 +26,7 @@ import {
   upsertComplaintRows,
   replaceComplaintsForCar,
 } from '@/lib/complaintService';
-import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -205,12 +205,19 @@ export async function GET(request) {
 
     console.log('[Cron] refresh-complaints completed:', summary);
 
-    notifyCronCompletion('Refresh Complaints', {
+    notifyCronEnrichment('NHTSA Complaints Refresh', {
       duration: durationMs,
-      processed: summary.carsProcessed,
-      succeeded: summary.totalInserted + summary.totalUpdated,
-      failed: summary.carsWithErrors,
+      table: 'car_issues',
+      recordsAdded: summary.totalInserted,
+      recordsUpdated: summary.totalUpdated,
+      recordsProcessed: summary.totalFetched,
+      sourcesChecked: summary.carsProcessed,
       errors: summary.carsWithErrors,
+      details: [
+        { label: '🚗 Cars Checked', value: summary.carsProcessed },
+        { label: '📥 From NHTSA', value: summary.totalFetched },
+        { label: '🚨 Cars w/ Complaints', value: summary.carsWithComplaints },
+      ],
     });
 
     return NextResponse.json({
@@ -228,6 +235,8 @@ export async function GET(request) {
     );
   }
 }
+
+
 
 
 

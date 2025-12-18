@@ -47,6 +47,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
   // Handle escape key
   useEffect(() => {
+  if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
         handleClose();
@@ -58,6 +59,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
   // Prevent body scroll when open
   useEffect(() => {
+  if (typeof document === 'undefined') return;
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -71,7 +73,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
   const handleClose = useCallback(() => {
     // CF-004: Always save dismissed state on any close action (not just "don't show again")
     // This prevents the modal from persisting across navigation
-    if (storageKey) {
+  if (storageKey && typeof localStorage !== 'undefined') {
       localStorage.setItem(storageKey, 'true');
     }
     

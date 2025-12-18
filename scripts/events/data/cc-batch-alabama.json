@@ -1,0 +1,65 @@
+{
+  "batch": "Alabama Expansion",
+  "venues": [
+    {
+      "name": "Birmingham Cars & Coffee Colonnade",
+      "city": "Birmingham",
+      "state": "AL",
+      "venue_name": "Shops of Colonnade",
+      "address": "3419 Colonnade Pkwy",
+      "zip": "35243",
+      "lat": 33.4461,
+      "lng": -86.7450,
+      "recurrence": "Every Saturday",
+      "source_url": "https://event.americancollectors.com/"
+    },
+    {
+      "name": "Magic City Octane Birmingham",
+      "city": "Birmingham",
+      "state": "AL",
+      "venue_name": "Magic City Octane",
+      "address": "Birmingham, AL",
+      "zip": "35203",
+      "lat": 33.5186,
+      "lng": -86.8104,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Huntsville Cars & Coffee MidCity",
+      "city": "Huntsville",
+      "state": "AL",
+      "venue_name": "MidCity District",
+      "address": "5901 University Dr NW",
+      "zip": "35806",
+      "lat": 34.7304,
+      "lng": -86.6600,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Horse Power Therapy Huntsville",
+      "city": "Huntsville",
+      "state": "AL",
+      "venue_name": "Stovehouse",
+      "address": "3414 Governors Dr",
+      "zip": "35805",
+      "lat": 34.7215,
+      "lng": -86.6073,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://nar-aaca.org/"
+    },
+    {
+      "name": "Montgomery Cars & Coffee",
+      "city": "Montgomery",
+      "state": "AL",
+      "venue_name": "Montgomery",
+      "address": "Montgomery, AL",
+      "zip": "36104",
+      "lat": 32.3792,
+      "lng": -86.3077,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

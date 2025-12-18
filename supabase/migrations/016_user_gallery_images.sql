@@ -223,3 +223,5 @@ COMMENT ON COLUMN user_collection_settings.carousel_interval_seconds IS 'Seconds
 
 
 
+
+

@@ -1,0 +1,173 @@
+{
+  "batch": "Sacramento Metro, Bay Area, DFW Suburbs",
+  "venues": [
+    {
+      "name": "Cars and Coffee Folsom",
+      "city": "El Dorado Hills",
+      "state": "CA",
+      "venue_name": "El Dorado Hills Town Center",
+      "address": "2101 Vine Street",
+      "zip": "95762",
+      "lat": 38.6669,
+      "lng": -121.0819,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeefolsom.com/"
+    },
+    {
+      "name": "916 Cars and Coffee Granite Bay",
+      "city": "Granite Bay",
+      "state": "CA",
+      "venue_name": "Bill's Donuts",
+      "address": "8749 Auburn Folsom Road",
+      "zip": "95746",
+      "lat": 38.7521,
+      "lng": -121.1578,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.capitalcitymopars.com/"
+    },
+    {
+      "name": "Cars and Coffee Country Club Sacramento",
+      "city": "Sacramento",
+      "state": "CA",
+      "venue_name": "Country Club Plaza",
+      "address": "2310 Watt Avenue",
+      "zip": "95821",
+      "lat": 38.6204,
+      "lng": -121.3904,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.capitalcitymopars.com/"
+    },
+    {
+      "name": "Mike's Tuesday Night Cruise Elk Grove",
+      "city": "Elk Grove",
+      "state": "CA",
+      "venue_name": "Original Mike's Diner",
+      "address": "9139 E. Stockton Blvd",
+      "zip": "95624",
+      "lat": 38.4088,
+      "lng": -121.3716,
+      "recurrence": "Every Tuesday",
+      "source_url": "https://www.capitalcitymopars.com/"
+    },
+    {
+      "name": "Dreams and Drivers Cars and Coffee",
+      "city": "Rocklin",
+      "state": "CA",
+      "venue_name": "Rocklin",
+      "address": "Rocklin, CA",
+      "zip": "95677",
+      "lat": 38.7907,
+      "lng": -121.2358,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.dreamsanddrivers.com/"
+    },
+    {
+      "name": "Central Valley Classics Cars and Coffee Lodi",
+      "city": "Lodi",
+      "state": "CA",
+      "venue_name": "Starbucks",
+      "address": "514 W. Kettleman Lane",
+      "zip": "95240",
+      "lat": 38.1341,
+      "lng": -121.2722,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.capitalcitymopars.com/"
+    },
+    {
+      "name": "Cars and Coffee Livermore",
+      "city": "Livermore",
+      "state": "CA",
+      "venue_name": "Southfront Road",
+      "address": "6951 Southfront Road",
+      "zip": "94551",
+      "lat": 37.6819,
+      "lng": -121.7785,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.carsandcoffeelivermore.com/"
+    },
+    {
+      "name": "GGC Cars & Coffee San Francisco",
+      "city": "San Francisco",
+      "state": "CA",
+      "venue_name": "Krispy Kreme Donuts",
+      "address": "Krispy Kreme Donuts",
+      "zip": "94103",
+      "lat": 37.7749,
+      "lng": -122.4194,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.ggcbmwcca.org/"
+    },
+    {
+      "name": "Cars and Coffee Peninsula",
+      "city": "Redwood City",
+      "state": "CA",
+      "venue_name": "Woodside Plaza Shopping Center",
+      "address": "Woodside Plaza Shopping Center",
+      "zip": "94061",
+      "lat": 37.4852,
+      "lng": -122.2364,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://www.carevents.com/"
+    },
+    {
+      "name": "Cars & Coffee Fletcher Jones Fremont",
+      "city": "Fremont",
+      "state": "CA",
+      "venue_name": "Fletcher Jones Motorcars",
+      "address": "5760 Cushing Pkwy",
+      "zip": "94538",
+      "lat": 37.4885,
+      "lng": -121.9283,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://www.mboffremont.com/"
+    },
+    {
+      "name": "Morning Maniacs McKinney Panera",
+      "city": "McKinney",
+      "state": "TX",
+      "venue_name": "Panera Bread",
+      "address": "3050 Central Expressway",
+      "zip": "75070",
+      "lat": 33.1973,
+      "lng": -96.6397,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://morningmaniacs.com/"
+    },
+    {
+      "name": "Morning Maniacs on the Square McKinney",
+      "city": "McKinney",
+      "state": "TX",
+      "venue_name": "McKinney Square",
+      "address": "111 Tennessee St",
+      "zip": "75069",
+      "lat": 33.1973,
+      "lng": -96.6150,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://morningmaniacs.com/"
+    },
+    {
+      "name": "Van Alstyne Cars and Coffee",
+      "city": "Van Alstyne",
+      "state": "TX",
+      "venue_name": "Downtown Van Alstyne",
+      "address": "Downtown Van Alstyne",
+      "zip": "75495",
+      "lat": 33.4215,
+      "lng": -96.5772,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://morningmaniacs.com/"
+    },
+    {
+      "name": "Monthly Muscle Car Show The Colony",
+      "city": "The Colony",
+      "state": "TX",
+      "venue_name": "Bubba's 33",
+      "address": "4025 TX-121",
+      "zip": "75056",
+      "lat": 33.0726,
+      "lng": -96.8855,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://morningmaniacs.com/"
+    }
+  ]
+}

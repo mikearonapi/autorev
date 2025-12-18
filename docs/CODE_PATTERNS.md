@@ -319,3 +319,5 @@ import styles from './Component.module.css';
 - Whether all API routes follow the same auth checking pattern
 - If error boundaries are implemented for component error handling
 - Whether the feature gating pattern is consistently applied across all gated features
+
+

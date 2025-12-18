@@ -1,0 +1,125 @@
+{
+  "batch": "Texas Expansion - DFW, Houston, Austin suburbs",
+  "venues": [
+    {
+      "name": "Morning Maniacs McKinney",
+      "city": "McKinney",
+      "state": "TX",
+      "venue_name": "Panera Bread",
+      "address": "US 75 and Eldorado Parkway",
+      "zip": "75070",
+      "lat": 33.1972,
+      "lng": -96.6397,
+      "recurrence": "Every Saturday",
+      "source_url": "https://morningmaniacs.com/"
+    },
+    {
+      "name": "Cars & Cigars Frisco",
+      "city": "Frisco",
+      "state": "TX",
+      "venue_name": "Industrial Cigar Co.",
+      "address": "Industrial Cigar Co.",
+      "zip": "75034",
+      "lat": 33.1507,
+      "lng": -96.8236,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.eventbrite.com/"
+    },
+    {
+      "name": "Grapevine Cruise Night",
+      "city": "Grapevine",
+      "state": "TX",
+      "venue_name": "Blagg Tire Pros",
+      "address": "604 South Main Street",
+      "zip": "76051",
+      "lat": 32.9343,
+      "lng": -97.0781,
+      "recurrence": "Every Saturday",
+      "source_url": "https://app.garaged.io/"
+    },
+    {
+      "name": "The Woodlands Cars & Coffee for a Cause",
+      "city": "The Woodlands",
+      "state": "TX",
+      "venue_name": "Market Street",
+      "address": "9595 Six Pines Drive",
+      "zip": "77380",
+      "lat": 30.1658,
+      "lng": -95.4613,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://business.woodlandschamber.org/"
+    },
+    {
+      "name": "Cars and Coffee Katy",
+      "city": "Katy",
+      "state": "TX",
+      "venue_name": "Current Christian Church",
+      "address": "26600 Westheimer Parkway",
+      "zip": "77494",
+      "lat": 29.7858,
+      "lng": -95.7567,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://myneighborhoodnews.com/"
+    },
+    {
+      "name": "Southwest GTG Sugar Land",
+      "city": "Sugar Land",
+      "state": "TX",
+      "venue_name": "Starbucks",
+      "address": "19908 Southwest Freeway",
+      "zip": "77479",
+      "lat": 29.5969,
+      "lng": -95.6349,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://lsrpca.com/"
+    },
+    {
+      "name": "Cars and Caffeine First Texas Honda",
+      "city": "Austin",
+      "state": "TX",
+      "venue_name": "First Texas Honda",
+      "address": "3400 Steck Ave",
+      "zip": "78757",
+      "lat": 30.3677,
+      "lng": -97.7378,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.firsttexashonda.com/"
+    },
+    {
+      "name": "Round Rock Car Show",
+      "city": "Round Rock",
+      "state": "TX",
+      "venue_name": "Round Rock",
+      "address": "Round Rock, TX",
+      "zip": "78664",
+      "lat": 30.5083,
+      "lng": -97.6789,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.motoraustin.com/"
+    },
+    {
+      "name": "Blanco Cars and Coffee",
+      "city": "Blanco",
+      "state": "TX",
+      "venue_name": "Blanco",
+      "address": "Blanco, TX",
+      "zip": "78606",
+      "lat": 30.0977,
+      "lng": -98.4214,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://www.motoraustin.com/"
+    },
+    {
+      "name": "Coffee with Cars Dripping Springs",
+      "city": "Dripping Springs",
+      "state": "TX",
+      "venue_name": "Dripping Springs",
+      "address": "Dripping Springs, TX",
+      "zip": "78620",
+      "lat": 30.1902,
+      "lng": -98.0867,
+      "recurrence": "4th Sunday monthly",
+      "source_url": "https://www.motoraustin.com/"
+    }
+  ]
+}

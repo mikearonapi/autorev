@@ -73,6 +73,7 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
     const fetchDynoData = async () => {
       if (!carSlug) return;
       
+    let cancelled = false;
       setLoading(true);
       setError(null);
       
@@ -82,17 +83,18 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
         if (!response.ok) throw new Error('Failed to fetch dyno data');
         
         const data = await response.json();
-        setDynoRuns(data.runs || []);
+      if (!cancelled) setDynoRuns(data.runs || []);
       } catch (err) {
         console.error('[DynoDataSection] Error:', err);
-        setError(err.message);
+      if (!cancelled) setError(err.message);
       } finally {
-        setLoading(false);
+      if (!cancelled) setLoading(false);
       }
     };
     
     fetchDynoData();
-  }, [carSlug]);
+  return () => { cancelled = true; };
+}, [carSlug]);
   
   // Determine how many to show
   const displayLimit = hasAccess ? (limit || dynoRuns.length) : TEASER_LIMITS.dynoRuns;
@@ -114,7 +116,39 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
     );
   }
   
-  if (error || dynoRuns.length === 0) {
+  // Refetch function for retry
+  const refetchDyno = () => {
+    setError(null);
+    setLoading(true);
+    fetch(`/api/cars/${carSlug}/dyno`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch dyno data');
+        return res.json();
+      })
+      .then(data => setDynoRuns(data.runs || []))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  };
+
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.activity size={20} />
+          <h3>Dyno Results</h3>
+        </div>
+        <div className={styles.errorState}>
+          <Icons.info size={20} />
+          <span>Unable to load dyno data</span>
+          <button className={styles.retryButton} onClick={refetchDyno}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (dynoRuns.length === 0) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -221,6 +255,7 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
     const fetchLapTimes = async () => {
       if (!carSlug) return;
       
+    let cancelled = false;
       setLoading(true);
       setError(null);
       
@@ -229,17 +264,18 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
         if (!response.ok) throw new Error('Failed to fetch lap times');
         
         const data = await response.json();
-        setLapTimes(data.lapTimes || []);
+      if (!cancelled) setLapTimes(data.lapTimes || []);
       } catch (err) {
         console.error('[LapTimesSection] Error:', err);
-        setError(err.message);
+      if (!cancelled) setError(err.message);
       } finally {
-        setLoading(false);
+      if (!cancelled) setLoading(false);
       }
     };
     
     fetchLapTimes();
-  }, [carSlug]);
+  return () => { cancelled = true; };
+}, [carSlug]);
   
   // Determine display limit based on context and access
   const effectiveLimit = isTeaser 
@@ -263,7 +299,39 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
     );
   }
   
-  if (error || lapTimes.length === 0) {
+  // Refetch function for retry
+  const refetchLapTimes = () => {
+    setError(null);
+    setLoading(true);
+    fetch(`/api/cars/${carSlug}/lap-times`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch lap times');
+        return res.json();
+      })
+      .then(data => setLapTimes(data.lapTimes || []))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  };
+
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.flag size={20} />
+          <h3>Track Lap Times</h3>
+        </div>
+        <div className={styles.errorState}>
+          <Icons.info size={20} />
+          <span>Unable to load lap times</span>
+          <button className={styles.retryButton} onClick={refetchLapTimes}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (lapTimes.length === 0) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -406,6 +474,8 @@ function formatLapTime(seconds) {
   }
   return `${secs}s`;
 }
+
+
 
 
 

@@ -2031,3 +2031,84 @@
     padding: 10px 12px;
   }
 }
+
+/* ===========================================
+   ERROR FALLBACK STYLES
+   =========================================== */
+
+.errorFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 24px;
+}
+
+.errorFallback .errorContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 360px;
+  gap: 16px;
+  padding: 32px;
+  background: rgba(15, 16, 18, 0.95);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 16px;
+}
+
+.errorFallback .errorContent svg {
+  color: #ef4444;
+}
+
+.errorFallback .errorContent h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.errorFallback .errorContent p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.errorFallback .errorActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.errorFallback .retryBtn,
+.errorFallback .backBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.errorFallback .retryBtn {
+  background: linear-gradient(135deg, #d4af37 0%, #b8973a 100%);
+  color: #000;
+}
+
+.errorFallback .retryBtn:hover {
+  background: linear-gradient(135deg, #e6c54a 0%, #d4af37 100%);
+}
+
+.errorFallback .backBtn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.errorFallback .backBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}

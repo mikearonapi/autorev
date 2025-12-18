@@ -1,0 +1,149 @@
+{
+  "batch": "Fix Critical Gaps - ID, VT, WY",
+  "venues": [
+    {
+      "name": "Treasure Valley Cars & Coffee Meridian",
+      "city": "Meridian",
+      "state": "ID",
+      "venue_name": "DeMeyer Furniture",
+      "address": "3530 East Franklin Road",
+      "zip": "83642",
+      "lat": 43.6021,
+      "lng": -116.3526,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://idahocarculture.com/"
+    },
+    {
+      "name": "Nampa Cars & Coffee",
+      "city": "Nampa",
+      "state": "ID",
+      "venue_name": "Nampa",
+      "address": "Nampa, ID",
+      "zip": "83651",
+      "lat": 43.5407,
+      "lng": -116.5635,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Snake River Cars and Coffee Idaho Falls",
+      "city": "Idaho Falls",
+      "state": "ID",
+      "venue_name": "Be Stickered",
+      "address": "2295 N Yellowstone, Suite 5",
+      "zip": "83401",
+      "lat": 43.4927,
+      "lng": -112.0339,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Magic Valley Cars & Coffee Twin Falls",
+      "city": "Twin Falls",
+      "state": "ID",
+      "venue_name": "2nd South Market",
+      "address": "210 2nd Avenue South",
+      "zip": "83301",
+      "lat": 42.5558,
+      "lng": -114.4608,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Cars Coffee Vermont South Burlington",
+      "city": "South Burlington",
+      "state": "VT",
+      "venue_name": "University Mall",
+      "address": "Dorset Street",
+      "zip": "05403",
+      "lat": 44.4527,
+      "lng": -73.1818,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carscoffeevermont.com/"
+    },
+    {
+      "name": "Cars and Coffee Middlebury VT",
+      "city": "Middlebury",
+      "state": "VT",
+      "venue_name": "A&W Route 7",
+      "address": "Route 7",
+      "zip": "05753",
+      "lat": 44.0154,
+      "lng": -73.1677,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carscoffeevermont.com/"
+    },
+    {
+      "name": "Cars and Coffee Waitsfield VT",
+      "city": "Waitsfield",
+      "state": "VT",
+      "venue_name": "Mad River Exchange",
+      "address": "6163 Route 100",
+      "zip": "05673",
+      "lat": 44.1893,
+      "lng": -72.8248,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://carscoffeevermont.com/"
+    },
+    {
+      "name": "Cars and Coffee Rutland VT",
+      "city": "Rutland",
+      "state": "VT",
+      "venue_name": "72 US Route 7 S",
+      "address": "72 US Route 7 S",
+      "zip": "05701",
+      "lat": 43.6106,
+      "lng": -72.9726,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Laramie Cars and Coffee",
+      "city": "Laramie",
+      "state": "WY",
+      "venue_name": "Toyota of Laramie",
+      "address": "2310 Grand Avenue",
+      "zip": "82070",
+      "lat": 41.3114,
+      "lng": -105.5911,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://wyomingcarculture.com/"
+    },
+    {
+      "name": "Casper Cars and Coffee",
+      "city": "Casper",
+      "state": "WY",
+      "venue_name": "Casper",
+      "address": "Casper, WY",
+      "zip": "82601",
+      "lat": 42.8666,
+      "lng": -106.3131,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Gillette Cars and Coffee",
+      "city": "Gillette",
+      "state": "WY",
+      "venue_name": "Gillette",
+      "address": "Gillette, WY",
+      "zip": "82716",
+      "lat": 44.2911,
+      "lng": -105.5022,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Whisler Car Show Rock Springs",
+      "city": "Rock Springs",
+      "state": "WY",
+      "venue_name": "Whisler Chevrolet",
+      "address": "2200 Foothill Blvd",
+      "zip": "82901",
+      "lat": 41.5875,
+      "lng": -109.2029,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://www.whislerchevy.com/"
+    }
+  ]
+}

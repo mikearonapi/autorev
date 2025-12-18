@@ -113,8 +113,8 @@ export default function SelectedCarBanner() {
         {/* Car Info - Always Visible */}
         <div className={styles.carInfo}>
           <div className={styles.carIdentity}>
-            <span className={styles.carName}>{selectedCar.name}</span>
-            <span className={styles.carYears}>{selectedCar.years}</span>
+            <span className={styles.carName}>{selectedCar?.name}</span>
+            <span className={styles.carYears}>{selectedCar?.years || ''}</span>
           </div>
           
           {/* Key Stats - Desktop Only */}
@@ -244,7 +244,7 @@ export default function SelectedCarBanner() {
             
             <div className={styles.expandedStat}>
               <span className={styles.expandedStatLabel}>Price Range</span>
-              <span className={styles.expandedStatValue}>{selectedCar.priceRange}</span>
+              <span className={styles.expandedStatValue}>{selectedCar?.priceRange || '—'}</span>
             </div>
 
             {hasUpgrades && (

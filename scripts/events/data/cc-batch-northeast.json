@@ -1,0 +1,65 @@
+{
+  "batch": "Northeast Expansion - NYC metro, New Jersey, Boston area",
+  "venues": [
+    {
+      "name": "Westchester Cars & Coffee",
+      "city": "Peekskill",
+      "state": "NY",
+      "venue_name": "John Walsh Blvd",
+      "address": "7 John Walsh Blvd",
+      "zip": "10566",
+      "lat": 41.2851,
+      "lng": -73.9204,
+      "recurrence": "Every Sunday",
+      "source_url": "https://westchestercarsandcoffee.com/"
+    },
+    {
+      "name": "Cars, Coffee & Crafts Mahwah",
+      "city": "Mahwah",
+      "state": "NJ",
+      "venue_name": "Continental School Parking Lot",
+      "address": "5211 State Route 634",
+      "zip": "07430",
+      "lat": 41.0887,
+      "lng": -74.1438,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Vespucci's Cars & Coffee",
+      "city": "East Hanover",
+      "state": "NJ",
+      "venue_name": "Vespucci's",
+      "address": "East Hanover, NJ",
+      "zip": "07936",
+      "lat": 40.8198,
+      "lng": -74.3649,
+      "recurrence": "Every Sunday",
+      "source_url": "https://www.jerseyshorecarshows.com/"
+    },
+    {
+      "name": "Bedford MA Cars and Coffee",
+      "city": "Burlington",
+      "state": "MA",
+      "venue_name": "Burlington MA",
+      "address": "Burlington, MA",
+      "zip": "01803",
+      "lat": 42.5048,
+      "lng": -71.1956,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://www.bedfordmacars.com/"
+    },
+    {
+      "name": "Brightshine Cars and Coffee Worcester",
+      "city": "Worcester",
+      "state": "MA",
+      "venue_name": "Brightshine Auto Spa",
+      "address": "Brightshine Auto Spa",
+      "zip": "01604",
+      "lat": 42.2626,
+      "lng": -71.8023,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://allevents.in/"
+    }
+  ]
+}

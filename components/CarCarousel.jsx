@@ -178,6 +178,7 @@ export default function CarCarousel() {
   
   // Check for mobile viewport
   useEffect(() => {
+  if (typeof window === 'undefined') return;
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);

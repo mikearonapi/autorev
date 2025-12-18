@@ -1,0 +1,65 @@
+{
+  "batch": "Missouri Full Coverage",
+  "venues": [
+    {
+      "name": "Cars and Coffee St Louis",
+      "city": "St Charles",
+      "state": "MO",
+      "venue_name": "Fast Lane Classic Cars",
+      "address": "Fast Lane Classic Cars",
+      "zip": "63301",
+      "lat": 38.7881,
+      "lng": -90.4974,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://renndvous.com/"
+    },
+    {
+      "name": "Cars and Coffee Underground Kansas City",
+      "city": "Kansas City",
+      "state": "MO",
+      "venue_name": "The Underground",
+      "address": "The Underground",
+      "zip": "64111",
+      "lat": 39.0997,
+      "lng": -94.5786,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://kansascityautomuseum.com/"
+    },
+    {
+      "name": "Cars and Coffee KC Auto Museum",
+      "city": "Kansas City",
+      "state": "MO",
+      "venue_name": "Kansas City Automotive Museum",
+      "address": "Kansas City Automotive Museum",
+      "zip": "64111",
+      "lat": 39.0836,
+      "lng": -94.5553,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://kansascityautomuseum.com/"
+    },
+    {
+      "name": "Cars and Coffee Springfield MO",
+      "city": "Springfield",
+      "state": "MO",
+      "venue_name": "Springfield",
+      "address": "Springfield, MO",
+      "zip": "65806",
+      "lat": 37.2090,
+      "lng": -93.2923,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars and Coffee Columbia MO",
+      "city": "Columbia",
+      "state": "MO",
+      "venue_name": "Columbia",
+      "address": "Columbia, MO",
+      "zip": "65201",
+      "lat": 38.9517,
+      "lng": -92.3341,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

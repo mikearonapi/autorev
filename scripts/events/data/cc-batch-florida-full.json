@@ -1,0 +1,113 @@
+{
+  "batch": "Florida Full Coverage - South & Central",
+  "venues": [
+    {
+      "name": "Cars & Coffee Palm Beach",
+      "city": "Boca Raton",
+      "state": "FL",
+      "venue_name": "Boca Raton Innovation Campus",
+      "address": "4850 T-Rex Ave",
+      "zip": "33431",
+      "lat": 26.3683,
+      "lng": -80.1289,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.carsandcoffeepb.com/"
+    },
+    {
+      "name": "Cars & Coffee Broward",
+      "city": "Pompano Beach",
+      "state": "FL",
+      "venue_name": "Harrah's Pompano Beach",
+      "address": "789 Isle of Capri Cir",
+      "zip": "33069",
+      "lat": 26.2348,
+      "lng": -80.1251,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://carsncoffeebroward.com/"
+    },
+    {
+      "name": "Cars & Coffee South Florida",
+      "city": "Fort Lauderdale",
+      "state": "FL",
+      "venue_name": "Fort Lauderdale",
+      "address": "Fort Lauderdale, FL",
+      "zip": "33301",
+      "lat": 26.1224,
+      "lng": -80.1373,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://carsandcoffeesoflo.com/"
+    },
+    {
+      "name": "Sanford Cars and Coffee",
+      "city": "Sanford",
+      "state": "FL",
+      "venue_name": "Henry's Depot",
+      "address": "212 W 1st St",
+      "zip": "32771",
+      "lat": 28.8128,
+      "lng": -81.2754,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://sanfordfl.gov/"
+    },
+    {
+      "name": "Orlando Cars & Coffee",
+      "city": "Winter Park",
+      "state": "FL",
+      "venue_name": "Donut Central",
+      "address": "495 N Semoran Blvd",
+      "zip": "32792",
+      "lat": 28.5972,
+      "lng": -81.3065,
+      "recurrence": "2nd Sunday monthly",
+      "source_url": "https://eventswithcars.com/"
+    },
+    {
+      "name": "Cars and Coffee Winter Garden",
+      "city": "Winter Garden",
+      "state": "FL",
+      "venue_name": "3118 Daniels Rd",
+      "address": "3118 Daniels Rd",
+      "zip": "34787",
+      "lat": 28.5458,
+      "lng": -81.5681,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://www.carsandcoffeewg.com/"
+    },
+    {
+      "name": "Caffeine and Chrome Lake Mary",
+      "city": "Lake Mary",
+      "state": "FL",
+      "venue_name": "Gateway Classic Cars",
+      "address": "635 Century Point #101",
+      "zip": "32746",
+      "lat": 28.7589,
+      "lng": -81.3178,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://events.com/"
+    },
+    {
+      "name": "Old Town Friday Night Muscle Car Show Kissimmee",
+      "city": "Kissimmee",
+      "state": "FL",
+      "venue_name": "Old Town",
+      "address": "5770 W Irlo Bronson Memorial Hwy",
+      "zip": "34746",
+      "lat": 28.3578,
+      "lng": -81.5036,
+      "recurrence": "Every Friday",
+      "source_url": "https://www.myoldtownusa.com/"
+    },
+    {
+      "name": "Old Town Saturday Night Classic Car Show Kissimmee",
+      "city": "Kissimmee",
+      "state": "FL",
+      "venue_name": "Old Town",
+      "address": "5770 W Irlo Bronson Memorial Hwy",
+      "zip": "34746",
+      "lat": 28.3578,
+      "lng": -81.5036,
+      "recurrence": "Every Saturday",
+      "source_url": "https://www.myoldtownusa.com/"
+    }
+  ]
+}

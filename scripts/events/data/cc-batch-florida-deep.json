@@ -1,0 +1,149 @@
+{
+  "batch": "Florida Deep Dive - All Regions",
+  "venues": [
+    {
+      "name": "Cars and Coffee 239 Naples",
+      "city": "Naples",
+      "state": "FL",
+      "venue_name": "Mercato Shops",
+      "address": "Mercato Shops",
+      "zip": "34110",
+      "lat": 26.2687,
+      "lng": -81.7976,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://carsandcoffee239.com/"
+    },
+    {
+      "name": "Coffee and Cars Cape Coral",
+      "city": "Cape Coral",
+      "state": "FL",
+      "venue_name": "Lobster Lady Parking",
+      "address": "Lobster Lady",
+      "zip": "33904",
+      "lat": 26.5629,
+      "lng": -81.9495,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://capecoralsusan.com/"
+    },
+    {
+      "name": "BMW Cars & Coffee Fort Myers",
+      "city": "Fort Myers",
+      "state": "FL",
+      "venue_name": "BMW of Fort Myers",
+      "address": "BMW of Fort Myers",
+      "zip": "33907",
+      "lat": 26.5922,
+      "lng": -81.8706,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://fscbmwcca.com/"
+    },
+    {
+      "name": "Gainesville Cars & Coffee Tioga",
+      "city": "Newberry",
+      "state": "FL",
+      "venue_name": "Tioga Town Center",
+      "address": "150 SW 129th Terrace",
+      "zip": "32669",
+      "lat": 29.6469,
+      "lng": -82.5986,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Ocala Cars & Coffee",
+      "city": "Ocala",
+      "state": "FL",
+      "venue_name": "Burnyzz Speed Shop",
+      "address": "1 Aspen Rd",
+      "zip": "34472",
+      "lat": 29.1219,
+      "lng": -82.0731,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Classic Car Cruise-In Daytona",
+      "city": "Daytona Beach",
+      "state": "FL",
+      "venue_name": "Bellevue Ave",
+      "address": "2987 Bellevue Ave Ext",
+      "zip": "32124",
+      "lat": 29.2108,
+      "lng": -81.0228,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars & Coffee Melbourne",
+      "city": "Melbourne",
+      "state": "FL",
+      "venue_name": "Tint World Melbourne",
+      "address": "Tint World Melbourne",
+      "zip": "32901",
+      "lat": 28.0836,
+      "lng": -80.6081,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Pensacola Cars & Coffee",
+      "city": "Pensacola",
+      "state": "FL",
+      "venue_name": "Gander Outdoors",
+      "address": "1220 Airport Blvd",
+      "zip": "32504",
+      "lat": 30.4780,
+      "lng": -87.2061,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://www.rideology.io/"
+    },
+    {
+      "name": "Green Light Nights Pensacola",
+      "city": "Pensacola",
+      "state": "FL",
+      "venue_name": "Five Flags Speedway",
+      "address": "Five Flags Speedway",
+      "zip": "32505",
+      "lat": 30.4693,
+      "lng": -87.2547,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://greenlightnights.com/"
+    },
+    {
+      "name": "Southwood Coffee & Cars Tallahassee",
+      "city": "Tallahassee",
+      "state": "FL",
+      "venue_name": "Merchants Row",
+      "address": "3197 Merchants Row Blvd",
+      "zip": "32311",
+      "lat": 30.4255,
+      "lng": -84.2207,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Panama City Cars & Coffee",
+      "city": "Panama City Beach",
+      "state": "FL",
+      "venue_name": "Pier Park",
+      "address": "Pier Park",
+      "zip": "32413",
+      "lat": 30.1766,
+      "lng": -85.8054,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://ecrmc.net/"
+    },
+    {
+      "name": "Emerald Coast Show n Shine Destin",
+      "city": "Destin",
+      "state": "FL",
+      "venue_name": "Hooters Destin",
+      "address": "Hooters Destin",
+      "zip": "32541",
+      "lat": 30.3935,
+      "lng": -86.4958,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://ecrmc.net/"
+    }
+  ]
+}

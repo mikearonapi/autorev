@@ -1,0 +1,65 @@
+{
+  "batch": "Florida Expansion - Tampa Bay, Jacksonville, St Augustine",
+  "venues": [
+    {
+      "name": "Sarasota Cars & Coffee",
+      "city": "Sarasota",
+      "state": "FL",
+      "venue_name": "Mall at University Town Center",
+      "address": "University Town Center",
+      "zip": "34243",
+      "lat": 27.3945,
+      "lng": -82.4536,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.sarasotacarsandcoffee.com/"
+    },
+    {
+      "name": "Cars & Coffee St Petersburg",
+      "city": "St. Petersburg",
+      "state": "FL",
+      "venue_name": "Dunkin' Donuts",
+      "address": "7595 4th St N",
+      "zip": "33702",
+      "lat": 27.8276,
+      "lng": -82.6366,
+      "recurrence": "Every Saturday",
+      "source_url": "https://registrytampabay.com/"
+    },
+    {
+      "name": "Cars & Coffee Classic Car Museum St Augustine",
+      "city": "St. Augustine",
+      "state": "FL",
+      "venue_name": "Classic Car Museum of St. Augustine",
+      "address": "4730 U.S. 1 South",
+      "zip": "32086",
+      "lat": 29.8329,
+      "lng": -81.3064,
+      "recurrence": "4th Saturday monthly",
+      "source_url": "https://www.ccmstaug.com/"
+    },
+    {
+      "name": "Caffeine and Octane Jacksonville",
+      "city": "Jacksonville",
+      "state": "FL",
+      "venue_name": "The Avenues Mall",
+      "address": "10300 Southside Blvd",
+      "zip": "32256",
+      "lat": 30.2415,
+      "lng": -81.5461,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.firstcoastcarculture.com/"
+    },
+    {
+      "name": "UB Coffee & Cars Orange Park",
+      "city": "Orange Park",
+      "state": "FL",
+      "venue_name": "Urban Bean Coffeehouse Café",
+      "address": "2023 Park Ave",
+      "zip": "32073",
+      "lat": 30.1663,
+      "lng": -81.7095,
+      "recurrence": "Every Sunday",
+      "source_url": "https://www.firstcoastcarculture.com/"
+    }
+  ]
+}

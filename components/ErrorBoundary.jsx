@@ -49,7 +49,11 @@ function DefaultFallback({ error, errorInfo, onRetry }) {
           )}
           <button 
             className={styles.reloadButton} 
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.location.reload();
+              }
+            }}
           >
             Reload Page
           </button>

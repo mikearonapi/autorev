@@ -1,0 +1,137 @@
+{
+  "batch": "Oklahoma, Arkansas, Kansas Coverage",
+  "venues": [
+    {
+      "name": "Coffee & Cars OKC",
+      "city": "Oklahoma City",
+      "state": "OK",
+      "venue_name": "Remington Park",
+      "address": "1 Remington Place",
+      "zip": "73111",
+      "lat": 35.4807,
+      "lng": -97.4659,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://coffeeandcarsokc.com/"
+    },
+    {
+      "name": "Cars & Coffee Tulsa",
+      "city": "Tulsa",
+      "state": "OK",
+      "venue_name": "Best Buy E 71st",
+      "address": "10303 E 71st St S",
+      "zip": "74133",
+      "lat": 36.0508,
+      "lng": -95.8838,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://oklahomacarshows.com/"
+    },
+    {
+      "name": "Coffee & Cars Norman",
+      "city": "Norman",
+      "state": "OK",
+      "venue_name": "Crest Foods",
+      "address": "1421 24th Ave NW",
+      "zip": "73069",
+      "lat": 35.2370,
+      "lng": -97.4864,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://soonermodela.org/"
+    },
+    {
+      "name": "Little Rock Cars & Coffee",
+      "city": "Little Rock",
+      "state": "AR",
+      "venue_name": "Burgundy Hotel",
+      "address": "1501 Merrill Drive",
+      "zip": "72211",
+      "lat": 34.7465,
+      "lng": -92.3598,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://markpettersen.com/"
+    },
+    {
+      "name": "NWA Cars and Coffee Rogers",
+      "city": "Rogers",
+      "state": "AR",
+      "venue_name": "Pig Trail Harley-Davidson",
+      "address": "2409 W Hudson Rd",
+      "zip": "72756",
+      "lat": 36.3320,
+      "lng": -94.1543,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://throttlepro.com/"
+    },
+    {
+      "name": "Blacktop Sunday Rogers",
+      "city": "Rogers",
+      "state": "AR",
+      "venue_name": "One Uptown",
+      "address": "5102 W Pauline Whitaker Pkwy",
+      "zip": "72758",
+      "lat": 36.3301,
+      "lng": -94.1833,
+      "recurrence": "1st Sunday monthly",
+      "source_url": "https://www.expressrally.com/"
+    },
+    {
+      "name": "Fayetteville Cars & Coffee",
+      "city": "Fayetteville",
+      "state": "AR",
+      "venue_name": "Fayetteville",
+      "address": "Fayetteville, AR",
+      "zip": "72701",
+      "lat": 36.0822,
+      "lng": -94.1719,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Wichita Cars & Coffee",
+      "city": "Wichita",
+      "state": "KS",
+      "venue_name": "11413 East Street",
+      "address": "11413 East Street",
+      "zip": "67207",
+      "lat": 37.6889,
+      "lng": -97.2427,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://garageapp.com/"
+    },
+    {
+      "name": "Kansas City Cars & Coffee Overland Park",
+      "city": "Overland Park",
+      "state": "KS",
+      "venue_name": "Overland Park",
+      "address": "Overland Park, KS",
+      "zip": "66211",
+      "lat": 38.9822,
+      "lng": -94.6708,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Topeka Cars & Coffee",
+      "city": "Topeka",
+      "state": "KS",
+      "venue_name": "Topeka",
+      "address": "Topeka, KS",
+      "zip": "66603",
+      "lat": 39.0473,
+      "lng": -95.6752,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Lawrence Cars & Coffee",
+      "city": "Lawrence",
+      "state": "KS",
+      "venue_name": "Lawrence",
+      "address": "Lawrence, KS",
+      "zip": "66044",
+      "lat": 38.9717,
+      "lng": -95.2353,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

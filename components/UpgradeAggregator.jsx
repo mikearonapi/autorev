@@ -137,8 +137,11 @@ export default function UpgradeAggregator({
 }) {
   // Calculate totals from upgrades using smart HP calculation
   const buildStats = useMemo(() => {
+    if (!car) {
+      return null;
+    }
     // Get upgrade keys for smart calculation
-    const upgradeKeys = selectedUpgrades.map(u => u.key).filter(Boolean);
+    const upgradeKeys = selectedUpgrades.filter(Boolean).map(u => u.key).filter(Boolean);
     
     // Use smart HP calculation with diminishing returns and overlap handling
     const hpResult = calculateSmartHpGain(car, upgradeKeys);
@@ -191,7 +194,7 @@ export default function UpgradeAggregator({
   }, [selectedUpgrades, totalCost, car]);
 
   // Don't render if no upgrades
-  if (selectedUpgrades.length === 0) {
+  if (!buildStats || selectedUpgrades.length === 0) {
     return null;
   }
 

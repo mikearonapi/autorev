@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getPublicClient } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-function getPublicDbClient() {
-  if (!supabaseUrl || !supabaseAnonKey) return null;
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-}
 
 function uniq(arr) {
   return [...new Set(arr)];
@@ -25,7 +15,7 @@ function uniq(arr) {
  */
 export async function POST(request) {
   try {
-    const client = getPublicDbClient();
+    const client = getPublicClient();
     if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const body = await request.json().catch(() => ({}));
@@ -92,6 +82,8 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
   }
 }
+
+
 
 
 

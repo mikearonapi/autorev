@@ -17,7 +17,7 @@
 
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
-import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 // Cron secret for authorization
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -57,13 +57,26 @@ export async function GET(request) {
       delayBetweenJobs,
     });
     
-    notifyCronCompletion('Process Scrape Jobs', {
-      duration: Date.now() - startTime,
-      processed: result.processed || result.jobsProcessed || 0,
-      succeeded: result.succeeded || result.completed || 0,
-      failed: result.failed || (result.errors ? result.errors.length : 0),
-      errors: result.errors ? result.errors.length : 0,
-    });
+    const processed = result.processed || result.jobsProcessed || 0;
+    const succeeded = result.succeeded || result.completed || 0;
+    const failed = result.failed || (result.errors ? result.errors.length : 0);
+    
+    // Only notify if there was actual work done (skip empty queue spam)
+    if (processed > 0 || failed > 0) {
+      notifyCronEnrichment('Job Queue Processor', {
+        duration: Date.now() - startTime,
+        table: 'scrape_jobs',
+        recordsProcessed: processed,
+        recordsUpdated: succeeded,
+        errors: failed,
+        details: [
+          { label: '📋 Jobs Processed', value: processed },
+          { label: '✅ Succeeded', value: succeeded },
+          failed > 0 && { label: '❌ Failed', value: failed },
+        ].filter(Boolean),
+      });
+    }
+    // Silent skip when queue is empty - no Discord notification
 
     return NextResponse.json({
       success: true,
@@ -183,6 +196,8 @@ export async function POST(request) {
     );
   }
 }
+
+
 
 
 

@@ -114,8 +114,8 @@ export default function ExpertReviews({ carSlug, car }) {
     }
   }, [carSlug]);
 
-  // Don't render if no reviews and no consensus data
-  if (!isLoading && videos.length === 0 && !consensus && reviewCount === 0) {
+  // Don't render if no reviews and no consensus data (and no error)
+  if (!isLoading && !error && videos.length === 0 && !consensus && reviewCount === 0) {
     return null;
   }
 
@@ -126,6 +126,41 @@ export default function ExpertReviews({ carSlug, car }) {
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner} />
           <span>Loading expert reviews...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state with retry
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <VerifiedIcon />
+            <span className={styles.headerTitle}>Expert Reviews</span>
+          </div>
+        </div>
+        <div className={styles.errorState}>
+          <AlertIcon size={20} />
+          <span>Unable to load expert reviews</span>
+          <button 
+            className={styles.retryButton}
+            onClick={() => {
+              setError(null);
+              setIsLoading(true);
+              fetch(`/api/cars/${carSlug}/expert-reviews`)
+                .then(res => {
+                  if (!res.ok) throw new Error('Failed to fetch');
+                  return res.json();
+                })
+                .then(data => setVideos(data.videos || []))
+                .catch(err => setError(err.message))
+                .finally(() => setIsLoading(false));
+            }}
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );

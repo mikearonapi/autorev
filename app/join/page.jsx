@@ -270,8 +270,8 @@ const featureCategories = [
     ],
   },
   {
-    id: 'al',
-    name: 'AL — AI Mechanic',
+    id: 'ai',
+    name: 'AL — Your AI Co-Pilot',
     icon: AlIcon,
     features: [
       { name: 'Monthly conversations', free: '~25', collector: '~75', tuner: '~150' },

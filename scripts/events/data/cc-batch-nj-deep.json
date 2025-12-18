@@ -1,0 +1,65 @@
+{
+  "batch": "New Jersey Deep Dive",
+  "venues": [
+    {
+      "name": "Cars N Coffee Toms River",
+      "city": "Toms River",
+      "state": "NJ",
+      "venue_name": "Sweetwaters Coffee Ocean County Mall",
+      "address": "Ocean County Mall",
+      "zip": "08753",
+      "lat": 39.9537,
+      "lng": -74.1979,
+      "recurrence": "4th Sunday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "Morristown Cars & Coffee",
+      "city": "Morristown",
+      "state": "NJ",
+      "venue_name": "Morristown",
+      "address": "Morristown, NJ",
+      "zip": "07960",
+      "lat": 40.7968,
+      "lng": -74.4815,
+      "recurrence": "Every Saturday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Princeton Cars & Coffee",
+      "city": "Lawrenceville",
+      "state": "NJ",
+      "venue_name": "Lawrenceville",
+      "address": "Lawrenceville, NJ",
+      "zip": "08648",
+      "lat": 40.2968,
+      "lng": -74.7294,
+      "recurrence": "Every Sunday",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars & Coffee Flemington",
+      "city": "Flemington",
+      "state": "NJ",
+      "venue_name": "Flemington",
+      "address": "Flemington, NJ",
+      "zip": "08822",
+      "lat": 40.5123,
+      "lng": -74.8593,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    },
+    {
+      "name": "Cars & Coffee Cherry Hill",
+      "city": "Cherry Hill",
+      "state": "NJ",
+      "venue_name": "Cherry Hill",
+      "address": "Cherry Hill, NJ",
+      "zip": "08002",
+      "lat": 39.9346,
+      "lng": -75.0307,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://carsandcoffeedirectory.com/"
+    }
+  ]
+}

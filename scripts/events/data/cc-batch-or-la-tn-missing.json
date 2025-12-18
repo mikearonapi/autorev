@@ -1,0 +1,89 @@
+{
+  "batch": "Oregon, Louisiana, Tennessee Missing Cities",
+  "venues": [
+    {
+      "name": "Cars & Kicks Salem Oregon",
+      "city": "Salem",
+      "state": "OR",
+      "venue_name": "Freeman Motor Salem",
+      "address": "3784 Portland Road NE",
+      "zip": "97301",
+      "lat": 44.9765,
+      "lng": -123.0065,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://allevents.in/"
+    },
+    {
+      "name": "German Classics Workshop Cars and Coffee Salem",
+      "city": "Salem",
+      "state": "OR",
+      "venue_name": "German Classics Workshop",
+      "address": "2728 19th St SE #3",
+      "zip": "97302",
+      "lat": 44.9214,
+      "lng": -123.0212,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://happeningnext.com/"
+    },
+    {
+      "name": "Shift Happens Cars & Coffee Eugene",
+      "city": "Eugene",
+      "state": "OR",
+      "venue_name": "Maxwell Community Hub",
+      "address": "440 Maxwell Rd",
+      "zip": "97404",
+      "lat": 44.0761,
+      "lng": -123.1210,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.transponderoregon.org/"
+    },
+    {
+      "name": "Kendall Bronco Club Cars & Coffee Eugene",
+      "city": "Eugene",
+      "state": "OR",
+      "venue_name": "Kendall Bronco Club of Eugene",
+      "address": "380 Goodpasture Island Rd",
+      "zip": "97401",
+      "lat": 44.0715,
+      "lng": -123.0779,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.kendallautooregon.com/"
+    },
+    {
+      "name": "Cars and Coffee Lafayette Louisiana",
+      "city": "Lafayette",
+      "state": "LA",
+      "venue_name": "Twin Peaks Sports Bar",
+      "address": "5801 Johnston St",
+      "zip": "70506",
+      "lat": 30.1862,
+      "lng": -92.0641,
+      "recurrence": "Last Wednesday monthly",
+      "source_url": "https://carsandcoffeeevents.com/"
+    },
+    {
+      "name": "Central Cars and Coffee Baton Rouge",
+      "city": "Baton Rouge",
+      "state": "LA",
+      "venue_name": "Grand Settlement Blvd",
+      "address": "14375 Grand Settlement Blvd",
+      "zip": "70810",
+      "lat": 30.3748,
+      "lng": -91.0989,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    },
+    {
+      "name": "Cars N Coffee Clarksville Tennessee",
+      "city": "Clarksville",
+      "state": "TN",
+      "venue_name": "Getsome Coffee",
+      "address": "3862 Trenton Rd",
+      "zip": "37040",
+      "lat": 36.5664,
+      "lng": -87.3534,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://carcruisefinder.com/"
+    }
+  ]
+}

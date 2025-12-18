@@ -87,6 +87,7 @@ export default function MobileBottomCta() {
 
   // Show/hide based on scroll direction and position
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const windowHeight = window.innerHeight;

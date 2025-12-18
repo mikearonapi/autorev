@@ -364,6 +364,12 @@ export default function FeedbackWidget({
     setError(null);
 
     try {
+      if (typeof window === 'undefined') {
+        setError('Feedback is only available in the browser.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const pageUrl = window.location.href;
       
       // Map category to feedback_type for API compatibility
@@ -394,12 +400,12 @@ export default function FeedbackWidget({
         
         // Common fields
         page_url: pageUrl,
-        page_title: document.title,
+        page_title: typeof document !== 'undefined' ? document.title : '',
         metadata: {
           sessionId: getSessionId(),
           browserInfo: getBrowserInfo(),
-          screenWidth: window.innerWidth,
-          screenHeight: window.innerHeight,
+          screenWidth: typeof window !== 'undefined' ? window.innerWidth : null,
+          screenHeight: typeof window !== 'undefined' ? window.innerHeight : null,
         },
       };
 

@@ -65,3 +65,5 @@ export default function CommunityEventsLayout({ children }) {
   );
 }
 
+
+

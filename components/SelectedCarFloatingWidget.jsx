@@ -71,6 +71,7 @@ export default function SelectedCarFloatingWidget() {
 
   // Handle scroll to hide when scrolling down
   useEffect(() => {
+  if (typeof window === 'undefined') return;
     let lastScrollY = window.scrollY;
     let ticking = false;
 

@@ -16,7 +16,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
-import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -108,12 +108,17 @@ export async function GET(request) {
       durationMs,
     };
 
-    notifyCronCompletion('Refresh Recalls', {
+    notifyCronEnrichment('Recall Data Refresh', {
       duration: durationMs,
-      processed: summary.carsProcessed,
-      succeeded: summary.carsProcessed - summary.carsWithErrors,
-      failed: summary.carsWithErrors,
+      table: 'car_recalls',
+      recordsAdded: summary.totalUpserted,
+      recordsProcessed: summary.totalFetched,
+      sourcesChecked: summary.carsProcessed,
       errors: summary.carsWithErrors,
+      details: [
+        { label: '🚗 Cars Checked', value: summary.carsProcessed },
+        { label: '📥 From NHTSA', value: summary.totalFetched },
+      ],
     });
 
     return NextResponse.json({
@@ -128,6 +133,8 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
   }
 }
+
+
 
 
 

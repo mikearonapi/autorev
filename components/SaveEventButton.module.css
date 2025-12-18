@@ -103,6 +103,13 @@
   gap: 6px;
 }
 
+/* Small variant - for dense card layouts */
+.actionBtn.smallBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+
 .labelText {
   font-size: 13px;
   font-weight: 500;

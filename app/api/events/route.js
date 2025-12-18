@@ -10,7 +10,9 @@ import { searchEvents } from '@/lib/eventsService';
  * Query params:
  *   - location: Flexible location input - accepts ZIP code (e.g., "20175") or "City, State" (e.g., "Leesburg, VA")
  *   - zip: ZIP code for location filtering (legacy, prefer location)
- *   - radius: Radius in miles (requires location/zip, default 50, max 500)
+ *   - lat: Direct latitude (from Google Places, skips server-side geocoding)
+ *   - lng: Direct longitude (from Google Places, skips server-side geocoding)
+ *   - radius: Radius in miles (requires location/zip or lat/lng, default 50, max 500)
  *   - city: City name for filtering (exact match)
  *   - state: State code for filtering
  *   - region: Region name (Northeast, Southeast, Midwest, Southwest, West)
@@ -45,6 +47,8 @@ export async function GET(request) {
     const params = {
       location: searchParams.get('location'),
       zip: searchParams.get('zip'),
+      lat: searchParams.get('lat'),
+      lng: searchParams.get('lng'),
       radius: searchParams.get('radius'),
       city: searchParams.get('city'),
       state: searchParams.get('state'),

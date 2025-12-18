@@ -113,7 +113,47 @@ export default function MarketValueSection({ carSlug, carName }) {
     );
   }
   
-  if (error || !marketData) {
+  // Refetch function for retry
+  const refetchMarketData = () => {
+    setError(null);
+    setLoading(true);
+    Promise.all([
+      fetch(`/api/cars/${carSlug}/market-value`),
+      fetch(`/api/cars/${carSlug}/price-by-year`),
+    ])
+      .then(async ([marketRes, historyRes]) => {
+        if (marketRes.ok) {
+          const marketJson = await marketRes.json();
+          setMarketData(marketJson.pricing || null);
+        }
+        if (historyRes.ok) {
+          const historyJson = await historyRes.json();
+          setPriceHistory(historyJson.priceHistory || []);
+        }
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  };
+
+  if (error) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Icons.dollarSign size={18} />
+          <h4>Market Value</h4>
+        </div>
+        <div className={styles.errorState}>
+          <Icons.info size={20} />
+          <span>Unable to load market data</span>
+          <button className={styles.retryButton} onClick={refetchMarketData}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!marketData) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -292,6 +332,8 @@ export default function MarketValueSection({ carSlug, carName }) {
     </PremiumGate>
   );
 }
+
+
 
 
 

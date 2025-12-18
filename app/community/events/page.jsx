@@ -60,13 +60,13 @@ function EventsContent() {
   const [view, setView] = useState('list');
   const [selectedMapEvent, setSelectedMapEvent] = useState(null);
 
-  // Items per page (5 columns x 4 rows = 20)
-  const ITEMS_PER_PAGE = 20;
+  // Items per page - dense layout allows more events per page
+  const ITEMS_PER_PAGE = 500;
 
   // Filters state
   const [filters, setFilters] = useState({
     location: searchParams.get('location') || '',
-    radius: searchParams.get('radius') || 50,
+    radius: parseInt(searchParams.get('radius'), 10) || 50,
     type: searchParams.get('type') || '',
     start_date: searchParams.get('start_date') || '',
     end_date: searchParams.get('end_date') || '',
@@ -76,6 +76,9 @@ function EventsContent() {
     is_free: searchParams.get('free_only') === 'true',
     brand: searchParams.get('brand') || '',
     for_my_cars: false,
+    // Optional coordinates from Google Places autocomplete
+    locationLat: searchParams.get('lat') ? parseFloat(searchParams.get('lat')) : null,
+    locationLng: searchParams.get('lng') ? parseFloat(searchParams.get('lng')) : null,
   });
 
   // Fetch event types, garage brands, and saved events on mount
@@ -142,7 +145,18 @@ function EventsContent() {
         
         // Add filters to params - use 'location' param for flexible ZIP/city search
         if (filters.location) params.set('location', filters.location);
-        if (filters.radius) params.set('radius', filters.radius);
+        
+        // Always include radius when location is set (enables radius-based search)
+        if (filters.location && filters.radius) {
+          params.set('radius', filters.radius.toString());
+        }
+        
+        // Pass coordinates if available from Google Places (more accurate geocoding)
+        if (filters.locationLat && filters.locationLng) {
+          params.set('lat', filters.locationLat.toString());
+          params.set('lng', filters.locationLng.toString());
+        }
+        
         if (filters.type) params.set('type', filters.type);
         if (filters.region) params.set('region', filters.region);
         if (filters.scope) params.set('scope', filters.scope);
@@ -200,10 +214,21 @@ function EventsContent() {
     setFilters(prev => ({ ...prev, ...newFilters }));
     setPage(1);
     
+    // Build URL params for shareable links (exclude internal-only fields)
     const params = new URLSearchParams();
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value) params.set(key, value);
-    });
+    const mergedFilters = { ...filters, ...newFilters };
+    
+    // Only include user-facing filter params in URL
+    if (mergedFilters.location) params.set('location', mergedFilters.location);
+    if (mergedFilters.radius && mergedFilters.radius !== 50) params.set('radius', mergedFilters.radius.toString());
+    if (mergedFilters.type) params.set('type', mergedFilters.type);
+    if (mergedFilters.region) params.set('region', mergedFilters.region);
+    if (mergedFilters.start_date) params.set('start_date', mergedFilters.start_date);
+    if (mergedFilters.end_date) params.set('end_date', mergedFilters.end_date);
+    if (mergedFilters.is_track_event) params.set('track_only', 'true');
+    if (mergedFilters.is_free) params.set('free_only', 'true');
+    if (mergedFilters.brand) params.set('brand', mergedFilters.brand);
+    
     router.replace(`/community/events?${params.toString()}`, { scroll: false });
   };
 

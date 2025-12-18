@@ -1,0 +1,137 @@
+{
+  "batch": "Los Angeles, Orange County, Austin/San Antonio",
+  "venues": [
+    {
+      "name": "Cars & Coffee Los Angeles",
+      "city": "Los Angeles",
+      "state": "CA",
+      "venue_name": "Griffith Park Merry-Go-Round",
+      "address": "4730 Crystal Springs Dr",
+      "zip": "90027",
+      "lat": 34.1369,
+      "lng": -118.2870,
+      "recurrence": "Last Sunday monthly",
+      "source_url": "https://carsandcoffeela.com/"
+    },
+    {
+      "name": "Cars & Coffee Glendale",
+      "city": "Glendale",
+      "state": "CA",
+      "venue_name": "Chevy Chase Country Club",
+      "address": "3067 E. Chevy Chase Dr",
+      "zip": "91206",
+      "lat": 34.1478,
+      "lng": -118.2117,
+      "recurrence": "Last Saturday monthly",
+      "source_url": "https://idrivesocal.com/"
+    },
+    {
+      "name": "Supercar Sunday Woodland Hills",
+      "city": "Woodland Hills",
+      "state": "CA",
+      "venue_name": "Pierce College",
+      "address": "6201 Winnetka Ave",
+      "zip": "91371",
+      "lat": 34.1825,
+      "lng": -118.5784,
+      "recurrence": "Every Sunday",
+      "source_url": "https://supercarsunday.com/"
+    },
+    {
+      "name": "Donut Derelicts Huntington Beach",
+      "city": "Huntington Beach",
+      "state": "CA",
+      "venue_name": "Magnolia & Adams Ave",
+      "address": "Magnolia & Adams Ave",
+      "zip": "92646",
+      "lat": 33.7675,
+      "lng": -118.0220,
+      "recurrence": "Every Saturday",
+      "source_url": "https://donutderelicts.com/"
+    },
+    {
+      "name": "Cars and Brunch Newport Beach",
+      "city": "Newport Beach",
+      "state": "CA",
+      "venue_name": "Chihuahua Cerveza",
+      "address": "3107 Newport Blvd",
+      "zip": "92663",
+      "lat": 33.6209,
+      "lng": -117.9289,
+      "recurrence": "Every Sunday",
+      "source_url": "https://surfcityclassics.org/"
+    },
+    {
+      "name": "Laguna Niguel Cars and Coffee",
+      "city": "Laguna Niguel",
+      "state": "CA",
+      "venue_name": "OC Mail Store",
+      "address": "30100 Town Center Dr C",
+      "zip": "92677",
+      "lat": 33.5225,
+      "lng": -117.7076,
+      "recurrence": "Every Sunday",
+      "source_url": "https://www.idrivesocal.com/"
+    },
+    {
+      "name": "Supercars By The Sea Huntington Beach",
+      "city": "Huntington Beach",
+      "state": "CA",
+      "venue_name": "Pacific Coast Highway",
+      "address": "22211 Pacific Coast Highway",
+      "zip": "92648",
+      "lat": 33.6603,
+      "lng": -117.9988,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://enjoyorangecounty.com/"
+    },
+    {
+      "name": "Quarantine Cruise Costa Mesa",
+      "city": "Costa Mesa",
+      "state": "CA",
+      "venue_name": "Hyland Ave",
+      "address": "3303-3323 Hyland Ave",
+      "zip": "92626",
+      "lat": 33.6846,
+      "lng": -117.9098,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://enjoyorangecounty.com/"
+    },
+    {
+      "name": "CarFest & Coffee San Antonio",
+      "city": "San Antonio",
+      "state": "TX",
+      "venue_name": "The Spin Coffee & Vinyl",
+      "address": "3131 Nacogdoches Rd #101",
+      "zip": "78217",
+      "lat": 29.5080,
+      "lng": -98.4281,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.carfestsa.org/"
+    },
+    {
+      "name": "Pistons on the Square Georgetown",
+      "city": "Georgetown",
+      "state": "TX",
+      "venue_name": "Georgetown Square",
+      "address": "Georgetown Square",
+      "zip": "78626",
+      "lat": 30.6329,
+      "lng": -97.6780,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://gtacc.org/"
+    },
+    {
+      "name": "Round Rock Car Show",
+      "city": "Round Rock",
+      "state": "TX",
+      "venue_name": "2002 Harrell Parkway",
+      "address": "2002 Harrell Parkway",
+      "zip": "78664",
+      "lat": 30.5083,
+      "lng": -97.6789,
+      "recurrence": "3rd Sunday monthly",
+      "source_url": "https://gtacc.org/"
+    }
+  ]
+}

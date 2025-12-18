@@ -1,0 +1,77 @@
+{
+  "batch": "Pacific Northwest Expansion - Seattle suburbs, Portland",
+  "venues": [
+    {
+      "name": "Porsche Bellevue Cars & Coffee",
+      "city": "Bellevue",
+      "state": "WA",
+      "venue_name": "Porsche Bellevue",
+      "address": "11910 NE 8th Street",
+      "zip": "98005",
+      "lat": 47.6174,
+      "lng": -122.1877,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://www.porschebellevue.com/"
+    },
+    {
+      "name": "Get With It Cars and Coffee Bellevue",
+      "city": "Bellevue",
+      "state": "WA",
+      "venue_name": "Mercurys Coffee Company",
+      "address": "13102 Northeast 20th Street",
+      "zip": "98005",
+      "lat": 47.6252,
+      "lng": -122.1574,
+      "recurrence": "Every Saturday",
+      "source_url": "https://washingtoncarculture.com/"
+    },
+    {
+      "name": "Exotics at Redmond Town Center",
+      "city": "Redmond",
+      "state": "WA",
+      "venue_name": "Redmond Town Center",
+      "address": "Redmond Town Center",
+      "zip": "98052",
+      "lat": 47.6700,
+      "lng": -122.1185,
+      "recurrence": "Every Saturday",
+      "source_url": "https://washingtoncarculture.com/"
+    },
+    {
+      "name": "Caffeine & Gasoline Griot's Garage",
+      "city": "Tacoma",
+      "state": "WA",
+      "venue_name": "Griot's Garage",
+      "address": "3333 South 38th Street",
+      "zip": "98409",
+      "lat": 47.2192,
+      "lng": -122.4659,
+      "recurrence": "1st Saturday monthly",
+      "source_url": "https://www.greaterseattleonthecheap.com/"
+    },
+    {
+      "name": "BMW Cars and Coffee Lake Oswego",
+      "city": "Lake Oswego",
+      "state": "OR",
+      "venue_name": "Oswego Grill",
+      "address": "7 Centerpointe Drive",
+      "zip": "97035",
+      "lat": 45.4126,
+      "lng": -122.7364,
+      "recurrence": "3rd Saturday monthly",
+      "source_url": "https://bmworegoncca.com/"
+    },
+    {
+      "name": "Porsche Beaverton Cars & Coffee",
+      "city": "Beaverton",
+      "state": "OR",
+      "venue_name": "Porsche Beaverton",
+      "address": "13875 SW Tualatin Valley Highway",
+      "zip": "97005",
+      "lat": 45.4918,
+      "lng": -122.8204,
+      "recurrence": "2nd Saturday monthly",
+      "source_url": "https://www.porschestudioportlandevents.com/"
+    }
+  ]
+}
