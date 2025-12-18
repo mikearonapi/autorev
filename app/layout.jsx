@@ -16,6 +16,10 @@ import CompareBar from '@/components/CompareBar';
 import { FeedbackProvider } from '@/components/FeedbackWidget';
 import { AIMechanicProvider } from '@/components/AIMechanicChat';
 import FeedbackCorner from '@/components/FeedbackCorner';
+import GlobalErrorHandler from '@/components/GlobalErrorHandler';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import FetchInterceptor from '@/components/FetchInterceptor';
+import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
 
 const siteUrl = 'https://autorev.app';
 
@@ -194,43 +198,51 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <AuthProvider>
-        <FeedbackProvider>
-        <CarSelectionProvider>
-        <FavoritesProvider>
-        <CompareProvider>
-        <SavedBuildsProvider>
-        <OwnedVehiclesProvider>
-        <AIMechanicProvider>
-          {/* Scroll to top on route change */}
-          <Suspense fallback={null}>
-            <ScrollToTop />
-          </Suspense>
-          <Header />
-          
-          {/* Feedback corner - discreet top-right feedback icon */}
-          <FeedbackCorner />
-          
-          <main>
-            {children}
-          </main>
-          <Footer />
-          
-          {/* Floating Compare Bar - shows when cars added to compare */}
-          <Suspense fallback={null}>
-            <CompareBar />
-          </Suspense>
-          
-          {/* Mobile sticky CTA bar - shows on scroll */}
-          <MobileBottomCta />
-        </AIMechanicProvider>
-        </OwnedVehiclesProvider>
-        </SavedBuildsProvider>
-        </CompareProvider>
-        </FavoritesProvider>
-        </CarSelectionProvider>
-        </FeedbackProvider>
-        </AuthProvider>
+        <GlobalErrorHandler>
+          <FetchInterceptor>
+            <ConsoleErrorInterceptor>
+            <ErrorBoundary name="RootLayout" featureContext="app">
+              <AuthProvider>
+            <FeedbackProvider>
+            <CarSelectionProvider>
+            <FavoritesProvider>
+            <CompareProvider>
+            <SavedBuildsProvider>
+            <OwnedVehiclesProvider>
+            <AIMechanicProvider>
+              {/* Scroll to top on route change */}
+              <Suspense fallback={null}>
+                <ScrollToTop />
+              </Suspense>
+              <Header />
+              
+              {/* Feedback corner - discreet top-right feedback icon */}
+              <FeedbackCorner />
+              
+              <main>
+                {children}
+              </main>
+              <Footer />
+              
+              {/* Floating Compare Bar - shows when cars added to compare */}
+              <Suspense fallback={null}>
+                <CompareBar />
+              </Suspense>
+              
+              {/* Mobile sticky CTA bar - shows on scroll */}
+              <MobileBottomCta />
+            </AIMechanicProvider>
+            </OwnedVehiclesProvider>
+            </SavedBuildsProvider>
+            </CompareProvider>
+            </FavoritesProvider>
+            </CarSelectionProvider>
+            </FeedbackProvider>
+            </AuthProvider>
+            </ErrorBoundary>
+            </ConsoleErrorInterceptor>
+          </FetchInterceptor>
+        </GlobalErrorHandler>
       </body>
     </html>
   );
