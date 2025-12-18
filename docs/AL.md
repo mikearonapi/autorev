@@ -435,6 +435,7 @@ Expensive tools are cached to reduce costs:
 |------|-----|
 | `get_car_ai_context` | 2 minutes |
 | `search_knowledge` | 5 minutes |
+| `search_community_insights` | 5 minutes |
 | `get_track_lap_times` | 10 minutes |
 | `get_dyno_runs` | 10 minutes |
 

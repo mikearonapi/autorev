@@ -1,8 +1,8 @@
 # AutoRev Database Schema
 
-> Complete reference for all 65 database tables
+> Complete reference for all 68 database tables
 >
-> **Last Verified:** December 15, 2024 — MCP-verified live query (Row counts audited)
+> **Last Verified:** December 18, 2024 — MCP-verified live query (Row counts audited)
 
 ---
 
@@ -15,13 +15,13 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Enthusiast Scores** | 7 subjective scores (sound, track, reliability, etc.) — not available from any API |
 | **Real Dyno Data** | Actual wheel HP/TQ measurements from real cars with mods documented |
 | **Citeable Lap Times** | Track times with tire, weather, and driver context |
-| **AI-Ready Knowledge** | 547 vector-embedded chunks for semantic search |
+| **AI-Ready Knowledge** | 683 vector-embedded chunks for semantic search |
 | **YouTube Intelligence** | 288 videos with AI-extracted pros/cons/summaries |
 | **Parts + Fitments** | 642 parts with 836 verified car-specific fitments |
 | **Maintenance Specs** | 130 columns of oil, fluid, tire specs per car |
 | **Recall Data** | 469 NHTSA recall campaigns linked to cars |
 | **Community Insights** | 1,226 forum-extracted insights (⚠️ Porsche-only currently) |
-| **Events** | 55 car events (⚠️ needs re-ingestion) |
+| **Events** | 7,730 car events |
 
 ---
 
@@ -59,9 +59,11 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | YouTube | 4 | 4 | 0 |
 | Track Data | 2 | 1 | 1 |
 | Forum Intelligence | 5 | 5 | 0 |
-| Events | 6 | 3 | 3 |
+| Events | 6 | 4 | 2 |
+| Event Coverage | 1 | 1 | 0 |
+| Image Library | 2 | 0 | 2 |
 | System | 5 | 4 | 1 |
-| **Total** | **65** | **51** | **14** |
+| **Total** | **68** | **53** | **15** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
@@ -70,7 +72,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 
 ## Core Car Data (16 tables)
 
-> **Note:** Row counts verified December 15, 2024 via MCP Supabase query.
+> **Note:** Row counts verified December 18, 2024 via MCP Supabase query.
 
 ### `cars` — Main vehicle database
 | Status | **98 rows** |
@@ -171,7 +173,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Future Use** | Detailed market analysis, price justification |
 
 ### `car_slug_aliases` — Slug redirects
-| Status | **23 rows** |
+| Status | **35 rows** |
 |--------|------------|
 | **Purpose** | Map alternate slugs to canonical car slugs |
 | **Key Fields** | `alias`, `canonical_slug` |
@@ -384,13 +386,13 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ## Knowledge Base (2 tables)
 
 ### `source_documents` — Document sources
-| Status | **54 rows** |
-|--------|------------|
+| Status | **190 rows** |
+|--------|-------------|
 | **Purpose** | Ingested documents (guides, transcripts) |
 | **Key Fields** | `id`, `source_type`, `source_url`, `source_title`, `license`, `raw_text`, `metadata` |
 
 ### `document_chunks` — Vector embeddings
-| Status | **547 rows** ✅ |
+| Status | **683 rows** ✅ |
 |--------|---------------|
 | **Purpose** | Chunked content with embeddings for semantic search |
 | **Key Fields** | `document_id` (FK→source_documents), `car_id`, `car_slug`, `chunk_index`, `chunk_text`, `chunk_tokens`, `topic`, `embedding_model`, `embedding` (vector) |
@@ -503,17 +505,17 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | Events API, event filtering |
 
 ### `events` — Core event data
-| Status | **55 rows** ⚠️ |
-|--------|----------------|
+| Status | **7,730 rows** ✅ |
+|--------|------------------|
 | **Purpose** | Car events with location, dates, and details |
-| **Gap Note** | Events count dropped from ~940 to 55. Requires re-ingestion from sources. |
+| **Note** | Significantly expanded via automated event ingestion |
 | **Key Fields** | `slug`, `name`, `description`, `event_type_id`, `start_date`, `end_date`, `start_time`, `end_time`, `timezone` |
 | **Location Fields** | `venue_name`, `address`, `city`, `state`, `zip`, `country`, `latitude`, `longitude`, `region`, `scope` |
 | **Meta Fields** | `source_url`, `source_name`, `registration_url`, `image_url`, `cost_text`, `is_free`, `status`, `featured` |
 | **Used By** | Events pages, /api/events |
 
 ### `event_car_affinities` — Event-car/brand links
-| Status | **0 rows** ⬜ |
+| Status | **79 rows** |
 |--------|------------|
 | **Purpose** | Links events to specific cars or brands |
 | **Key Fields** | `event_id`, `car_id` (nullable), `brand` (nullable), `affinity_type` (featured/welcome/exclusive) |
@@ -540,6 +542,52 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Key Fields** | `name`, `source_type`, `base_url`, `api_config`, `scrape_config`, `regions_covered[]`, `event_types[]`, `is_active`, `last_run_at`, `last_run_status`, `last_run_events` |
 | **Used By** | Automated event ingestion cron |
 | **Note** | Source names must normalize to match fetcher keys (e.g., "MotorsportReg" → "motorsportreg"). See `lib/eventSourceFetchers/index.js` for available fetchers. |
+
+---
+
+## Event Coverage (1 table)
+
+> Internal analytics for tracking event coverage across US cities
+
+### `target_cities` — Event Coverage Tracking
+| Status | **494 rows** |
+|--------|-------------|
+| **Purpose** | Track event coverage for top 500 US cities |
+| **Columns** | 21 columns |
+| **Key Fields** | `id`, `city`, `state`, `population`, `population_rank`, `latitude`, `longitude`, `region`, `msa_name`, `priority_tier` |
+| **Coverage Fields** | `has_cnc_coverage`, `cnc_event_count`, `total_event_count`, `track_event_count`, `show_event_count`, `autocross_event_count` |
+| **Meta Fields** | `nearest_event_distance_miles`, `coverage_notes`, `last_coverage_check` |
+| **Used By** | Coverage reports, event expansion planning |
+| **RLS** | Public read, service role write |
+
+---
+
+## Image Library (2 tables)
+
+> Image management system for car images and brand logos
+
+### `car_images` — Car image repository
+| Status | **0 rows** ⬜ |
+|--------|---------------|
+| **Purpose** | Central repository for all car images with rich metadata |
+| **Columns** | 33 columns |
+| **Key Fields** | `id`, `car_slug`, `brand`, `blob_url`, `blob_path`, `source_type`, `license`, `description`, `alt_text` |
+| **Content Fields** | `content_tags[]`, `recommended_uses[]`, `quality_tier`, `is_primary`, `display_order` |
+| **AI Fields** | `ai_prompt`, `ai_model`, `ai_settings` |
+| **Status Fields** | `is_verified`, `is_active`, `needs_review`, `review_notes` |
+| **Used By** | Image library management (feature gated by `SUPABASE_IMAGE_SYNC_ENABLED`) |
+| **RLS** | Public read, service role write |
+
+### `brand_logos` — Brand logo repository
+| Status | **0 rows** ⬜ |
+|--------|---------------|
+| **Purpose** | Brand logos and branding metadata |
+| **Columns** | 17 columns |
+| **Key Fields** | `id`, `brand_key`, `brand_name`, `logo_svg_url`, `logo_png_url`, `logo_dark_url` |
+| **Branding Fields** | `primary_color`, `secondary_color`, `accent_color` |
+| **Info Fields** | `founded`, `headquarters`, `country`, `wikipedia_url` |
+| **Used By** | Brand display, theming |
+| **RLS** | Public read, service role write |
 
 ---
 
@@ -584,6 +632,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | `al_user_balance` | User balance calculation | View |
 | `feedback_bug_triage` | Bug feedback filtering | View |
 | `feedback_by_tier` | Feedback aggregated by tier | View |
+| `city_coverage_report` | Event coverage dashboard for target cities | View |
 
 ---
 
@@ -596,7 +645,6 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Market Pricing** | 10/98 cars | 98/98 | My Garage Value tab | Expand BaT/Cars.com scrapers |
 | **Part Fitments** | 836 fitments (~15% coverage) | Full catalog | Parts search, Build planner | Multi-vendor ingestion pipeline |
 | **Community Insights** | 10/98 cars (Porsche only) | 98/98 | AL tool, car detail | Expand forum scraping to BMW, Nissan, etc. |
-| **Events** | 55 events | 500+ | Events pages | Re-run event source ingestion |
 
 ### P2 — Important (Feature Enhancement)
 
@@ -625,14 +673,18 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 - ✅ `vehicle_service_intervals` (976 records)
 - ✅ `car_issues` (1,201 records)
 - ✅ `car_recalls` (469 records, 69/98 cars)
-- ⚠️ `community_insights` (1,226 records — **Porsche-only, 10/98 cars**)
-- ⚠️ `events` (55 events — **needs re-ingestion**)
+- ⚠️ `community_insights` (1,233 records — **Porsche-only, 10/98 cars**)
+- ✅ `events` (7,730 events)
 
 ### Significantly Expanded
 - `parts` (642 records)
 - `part_fitments` (836 records)
-- `forum_scraped_threads` (175 threads)
+- `forum_scraped_threads` (181 threads)
 - `fitment_tag_mappings` (124 records)
+- `events` (7,730 records)
+- `document_chunks` (683 records)
+- `source_documents` (190 records)
+- `target_cities` (494 records)
 
 ### Partially Populated
 - ⚠️ `car_market_pricing` (10/98 cars)
@@ -654,6 +706,8 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | `al_credit_purchases` | Payment integration |
 | `event_saves` | User bookmarked events |
 | `event_submissions` | User submitted events |
+| `car_images` | Image library (enable via SUPABASE_IMAGE_SYNC_ENABLED) |
+| `brand_logos` | Brand logo repository |
 
 ---
 
@@ -683,6 +737,7 @@ AutoRev uses PostgreSQL functions for complex queries. These are called via `sup
 
 | Function | Purpose | Used By |
 |----------|---------|---------|
+| `search_cars_fts(search_query, max_results)` | Full-text search with relevance ranking | AL car search |
 | `search_cars_fulltext(search_query, max_results)` | PostgreSQL full-text search | Car search, AL |
 | `search_cars_semantic(query_embedding, threshold, count)` | Vector similarity search | Semantic car search |
 | `search_cars_advanced(search_query, filters, sort_by, ...)` | Complex filtered search | Browse cars page |

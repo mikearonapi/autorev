@@ -66,7 +66,12 @@
     "fuel_type": "Premium",
     "annual_fuel_cost": 2500,
     "co2_emissions": 420,
-    "ghg_score": 4
+    "ghg_score": 4,
+    "is_electric": false,
+    "is_hybrid": false,
+    "ev_range": null,
+    "source": "EPA",
+    "fetched_at": "2024-12-15T00:00:00.000Z"
   }
 }
 ```
@@ -87,10 +92,25 @@
     "nhtsa_side_crash_rating": 5,
     "nhtsa_rollover_rating": 4,
     "recall_count": 2,
+    "complaint_count": 15,
+    "investigation_count": 0,
+    "tsb_count": 3,
+    "has_open_recalls": false,
+    "has_open_investigations": false,
     "iihs_overall": "Good",
+    "iihs_small_overlap_front": "Good",
+    "iihs_moderate_overlap_front": "Good",
+    "iihs_side": "Good",
+    "iihs_roof_strength": "Good",
+    "iihs_head_restraints": "Good",
+    "iihs_front_crash_prevention": "Superior",
+    "iihs_headlight_rating": "Acceptable",
     "iihs_top_safety_pick": false,
+    "iihs_top_safety_pick_plus": false,
     "safety_score": 85,
-    "safety_grade": "A"
+    "safety_grade": "A",
+    "nhtsa_fetched_at": "2024-12-15T00:00:00.000Z",
+    "iihs_fetched_at": "2024-12-15T00:00:00.000Z"
   }
 }
 ```
@@ -129,13 +149,24 @@
   "marketValue": {
     "avg_price": 45000,
     "bat_avg": 46000,
+    "bat_median": 45500,
     "carscom_avg": 44000,
-    "hagerty_condition_2": 48000,
+    "carscom_median": 43500,
+    "hagerty_concours": 65000,
+    "hagerty_excellent": 52000,
+    "hagerty_good": 45000,
+    "hagerty_fair": 38000,
     "trend_direction": "stable",
-    "confidence": "high"
+    "confidence": "high",
+    "updated_at": "2024-12-15T00:00:00.000Z"
   }
 }
 ```
+
+**Notes:**
+- Returns `null` for `marketValue` if no pricing data available
+- `trend_direction` can be: "rising", "stable", "falling"
+- `confidence` can be: "high", "medium", "low"
 
 **Table:** `car_market_pricing`
 
@@ -298,7 +329,7 @@
 
 **Query Params:**
 - `limit` - Max recalls (default 50, max 200)
-- `includeIncomplete` - Include incomplete records (default true)
+- `includeIncomplete` - Include incomplete records (default true, set to "false" to filter)
 
 **Response:**
 ```json
@@ -313,6 +344,7 @@
       "consequence": "...",
       "remedy": "...",
       "manufacturer": "Porsche",
+      "notes": "Additional recall notes",
       "source_url": "https://...",
       "is_incomplete": false
     }
@@ -331,27 +363,63 @@
 **Purpose:** Search parts catalog
 
 **Query Params:**
-- `q` - Search query
-- `car_slug` - Filter by car fitment
+- `q` - Search query (optional if carSlug/carVariantKey provided)
+- `carSlug` - Filter by car fitment
+- `carVariantKey` - Filter by specific car variant
 - `category` - Part category
-- `limit` - Max results
+- `verified` - Filter to verified fitments only (boolean)
+- `limit` - Max results (default 12, max 30)
 
 **Response:**
 ```json
 {
-  "parts": [
+  "query": "intake",
+  "carSlug": "718-cayman-gt4",
+  "carVariantKey": null,
+  "count": 5,
+  "results": [
     {
       "id": "uuid",
       "name": "Cold Air Intake",
       "brand_name": "AFE",
       "part_number": "54-12202",
       "category": "intake",
-      "fitment": { "verified": true, "requires_tune": false },
-      "latest_price": { "price_cents": 35000, "vendor_name": "MAPerformance" }
+      "description": "High-flow cold air intake system",
+      "quality_tier": "premium",
+      "street_legal": true,
+      "source_urls": ["https://..."],
+      "confidence": 0.95,
+      "fitment": {
+        "part_id": "uuid",
+        "car_id": "uuid",
+        "car_variant_id": null,
+        "car_slug": "718-cayman-gt4",
+        "fitment_notes": "Direct bolt-on",
+        "requires_tune": false,
+        "install_difficulty": "easy",
+        "estimated_labor_hours": 1,
+        "verified": true,
+        "confidence": 0.95,
+        "source_url": "https://...",
+        "updated_at": "2024-12-15T00:00:00.000Z"
+      },
+      "latest_price": {
+        "part_id": "uuid",
+        "vendor_name": "MAPerformance",
+        "product_url": "https://...",
+        "price_cents": 35000,
+        "currency": "USD",
+        "recorded_at": "2024-12-15T00:00:00.000Z"
+      }
     }
   ]
 }
 ```
+
+**Notes:**
+- If `carSlug` or `carVariantKey` provided but no fitments found, returns empty results
+- Fitments are ranked by verified status, confidence, and recency
+- Maximum of 60 part IDs can be searched at once
 
 **Tables:** `parts`, `part_fitments`, `part_pricing_snapshots`
 
@@ -386,14 +454,32 @@
   "edges": [
     {
       "id": "uuid",
-      "relation_type": "requires|suggests|conflicts",
-      "reason": "Explanation",
-      "part": { "id": "uuid", "name": "Part A", "brand_name": "Brand", "category": "intake" },
-      "related_part": { "id": "uuid", "name": "Part B", "brand_name": "Brand", "category": "tune" }
+      "relation_type": "requires",
+      "reason": "Intake requires tune for optimal performance",
+      "metadata": {},
+      "part": {
+        "id": "uuid",
+        "name": "Cold Air Intake",
+        "brand_name": "AFE",
+        "part_number": "54-12202",
+        "category": "intake"
+      },
+      "related_part": {
+        "id": "uuid",
+        "name": "Stage 1 Tune",
+        "brand_name": "COBB",
+        "part_number": "AP3-POR-001",
+        "category": "tune"
+      }
     }
   ]
 }
 ```
+
+**Notes:**
+- `relation_type` can be: `requires`, `suggests`, `conflicts`
+- Maximum of 60 part IDs per request
+- Returns all edges where either `part_id` or `related_part_id` is in the request
 
 **Table:** `part_relationships`
 
@@ -701,42 +787,78 @@
 ---
 
 ### `GET /api/users/[userId]/al-credits`
-**Purpose:** Get user's AL credit balance
+**Purpose:** Get user's AL credit balance (token-based billing)
 
 **Response:**
 ```json
 {
-  "balance_cents": 75,
-  "plan_id": "collector",
-  "lifetime_spent_cents": 125
+  "balanceCents": 75,
+  "balanceFormatted": "$0.75",
+  "balanceCompact": "75¢",
+  "plan": "collector",
+  "planName": "Collector",
+  "monthlyAllocationCents": 200,
+  "monthlyAllocationFormatted": "$2.00",
+  "spentThisMonthCents": 125,
+  "spentThisMonthFormatted": "$1.25",
+  "purchasedCents": 0,
+  "inputTokensThisMonth": 15000,
+  "outputTokensThisMonth": 5000,
+  "messagesThisMonth": 12,
+  "tank": {
+    "level": "medium",
+    "percentage": 37.5
+  },
+  "lastRefillDate": "2024-12-01T00:00:00.000Z",
+  "isUnlimited": false,
+  "credits": 75,
+  "usedThisMonth": 125
 }
 ```
+
+**Notes:**
+- `tank.level` can be: "full", "high", "medium", "low", "empty"
+- `credits` and `usedThisMonth` are legacy fields for backward compatibility
+- `isUnlimited` is true for Founder tier users
 
 ---
 
 ## VIN Routes (3)
 
-### `POST /api/vin/decode`
-**Purpose:** Decode VIN to car variant
+### `GET|POST /api/vin/decode`
+**Purpose:** Decode VIN to car variant using NHTSA API
 
-**Auth:** Required (Collector tier)
+**Auth:** No (public endpoint)
 
-**Request:**
-```json
-{
-  "vin": "WP0AB29986S731234"
-}
-```
+**Methods:**
+- `GET` with query param: `?vin=WP0AB29986S731234`
+- `POST` with JSON body: `{ "vin": "WP0AB29986S731234" }`
 
 **Response:**
 ```json
 {
-  "car_slug": "718-cayman-gt4",
-  "variant": {
-    "model_year": 2020,
-    "trim_level": "GT4",
-    "engine_code": "4.0L flat-6"
+  "success": true,
+  "vin": "WP0AB29986S731234",
+  "decoded": {
+    "year": 2020,
+    "make": "Porsche",
+    "model": "718 Cayman",
+    "trim": "GT4",
+    "engine": "4.0L H6",
+    "bodyClass": "Coupe",
+    "driveType": "RWD",
+    "fuelType": "Gasoline",
+    "plantCountry": "Germany"
   }
+}
+```
+
+**Error Response:**
+```json
+{
+  "success": false,
+  "error": "Invalid VIN format. VIN must be 17 alphanumeric characters (excluding I, O, Q).",
+  "vin": "INVALID"
 }
 ```
 
@@ -1336,15 +1458,41 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 ---
 
 ### `GET /api/health`
-**Purpose:** Health check endpoint for monitoring
+**Purpose:** Health check endpoint for monitoring and uptime checks
+
+**Query Params:**
+- `deep` (boolean): If "true", includes database connectivity check
 
 **Response:**
 ```json
 {
   "status": "ok",
-  "timestamp": "2024-12-15T00:00:00.000Z"
+  "timestamp": "2024-12-18T00:00:00.000Z",
+  "version": "1.0.0"
 }
 ```
+
+**Deep Health Check Response (with `?deep=true`):**
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-12-18T00:00:00.000Z",
+  "database": "connected",
+  "version": "1.0.0"
+}
+```
+
+**Degraded Response (when database unavailable):**
+```json
+{
+  "status": "degraded",
+  "timestamp": "2024-12-18T00:00:00.000Z",
+  "database": "disconnected",
+  "version": "1.0.0"
+}
+```
+
+**HTTP Status:** 200 (ok) or 503 (degraded)
 
 ---
 

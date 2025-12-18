@@ -55,7 +55,13 @@ export async function GET(request, { params }) {
       throw error;
     }
     
-    return NextResponse.json({ safety: data });
+    // Safety data updates weekly - cache for 1 hour
+    return new NextResponse(JSON.stringify({ safety: data }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      },
+    });
   } catch (err) {
     console.error('[API/safety-ratings] Error:', err);
     return NextResponse.json({ error: 'Failed to fetch safety data' }, { status: 500 });

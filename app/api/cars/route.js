@@ -59,7 +59,13 @@ export async function GET(request) {
       throw error;
     }
 
-    return NextResponse.json({ cars: data || [] });
+    // Cache car list for 5 minutes, allow stale for 10 minutes while revalidating
+    return new NextResponse(JSON.stringify({ cars: data || [] }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    });
   } catch (err) {
     console.error('[API/cars] Error:', err);
     await logServerError(err, request, { apiRoute: '/api/cars' });

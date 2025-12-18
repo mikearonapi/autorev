@@ -524,7 +524,20 @@ export async function POST(request) {
   try {
     const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
     const internalEvalHeader = request.headers.get('x-internal-eval-key');
-    const isInternalEval = Boolean(INTERNAL_EVAL_KEY && internalEvalHeader && internalEvalHeader === INTERNAL_EVAL_KEY);
+    
+    // SECURITY: Internal eval requires a valid, sufficiently long key
+    // The key must be at least 32 characters and match exactly
+    const isInternalEval = Boolean(
+      INTERNAL_EVAL_KEY && 
+      INTERNAL_EVAL_KEY.length >= 32 &&
+      internalEvalHeader && 
+      internalEvalHeader === INTERNAL_EVAL_KEY
+    );
+    
+    // Log internal eval usage for audit trail (without exposing the key)
+    if (isInternalEval) {
+      console.info(`[AL:${correlationId}] Internal eval request authorized`);
+    }
     
     // Check if streaming is requested
     const url = new URL(request.url);

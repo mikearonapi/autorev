@@ -43,7 +43,13 @@ export async function GET(request, { params }) {
       throw error;
     }
     
-    return NextResponse.json({ efficiency: data });
+    // Fuel economy data is static - cache for 1 hour
+    return new NextResponse(JSON.stringify({ efficiency: data }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      },
+    });
   } catch (err) {
     console.error('[API/efficiency] Error:', err);
     return NextResponse.json({ error: 'Failed to fetch efficiency data' }, { status: 500 });

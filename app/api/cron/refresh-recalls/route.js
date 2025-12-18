@@ -76,8 +76,6 @@ export async function GET(request) {
     let carsToProcess = allCars.slice(skipCars);
     if (limitCars) carsToProcess = carsToProcess.slice(0, limitCars);
 
-    const startedAt = Date.now();
-
     const perCar = await mapWithConcurrency(carsToProcess, concurrency, async (car) => {
       const fetched = await fetchRecallRowsForCar({
         car,
