@@ -17,9 +17,11 @@
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  /* Add padding for scroll indicators */
+  /* Prevent mobile horizontal overflow: padding must not increase border box width */
+  box-sizing: border-box;
+  max-width: 100%;
+  /* Add padding for scroll indicators (kept within border box) */
   padding-right: 32px;
-  margin-right: -32px;
 }
 
 .categoryRow::-webkit-scrollbar {

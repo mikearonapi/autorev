@@ -4,7 +4,13 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  /*
+    Keep the global header above in-page fixed widgets.
+    Many components use z-index: 1000; if we stay at 1000, DOM order can place
+    the header behind them (mobile users report the menu only works at top).
+    Keep overlays/modals (1100+) above the header.
+  */
+  z-index: 1050;
   background: var(--color-white);
   height: var(--header-height-mobile);
   transition: box-shadow var(--transition-base), background var(--transition-base);
@@ -43,7 +49,7 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  z-index: 1001;
+  z-index: 1051;
   -webkit-tap-highlight-color: transparent;
   /* Fixed width to prevent layout shift when suffix changes */
   min-width: 160px;
@@ -170,7 +176,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-fast), visibility var(--transition-fast);
-  z-index: 1000;
+  z-index: 1050;
 }
 
 /* Bridge gap between nav item and dropdown to prevent mouseout */
@@ -324,7 +330,7 @@
   visibility: hidden;
   transform: translateY(-8px);
   transition: all 0.2s ease;
-  z-index: 1000;
+  z-index: 1050;
 }
 
 .profileDropdown::before {
@@ -561,7 +567,7 @@
   width: 44px;
   height: 44px;
   color: var(--color-gray-700);
-  z-index: 1001;
+  z-index: 1051;
   -webkit-tap-highlight-color: transparent;
   border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
@@ -607,7 +613,11 @@
   flex-direction: column;
   transform: translateX(100%);
   transition: transform var(--transition-slow);
-  z-index: 999;
+  /*
+    Keep the mobile menu panel above in-page fixed widgets (most are <= 1000).
+    Still below global overlays/modals (1100+).
+  */
+  z-index: 1049;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

@@ -12,6 +12,8 @@
     "test": "node --test \"lib/**/*.test.js\" \"scripts/**/*.test.js\"",
     "test:integration": "node --test \"tests/integration/**/*.test.js\"",
     "test:all": "npm test && npm run test:integration",
+    "test:e2e": "playwright test",
+    "mobile:audit": "MOBILE_AUDIT=1 playwright test tests/e2e/mobile-audit.screenshots.spec.js",
     "seed": "node scripts/migrate-and-seed.js",
     "gen:seed-multi-brand-migration": "node scripts/generateSeedMultiBrandMigration.mjs",
     "test:gen:seed-multi-brand-migration": "node scripts/testGenerateSeedMultiBrandMigration.mjs",
@@ -62,6 +64,7 @@
     "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "eslint": "^8.57.0",

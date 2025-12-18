@@ -25,8 +25,18 @@
 }
 
 
-/* Ensure all content is above backgrounds */
-.page > * {
+/*
+  IMPORTANT:
+  Do NOT blanket-style all direct children of `.page`.
+  `.page > * { position: relative; z-index: 2; }` can override fixed overlays
+  (e.g. OnboardingPopup, modal overlays) because CSS module ordering can cause
+  it to win the cascade. That leads to "popups show up while scrolling" and
+  layout/zoom artifacts on mobile.
+*/
+
+/* Keep primary content above the background */
+.headerBar,
+.mainContent {
   position: relative;
   z-index: 2;
 }
@@ -210,6 +220,23 @@
   min-height: 44px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Mobile: slightly reduce pill density to prevent clipping */
+@media (max-width: 480px) {
+  .tabPill {
+    padding: 8px 10px;
+    font-size: 11px;
+    gap: 5px;
+    min-height: 44px;
+  }
+
+  .tabCount {
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
 }
 
 @media (min-width: 480px) {

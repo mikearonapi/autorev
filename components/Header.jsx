@@ -347,6 +347,7 @@ export default function Header() {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMenuOpen}
+          data-testid="mobile-menu-toggle"
         >
           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
@@ -356,6 +357,8 @@ export default function Header() {
       <div 
         ref={mobileNavRef}
         className={`${styles.mobileNav} ${isMenuOpen ? styles.mobileNavOpen : ''}`}
+        data-testid="mobile-nav"
+        data-open={isMenuOpen ? 'true' : 'false'}
       >
         <nav className={styles.mobileNavLinks}>
           {navLinks.map(link => (

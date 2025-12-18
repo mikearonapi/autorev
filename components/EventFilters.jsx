@@ -178,7 +178,8 @@ export default function EventFilters({
           />
           {eventTypes.map(type => (
             <EventCategoryPill 
-              key={type.id}
+              // Prefer stable keys (API types can be missing numeric ids in some environments)
+              key={type.slug || type.id}
               category={type}
               isActive={filters.type === type.slug}
               onClick={() => handleChange('type', type.slug)}

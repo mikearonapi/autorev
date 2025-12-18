@@ -37,6 +37,10 @@ Thumbs.db
 # Generated images (local AI output before upload)
 generated-images/
 
+# Playwright
+playwright-report/
+test-results/
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
