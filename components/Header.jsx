@@ -210,150 +210,156 @@ export default function Header() {
   };
 
   return (
-    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
-      <div className={styles.container}>
-        {/* Logo */}
-        <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <Image 
-              src="/images/autorev-logo-trimmed.png" 
-              alt="AutoRev Logo" 
-              width={36} 
-              height={36}
-              priority
-              unoptimized
-            />
-          </div>
-          <div className={styles.logoText}>
-            <span className={styles.logoName}>
-              Auto<span className={styles.logoRev}>Rev</span><span className={`${styles.logoSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span>
-            </span>
-          </div>
-        </Link>
+    <>
+      <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+        <div className={styles.container}>
+          {/* Logo */}
+          <Link href="/" className={styles.logo}>
+            <div className={styles.logoIcon}>
+              <Image 
+                src="/images/autorev-logo-trimmed.png" 
+                alt="AutoRev Logo" 
+                width={36} 
+                height={36}
+                priority
+                unoptimized
+              />
+            </div>
+            <div className={styles.logoText}>
+              <span className={styles.logoName}>
+                Auto<span className={styles.logoRev}>Rev</span><span className={`${styles.logoSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span>
+              </span>
+            </div>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className={styles.desktopNav}>
-          {navLinks.map(link => (
-            link.subLinks ? (
-              <div key={link.href || link.label} className={styles.navDropdown}>
-                {link.href ? (
-                  <Link
-                    href={link.href}
-                    className={`${styles.navLink} ${isActive(link.href) || link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
-                  >
-                    {link.label}
-                    <ChevronIcon />
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    className={`${styles.navLink} ${styles.navLinkDropdown} ${link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
-                  >
-                    {link.label}
-                    <ChevronIcon />
-                  </button>
-                )}
-                <div className={styles.dropdownMenu}>
-                  {link.subLinks.map(subLink => (
+          {/* Desktop Navigation */}
+          <nav className={styles.desktopNav}>
+            {navLinks.map(link => (
+              link.subLinks ? (
+                <div key={link.href || link.label} className={styles.navDropdown}>
+                  {link.href ? (
                     <Link
-                      key={subLink.href}
-                      href={subLink.href}
-                      className={`${styles.dropdownItem} ${isActive(subLink.href) ? styles.dropdownItemActive : ''}`}
+                      href={link.href}
+                      className={`${styles.navLink} ${isActive(link.href) || link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
                     >
-                      {subLink.label}
+                      {link.label}
+                      <ChevronIcon />
                     </Link>
-                  ))}
+                  ) : (
+                    <button
+                      type="button"
+                      className={`${styles.navLink} ${styles.navLinkDropdown} ${link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
+                    >
+                      {link.label}
+                      <ChevronIcon />
+                    </button>
+                  )}
+                  <div className={styles.dropdownMenu}>
+                    {link.subLinks.map(subLink => (
+                      <Link
+                        key={subLink.href}
+                        href={subLink.href}
+                        className={`${styles.dropdownItem} ${isActive(subLink.href) ? styles.dropdownItemActive : ''}`}
+                      >
+                        {subLink.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`${styles.navLink} ${isActive(link.href) ? styles.navLinkActive : ''}`}
+                >
+                  {link.label}
+                </Link>
+              )
+            ))}
+          </nav>
+
+          {/* Right Side Actions */}
+          <div className={styles.headerActions}>
+            {isAuthenticated ? (
+              <div 
+                className={styles.profileDropdownContainer}
+                onMouseEnter={() => setShowProfileDropdown(true)}
+                onMouseLeave={() => setShowProfileDropdown(false)}
+              >
+                <Link href="/profile" className={styles.profileLink}>
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={displayName || 'Profile'}
+                      width={28}
+                      height={28}
+                      className={styles.profileAvatarImage}
+                    />
+                  ) : (
+                    <span className={styles.profileAvatar}>
+                      {initials}
+                    </span>
+                  )}
+                </Link>
+                
+                {/* Profile Dropdown */}
+                <div className={`${styles.profileDropdown} ${showProfileDropdown ? styles.profileDropdownOpen : ''}`}>
+                  <div className={styles.profileDropdownHeader}>
+                    <span className={styles.profileDropdownName}>{displayName}</span>
+                    <span className={styles.profileDropdownEmail}>{user?.email}</span>
+                  </div>
+                  <div className={styles.profileDropdownDivider} />
+                  <Link 
+                    href="/profile" 
+                    className={styles.profileDropdownItem}
+                    onClick={() => setShowProfileDropdown(false)}
+                  >
+                    <SettingsIcon size={16} />
+                    My Profile
+                  </Link>
+                  <div className={styles.profileDropdownDivider} />
+                  <button 
+                    className={styles.profileDropdownSignOut}
+                    onClick={handleSignOut}
+                  >
+                    <LogoutIcon size={16} />
+                    Sign Out
+                  </button>
                 </div>
               </div>
             ) : (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`${styles.navLink} ${isActive(link.href) ? styles.navLinkActive : ''}`}
-              >
-                {link.label}
-              </Link>
-            )
-          ))}
-        </nav>
-
-        {/* Right Side Actions */}
-        <div className={styles.headerActions}>
-          {isAuthenticated ? (
-            <div 
-              className={styles.profileDropdownContainer}
-              onMouseEnter={() => setShowProfileDropdown(true)}
-              onMouseLeave={() => setShowProfileDropdown(false)}
-            >
-              <Link href="/profile" className={styles.profileLink}>
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={displayName || 'Profile'}
-                    width={28}
-                    height={28}
-                    className={styles.profileAvatarImage}
-                  />
-                ) : (
-                  <span className={styles.profileAvatar}>
-                    {initials}
-                  </span>
-                )}
-              </Link>
-              
-              {/* Profile Dropdown */}
-              <div className={`${styles.profileDropdown} ${showProfileDropdown ? styles.profileDropdownOpen : ''}`}>
-                <div className={styles.profileDropdownHeader}>
-                  <span className={styles.profileDropdownName}>{displayName}</span>
-                  <span className={styles.profileDropdownEmail}>{user?.email}</span>
-                </div>
-                <div className={styles.profileDropdownDivider} />
-                <Link 
-                  href="/profile" 
-                  className={styles.profileDropdownItem}
-                  onClick={() => setShowProfileDropdown(false)}
-                >
-                  <SettingsIcon size={16} />
-                  My Profile
-                </Link>
-                <div className={styles.profileDropdownDivider} />
+              <>
                 <button 
-                  className={styles.profileDropdownSignOut}
-                  onClick={handleSignOut}
+                  className={styles.loginLink}
+                  onClick={() => authModal.openSignIn()}
                 >
-                  <LogoutIcon size={16} />
-                  Sign Out
+                  Log In
                 </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <button 
-                className={styles.loginLink}
-                onClick={() => authModal.openSignIn()}
-              >
-                Log In
-              </button>
-              <Link href="/join" className={styles.joinButton}>
-                Join
-              </Link>
-            </>
-          )}
+                <Link href="/join" className={styles.joinButton}>
+                  Join
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className={styles.menuToggle}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            data-testid="mobile-menu-toggle"
+          >
+            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
         </div>
+      </header>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className={styles.menuToggle}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMenuOpen}
-          data-testid="mobile-menu-toggle"
-        >
-          {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation Overlay */}
+      {/* 
+        Mobile Navigation Overlay - MUST be outside <header> to escape its stacking context.
+        When header has position:fixed + backdrop-filter, it creates a stacking context
+        that traps children regardless of z-index. Sibling placement allows proper layering.
+      */}
       <div 
         ref={mobileNavRef}
         className={`${styles.mobileNav} ${isMenuOpen ? styles.mobileNavOpen : ''}`}
@@ -460,7 +466,7 @@ export default function Header() {
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
       />
-    </header>
+    </>
   );
 }
 

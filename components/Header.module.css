@@ -600,7 +600,11 @@
   left: -8px;
 }
 
-/* Mobile Navigation Overlay - Full screen with safe areas */
+/* Mobile Navigation Overlay - Full screen with safe areas
+   IMPORTANT: This element is rendered OUTSIDE the <header> in the DOM
+   to escape the header's stacking context (created by position:fixed + backdrop-filter).
+   This allows z-index to work at document level.
+*/
 .mobileNav {
   position: fixed;
   top: calc(var(--header-height-mobile) + env(safe-area-inset-top, 0));
@@ -617,10 +621,12 @@
   transform: translateX(100%);
   transition: transform var(--transition-slow);
   /*
-    Keep the mobile menu panel above in-page fixed widgets (most are <= 1000).
-    Still below global overlays/modals (1100+).
+    Now that mobileNav is outside header's stacking context, this z-index
+    competes at document level. Set to 1050 to match header and appear
+    above all in-page widgets (typically z-index <= 1000).
+    Still below global modals (1100+).
   */
-  z-index: 1049;
+  z-index: 1050;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
