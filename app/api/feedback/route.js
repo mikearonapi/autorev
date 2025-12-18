@@ -1,73 +1,99 @@
-import { createClient } from '@supabase/supabase-js';
+import { getServiceClient } from '@/lib/supabaseServer';
 import { notifyFeedback } from '@/lib/discord';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(request) {
   try {
     const body = await request.json();
     const {
       feedback_type,
+      category,
       message,
       email,
       page_url,
+      pageUrl,
       page_title,
       car_slug,
       build_id,
       tags,
       metadata,
+      browserInfo,
+      severity,
+      rating,
+      featureContext,
+      errorMetadata,
+      userTier,
     } = body;
 
-    // Validate required fields
-    if (!feedback_type || !message) {
+    const normalizedMessage = message || body?.errorMetadata?.errorMessage;
+
+    if (!normalizedMessage) {
       return Response.json(
-        { success: false, error: 'feedback_type and message are required' },
+        { success: false, error: 'message is required' },
         { status: 400 }
       );
     }
 
-    // Validate feedback_type
-    const validTypes = ['like', 'dislike', 'feature', 'bug', 'question', 'other'];
-    if (!validTypes.includes(feedback_type)) {
+    const validTypes = ['like', 'dislike', 'feature', 'bug', 'question', 'car_request', 'other', 'al-feedback'];
+    const validCategories = ['bug', 'feature', 'data', 'general', 'praise', 'auto-error'];
+    const validSeverities = ['blocking', 'major', 'minor'];
+
+    const categoryToInsert = category || body?.category || null;
+    const feedbackTypeToInsert = feedback_type && validTypes.includes(feedback_type)
+      ? feedback_type
+      : (categoryToInsert === 'auto-error' ? 'bug' : 'other');
+
+    if (!validTypes.includes(feedbackTypeToInsert)) {
       return Response.json(
         { success: false, error: `Invalid feedback_type. Must be one of: ${validTypes.join(', ')}` },
         { status: 400 }
       );
     }
 
-    // Create Supabase client with service role for bypassing RLS
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
+    if (categoryToInsert && !validCategories.includes(categoryToInsert)) {
+      return Response.json(
+        { success: false, error: `Invalid category. Must be one of: ${validCategories.join(', ')}` },
+        { status: 400 }
+      );
+    }
 
-    // Get user agent from request headers
+    if (severity && !validSeverities.includes(severity)) {
+      return Response.json(
+        { success: false, error: `Invalid severity. Must be one of: ${validSeverities.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // Get shared Supabase client (service role for bypassing RLS)
+    const supabase = getServiceClient();
+    if (!supabase) {
+      console.error('[Feedback API] Database not configured');
+      return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
+    }
+
     const userAgent = request.headers.get('user-agent') || null;
+    const browserInfoPayload = browserInfo || metadata || null;
 
-    // Prepare feedback data
     const feedbackData = {
-      feedback_type,
-      message,
+      feedback_type: feedbackTypeToInsert,
+      category: categoryToInsert || null,
+      message: normalizedMessage,
       email: email || null,
-      page_url: page_url || null,
+      page_url: page_url || pageUrl || null,
       page_title: page_title || null,
       car_slug: car_slug || null,
       build_id: build_id || null,
       user_agent: userAgent,
+      browser_info: browserInfoPayload,
       tags: tags || [],
       status: 'new',
       priority: 'normal',
+      severity: severity || null,
+      rating: rating || null,
+      feature_context: featureContext || null,
+      user_tier: userTier || null,
+      error_metadata: errorMetadata || null,
     };
 
-    // Add metadata as JSONB if provided
-    if (metadata) {
-      feedbackData.browser_info = metadata;
-    }
-
-    // Insert into user_feedback table
     const { data, error } = await supabase
       .from('user_feedback')
       .insert(feedbackData)
@@ -82,8 +108,6 @@ export async function POST(request) {
       );
     }
 
-    // Fire-and-forget Discord notification (don't await to avoid blocking response)
-    // Map feedback_type to category for Discord display
     const categoryMap = {
       'like': 'Praise',
       'dislike': 'Dislike', 
@@ -91,15 +115,17 @@ export async function POST(request) {
       'bug': 'Bug Report',
       'question': 'Question',
       'other': 'Other',
+      'car_request': 'Car Request',
+      'auto-error': 'Auto Error',
     };
     
     notifyFeedback({
       id: data.id,
-      category: body.category || categoryMap[feedback_type] || feedback_type,
-      severity: body.severity,
-      message: body.message,
-      page_url: body.page_url || page_url, // Use snake_case to match widget
-      user_tier: body.userTier || null,
+      category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
+      severity: feedbackData.severity,
+      message: normalizedMessage,
+      page_url: feedbackData.page_url,
+      user_tier: feedbackData.user_tier,
     }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
 
     return Response.json({
@@ -115,5 +141,63 @@ export async function POST(request) {
       { success: false, error: 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     );
+  }
+}
+
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    const severity = searchParams.get('severity');
+    const status = searchParams.get('status');
+    const unresolved = searchParams.get('unresolved') === 'true';
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);
+
+    const supabase = getServiceClient();
+    if (!supabase) {
+      return Response.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
+    let query = supabase
+      .from('user_feedback')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (category && category !== 'all') query = query.eq('category', category);
+    if (severity && severity !== 'all') query = query.eq('severity', severity);
+    if (status && status !== 'all') query = query.eq('status', status);
+    if (unresolved) query = query.is('resolved_at', null);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('[Feedback API] GET error:', error);
+      return Response.json({ error: 'Failed to fetch feedback' }, { status: 500 });
+    }
+
+    const counts = {};
+    const categoryStats = {};
+
+    (data || []).forEach((item) => {
+      const cat = item.category || item.feedback_type || 'unknown';
+      counts[cat] = (counts[cat] || 0) + 1;
+
+      const statBucket = categoryStats[cat] || { total: 0, blocking: 0, major: 0, minor: 0 };
+      statBucket.total += 1;
+      if (item.severity === 'blocking') statBucket.blocking += 1;
+      if (item.severity === 'major') statBucket.major += 1;
+      if (item.severity === 'minor') statBucket.minor += 1;
+      categoryStats[cat] = statBucket;
+    });
+
+    return Response.json({
+      recent: data,
+      counts,
+      categoryStats,
+    });
+  } catch (err) {
+    console.error('[Feedback API] GET unexpected error:', err);
+    return Response.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
