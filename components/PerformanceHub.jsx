@@ -1017,7 +1017,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   
   // Get available upgrades for this car
   const availableUpgrades = useMemo(() => 
-    getAvailableUpgrades(car), 
+    car ? getAvailableUpgrades(car) : { packages: [], modulesByCategory: {} }, 
     [car]
   );
   
@@ -1197,6 +1197,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   // Format numbers with commas
   const formatNumber = (num) => num?.toLocaleString() || '—';
   
+  // Early return AFTER all hooks (React rules of hooks)
+  if (!car) {
+    return null;
+  }
+
   return (
     <div className={styles.hubV2}>
 
@@ -1372,7 +1377,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             >
               Stock
             </button>
-            {availableUpgrades.packages.map(pkg => (
+            {(availableUpgrades.packages || []).map(pkg => (
               <button
                 key={pkg.key}
                 className={`${styles.packagePill} ${styles[pkg.tier]} ${selectedPackageKey === pkg.key ? styles.active : ''}`}
