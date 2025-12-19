@@ -850,6 +850,106 @@
 
 /* Mobile-first adjustments */
 @media (max-width: 767px) {
+  .page {
+    --section-pad-y: 32px;
+    gap: var(--space-lg);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    padding-bottom: var(--section-pad-y);
+  }
+
+  /* Compact hero layout - show AL mascot inline with content */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .heroContent {
+    gap: var(--space-sm);
+  }
+
+  /* Move AL visual right after the CTA buttons */
+  .heroVisual {
+    order: -1;
+    margin-bottom: var(--space-xs);
+  }
+
+  .heroCard {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .heroMascotWrapper {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .heroMascot {
+    width: 80px;
+    height: 80px;
+  }
+
+  .heroCardContent {
+    display: none;
+  }
+
+  .heroGlow {
+    display: none;
+  }
+
+  /* Compact stats - smaller cards */
+  .heroStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+
+  .statCard {
+    padding: var(--space-sm);
+  }
+
+  .statValue {
+    font-size: var(--font-size-lg);
+    min-height: 24px;
+  }
+
+  .statLabel {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Compact section headers */
+  .sectionHeader {
+    margin-bottom: var(--space-md);
+  }
+
+  .sectionHeader h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .sectionHeader p {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Compact problem section */
+  .problem {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .problemCard {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .problemIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Comparison cards */
   .tableWrapper {
     display: none;
   }
@@ -860,6 +960,35 @@
     gap: var(--space-md);
   }
 
+  .comparisonCard {
+    padding: var(--space-md);
+  }
+
+  /* Capability cards */
+  .card {
+    padding: var(--space-md);
+  }
+
+  .cardIcon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Tools accordion */
+  .tools {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .accordionTrigger {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .accordionContent {
+    padding: 0 var(--space-md) var(--space-sm);
+  }
+
+  /* Pricing cards */
   .pricingTable {
     display: none;
   }
@@ -870,21 +999,33 @@
     gap: var(--space-md);
   }
 
+  .pricingCard {
+    padding: var(--space-md);
+  }
+
   .pricingCardList li {
     align-items: center;
+    padding: var(--space-xs) var(--space-sm);
   }
 
   .pricingCardSummary {
     font-size: var(--font-size-base);
   }
 
-  .heroStats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* CTA section */
+  .tryNow {
+    padding: var(--space-lg) var(--space-sm);
+    margin-bottom: 0;
   }
 
-  .page {
-    padding-left: var(--space-sm);
-    padding-right: var(--space-sm);
+  .promptButton {
+    padding: var(--space-sm) var(--space-md);
+    min-height: 44px;
+  }
+
+  /* Remove sticky CTA (already handled globally) */
+  .mobileStickyCta {
+    display: none;
   }
 }
 

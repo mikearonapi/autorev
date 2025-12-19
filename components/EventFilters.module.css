@@ -286,8 +286,325 @@
   margin-left: auto;
 }
 
+/* ==========================================================================
+   MOBILE FILTER BAR - Compact bar with filter button
+   ========================================================================== */
+
+.mobileFilterBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+}
+
+/* Hide mobile filter bar on desktop */
+@media (min-width: 768px) {
+  .mobileFilterBar {
+    display: none;
+  }
+}
+
+.mobileFilterBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobileFilterBtn:active {
+  background: var(--color-gray-50);
+  transform: scale(0.98);
+}
+
+.filterBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--sn-primary);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.mobileSubmitBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--sn-gold);
+  color: var(--color-gray-900);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobileSubmitBtn:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   MOBILE FILTER DRAWER - Bottom sheet style
+   ========================================================================== */
+
+.filterDrawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.filterDrawer {
+  width: 100%;
+  max-height: 85vh;
+  max-height: 85dvh;
+  background: var(--color-white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+  /* Safe area support for iPhone */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filterDrawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-gray-100);
+  position: relative;
+}
+
+.filterDrawerDragHandle {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: var(--color-gray-300);
+  border-radius: 2px;
+}
+
+.filterDrawerTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.filterDrawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filterDrawerClose:active {
+  background: var(--color-gray-200);
+}
+
+.filterDrawerContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Style filter elements inside drawer */
+.filterDrawerContent .locationAutocomplete {
+  max-width: none;
+  width: 100%;
+}
+
+.filterDrawerContent .filterSelect {
+  width: 100%;
+  min-height: 48px;
+}
+
+.filterDrawerContent .dateRange {
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.filterDrawerContent .dateInput {
+  width: 100%;
+  min-height: 48px;
+}
+
+.drawerToggleRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.drawerViewToggle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.drawerViewLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.drawerClearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: var(--space-sm);
+}
+
+.drawerClearBtn:active {
+  background: var(--color-gray-200);
+}
+
+.filterDrawerFooter {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.filterDrawerApplyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--sn-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filterDrawerApplyBtn:active {
+  background: var(--sn-primary-dark);
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   DESKTOP FILTERS - Full filter bar (hidden on mobile)
+   ========================================================================== */
+
+.desktopFilters {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktopFilters {
+    display: block;
+  }
+}
+
+/* Desktop filter row styling */
+.desktopFilters .filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.desktopFilters .toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-gray-100);
+  margin-top: var(--space-sm);
+}
+
+/* ==========================================================================
+   LEGACY MOBILE STYLES (updated)
+   ========================================================================== */
+
 /* Mobile */
-@media (max-width: 640px) {
+@media (max-width: 767px) {
+  /* Hide desktop-only elements */
+  .desktopFilters {
+    display: none;
+  }
+  
   .filterRow {
     flex-direction: column;
     align-items: stretch;

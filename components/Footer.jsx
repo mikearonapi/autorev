@@ -5,6 +5,13 @@ import Link from 'next/link';
 import styles from './Footer.module.css';
 import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient';
 
+// Check icon for success state
+const CheckIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 // Navigation sections
 const footerSections = [
   {
@@ -107,7 +114,7 @@ export default function Footer() {
 
             {/* Compact Newsletter */}
             {status === 'success' ? (
-              <p className={styles.newsletterSuccess}>✓ You're subscribed!</p>
+              <p className={styles.newsletterSuccess}><CheckIcon size={14} /> You're subscribed!</p>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
                 <input

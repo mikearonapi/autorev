@@ -317,7 +317,9 @@ export default function AddToCalendarButton({ event, variant = 'default' }) {
             >
               ×
             </button>
-            <div className={styles.modalIcon}>📅</div>
+            <div className={styles.modalIcon}>
+              <CalendarIcon size={32} />
+            </div>
             <h3 className={styles.modalTitle}>Add to Your Calendar</h3>
             <p className={styles.modalDescription}>
               Never miss an event! Export events directly to Google Calendar, Apple Calendar, 

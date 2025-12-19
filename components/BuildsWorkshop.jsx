@@ -139,6 +139,13 @@ const Icons = {
       <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
     </svg>
   ),
+  alert: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
 };
 
 /**
@@ -309,10 +316,10 @@ function BuildCard({
           {/* DIY Assessment */}
           <div className={styles.diyAssessment} data-feasibility={complexity.diyFeasibility}>
             <span className={styles.diyLabel}>
-              {complexity.diyFeasibility === 'fully-diy' && '✓ DIY Friendly'}
-              {complexity.diyFeasibility === 'partial-diy' && '⚡ Partial DIY'}
-              {complexity.diyFeasibility === 'shop-recommended' && '⚠ Shop Recommended'}
-              {complexity.diyFeasibility === 'mostly-shop' && '🔧 Professional Install'}
+              {complexity.diyFeasibility === 'fully-diy' && <><Icons.check size={14} /> DIY Friendly</>}
+              {complexity.diyFeasibility === 'partial-diy' && <><Icons.bolt size={14} /> Partial DIY</>}
+              {complexity.diyFeasibility === 'shop-recommended' && <><Icons.alert size={14} /> Shop Recommended</>}
+              {complexity.diyFeasibility === 'mostly-shop' && <><Icons.wrench size={14} /> Professional Install</>}
             </span>
           </div>
         </div>

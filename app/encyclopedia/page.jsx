@@ -868,14 +868,14 @@ function HomeView({ onNavigate }) {
 // =============================================================================
 
 // =============================================================================
-// PAGE BANNER
+// PAGE BANNER - With scroll-collapse for mobile
 // =============================================================================
 
-function PageBanner() {
+function PageBanner({ isCollapsed }) {
   const stats = useMemo(() => getEncyclopediaStats(), []);
 
   return (
-    <div className={styles.pageBanner}>
+    <div className={`${styles.pageBanner} ${isCollapsed ? styles.pageBannerCollapsed : ''}`}>
       <div className={styles.bannerContent}>
         <div className={styles.bannerText}>
           <h1 className={styles.bannerTitle}>Automotive Encyclopedia</h1>
@@ -901,10 +901,56 @@ function PageBanner() {
           <div className={styles.bannerStatDivider} />
           <div className={styles.bannerStat}>
             <span className={styles.bannerStatNumber}>{stats.buildGuides}</span>
-            <span className={styles.bannerStatLabel}>Build Guides</span>
+            <span className={styles.bannerStatLabel}>Guides</span>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// QUICK NAV TABS - Mobile horizontal scroll navigation
+// =============================================================================
+
+function QuickNavTabs({ selectedId, onNavigate }) {
+  const quickLinks = useMemo(() => [
+    { key: null, label: 'Home', icon: 'home' },
+    { key: 'auto.engine', label: 'Engine', icon: 'cog' },
+    { key: 'auto.suspension', label: 'Suspension', icon: 'cog' },
+    { key: 'auto.brakes', label: 'Brakes', icon: 'cog' },
+    { key: 'modifications', label: 'Mods', icon: 'wrench' },
+    { key: 'guides', label: 'Guides', icon: 'map' },
+  ], []);
+
+  const getActiveKey = () => {
+    if (!selectedId) return null;
+    // Match based on prefix
+    for (const link of quickLinks) {
+      if (link.key && selectedId.startsWith(link.key)) {
+        return link.key;
+      }
+    }
+    return null;
+  };
+
+  const activeKey = getActiveKey();
+
+  return (
+    <div className={styles.quickNavTabs}>
+      {quickLinks.map((link) => (
+        <button
+          key={link.key || 'home'}
+          className={`${styles.quickNavTab} ${activeKey === link.key ? styles.quickNavTabActive : ''}`}
+          onClick={() => onNavigate(link.key)}
+        >
+          {link.icon === 'home' && <Icons.home size={14} />}
+          {link.icon === 'cog' && <Icons.cog size={14} />}
+          {link.icon === 'wrench' && <Icons.wrench size={14} />}
+          {link.icon === 'map' && <Icons.map size={14} />}
+          <span>{link.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -919,6 +965,7 @@ function EncyclopediaContent() {
   const [selectedId, setSelectedId] = useState(null);
   const [article, setArticle] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [bannerCollapsed, setBannerCollapsed] = useState(false);
 
   // Read topic from URL on mount
   useEffect(() => {
@@ -938,6 +985,24 @@ function EncyclopediaContent() {
     }
   }, [selectedId]);
 
+  // Scroll-based banner collapse (mobile only)
+  useEffect(() => {
+    let lastScrollY = 0;
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Collapse after scrolling 50px
+      if (scrollY > 50 && !bannerCollapsed) {
+        setBannerCollapsed(true);
+      } else if (scrollY <= 20 && bannerCollapsed) {
+        setBannerCollapsed(false);
+      }
+      lastScrollY = scrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [bannerCollapsed]);
+
   const handleNavigate = useCallback((id) => {
     setSelectedId(id);
     // Update URL without full navigation
@@ -950,24 +1015,42 @@ function EncyclopediaContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  // Handle search trigger - opens sidebar with search focused
+  const handleSearchTrigger = () => {
+    setSidebarOpen(true);
+    // Focus search input after sidebar opens
+    setTimeout(() => {
+      const searchInput = document.querySelector(`.${styles.searchInput}`);
+      if (searchInput) searchInput.focus();
+    }, 100);
+  };
+
   return (
     <div className={styles.page}>
       {/* Page Banner */}
-      <PageBanner />
+      <PageBanner isCollapsed={bannerCollapsed} />
 
       {/* Mobile header */}
       <header className={styles.mobileHeader}>
         <button 
           className={styles.menuButton}
           onClick={() => setSidebarOpen(true)}
+          aria-label="Open navigation menu"
         >
-          <Icons.menu size={24} />
+          <Icons.menu size={22} />
         </button>
         <span className={styles.mobileTitle}>Encyclopedia</span>
-        <div className={styles.mobileSearchTrigger}>
-          <Icons.search size={20} />
-        </div>
+        <button 
+          className={styles.mobileSearchTrigger}
+          onClick={handleSearchTrigger}
+          aria-label="Search encyclopedia"
+        >
+          <Icons.search size={18} />
+        </button>
       </header>
+
+      {/* Quick Navigation Tabs - Mobile only */}
+      <QuickNavTabs selectedId={selectedId} onNavigate={handleNavigate} />
 
       <div className={styles.layout}>
         <Sidebar

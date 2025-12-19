@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './EventFilters.module.css';
 import EventCategoryPill from './EventCategoryPill';
@@ -17,6 +17,20 @@ const RADIUS_OPTIONS = [
   { value: 300, label: '300 miles' },
   { value: 500, label: '500 miles' },
 ];
+
+// Hook to detect mobile viewport
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [breakpoint]);
+  
+  return isMobile;
+}
 
 // Icons
 const Icons = {
@@ -78,6 +92,41 @@ const Icons = {
       <path d="M10 9h4"/>
     </svg>
   ),
+  chevronDown: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  ),
+  chevronUp: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  ),
+  x: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  ),
+  sliders: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="4" y1="21" x2="4" y2="14"/>
+      <line x1="4" y1="10" x2="4" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12" y2="3"/>
+      <line x1="20" y1="21" x2="20" y2="16"/>
+      <line x1="20" y1="12" x2="20" y2="3"/>
+      <line x1="1" y1="14" x2="7" y2="14"/>
+      <line x1="9" y1="8" x2="15" y2="8"/>
+      <line x1="17" y1="16" x2="23" y2="16"/>
+    </svg>
+  ),
+  plus: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  ),
 };
 
 export default function EventFilters({
@@ -99,6 +148,22 @@ export default function EventFilters({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   // Track if location has coordinates from Google Places
   const [locationCoords, setLocationCoords] = useState(null);
+  // Mobile filter drawer state
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  // Calculate active filter count for mobile badge
+  const activeFilterCount = useCallback(() => {
+    let count = 0;
+    if (filters.location) count++;
+    if (filters.region) count++;
+    if (filters.start_date || filters.end_date) count++;
+    if (filters.is_track_event) count++;
+    if (filters.is_free) count++;
+    if (filters.for_my_cars) count++;
+    if (filters.radius && filters.radius !== 50) count++;
+    return count;
+  }, [filters]);
 
   const handleChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
@@ -166,9 +231,148 @@ export default function EventFilters({
     }
   };
 
+  const filterCount = activeFilterCount();
+
+  // Render the main filter inputs (location, radius, region, dates)
+  const renderFilterInputs = () => (
+    <>
+      {/* Location Search with Autocomplete */}
+      {showLocationInput && (
+        <LocationAutocomplete
+          value={filters.location || ''}
+          onChange={handleLocationChange}
+          placeholder="ZIP code or City, State"
+          className={styles.locationAutocomplete}
+        />
+      )}
+
+      {/* Radius/Distance Select */}
+      {showLocationInput && (
+        <select 
+          value={filters.radius || 50} 
+          onChange={(e) => handleRadiusChange(e.target.value)}
+          className={styles.filterSelect}
+          title="Search radius from location"
+        >
+          {RADIUS_OPTIONS.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {/* Region Select */}
+      <select 
+        value={filters.region || ''} 
+        onChange={(e) => handleChange('region', e.target.value)}
+        className={styles.filterSelect}
+      >
+        <option value="">All Regions</option>
+        <option value="New England">New England</option>
+        <option value="Mid-Atlantic">Mid-Atlantic</option>
+        <option value="Southeast">Southeast</option>
+        <option value="Great Lakes">Great Lakes</option>
+        <option value="Plains">Plains</option>
+        <option value="Southwest">Southwest</option>
+        <option value="Mountain">Mountain</option>
+        <option value="Pacific">Pacific</option>
+      </select>
+
+      {/* Date Range */}
+      {showDateRange && (
+        <div className={styles.dateRange}>
+          <input
+            type="date"
+            value={filters.start_date || ''}
+            onChange={(e) => handleChange('start_date', e.target.value)}
+            className={styles.dateInput}
+            placeholder="Start Date"
+          />
+          <span className={styles.dateSeparator}>to</span>
+          <input
+            type="date"
+            value={filters.end_date || ''}
+            onChange={(e) => handleChange('end_date', e.target.value)}
+            className={styles.dateInput}
+            placeholder="End Date"
+          />
+        </div>
+      )}
+    </>
+  );
+
+  // Render toggle checkboxes (track events, free events, for my cars)
+  const renderToggles = () => (
+    <>
+      <label className={styles.toggleLabel}>
+        <input
+          type="checkbox"
+          checked={filters.is_track_event || false}
+          onChange={(e) => handleChange('is_track_event', e.target.checked)}
+          className={styles.toggleCheckbox}
+        />
+        <span className={styles.toggleText}>Track Events Only</span>
+      </label>
+
+      <label className={styles.toggleLabel}>
+        <input
+          type="checkbox"
+          checked={filters.is_free || false}
+          onChange={(e) => handleChange('is_free', e.target.checked)}
+          className={styles.toggleCheckbox}
+        />
+        <span className={styles.toggleText}>Free Events Only</span>
+      </label>
+
+      {showCarFilters && isAuthenticated && (
+        <PremiumGate feature="eventsForMyCars" fallback={null}>
+          <button
+            onClick={() => handleChange('for_my_cars', !filters.for_my_cars)}
+            className={`${styles.garageFilterBtn} ${filters.for_my_cars ? styles.garageFilterBtnActive : ''}`}
+          >
+            <Icons.garage />
+            Events for My Cars
+          </button>
+        </PremiumGate>
+      )}
+    </>
+  );
+
+  // Render view toggle (list, map, calendar)
+  const renderViewToggle = () => (
+    <div className={styles.viewToggle}>
+      <button
+        onClick={() => onViewChange('list')}
+        className={`${styles.viewBtn} ${currentView === 'list' ? styles.viewBtnActive : ''}`}
+      >
+        <Icons.list />
+        List
+      </button>
+      <button
+        onClick={() => handlePremiumFeatureClick('map')}
+        className={`${styles.viewBtn} ${currentView === 'map' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
+        title={!canUsePremiumFeatures ? "Upgrade to Collector for Map View" : "Map View"}
+      >
+        <Icons.map />
+        Map
+        {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
+      </button>
+      <button
+        onClick={() => handlePremiumFeatureClick('calendar')}
+        className={`${styles.viewBtn} ${currentView === 'calendar' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
+        title={!canUsePremiumFeatures ? "Upgrade to Collector for Calendar View" : "Calendar View"}
+      >
+        <Icons.calendar />
+        Calendar
+        {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
+      </button>
+    </div>
+  );
+
   return (
     <div className={styles.filters}>
-      {/* Category Pills */}
+      {/* Category Pills - Always visible */}
       {showCategoryPills && (
         <div className={styles.categoryRow}>
           <EventCategoryPill 
@@ -178,7 +382,6 @@ export default function EventFilters({
           />
           {eventTypes.map(type => (
             <EventCategoryPill 
-              // Prefer stable keys (API types can be missing numeric ids in some environments)
               key={type.slug || type.id}
               category={type}
               isActive={filters.type === type.slug}
@@ -188,143 +391,101 @@ export default function EventFilters({
         </div>
       )}
 
-      {/* Main Filter Bar */}
-      <div className={styles.filterRow}>
-        {/* Location Search with Autocomplete */}
-        {showLocationInput && (
-          <LocationAutocomplete
-            value={filters.location || ''}
-            onChange={handleLocationChange}
-            placeholder="ZIP code or City, State"
-            className={styles.locationAutocomplete}
-          />
-        )}
-
-        {/* Radius/Distance Select - Only show when location is entered */}
-        {showLocationInput && (
-          <select 
-            value={filters.radius || 50} 
-            onChange={(e) => handleRadiusChange(e.target.value)}
-            className={styles.filterSelect}
-            title="Search radius from location"
-          >
-            {RADIUS_OPTIONS.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        )}
-
-        {/* Region Select - 8 regions for better geographic filtering */}
-        <select 
-          value={filters.region || ''} 
-          onChange={(e) => handleChange('region', e.target.value)}
-          className={styles.filterSelect}
+      {/* MOBILE: Compact filter bar with expand button */}
+      <div className={styles.mobileFilterBar}>
+        <button 
+          className={styles.mobileFilterBtn}
+          onClick={() => setMobileFiltersOpen(true)}
+          aria-expanded={mobileFiltersOpen}
         >
-          <option value="">All Regions</option>
-          <option value="New England">New England</option>
-          <option value="Mid-Atlantic">Mid-Atlantic</option>
-          <option value="Southeast">Southeast</option>
-          <option value="Great Lakes">Great Lakes</option>
-          <option value="Plains">Plains</option>
-          <option value="Southwest">Southwest</option>
-          <option value="Mountain">Mountain</option>
-          <option value="Pacific">Pacific</option>
-        </select>
-
-        {/* Date Range */}
-        {showDateRange && (
-          <div className={styles.dateRange}>
-            <input
-              type="date"
-              value={filters.start_date || ''}
-              onChange={(e) => handleChange('start_date', e.target.value)}
-              className={styles.dateInput}
-              placeholder="Start Date"
-            />
-            <span className={styles.dateSeparator}>to</span>
-            <input
-              type="date"
-              value={filters.end_date || ''}
-              onChange={(e) => handleChange('end_date', e.target.value)}
-              className={styles.dateInput}
-              placeholder="End Date"
-            />
-          </div>
-        )}
-
-        {/* Clear Filters */}
-        <button onClick={handleClear} className={styles.clearBtn}>
-          <Icons.filter size={14} />
-          Clear
+          <Icons.sliders size={16} />
+          <span>Filters</span>
+          {filterCount > 0 && (
+            <span className={styles.filterBadge}>{filterCount}</span>
+          )}
         </button>
-
-        {/* View Toggle */}
-        {showViewToggle && (
-          <div className={styles.viewToggle}>
-            <button
-              onClick={() => onViewChange('list')}
-              className={`${styles.viewBtn} ${currentView === 'list' ? styles.viewBtnActive : ''}`}
-            >
-              <Icons.list />
-              List
-            </button>
-            <button
-              onClick={() => handlePremiumFeatureClick('map')}
-              className={`${styles.viewBtn} ${currentView === 'map' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-              title={!canUsePremiumFeatures ? "Upgrade to Collector for Map View" : "Map View"}
-            >
-              <Icons.map />
-              Map
-              {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
-            </button>
-            <button
-              onClick={() => handlePremiumFeatureClick('calendar')}
-              className={`${styles.viewBtn} ${currentView === 'calendar' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-              title={!canUsePremiumFeatures ? "Upgrade to Collector for Calendar View" : "Calendar View"}
-            >
-              <Icons.calendar />
-              Calendar
-              {!canUsePremiumFeatures && <span className={styles.lockIcon}><Icons.lock /></span>}
-            </button>
-          </div>
-        )}
+        <Link href="/events/submit" className={styles.mobileSubmitBtn}>
+          <Icons.plus size={14} />
+          <span>Submit</span>
+        </Link>
       </div>
 
-      {/* Toggles Row */}
-      <div className={styles.toggleRow}>
-        <label className={styles.toggleLabel}>
-          <input
-            type="checkbox"
-            checked={filters.is_track_event || false}
-            onChange={(e) => handleChange('is_track_event', e.target.checked)}
-            className={styles.toggleCheckbox}
-          />
-          <span className={styles.toggleText}>Track Events Only</span>
-        </label>
+      {/* MOBILE: Filter Drawer/Bottom Sheet */}
+      {mobileFiltersOpen && (
+        <div 
+          className={styles.filterDrawerOverlay}
+          onClick={() => setMobileFiltersOpen(false)}
+        >
+          <div 
+            className={styles.filterDrawer}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.filterDrawerHeader}>
+              <div className={styles.filterDrawerDragHandle} />
+              <h3 className={styles.filterDrawerTitle}>Filters</h3>
+              <button 
+                className={styles.filterDrawerClose}
+                onClick={() => setMobileFiltersOpen(false)}
+                aria-label="Close filters"
+              >
+                <Icons.x size={20} />
+              </button>
+            </div>
+            <div className={styles.filterDrawerContent}>
+              {/* Filter inputs */}
+              {renderFilterInputs()}
+              
+              {/* Toggles */}
+              <div className={styles.drawerToggleRow}>
+                {renderToggles()}
+              </div>
+              
+              {/* View Toggle */}
+              {showViewToggle && (
+                <div className={styles.drawerViewToggle}>
+                  <span className={styles.drawerViewLabel}>View</span>
+                  {renderViewToggle()}
+                </div>
+              )}
+              
+              {/* Clear button */}
+              <button onClick={handleClear} className={styles.drawerClearBtn}>
+                <Icons.filter size={14} />
+                Clear All Filters
+              </button>
+            </div>
+            <div className={styles.filterDrawerFooter}>
+              <button 
+                className={styles.filterDrawerApplyBtn}
+                onClick={() => setMobileFiltersOpen(false)}
+              >
+                Show Results
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-        <label className={styles.toggleLabel}>
-          <input
-            type="checkbox"
-            checked={filters.is_free || false}
-            onChange={(e) => handleChange('is_free', e.target.checked)}
-            className={styles.toggleCheckbox}
-          />
-          <span className={styles.toggleText}>Free Events Only</span>
-        </label>
+      {/* DESKTOP: Full filter bar (hidden on mobile) */}
+      <div className={styles.desktopFilters}>
+        {/* Filter Row */}
+        <div className={styles.filterRow}>
+          {renderFilterInputs()}
+          
+          {/* Clear button */}
+          <button onClick={handleClear} className={styles.clearBtn}>
+            <Icons.filter size={14} />
+            Clear
+          </button>
 
-        {showCarFilters && isAuthenticated && (
-          <PremiumGate feature="eventsForMyCars" fallback={null}>
-            <button
-              onClick={() => handleChange('for_my_cars', !filters.for_my_cars)}
-              className={`${styles.garageFilterBtn} ${filters.for_my_cars ? styles.garageFilterBtnActive : ''}`}
-            >
-              <Icons.garage />
-              Events for My Cars
-            </button>
-          </PremiumGate>
-        )}
+          {/* View Toggle */}
+          {showViewToggle && renderViewToggle()}
+        </div>
+        
+        {/* Toggle Row - separate from filter row */}
+        <div className={styles.toggleRow}>
+          {renderToggles()}
+        </div>
       </div>
 
       {/* Upgrade Modal for Premium Features */}

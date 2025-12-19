@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './GarageEventsSection.module.css';
 import PremiumGate from '@/components/PremiumGate';
+import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
 
 /**
  * GarageEventsSection - Shows upcoming events for user's owned vehicles or favorites
@@ -34,7 +35,7 @@ function CompactEventCard({ event }) {
       </div>
       <div className={styles.eventInfo}>
         <span className={styles.eventType}>
-          {event.event_type?.icon || '📅'} {event.event_type?.name || 'Event'}
+          <EventTypeIcon slug={event.event_type?.slug} size={14} /> {event.event_type?.name || 'Event'}
         </span>
         <h4 className={styles.eventName}>{event.name}</h4>
         <span className={styles.eventLocation}>
@@ -61,9 +62,12 @@ function LoadingState() {
 }
 
 function EmptyState({ hasVehicles }) {
+  const CalendarIcon = CategoryIcons['other'];
   return (
     <div className={styles.empty}>
-      <span className={styles.emptyIcon}>📅</span>
+      <span className={styles.emptyIcon}>
+        <CalendarIcon size={24} />
+      </span>
       <p className={styles.emptyText}>
         {hasVehicles 
           ? 'No upcoming events found for your vehicles.'
@@ -162,7 +166,9 @@ export default function GarageEventsSection({ vehicles = [], favorites = [] }) {
       <section className={styles.section}>
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <span className={styles.icon}>🏁</span>
+            <span className={styles.icon}>
+              <TrackEventBadgeIcon size={18} />
+            </span>
             <h3 className={styles.title}>Upcoming Events</h3>
           </div>
           <Link href={seeAllLink} className={styles.seeAllLink}>

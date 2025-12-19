@@ -70,7 +70,7 @@ describe('UpgradeCenter - Checkbox Functionality', () => {
     });
   });
 
-  it('should have disabled checkboxes when not in Custom mode', () => {
+  it('should have enabled checkboxes regardless of mode (auto-switches to Custom)', async () => {
     render(<UpgradeCenter car={mockCar} />);
     
     // Start in Stock mode (default)
@@ -78,10 +78,13 @@ describe('UpgradeCenter - Checkbox Functionality', () => {
     const powerCategory = screen.getByText('Power');
     fireEvent.click(powerCategory);
     
-    // Checkboxes should be disabled
-    const checkboxes = screen.getAllByRole('checkbox');
-    checkboxes.forEach(checkbox => {
-      expect(checkbox).toBeDisabled();
+    // Wait for popup to appear
+    await waitFor(() => {
+      // Checkboxes should NOT be disabled - they're always clickable now
+      const checkboxes = screen.getAllByRole('checkbox');
+      checkboxes.forEach(checkbox => {
+        expect(checkbox).not.toBeDisabled();
+      });
     });
   });
 
@@ -139,25 +142,26 @@ describe('UpgradeCenter - Checkbox Functionality', () => {
     });
   });
 
-  it('should not respond to clicks when checkbox is disabled', () => {
-    const { container } = render(<UpgradeCenter car={mockCar} />);
+  it('should auto-switch to Custom mode when checkbox clicked in non-Custom mode', async () => {
+    render(<UpgradeCenter car={mockCar} />);
     
-    // Stay in Stock mode (checkboxes disabled)
+    // Stay in Stock mode initially
     const powerCategory = screen.getByText('Power');
     fireEvent.click(powerCategory);
     
-    // Get a disabled checkbox
-    const checkboxes = screen.getAllByRole('checkbox');
-    const firstCheckbox = checkboxes[0];
+    // Wait for popup and find a checkbox
+    const intakeCheckbox = await screen.findByRole('checkbox', { name: /cold air intake/i });
     
-    // Verify it's disabled
-    expect(firstCheckbox).toBeDisabled();
+    // Click the checkbox while in Stock mode
+    fireEvent.click(intakeCheckbox);
     
-    // Try to click it
-    fireEvent.click(firstCheckbox);
-    
-    // State should not change (still unchecked)
-    expect(firstCheckbox).toHaveAttribute('aria-checked', 'false');
+    // Should have toggled AND switched to Custom mode
+    await waitFor(() => {
+      expect(intakeCheckbox).toHaveAttribute('aria-checked', 'true');
+      // Verify Custom is now active (has active class)
+      const customButton = screen.getByText('Custom');
+      expect(customButton.closest('button')).toHaveClass('pkgBtnActive');
+    });
   });
 
   it('should show conflict badge when upgrade would replace another', async () => {
@@ -231,18 +235,37 @@ describe('UpgradeCenter - Edge Cases', () => {
     });
   });
 
-  it('should prevent clicks via pointer-events CSS on disabled buttons', () => {
-    const { container } = render(<UpgradeCenter car={mockCar} />);
+  it('should preserve package upgrades when switching to Custom via toggle', async () => {
+    render(<UpgradeCenter car={mockCar} />);
     
-    // Open category in non-custom mode
+    // Select Street package first
+    const streetButton = screen.getByText('Street');
+    fireEvent.click(streetButton);
+    
+    // Open category
     const powerCategory = screen.getByText('Power');
     fireEvent.click(powerCategory);
     
-    // Get disabled button
-    const disabledButton = container.querySelector('.upgradeToggle:disabled');
+    // Note which upgrades are pre-selected from the package
+    const checkboxes = await screen.findAllByRole('checkbox');
+    const initiallyCheckedCount = checkboxes.filter(
+      cb => cb.getAttribute('aria-checked') === 'true'
+    ).length;
     
-    // Verify pointer-events: none is applied
-    const styles = window.getComputedStyle(disabledButton);
-    expect(styles.pointerEvents).toBe('none');
+    // Click on an unchecked upgrade to add it
+    const unchecked = checkboxes.find(
+      cb => cb.getAttribute('aria-checked') === 'false'
+    );
+    if (unchecked) {
+      fireEvent.click(unchecked);
+      
+      // After switching to Custom, package upgrades should be preserved plus the new one
+      await waitFor(() => {
+        const newCheckedCount = checkboxes.filter(
+          cb => cb.getAttribute('aria-checked') === 'true'
+        ).length;
+        expect(newCheckedCount).toBeGreaterThanOrEqual(initiallyCheckedCount);
+      });
+    }
   });
 });

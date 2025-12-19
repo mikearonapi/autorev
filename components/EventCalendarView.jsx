@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './EventCalendarView.module.css';
 import PremiumGate from './PremiumGate';
+import { EventTypeIcon, TrackEventBadgeIcon } from '@/components/icons/EventIcons';
 
 /**
  * Get days in a month
@@ -309,7 +310,7 @@ export default function EventCalendarView({
                     onClick={(e) => handleEventClick(e, event)}
                   >
                     <span className={styles.eventIcon}>
-                      {event.event_type?.icon || '📅'}
+                      <EventTypeIcon slug={event.event_type?.slug} size={16} />
                     </span>
                     <div className={styles.eventInfo}>
                       <span className={styles.eventName}>{event.name}</span>
@@ -319,7 +320,9 @@ export default function EventCalendarView({
                       </span>
                     </div>
                     {event.event_type?.is_track_event && (
-                      <span className={styles.trackBadge}>🏁</span>
+                      <span className={styles.trackBadge}>
+                        <TrackEventBadgeIcon size={14} />
+                      </span>
                     )}
                   </Link>
                 ))}

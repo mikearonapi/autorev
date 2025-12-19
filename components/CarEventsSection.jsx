@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './CarEventsSection.module.css';
+import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
 
 /**
  * CarEventsSection - Shows upcoming events for a specific car on its detail page
@@ -29,7 +30,7 @@ function CompactEventCard({ event }) {
       </div>
       <div className={styles.cardContent}>
         <div className={styles.eventType}>
-          <span>{event.event_type?.icon || '📅'}</span>
+          <EventTypeIcon slug={event.event_type?.slug} size={14} />
           <span>{event.event_type?.name || 'Event'}</span>
         </div>
         <h4 className={styles.eventName}>{event.name}</h4>
@@ -57,9 +58,12 @@ function LoadingState() {
 }
 
 function EmptyState({ brand }) {
+  const CalendarIcon = CategoryIcons['other'];
   return (
     <div className={styles.empty}>
-      <span className={styles.emptyIcon}>📅</span>
+      <span className={styles.emptyIcon}>
+        <CalendarIcon size={24} />
+      </span>
       <p>No upcoming events found{brand ? ` for ${brand}` : ''}.</p>
       <Link href="/events" className={styles.browseLink}>
         Browse all events →
@@ -124,7 +128,9 @@ export default function CarEventsSection({ carSlug, carName, brand }) {
     <section className={styles.section}>
       <div className={styles.header}>
         <h3 className={styles.title}>
-          <span className={styles.icon}>🏁</span>
+          <span className={styles.icon}>
+            <TrackEventBadgeIcon size={18} />
+          </span>
           Upcoming Events
         </h3>
       </div>

@@ -10,59 +10,113 @@
 import { useState, useEffect } from 'react';
 import styles from './ServiceLogModal.module.css';
 
+// SVG Icons for service categories
+const ServiceIcons = {
+  oil: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </svg>
+  ),
+  tire: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="4"/>
+    </svg>
+  ),
+  brake: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+    </svg>
+  ),
+  fluid: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+    </svg>
+  ),
+  filter: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+    </svg>
+  ),
+  electrical: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
+  engine: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  ),
+  suspension: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+      <circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>
+    </svg>
+  ),
+  wrench: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+};
+
 // Service categories and types
 const SERVICE_CATEGORIES = {
   oil_change: {
     label: 'Oil Change',
-    icon: '🛢️',
+    icon: ServiceIcons.oil,
     types: ['Oil Change', 'Oil & Filter Change', 'Synthetic Oil Change'],
     defaultInterval: { miles: 5000, months: 6 },
   },
   tire: {
     label: 'Tires & Wheels',
-    icon: '🔧',
+    icon: ServiceIcons.tire,
     types: ['Tire Rotation', 'Tire Replacement', 'Wheel Alignment', 'Tire Balance', 'TPMS Service'],
     defaultInterval: { miles: 7500, months: null },
   },
   brake: {
     label: 'Brakes',
-    icon: '🛑',
+    icon: ServiceIcons.brake,
     types: ['Brake Pad Replacement', 'Brake Rotor Replacement', 'Brake Fluid Flush', 'Caliper Service', 'Brake Inspection'],
     defaultInterval: { miles: 30000, months: null },
   },
   fluid: {
     label: 'Fluids',
-    icon: '💧',
+    icon: ServiceIcons.fluid,
     types: ['Coolant Flush', 'Transmission Fluid Change', 'Differential Fluid Change', 'Power Steering Flush', 'Brake Fluid Flush'],
     defaultInterval: { miles: 30000, months: 24 },
   },
   filter: {
     label: 'Filters',
-    icon: '🔲',
+    icon: ServiceIcons.filter,
     types: ['Air Filter Replacement', 'Cabin Filter Replacement', 'Fuel Filter Replacement'],
     defaultInterval: { miles: 15000, months: 12 },
   },
   electrical: {
     label: 'Electrical',
-    icon: '⚡',
+    icon: ServiceIcons.electrical,
     types: ['Battery Replacement', 'Alternator Service', 'Starter Replacement', 'Spark Plug Replacement'],
     defaultInterval: { miles: null, months: 48 },
   },
   engine: {
     label: 'Engine',
-    icon: '🔩',
+    icon: ServiceIcons.engine,
     types: ['Timing Belt/Chain Service', 'Serpentine Belt Replacement', 'Engine Tune-Up', 'Valve Adjustment'],
     defaultInterval: { miles: 60000, months: null },
   },
   suspension: {
     label: 'Suspension',
-    icon: '🏎️',
+    icon: ServiceIcons.suspension,
     types: ['Shock/Strut Replacement', 'Spring Replacement', 'Sway Bar Service', 'Bushing Replacement', 'Alignment'],
     defaultInterval: { miles: 50000, months: null },
   },
   other: {
     label: 'Other',
-    icon: '🔧',
+    icon: ServiceIcons.wrench,
     types: ['Inspection', 'Recall Service', 'Warranty Work', 'Custom/Other'],
     defaultInterval: { miles: null, months: 12 },
   },

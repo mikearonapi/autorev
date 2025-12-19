@@ -5,14 +5,15 @@
   background: var(--color-gray-50);
 }
 
-/* Hero Section - Compact version matching Community home */
+/* Hero Section - Ultra-compact on mobile, standard on desktop */
 .hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl) var(--space-md);
-  padding-top: calc(var(--space-lg) + var(--header-height-mobile));
+  /* Mobile: minimal padding for compact hero */
+  padding: var(--space-sm) var(--space-md);
+  padding-top: calc(var(--space-sm) + var(--header-height-mobile));
   text-align: center;
   background: var(--color-gray-900);
   overflow: hidden;
@@ -53,8 +54,9 @@
   margin: 0 auto;
 }
 
+/* Mobile: Hide badge to save space */
 .badge {
-  display: inline-block;
+  display: none;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -69,23 +71,26 @@
 
 @media (min-width: 768px) {
   .badge {
+    display: inline-block;
     font-size: var(--font-size-xs);
     padding: var(--space-xs) var(--space-md);
   }
 }
 
+/* Mobile: Compact title */
 .heroTitle {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-white);
-  margin: 0 0 var(--space-xs);
-  line-height: 1.1;
+  margin: 0;
+  line-height: 1.2;
 }
 
 @media (min-width: 768px) {
   .heroTitle {
     font-size: var(--font-size-3xl);
+    margin: 0 0 var(--space-xs);
   }
 }
 
@@ -93,7 +98,9 @@
   color: var(--sn-accent);
 }
 
+/* Mobile: Hide subtitle to save vertical space */
 .heroSubtitle {
+  display: none;
   font-size: var(--font-size-sm);
   color: var(--color-gray-300);
   margin: 0 0 var(--space-md);
@@ -102,12 +109,14 @@
 
 @media (min-width: 768px) {
   .heroSubtitle {
+    display: block;
     font-size: var(--font-size-base);
   }
 }
 
+/* Mobile: Hide submit button in hero (moved to filter bar) */
 .submitEventBtn {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-lg);
@@ -121,16 +130,22 @@
   transition: all var(--transition-fast);
 }
 
+@media (min-width: 768px) {
+  .submitEventBtn {
+    display: inline-flex;
+  }
+}
+
 .submitEventBtn:hover {
   background: var(--sn-gold-light);
   transform: translateY(-1px);
 }
 
-/* Filters Section - Compact */
+/* Filters Section - Minimal on mobile, expanded on desktop */
 .filtersSection {
   background: var(--color-white);
   border-bottom: 1px solid var(--color-gray-200);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   position: sticky;
   top: var(--header-height-mobile);
   z-index: 100;

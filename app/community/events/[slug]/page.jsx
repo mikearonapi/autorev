@@ -9,6 +9,7 @@ import EventCard from '@/components/EventCard';
 import SaveEventButton from '@/components/SaveEventButton';
 import AddToCalendarButton from '@/components/AddToCalendarButton';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { EventTypeIcon, TrackEventBadgeIcon, FeaturedBadgeIcon } from '@/components/icons/EventIcons';
 
 /**
  * Format date for display
@@ -319,14 +320,21 @@ export default function CommunityEventDetailPage() {
             <div className={styles.badges}>
               {event_type && (
                 <span className={styles.typeBadge}>
-                  {event_type.icon} {event_type.name}
+                  <EventTypeIcon slug={event_type.slug} size={16} />
+                  {event_type.name}
                 </span>
               )}
               {event_type?.is_track_event && (
-                <span className={styles.trackBadge}>🏁 Track Event</span>
+                <span className={styles.trackBadge}>
+                  <TrackEventBadgeIcon size={14} />
+                  Track Event
+                </span>
               )}
               {featured && (
-                <span className={styles.featuredBadge}>★ Featured</span>
+                <span className={styles.featuredBadge}>
+                  <FeaturedBadgeIcon size={12} />
+                  Featured
+                </span>
               )}
             </div>
             

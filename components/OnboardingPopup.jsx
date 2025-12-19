@@ -3,6 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from './OnboardingPopup.module.css';
 
+// Check icon for feature list
+const CheckIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 /**
  * OnboardingPopup Component
  * 
@@ -173,7 +180,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
               <ul className={styles.featureList}>
                 {step.features.map((feature, i) => (
                   <li key={i} className={styles.featureItem}>
-                    <span className={styles.featureIcon} style={{ color: accentColor }}>✓</span>
+                    <span className={styles.featureIcon} style={{ color: accentColor }}><CheckIcon size={14} /></span>
                     <span>{feature}</span>
                   </li>
                 ))}

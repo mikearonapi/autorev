@@ -83,7 +83,15 @@ const ALMascotIcon = ({ size = 20 }) => (
   />
 );
 
-// Settings Icon for mobile menu
+// Profile Icon for mobile menu (user silhouette)
+const ProfileIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
+// Settings Icon for desktop dropdown
 const SettingsIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3"/>
@@ -418,14 +426,14 @@ export default function Header() {
             <span>Ask AL</span>
           </button>
           
-          {/* Settings link - always visible, leads to profile page */}
+          {/* Profile link - always visible, leads to profile page */}
           <Link 
             href="/profile"
             className={styles.mobileSettingsLink}
             onClick={() => setIsMenuOpen(false)}
           >
-            <SettingsIcon size={20} />
-            <span>Settings</span>
+            <ProfileIcon size={20} />
+            <span>Profile</span>
           </Link>
           
           {/* Mobile Auth Buttons - Only shown when not authenticated */}

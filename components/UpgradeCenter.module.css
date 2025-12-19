@@ -6,8 +6,8 @@
 .upgradeCenter {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  gap: 16px;
+  padding: 20px;
   height: 100%;
   overflow: hidden;
   background: radial-gradient(circle at top center, #1a1b1e 0%, #0f1012 100%);
@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 16px;
+  padding: 16px 20px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
@@ -195,11 +195,11 @@
 .recommendationBanner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px 16px;
+  gap: 10px;
+  padding: 18px 20px;
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
   border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   flex-shrink: 0;
 }
 
@@ -282,8 +282,8 @@
 
 .mainGrid {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 12px;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -293,24 +293,24 @@
 .leftPanel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   overflow: hidden;
 }
 
 .packageGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .pkgBtn {
-  padding: 6px 4px;
+  padding: 10px 6px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 6px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
@@ -331,7 +331,7 @@
 .categoryList {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
@@ -340,17 +340,17 @@
 .catBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
+  gap: 10px;
+  padding: 12px 14px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.12s ease;
   width: 100%;
   text-align: left;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .catBtn:hover:not(:disabled) {
@@ -399,7 +399,7 @@
 .rightPanel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -407,17 +407,17 @@
 .section {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 16px;
 }
 
 .sectionTitle {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0 0 10px;
+  margin: 0 0 14px;
 }
 
 /* ===========================================
@@ -762,12 +762,12 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* METRIC ROWS - Super Compact */
+/* METRIC ROWS - Improved spacing */
 .metricRow, .scoreRow {
-  padding: 8px 10px;
+  padding: 12px 14px;
   background: rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
-  margin-bottom: 6px;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .metricRow:last-child, .scoreRow:last-child {
@@ -778,7 +778,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .metricLabel, .scoreLabel {
@@ -832,9 +832,9 @@
 
 /* PROGRESS BARS */
 .track {
-  height: 5px;
+  height: 6px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
+  border-radius: 4px;
   position: relative;
   overflow: hidden;
 }
@@ -894,7 +894,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 16px 20px;
   background: rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -942,18 +942,18 @@
 .popupContent {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
+  padding: 16px;
 }
 
 .upgradeRow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  margin-bottom: 6px;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.12s ease;
 }
 
@@ -1173,23 +1173,34 @@
    =========================================== */
 
 @media (max-width: 800px) {
+  .upgradeCenter {
+    padding: 16px;
+    gap: 12px;
+  }
+  
   .mainGrid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .leftPanel {
-    max-height: 200px;
+    max-height: 240px;
   }
   
   .categoryList {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 6px;
   }
   
   .catBtn {
     width: auto;
     flex: 0 0 auto;
+    padding: 10px 12px;
+  }
+  
+  .section {
+    padding: 14px;
   }
 }
 

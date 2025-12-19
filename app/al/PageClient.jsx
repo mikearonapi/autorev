@@ -195,11 +195,18 @@ const toolGroups = [
   },
 ];
 
+// Check icon for tier comparison
+const CheckMark = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 const tierRows = [
   { label: 'Monthly Conversations', free: '~15-20', collector: '~70-80', tuner: '~175-200' },
-  { label: 'All 17 Tools', free: '4 tools', collector: '✓', tuner: '✓' },
-  { label: 'Community Insights', free: '—', collector: '✓', tuner: '✓' },
-  { label: 'Build Recommendations', free: '—', collector: '—', tuner: '✓' },
+  { label: 'All 17 Tools', free: '4 tools', collector: <CheckMark />, tuner: <CheckMark /> },
+  { label: 'Community Insights', free: '—', collector: <CheckMark />, tuner: <CheckMark /> },
+  { label: 'Build Recommendations', free: '—', collector: '—', tuner: <CheckMark /> },
 ];
 
 const promptButtons = [
@@ -433,7 +440,7 @@ export default function PageClient() {
                   <p className={`${styles.responseText} ${styles.genericAnswer}`}>{row.generic}</p>
                 </div>
                 <div className={styles.responseBlock}>
-                  <span className={`${styles.responseLabel} ${styles.alLabel}`}>✓ AL says</span>
+                  <span className={`${styles.responseLabel} ${styles.alLabel}`}><CheckMark /> AL says</span>
                   <p className={`${styles.responseText} ${styles.alAnswer}`}>{interpolateTemplate(row.alTemplate, stats)}</p>
                 </div>
               </div>
@@ -564,13 +571,6 @@ export default function PageClient() {
           </Button>
         </div>
       </section>
-
-      {/* Mobile sticky CTA */}
-      <div className={styles.mobileStickyCta}>
-        <Button fullWidth variant="primary" onClick={() => handlePrompt(promptButtons[0])}>
-          Ask AL Anything
-        </Button>
-      </div>
 
       {/* Auth Modal */}
       <AuthModal isOpen={authModal.isOpen} onClose={authModal.close} defaultMode={authModal.defaultMode} />

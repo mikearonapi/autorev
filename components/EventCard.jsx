@@ -128,6 +128,11 @@ const Icons = {
       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
     </svg>
   ),
+  check: ({ size = 14 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
 };
 
 function formatEventTime(timeStr) {
@@ -241,7 +246,8 @@ export default function EventCard({
             <div className={styles.footerInfo}>
               {cost && (
                 <span className={`${styles.cost} ${is_free ? styles.free : ''}`}>
-                  {is_free ? '✓ Free' : cost}
+                  {is_free && <Icons.check size={12} />}
+                  {is_free ? 'Free' : cost}
                 </span>
               )}
               {brandAffinity && (

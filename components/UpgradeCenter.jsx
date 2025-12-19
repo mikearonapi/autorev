@@ -430,6 +430,7 @@ function ConflictNotification({ message, onDismiss, replacedUpgrade }) {
 
 /**
  * Category Popup Modal
+ * Now allows toggling upgrades regardless of package - auto-switches to Custom mode
  */
 function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose, onInfoClick, isCustomMode, allUpgrades }) {
   const popupRef = useRef(null);
@@ -451,16 +452,26 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
   }, [allUpgrades]);
   
   // Check which upgrades would be replaced for each unselected upgrade
+  // Fixed: use conflictsWith instead of conflictingUpgrades
   const getReplacementInfo = useCallback((upgradeKey) => {
     if (selectedModules.includes(upgradeKey)) return null;
     
-    const conflict = checkUpgradeConflict(upgradeKey, selectedModules);
-    if (!conflict) return null;
-    
-    return {
-      ...conflict,
-      names: conflict.conflictingUpgrades.map(key => getUpgradeName(key)),
-    };
+    try {
+      const conflict = checkUpgradeConflict(upgradeKey, selectedModules);
+      if (!conflict) return null;
+      
+      // Use conflictsWith (the correct property name from checkUpgradeConflict)
+      const conflictingKeys = conflict.conflictsWith || [];
+      
+      return {
+        ...conflict,
+        conflictingUpgrades: conflictingKeys,
+        names: conflictingKeys.map(key => getUpgradeName(key)),
+      };
+    } catch {
+      // Defensive: if conflict detection fails, return null
+      return null;
+    }
   }, [selectedModules, getUpgradeName]);
   
   const Icon = category.icon;
@@ -491,19 +502,11 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
                   type="button"
                   className={styles.upgradeToggle}
                   onClick={(e) => {
-                    // Prevent any default behavior
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    // Only proceed if in custom mode
-                    if (!isCustomMode) {
-                      return;
-                    }
-                    
-                    // Call the toggle handler
+                    // Always allow toggle - handleModuleToggle will auto-switch to Custom mode
                     onToggle(upgrade.key, upgrade.name, replacementInfo);
                   }}
-                  disabled={!isCustomMode}
                   aria-label={`${isSelected ? 'Deselect' : 'Select'} ${upgrade.name}`}
                   aria-checked={isSelected}
                   role="checkbox"
@@ -516,7 +519,7 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
                     <span className={styles.upgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
                   )}
                 </button>
-                {hasConflict && isCustomMode && (
+                {hasConflict && (
                   <span className={styles.conflictBadge} title={`Replaces: ${replacementInfo.names.join(', ')}`}>
                     <Icons.swap size={10} />
                   </span>
@@ -528,11 +531,6 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
             );
           })}
         </div>
-        {!isCustomMode && (
-          <div className={styles.popupFooter}>
-            💡 Switch to "Custom" package above to toggle individual upgrades
-          </div>
-        )}
       </div>
     </div>
   );
@@ -807,31 +805,43 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   };
   
   const handleModuleToggle = useCallback((moduleKey, moduleName, replacementInfo) => {
-    if (!isCustomMode) setSelectedPackage('custom');
+    // When switching from a package to Custom, preserve the package's upgrades
+    const switchingToCustom = !isCustomMode;
     
     setSelectedModules(prev => {
-      // If already selected, just deselect
-      if (prev.includes(moduleKey)) {
-        return prev.filter(k => k !== moduleKey);
+      // If switching from a package, start with the package's upgrades instead of empty array
+      let baseModules = switchingToCustom && packageUpgrades.length > 0 
+        ? [...packageUpgrades] 
+        : [...prev];
+      
+      // If already selected, remove it
+      if (baseModules.includes(moduleKey)) {
+        return baseModules.filter(k => k !== moduleKey);
       }
       
-      // Check for conflicts when adding
-      if (replacementInfo && replacementInfo.conflictingUpgrades.length > 0) {
-        // Show notification about the replacement
-        const replacedNames = replacementInfo.names.join(' and ');
-        setConflictNotification({
-          message: `"${replacedNames}" has been replaced with "${moduleName}"`,
-          replacedUpgrade: replacedNames,
-        });
+      // Check for conflicts and resolve them
+      if (replacementInfo && replacementInfo.conflictingUpgrades?.length > 0) {
+        const replacedNames = replacementInfo.names?.join(' and ') || '';
+        if (replacedNames) {
+          setConflictNotification({
+            message: `"${replacedNames}" has been replaced with "${moduleName}"`,
+            replacedUpgrade: replacedNames,
+          });
+        }
         
-        // Auto-resolve: remove conflicting upgrades and add the new one
-        return resolveConflicts(moduleKey, prev);
+        // Remove conflicting upgrades and add the new one
+        const conflictingKeys = replacementInfo.conflictingUpgrades || [];
+        baseModules = baseModules.filter(k => !conflictingKeys.includes(k));
       }
       
-      // No conflict, just add
-      return [...prev, moduleKey];
+      return [...baseModules, moduleKey];
     });
-  }, [isCustomMode]);
+    
+    // Switch to custom mode after updating modules
+    if (switchingToCustom) {
+      setSelectedPackage('custom');
+    }
+  }, [isCustomMode, packageUpgrades]);
   
   const handleSaveBuild = async () => {
     if (!canSave) { setSaveError('Please sign in'); return; }

@@ -99,6 +99,16 @@ const Icons = {
       <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
     </svg>
   ),
+  infinity: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"/>
+    </svg>
+  ),
+  sparkle: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"/>
+    </svg>
+  ),
   trash: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6"/>
@@ -271,7 +281,7 @@ export default function ProfilePage() {
               status: isUnlimited 
                 ? { label: 'Unlimited', color: '#8b5cf6' }
                 : { label: 'Full', color: '#22c55e' },
-              label: isUnlimited ? 'Founder Tank ♾️' : plan.tankLabel,
+              label: isUnlimited ? 'Founder Tank' : plan.tankLabel,
             },
             purchasedFuel: data.purchasedCents || 0,
             messagesThisMonth: data.messagesThisMonth || 0,
@@ -605,7 +615,7 @@ export default function ProfilePage() {
               {alBalance.isUnlimited ? (
                 <div className={styles.founderBanner}>
                   <div className={styles.founderBannerContent}>
-                    <span className={styles.founderIcon}>🎉</span>
+                    <span className={styles.founderIcon}><Icons.sparkle size={20} /></span>
                     <div>
                       <h3 className={styles.founderTitle}>Unlimited AI/AL Access</h3>
                       <p className={styles.founderMessage}>

@@ -193,44 +193,45 @@
 /* Tab Pills - Matches Garage */
 .tabPills {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 4px;
-  border-radius: 12px;
+  padding: 3px;
+  border-radius: 10px;
   /* Don't allow shrinking - keep natural width */
   flex-shrink: 0;
 }
 
-/* CF-001: Touch target compliance - minimum 44px on all devices */
+@media (min-width: 480px) {
+  .tabPills {
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+}
+
+/* CF-001: Touch target compliance - Compact on mobile, larger on tablet+ */
 .tabPill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
+  gap: 4px;
+  padding: 6px 10px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  /* Ensure touch-friendly tap target */
-  min-height: 44px;
+  /* Compact on mobile, touch-friendly on larger screens */
+  min-height: 32px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
-/* Mobile: slightly reduce pill density to prevent clipping */
+/* Mobile: compact pill sizing */
 @media (max-width: 480px) {
-  .tabPill {
-    padding: 8px 10px;
-    font-size: 11px;
-    gap: 5px;
-    min-height: 44px;
-  }
-
   .tabCount {
     min-width: 16px;
     height: 16px;
@@ -241,15 +242,19 @@
 
 @media (min-width: 480px) {
   .tabPill {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 8px 14px;
+    font-size: 12px;
+    min-height: 36px;
+    gap: 5px;
   }
 }
 
 @media (min-width: 768px) {
   .tabPill {
-    padding: 12px 18px;
+    padding: 10px 16px;
     font-size: 14px;
+    min-height: 44px;
+    gap: 6px;
   }
 }
 
@@ -1894,7 +1899,7 @@
   }
 
   .tabPill {
-    padding: 8px 10px;
+    padding: 6px 8px;
   }
   
   .titleCompact {
@@ -1919,7 +1924,7 @@
   }
   
   .tabPill {
-    padding: 10px 18px;
+    padding: 10px 16px;
     font-size: 14px;
   }
 }
