@@ -183,19 +183,27 @@
 /* Tab Pills */
 .tabPills {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 4px;
-  border-radius: 12px;
+  padding: 3px;
+  border-radius: 10px;
   /* Don't allow shrinking - keep natural width */
   flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .tabPills {
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+  }
 }
 
 .tabPill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 4px;
+  padding: 6px 10px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -205,15 +213,17 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  /* Ensure touch-friendly tap target */
-  min-height: 36px;
+  /* Compact on mobile, touch-friendly on larger screens */
+  min-height: 32px;
+  font-size: 11px;
 }
 
 @media (min-width: 480px) {
   .tabPill {
     padding: 8px 14px;
-    font-size: 13px;
-    min-height: 40px;
+    font-size: 12px;
+    min-height: 36px;
+    gap: 5px;
   }
 }
 
@@ -2123,16 +2133,27 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 4px;
+  padding: 5px 10px;
   background: rgba(46, 204, 113, 0.9);
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--color-white);
   z-index: 10;
+}
+
+/* Larger badge on tablet+ */
+@media (min-width: 768px) {
+  .heroBadgeOwned {
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 8px;
+    letter-spacing: 0.1em;
+  }
 }
 
 /* ===========================================
