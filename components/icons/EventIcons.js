@@ -1,50 +1,7 @@
 // Event and Category Icons
 // Consistent SVG icons for the Community section
 
-/**
- * Get the icon component for an event type by slug
- * @param {string} slug - Event type slug (e.g., 'auction', 'track-day')
- * @returns {Function} Icon component
- */
-export function getEventTypeIcon(slug) {
-  return CategoryIcons[slug] || CategoryIcons['other'];
-}
-
-/**
- * EventTypeIcon - Renders the appropriate SVG icon for an event type
- * @param {Object} props
- * @param {string} props.slug - Event type slug
- * @param {number} [props.size=18] - Icon size in pixels
- * @param {string} [props.className] - Additional CSS class
- */
-export function EventTypeIcon({ slug, size = 18, className }) {
-  const IconComponent = getEventTypeIcon(slug);
-  return (
-    <span className={className} style={{ display: 'inline-flex', alignItems: 'center' }}>
-      <IconComponent size={size} />
-    </span>
-  );
-}
-
-/**
- * TrackEventBadgeIcon - Checkered flag icon for track events
- */
-export const TrackEventBadgeIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-    <line x1="4" y1="22" x2="4" y2="15"/>
-  </svg>
-);
-
-/**
- * FeaturedBadgeIcon - Star icon for featured events
- */
-export const FeaturedBadgeIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-  </svg>
-);
-
+// Define CategoryIcons FIRST so they're available to helper functions
 export const CategoryIcons = {
   'all': ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -123,12 +80,57 @@ export const CategoryIcons = {
   ),
   'other': ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="8" x2="12" y2="12"/>
-      <line x1="12" y1="16" x2="12.01" y2="16"/>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
   ),
 };
+
+/**
+ * Get the icon component for an event type by slug
+ * @param {string} slug - Event type slug (e.g., 'auction', 'track-day')
+ * @returns {Function} Icon component
+ */
+export function getEventTypeIcon(slug) {
+  return CategoryIcons[slug] || CategoryIcons['other'];
+}
+
+/**
+ * EventTypeIcon - Renders the appropriate SVG icon for an event type
+ * @param {Object} props
+ * @param {string} props.slug - Event type slug
+ * @param {number} [props.size=18] - Icon size in pixels
+ * @param {string} [props.className] - Additional CSS class
+ */
+export function EventTypeIcon({ slug, size = 18, className }) {
+  const IconComponent = getEventTypeIcon(slug);
+  return (
+    <span className={className} style={{ display: 'inline-flex', alignItems: 'center' }}>
+      <IconComponent size={size} />
+    </span>
+  );
+}
+
+/**
+ * TrackEventBadgeIcon - Checkered flag icon for track events
+ */
+export const TrackEventBadgeIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+    <line x1="4" y1="22" x2="4" y2="15"/>
+  </svg>
+);
+
+/**
+ * FeaturedBadgeIcon - Star icon for featured events
+ */
+export const FeaturedBadgeIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </svg>
+);
 
 export const UiIcons = {
   search: ({ size = 18 }) => (
@@ -220,4 +222,3 @@ export const UiIcons = {
     </svg>
   ),
 };
-

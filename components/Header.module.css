@@ -670,7 +670,7 @@
 
 /* Mobile nav label for dropdown-only items (no page link) */
 .mobileNavLabel {
-  color: var(--color-gray-500);
+  color: var(--color-gray-700);
   cursor: default;
 }
 

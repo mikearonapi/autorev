@@ -13,7 +13,7 @@
  */
 
 import { useEffect } from 'react';
-import { ErrorLogger } from '@/lib/errorLogger';
+import { logError } from '@/lib/errorLogger';
 
 let isPatched = false;
 let originalConsoleError = null;
@@ -122,17 +122,24 @@ function patchConsoleError() {
       errorObj = new Error(message.slice(0, 500));
     }
     
-    // Log to our system
-    ErrorLogger.logError(errorObj, {
-      errorType: 'console_error',
-      consoleArgs: args.slice(0, 3).map(a => {
-        if (a instanceof Error) return a.message;
-        if (typeof a === 'string') return a.slice(0, 200);
-        return typeof a;
-      }),
-      severity: 'minor', // Console errors are usually handled, so minor
-      componentName: 'ConsoleErrorInterceptor',
-    });
+    // Log to our system (safely - don't crash if logger fails)
+    try {
+      logError(errorObj, {
+        errorType: 'console_error',
+        consoleArgs: args.slice(0, 3).map(a => {
+          if (a instanceof Error) return a.message;
+          if (typeof a === 'string') return a.slice(0, 200);
+          return typeof a;
+        }),
+        severity: 'minor', // Console errors are usually handled, so minor
+        componentName: 'ConsoleErrorInterceptor',
+      });
+    } catch (logErr) {
+      // Silently ignore - don't let logging break the app
+      if (originalConsoleError) {
+        originalConsoleError.call(console, '[ConsoleErrorInterceptor] Failed to log:', logErr);
+      }
+    }
   };
 }
 

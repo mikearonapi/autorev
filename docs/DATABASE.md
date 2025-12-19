@@ -282,11 +282,12 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | Tuning Shop builds (Tuner tier) |
 
 ### `user_feedback` — User feedback
-| Status | **2 rows** |
+| Status | **69 rows** |
 |--------|-----------|
 | **Purpose** | Beta and user feedback submitted through FeedbackWidget, plus automatic error logging |
-| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email`, `category`, `severity`, `rating`, `user_tier`, `feature_context`, `status`, `error_metadata` |
+| **Key Fields** | `user_id`, `page_url`, `feedback_type`, `message`, `email`, `category`, `severity`, `rating`, `user_tier`, `feature_context`, `status`, `error_metadata`, `issue_addressed` |
 | **Auto-Error Support** | `category = 'auto-error'` with `error_metadata` JSONB for client-side error capture |
+| **Issue Tracking** | `issue_addressed` (boolean): `true` = addressed, `false` = needs attention, `NULL` = not evaluated |
 | **Used By** | FeedbackWidget, FeedbackCorner, internal admin page, ErrorBoundary |
 
 ### `user_vehicles` — Owned vehicles
