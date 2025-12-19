@@ -165,3 +165,4 @@ describe('Car Selector Scoring', () => {
     console.log('Car fields:', Object.keys(car).slice(0, 10).join(', '), '...');
   });
 });
+

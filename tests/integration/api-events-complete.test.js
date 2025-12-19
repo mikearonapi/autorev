@@ -202,6 +202,46 @@ describe('Events API - Complete Coverage', () => {
       assertResponse(response, 200);
     });
 
+    it('supports location search with city-only input', async () => {
+      // Test case: User enters just a city name without state
+      const response = await apiRequest('/api/events?location=Leesburg&radius=100&limit=50');
+      assertResponse(response, 200);
+      // Should either find events via geocoding or fallback to city name search
+      console.log(`Location search for "Leesburg" found ${response.data.events.length} events`);
+    });
+
+    it('supports location search with City, State format', async () => {
+      const response = await apiRequest('/api/events?location=Leesburg%2C%20VA&radius=100&limit=50');
+      assertResponse(response, 200);
+      // Leesburg, VA should geocode correctly and find local events
+      console.log(`Location search for "Leesburg, VA" found ${response.data.events.length} events`);
+    });
+
+    it('includes distance_miles when radius search is used', async () => {
+      const response = await apiRequest('/api/events?location=Washington%2C%20DC&radius=50&limit=20');
+      assertResponse(response, 200);
+      if (response.data.events.length > 0) {
+        // Events within radius should have distance_miles field
+        const eventsWithDistance = response.data.events.filter(e => typeof e.distance_miles === 'number');
+        assert.ok(eventsWithDistance.length > 0, 'Radius search should include distance_miles');
+        // Distance should be within radius
+        eventsWithDistance.forEach(e => {
+          assert.ok(e.distance_miles <= 50, `Event should be within 50 miles, got ${e.distance_miles}`);
+        });
+      }
+    });
+
+    it('returns searchCenter info when radius search is used', async () => {
+      const response = await apiRequest('/api/events?location=Chicago&radius=100&limit=10');
+      assertResponse(response, 200);
+      // When geocoding succeeds, searchCenter should be included
+      if (response.data.searchCenter) {
+        assert.ok(typeof response.data.searchCenter.latitude === 'number');
+        assert.ok(typeof response.data.searchCenter.longitude === 'number');
+        assert.ok(response.data.searchCenter.radius === 100);
+      }
+    });
+
     it('handles empty results gracefully', async () => {
       const response = await apiRequest('/api/events?state=ZZ&limit=20');
       assertResponse(response, 200);
@@ -343,3 +383,4 @@ describe('Events Data Validation', () => {
     console.log(`Featured events: ${featured.length}/${response.data.events.length}`);
   });
 });
+

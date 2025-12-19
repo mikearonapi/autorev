@@ -548,3 +548,4 @@ test.describe('Journey 1: Car Shopper', () => {
 ---
 
 *Generated from authoritative docs: PAGES.md, API.md, ARCHITECTURE.md, DATABASE.md*
+

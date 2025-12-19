@@ -266,3 +266,4 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Server-
 - Whether error boundaries are implemented anywhere in the application
 
 
+

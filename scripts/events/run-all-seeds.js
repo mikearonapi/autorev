@@ -54,3 +54,4 @@ run().catch((err) => {
   console.error('❌ run-all-seeds failed:', err);
   process.exit(1);
 });
+

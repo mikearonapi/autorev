@@ -73,3 +73,4 @@ Focus on college towns, affluent suburbs, car culture hubs
 
 ### Batch 3: Smaller Cities (151-500)
 Regional coverage, 1-2 venues per city
+

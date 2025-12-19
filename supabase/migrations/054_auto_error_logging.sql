@@ -29,3 +29,4 @@ WHERE category = 'auto-error';
 CREATE INDEX IF NOT EXISTS idx_user_feedback_unresolved_auto_errors
 ON user_feedback(created_at DESC) 
 WHERE category = 'auto-error' AND resolved_at IS NULL;
+

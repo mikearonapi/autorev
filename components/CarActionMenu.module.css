@@ -140,18 +140,18 @@
   gap: 4px;
 }
 
-/* CF-001: Touch target compliance - minimum 44px */
+/* Compact action buttons - sized to match quickActionItem style */
 .compactBtn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
-  border-radius: 10px;
+  border-radius: 8px;
   color: var(--btn-text);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -388,11 +388,11 @@
    =========================================== */
 
 @media (max-width: 767px) {
-  /* Smaller buttons on mobile to fit in panels */
+  /* Compact buttons on mobile - slightly smaller for tight spaces */
   .compactBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
   }
   
   .compactMenu {

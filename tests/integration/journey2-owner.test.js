@@ -181,3 +181,4 @@ describe('Maintenance Coverage', () => {
     assert.ok(carsWithMaintenance >= 0, 'Maintenance coverage check');
   });
 });
+

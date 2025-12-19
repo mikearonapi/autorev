@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/app/page.module.css';
-import { carData } from '@/data/cars.js';
-import upgradeDetails from '@/data/upgradeEducation.js';
-import { usePlatformStats } from '@/hooks/usePlatformStats';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 
 // Hero image - Dodge Viper overhead shot
@@ -20,22 +17,6 @@ export default function HeroSection() {
   
   // Auth modal (for potential future use)
   const authModal = useAuthModal();
-  
-  // Platform stats from database (with fallbacks to local data)
-  const { stats } = usePlatformStats();
-
-  // Dynamic stats pulled from database or local fallback
-  const quickStats = useMemo(() => {
-    const carCount = stats?.cars || carData?.length || 98;
-    const upgradeCount = Object.keys(upgradeDetails || {}).length || 77;
-    
-    return [
-      { value: String(carCount), label: 'Sports Cars', suffix: '' },
-      { value: String(upgradeCount), label: 'Upgrade Guides', suffix: '+' },
-      { value: 'Miatas to GT3s', label: 'From', suffix: '', isText: true },
-      { value: 'Every Service', label: 'Know', suffix: '', isText: true },
-    ];
-  }, [stats]);
 
   // Cycle through brand suffixes every 1.5 seconds
   useEffect(() => {
@@ -75,31 +56,13 @@ export default function HeroSection() {
           Find What<br />
           <span className={styles.heroAccent}>Drives You</span>
         </h1>
+        <p className={styles.heroSubtitle}>
+          Whether you&apos;re dreaming about your first sports car or planning your tenth build, 
+          AutoRev is your companion for the journey.
+        </p>
         <button onClick={handleJoinClick} className={styles.heroJoinButton}>
           Join the auto <span className={styles.heroRevWord}><span className={styles.heroAccent}>rev</span><span className={`${styles.heroAccent} ${styles.heroBrandSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span></span>
         </button>
-      </div>
-      
-      {/* Quick Stats Bar - Dynamic values from actual data */}
-      <div className={styles.quickStatsBar}>
-        {quickStats.map((stat, index) => (
-          <div key={index} className={`${styles.quickStat} ${stat.isText ? styles.quickStatText : ''}`}>
-            {stat.isText ? (
-              <>
-                <span className={styles.quickStatLabel}>{stat.label}</span>
-                <span className={styles.quickStatValue}>{stat.value}</span>
-              </>
-            ) : (
-              <>
-                <span className={styles.quickStatValue}>
-                  {stat.value}
-                  {stat.suffix && <span className={styles.quickStatSuffix}>{stat.suffix}</span>}
-                </span>
-                <span className={styles.quickStatLabel}>{stat.label}</span>
-              </>
-            )}
-          </div>
-        ))}
       </div>
       
       {/* Auth Modal */}

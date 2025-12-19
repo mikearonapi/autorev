@@ -244,3 +244,4 @@ main().catch((err) => {
   console.error('❌ Analysis failed:', err);
   process.exit(1);
 });
+

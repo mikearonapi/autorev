@@ -244,3 +244,4 @@ function formatDate(date) {
 export function createClientOrThrow() {
   return getServiceSupabase();
 }
+

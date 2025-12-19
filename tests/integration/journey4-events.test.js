@@ -224,3 +224,4 @@ describe('Events Pagination', () => {
     }
   });
 });
+

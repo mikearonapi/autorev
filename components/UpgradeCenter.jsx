@@ -41,7 +41,8 @@ import CarImage from './CarImage';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
-import { DynoDataSection, LapTimesSection } from './PerformanceData';
+// TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
+// To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
 // Compact Icons
 const Icons = {
@@ -524,8 +525,8 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
                     <Icons.swap size={10} />
                   </span>
                 )}
-                <button type="button" className={styles.infoBtn} onClick={() => onInfoClick(upgrade)} aria-label={`View ${upgrade.name} details`}>
-                  <Icons.info size={12} />
+                <button type="button" className={styles.learnMoreBtn} onClick={() => onInfoClick(upgrade)} aria-label={`Learn more about ${upgrade.name}`}>
+                  <span>Learn more</span>
                 </button>
               </div>
             );
@@ -558,7 +559,9 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   // Parts Finder state (beta)
   const [partsQuery, setPartsQuery] = useState('');
   const [partsCategory, setPartsCategory] = useState('');
-  const [partsVerifiedOnly, setPartsVerifiedOnly] = useState(true);
+  // Default to false since only ~1% of fitments are currently verified
+  // Users can opt-in to verified-only filtering
+  const [partsVerifiedOnly, setPartsVerifiedOnly] = useState(false);
   const [partsLoading, setPartsLoading] = useState(false);
   const [partsError, setPartsError] = useState(null);
   const [partsResults, setPartsResults] = useState([]);
@@ -578,7 +581,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   useEffect(() => {
     setPartsQuery('');
     setPartsCategory('');
-    setPartsVerifiedOnly(true);
+    setPartsVerifiedOnly(false); // Match initial default
     setPartsError(null);
     setPartsResults([]);
     setSelectedParts([]);
@@ -1204,9 +1207,12 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
             )}
           </div>
 
-          {/* Performance Intelligence - Dyno & Lap Times (Tuner tier) */}
+          {/* Performance Intelligence - Dyno & Lap Times (Tuner tier)
+              TEMPORARILY HIDDEN: Keeping code intact for future re-enablement.
+              To restore, uncomment the following lines:
           <DynoDataSection carSlug={car?.slug} carName={car?.name} />
           <LapTimesSection carSlug={car?.slug} carName={car?.name} />
+          */}
         </div>
       </div>
       

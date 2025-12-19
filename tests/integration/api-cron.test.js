@@ -182,3 +182,4 @@ describe('Cron Authentication Methods', () => {
     assert.ok([401, 403].includes(response.status));
   });
 });
+

@@ -160,3 +160,4 @@ describe('AL Assistant (Authenticated)', { skip: !process.env.TEST_AUTH_TOKEN },
     console.log(`Response mentions car-specific data: ${text.includes('vanos') || text.includes('subframe')}`);
   });
 });
+

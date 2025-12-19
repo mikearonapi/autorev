@@ -377,3 +377,4 @@ describe('Car Data Validation', () => {
     assert.ok(Object.keys(tiers).length >= 3, 'Should have multiple tiers');
   });
 });
+

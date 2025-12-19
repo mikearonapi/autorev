@@ -193,3 +193,4 @@ if (dryRun) {
   console.log('ℹ️  This was a dry run. No changes were made to the database.');
   console.log('   Remove --dryRun to actually update source timestamps.\n');
 }
+

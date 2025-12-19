@@ -1,46 +1,38 @@
-/* AddToCalendarButton - On-Brand Styling */
+/* AddToCalendarButton - Icon-Only Calendar Add Button */
 
 .container {
   position: relative;
   display: inline-block;
 }
 
-.triggerBtn {
-  display: inline-flex;
+/* Icon-only button style */
+.iconButton {
+  display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
-  color: var(--color-gray-700);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  color: var(--sn-primary);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.triggerBtn:hover {
+.iconButton:hover {
   background: var(--color-gray-50);
   border-color: var(--sn-primary);
-  color: var(--sn-primary);
+  transform: scale(1.05);
 }
 
-.triggerIcon {
-  display: flex;
-  align-items: center;
+.iconButton:active {
+  transform: scale(0.98);
 }
 
-.chevron {
-  display: flex;
-  align-items: center;
-  margin-left: var(--space-xs);
-  transition: transform var(--transition-fast);
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
+.iconButton.open {
+  background: var(--sn-primary-light);
+  border-color: var(--sn-primary);
 }
 
 /* Dropdown */
@@ -55,9 +47,31 @@
   box-shadow: var(--shadow-lg);
   z-index: 1000;
   overflow: hidden;
+  animation: fadeIn 0.15s ease-out;
 }
 
-.dropdownItem {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section labels in dropdown */
+.sectionLabel {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.option {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -69,49 +83,158 @@
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   text-align: left;
-  text-decoration: none;
   cursor: pointer;
   transition: background var(--transition-fast);
 }
 
-.dropdownItem:hover {
+.option:hover {
   background: var(--color-gray-50);
   color: var(--sn-primary);
 }
 
-.dropdownIcon {
+.option svg {
+  flex-shrink: 0;
+}
+
+/* Universal option (download .ics) */
+.universalOption {
+  background: var(--color-gray-50);
+}
+
+.universalOption:hover {
+  background: var(--sn-primary-light);
+}
+
+.optionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.option:hover .optionHint {
+  color: var(--sn-primary);
+  opacity: 0.8;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-gray-200);
+  margin: var(--space-xs) 0;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
-  color: var(--color-gray-400);
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--space-md);
+  animation: fadeIn 0.2s ease-out;
 }
 
-.dropdownItem:hover .dropdownIcon {
-  color: var(--sn-primary);
-}
-
-/* Gated state */
-.gatedBtn {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.gatedBtn:hover {
+.modalContent {
+  position: relative;
   background: var(--color-white);
-  border-color: var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+}
+
+.modalClose {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-gray-500);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalClose:hover {
+  background: var(--color-gray-200);
   color: var(--color-gray-700);
 }
 
-.upgradeHint {
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-warning-light);
-  border-top: 1px solid var(--color-gray-100);
-  font-size: var(--font-size-xs);
-  color: var(--color-warning);
-  text-align: center;
+.modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-md);
+  background: var(--sn-primary-light);
+  border-radius: var(--radius-full);
+  color: var(--sn-primary);
 }
 
-.upgradeHint a {
-  color: var(--color-warning);
+.modalTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  text-decoration: underline;
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-sm);
+}
+
+.modalDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: 1.6;
+  margin: 0 0 var(--space-lg);
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.upgradeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--tier-color, var(--sn-primary));
+  color: var(--color-white);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.upgradeBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.dismissBtn {
+  padding: var(--space-sm) var(--space-md);
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.dismissBtn:hover {
+  color: var(--color-gray-700);
 }

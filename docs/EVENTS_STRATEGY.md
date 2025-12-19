@@ -353,3 +353,4 @@ scripts/
 6. ⬜ Create seed-major-shows.js
 7. ⬜ Apply for MotorsportReg API access
 8. ⬜ Build and test Cars & Coffee scraper
+

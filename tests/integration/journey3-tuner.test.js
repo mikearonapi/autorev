@@ -200,3 +200,4 @@ describe('Performance Data Coverage', () => {
     assert.ok(carsWithDyno >= 0, 'Some cars should have dyno data');
   });
 });
+

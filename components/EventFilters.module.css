@@ -4,6 +4,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Category Pills Row - CF-005: Horizontal scroll with indicators */
@@ -388,6 +391,7 @@
 
 .filterDrawer {
   width: 100%;
+  max-width: 100vw;
   max-height: 85vh;
   max-height: 85dvh;
   background: var(--color-white);
@@ -397,6 +401,9 @@
   animation: slideUp 0.3s ease;
   /* Safe area support for iPhone */
   padding-bottom: env(safe-area-inset-bottom, 0);
+  /* Prevent horizontal overflow */
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 @keyframes slideUp {
@@ -414,9 +421,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md) var(--space-md);
   border-bottom: 1px solid var(--color-gray-100);
   position: relative;
+  box-sizing: border-box;
 }
 
 .filterDrawerDragHandle {
@@ -460,21 +468,26 @@
 .filterDrawerContent {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-lg);
+  overflow-x: hidden;
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* Style filter elements inside drawer */
 .filterDrawerContent .locationAutocomplete {
-  max-width: none;
+  max-width: 100%;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .filterDrawerContent .filterSelect {
   width: 100%;
   min-height: 48px;
+  box-sizing: border-box;
 }
 
 /* Mobile filter row - puts radius and region side by side */
@@ -482,13 +495,15 @@
   display: flex;
   gap: var(--space-sm);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .filterSelectHalf {
   flex: 1;
   min-width: 0;
-  padding: var(--space-sm) var(--space-md);
-  padding-right: calc(var(--space-md) + 16px);
+  max-width: 100%;
+  padding: var(--space-sm) var(--space-sm);
+  padding-right: calc(var(--space-sm) + 16px);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
@@ -496,11 +511,12 @@
   background-color: var(--color-white);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right var(--space-sm) center;
+  background-position: right var(--space-xs) center;
   color: var(--color-gray-900);
   cursor: pointer;
   transition: border-color var(--transition-fast);
   min-height: 48px;
+  box-sizing: border-box;
 }
 
 .filterSelectHalf:focus {
@@ -524,6 +540,19 @@
   border-top: 1px solid var(--color-gray-100);
 }
 
+/* Compact view toggle buttons in mobile drawer */
+.drawerViewToggle .viewToggle {
+  width: 100%;
+  justify-content: center;
+}
+
+.drawerViewToggle .viewBtn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-xs);
+  font-size: var(--font-size-xs);
+  min-width: 0;
+}
+
 .drawerViewLabel {
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -537,7 +566,7 @@
   gap: var(--space-xs);
   width: 100%;
   min-height: 44px;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm);
   background: var(--color-gray-100);
   color: var(--color-gray-600);
   border: none;
@@ -548,6 +577,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-top: var(--space-sm);
+  box-sizing: border-box;
 }
 
 .drawerClearBtn:active {
@@ -555,8 +585,9 @@
 }
 
 .filterDrawerFooter {
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
   border-top: 1px solid var(--color-gray-100);
+  box-sizing: border-box;
 }
 
 .filterDrawerApplyBtn {
@@ -565,7 +596,7 @@
   justify-content: center;
   width: 100%;
   min-height: 52px;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md) var(--space-md);
   background: var(--sn-primary);
   color: var(--color-white);
   border: none;
@@ -576,6 +607,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 .filterDrawerApplyBtn:active {

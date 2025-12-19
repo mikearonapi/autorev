@@ -1772,10 +1772,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 24px;
+  gap: 16px;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  /* Prevent overlap with quickActionBar on right side */
+  padding-right: 10px;
 }
 
 /* Override tooltip positioning within expanded row to show below buttons */
@@ -1833,6 +1835,15 @@
   flex-shrink: 0;
 }
 
+/* Mobile and tablet - prevent quickActionBar overlap */
+@media (max-width: 767px) {
+  .expandedActionsRow {
+    /* Prevent overlap with quickActionBar on right side */
+    padding-right: 80px;
+    gap: 8px;
+  }
+}
+
 @media (max-width: 500px) {
   .seeDetailsBtn span {
     display: none;
@@ -1847,6 +1858,8 @@
     gap: 6px;
     margin-top: 12px;
     padding-top: 12px;
+    /* Prevent overlap with quickActionBar on right side */
+    padding-right: 70px;
   }
 }
 
@@ -1856,6 +1869,8 @@
     gap: 4px;
     margin-top: 10px;
     padding-top: 10px;
+    /* Prevent overlap with quickActionBar on right side */
+    padding-right: 65px;
   }
   
   .seeDetailsBtn {

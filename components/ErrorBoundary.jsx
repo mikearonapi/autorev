@@ -177,3 +177,4 @@ export function withErrorBoundary(WrappedComponent, fallback = null, name = '') 
   WithErrorBoundary.displayName = `withErrorBoundary(${displayName})`;
   return WithErrorBoundary;
 }
+

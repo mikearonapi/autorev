@@ -109,3 +109,4 @@ END $$;
 -- Run these queries to verify the functions were created:
 -- SELECT routine_name FROM information_schema.routines 
 --   WHERE routine_schema = 'public' AND routine_name IN ('search_document_chunks', 'search_cars_fts');
+

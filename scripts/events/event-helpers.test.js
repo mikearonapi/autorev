@@ -37,3 +37,4 @@ import {
   // 6 months of Saturdays in 2026 (5 + 4 + 4 + 5 + 4 + 5 = 27)
   assert.strictEqual(dates.length, 27);
 }
+

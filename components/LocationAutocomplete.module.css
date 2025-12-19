@@ -1,6 +1,8 @@
 .container {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Light yellow/gold themed input - key input on events page */
@@ -12,6 +14,9 @@
   border: 2px solid var(--sn-gold, #d4af37);
   border-radius: var(--radius-md, 8px);
   transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .inputWrapper:focus-within {
@@ -35,6 +40,8 @@
   font-size: 14px;
   outline: none;
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .input::placeholder {
@@ -118,10 +125,12 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   max-height: 280px;
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1000;
   list-style: none;
   margin: 0;
   padding: 4px;
+  box-sizing: border-box;
 }
 
 .suggestionItem {
@@ -146,11 +155,14 @@
 
 .suggestionText {
   flex: 1;
+  min-width: 0;
   font-size: 14px;
   color: var(--color-gray-900, #1a1a1a);
   display: flex;
   align-items: center;
   gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .suggestionZip {

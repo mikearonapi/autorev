@@ -246,3 +246,4 @@ describe('VIN Format Validation', () => {
     });
   }
 });
+

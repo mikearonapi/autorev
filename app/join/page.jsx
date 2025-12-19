@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -8,6 +8,8 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import styles from './page.module.css';
 import { carData } from '@/data/cars.js';
+import upgradeDetails from '@/data/upgradeEducation.js';
+import { usePlatformStats } from '@/hooks/usePlatformStats';
 
 // Icons
 const Icons = {
@@ -292,9 +294,25 @@ export default function JoinPage() {
   const { user, isLoading } = useAuth();
   const authModal = useAuthModal();
   
+  // Platform stats from database (with fallbacks to local data)
+  const { stats } = usePlatformStats();
+  
   // Animated REV text state
   const [suffixIndex, setSuffixIndex] = useState(0);
   const [suffixVisible, setSuffixVisible] = useState(true);
+
+  // Dynamic stats pulled from database or local fallback
+  const quickStats = useMemo(() => {
+    const carCount = stats?.cars || carData?.length || 98;
+    const upgradeCount = Object.keys(upgradeDetails || {}).length || 77;
+    
+    return [
+      { value: String(carCount), label: 'Sports Cars', suffix: '' },
+      { value: String(upgradeCount), label: 'Upgrade Guides', suffix: '+' },
+      { value: 'Miatas to GT3s', label: 'From', suffix: '', isText: true },
+      { value: 'Every Service', label: 'Know', suffix: '', isText: true },
+    ];
+  }, [stats]);
 
   // Cycle through REVival, REVelation, REVolution
   useEffect(() => {
@@ -353,6 +371,28 @@ export default function JoinPage() {
         </div>
 
         <ScrollIndicator />
+        
+        {/* Quick Stats Bar - Dynamic values from actual data */}
+        <div className={styles.quickStatsBar}>
+          {quickStats.map((stat, index) => (
+            <div key={index} className={`${styles.quickStat} ${stat.isText ? styles.quickStatText : ''}`}>
+              {stat.isText ? (
+                <>
+                  <span className={styles.quickStatLabel}>{stat.label}</span>
+                  <span className={styles.quickStatValue}>{stat.value}</span>
+                </>
+              ) : (
+                <>
+                  <span className={styles.quickStatValue}>
+                    {stat.value}
+                    {stat.suffix && <span className={styles.quickStatSuffix}>{stat.suffix}</span>}
+                  </span>
+                  <span className={styles.quickStatLabel}>{stat.label}</span>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Tiers Section */}

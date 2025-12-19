@@ -9,7 +9,7 @@
  * 3. Projects - View, manage, compare, and analyze saved builds
  */
 
-import React, { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, Suspense, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -621,15 +621,36 @@ function TuningShopContent() {
   const { vehicles = [] } = useOwnedVehicles() || {};
   
   // Handle URL params for direct build access
+  // Use a mounted ref to prevent state updates during navigation transitions
+  const isMountedRef = useRef(true);
   useEffect(() => {
-    const buildId = searchParams.get('build');
-    const planCar = searchParams.get('plan');
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // Guard against updates during navigation/unmount
+    if (!isMountedRef.current) return;
+    
+    // Safely access search params - can throw during navigation transitions
+    let buildId = null;
+    let planCar = null;
+    try {
+      buildId = searchParams?.get('build');
+      planCar = searchParams?.get('plan');
+    } catch (err) {
+      // Ignore errors during navigation transitions
+      console.warn('[TuningShop] Search params access failed:', err);
+      return;
+    }
     
     if (buildId && builds.length > 0) {
       const build = getBuildById(buildId);
       if (build) {
         const car = carData.find(c => c.slug === build.carSlug);
-        if (car) {
+        if (car && isMountedRef.current) {
           setSelectedCar(car);
           setCurrentBuildId(buildId);
           setActiveTab('upgrades');
@@ -637,7 +658,7 @@ function TuningShopContent() {
       }
     } else if (planCar) {
       const car = carData.find(c => c.slug === planCar);
-      if (car) {
+      if (car && isMountedRef.current) {
         setSelectedCar(car);
         setCurrentBuildId(null);
         setActiveTab('upgrades');

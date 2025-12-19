@@ -136,3 +136,4 @@ MOTORSPORTREG_CONSUMER_SECRET=oauth-consumer-secret
 - GraphQL Docs: https://api-v2.motorsportreg.com/graphql (schema introspection)
 - WordPress Plugin: https://blog.motorsportreg.com/wordpress-calendar-plugin
 - Developer Support: motorsportreg-api-developers@googlegroups.com
+

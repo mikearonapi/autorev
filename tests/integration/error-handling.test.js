@@ -269,3 +269,4 @@ describe('Error Response Format', () => {
     assert.ok(response.data.error, 'Should have error message');
   });
 });
+
