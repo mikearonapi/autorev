@@ -456,6 +456,15 @@
   /* Width stays the same */
 }
 
+/* Mobile: Ensure expanded panel has enough space for action buttons */
+@media (max-width: 767px) {
+  .specPanel_expanded {
+    /* Allow taller panel to fit all content including action row */
+    max-height: 55vh;
+    padding-bottom: 16px;
+  }
+}
+
 /* Details state - wider panel with scrollable content */
 .specPanel_details {
   width: calc(100% - 48px);
@@ -1822,10 +1831,26 @@
   .seeDetailsBtn {
     padding: 10px 12px;
   }
-  
+
   .expandedActionsRow {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+}
+
+/* Smaller screens - more compact action row */
+@media (max-width: 480px) {
+  .expandedActionsRow {
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  
+  .seeDetailsBtn {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }
 
