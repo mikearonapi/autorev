@@ -364,10 +364,6 @@ export default function JoinPage() {
               </span>
             </span>
           </h1>
-          <p className={styles.subtitle}>
-            Whether you're dreaming about your first sports car or planning your tenth build, 
-            AutoRev is your companion for the journey.
-          </p>
         </div>
 
         <ScrollIndicator />

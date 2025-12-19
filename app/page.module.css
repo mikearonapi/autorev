@@ -113,19 +113,14 @@
 
 .heroTitle {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
+  /* Mobile-first: ~2.5x larger for visual impact (was --font-size-2xl: 22-28px) */
+  font-size: clamp(2.75rem, 12vw, 3.5rem); /* 44-56px */
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: var(--line-height-tight);
   margin-bottom: var(--space-md);
-}
-
-@media (min-width: 480px) {
-  .heroTitle {
-    font-size: var(--font-size-3xl);
-  }
 }
 
 .heroAccent {
