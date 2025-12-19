@@ -82,7 +82,7 @@
 | Service | Service log tracking | Collector |
 | Value | Market value, price history | Collector |
 
-**Events Integration (Collector+):**
+**Events Integration (Enthusiast+):**
 - Shows upcoming events relevant to user's owned vehicles
 - Queries events by car brand/slug matching garage vehicles
 - Falls back to favorites' brands if no owned vehicles
@@ -197,25 +197,25 @@ Technical Reference (Legacy)
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | Discover car events (Cars & Coffee, track days, shows, auctions) |
-| **Tier** | Free (List view), Collector+ (Map/Calendar views) |
+| **Tier** | Free (List view), Enthusiast+ (Map/Calendar views) |
 | **Key Components** | EventCard, EventFilters, EventCalendarView, EventMap |
 | **Data Sources** | `events`, `event_types`, `event_car_affinities` |
 
 **Features:**
 - **Three View Modes:**
   - List (Free) - Grid of EventCards
-  - Map (Collector+) - Geographic view with clustering
-  - Calendar (Collector+) - Monthly calendar grid
+  - Map (Enthusiast+) - Geographic view with clustering
+  - Calendar (Enthusiast+) - Monthly calendar grid
 - **Filters (EventFilters component):**
   - Category pills (quick event type selection)
   - Location (ZIP, city/state, region, scope)
   - Date range picker
   - Track Events Only toggle
   - Free Events Only toggle
-  - "Events for My Cars" (Collector+ with garage data)
+  - "Events for My Cars" (Enthusiast+ with garage data)
 - Featured events highlighted
 - Pagination
-- Save events (Collector+)
+- Save events (Enthusiast+)
 
 ### Community Event Detail (`/community/events/[slug]`)
 | Attribute | Value |
@@ -230,8 +230,8 @@ Technical Reference (Legacy)
 - Full event information (date/time, location, description, cost)
 - Google Maps integration (external link)
 - Car/brand affinity badges with links
-- Save button (Collector+ tier)
-- Add to Calendar dropdown (Collector+ tier, Google/Apple/Outlook/ICS)
+- Save button (Enthusiast+ tier)
+- Add to Calendar dropdown (Enthusiast+ tier, Google/Apple/Outlook/ICS)
 - Share functionality
 - Related events (same type or region)
 - CTA to external source/registration
@@ -262,7 +262,7 @@ Technical Reference (Legacy)
 | Attribute | Value |
 |-----------|-------|
 | **Purpose** | User's bookmarked events collection |
-| **Tier** | Collector+ |
+| **Tier** | Enthusiast+ |
 | **Key Components** | EventCard grid, PremiumGate |
 | **Data Sources** | `event_saves`, `events`, `event_types` |
 
@@ -332,7 +332,7 @@ Home → Car Selector → Set priorities → View matches
             Ask AL questions
 ```
 
-### Journey 2: New Owner (Collector Tier)
+### Journey 2: New Owner (Enthusiast Tier)
 ```
 My Garage → Add Vehicle (enter VIN)
          ↓

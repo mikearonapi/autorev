@@ -106,7 +106,7 @@ The AutoRev API is **well-architected** with consistent patterns, proper error h
 | `GET /api/events/[slug]` | ✅ | GET | |
 | `GET /api/events/types` | ✅ | GET | |
 | `POST /api/events/submit` | ✅ | POST | Requires auth |
-| `POST /api/events/[slug]/save` | ✅ | POST | Collector+ tier |
+| `POST /api/events/[slug]/save` | ✅ | POST | Enthusiast+ tier |
 | `DELETE /api/events/[slug]/save` | ✅ | DELETE | |
 
 ### Users/AL Routes (4/4) ✅

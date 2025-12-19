@@ -213,7 +213,7 @@ Event discovery and management components.
 ### `EventCalendarView`
 **File:** `components/EventCalendarView.jsx`
 **Purpose:** Monthly calendar grid view of events
-**Tier:** Collector+
+**Tier:** Enthusiast+
 **Props:**
 - `events` - Array of events
 - `month` - Display month (0-11)
@@ -223,7 +223,7 @@ Event discovery and management components.
 ### `EventMap`
 **File:** `components/EventMap.jsx`
 **Purpose:** Geographic map view of events
-**Tier:** Collector+
+**Tier:** Enthusiast+
 **Props:**
 - `events` - Array of events with lat/lng
 - `onEventSelect` - Event selection callback
@@ -238,7 +238,7 @@ Event discovery and management components.
 ### `SaveEventButton`
 **File:** `components/SaveEventButton.jsx`
 **Purpose:** Reusable save/unsave event button with auth/tier gating
-**Tier:** Collector+ (prompts upgrade for free users)
+**Tier:** Enthusiast+ (prompts upgrade for free users)
 **Props:**
 - `eventId` - Event ID
 - `eventSlug` - Event slug
@@ -249,7 +249,7 @@ Event discovery and management components.
 ### `AddToCalendarButton`
 **File:** `components/AddToCalendarButton.jsx`
 **Purpose:** Dropdown to export event to calendar services
-**Tier:** Collector+
+**Tier:** Enthusiast+
 **Props:**
 - `event` - Full event object
 **Exports to:**

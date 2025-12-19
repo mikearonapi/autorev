@@ -966,7 +966,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </>
             )}
 
-            {/* Owner's Reference View - Only for My Collection (Collector+ tier) */}
+            {/* Owner's Reference View - Only for My Collection (Enthusiast+ tier) */}
             {isOwnedVehicle && detailsView === 'reference' && (
               <PremiumGate feature="ownerReference" variant="compact">
                 {/* VIN Lookup - Compact inline */}
@@ -1134,7 +1134,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Safety View - Recalls, TSBs, Complaints, Safety Ratings (Collector+ tier) */}
+            {/* Safety View - Recalls, TSBs, Complaints, Safety Ratings (Enthusiast+ tier) */}
             {isOwnedVehicle && detailsView === 'safety' && (
               <PremiumGate feature="safetyData" variant="compact">
                 {loadingSafety ? (
@@ -1265,7 +1265,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Service Log View (Collector+ tier) */}
+            {/* Service Log View (Enthusiast+ tier) */}
             {isOwnedVehicle && detailsView === 'service' && (
               <PremiumGate feature="serviceLog" variant="compact">
                 {/* Add Service Button */}
@@ -1365,7 +1365,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Market Value View - Only for My Collection (Collector+ tier) */}
+            {/* Market Value View - Only for My Collection (Enthusiast+ tier) */}
             {isOwnedVehicle && detailsView === 'value' && (
               <MarketValueSection 
                 carSlug={item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug}

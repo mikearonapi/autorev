@@ -15,7 +15,7 @@ free → collector → tuner → admin
 | Tier | Price | Target User | Monthly AL Budget |
 |------|-------|-------------|-------------------|
 | **Free** | $0 forever | Car shoppers, browsers | $0.25 (~25 chats) |
-| **Collector** | $4.99/mo | Car owners | $1.00 (~75 chats) |
+| **Enthusiast** | $4.99/mo | Car owners | $1.00 (~75 chats) |
 | **Tuner** | $9.99/mo | Modifiers, track enthusiasts | $2.50 (~150 chats) |
 | **Admin** | Internal | Staff | Unlimited |
 
@@ -87,7 +87,7 @@ free → collector → tuner → admin
 | Feature | Free | Collector | Tuner | Description |
 |---------|:----:|:---------:|:-----:|-------------|
 | Basic AI Chat | ✅ | ✅ | ✅ | ~25 chats/month |
-| Collector AI Chat | ❌ | ✅ | ✅ | ~75 chats/month |
+| Enthusiast AI Chat | ❌ | ✅ | ✅ | ~75 chats/month |
 | Tuner AI Chat | ❌ | ❌ | ✅ | ~150 chats/month |
 | Early Access | ❌ | ❌ | ✅ | New features first |
 
@@ -174,7 +174,7 @@ export async function GET(request) {
   
   if (!hasTierAccess(user?.tier, 'collector')) {
     return NextResponse.json(
-      { error: 'Requires Collector tier' },
+      { error: 'Requires Enthusiast tier' },
       { status: 403 }
     );
   }
@@ -210,14 +210,14 @@ After disabling:
 
 ## Upgrade Flows
 
-### Free → Collector
+### Free → Enthusiast
 
 Triggered by:
 - Clicking "Upgrade" on gated feature
 - Visiting `/join?upgrade=collector`
 - Reaching AL chat limit
 
-### Free/Collector → Tuner
+### Free/Enthusiast → Tuner
 
 Triggered by:
 - Accessing dyno/lap time data
@@ -230,14 +230,14 @@ Triggered by:
 import { getUpgradeCTA } from '@/lib/tierAccess';
 
 const cta = getUpgradeCTA('collector');
-// → { tier: 'collector', tierName: 'Collector', price: '$4.99/mo', ... }
+// → { tier: 'collector', tierName: 'Enthusiast', price: '$4.99/mo', ... }
 ```
 
 ---
 
 ## Feature Categories Summary
 
-| Category | Free Features | Collector Adds | Tuner Adds |
+| Category | Free Features | Enthusiast Adds | Tuner Adds |
 |----------|---------------|----------------|------------|
 | **Discovery** | Full car database, selector, reviews | — | — |
 | **Ownership** | Save favorites | VIN decode, service log, market value | — |

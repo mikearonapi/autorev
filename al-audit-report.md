@@ -97,7 +97,7 @@
 | Params match docs | ✅ | `car_slug` (required), `limit`, `include_quotes` |
 | DB queries valid | ✅ | Uses `fetchVideosForCar`, `calculateCarConsensus` |
 | Error handling | ✅ | Returns placeholder if no data |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **DB Tables:** `youtube_videos`, `youtube_video_car_links`
 
@@ -111,7 +111,7 @@
 | Params match docs | ✅ | `car_slug` (required), `severity_filter` (Critical/Major/Minor/All) |
 | DB queries valid | ✅ | Queries `car_issues` (preferred) with fallback to `vehicle_known_issues` |
 | Error handling | ✅ | Falls back to local carData if DB fails |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **DB Tables:** `car_issues`, `vehicle_known_issues` (legacy fallback)
 
@@ -125,7 +125,7 @@
 | Params match docs | ✅ | `car_slugs[]` (2-4 required), `focus_areas[]` |
 | DB queries valid | ✅ | Uses local carData (no DB queries) |
 | Error handling | ✅ | Returns error if < 2 valid cars |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **Note:** Currently uses local carData only. Could be enhanced to use DB data via `get_car_ai_context`.
 
@@ -139,7 +139,7 @@
 | Params match docs | ✅ | `query` (required), `category` (all, automotive, topics, modifications, build_guides, systems, components) |
 | DB queries valid | ✅ | Semantic search via `search_document_chunks` RPC + keyword fallback |
 | Error handling | ✅ | Falls back to keyword search if vector search fails |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **RPCs:** `search_document_chunks(p_embedding, p_car_id, p_limit)`
 
@@ -155,7 +155,7 @@
 | Params match docs | ✅ | `upgrade_key` (required), `car_slug` (optional) |
 | DB queries valid | ✅ | Uses static `upgradeDetails` + `getModificationArticle` |
 | Error handling | ✅ | Returns error if upgrade not found |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **Data Source:** `data/upgradeEducation.js` (static), `lib/encyclopediaHierarchy.js`
 
@@ -169,7 +169,7 @@
 | Params match docs | ✅ | `query` (required), `car_context`, `sources[]` |
 | DB queries valid | ✅ | **STUB** with enhanced guidance (documented) |
 | Error handling | ✅ | Returns error if query missing |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **Note:** This is a documented stub that provides:
 - Brand-aware forum suggestions (Porsche → Rennlist, BMW → Bimmerpost, etc.)
@@ -189,7 +189,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `query` (required), `car_slug`, `category`, `limit` |
 | DB queries valid | ✅ | Queries `parts`, `part_fitments`, `part_pricing_snapshots` |
 | Error handling | ✅ | Returns error on failure |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **DB Tables:** `parts`, `part_fitments`, `part_pricing_snapshots`
 
@@ -203,7 +203,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `car_slug` (required), `car_variant_key`, `mileage` |
 | DB queries valid | ✅ | Uses `get_car_maintenance_summary` and `get_car_maintenance_summary_variant` RPCs |
 | Error handling | ✅ | Falls back to raw `vehicle_maintenance_specs` table |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **DB Tables:** `vehicle_maintenance_specs`  
 **RPCs:** `get_car_maintenance_summary`, `get_car_maintenance_summary_variant`
@@ -218,7 +218,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `query` (required), `car_slug`, `topic`, `limit` |
 | DB queries valid | ✅ | Uses `search_document_chunks` RPC with embeddings |
 | Error handling | ✅ | Returns error if embeddings unavailable |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **DB Tables:** `document_chunks`, `cars`  
 **RPCs:** `search_document_chunks(p_embedding, p_car_id, p_limit)`
@@ -235,7 +235,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `car_slug` (required), `limit` |
 | DB queries valid | ✅ | Uses `get_car_track_lap_times` RPC |
 | Error handling | ✅ | Returns error with car_slug on failure |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **RPCs:** `get_car_track_lap_times(p_car_slug, p_limit)`
 
@@ -249,7 +249,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `car_slug` (required), `limit`, `include_curve` |
 | DB queries valid | ✅ | Uses `get_car_dyno_runs` RPC |
 | Error handling | ✅ | Returns error with car_slug on failure |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **RPCs:** `get_car_dyno_runs(p_car_slug, p_limit, p_include_curve)`
 
@@ -263,7 +263,7 @@ Future: Exa API or Google Custom Search integration.
 | Params match docs | ✅ | `query` (required), `car_slug`, `insight_types[]`, `limit` |
 | DB queries valid | ✅ | Uses `search_community_insights` RPC with embeddings |
 | Error handling | ✅ | Returns error if embeddings unavailable |
-| Tier gating | ✅ | Collector+ only |
+| Tier gating | ✅ | Enthusiast+ only |
 
 **RPCs:** `search_community_insights(p_query_embedding, p_car_slug, p_insight_types, p_limit, p_min_confidence)`
 

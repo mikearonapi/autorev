@@ -126,7 +126,7 @@
 | Tier | Price | Key Value |
 |------|-------|-----------|
 | **Free** | $0 | Car research & discovery |
-| **Collector** | $4.99/mo | Ownership intelligence |
+| **Enthusiast** | $4.99/mo | Ownership intelligence |
 | **Tuner** | $9.99/mo | Performance data & builds |
 
 Currently **beta** - all features unlocked for authenticated users.

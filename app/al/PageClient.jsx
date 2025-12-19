@@ -526,7 +526,7 @@ export default function PageClient() {
         <div className={styles.pricingCards}>
           {[
             { id: 'free', name: 'Free', summary: tierRows[0]?.free || '~15-20', values: tierRows.map((row) => ({ label: row.label, value: row.free })) },
-            { id: 'collector', name: 'Collector', summary: tierRows[0]?.collector || '~70-80', values: tierRows.map((row) => ({ label: row.label, value: row.collector })) },
+            { id: 'collector', name: 'Enthusiast', summary: tierRows[0]?.collector || '~70-80', values: tierRows.map((row) => ({ label: row.label, value: row.collector })) },
             { id: 'tuner', name: 'Tuner', summary: tierRows[0]?.tuner || '~175-200', values: tierRows.map((row) => ({ label: row.label, value: row.tuner })) },
           ].map((tier) => {
             const isCurrent = profile?.subscription_tier === tier.id;

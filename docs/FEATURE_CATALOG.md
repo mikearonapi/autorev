@@ -126,7 +126,7 @@
 | Add personal notes | Free | ✅ Complete | `user_favorites.notes` | Optional |
 | View saved favorites | Free | ✅ Complete | FavoritesProvider | Context-based |
 
-### Owned Vehicles (Collector+)
+### Owned Vehicles (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -134,7 +134,7 @@
 | VIN decode | Collector | ✅ Complete | NHTSA API + `car_variants` | External API |
 | Variant identification | Collector | ✅ Complete | `car_variants` (102 rows) | Year/trim matching |
 
-### Owner's Reference Tab (Collector+)
+### Owner's Reference Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -143,7 +143,7 @@
 | Tire sizes | Collector | ✅ Complete | `vehicle_maintenance_specs` | All cars |
 | Service intervals | Collector | ✅ Complete | `vehicle_service_intervals` (976 rows) | Comprehensive |
 
-### Safety Tab (Collector+)
+### Safety Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -151,7 +151,7 @@
 | Open recall status | Collector | ✅ Complete | NHTSA API | Incomplete/complete |
 | Safety ratings for VIN | Collector | ✅ Complete | `car_safety_data` | Via matched car |
 
-### Service Log Tab (Collector+)
+### Service Log Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -160,7 +160,7 @@
 | Cost tracking | Collector | 🚧 Under Development | ServiceLogModal.jsx | Form field exists |
 | Next service reminder | Collector | ❌ Not Built | — | No notification system |
 
-### Value Tab (Collector+)
+### Value Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -171,7 +171,7 @@
 | Price history trends | Collector | ⚠️ Partial (7%) | `car_price_history` (7 rows) | Effectively non-functional |
 | Market trend indicator | Collector | ⚠️ Partial (10%) | `car_market_pricing.market_trend` | 10 cars |
 
-### Collections & Export (Collector+)
+### Collections & Export (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -253,7 +253,7 @@
 | Google Maps link | Free | ✅ Complete | External link | From lat/lng |
 | Related events | Free | ✅ Complete | Same type/region | Algorithm |
 
-### Enhanced Views (Collector+)
+### Enhanced Views (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
@@ -613,7 +613,7 @@ Remove until implemented, or mark as "Coming Soon"
 | `eventsBrowse` | ✅ Complete |
 | `eventsSubmit` | ✅ Complete |
 
-### Collector Tier (12 features)
+### Enthusiast Tier (12 features)
 | Feature Key | Status |
 |-------------|--------|
 | `vinDecode` | ✅ Complete |
@@ -790,7 +790,7 @@ This section documents exactly what is displayed on the `/join` page feature tab
 | Save favorite cars | ✓ | ✓ | ✓ |
 | Save cars you own | ✓ | ✓ | ✓ |
 
-#### My Garage Intelligence (Collector+)
+#### My Garage Intelligence (Enthusiast+)
 
 | Feature | Free | Collector | Tuner |
 |---------|:----:|:---------:|:-----:|
@@ -847,7 +847,7 @@ This section documents exactly what is displayed on the `/join` page feature tab
 - Side-by-side comparison
 - AL: ~25/mo, Car search & basic questions
 
-**Collector** — Own & maintain your car
+**Enthusiast** — Own & maintain your car
 - Garage Intelligence system
 - VIN decode, specs & service logs
 - Maintenance schedules & recalls

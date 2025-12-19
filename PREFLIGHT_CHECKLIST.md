@@ -198,12 +198,12 @@ None are blocking issues.
 
 | Feature | Required Tier | Page |
 |---------|---------------|------|
-| VIN Decode | Collector | /garage |
-| Market Value | Collector | /garage |
-| Service Logs | Collector | /garage |
-| Saved Events | Collector | /community/events |
-| Map View | Collector | /community/events |
-| Calendar View | Collector | /community/events |
+| VIN Decode | Enthusiast | /garage |
+| Market Value | Enthusiast | /garage |
+| Service Logs | Enthusiast | /garage |
+| Saved Events | Enthusiast | /community/events |
+| Map View | Enthusiast | /community/events |
+| Calendar View | Enthusiast | /community/events |
 | Dyno Database | Tuner | /browse-cars/[slug] |
 | Full Lap Times | Tuner | /browse-cars/[slug] |
 | Build Projects | Tuner | /tuning-shop |

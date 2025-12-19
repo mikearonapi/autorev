@@ -4,7 +4,7 @@
  * Market Value Section
  * 
  * Displays market pricing data from BaT, Hagerty, and Cars.com
- * Collector tier feature - shows what your car is worth.
+ * Enthusiast tier feature - shows what your car is worth.
  */
 
 import React, { useState, useEffect } from 'react';

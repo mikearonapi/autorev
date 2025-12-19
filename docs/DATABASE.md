@@ -131,7 +131,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 |--------|-----------|
 | **Purpose** | Price tracking over time |
 | **Key Fields** | `car_slug`, `source`, `price`, `recorded_at` |
-| **Used By** | My Garage Value tab (Collector tier) |
+| **Used By** | My Garage Value tab (Enthusiast tier) |
 
 ### `car_dyno_runs` — Real dyno data
 | Status | **29 rows** |
@@ -295,14 +295,14 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 |--------|----------|
 | **Purpose** | User's owned vehicles with VIN |
 | **Key Fields** | `user_id`, `matched_car_slug`, `matched_car_id`, `matched_car_variant_id`, `vin`, `year`, `make`, `model`, `trim`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
-| **Used By** | Collector tier ownership features, My Garage |
+| **Used By** | Enthusiast tier ownership features, My Garage |
 
 ### `user_service_logs` — Service records
 | Status | **0 rows** ⬜ |
 |--------|---------------|
 | **Purpose** | Maintenance history for owned vehicles |
 | **Key Fields** | `user_vehicle_id`, `service_type`, `service_date`, `odometer_reading`, `performed_by`, `shop_name`, `parts_cost`, `labor_cost`, `total_cost` |
-| **Future Use** | Collector tier service tracking |
+| **Future Use** | Enthusiast tier service tracking |
 
 ### `user_project_parts` — Build part selections
 | Status | **0 rows** ⬜ |
@@ -315,7 +315,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | Status | **0 rows** ⬜ |
 |--------|---------------|
 | **Purpose** | Saved comparison lists |
-| **Future Use** | Collector tier compare feature |
+| **Future Use** | Enthusiast tier compare feature |
 
 ### `user_activity` — Activity tracking
 | Status | **0 rows** ⬜ |
@@ -696,7 +696,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ### Empty (Future Use)
 | Table | Future Purpose |
 |-------|----------------|
-| `user_service_logs` | Collector tier service tracking |
+| `user_service_logs` | Enthusiast tier service tracking |
 | `user_project_parts` | Build project part selections |
 | `user_compare_lists` | Saved comparison sessions |
 | `car_auction_results` | Detailed BaT sale-by-sale data |

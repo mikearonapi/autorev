@@ -1,7 +1,7 @@
 /**
  * Event Save/Unsave API
  * 
- * POST /api/events/[slug]/save - Save an event (requires Collector+ tier)
+ * POST /api/events/[slug]/save - Save an event (requires Enthusiast+ tier)
  * DELETE /api/events/[slug]/save - Unsave an event
  * 
  * Requires authentication for both operations.
@@ -60,14 +60,14 @@ export async function POST(request, { params }) {
     
     const userTier = profile?.subscription_tier || 'free';
     
-    // Check tier access (Collector+ required)
+    // Check tier access (Enthusiast+ required)
     // During beta, all authenticated users have access
     const hasAccess = IS_BETA || hasTierAccess(userTier, 'collector');
     
     if (!hasAccess) {
       return NextResponse.json(
         { 
-          error: 'This feature requires Collector tier or higher',
+          error: 'This feature requires Enthusiast tier or higher',
           requiredTier: 'collector',
         },
         { status: 403 }

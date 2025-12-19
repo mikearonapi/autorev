@@ -62,8 +62,8 @@ export default function PrivacyPolicy() {
           </p>
           <ul>
             <li><strong>Favorite cars:</strong> Cars you save to your garage for quick access</li>
-            <li><strong>Owned vehicles:</strong> Vehicle details including VIN, year, make, model, trim, mileage, and purchase information (Collector tier)</li>
-            <li><strong>Service logs:</strong> Maintenance records for your owned vehicles (Collector tier)</li>
+            <li><strong>Owned vehicles:</strong> Vehicle details including VIN, year, make, model, trim, mileage, and purchase information (Enthusiast tier)</li>
+            <li><strong>Service logs:</strong> Maintenance records for your owned vehicles (Enthusiast tier)</li>
             <li><strong>Build projects:</strong> Saved modification plans and upgrade selections (Tuner tier)</li>
             <li><strong>Comparison lists:</strong> Cars you compare side-by-side</li>
             <li><strong>Car Selector preferences:</strong> Priority weights and filter selections</li>
@@ -106,7 +106,7 @@ export default function PrivacyPolicy() {
           <ul>
             <li>Provide car discovery, comparison, and recommendation services</li>
             <li>Save your garage, favorites, and build projects across sessions</li>
-            <li>Enable ownership tracking and service log features (Collector tier)</li>
+            <li>Enable ownership tracking and service log features (Enthusiast tier)</li>
             <li>Provide performance data and parts catalog access (Tuner tier)</li>
             <li>Manage your subscription tier and feature access</li>
           </ul>

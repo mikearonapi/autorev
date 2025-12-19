@@ -76,10 +76,10 @@ For cars saved to the garage:
 | View | What's On It | Tier |
 |------|--------------|------|
 | **Overview** | Basic car info, photos | Free |
-| **Reference** | Oil specs, capacities, maintenance schedules | Collector |
-| **Safety** | Your car's safety features | Collector |
-| **Service** | Service log tracking | Collector |
-| **Value** | Market value & price history | Collector |
+| **Reference** | Oil specs, capacities, maintenance schedules | Enthusiast |
+| **Safety** | Your car's safety features | Enthusiast |
+| **Service** | Service log tracking | Enthusiast |
+| **Value** | Market value & price history | Enthusiast |
 
 ---
 
@@ -123,7 +123,7 @@ Everything in Free, plus:
 ### TUNER — Build Better
 **Price**: $9.99/month (free during beta)
 
-Everything in Collector, plus:
+Everything in Enthusiast, plus:
 
 | Feature | ✓ |
 |---------|---|
@@ -248,7 +248,7 @@ AL (short for AutoLingo) is an **AI-powered car research assistant** built into 
 | Tier | Monthly Chats |
 |------|---------------|
 | Free | ~25 |
-| Collector | ~75 |
+| Enthusiast | ~75 |
 | Tuner | ~150 |
 
 ---

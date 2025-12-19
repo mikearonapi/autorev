@@ -79,9 +79,9 @@ describe('Tier Access & Feature Gating', () => {
   });
 
   // =========================================
-  // Collector Tier Features
+  // Enthusiast Tier Features
   // =========================================
-  describe('Collector Tier Features (Auth Required)', () => {
+  describe('Enthusiast Tier Features (Auth Required)', () => {
     it('VIN decode requires authentication', async () => {
       const response = await apiRequest('/api/vin/decode', {
         method: 'POST',

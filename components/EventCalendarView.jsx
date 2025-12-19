@@ -68,7 +68,7 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
  * EventCalendarView component
  * 
  * A monthly calendar grid showing events on their dates.
- * Tier-gated: Collector+ only.
+ * Tier-gated: Enthusiast+ only.
  * 
  * @param {Object} props
  * @param {Array} props.events - Array of event objects

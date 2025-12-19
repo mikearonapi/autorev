@@ -225,7 +225,7 @@ export default function SaveEventButton({
                 ? `Bookmark "${eventName}" so you never miss it!`
                 : 'Bookmark events so you never miss them!'
               }
-              {' '}Saving events is available for Collector members and above.
+              {' '}Saving events is available for Enthusiast members and above.
             </p>
             <div className={styles.modalActions}>
               <Link 

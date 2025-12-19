@@ -12,9 +12,9 @@
 | Journey | User Tier | Critical APIs | Tables Touched |
 |---------|-----------|---------------|----------------|
 | Car Shopper | Free | `/api/cars`, `/api/cars/[slug]/*`, `/api/ai-mechanic` | `cars`, `user_favorites`, `al_conversations` |
-| New Owner | Collector | `/api/vin/decode`, `/api/cars/[slug]/maintenance`, `/api/cars/[slug]/market-value` | `user_vehicles`, `car_variants`, `vehicle_maintenance_specs` |
+| New Owner | Enthusiast | `/api/vin/decode`, `/api/cars/[slug]/maintenance`, `/api/cars/[slug]/market-value` | `user_vehicles`, `car_variants`, `vehicle_maintenance_specs` |
 | Enthusiast | Tuner | `/api/cars/[slug]/dyno`, `/api/cars/[slug]/lap-times`, `/api/parts/search` | `car_dyno_runs`, `car_track_lap_times`, `parts`, `user_projects` |
-| Event Discovery | Free/Collector | `/api/events`, `/api/events/[slug]`, `/api/events/submit` | `events`, `event_types`, `event_saves`, `event_submissions` |
+| Event Discovery | Free/Enthusiast | `/api/events`, `/api/events/[slug]`, `/api/events/submit` | `events`, `event_types`, `event_saves`, `event_submissions` |
 | AL Assistant | Free+ | `/api/ai-mechanic` | `al_conversations`, `al_messages`, `al_usage_logs`, `al_user_credits` |
 
 ---
@@ -69,7 +69,7 @@ POST /api/ai-mechanic
 
 ---
 
-## Journey 2: New Owner (Collector Tier)
+## Journey 2: New Owner (Enthusiast Tier)
 
 ### Preconditions
 - Authenticated user with `subscription_tier = 'collector'`
@@ -81,7 +81,7 @@ POST /api/ai-mechanic
 
 | Step | Action | API Call | Expected Response | Assertion |
 |------|--------|----------|-------------------|-----------|
-| 1 | Login as Collector user | Supabase Auth | Session established | User context shows 'collector' tier |
+| 1 | Login as Enthusiast user | Supabase Auth | Session established | User context shows 'collector' tier |
 | 2 | Navigate to `/garage` | None | Garage page loads | "My Vehicles" section visible |
 | 3 | Click "Add Vehicle" button | None | AddVehicleModal opens | VIN input field visible |
 | 4 | Enter valid VIN `WP0AB29986S731234` | None | VIN field populated | 17-character VIN accepted |
@@ -113,7 +113,7 @@ GET  /api/cars/[slug]/price-by-year
 |---------|--------------------------------|
 | Add Vehicle with VIN | PremiumGate blocks, shows upgrade prompt |
 | Market Value tab | PremiumGate blocks, teaser content shown |
-| Price History chart | Blurred/locked with Collector CTA |
+| Price History chart | Blurred/locked with Enthusiast CTA |
 
 ---
 
@@ -166,7 +166,7 @@ POST /api/parts/relationships
 | `user_projects` | New row with `project_name`, `car_slug`, `selected_upgrades` |
 
 ### Tier Gating Assertions
-| Feature | Expected Behavior for Collector User |
+| Feature | Expected Behavior for Enthusiast User |
 |---------|-------------------------------------|
 | Full Dyno Data | PremiumGate blocks, shows sample + upgrade CTA |
 | Full Lap Times | PremiumGate blocks, limited preview |
@@ -180,7 +180,7 @@ POST /api/parts/relationships
 - `event_types` has ≥5 event types (cars-and-coffee, track-day, etc.)
 - `events` table has ≥10 approved events with future `start_date`
 - Events have `status = 'approved'`
-- For save/submit tests: authenticated Collector+ user
+- For save/submit tests: authenticated Enthusiast+ user
 
 ### Steps
 
@@ -196,7 +196,7 @@ POST /api/parts/relationships
 | 8 | Click on event card | None | Navigate to `/community/events/[slug]` | Event detail page loads |
 | 9 | Load event detail | `GET /api/events/[slug]` | `{ event: {...} }` | Full event data displayed |
 | 10 | Verify event fields | None | Data rendered | name, date, time, venue, city, state, description |
-| 11 | Click "Save Event" (Collector+) | `POST /api/events/[slug]/save` | `{ saved: true }` | Save button toggles, confirmation |
+| 11 | Click "Save Event" (Enthusiast+) | `POST /api/events/[slug]/save` | `{ saved: true }` | Save button toggles, confirmation |
 | 12 | Navigate to `/events/saved` | `GET /api/users/[userId]/saved-events` | `{ savedEvents: [...] }` | Saved event appears in list |
 | 13 | Unsave event | `DELETE /api/events/[slug]/save` | `{ saved: false }` | Event removed from saved list |
 | 14 | Navigate to `/events/submit` | None | Submission form loads | Form fields visible |
@@ -227,9 +227,9 @@ POST   /api/events/submit
 | Feature | Expected Behavior for Free User |
 |---------|--------------------------------|
 | Save Event | 401/403 error, upgrade prompt |
-| Map View | PremiumGate, Collector CTA |
-| Calendar View | PremiumGate, Collector CTA |
-| "Events for My Cars" filter | Disabled, Collector CTA |
+| Map View | PremiumGate, Enthusiast CTA |
+| Calendar View | PremiumGate, Enthusiast CTA |
+| "Events for My Cars" filter | Disabled, Enthusiast CTA |
 
 ---
 
@@ -324,7 +324,7 @@ GET  /api/users/[userId]/al-conversations/[conversationId]
 INSERT INTO user_profiles (id, display_name, subscription_tier)
 VALUES 
   ('test-free-user-id', 'Test Free User', 'free'),
-  ('test-collector-user-id', 'Test Collector', 'collector'),
+  ('test-collector-user-id', 'Test Enthusiast', 'collector'),
   ('test-tuner-user-id', 'Test Tuner', 'tuner')
 ON CONFLICT (id) DO UPDATE SET subscription_tier = EXCLUDED.subscription_tier;
 
@@ -449,8 +449,8 @@ interface AIResponse {
 | Invalid VIN format | 400 | `{ error: "Invalid VIN" }` |
 | VIN not in database | 404 | `{ error: "No matching variant" }` |
 | Unauthenticated user saves event | 401 | `{ error: "Authentication required" }` |
-| Free user accesses Collector feature | 403 | `{ error: "Requires Collector tier" }` |
-| Collector user accesses Tuner feature | 403 | `{ error: "Requires Tuner tier" }` |
+| Free user accesses Enthusiast feature | 403 | `{ error: "Requires Enthusiast tier" }` |
+| Enthusiast user accesses Tuner feature | 403 | `{ error: "Requires Tuner tier" }` |
 | AL request with zero credits | 402 | `{ error: "Insufficient credits" }` |
 | Event submission missing required field | 400 | `{ error: "Validation error", fields: [...] }` |
 | Event submission past date | 400 | `{ error: "Event date must be in future" }` |
@@ -472,7 +472,7 @@ ANTHROPIC_API_KEY=<test-or-mock-key>
 |------|-------|------|---------|
 | Anonymous | — | — | Free features without auth |
 | Free | test-free@autorev.test | free | Free tier gating |
-| Collector | test-collector@autorev.test | collector | Collector features |
+| Enthusiast | test-enthusiast@autorev.test | collector | Enthusiast features |
 | Tuner | test-tuner@autorev.test | tuner | Full feature access |
 | Admin | test-admin@autorev.test | admin | Internal routes |
 
@@ -481,7 +481,7 @@ ANTHROPIC_API_KEY=<test-or-mock-key>
 2. **Journey 1**: Car Shopper (no auth required)
 3. **Journey 4**: Event Discovery (partial auth)
 4. **Journey 5**: AL Assistant (auth required)
-5. **Journey 2**: New Owner (Collector auth)
+5. **Journey 2**: New Owner (Enthusiast auth)
 6. **Journey 3**: Enthusiast (Tuner auth)
 7. **Cleanup**: Remove test data
 

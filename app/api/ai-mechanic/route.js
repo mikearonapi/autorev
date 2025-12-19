@@ -1151,7 +1151,7 @@ To use my full capabilities, you'll need to **join AutoRev** first. It's free to
 - Access to our car database
 - Basic recommendations and search
 
-**With Enthusiast ($9.99/mo) and up:**
+**With Tuner ($9.99/mo) and up:**
 - More monthly credits
 - Expert YouTube review summaries
 - Deep reliability analysis

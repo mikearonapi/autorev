@@ -91,7 +91,7 @@ export async function GET(request) {
     id: 'conv_5t8r2w9q',
     firstMessage: 'I have a 2019 Mazda MX-5 Miata Club with the Brembo/BBS package. I want to add about 50hp naturally aspirated and improve handling for canyon driving. What upgrades do you recommend staying under $8k total?',
     carContext: '2019 Mazda MX-5 Miata',
-    userTier: 'Collector',
+    userTier: 'Enthusiast',
   });
 
   // Test 7: Cron Completion - YouTube enrichment success

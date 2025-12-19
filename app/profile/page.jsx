@@ -172,7 +172,7 @@ const PLANS = {
   },
   collector: {
     id: 'collector',
-    name: 'Collector',
+    name: 'Enthusiast',
     price: 0,
     priceNote: 'Free During Beta',
     futurePrice: '$4.99/mo',

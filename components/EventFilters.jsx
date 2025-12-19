@@ -381,7 +381,7 @@ export default function EventFilters({
       <button
         onClick={() => handlePremiumFeatureClick('map')}
         className={`${styles.viewBtn} ${currentView === 'map' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-        title={!canUsePremiumFeatures ? "Upgrade to Collector for Map View" : "Map View"}
+        title={!canUsePremiumFeatures ? "Upgrade to Enthusiast for Map View" : "Map View"}
       >
         <Icons.map />
         Map
@@ -390,7 +390,7 @@ export default function EventFilters({
       <button
         onClick={() => handlePremiumFeatureClick('calendar')}
         className={`${styles.viewBtn} ${currentView === 'calendar' ? styles.viewBtnActive : ''} ${!canUsePremiumFeatures ? styles.viewBtnLocked : ''}`}
-        title={!canUsePremiumFeatures ? "Upgrade to Collector for Calendar View" : "Calendar View"}
+        title={!canUsePremiumFeatures ? "Upgrade to Enthusiast for Calendar View" : "Calendar View"}
       >
         <Icons.calendar />
         Calendar
@@ -538,14 +538,14 @@ export default function EventFilters({
               {showUpgradeModal === 'map' 
                 ? 'See events on an interactive map with location clustering and easy discovery.'
                 : 'View events in a monthly calendar layout to plan your car meet schedule.'}
-              {' '}This feature is available for Collector members and above.
+              {' '}This feature is available for Enthusiast members and above.
             </p>
             <div className={styles.upgradeModalActions}>
               <Link 
                 href="/join" 
                 className={styles.upgradeModalUpgradeBtn}
               >
-                Upgrade to Collector
+                Upgrade to Enthusiast
               </Link>
               <button 
                 onClick={() => setShowUpgradeModal(false)}

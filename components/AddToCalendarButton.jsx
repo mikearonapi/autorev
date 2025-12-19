@@ -264,7 +264,7 @@ function generateYahooCalendarUrl(event) {
  * AddToCalendarButton component
  * 
  * A dropdown button to add events to various calendar apps.
- * Tier-gated: Collector+ only.
+ * Tier-gated: Enthusiast+ only.
  * 
  * @param {Object} props
  * @param {Object} props.event - Event object with date/time/location
@@ -360,7 +360,7 @@ export default function AddToCalendarButton({ event, variant = 'default' }) {
             !isAuthenticated
               ? 'Sign in to add to calendar'
               : !canExport
-                ? 'Upgrade to Collector to add to calendar'
+                ? 'Upgrade to Enthusiast to add to calendar'
                 : 'Add to calendar'
           }
         >
@@ -439,8 +439,8 @@ export default function AddToCalendarButton({ event, variant = 'default' }) {
             </div>
             <h3 className={styles.modalTitle}>Add to Your Calendar</h3>
             <p className={styles.modalDescription}>
-              Never miss an event! Export events directly to Google Calendar, Apple Calendar, 
-              or Outlook. Available for Collector members and above.
+              Never miss an event! Export events directly to Google Calendar, Apple Calendar,
+              or Outlook. Available for Enthusiast members and above.
             </p>
             <div className={styles.modalActions}>
               <Link 

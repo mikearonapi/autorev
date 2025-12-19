@@ -1,10 +1,10 @@
 /**
- * Journey 2: New Owner (Collector Tier)
+ * Journey 2: New Owner (Enthusiast Tier)
  * 
  * Tests ownership features:
  * VIN Decode → Maintenance Specs → Market Value
  * 
- * Note: VIN decode requires Collector tier auth
+ * Note: VIN decode requires Enthusiast tier auth
  * These tests verify API structure; full auth flow needs user tokens
  * 
  * Preconditions:
@@ -115,7 +115,7 @@ describe('Journey 2: New Owner - Maintenance Data', () => {
       });
       
       // When IS_BETA=true, auth is bypassed for authenticated users
-      // Should require Collector tier auth in production
+      // Should require Enthusiast tier auth in production
       if (response.status === 200) {
         console.log('VIN decode allowed (IS_BETA mode or auth bypassed)');
         assert.ok(response.data, 'Should return decode result');

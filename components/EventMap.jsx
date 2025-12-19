@@ -243,7 +243,7 @@ export default function EventMap({
         <div className={styles.gatedState}>
           <Icons.mapPin size={40} />
           <h3>Map View</h3>
-          <p>Upgrade to Collector tier to view events on a map.</p>
+          <p>Upgrade to Enthusiast tier to view events on a map.</p>
         </div>
       </div>
     }>

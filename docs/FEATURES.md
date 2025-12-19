@@ -69,8 +69,8 @@
 - **Market Value**: See what your car is worth (BaT, Cars.com, Hagerty)
 - **Price History**: Track value trends over time
 
-| Feature | Free | Collector | Tuner |
-|---------|------|-----------|-------|
+| Feature | Free | Enthusiast | Tuner |
+|---------|------|------------|-------|
 | Save favorites | ✓ | ✓ | ✓ |
 | Collections | — | ✓ | ✓ |
 | VIN decode | — | ✓ | ✓ |
@@ -101,8 +101,8 @@
 - Check parts compatibility
 - Export builds as PDF
 
-| Feature | Free | Collector | Tuner |
-|---------|------|-----------|-------|
+| Feature | Free | Enthusiast | Tuner |
+|---------|------|------------|-------|
 | Browse upgrades | ✓ | ✓ | ✓ |
 | Parts preview (3) | ✓ | ✓ | ✓ |
 | Lap times preview (2) | ✓ | ✓ | ✓ |
@@ -133,8 +133,8 @@
 | Get Details | Pull car specs | Free |
 | Search Events | Find car events near you | Free |
 | Known Issues | Common problems | Free |
-| Knowledge Search | Deep documentation | Collector |
-| Maintenance Specs | Oil/fluid specs | Collector |
+| Knowledge Search | Deep documentation | Enthusiast |
+| Maintenance Specs | Oil/fluid specs | Enthusiast |
 | Search Parts | Parts catalog | Tuner |
 | Build Recommendations | Mod suggestions | Tuner |
 
@@ -142,7 +142,7 @@
 | Tier | Chats/Month |
 |------|-------------|
 | Free | ~25 |
-| Collector | ~75 |
+| Enthusiast | ~75 |
 | Tuner | ~150 |
 
 ---
@@ -204,7 +204,7 @@
 
 ### Cross-Feature Integration
 - **AL Integration**: Ask AL to find events using `search_events` tool
-- **My Garage Integration**: Upcoming events section shows events for your cars (Collector+)
+- **My Garage Integration**: Upcoming events section shows events for your cars (Enthusiast+)
 - **Car Detail Integration**: See events featuring a specific car or brand
 - **Deep Linking**: `/events?brand=Porsche`, `/events?type=track-day`, `/events?car=718-cayman-gt4`
 - **"Events for Your Cars" filter**: Quick filter on events page for authenticated users with garage cars
@@ -214,7 +214,7 @@
 |--------|------|
 | Browse events | Free |
 | Submit events | Free (authenticated) |
-| Save/bookmark events | Collector |
+| Save/bookmark events | Enthusiast |
 
 **Available to**: Everyone (Free)
 
@@ -239,7 +239,7 @@
 - Historical price trends
 - Market trend indicator (rising/stable/falling)
 
-**Available to**: Collector & Tuner tiers
+**Available to**: Enthusiast & Tuner tiers
 
 ---
 
@@ -333,7 +333,7 @@ Everything in Free, plus:
 ### TUNER — Build Better
 *For enthusiasts who modify their cars*
 
-Everything in Collector, plus:
+Everything in Enthusiast, plus:
 - Full dyno database
 - Full lap times library
 - Full parts catalog

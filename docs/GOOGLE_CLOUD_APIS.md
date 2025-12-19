@@ -110,7 +110,7 @@
 
 **Potential Use Cases:**
 1. **Track Location Maps** — Embed interactive maps in lap times section
-2. **Dealer/Mechanic Locator** — Show service locations for Collector tier
+2. **Dealer/Mechanic Locator** — Show service locations for Enthusiast tier
 3. **Road Trip Planning** — Future enthusiast driving route feature
 4. **Test Location Context** — "Where this car was tested" on dyno/lap time entries
 

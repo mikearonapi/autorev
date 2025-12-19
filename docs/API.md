@@ -674,7 +674,7 @@
 ### `POST /api/events/[slug]/save`
 **Purpose:** Save (bookmark) an event
 
-**Auth:** Required (Collector+ tier)
+**Auth:** Required (Enthusiast+ tier)
 
 **Response:**
 ```json
@@ -686,7 +686,7 @@
 
 **Error Responses:**
 - `401` - Authentication required
-- `403` - Requires Collector tier
+- `403` - Requires Enthusiast tier
 - `404` - Event not found or not approved
 
 **Table:** `event_saves`
@@ -796,7 +796,7 @@
   "balanceFormatted": "$0.75",
   "balanceCompact": "75¢",
   "plan": "collector",
-  "planName": "Collector",
+  "planName": "Enthusiast",
   "monthlyAllocationCents": 200,
   "monthlyAllocationFormatted": "$2.00",
   "spentThisMonthCents": 125,

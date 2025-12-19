@@ -112,7 +112,7 @@ const typeLabels = {
 // Tier labels
 const tierLabels = {
   free: 'Free',
-  collector: 'Collector',
+  collector: 'Enthusiast',
   tuner: 'Tuner',
   admin: 'Admin',
 };

@@ -422,7 +422,7 @@ export default function TermsOfService() {
           </p>
           <ul>
             <li><strong>Free:</strong> $0.25/month (~15-20 conversations)</li>
-            <li><strong>Collector:</strong> $1.00/month (~70-80 conversations)</li>
+            <li><strong>Enthusiast:</strong> $1.00/month (~70-80 conversations)</li>
             <li><strong>Tuner:</strong> $2.50/month (~175-200 conversations)</li>
           </ul>
           <p>

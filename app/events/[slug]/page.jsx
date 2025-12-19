@@ -396,7 +396,7 @@ export default function EventDetailPage() {
                   !isAuthenticated
                     ? 'Sign in to save events'
                     : !canSaveEvents
-                      ? 'Upgrade to Collector to save events'
+                      ? 'Upgrade to Enthusiast to save events'
                       : isSaved
                         ? 'Unsave event'
                         : 'Save event'
@@ -430,7 +430,7 @@ export default function EventDetailPage() {
               <div className={styles.upgradePromptOverlay} onClick={() => setShowUpgradePrompt(false)}>
                 <div className={styles.upgradePrompt} onClick={e => e.stopPropagation()}>
                   <TeaserPrompt
-                    message={`Save events requires ${upgradeCTA?.tierName || 'Collector'}`}
+                    message={`Save events requires ${upgradeCTA?.tierName || 'Enthusiast'}`}
                     targetTier={upgradeCTA?.tier || 'collector'}
                     variant="compact"
                   />

@@ -112,12 +112,12 @@ DISCOVER → RESEARCH → BUY → OWN → MODIFY
 | Tier | Price | Target User | Key Features |
 |------|-------|-------------|--------------|
 | **Free** | $0 | Shoppers, browsers | Full car database, selector, safety/fuel data, ~25 AI chats/mo |
-| **Collector** | $4.99/mo | Owners who want data | VIN decode, owner's reference, market values, service logs, ~75 AI chats/mo |
+| **Enthusiast** | $4.99/mo | Owners who want data | VIN decode, owner's reference, market values, service logs, ~75 AI chats/mo |
 | **Tuner** | $9.99/mo | Modifiers, track enthusiasts | Full dyno/lap data, parts catalog, build planning, ~150 AI chats/mo |
 
 **Revenue Streams:**
 
-1. **Subscriptions** — Primary recurring revenue from Collector/Tuner tiers
+1. **Subscriptions** — Primary recurring revenue from Enthusiast/Tuner tiers
 2. **AI Overages** — Additional AL usage beyond tier limits
 3. **Future: Affiliate/Parts** — Commission on verified parts purchases (not yet active)
 

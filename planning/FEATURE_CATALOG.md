@@ -126,57 +126,57 @@
 | Add personal notes | Free | ✅ Complete | `user_favorites.notes` | Optional |
 | View saved favorites | Free | ✅ Complete | FavoritesProvider | Context-based |
 
-### Owned Vehicles (Collector+)
+### Owned Vehicles (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| Add owned vehicle | Collector | ✅ Complete | `user_vehicles` (2 rows) | VIN optional |
-| VIN decode | Collector | ✅ Complete | NHTSA API + `car_variants` | External API |
-| Variant identification | Collector | ✅ Complete | `car_variants` (102 rows) | Year/trim matching |
+| Add owned vehicle | Enthusiast | ✅ Complete | `user_vehicles` (2 rows) | VIN optional |
+| VIN decode | Enthusiast | ✅ Complete | NHTSA API + `car_variants` | External API |
+| Variant identification | Enthusiast | ✅ Complete | `car_variants` (102 rows) | Year/trim matching |
 
-### Owner's Reference Tab (Collector+)
-
-| Feature | Tier | Status | Data Source | Notes |
-|---------|------|--------|-------------|-------|
-| Oil specs | Collector | ✅ Complete | `vehicle_maintenance_specs` (98 rows) | 100% |
-| Fluid capacities | Collector | ✅ Complete | `vehicle_maintenance_specs` | 130 columns |
-| Tire sizes | Collector | ✅ Complete | `vehicle_maintenance_specs` | All cars |
-| Service intervals | Collector | ✅ Complete | `vehicle_service_intervals` (976 rows) | Comprehensive |
-
-### Safety Tab (Collector+)
+### Owner's Reference Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| VIN-specific recalls | Collector | ✅ Complete | NHTSA API | `fetchRecallsByVIN()` |
-| Open recall status | Collector | ✅ Complete | NHTSA API | Incomplete/complete |
-| Safety ratings for VIN | Collector | ✅ Complete | `car_safety_data` | Via matched car |
+| Oil specs | Enthusiast | ✅ Complete | `vehicle_maintenance_specs` (98 rows) | 100% |
+| Fluid capacities | Enthusiast | ✅ Complete | `vehicle_maintenance_specs` | 130 columns |
+| Tire sizes | Enthusiast | ✅ Complete | `vehicle_maintenance_specs` | All cars |
+| Service intervals | Enthusiast | ✅ Complete | `vehicle_service_intervals` (976 rows) | Comprehensive |
 
-### Service Log Tab (Collector+)
-
-| Feature | Tier | Status | Data Source | Notes |
-|---------|------|--------|-------------|-------|
-| Log service records | Collector | 🚧 Under Development | `user_service_logs` (0 rows) | UI exists, table empty |
-| Service categories | Collector | 🚧 Under Development | ServiceLogModal.jsx | Form complete |
-| Cost tracking | Collector | 🚧 Under Development | ServiceLogModal.jsx | Form field exists |
-| Next service reminder | Collector | ❌ Not Built | — | No notification system |
-
-### Value Tab (Collector+)
+### Safety Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| Current market value | Collector | ⚠️ Partial (10%) | `car_market_pricing` (10/98 cars) | Critical gap |
-| BaT auction prices | Collector | ⚠️ Partial (10%) | `car_market_pricing.bat_*` | 10 cars only |
-| Cars.com listings | Collector | ⚠️ Partial (10%) | `car_market_pricing.carscom_*` | 10 cars only |
-| Hagerty values | Collector | ⚠️ Partial (10%) | `car_market_pricing.hagerty_*` | 10 cars only |
-| Price history trends | Collector | ⚠️ Partial (7%) | `car_price_history` (7 rows) | Effectively non-functional |
-| Market trend indicator | Collector | ⚠️ Partial (10%) | `car_market_pricing.market_trend` | 10 cars |
+| VIN-specific recalls | Enthusiast | ✅ Complete | NHTSA API | `fetchRecallsByVIN()` |
+| Open recall status | Enthusiast | ✅ Complete | NHTSA API | Incomplete/complete |
+| Safety ratings for VIN | Enthusiast | ✅ Complete | `car_safety_data` | Via matched car |
 
-### Collections & Export (Collector+)
+### Service Log Tab (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| Organize into collections | Collector | ❌ Not Built | — | Feature key exists, no UI |
-| Export garage data | Collector | ❌ Not Built | — | Feature key exists, no implementation |
+| Log service records | Enthusiast | 🚧 Under Development | `user_service_logs` (0 rows) | UI exists, table empty |
+| Service categories | Enthusiast | 🚧 Under Development | ServiceLogModal.jsx | Form complete |
+| Cost tracking | Enthusiast | 🚧 Under Development | ServiceLogModal.jsx | Form field exists |
+| Next service reminder | Enthusiast | ❌ Not Built | — | No notification system |
+
+### Value Tab (Enthusiast+)
+
+| Feature | Tier | Status | Data Source | Notes |
+|---------|------|--------|-------------|-------|
+| Current market value | Enthusiast | ⚠️ Partial (10%) | `car_market_pricing` (10/98 cars) | Critical gap |
+| BaT auction prices | Enthusiast | ⚠️ Partial (10%) | `car_market_pricing.bat_*` | 10 cars only |
+| Cars.com listings | Enthusiast | ⚠️ Partial (10%) | `car_market_pricing.carscom_*` | 10 cars only |
+| Hagerty values | Enthusiast | ⚠️ Partial (10%) | `car_market_pricing.hagerty_*` | 10 cars only |
+| Price history trends | Enthusiast | ⚠️ Partial (7%) | `car_price_history` (7 rows) | Effectively non-functional |
+| Market trend indicator | Enthusiast | ⚠️ Partial (10%) | `car_market_pricing.market_trend` | 10 cars |
+
+### Collections & Export (Enthusiast+)
+
+| Feature | Tier | Status | Data Source | Notes |
+|---------|------|--------|-------------|-------|
+| Organize into collections | Enthusiast | ❌ Not Built | — | Feature key exists, no UI |
+| Export garage data | Enthusiast | ❌ Not Built | — | Feature key exists, no implementation |
 
 ---
 
@@ -253,15 +253,15 @@
 | Google Maps link | Free | ✅ Complete | External link | From lat/lng |
 | Related events | Free | ✅ Complete | Same type/region | Algorithm |
 
-### Enhanced Views (Collector+)
+### Enhanced Views (Enthusiast+)
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| Map view | Collector | ✅ Complete | EventMap.jsx | Leaflet integration |
-| Calendar view | Collector | ✅ Complete | EventCalendarView.jsx | Monthly grid |
-| Save/bookmark events | Collector | ✅ Complete | `event_saves` (0 rows) | Working, no saves yet |
-| Add to calendar export | Collector | ✅ Complete | AddToCalendarButton.jsx | Google/Apple/ICS |
-| Events for my cars filter | Collector | ✅ Complete | EventFilters.jsx | Garage integration |
+| Map view | Enthusiast | ✅ Complete | EventMap.jsx | Leaflet integration |
+| Calendar view | Enthusiast | ✅ Complete | EventCalendarView.jsx | Monthly grid |
+| Save/bookmark events | Enthusiast | ✅ Complete | `event_saves` (0 rows) | Working, no saves yet |
+| Add to calendar export | Enthusiast | ✅ Complete | AddToCalendarButton.jsx | Google/Apple/ICS |
+| Events for my cars filter | Enthusiast | ✅ Complete | EventFilters.jsx | Garage integration |
 
 ### Event Submission (`/events/submit`)
 
@@ -273,14 +273,14 @@
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| View saved events | Collector | ✅ Complete | `event_saves` | PremiumGate protected |
-| Remove saved events | Collector | ✅ Complete | API route exists | Unsave functionality |
+| View saved events | Enthusiast | ✅ Complete | `event_saves` | PremiumGate protected |
+| Remove saved events | Enthusiast | ✅ Complete | API route exists | Unsave functionality |
 
 ### Garage Events Integration
 
 | Feature | Tier | Status | Component | Notes |
 |---------|------|--------|-----------|-------|
-| Events for garage vehicles | Collector | ✅ Complete | GarageEventsSection.jsx | Shows relevant events |
+| Events for garage vehicles | Enthusiast | ✅ Complete | GarageEventsSection.jsx | Shows relevant events |
 | Events on car detail | Free | ✅ Complete | CarEventsSection.jsx | Events for that car type |
 
 ---
@@ -358,7 +358,7 @@
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| Tier cards (Free/Collector/Tuner) | Public | ✅ Complete | `lib/tierAccess.js` | With pricing |
+| Tier cards (Free/Enthusiast/Tuner) | Public | ✅ Complete | `lib/tierAccess.js` | With pricing |
 | Feature comparison table | Public | ✅ Complete | Static | 6 categories |
 | Signup CTAs | Public | ✅ Complete | AuthModal | Sign up buttons |
 | Testimonials | Public | ✅ Complete | Static | User quotes |
@@ -418,23 +418,23 @@
 | `get_car_ai_context` tool | Free | ✅ Complete | RPC function | Optimized context |
 | `search_events` tool | Free | ✅ Complete | `events` | Location-based |
 
-### Collector Tools
+### Enthusiast Tools
 
 | Feature | Tier | Status | Data Source | Notes |
 |---------|------|--------|-------------|-------|
-| ~75 chats/month | Collector | ✅ Complete | `al_user_credits` | $1.00 budget |
-| `get_expert_reviews` | Collector | ✅ Complete | `youtube_videos` | AI summaries |
-| `get_known_issues` | Collector | ✅ Complete | `car_issues`, `vehicle_known_issues` | 1,300+ issues |
-| `compare_cars` | Collector | ✅ Complete | `cars` | Up to 4 |
-| `search_encyclopedia` | Collector | ✅ Complete | Static data | All content |
-| `get_upgrade_info` | Collector | ✅ Complete | `upgrade_keys`, `data/upgradeEducation.js` | Mod details |
-| `search_parts` | Collector | ⚠️ Partial (15%) | `parts`, `part_fitments` | Limited fitments |
-| `get_maintenance_schedule` | Collector | ✅ Complete | `vehicle_maintenance_specs`, `vehicle_service_intervals` | 100% |
-| `search_knowledge` | Collector | ✅ Complete | `document_chunks` (547 rows) | Vector search |
-| `get_track_lap_times` | Collector | ⚠️ Partial (20%) | `car_track_lap_times` | 65 records |
-| `get_dyno_runs` | Collector | ⚠️ Partial (30%) | `car_dyno_runs` | 29 runs |
-| `search_community_insights` | Collector | ✅ Complete | `community_insights` (1,226 rows) | Forum wisdom |
-| `search_forums` | Collector | 🚧 Under Development | — | Stub only |
+| ~75 chats/month | Enthusiast | ✅ Complete | `al_user_credits` | $1.00 budget |
+| `get_expert_reviews` | Enthusiast | ✅ Complete | `youtube_videos` | AI summaries |
+| `get_known_issues` | Enthusiast | ✅ Complete | `car_issues`, `vehicle_known_issues` | 1,300+ issues |
+| `compare_cars` | Enthusiast | ✅ Complete | `cars` | Up to 4 |
+| `search_encyclopedia` | Enthusiast | ✅ Complete | Static data | All content |
+| `get_upgrade_info` | Enthusiast | ✅ Complete | `upgrade_keys`, `data/upgradeEducation.js` | Mod details |
+| `search_parts` | Enthusiast | ⚠️ Partial (15%) | `parts`, `part_fitments` | Limited fitments |
+| `get_maintenance_schedule` | Enthusiast | ✅ Complete | `vehicle_maintenance_specs`, `vehicle_service_intervals` | 100% |
+| `search_knowledge` | Enthusiast | ✅ Complete | `document_chunks` (547 rows) | Vector search |
+| `get_track_lap_times` | Enthusiast | ⚠️ Partial (20%) | `car_track_lap_times` | 65 records |
+| `get_dyno_runs` | Enthusiast | ⚠️ Partial (30%) | `car_dyno_runs` | 29 runs |
+| `search_community_insights` | Enthusiast | ✅ Complete | `community_insights` (1,226 rows) | Forum wisdom |
+| `search_forums` | Enthusiast | 🚧 Under Development | — | Stub only |
 
 ### Tuner Tools
 
@@ -613,7 +613,7 @@ Remove until implemented, or mark as "Coming Soon"
 | `eventsBrowse` | ✅ Complete |
 | `eventsSubmit` | ✅ Complete |
 
-### Collector Tier (12 features)
+### Enthusiast Tier (12 features)
 | Feature Key | Status |
 |-------------|--------|
 | `vinDecode` | ✅ Complete |
@@ -627,7 +627,7 @@ Remove until implemented, or mark as "Coming Soon"
 | `fullCompare` | ⚠️ Defined but NOT gated — works for everyone |
 | `collections` | ❌ Not Built |
 | `exportData` | ❌ Not Built |
-| `alCollector` | ✅ Complete |
+| `alEnthusiast` | ✅ Complete |
 
 ### Tuner Tier (10 features)
 | Feature Key | Status |
@@ -679,7 +679,7 @@ These components appear across all pages and provide consistent functionality.
 | Selected car floating widget | SelectedCarFloatingWidget.jsx | Free | ✅ Complete | Quick actions for selected car |
 | Selected car banner | SelectedCarBanner.jsx | Free | ✅ Complete | Persistent car context |
 | Compare bar | CompareBar.jsx | Free | ✅ Complete | Floating compare tray (up to 4 cars) |
-| Compare modal | CompareModal.jsx | Collector | ✅ Complete | Full comparison view |
+| Compare modal | CompareModal.jsx | Enthusiast | ✅ Complete | Full comparison view |
 | Car action menu | CarActionMenu.jsx | Free | ✅ Complete | Add to favorites/compare/garage |
 
 ### Authentication & User
@@ -744,7 +744,7 @@ These providers manage global state across the application.
 |----------|------|---------|------|
 | AuthProvider | `providers/AuthProvider.jsx` | User auth state | All |
 | FavoritesProvider | `providers/FavoritesProvider.jsx` | Garage favorites | Free |
-| OwnedVehiclesProvider | `providers/OwnedVehiclesProvider.jsx` | Owned vehicles | Collector |
+| OwnedVehiclesProvider | `providers/OwnedVehiclesProvider.jsx` | Owned vehicles | Enthusiast |
 | CompareProvider | `providers/CompareProvider.jsx` | Compare list state | Free |
 | CarSelectionProvider | `providers/CarSelectionProvider.jsx` | Selected car context | Free |
 | SavedBuildsProvider | `providers/SavedBuildsProvider.jsx` | Build projects | Tuner |
@@ -775,8 +775,8 @@ This section documents exactly what is displayed on the `/join` page feature tab
 
 ### Browse Cars & Find Your Match
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Full 98-car sports car database | ✓ | ✓ | ✓ |
 | Car Selector quiz with personalized matches | ✓ | ✓ | ✓ |
 | Specs, known issues & buying guides | ✓ | ✓ | ✓ |
@@ -785,15 +785,15 @@ This section documents exactly what is displayed on the `/join` page feature tab
 
 ### My Garage
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Save favorite cars | ✓ | ✓ | ✓ |
 | Save cars you own | ✓ | ✓ | ✓ |
 
-#### My Garage Intelligence (Collector+)
+#### My Garage Intelligence (Enthusiast+)
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | VIN Decode — identify your exact variant | — | ✓ | ✓ |
 | Owner's Reference — oil specs, capacities, fluids | — | ✓ | ✓ |
 | Maintenance schedules & service intervals | — | ✓ | ✓ |
@@ -803,8 +803,8 @@ This section documents exactly what is displayed on the `/join` page feature tab
 
 ### Tuning Shop
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Browse upgrade packages & mod tiers | ✓ | ✓ | ✓ |
 | Performance projections (HP/torque gains) | ✓ | ✓ | ✓ |
 | Popular parts preview | ✓ | ✓ | ✓ |
@@ -814,24 +814,24 @@ This section documents exactly what is displayed on the `/join` page feature tab
 
 ### Community
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Browse & submit car events | ✓ | ✓ | ✓ |
 | Map & calendar views | — | ✓ | ✓ |
 | Save events & export to calendar | — | ✓ | ✓ |
 
 ### Encyclopedia
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Automotive systems education | ✓ | ✓ | ✓ |
 | Modification guides & explanations | ✓ | ✓ | ✓ |
 | Build paths & learning guides | ✓ | ✓ | ✓ |
 
 ### AL — AI Mechanic
 
-| Feature | Free | Collector | Tuner |
-|---------|:----:|:---------:|:-----:|
+| Feature | Free | Enthusiast | Tuner |
+|---------|:----:|:----------:|:-----:|
 | Monthly conversations | ~25 | ~75 | ~150 |
 | Car search & basic questions | ✓ | ✓ | ✓ |
 | Reviews, reliability & maintenance lookup | — | ✓ | ✓ |
@@ -847,7 +847,7 @@ This section documents exactly what is displayed on the `/join` page feature tab
 - Side-by-side comparison
 - AL: ~25/mo, Car search & basic questions
 
-**Collector** — Own & maintain your car
+**Enthusiast** — Own & maintain your car
 - Garage Intelligence system
 - VIN decode, specs & service logs
 - Maintenance schedules & recalls

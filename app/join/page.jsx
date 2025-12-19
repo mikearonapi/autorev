@@ -154,7 +154,7 @@ const tiers = [
   },
   {
     id: 'collector',
-    name: 'Collector',
+    name: 'Enthusiast',
     price: 'Free',
     priceNote: 'During Beta',
     futurePrice: '$4.99/mo',
@@ -504,7 +504,7 @@ export default function JoinPage() {
                 <span className={styles.tierHeaderPrice}>$0</span>
               </div>
               <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderCollector}`}>
-                <span className={styles.tierHeaderName}>Collector</span>
+                <span className={styles.tierHeaderName}>Enthusiast</span>
                 <span className={styles.tierHeaderPrice}>$4.99/mo</span>
               </div>
               <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderTuner}`}>

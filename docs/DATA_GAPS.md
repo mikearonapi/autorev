@@ -31,7 +31,7 @@
 | Cars with pricing | 10 |
 | Cars missing pricing | 88 |
 | Affected feature | My Garage → Value tab |
-| User impact | Collector tier value proposition degraded |
+| User impact | Enthusiast tier value proposition degraded |
 
 **Cars WITH Pricing (Current):**
 | Car | Brand | Cars.com Avg |

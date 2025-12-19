@@ -242,8 +242,8 @@ Cars with LOW reliability scores but NO documented issues:
 | `car_auction_results` | 0 | Individual auction results | P2 |
 | `track_layouts` | 0 | Track configuration variants | P3 |
 | `upgrade_key_parts` | 0 | Link upgrade_keys to parts | P2 |
-| `user_vehicles` | 0 | Collector tier owned vehicles | P2 |
-| `user_service_logs` | 0 | Collector tier service tracking | P2 |
+| `user_vehicles` | 0 | Enthusiast tier owned vehicles | P2 |
+| `user_service_logs` | 0 | Enthusiast tier service tracking | P2 |
 | `user_project_parts` | 0 | Tuner tier build details | P2 |
 | `user_compare_lists` | 0 | Saved comparison lists | P3 |
 | `user_activity` | 0 | Usage analytics | P3 |

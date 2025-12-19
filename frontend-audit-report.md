@@ -156,7 +156,7 @@
 
 #### 17. Saved Events (`/events/saved`) ✅
 - **Status:** Inferred from navigation patterns
-- **Tier Gating:** Collector tier required
+- **Tier Gating:** Enthusiast tier required
 - **Issues Found:** None
 
 #### 18. Contact (`/contact`) ✅

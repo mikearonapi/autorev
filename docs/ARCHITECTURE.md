@@ -113,7 +113,7 @@ export const FEATURES = {
   fuelEconomy: { tier: 'free' },
   safetyRatings: { tier: 'free' },
   
-  // Collector tier
+  // Enthusiast tier
   vinDecode: { tier: 'collector' },
   marketValue: { tier: 'collector' },
   priceHistory: { tier: 'collector' },

@@ -9,7 +9,7 @@ import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/
 /**
  * GarageEventsSection - Shows upcoming events for user's owned vehicles or favorites
  * 
- * For Collector+ tier users:
+ * For Enthusiast+ tier users:
  * - If user has owned vehicles: Shows events matching their car brands/models
  * - If user has no vehicles but has favorites: Shows events matching favorite car brands
  */
