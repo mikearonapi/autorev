@@ -233,8 +233,64 @@ export default function EventFilters({
 
   const filterCount = activeFilterCount();
 
-  // Render the main filter inputs (location, radius, region, dates)
-  const renderFilterInputs = () => (
+  // Radius select component (reused in mobile and desktop)
+  const RadiusSelect = ({ className }) => (
+    <select 
+      value={filters.radius || 50} 
+      onChange={(e) => handleRadiusChange(e.target.value)}
+      className={className || styles.filterSelect}
+      title="Search radius from location"
+    >
+      {RADIUS_OPTIONS.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+
+  // Region select component (reused in mobile and desktop)
+  const RegionSelect = ({ className }) => (
+    <select 
+      value={filters.region || ''} 
+      onChange={(e) => handleChange('region', e.target.value)}
+      className={className || styles.filterSelect}
+    >
+      <option value="">All Regions</option>
+      <option value="New England">New England</option>
+      <option value="Mid-Atlantic">Mid-Atlantic</option>
+      <option value="Southeast">Southeast</option>
+      <option value="Great Lakes">Great Lakes</option>
+      <option value="Plains">Plains</option>
+      <option value="Southwest">Southwest</option>
+      <option value="Mountain">Mountain</option>
+      <option value="Pacific">Pacific</option>
+    </select>
+  );
+
+  // MOBILE: Compact filter inputs (no date range, radius+region on same row)
+  const renderMobileFilterInputs = () => (
+    <>
+      {/* Location Search */}
+      {showLocationInput && (
+        <LocationAutocomplete
+          value={filters.location || ''}
+          onChange={handleLocationChange}
+          placeholder="ZIP code or City, State"
+          className={styles.locationAutocomplete}
+        />
+      )}
+
+      {/* Radius + Region on same row */}
+      <div className={styles.mobileFilterRow}>
+        {showLocationInput && <RadiusSelect className={styles.filterSelectHalf} />}
+        <RegionSelect className={styles.filterSelectHalf} />
+      </div>
+    </>
+  );
+
+  // DESKTOP: Full filter inputs (includes date range)
+  const renderDesktopFilterInputs = () => (
     <>
       {/* Location Search with Autocomplete */}
       {showLocationInput && (
@@ -247,39 +303,12 @@ export default function EventFilters({
       )}
 
       {/* Radius/Distance Select */}
-      {showLocationInput && (
-        <select 
-          value={filters.radius || 50} 
-          onChange={(e) => handleRadiusChange(e.target.value)}
-          className={styles.filterSelect}
-          title="Search radius from location"
-        >
-          {RADIUS_OPTIONS.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
+      {showLocationInput && <RadiusSelect />}
 
       {/* Region Select */}
-      <select 
-        value={filters.region || ''} 
-        onChange={(e) => handleChange('region', e.target.value)}
-        className={styles.filterSelect}
-      >
-        <option value="">All Regions</option>
-        <option value="New England">New England</option>
-        <option value="Mid-Atlantic">Mid-Atlantic</option>
-        <option value="Southeast">Southeast</option>
-        <option value="Great Lakes">Great Lakes</option>
-        <option value="Plains">Plains</option>
-        <option value="Southwest">Southwest</option>
-        <option value="Mountain">Mountain</option>
-        <option value="Pacific">Pacific</option>
-      </select>
+      <RegionSelect />
 
-      {/* Date Range */}
+      {/* Date Range - Desktop only */}
       {showDateRange && (
         <div className={styles.dateRange}>
           <input
@@ -432,8 +461,8 @@ export default function EventFilters({
               </button>
             </div>
             <div className={styles.filterDrawerContent}>
-              {/* Filter inputs */}
-              {renderFilterInputs()}
+              {/* Filter inputs - mobile compact version */}
+              {renderMobileFilterInputs()}
               
               {/* Toggles */}
               <div className={styles.drawerToggleRow}>
@@ -470,7 +499,7 @@ export default function EventFilters({
       <div className={styles.desktopFilters}>
         {/* Filter Row */}
         <div className={styles.filterRow}>
-          {renderFilterInputs()}
+          {renderDesktopFilterInputs()}
           
           {/* Clear button */}
           <button onClick={handleClear} className={styles.clearBtn}>
