@@ -293,9 +293,10 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ### `user_vehicles` — Owned vehicles
 | Status | **4 rows** |
 |--------|----------|
-| **Purpose** | User's owned vehicles with VIN |
+| **Purpose** | User's owned vehicles with VIN and installed modifications |
 | **Key Fields** | `user_id`, `matched_car_slug`, `matched_car_id`, `matched_car_variant_id`, `vin`, `year`, `make`, `model`, `trim`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
-| **Used By** | Enthusiast tier ownership features, My Garage |
+| **Modification Fields** | `installed_modifications` (JSONB array of upgrade keys), `active_build_id` (FK to user_projects), `total_hp_gain`, `modified_at` |
+| **Used By** | Enthusiast tier ownership features, My Garage, Tuning Shop "Apply to Vehicle" |
 
 ### `user_service_logs` — Service records
 | Status | **0 rows** ⬜ |
@@ -907,7 +908,7 @@ For reference, here are the column counts per table:
 | `car_market_pricing` | **30** | Multi-source price aggregation |
 | `car_safety_data` | **29** | NHTSA + IIHS ratings |
 | `community_insights` | **26** | Forum-extracted insights + embedding |
-| `user_vehicles` | **26** | VIN, ownership, mileage tracking |
+| `user_vehicles` | **30** | VIN, ownership, mileage tracking, installed modifications |
 
 ---
 

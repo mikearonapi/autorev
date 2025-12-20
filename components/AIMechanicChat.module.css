@@ -512,6 +512,7 @@
   border-radius: 8px;
   color: #6b7280;
   cursor: pointer;
+  position: relative;
   transition: all 0.15s ease;
   /* Ensure good touch target */
   min-width: 44px;
@@ -583,7 +584,7 @@
 .messagesArea {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 16px;
   background: #fafafa;
   min-height: 0;
   /* Enable momentum scrolling on iOS */
@@ -752,7 +753,7 @@
 .messages {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .message {
@@ -778,8 +779,8 @@
 }
 
 .messageIcon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -793,10 +794,10 @@
 
 .messageContent {
   max-width: 80%;
-  padding: 14px 18px;
-  border-radius: 16px;
-  font-size: 14.5px;
-  line-height: 1.65;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.55;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -818,11 +819,44 @@
 
 /* Improved paragraph spacing */
 .messageContent p {
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .messageContent p:last-child {
   margin-bottom: 0;
+}
+
+/* Markdown header styles (rendered from ## and ###) */
+.messageContent :global(.responseH3) {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a4d6e;
+  margin: 14px 0 6px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(26, 77, 110, 0.12);
+  letter-spacing: -0.01em;
+}
+
+.messageContent :global(.responseH3):first-child {
+  margin-top: 0;
+}
+
+.messageContent :global(.responseH4) {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin: 10px 0 4px 0;
+}
+
+.messageContent :global(.responseH4):first-child {
+  margin-top: 0;
+}
+
+/* Numbered list styling */
+.messageContent :global(.listNum) {
+  color: #667eea;
+  font-weight: 600;
+  margin-right: 4px;
 }
 
 /* Better strong/bold styling */
@@ -884,49 +918,60 @@
 /* Mobile messages */
 @media (max-width: 480px) {
   .messages {
-    gap: 14px;
+    gap: 12px;
   }
   
   .message {
-    gap: 10px;
+    gap: 8px;
   }
   
   .messageIcon {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
   }
   
   .messageContent {
-    max-width: 85%;
-    padding: 10px 14px;
-    font-size: 14px;
-    border-radius: 14px;
+    max-width: 88%;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    border-radius: 12px;
   }
   
   .message.assistant .messageContent {
-    border-radius: 14px 14px 14px 4px;
+    border-radius: 12px 12px 12px 4px;
   }
   
   .message.user .messageContent {
-    border-radius: 14px 14px 4px 14px;
+    border-radius: 12px 12px 4px 12px;
+  }
+  
+  .messageContent :global(.responseH3) {
+    font-size: 13px;
+    margin: 10px 0 4px 0;
+  }
+  
+  .messageContent :global(.responseH4) {
+    font-size: 12px;
+    margin: 8px 0 3px 0;
   }
 }
 
 @media (max-width: 375px) {
   .messages {
-    gap: 12px;
+    gap: 10px;
   }
   
   .messageIcon {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
   }
   
   .messageContent {
-    max-width: 88%;
-    padding: 9px 12px;
-    font-size: 13px;
-    line-height: 1.5;
+    max-width: 90%;
+    padding: 7px 10px;
+    font-size: 12px;
+    line-height: 1.45;
   }
 }
 
@@ -1001,8 +1046,139 @@
 }
 
 /* ----------------------------------------
-   Contextual Loading States - Enhanced
+   Animated Thinking Bubble - Shows what AL is doing
    ---------------------------------------- */
+.thinkingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.thinkingBubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 10px;
+  background: linear-gradient(135deg, rgba(212, 160, 74, 0.08) 0%, rgba(212, 160, 74, 0.04) 100%);
+  border: 1px solid rgba(212, 160, 74, 0.25);
+  border-radius: 24px;
+  box-shadow: 0 2px 12px rgba(212, 160, 74, 0.1);
+  animation: thinkingPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes thinkingPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.thinkingIcon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 2px solid #d4a04a;
+  box-shadow: 0 2px 6px rgba(212, 160, 74, 0.2);
+  flex-shrink: 0;
+}
+
+.thinkingMascot {
+  animation: thinkingPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes thinkingPulse {
+  0%, 100% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(0.92); 
+  }
+}
+
+.thinkingContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.thinkingText {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7c6835;
+  letter-spacing: 0.01em;
+}
+
+.thinkingDots {
+  display: flex;
+  gap: 3px;
+  padding-left: 2px;
+}
+
+.thinkingDots span {
+  width: 4px;
+  height: 4px;
+  background: #d4a04a;
+  border-radius: 50%;
+  animation: thinkingDotBounce 1s infinite ease-in-out;
+}
+
+.thinkingDots span:nth-child(1) { animation-delay: 0s; }
+.thinkingDots span:nth-child(2) { animation-delay: 0.15s; }
+.thinkingDots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes thinkingDotBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* Mobile thinking bubble */
+@media (max-width: 480px) {
+  .thinkingContainer {
+    padding: 16px 0;
+  }
+  
+  .thinkingBubble {
+    padding: 8px 14px 8px 8px;
+    gap: 8px;
+    border-radius: 20px;
+  }
+  
+  .thinkingIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .thinkingText {
+    font-size: 11px;
+  }
+  
+  .thinkingDots span {
+    width: 3px;
+    height: 3px;
+  }
+}
+
+/* Legacy loading state classes (kept for backwards compatibility) */
 .loadingState {
   display: flex;
   flex-direction: column;
@@ -1011,7 +1187,7 @@
 }
 
 .loadingText {
-  font-size: 13.5px;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -1021,11 +1197,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 5px 10px;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
   border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 8px;
-  font-size: 11.5px;
+  font-size: 10px;
   font-weight: 600;
   color: #667eea;
   text-transform: capitalize;
@@ -2029,6 +2205,562 @@
   
   .noConversations p {
     font-size: 13px;
+  }
+}
+
+/* ----------------------------------------
+   Confidence Indicators in Responses
+   ---------------------------------------- */
+.messageContent :global(.confidenceHigh) {
+  color: #059669;
+  font-weight: 500;
+  position: relative;
+  cursor: help;
+}
+
+.messageContent :global(.confidenceHigh)::before {
+  content: '✓ ';
+  font-size: 10px;
+}
+
+.messageContent :global(.confidenceMedium) {
+  color: #d97706;
+  font-weight: 500;
+  position: relative;
+  cursor: help;
+}
+
+.messageContent :global(.confidenceMedium)::before {
+  content: '○ ';
+  font-size: 10px;
+}
+
+.messageContent :global(.confidenceLow) {
+  color: #9ca3af;
+  font-style: italic;
+  position: relative;
+  cursor: help;
+}
+
+.messageContent :global(.confidenceLow)::before {
+  content: '△ ';
+  font-size: 10px;
+}
+
+/* ----------------------------------------
+   Action Buttons in Responses
+   ---------------------------------------- */
+.responseActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.responseActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.responseActionBtn:hover {
+  border-color: #1a4d6e;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #1a4d6e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(26, 77, 110, 0.12);
+}
+
+.responseActionBtn svg {
+  flex-shrink: 0;
+}
+
+.responseActionBtnPrimary {
+  background: linear-gradient(135deg, #1a4d6e 0%, #2d5a7b 100%);
+  border-color: #1a4d6e;
+  color: #ffffff;
+}
+
+.responseActionBtnPrimary:hover {
+  background: linear-gradient(135deg, #164058 0%, #1a4d6e 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(26, 77, 110, 0.25);
+}
+
+/* ----------------------------------------
+   Context Indicator Bar
+   ---------------------------------------- */
+.contextBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(212, 160, 74, 0.08) 0%, rgba(212, 160, 74, 0.04) 100%);
+  border-top: 1px solid rgba(212, 160, 74, 0.15);
+  border-bottom: 1px solid rgba(212, 160, 74, 0.1);
+  gap: 8px;
+}
+
+.contextInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contextIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.contextLabel {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.contextCar {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a4d6e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contextYears {
+  font-size: 11px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.contextClearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 50%;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.contextClearBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* ----------------------------------------
+   Quick Reply Chips
+   ---------------------------------------- */
+.quickRepliesBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(249, 250, 251, 0.5) 0%, #fafafa 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.quickReplyChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.quickReplyChip:hover {
+  border-color: #d4a04a;
+  background: rgba(212, 160, 74, 0.05);
+  color: #1a4d6e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(212, 160, 74, 0.15);
+}
+
+.quickReplyChip:active {
+  transform: translateY(0);
+}
+
+.quickReplyIcon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* ----------------------------------------
+   Cost Preview
+   ---------------------------------------- */
+.costPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.costPreviewContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.costPreviewIcon {
+  font-size: 16px;
+}
+
+.costPreviewText {
+  font-size: 12px;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.costPreviewText strong {
+  font-weight: 600;
+  color: #92400e;
+}
+
+.costPreviewActions {
+  display: flex;
+  gap: 8px;
+}
+
+.costPreviewSend {
+  flex: 1;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #1a4d6e 0%, #2d5a7b 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.costPreviewSend:hover {
+  background: linear-gradient(135deg, #164058 0%, #1a4d6e 100%);
+  transform: translateY(-1px);
+}
+
+.costPreviewCancel {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(120, 53, 15, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #78350f;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.costPreviewCancel:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* ----------------------------------------
+   Bookmark Button
+   ---------------------------------------- */
+.bookmarkBtn {
+  margin-left: auto;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.bookmarkBtn:hover {
+  opacity: 1;
+  color: #d4a04a;
+}
+
+.bookmarkBtn.bookmarked {
+  opacity: 1;
+  color: #d4a04a;
+}
+
+.bookmarkBtn.bookmarked svg {
+  fill: #d4a04a;
+}
+
+/* ----------------------------------------
+   Bookmark Badge in Header
+   ---------------------------------------- */
+.bookmarkBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  background: #d4a04a;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.headerBtnActive {
+  color: #d4a04a;
+  background: rgba(212, 160, 74, 0.1);
+}
+
+/* ----------------------------------------
+   Bookmarks Panel
+   ---------------------------------------- */
+.bookmarksPanel {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  animation: slideInFromRight 0.2s ease-out;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.bookmarksPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #d4a04a;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.bookmarksPanelHeader span {
+  flex: 1;
+  color: #1a4d6e;
+}
+
+.bookmarksPanelClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.bookmarksPanelClose:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.bookmarksList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.noBookmarks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  text-align: center;
+  gap: 8px;
+}
+
+.noBookmarks p {
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0;
+}
+
+.noBookmarks span {
+  font-size: 12px;
+}
+
+.bookmarkItem {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.bookmarkItem:hover {
+  border-color: #d4a04a;
+  box-shadow: 0 2px 8px rgba(212, 160, 74, 0.1);
+}
+
+.bookmarkMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.bookmarkCar {
+  color: #1a4d6e;
+  font-weight: 500;
+}
+
+.bookmarkDate {
+  color: #9ca3af;
+}
+
+.bookmarkQuery {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 6px 8px;
+  background: #ffffff;
+  border-radius: 6px;
+  border-left: 2px solid #d4a04a;
+}
+
+.bookmarkContent {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.bookmarkActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.bookmarkCopyBtn {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bookmarkCopyBtn:hover {
+  border-color: #1a4d6e;
+  color: #1a4d6e;
+}
+
+.bookmarkDeleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bookmarkDeleteBtn:hover {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+/* Mobile adjustments for context bar and quick replies */
+@media (max-width: 480px) {
+  .contextBar {
+    padding: 6px 12px;
+  }
+  
+  .contextLabel {
+    display: none; /* Hide label on mobile to save space */
+  }
+  
+  .contextCar {
+    font-size: 13px;
+  }
+  
+  .quickRepliesBar {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  
+  .quickReplyChip {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 16px;
+  }
+  
+  .quickReplyIcon {
+    font-size: 12px;
   }
 }
 

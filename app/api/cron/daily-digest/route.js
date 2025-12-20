@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { postDailyDigest, postALIntelligence } from '@/lib/discord';
 import { generateALIntelligence } from '@/lib/alIntelligence';
 import { enhanceDigestStats } from '@/lib/digestEnhancer';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -328,6 +329,7 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('[Cron/DailyDigest] Error:', error);
+    await logCronError('daily-digest', error, { phase: 'digest-generation' });
     return NextResponse.json(
       { error: 'Failed to generate digest', details: error.message },
       { status: 500 }

@@ -17,6 +17,7 @@ import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -127,10 +128,12 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] refresh-recalls error:', err);
+    await logCronError('refresh-recalls', err, { phase: 'processing' });
     notifyCronFailure('Refresh Recalls', err, { phase: 'processing' });
     return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
   }
 }
+
 
 
 

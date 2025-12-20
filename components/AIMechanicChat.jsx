@@ -14,6 +14,16 @@ import styles from './AIMechanicChat.module.css';
 import { useAuth } from './providers/AuthProvider';
 import { useCarSelection } from './providers/CarSelectionProvider';
 import AuthModal, { useAuthModal } from './AuthModal';
+import { 
+  loadALPreferences, 
+  saveALPreferences, 
+  saveALBookmark, 
+  removeALBookmark, 
+  loadALBookmarks,
+  isBookmarked as checkIsBookmarked,
+  getBookmarkByContent,
+  addKnownCar
+} from '../lib/stores/alPreferencesStore';
 
 /**
  * Hook for responsive screen size detection
@@ -284,12 +294,22 @@ const Icons = {
       <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
     </svg>
   ),
+  bookmark: ({ size = 16, filled = false }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+    </svg>
+  ),
+  trash: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+    </svg>
+  ),
 };
 
 /**
- * Format AI response with markdown
+ * Format AI response with markdown and extract actionable elements
  */
-function formatResponse(text) {
+function formatResponse(text, options = {}) {
   if (!text) return '';
   
   const escapeHtml = (s) => String(s || '')
@@ -302,16 +322,39 @@ function formatResponse(text) {
   // Escape first to avoid injecting arbitrary HTML via model output.
   let formatted = escapeHtml(text);
 
+  // Convert markdown headers to proper HTML (before other formatting)
+  // ### Smaller headers
+  formatted = formatted.replace(/^### (.+)$/gm, '<h4 class="responseH4">$1</h4>');
+  // ## Main section headers
+  formatted = formatted.replace(/^## (.+)$/gm, '<h3 class="responseH3">$1</h3>');
+
   // Simple markdown-ish formatting
   formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   formatted = formatted.replace(/^• /gm, '<span class="bullet">•</span> ');
   formatted = formatted.replace(/^- /gm, '<span class="bullet">•</span> ');
+  // Numbered lists (1. 2. etc.)
+  formatted = formatted.replace(/^(\d+)\. /gm, '<span class="listNum">$1.</span> ');
 
   // Turn enforced citations into clickable links.
   // Expected: (Source: https://example.com/...)
   formatted = formatted.replace(
     /\(Source:\s*(https?:\/\/[^\s)]+)\)/gi,
     (_m, url) => `(<a class="sourceLink" href="${url}" target="_blank" rel="noopener noreferrer">Source</a>)`
+  );
+  
+  // Add confidence indicators for data
+  // Look for patterns like "Our database shows" or "According to X verified reports"
+  formatted = formatted.replace(
+    /\b(verified|confirmed|documented)\b/gi,
+    '<span class="confidenceHigh" title="Verified data">$1</span>'
+  );
+  formatted = formatted.replace(
+    /\b(community reports?|forum data|owner feedback)\b/gi,
+    '<span class="confidenceMedium" title="Community-sourced data">$1</span>'
+  );
+  formatted = formatted.replace(
+    /\b(limited data|sparse information|few reports)\b/gi,
+    '<span class="confidenceLow" title="Limited data available">$1</span>'
   );
 
   formatted = formatted.replace(/\n\n/g, '</p><p>');
@@ -320,8 +363,147 @@ function formatResponse(text) {
   return `<p>${formatted}</p>`;
 }
 
+/**
+ * Extract car mentions from text for action buttons
+ */
+function extractCarMentions(text) {
+  if (!text) return [];
+  
+  // Common car name patterns - this is a simplified matcher
+  // In production, you'd match against actual car database slugs
+  const carPatterns = [
+    /\b(Porsche\s+)?(\d{3}|Cayman|Boxster|GT[234]|Carrera|Taycan)\b/gi,
+    /\b(BMW\s+)?M[234568]\b/gi,
+    /\b(Corvette|C[5-8]|Z06|ZR1|Stingray)\b/gi,
+    /\b(Mustang|GT350|GT500|Mach\s*1)\b/gi,
+    /\b(MX-?5|Miata|RF)\b/gi,
+    /\b(Supra|GR86|BRZ)\b/gi,
+    /\b(GT-?R|370Z|400Z)\b/gi,
+    /\b(Cayman\s+S|Cayman\s+GTS|Boxster\s+S)\b/gi,
+  ];
+  
+  const mentions = new Set();
+  for (const pattern of carPatterns) {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(m => mentions.add(m.trim()));
+    }
+  }
+  
+  return Array.from(mentions).slice(0, 3); // Max 3 car mentions
+}
+
 // LocalStorage key for intro preference
 const AL_INTRO_STORAGE_KEY = 'autorev_al_intro_seen';
+
+/**
+ * Response Actions Component - Shows contextual action buttons after responses
+ */
+function ResponseActions({ content, focusedCar, onCarClick }) {
+  if (!content) return null;
+  
+  const actions = [];
+  const contentLower = content.toLowerCase();
+  
+  // Check for comparison context
+  const hasComparison = contentLower.includes('compare') || contentLower.includes('vs') || contentLower.includes('versus');
+  
+  // Check for specific actionable content
+  const hasMaintenance = contentLower.includes('maintenance') || contentLower.includes('service') || contentLower.includes('oil change');
+  const hasIssues = contentLower.includes('issue') || contentLower.includes('problem') || contentLower.includes('recall');
+  const hasMods = contentLower.includes('mod') || contentLower.includes('upgrade') || contentLower.includes('intake') || contentLower.includes('exhaust');
+  const hasBuying = contentLower.includes('buy') || contentLower.includes('purchase') || contentLower.includes('ppi');
+  
+  // Extract mentioned cars
+  const carMentions = extractCarMentions(content);
+  
+  // Add "View Car" action if focused car exists
+  if (focusedCar?.slug) {
+    actions.push({
+      type: 'link',
+      label: `View ${focusedCar.name?.split(' ').slice(-1)[0] || 'Car'}`,
+      href: `/browse-cars/${focusedCar.slug}`,
+      icon: '→',
+      primary: true,
+    });
+  }
+  
+  // Add comparison action if multiple cars mentioned
+  if (carMentions.length >= 2 || hasComparison) {
+    actions.push({
+      type: 'action',
+      label: 'Compare These',
+      icon: '⚖️',
+      action: 'compare',
+    });
+  }
+  
+  // Add contextual actions based on content
+  if (hasMaintenance && focusedCar?.slug) {
+    actions.push({
+      type: 'link',
+      label: 'Maintenance Guide',
+      href: `/browse-cars/${focusedCar.slug}#maintenance`,
+      icon: '🔧',
+    });
+  }
+  
+  if (hasIssues && focusedCar?.slug) {
+    actions.push({
+      type: 'link',
+      label: 'Known Issues',
+      href: `/browse-cars/${focusedCar.slug}#issues`,
+      icon: '⚠️',
+    });
+  }
+  
+  if (hasMods) {
+    actions.push({
+      type: 'link',
+      label: 'Explore Mods',
+      href: `/encyclopedia`,
+      icon: '🔩',
+    });
+  }
+  
+  // Limit to 3 actions
+  const displayActions = actions.slice(0, 3);
+  
+  if (displayActions.length === 0) return null;
+  
+  return (
+    <div className={styles.responseActions}>
+      {displayActions.map((action, i) => (
+        action.type === 'link' ? (
+          <a
+            key={i}
+            href={action.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.responseActionBtn} ${action.primary ? styles.responseActionBtnPrimary : ''}`}
+          >
+            {action.icon && <span>{action.icon}</span>}
+            <span>{action.label}</span>
+          </a>
+        ) : (
+          <button
+            key={i}
+            className={styles.responseActionBtn}
+            onClick={() => {
+              if (action.action === 'compare' && onCarClick) {
+                // Could trigger compare modal or navigate
+                window.open('/car-selector', '_blank');
+              }
+            }}
+          >
+            {action.icon && <span>{action.icon}</span>}
+            <span>{action.label}</span>
+          </button>
+        )
+      ))}
+    </div>
+  );
+}
 
 /**
  * Main AIMechanicChat Component
@@ -357,6 +539,26 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [conversations, setConversations] = useState([]);
   const [conversationsLoading, setConversationsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(null);
+  
+  // Context indicator state - which car AL is focused on
+  const [focusedCar, setFocusedCar] = useState(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  
+  // Quick reply chips state
+  const [quickReplies, setQuickReplies] = useState([]);
+  
+  // Prefetched context state
+  const [prefetchedContext, setPrefetchedContext] = useState(null);
+  const [isPrefetching, setIsPrefetching] = useState(false);
+  
+  // Cost preview state
+  const [showCostPreview, setShowCostPreview] = useState(false);
+  const [estimatedCost, setEstimatedCost] = useState(null);
+  
+  // User preferences and bookmarks state
+  const [alPreferences, setAlPreferences] = useState(null);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [showBookmarks, setShowBookmarks] = useState(false);
   
   // Wiggle animation state (like FeedbackCorner)
   const [isWiggling, setIsWiggling] = useState(false);
@@ -511,6 +713,112 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     }
   }, [isExpanded, isAuthenticated, user?.id]);
   
+  // Prefetch context when chat opens
+  useEffect(() => {
+    const prefetchContext = async () => {
+      if (!isOpen || !isAuthenticated || isPrefetching || prefetchedContext) return;
+      
+      setIsPrefetching(true);
+      try {
+        // Prefetch the current car context and garage vehicle
+        const prefetchSlug = selectedCar?.slug || null;
+        if (prefetchSlug) {
+          const response = await fetch(`/api/cars/${prefetchSlug}/ai-context`);
+          if (response.ok) {
+            const data = await response.json();
+            setPrefetchedContext(data);
+            // Set focused car if we have context
+            if (data?.car?.name) {
+              setFocusedCar({
+                slug: prefetchSlug,
+                name: data.car.name,
+                years: data.car.years,
+                source: 'page'
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[AL Chat] Prefetch failed:', err);
+      } finally {
+        setIsPrefetching(false);
+      }
+    };
+    
+    // Only prefetch when chat is open and user is authenticated (not on intro/sign-in screens)
+    if (isOpen && !showIntro && isAuthenticated) {
+      prefetchContext();
+    }
+  }, [isOpen, isAuthenticated, selectedCar?.slug, isPrefetching, prefetchedContext, showIntro]);
+  
+  // Update focused car from selectedCar (page context)
+  useEffect(() => {
+    if (selectedCar?.slug && selectedCar?.name) {
+      setFocusedCar({
+        slug: selectedCar.slug,
+        name: selectedCar.name,
+        years: selectedCar.years,
+        source: 'page'
+      });
+      // Track car in preferences
+      addKnownCar(selectedCar.slug);
+    }
+  }, [selectedCar?.slug, selectedCar?.name, selectedCar?.years]);
+  
+  // Load preferences and bookmarks on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setAlPreferences(loadALPreferences());
+      setBookmarks(loadALBookmarks());
+    }
+  }, []);
+  
+  // Generate quick reply chips based on domains and response
+  const generateQuickReplies = useCallback((domains, lastResponse, carContext) => {
+    const replies = [];
+    const domainSet = new Set(domains || []);
+    
+    // Car-specific quick replies
+    if (carContext) {
+      if (domainSet.has('reliability') || lastResponse?.includes('issue') || lastResponse?.includes('problem')) {
+        replies.push({ text: 'What about maintenance costs?', icon: '🔧' });
+        replies.push({ text: 'How to prevent these issues?', icon: '🛡️' });
+      }
+      if (domainSet.has('modifications') || lastResponse?.includes('mod') || lastResponse?.includes('upgrade')) {
+        replies.push({ text: 'What order should I install these?', icon: '📋' });
+        replies.push({ text: 'Total cost estimate?', icon: '💰' });
+      }
+      if (domainSet.has('buying')) {
+        replies.push({ text: 'Best model years?', icon: '📅' });
+        replies.push({ text: 'What to check during PPI?', icon: '🔍' });
+      }
+      if (domainSet.has('performance') || domainSet.has('track')) {
+        replies.push({ text: 'Track prep checklist?', icon: '🏁' });
+        replies.push({ text: 'Compare lap times', icon: '⏱️' });
+      }
+      if (domainSet.has('maintenance')) {
+        replies.push({ text: 'DIY or dealer?', icon: '🏠' });
+        replies.push({ text: 'Recommended fluids?', icon: '🛢️' });
+      }
+      // Always offer comparison if we have a car context
+      if (!domainSet.has('comparison')) {
+        replies.push({ text: 'Compare to alternatives', icon: '⚖️' });
+      }
+    }
+    
+    // General quick replies if no car context
+    if (!carContext && replies.length === 0) {
+      if (domainSet.has('education')) {
+        replies.push({ text: 'Explain in more detail', icon: '📚' });
+        replies.push({ text: 'Real-world examples?', icon: '🌍' });
+      }
+      replies.push({ text: 'Help me find a car', icon: '🔍' });
+    }
+    
+    // Limit to 3 replies max
+    return replies.slice(0, 3);
+  }, []);
+  
   // Load a specific conversation
   const loadConversation = useCallback(async (convId) => {
     if (!user?.id || !convId) return;
@@ -540,7 +848,74 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setMessages([]);
     setSuggestions(contextConfig.suggestions || []);
     setError(null);
+    setQuickReplies([]);
   }, [contextConfig.suggestions]);
+  
+  // Clear focused car context
+  const clearFocusedCar = useCallback(() => {
+    setFocusedCar(null);
+    setShowContextMenu(false);
+    setPrefetchedContext(null);
+  }, []);
+  
+  // Change focused car (from search or manual input)
+  const changeFocusedCar = useCallback((car) => {
+    setFocusedCar({
+      slug: car.slug,
+      name: car.name,
+      years: car.years,
+      source: 'manual'
+    });
+    setShowContextMenu(false);
+    setPrefetchedContext(null);
+  }, []);
+  
+  // Toggle bookmark for a message
+  const toggleBookmark = useCallback((content, query) => {
+    const existing = getBookmarkByContent(content);
+    if (existing) {
+      removeALBookmark(existing.id);
+      setBookmarks(loadALBookmarks());
+    } else {
+      saveALBookmark({
+        content,
+        query: query || messages.find(m => m.role === 'user')?.content || '',
+        carSlug: focusedCar?.slug,
+        carName: focusedCar?.name,
+      });
+      setBookmarks(loadALBookmarks());
+    }
+  }, [focusedCar, messages]);
+  
+  // Estimate query cost based on complexity
+  const estimateQueryCost = useCallback((query) => {
+    if (!query) return null;
+    
+    const queryLower = query.toLowerCase();
+    const wordCount = query.split(/\s+/).length;
+    
+    // Check for expensive query patterns
+    const isComparison = queryLower.includes('compare') || queryLower.includes(' vs ') || queryLower.includes('versus');
+    const isComprehensive = queryLower.includes('everything') || queryLower.includes('tell me all') || queryLower.includes('in detail');
+    const isBuildPlan = queryLower.includes('build plan') || queryLower.includes('mod plan') || queryLower.includes('upgrade path');
+    const isResearch = queryLower.includes('should i buy') || queryLower.includes('worth it') || queryLower.includes('reliable');
+    
+    let costLevel = 'low'; // Default: 1-2 credits
+    let estimate = '~1-2';
+    let showPreview = false;
+    
+    if (isComparison || isComprehensive || isBuildPlan) {
+      costLevel = 'high';
+      estimate = '~3-5';
+      showPreview = true;
+    } else if (isResearch || wordCount > 25) {
+      costLevel = 'medium';
+      estimate = '~2-3';
+      showPreview = false; // Only show preview for high-cost queries
+    }
+    
+    return { costLevel, estimate, showPreview };
+  }, []);
   
   // Handle "Get Started" button
   const handleGetStarted = () => {
@@ -572,6 +947,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setInput('');
     setError(null);
     setSuggestions([]);
+    setQuickReplies([]);
     setStreamingContent('');
     setCurrentTool(null);
     setLoadingMessage('Thinking...');
@@ -584,6 +960,9 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
     
+    // Use focused car or selected car
+    const carSlugToUse = focusedCar?.slug || selectedCar?.slug;
+    
     try {
       // Use streaming API
       const response = await fetch('/api/ai-mechanic?stream=true', {
@@ -594,13 +973,14 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         },
         body: JSON.stringify({
           message: userMessage,
-          carSlug: selectedCar?.slug,
+          carSlug: carSlugToUse,
           userId: user?.id,
           currentPage: pathname,
           context: getPageContext(),
           conversationId: currentConversationId,
           history: messages.slice(-6),
           stream: true,
+          prefetchedContext: prefetchedContext,
         }),
         signal,
       });
@@ -693,6 +1073,10 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
             messageId,
           }]);
           setStreamingContent('');
+          
+          // Generate quick reply chips based on domains and response
+          const replies = generateQuickReplies(detectedDomains, fullContent, focusedCar || carSlugToUse);
+          setQuickReplies(replies);
         }
       } else {
         // Fallback to non-streaming response
@@ -707,6 +1091,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         }
         
         setMessages([...newMessages, { role: 'assistant', content: data.response }]);
+        
+        // Generate quick reply chips
+        const domains = data.context?.domains || [];
+        const replies = generateQuickReplies(domains, data.response, focusedCar || carSlugToUse);
+        setQuickReplies(replies);
       }
       
     } catch (err) {
@@ -965,6 +1354,19 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       <Icons.newChat size={16} />
                     </button>
                   )}
+                  {bookmarks.length > 0 && (
+                    <button 
+                      onClick={() => setShowBookmarks(!showBookmarks)} 
+                      className={`${styles.headerBtn} ${showBookmarks ? styles.headerBtnActive : ''}`}
+                      aria-label="Saved responses"
+                      title="Saved responses"
+                    >
+                      <Icons.bookmark size={16} filled={showBookmarks} />
+                      {bookmarks.length > 0 && (
+                        <span className={styles.bookmarkBadge}>{bookmarks.length}</span>
+                      )}
+                    </button>
+                  )}
                   <button 
                     onClick={() => setIsExpanded(!isExpanded)} 
                     className={styles.headerBtn}
@@ -982,6 +1384,73 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                   </button>
                 </div>
               </div>
+
+              {/* Bookmarks Panel - slides over content when shown */}
+              {showBookmarks && (
+                <div className={styles.bookmarksPanel}>
+                  <div className={styles.bookmarksPanelHeader}>
+                    <Icons.bookmark size={16} filled />
+                    <span>Saved Responses</span>
+                    <button 
+                      onClick={() => setShowBookmarks(false)}
+                      className={styles.bookmarksPanelClose}
+                    >
+                      <Icons.x size={16} />
+                    </button>
+                  </div>
+                  <div className={styles.bookmarksList}>
+                    {bookmarks.length === 0 ? (
+                      <div className={styles.noBookmarks}>
+                        <Icons.bookmark size={24} />
+                        <p>No saved responses yet</p>
+                        <span>Click the bookmark icon on any response to save it</span>
+                      </div>
+                    ) : (
+                      bookmarks.map(bm => (
+                        <div key={bm.id} className={styles.bookmarkItem}>
+                          <div className={styles.bookmarkMeta}>
+                            {bm.carName && (
+                              <span className={styles.bookmarkCar}>🚗 {bm.carName}</span>
+                            )}
+                            <span className={styles.bookmarkDate}>
+                              {new Date(bm.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          {bm.query && (
+                            <div className={styles.bookmarkQuery}>
+                              <strong>Q:</strong> {bm.query.slice(0, 80)}{bm.query.length > 80 ? '...' : ''}
+                            </div>
+                          )}
+                          <div className={styles.bookmarkContent}>
+                            {bm.content?.slice(0, 150)}{bm.content?.length > 150 ? '...' : ''}
+                          </div>
+                          <div className={styles.bookmarkActions}>
+                            <button 
+                              className={styles.bookmarkCopyBtn}
+                              onClick={() => {
+                                navigator.clipboard.writeText(bm.content);
+                              }}
+                              title="Copy to clipboard"
+                            >
+                              Copy
+                            </button>
+                            <button 
+                              className={styles.bookmarkDeleteBtn}
+                              onClick={() => {
+                                removeALBookmark(bm.id);
+                                setBookmarks(loadALBookmarks());
+                              }}
+                              title="Delete bookmark"
+                            >
+                              <Icons.trash size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Main Content - with sidebar in expanded mode */}
               <div className={`${styles.chatContent} ${isExpanded ? styles.chatContentExpanded : ''}`}>
@@ -1059,7 +1528,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       >
                         {msg.role === 'assistant' && (
                           <div className={styles.messageIcon}>
-                            <ALMascot size={28} />
+                            <ALMascot size={24} />
                           </div>
                         )}
                         <div className={styles.messageWrapper}>
@@ -1073,6 +1542,18 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                           >
                             {msg.role === 'user' ? msg.content : null}
                           </div>
+                          
+                          {/* Action buttons for assistant messages */}
+                          {msg.role === 'assistant' && (
+                            <ResponseActions 
+                              content={msg.content} 
+                              focusedCar={focusedCar}
+                              onCarClick={(slug) => {
+                                // Navigate to car page
+                                window.open(`/browse-cars/${slug}`, '_blank');
+                              }}
+                            />
+                          )}
                           
                           {/* Feedback buttons for assistant messages */}
                           {msg.role === 'assistant' && (
@@ -1099,6 +1580,15 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                                   </button>
                                 </>
                               )}
+                              
+                              {/* Bookmark button */}
+                              <button
+                                className={`${styles.feedbackBtn} ${styles.bookmarkBtn} ${checkIsBookmarked(msg.content) ? styles.bookmarked : ''}`}
+                                onClick={() => toggleBookmark(msg.content)}
+                                title={checkIsBookmarked(msg.content) ? 'Remove bookmark' : 'Save response'}
+                              >
+                                <Icons.bookmark size={14} filled={checkIsBookmarked(msg.content)} />
+                              </button>
                               
                               {/* Expanded feedback input for negative feedback */}
                               {showFeedbackInput === i && (
@@ -1133,7 +1623,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                     {isLoading && streamingContent && (
                       <div className={`${styles.message} ${styles.assistant}`}>
                         <div className={styles.messageIcon}>
-                          <ALMascot size={28} />
+                          <ALMascot size={24} />
                         </div>
                         <div 
                           className={styles.messageContent}
@@ -1142,22 +1632,16 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       </div>
                     )}
                     
-                    {/* Loading indicator with contextual message */}
+                    {/* Loading indicator - animated thinking bubble */}
                     {isLoading && !streamingContent && (
-                      <div className={`${styles.message} ${styles.assistant}`}>
-                        <div className={styles.messageIcon}>
-                          <ALMascot size={28} className={styles.loadingIcon} />
-                        </div>
-                        <div className={styles.messageContent}>
-                          <div className={styles.loadingState}>
-                            <div className={styles.loadingText}>{loadingMessage}</div>
-                            {currentTool && (
-                              <div className={styles.toolIndicator}>
-                                <Icons.sparkle size={12} />
-                                <span>{currentTool.replace(/_/g, ' ')}</span>
-                              </div>
-                            )}
-                            <div className={styles.typing}>
+                      <div className={styles.thinkingContainer}>
+                        <div className={styles.thinkingBubble} key={loadingMessage}>
+                          <div className={styles.thinkingIcon}>
+                            <ALMascot size={24} className={styles.thinkingMascot} />
+                          </div>
+                          <div className={styles.thinkingContent}>
+                            <span className={styles.thinkingText}>{loadingMessage}</span>
+                            <div className={styles.thinkingDots}>
                               <span></span><span></span><span></span>
                             </div>
                           </div>
@@ -1175,21 +1659,115 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 </div>
               </div>
 
+              {/* Context Indicator Bar */}
+              {focusedCar && (
+                <div className={styles.contextBar}>
+                  <div className={styles.contextInfo}>
+                    <span className={styles.contextIcon}>🚗</span>
+                    <span className={styles.contextLabel}>Helping with:</span>
+                    <span className={styles.contextCar}>{focusedCar.name}</span>
+                    {focusedCar.years && (
+                      <span className={styles.contextYears}>({focusedCar.years})</span>
+                    )}
+                  </div>
+                  <button 
+                    className={styles.contextClearBtn}
+                    onClick={clearFocusedCar}
+                    title="Clear car context"
+                  >
+                    <Icons.x size={14} />
+                  </button>
+                </div>
+              )}
+              
+              {/* Quick Reply Chips */}
+              {quickReplies.length > 0 && !isLoading && messages.length > 0 && (
+                <div className={styles.quickRepliesBar}>
+                  {quickReplies.map((reply, i) => (
+                    <button
+                      key={i}
+                      className={styles.quickReplyChip}
+                      onClick={() => sendMessage(reply.text)}
+                    >
+                      {reply.icon && <span className={styles.quickReplyIcon}>{reply.icon}</span>}
+                      <span>{reply.text}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Cost Preview */}
+              {showCostPreview && estimatedCost && (
+                <div className={styles.costPreview}>
+                  <div className={styles.costPreviewContent}>
+                    <span className={styles.costPreviewIcon}>💡</span>
+                    <span className={styles.costPreviewText}>
+                      This detailed query may use <strong>{estimatedCost.estimate} credits</strong>
+                    </span>
+                  </div>
+                  <div className={styles.costPreviewActions}>
+                    <button 
+                      className={styles.costPreviewSend}
+                      onClick={() => {
+                        setShowCostPreview(false);
+                        sendMessage();
+                      }}
+                    >
+                      Send anyway
+                    </button>
+                    <button 
+                      className={styles.costPreviewCancel}
+                      onClick={() => setShowCostPreview(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Input Area */}
               <div className={styles.inputArea}>
                 <div className={styles.inputWrapper}>
                   <textarea
                     ref={inputRef}
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={contextConfig.placeholder}
+                    onChange={(e) => {
+                      setInput(e.target.value);
+                      // Check if query might be expensive
+                      const cost = estimateQueryCost(e.target.value);
+                      if (cost?.showPreview) {
+                        setEstimatedCost(cost);
+                      } else {
+                        setEstimatedCost(null);
+                        setShowCostPreview(false);
+                      }
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        // Check for cost preview before sending
+                        if (estimatedCost?.showPreview && !showCostPreview) {
+                          setShowCostPreview(true);
+                        } else {
+                          setShowCostPreview(false);
+                          sendMessage();
+                        }
+                      }
+                    }}
+                    placeholder={focusedCar ? `Ask about ${focusedCar.name}...` : contextConfig.placeholder}
                     className={styles.input}
                     rows={1}
                     disabled={isLoading}
                   />
                   <button
-                    onClick={() => sendMessage()}
+                    onClick={() => {
+                      if (estimatedCost?.showPreview && !showCostPreview) {
+                        setShowCostPreview(true);
+                      } else {
+                        setShowCostPreview(false);
+                        sendMessage();
+                      }
+                    }}
                     disabled={!input.trim() || isLoading}
                     className={styles.sendBtn}
                     aria-label="Send"

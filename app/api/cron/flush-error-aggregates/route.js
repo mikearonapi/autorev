@@ -11,10 +11,11 @@
 import { NextResponse } from 'next/server';
 import { getAggregatesReadyToFlush, formatAggregateForDiscord } from '@/lib/errorAggregator';
 import { notifyAggregatedError } from '@/lib/discord';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
-export async function GET(request) {
+async function handleFlush(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
   const vercelCron = request.headers.get('x-vercel-cron');
@@ -62,6 +63,7 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('[ErrorFlush] Error flushing aggregates:', error);
+    await logCronError('flush-error-aggregates', error, { phase: 'flush' });
     return NextResponse.json({
       error: 'Failed to flush error aggregates',
       details: error.message,
@@ -69,8 +71,12 @@ export async function GET(request) {
   }
 }
 
+export async function GET(request) {
+  return handleFlush(request);
+}
+
 // Also support POST for manual triggers
 export async function POST(request) {
-  return GET(request);
+  return handleFlush(request);
 }
 

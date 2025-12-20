@@ -3911,3 +3911,138 @@
   color: var(--color-info);
 }
 
+/* ============================================================================
+   Apply to Vehicle Section (in Save Build Modal)
+   ============================================================================ */
+.applyToVehicleSection {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.applyToVehicleDivider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.applyToVehicleDivider span {
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-white);
+  position: relative;
+}
+
+.applyToVehicleDivider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-gray-200);
+  z-index: 0;
+}
+
+.applyToVehicleDivider span {
+  position: relative;
+  z-index: 1;
+}
+
+.applyToVehicleTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 var(--space-xs);
+}
+
+.applyToVehicleTitle svg {
+  color: var(--sn-primary);
+}
+
+.applyToVehicleDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--space-md);
+}
+
+.applyToVehicleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.applyToVehicleButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-50);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.applyToVehicleButton:hover:not(:disabled) {
+  border-color: var(--sn-primary);
+  background: var(--sn-primary-light);
+}
+
+.applyToVehicleButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.applyVehicleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.applyVehicleName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.applyVehicleModified {
+  font-size: var(--font-size-xs);
+  color: var(--sn-primary);
+  font-weight: 500;
+}
+
+.applyVehicleAction {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--sn-primary);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--sn-primary-light);
+  border-radius: var(--radius-sm);
+}
+
+.applySuccess {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-success-light);
+  border-radius: var(--radius-md);
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.applySuccess svg {
+  flex-shrink: 0;
+}
+

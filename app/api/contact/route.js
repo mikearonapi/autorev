@@ -1,11 +1,11 @@
 import { Resend } from 'resend';
 import { notifyContact } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CONTACT_EMAIL = 'contact@autorev.app';
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     const { name, email, interest, car, message } = body;
 
     // Initialize Resend at runtime (not build time)
@@ -175,13 +175,8 @@ export async function POST(request) {
       message: body.message,
     }, leadQuality).catch(err => console.error('[Contact API] Discord notification failed:', err));
 
-    return Response.json({ success: true, data: { id: data?.id } });
-  } catch (err) {
-    console.error('[Contact API] Unexpected error:', err);
-    return Response.json(
-      { success: false, error: 'An unexpected error occurred. Please try again.' },
-      { status: 500 }
-    );
-  }
+  return Response.json({ success: true, data: { id: data?.id } });
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'contact', feature: 'contact' });
 

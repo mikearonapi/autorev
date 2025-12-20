@@ -24,6 +24,10 @@ export async function POST(request) {
       featureContext,
       errorMetadata,
       userTier,
+      // New enhanced tracking fields
+      errorSource,
+      errorHash,
+      appVersion,
     } = body;
 
     const normalizedMessage = message || body?.errorMetadata?.errorMessage;
@@ -75,6 +79,11 @@ export async function POST(request) {
     const userAgent = request.headers.get('user-agent') || null;
     const browserInfoPayload = browserInfo || metadata || null;
 
+    // Determine priority based on severity
+    const priorityFromSeverity = severity === 'blocking' ? 'urgent' 
+      : severity === 'major' ? 'high' 
+      : 'normal';
+
     const feedbackData = {
       feedback_type: feedbackTypeToInsert,
       category: categoryToInsert || null,
@@ -88,12 +97,16 @@ export async function POST(request) {
       browser_info: browserInfoPayload,
       tags: tags || [],
       status: 'new',
-      priority: 'normal',
+      priority: categoryToInsert === 'auto-error' ? priorityFromSeverity : 'normal',
       severity: severity || null,
       rating: rating || null,
       feature_context: featureContext || null,
       user_tier: userTier || null,
       error_metadata: errorMetadata || null,
+      // Enhanced tracking fields
+      error_source: errorSource || null,
+      error_hash: errorHash || null,
+      app_version: appVersion || null,
     };
 
     const { data, error } = await supabase

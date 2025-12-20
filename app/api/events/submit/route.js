@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notifyEventSubmission } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Validate URL format
@@ -34,10 +35,9 @@ function isFutureOrToday(dateString) {
   return date >= today;
 }
 
-export async function POST(request) {
-  try {
-    // Get authenticated user
-    const cookieStore = cookies();
+async function handlePost(request) {
+  // Get authenticated user
+  const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -165,17 +165,12 @@ export async function POST(request) {
       source_url: body.source_url,
     }).catch(err => console.error('[Events Submit] Discord notification failed:', err));
     
-    return NextResponse.json({
-      success: true,
-      submissionId: submission.id,
-      message: 'Event submitted successfully. It will be reviewed within 48 hours.',
-    });
-  } catch (err) {
-    console.error('[API/events/submit] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    success: true,
+    submissionId: submission.id,
+    message: 'Event submitted successfully. It will be reviewed within 48 hours.',
+  });
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'events/submit', feature: 'events' });
 

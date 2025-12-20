@@ -12,10 +12,10 @@ import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handleGet(request, { params }) {
+  const { userId } = await params;
     
     console.log('[API/users/saved-events] GET request for userId:', userId);
     
@@ -162,16 +162,11 @@ export async function GET(request, { params }) {
         },
       }));
     
-    return NextResponse.json({
-      savedEvents,
-      count: savedEvents.length,
-    });
-  } catch (err) {
-    console.error('[API/users/saved-events] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    savedEvents,
+    count: savedEvents.length,
+  });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/saved-events', feature: 'events' });
 

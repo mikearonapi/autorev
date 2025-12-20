@@ -27,6 +27,7 @@ import {
   replaceComplaintsForCar,
 } from '@/lib/complaintService';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -228,6 +229,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[Cron] refresh-complaints error:', err);
+    await logCronError('refresh-complaints', err, { phase: 'processing' });
     notifyCronFailure('Refresh Complaints', err, { phase: 'processing' });
     return NextResponse.json(
       { error: 'Failed', message: err.message },

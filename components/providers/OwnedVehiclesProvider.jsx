@@ -21,6 +21,9 @@ import {
   addUserVehicle,
   updateUserVehicle,
   deleteUserVehicle,
+  applyVehicleModifications,
+  clearVehicleModifications,
+  applyBuildToVehicle,
 } from '@/lib/userDataService';
 
 // LocalStorage key for guest vehicles
@@ -76,6 +79,11 @@ function saveLocalVehicles(vehicles) {
  * @property {Object} [vinDecodeData] - Cached VIN decode data
  * @property {string} createdAt - When added
  * @property {string} updatedAt - Last modified
+ * @property {string[]} [installedModifications] - Array of upgrade keys installed on this vehicle
+ * @property {string} [activeBuildId] - FK to user_projects if mods came from a build
+ * @property {number} [totalHpGain] - Cached total HP gain from mods
+ * @property {string} [modifiedAt] - When modifications were last updated
+ * @property {boolean} isModified - Computed: whether vehicle has any mods
  */
 
 /**
@@ -101,6 +109,7 @@ const defaultState = {
  * Transform Supabase row to client format
  */
 function transformVehicle(row) {
+  const installedMods = row.installed_modifications || [];
   return {
     id: row.id,
     vin: row.vin,
@@ -125,6 +134,12 @@ function transformVehicle(row) {
     vinDecodeData: row.vin_decode_data,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    // Modification fields
+    installedModifications: installedMods,
+    activeBuildId: row.active_build_id,
+    totalHpGain: row.total_hp_gain || 0,
+    modifiedAt: row.modified_at,
+    isModified: Array.isArray(installedMods) && installedMods.length > 0,
   };
 }
 
@@ -340,6 +355,11 @@ export function OwnedVehiclesProvider({ children }) {
         notes: updates.notes,
         vin_decode_data: updates.vinDecodeData,
         vin_decoded_at: updates.vinDecodeData ? new Date().toISOString() : undefined,
+        // Modification fields
+        installed_modifications: updates.installedModifications,
+        active_build_id: updates.activeBuildId,
+        total_hp_gain: updates.totalHpGain,
+        modified_at: updates.modifiedAt,
       };
 
       // Remove undefined values
@@ -411,16 +431,138 @@ export function OwnedVehiclesProvider({ children }) {
     return updateVehicle(vehicleId, { isPrimary: true });
   }, [state.vehicles, updateVehicle]);
 
+  /**
+   * Apply modifications to a vehicle
+   * @param {string} vehicleId 
+   * @param {Object} modifications - { upgrades: string[], totalHpGain: number, buildId?: string }
+   */
+  const applyModifications = useCallback(async (vehicleId, modifications) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, update locally
+      const vehicle = state.vehicles.find(v => v.id === vehicleId);
+      if (!vehicle) return { data: null, error: new Error('Vehicle not found') };
+
+      const updatedVehicle = {
+        ...vehicle,
+        installedModifications: modifications.upgrades || [],
+        totalHpGain: modifications.totalHpGain || 0,
+        activeBuildId: modifications.buildId || null,
+        modifiedAt: new Date().toISOString(),
+        isModified: (modifications.upgrades?.length || 0) > 0,
+        updatedAt: new Date().toISOString(),
+      };
+      dispatch({ type: ActionTypes.UPDATE, payload: updatedVehicle });
+      return { data: updatedVehicle, error: null };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await applyVehicleModifications(user.id, vehicleId, modifications);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id, state.vehicles]);
+
+  /**
+   * Clear all modifications from a vehicle (reset to stock)
+   * @param {string} vehicleId 
+   */
+  const clearModifications = useCallback(async (vehicleId) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, update locally
+      const vehicle = state.vehicles.find(v => v.id === vehicleId);
+      if (!vehicle) return { data: null, error: new Error('Vehicle not found') };
+
+      const updatedVehicle = {
+        ...vehicle,
+        installedModifications: [],
+        totalHpGain: 0,
+        activeBuildId: null,
+        modifiedAt: new Date().toISOString(),
+        isModified: false,
+        updatedAt: new Date().toISOString(),
+      };
+      dispatch({ type: ActionTypes.UPDATE, payload: updatedVehicle });
+      return { data: updatedVehicle, error: null };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await clearVehicleModifications(user.id, vehicleId);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id, state.vehicles]);
+
+  /**
+   * Apply a saved build to a vehicle
+   * @param {string} vehicleId 
+   * @param {string} buildId - user_projects.id
+   */
+  const applyBuild = useCallback(async (vehicleId, buildId) => {
+    if (!isAuthenticated || !user?.id) {
+      return { data: null, error: new Error('Must be authenticated to apply builds') };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await applyBuildToVehicle(user.id, vehicleId, buildId);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id]);
+
+  /**
+   * Get a vehicle by ID
+   * @param {string} vehicleId 
+   */
+  const getVehicleById = useCallback((vehicleId) => {
+    return state.vehicles.find(v => v.id === vehicleId) || null;
+  }, [state.vehicles]);
+
+  /**
+   * Get vehicles matching a car slug (for Tuning Shop integration)
+   * @param {string} carSlug 
+   */
+  const getVehiclesByCarSlug = useCallback((carSlug) => {
+    if (!carSlug) return [];
+    return state.vehicles.filter(v => v.matchedCarSlug === carSlug);
+  }, [state.vehicles]);
+
   const value = {
     vehicles: state.vehicles,
     count: state.vehicles.length,
     isHydrated,
     isLoading,
+    // CRUD operations
     addVehicle,
     updateVehicle,
     removeVehicle,
+    // Primary vehicle
     getPrimaryVehicle,
     setPrimaryVehicle,
+    // Modification operations
+    applyModifications,
+    clearModifications,
+    applyBuild,
+    // Helpers
+    getVehicleById,
+    getVehiclesByCarSlug,
   };
 
   return (

@@ -45,6 +45,7 @@ import CarImage from './CarImage';
 import UpgradeAggregator from './UpgradeAggregator';
 import { useCarSelection } from './providers/CarSelectionProvider';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
+import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useAuth } from './providers/AuthProvider';
 
 // Icons for performance categories
@@ -143,6 +144,13 @@ const Icons = {
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
       <line x1="12" y1="9" x2="12" y2="13"/>
       <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  car: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2-5H8L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
+      <circle cx="7" cy="17" r="2"/>
+      <circle cx="17" cy="17" r="2"/>
     </svg>
   ),
   save: ({ size = 20 }) => (
@@ -966,6 +974,16 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   // Auth and saved builds
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, getBuildsByCarSlug, canSave } = useSavedBuilds();
+  
+  // Owned vehicles for "Apply to My Vehicle" feature
+  const { vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
+  
+  // Find user's vehicles that match this car
+  const matchingVehicles = useMemo(() => 
+    getVehiclesByCarSlug(car.slug),
+    [getVehiclesByCarSlug, car.slug]
+  );
+  const hasMatchingVehicle = matchingVehicles.length > 0;
 
   // Initialize to stock - users can select their preferred package
   const [selectedPackageKey, setSelectedPackageKey] = useState('stock');
@@ -979,6 +997,10 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   const [isSaving, setIsSaving] = useState(false);
   const [currentBuildId, setCurrentBuildId] = useState(initialBuildId);
   const [saveError, setSaveError] = useState(null);
+  
+  // Apply to vehicle state
+  const [isApplyingToVehicle, setIsApplyingToVehicle] = useState(false);
+  const [applySuccess, setApplySuccess] = useState(null);
   
   // Get existing builds for this car
   const existingBuilds = useMemo(() => 
@@ -1183,6 +1205,38 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       console.error('[PerformanceHub] Save build error:', err);
     } finally {
       setIsSaving(false);
+    }
+  };
+  
+  // Handler for applying modifications to a vehicle
+  const handleApplyToVehicle = async (vehicleId) => {
+    if (!vehicleId || effectiveSelectedModules.length === 0) return;
+    
+    setIsApplyingToVehicle(true);
+    setApplySuccess(null);
+    
+    try {
+      const { data, error } = await applyModifications(vehicleId, {
+        upgrades: effectiveSelectedModules,
+        totalHpGain: smartHp.totalGain,
+        buildId: currentBuildId || null, // Link to build if one exists
+      });
+      
+      if (error) {
+        setSaveError(error.message || 'Failed to apply modifications');
+      } else {
+        setApplySuccess(data);
+        // Close modal after brief delay to show success
+        setTimeout(() => {
+          setShowSaveModal(false);
+          setApplySuccess(null);
+        }, 1500);
+      }
+    } catch (err) {
+      setSaveError('An unexpected error occurred');
+      console.error('[PerformanceHub] Apply to vehicle error:', err);
+    } finally {
+      setIsApplyingToVehicle(false);
     }
   };
   
@@ -1748,6 +1802,53 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                   <Link href="/garage" className={styles.saveModalSignInLink}>
                     Sign In
                   </Link>
+                </div>
+              )}
+              
+              {/* Apply to My Vehicle Section */}
+              {hasMatchingVehicle && effectiveSelectedModules.length > 0 && (
+                <div className={styles.applyToVehicleSection}>
+                  <div className={styles.applyToVehicleDivider}>
+                    <span>or</span>
+                  </div>
+                  <h4 className={styles.applyToVehicleTitle}>
+                    <Icons.car size={16} />
+                    Apply to Your Vehicle
+                  </h4>
+                  <p className={styles.applyToVehicleDesc}>
+                    Mark these upgrades as installed on your owned {car.name}
+                  </p>
+                  {applySuccess ? (
+                    <div className={styles.applySuccess}>
+                      <Icons.check size={16} />
+                      Modifications applied to {applySuccess.nickname || `${applySuccess.year} ${applySuccess.make} ${applySuccess.model}`}!
+                    </div>
+                  ) : (
+                    <div className={styles.applyToVehicleList}>
+                      {matchingVehicles.map(vehicle => (
+                        <button
+                          key={vehicle.id}
+                          className={styles.applyToVehicleButton}
+                          onClick={() => handleApplyToVehicle(vehicle.id)}
+                          disabled={isApplyingToVehicle}
+                        >
+                          <div className={styles.applyVehicleInfo}>
+                            <span className={styles.applyVehicleName}>
+                              {vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                            </span>
+                            {vehicle.isModified && (
+                              <span className={styles.applyVehicleModified}>
+                                Modified • +{vehicle.totalHpGain} HP
+                              </span>
+                            )}
+                          </div>
+                          <span className={styles.applyVehicleAction}>
+                            {isApplyingToVehicle ? 'Applying...' : (vehicle.isModified ? 'Update Mods' : 'Apply Mods')}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

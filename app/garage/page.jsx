@@ -214,6 +214,12 @@ const Icons = {
       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
     </svg>
   ),
+  link: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+  ),
 };
 
 // Brand Logo Component - displays brand name with consistent gold color
@@ -232,7 +238,7 @@ function BrandLogo({ brand }) {
 
 // Hero Vehicle Display Component
 // Progressive disclosure: Collapsed → Expanded (key info) → Full Details/Owner Dashboard
-function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, userId }) {
+function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, onClearModifications, userId }) {
   // Panel states: 'collapsed', 'expanded', 'details'
   const [panelState, setPanelState] = useState('collapsed');
   const [showPerformance, setShowPerformance] = useState(false);
@@ -674,7 +680,19 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         <div className={styles.specPanelHeader}>
           <div className={styles.specPanelHeaderInfo}>
             <BrandLogo brand={brand} />
-            <h2 className={styles.heroVehicleName}>{displayName}</h2>
+            <div className={styles.heroVehicleNameRow}>
+              <h2 className={styles.heroVehicleName}>{displayName}</h2>
+              {/* Modified badge for owned vehicles with modifications */}
+              {isOwnedVehicle && item.vehicle?.isModified && (
+                <span className={styles.modifiedBadge}>
+                  <Icons.wrench size={12} />
+                  MODIFIED
+                  {item.vehicle.totalHpGain > 0 && (
+                    <span className={styles.modifiedHpGain}>+{item.vehicle.totalHpGain} HP</span>
+                  )}
+                </span>
+              )}
+            </div>
             <p className={styles.heroSubInfo}>{getSubInfo()}</p>
           </div>
           <div className={styles.headerActions}>
@@ -720,6 +738,17 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 >
                   <Icons.clipboard size={12} />
                   <span>Service</span>
+                </button>
+                <button 
+                  className={`${styles.headerToggleBtn} ${detailsView === 'mods' ? styles.headerToggleActive : ''}`}
+                  onClick={() => setDetailsView('mods')}
+                  title="Modifications"
+                >
+                  <Icons.wrench size={12} />
+                  <span>Mods</span>
+                  {item.vehicle?.isModified && (
+                    <span className={styles.tabBadge}>{item.vehicle.installedModifications?.length || 0}</span>
+                  )}
                 </button>
               </div>
             )}
@@ -1372,6 +1401,100 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 carName={item?.matchedCar?.name || car?.name}
               />
             )}
+
+            {/* Modifications View - Shows installed upgrades */}
+            {isOwnedVehicle && detailsView === 'mods' && (
+              <div className={styles.modsView}>
+                <div className={styles.modsHeader}>
+                  <h4 className={styles.detailBlockTitle}>
+                    <Icons.wrench size={14} />
+                    Installed Modifications
+                  </h4>
+                  {item.vehicle?.matchedCarSlug && (
+                    <Link 
+                      href={`/tuning-shop?plan=${item.vehicle.matchedCarSlug}`}
+                      className={styles.editModsLink}
+                    >
+                      <Icons.edit size={14} />
+                      {item.vehicle?.isModified ? 'Edit Mods' : 'Add Mods'}
+                    </Link>
+                  )}
+                </div>
+
+                {item.vehicle?.isModified && item.vehicle.installedModifications?.length > 0 ? (
+                  <>
+                    {/* HP Gain Summary */}
+                    {item.vehicle.totalHpGain > 0 && (
+                      <div className={styles.modsHpSummary}>
+                        <span className={styles.modsHpLabel}>Total Estimated Gain</span>
+                        <span className={styles.modsHpValue}>+{item.vehicle.totalHpGain} HP</span>
+                      </div>
+                    )}
+
+                    {/* Modifications List */}
+                    <div className={styles.modsList}>
+                      {item.vehicle.installedModifications.map((mod, idx) => (
+                        <div key={idx} className={styles.modItem}>
+                          <Icons.check size={14} />
+                          <span className={styles.modName}>
+                            {mod.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Source Build Link */}
+                    {item.vehicle.activeBuildId && (
+                      <Link 
+                        href={`/tuning-shop?build=${item.vehicle.activeBuildId}`}
+                        className={styles.sourceBuildLink}
+                      >
+                        <Icons.link size={14} />
+                        View Original Build
+                      </Link>
+                    )}
+
+                    {/* Clear Modifications Button */}
+                    <button 
+                      className={styles.clearModsButton}
+                      onClick={async () => {
+                        if (window.confirm('Reset this vehicle to stock configuration? This will remove all modifications.')) {
+                          if (onClearModifications) {
+                            await onClearModifications(item.vehicle.id);
+                          }
+                        }
+                      }}
+                    >
+                      <Icons.x size={14} />
+                      Reset to Stock
+                    </button>
+                  </>
+                ) : (
+                  <div className={styles.modsEmptyState}>
+                    <Icons.wrench size={32} />
+                    <p>No modifications installed</p>
+                    <p className={styles.modsEmptyDesc}>
+                      Track your upgrades by applying a build from the Tuning Shop
+                    </p>
+                    {item.vehicle?.matchedCarSlug && (
+                      <Link 
+                        href={`/tuning-shop?plan=${item.vehicle.matchedCarSlug}`}
+                        className={styles.modsEmptyAction}
+                      >
+                        <Icons.plus size={16} />
+                        Plan Modifications
+                      </Link>
+                    )}
+                  </div>
+                )}
+
+                {item.vehicle.modifiedAt && (
+                  <p className={styles.referenceNote}>
+                    Last updated: {new Date(item.vehicle.modifiedAt).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -1763,7 +1886,7 @@ function GarageContent() {
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
   const { builds, deleteBuild, getBuildById } = useSavedBuilds();
-  const { vehicles, addVehicle, updateVehicle, removeVehicle } = useOwnedVehicles();
+  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications } = useOwnedVehicles();
 
   // Reset selection when tab changes
   useEffect(() => {
@@ -2035,6 +2158,7 @@ function GarageContent() {
                 onAddToMyCars={handleAddFavoriteToMyCars}
                 isInMyCars={activeTab === 'favorites' && currentItem ? isInMyCars(currentItem.slug) : false}
                 onUpdateVehicle={updateVehicle}
+                onClearModifications={clearModifications}
                 userId={user?.id}
               />
 

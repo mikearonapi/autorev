@@ -19,12 +19,13 @@ import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { carData } from '@/data/cars';
 import * as dataAggregator from '@/lib/dataAggregator';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/enriched
  * Fetch enriched data for a car from all external sources
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -33,8 +34,6 @@ export async function GET(request, { params }) {
       { status: 400 }
     );
   }
-  
-  try {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const sourcesParam = searchParams.get('sources');
@@ -99,20 +98,16 @@ export async function GET(request, { params }) {
     // Add data quality assessment
     const quality = dataAggregator.assessDataQuality(enrichedData);
     
-    return NextResponse.json({
-      success: true,
-      slug,
-      data: enrichedData,
-      quality,
-    });
-  } catch (err) {
-    console.error('[Enriched API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch enriched data', message: err.message },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    success: true,
+    slug,
+    data: enrichedData,
+    quality,
+  });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/enriched', feature: 'browse-cars' });
+
 
 
 

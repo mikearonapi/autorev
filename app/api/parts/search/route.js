@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPublicClient, isConfigured } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,10 +24,9 @@ function parseBool(v) {
  * - q is optional if carSlug/carVariantKey provided (for "browse parts for my car" views).
  * - verified=true filters to verified fitments only.
  */
-export async function GET(request) {
-  try {
-    const client = getPublicClient();
-    if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+async function handleGet(request) {
+  const client = getPublicClient();
+  if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const { searchParams } = new URL(request.url);
     const q = (searchParams.get('q') || '').trim();
@@ -152,11 +152,10 @@ export async function GET(request) {
         latest_price: priceByPartId.get(p.id) || null,
       })),
     });
-  } catch (err) {
-    console.error('[api/parts/search] Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'parts/search', feature: 'tuning-shop' });
+
 
 
 
