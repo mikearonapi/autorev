@@ -116,18 +116,23 @@ export async function GET(request) {
       }).then(result => {
         if (result.error) {
           console.warn('[DailyDigest] DAU function error:', result.error.message);
-          return { data: [{ count: 0 }], error: null };
+          return { count: 0, data: null, error: null };
         }
         return result;
-      }).catch(() => ({ data: [{ count: 0 }], error: null })), // Graceful fallback if RPC doesn't exist yet
+      }).catch(() => ({ count: 0, data: null, error: null })),
 
       // User activity events
-      supabase
-        .from('user_activity')
-        .select('event_type')
-        .gte('created_at', yesterday.toISOString())
-        .lt('created_at', todayStart.toISOString())
-        .catch(() => ({ data: [], error: null })), // Graceful fallback for empty table
+      (async () => {
+        try {
+          return await supabase
+            .from('user_activity')
+            .select('event_type')
+            .gte('created_at', yesterday.toISOString())
+            .lt('created_at', todayStart.toISOString());
+        } catch (err) {
+          return { data: [], error: null };
+        }
+      })(),
 
       // Auto-errors (from yesterday)
       supabase
@@ -174,7 +179,7 @@ export async function GET(request) {
     const baseStats = {
       // User metrics
       signups: signupsResult.count || 0,
-      activeUsers: activeUsersResult.count || 0,
+      activeUsers: activeUsersResult?.count || activeUsersResult?.data?.[0]?.count || 0,
       
       // Engagement metrics
       feedback: feedbackResult.count || 0,
@@ -210,10 +215,16 @@ export async function GET(request) {
         .gte('created_at', twoDaysAgo.toISOString())
         .lt('created_at', yesterday.toISOString()),
       
-      supabase.rpc('get_daily_active_users', {
-        p_start_date: twoDaysAgo.toISOString(),
-        p_end_date: yesterday.toISOString(),
-      }).catch(() => ({ count: 0 })),
+      (async () => {
+        try {
+          return await supabase.rpc('get_daily_active_users', {
+            p_start_date: twoDaysAgo.toISOString(),
+            p_end_date: yesterday.toISOString(),
+          });
+        } catch (err) {
+          return { count: 0, data: null, error: null };
+        }
+      })(),
       
       supabase
         .from('al_conversations')
@@ -224,7 +235,7 @@ export async function GET(request) {
 
     const previousStats = {
       signups: prevSignups.count || 0,
-      activeUsers: prevActiveUsers.count || 0,
+      activeUsers: prevActiveUsers?.count || prevActiveUsers?.data?.[0]?.count || 0,
       alConversations: prevALConversations.count || 0,
     };
 
