@@ -111,3 +111,4 @@ CREATE POLICY "user_activity_service_role_insert" ON user_activity
 
 
 
+

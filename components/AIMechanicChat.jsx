@@ -815,7 +815,6 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         replies.push({ text: 'Explain in more detail', icon: '📚' });
         replies.push({ text: 'Real-world examples?', icon: '🌍' });
       }
-      replies.push({ text: 'Help me find a car', icon: '🔍' });
     }
     
     // Limit to 3 replies max

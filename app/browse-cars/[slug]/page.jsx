@@ -272,13 +272,19 @@ function ExpandableSection({ title, children, defaultOpen = false }) {
   );
 }
 
+// Loading timeout constants
+const LOADING_SLOW_THRESHOLD_MS = 5000; // Show "taking longer" message after 5s
+const LOADING_MAX_TIMEOUT_MS = 12000; // Force error state after 12s
+
 export default function CarDetail() {
   const params = useParams();
   const slug = params.slug;
   const [car, setCar] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSlow, setIsLoadingSlow] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [retryCount, setRetryCount] = useState(0);
 
   // Popular parts (fitment-aware) for this car platform
   const [popularParts, setPopularParts] = useState([]);
@@ -292,6 +298,8 @@ export default function CarDetail() {
   // Auth for activity tracking
   const { user } = useAuth();
   const hasTrackedView = useRef(false);
+  const slowLoadingTimerRef = useRef(null);
+  const maxTimeoutRef = useRef(null);
 
   // Track page view once car is loaded
   useEffect(() => {
@@ -301,15 +309,42 @@ export default function CarDetail() {
     }
   }, [car, user?.id]);
 
-  // Fetch car data
+  // Fetch car data with retry support
   useEffect(() => {
     let isMounted = true;
 
     async function loadCar() {
       try {
         setIsLoading(true);
+        setIsLoadingSlow(false);
         setError(null);
+        
+        // Set up slow loading indicator
+        slowLoadingTimerRef.current = setTimeout(() => {
+          if (isMounted) setIsLoadingSlow(true);
+        }, LOADING_SLOW_THRESHOLD_MS);
+        
+        // Set up max timeout to prevent infinite loading
+        maxTimeoutRef.current = setTimeout(() => {
+          if (isMounted && isLoading) {
+            console.warn('[CarDetail] Max timeout reached, forcing error state');
+            setError('Loading timed out. Please try again.');
+            setIsLoading(false);
+            setIsLoadingSlow(false);
+          }
+        }, LOADING_MAX_TIMEOUT_MS);
+        
         const carData = await fetchCarBySlug(slug);
+        
+        // Clear loading timers
+        if (slowLoadingTimerRef.current) {
+          clearTimeout(slowLoadingTimerRef.current);
+          slowLoadingTimerRef.current = null;
+        }
+        if (maxTimeoutRef.current) {
+          clearTimeout(maxTimeoutRef.current);
+          maxTimeoutRef.current = null;
+        }
         
         if (isMounted) {
           if (carData) {
@@ -333,9 +368,21 @@ export default function CarDetail() {
             }
           }
           setIsLoading(false);
+          setIsLoadingSlow(false);
         }
       } catch (err) {
         console.error('[CarDetail] Error loading car:', err);
+        
+        // Clear loading timers
+        if (slowLoadingTimerRef.current) {
+          clearTimeout(slowLoadingTimerRef.current);
+          slowLoadingTimerRef.current = null;
+        }
+        if (maxTimeoutRef.current) {
+          clearTimeout(maxTimeoutRef.current);
+          maxTimeoutRef.current = null;
+        }
+        
         if (isMounted) {
           const localCar = getLocalCarBySlug(slug);
           if (localCar) {
@@ -349,13 +396,28 @@ export default function CarDetail() {
             setError('Failed to load vehicle data');
           }
           setIsLoading(false);
+          setIsLoadingSlow(false);
         }
       }
     }
 
     loadCar();
-    return () => { isMounted = false; };
-  }, [slug]);
+    
+    return () => { 
+      isMounted = false;
+      if (slowLoadingTimerRef.current) {
+        clearTimeout(slowLoadingTimerRef.current);
+      }
+      if (maxTimeoutRef.current) {
+        clearTimeout(maxTimeoutRef.current);
+      }
+    };
+  }, [slug, retryCount]);
+  
+  // Retry handler
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+  };
 
   // Fetch popular parts when car changes (best-effort)
   useEffect(() => {
@@ -416,6 +478,18 @@ export default function CarDetail() {
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner}></div>
           <p>Loading vehicle...</p>
+          {isLoadingSlow && (
+            <div className={styles.slowLoadingHint}>
+              <p>Taking longer than expected...</p>
+              <button 
+                onClick={handleRetry}
+                className={styles.retryButton}
+              >
+                <Icons.zap size={16} />
+                Retry
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -423,16 +497,29 @@ export default function CarDetail() {
 
   // Error state
   if (error || !car) {
+    const isTimeoutError = error?.includes('timed out') || error?.includes('timeout');
     return (
       <div className={styles.container}>
         <div className={styles.errorState}>
           <Icons.alertCircle size={48} />
           <h2>{error || 'Vehicle not found'}</h2>
-          <p>The vehicle you&apos;re looking for doesn&apos;t exist or couldn&apos;t be loaded.</p>
-          <Link href="/car-selector" className={styles.backButton}>
-            <Icons.arrowLeft size={18} />
-            Back to Car Selector
-          </Link>
+          <p>
+            {isTimeoutError 
+              ? 'The request took too long. This might be a temporary network issue.'
+              : 'The vehicle you\'re looking for doesn\'t exist or couldn\'t be loaded.'}
+          </p>
+          <div className={styles.errorActions}>
+            {isTimeoutError && (
+              <button onClick={handleRetry} className={styles.retryButton}>
+                <Icons.zap size={16} />
+                Try Again
+              </button>
+            )}
+            <Link href="/car-selector" className={styles.backButton}>
+              <Icons.arrowLeft size={18} />
+              Back to Car Selector
+            </Link>
+          </div>
         </div>
       </div>
     );

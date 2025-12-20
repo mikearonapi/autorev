@@ -4,9 +4,15 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Google Fonts Import
+   Font Configuration
+   -------------------------------------------------------------------------- 
+   Fonts are loaded via next/font in lib/fonts.js for optimal performance:
+   - Automatic self-hosting (no external requests)
+   - Zero layout shift with size-adjust
+   - Preloading of critical font files
+   
+   CSS variables --font-inter and --font-oswald are set on <html>
    -------------------------------------------------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
 
 /* --------------------------------------------------------------------------
    Mobile Utilities Import
@@ -107,8 +113,10 @@
      FLUID TYPOGRAPHY (Mobile-First with Clamp)
      Base: 14-16px on mobile, scales up on larger screens
      ======================================================================= */
-  --font-display: 'Oswald', 'Impact', sans-serif;
-  --font-body: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Font variables - using next/font CSS variables with fallbacks */
+  --font-display: var(--font-oswald, 'Oswald'), 'Impact', sans-serif;
+  --font-body: var(--font-inter, 'Inter'), 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-primary: var(--font-inter, 'Inter'), -apple-system, BlinkMacSystemFont, sans-serif;
   
   /* Fluid font sizes using clamp() for smooth scaling */
   --font-size-xs: clamp(10px, 2.5vw, 11px);
