@@ -246,9 +246,8 @@ export async function GET(request) {
       // Activity breakdown (raw)
       activity: activityByType,
       
-      // Issues - now shows unique errors (deduplicated)
+      // Issues - unique errors only (deduplicated by error message)
       autoErrors: uniqueAutoErrors,
-      totalAutoErrors: totalAutoErrors,
       unresolvedBugs: unresolvedBugsResult.count || 0,
       topFeedbackCategories: topCategories,
     };
