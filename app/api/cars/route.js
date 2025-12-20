@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { logServerError } from '@/lib/serverErrorLogger';
 
+// Force dynamic rendering - this route uses request.url for query params
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/cars
  * 
@@ -72,6 +75,7 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch cars' }, { status: 500 });
   }
 }
+
 
 
 

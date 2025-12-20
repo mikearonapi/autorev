@@ -36,7 +36,7 @@ console.log('⏳ Sending request...\n');
 
 try {
   const response = await fetch(`${BASE_URL}/api/cron/daily-digest`, {
-    method: 'POST',
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${CRON_SECRET}`,

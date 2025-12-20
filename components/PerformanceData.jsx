@@ -70,10 +70,11 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
   const { hasAccess, showUpgradePrompt } = usePremiumAccess('dynoDatabase');
   
   useEffect(() => {
+    let isCancelled = false;
+    
     const fetchDynoData = async () => {
       if (!carSlug) return;
       
-    let cancelled = false;
       setLoading(true);
       setError(null);
       
@@ -83,18 +84,18 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
         if (!response.ok) throw new Error('Failed to fetch dyno data');
         
         const data = await response.json();
-      if (!cancelled) setDynoRuns(data.runs || []);
+        if (!isCancelled) setDynoRuns(data.runs || []);
       } catch (err) {
         console.error('[DynoDataSection] Error:', err);
-      if (!cancelled) setError(err.message);
+        if (!isCancelled) setError(err.message);
       } finally {
-      if (!cancelled) setLoading(false);
+        if (!isCancelled) setLoading(false);
       }
     };
     
     fetchDynoData();
-  return () => { cancelled = true; };
-}, [carSlug]);
+    return () => { isCancelled = true; };
+  }, [carSlug]);
   
   // Determine how many to show
   const displayLimit = hasAccess ? (limit || dynoRuns.length) : TEASER_LIMITS.dynoRuns;
@@ -252,10 +253,11 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
   const { hasAccess, showUpgradePrompt } = usePremiumAccess('fullLapTimes');
   
   useEffect(() => {
+    let isCancelled = false;
+    
     const fetchLapTimes = async () => {
       if (!carSlug) return;
       
-    let cancelled = false;
       setLoading(true);
       setError(null);
       
@@ -264,18 +266,18 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
         if (!response.ok) throw new Error('Failed to fetch lap times');
         
         const data = await response.json();
-      if (!cancelled) setLapTimes(data.lapTimes || []);
+        if (!isCancelled) setLapTimes(data.lapTimes || []);
       } catch (err) {
         console.error('[LapTimesSection] Error:', err);
-      if (!cancelled) setError(err.message);
+        if (!isCancelled) setError(err.message);
       } finally {
-      if (!cancelled) setLoading(false);
+        if (!isCancelled) setLoading(false);
       }
     };
     
     fetchLapTimes();
-  return () => { cancelled = true; };
-}, [carSlug]);
+    return () => { isCancelled = true; };
+  }, [carSlug]);
   
   // Determine display limit based on context and access
   const effectiveLimit = isTeaser 
@@ -474,6 +476,7 @@ function formatLapTime(seconds) {
   }
   return `${secs}s`;
 }
+
 
 
 

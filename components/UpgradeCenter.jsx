@@ -590,7 +590,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   }, [safeCarSlug]);
 
   useEffect(() => {
-    let cancelled = false;
+    let isCancelled = false;
     const q = partsQuery.trim();
     // Guard: skip fetch if no car
   const hasWindow = typeof window !== 'undefined';
@@ -599,7 +599,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     if (!shouldFetch) {
       setPartsResults([]);
       setPartsError(null);
-      return () => { cancelled = true; };
+      return () => { isCancelled = true; };
     }
 
     const timer = setTimeout(async () => {
@@ -618,16 +618,16 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
         if (!res.ok) throw new Error(json?.error || 'Failed to search parts');
 
         const results = Array.isArray(json?.results) ? json.results : [];
-        if (!cancelled) setPartsResults(results);
+        if (!isCancelled) setPartsResults(results);
       } catch (err) {
-        if (!cancelled) setPartsError(err.message || 'Failed to search parts');
+        if (!isCancelled) setPartsError(err.message || 'Failed to search parts');
       } finally {
-        if (!cancelled) setPartsLoading(false);
+        if (!isCancelled) setPartsLoading(false);
       }
     }, 250);
 
     return () => {
-      cancelled = true;
+      isCancelled = true;
       clearTimeout(timer);
     };
   }, [safeCarSlug, partsQuery, partsCategory, partsVerifiedOnly]);
@@ -646,12 +646,12 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
 
   // Fetch relationship edges for selected parts and compute warnings.
   useEffect(() => {
-    let cancelled = false;
+    let isCancelled = false;
     const ids = selectedParts.map((p) => p.id).filter(Boolean);
     if (ids.length === 0) {
       setGraphEdges([]);
       setGraphError(null);
-      return () => { cancelled = true; };
+      return () => { isCancelled = true; };
     }
 
     const timer = setTimeout(async () => {
@@ -665,16 +665,16 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
         });
         const json = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(json?.error || 'Failed to load part relationships');
-        if (!cancelled) setGraphEdges(Array.isArray(json?.edges) ? json.edges : []);
+        if (!isCancelled) setGraphEdges(Array.isArray(json?.edges) ? json.edges : []);
       } catch (err) {
-        if (!cancelled) setGraphError(err.message || 'Failed to load part relationships');
+        if (!isCancelled) setGraphError(err.message || 'Failed to load part relationships');
       } finally {
-        if (!cancelled) setGraphLoading(false);
+        if (!isCancelled) setGraphLoading(false);
       }
     }, 200);
 
     return () => {
-      cancelled = true;
+      isCancelled = true;
       clearTimeout(timer);
     };
   }, [selectedParts]);

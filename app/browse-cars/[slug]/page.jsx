@@ -359,9 +359,9 @@ export default function CarDetail() {
 
   // Fetch popular parts when car changes (best-effort)
   useEffect(() => {
-    let cancelled = false;
+    let isCancelled = false;
     const carSlug = car?.slug;
-    if (!carSlug) return () => { cancelled = true; };
+    if (!carSlug) return () => { isCancelled = true; };
 
     const load = async () => {
       setPopularPartsLoading(true);
@@ -370,19 +370,19 @@ export default function CarDetail() {
         const res = await fetch(`/api/parts/popular?carSlug=${encodeURIComponent(carSlug)}&limit=8`);
         const json = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(json?.error || 'Failed to load popular parts');
-        if (!cancelled) setPopularParts(Array.isArray(json?.results) ? json.results : []);
+        if (!isCancelled) setPopularParts(Array.isArray(json?.results) ? json.results : []);
       } catch (err) {
-        if (!cancelled) {
+        if (!isCancelled) {
           setPopularParts([]);
           setPopularPartsError(err.message || 'Failed to load popular parts');
         }
       } finally {
-        if (!cancelled) setPopularPartsLoading(false);
+        if (!isCancelled) setPopularPartsLoading(false);
       }
     };
 
     load();
-    return () => { cancelled = true; };
+    return () => { isCancelled = true; };
   }, [car?.slug]);
 
   const fallbackPackages = useMemo(() => {
