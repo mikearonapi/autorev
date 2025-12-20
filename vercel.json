@@ -17,6 +17,10 @@
   ],
   "crons": [
     {
+      "path": "/api/cron/flush-error-aggregates",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/process-scrape-jobs?max=3&delay=15000",
       "schedule": "*/15 * * * *"
     },

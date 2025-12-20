@@ -69,11 +69,54 @@ export async function GET(request) {
         const isNewUser = (now - createdAt) < 60000;
 
         if (isNewUser) {
+          // Gather acquisition context from cookies/headers
+          const cookieStore = await cookies();
+          const sourcePage = cookieStore.get('signup_source_page')?.value;
+          const carContext = cookieStore.get('signup_car_context')?.value;
+          const referrer = cookieStore.get('signup_referrer')?.value;
+
+          // Get user's metadata which may contain additional context
+          const signupContext = {
+            source_page: sourcePage || user.user_metadata?.source_page,
+            car_context: carContext || user.user_metadata?.car_context,
+            referrer: referrer || user.user_metadata?.referrer || 'direct',
+          };
+
+          // Check for first action (within 2 minutes of signup)
+          try {
+            const twoMinutesLater = new Date(createdAt);
+            twoMinutesLater.setMinutes(twoMinutesLater.getMinutes() + 2);
+            
+            const { data: firstActivity } = await supabase
+              .from('user_activity')
+              .select('event_type')
+              .eq('user_id', user.id)
+              .gte('created_at', createdAt.toISOString())
+              .lte('created_at', twoMinutesLater.toISOString())
+              .order('created_at', { ascending: true })
+              .limit(1)
+              .single();
+
+            if (firstActivity) {
+              const actionLabels = {
+                'car_favorited': '⭐ Favorited a car',
+                'build_started': '🔧 Started building',
+                'ai_mechanic_used': '🤖 Asked AL',
+                'comparison_started': '⚖️ Started comparison',
+                'car_viewed': '👀 Viewed car details',
+              };
+              signupContext.first_action = actionLabels[firstActivity.event_type] || firstActivity.event_type;
+            }
+          } catch (activityErr) {
+            // Gracefully handle if activity check fails
+            console.log('[Auth Callback] Could not fetch first activity:', activityErr.message);
+          }
+
           notifySignup({
             id: user.id,
             email: user.email,
             provider: user.app_metadata?.provider || 'email',
-          }).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
+          }, signupContext).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
         }
       }
     } catch (err) {

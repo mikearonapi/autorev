@@ -101,13 +101,79 @@ export async function POST(request) {
       );
     }
 
-    // Fire-and-forget Discord notification
+    // Calculate lead quality score
+    let leadQuality = { score: 'cold' };
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
+
+      // Check if this email has user activity (engaged users are higher quality)
+      const { data: userProfile } = await supabase
+        .from('user_profiles')
+        .select('id, created_at')
+        .eq('id', (await supabase.auth.admin.getUserByEmail(email)).data?.user?.id)
+        .single()
+        .catch(() => ({ data: null }));
+
+      if (userProfile) {
+        // Existing user - check their activity
+        const { data: activities } = await supabase
+          .from('user_activity')
+          .select('event_type, created_at')
+          .eq('user_id', userProfile.id)
+          .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // Last 7 days
+          .order('created_at', { ascending: false });
+
+        const activityCount = activities?.length || 0;
+        const accountAge = Date.now() - new Date(userProfile.created_at).getTime();
+        const daysSinceSignup = Math.floor(accountAge / (1000 * 60 * 60 * 24));
+
+        // Scoring logic
+        if (activityCount >= 10 || (activityCount >= 5 && daysSinceSignup <= 7)) {
+          leadQuality.score = 'hot';
+          leadQuality.suggested_action = '🎯 High priority - respond within 2 hours';
+        } else if (activityCount >= 3 || daysSinceSignup <= 3) {
+          leadQuality.score = 'warm';
+          leadQuality.suggested_action = '⏰ Respond within 24 hours';
+        } else {
+          leadQuality.score = 'cold';
+        }
+
+        // Build engagement summary
+        const eventSummary = activities?.slice(0, 5).map(a => a.event_type).join(', ') || 'None';
+        leadQuality.engagement_summary = activityCount > 0 
+          ? `${activityCount} actions in last 7 days • Signed up ${daysSinceSignup}d ago\nRecent: ${eventSummary}`
+          : `Signed up ${daysSinceSignup}d ago • No recent activity`;
+      } else {
+        // New visitor - check message content for quality signals
+        const messageLower = (body.message || '').toLowerCase();
+        const highIntentKeywords = ['buy', 'purchase', 'ready', 'budget', 'soon', 'looking to'];
+        const hasHighIntent = highIntentKeywords.some(keyword => messageLower.includes(keyword));
+
+        if (hasHighIntent && body.interest && body.car) {
+          leadQuality.score = 'warm';
+          leadQuality.suggested_action = '⏰ Specific interest with intent - respond within 24 hours';
+          leadQuality.engagement_summary = 'New visitor with specific car interest and buying intent';
+        } else {
+          leadQuality.score = 'cold';
+          leadQuality.engagement_summary = 'New visitor';
+        }
+      }
+    } catch (scoringErr) {
+      console.error('[Contact API] Lead scoring failed:', scoringErr);
+      // Continue with default score
+    }
+
+    // Fire-and-forget Discord notification with quality scoring
     notifyContact({
       name: body.name,
       email: body.email,
       interest: body.interest,
       message: body.message,
-    }).catch(err => console.error('[Contact API] Discord notification failed:', err));
+    }, leadQuality).catch(err => console.error('[Contact API] Discord notification failed:', err));
 
     return Response.json({ success: true, data: { id: data?.id } });
   } catch (err) {

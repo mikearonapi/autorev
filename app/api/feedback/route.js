@@ -1,5 +1,7 @@
 import { getServiceClient } from '@/lib/supabaseServer';
 import { notifyFeedback } from '@/lib/discord';
+import { aggregateError, formatAggregateForDiscord } from '@/lib/errorAggregator';
+import { notifyAggregatedError } from '@/lib/discord';
 
 export async function POST(request) {
   try {
@@ -119,14 +121,42 @@ export async function POST(request) {
       'auto-error': 'Auto Error',
     };
     
-    notifyFeedback({
-      id: data.id,
-      category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
-      severity: feedbackData.severity,
-      message: normalizedMessage,
-      page_url: feedbackData.page_url,
-      user_tier: feedbackData.user_tier,
-    }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
+    // Handle auto-errors differently - use aggregation
+    if (categoryToInsert === 'auto-error') {
+      try {
+        const { shouldFlushNow, aggregate } = aggregateError(data);
+        
+        if (shouldFlushNow) {
+          // Send aggregated error immediately if threshold reached
+          const formatted = formatAggregateForDiscord(aggregate);
+          notifyAggregatedError(formatted).catch(err => 
+            console.error('[Feedback API] Aggregated error notification failed:', err)
+          );
+        }
+        // Otherwise error is queued and will be sent by the flush cron job
+      } catch (aggErr) {
+        console.error('[Feedback API] Error aggregation failed:', aggErr);
+        // Fallback to regular notification
+        notifyFeedback({
+          id: data.id,
+          category: 'Auto Error',
+          severity: feedbackData.severity,
+          message: normalizedMessage,
+          page_url: feedbackData.page_url,
+          user_tier: feedbackData.user_tier,
+        }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
+      }
+    } else {
+      // Regular feedback - send immediately
+      notifyFeedback({
+        id: data.id,
+        category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
+        severity: feedbackData.severity,
+        message: normalizedMessage,
+        page_url: feedbackData.page_url,
+        user_tier: feedbackData.user_tier,
+      }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
+    }
 
     return Response.json({
       success: true,
