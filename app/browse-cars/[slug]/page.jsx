@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -16,6 +16,8 @@ import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import CarActionMenu from '@/components/CarActionMenu';
 import { LapTimesSection } from '@/components/PerformanceData';
 import { FuelEconomySection, SafetyRatingsSection, PriceByYearSection } from '@/components/CarDetailSections';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { trackCarView } from '@/lib/activityTracker';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -286,6 +288,18 @@ export default function CarDetail() {
   // Car selection integration
   const { selectedCar, selectCar, isHydrated } = useCarSelection();
   const isThisCarSelected = isHydrated && selectedCar?.slug === slug;
+
+  // Auth for activity tracking
+  const { user } = useAuth();
+  const hasTrackedView = useRef(false);
+
+  // Track page view once car is loaded
+  useEffect(() => {
+    if (car && !hasTrackedView.current) {
+      trackCarView(car.slug, car.name, 'direct', user?.id);
+      hasTrackedView.current = true;
+    }
+  }, [car, user?.id]);
 
   // Fetch car data
   useEffect(() => {

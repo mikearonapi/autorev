@@ -15,3 +15,9 @@ CHECK (category IS NULL OR category IN ('bug', 'feature', 'data', 'general', 'pr
 -- Document the new category
 COMMENT ON COLUMN user_feedback.category IS 'Beta feedback category: bug, feature, data, general, praise, auto-error';
 
+
+
+
+
+
+

@@ -31,32 +31,51 @@ export async function GET(request) {
     // Query counts for the past 24 hours
     const [
       signupsResult,
+      signInsResult,
       feedbackResult,
       contactsResult,
       alConversationsResult,
       eventSubmissionsResult,
       unresolvedBugsResult,
       feedbackCategoriesResult,
-      // NEW: AL usage analytics
+      // AL usage analytics
       alMessagesResult,
       alUsageStatsResult,
-      // NEW: User activity analytics
-      activeUsersResult,
+      // User activity from user_activity table
       userActivityResult,
-      // NEW: Auto-errors
+      // Favorites added
+      favoritesResult,
+      // Vehicles added
+      vehiclesResult,
+      // Auto-errors
       autoErrorsResult,
+      // Total users (for context)
+      totalUsersResult,
     ] = await Promise.all([
-      // New signups
+      // New signups (from auth.users)
       supabase
         .from('user_profiles')
         .select('id', { count: 'exact', head: true })
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
       
-      // Feedback submitted
+      // Users who signed in yesterday (from auth.users last_sign_in_at)
+      supabase.rpc('get_users_signed_in_range', {
+        start_date: yesterday.toISOString(),
+        end_date: todayStart.toISOString(),
+      }).then(result => {
+        if (result.error) {
+          console.warn('[DailyDigest] Sign-ins query error:', result.error.message);
+          return { count: 0, data: [] };
+        }
+        return result;
+      }).catch(() => ({ count: 0, data: [] })),
+      
+      // Feedback submitted (excluding auto-errors)
       supabase
         .from('user_feedback')
         .select('id', { count: 'exact', head: true })
+        .neq('category', 'auto-error')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
       
@@ -88,17 +107,18 @@ export async function GET(request) {
         .eq('category', 'bug')
         .or('issue_addressed.is.null,issue_addressed.eq.false'),
       
-      // Top feedback categories (yesterday)
+      // Top feedback categories (yesterday, excluding auto-errors)
       supabase
         .from('user_feedback')
         .select('category')
+        .neq('category', 'auto-error')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
       // AL messages sent (questions asked)
       supabase
         .from('al_messages')
-        .select('id, role', { count: 'exact' })
+        .select('id, role')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
@@ -109,30 +129,26 @@ export async function GET(request) {
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
-      // Active users (unique user_ids in al_conversations, al_messages, user_feedback, or user_activity)
-      supabase.rpc('get_daily_active_users', {
-        p_start_date: yesterday.toISOString(),
-        p_end_date: todayStart.toISOString(),
-      }).then(result => {
-        if (result.error) {
-          console.warn('[DailyDigest] DAU function error:', result.error.message);
-          return { count: 0, data: null, error: null };
-        }
-        return result;
-      }).catch(() => ({ count: 0, data: null, error: null })),
+      // User activity events (from new tracking)
+      supabase
+        .from('user_activity')
+        .select('event_type, event_data')
+        .gte('created_at', yesterday.toISOString())
+        .lt('created_at', todayStart.toISOString()),
 
-      // User activity events
-      (async () => {
-        try {
-          return await supabase
-            .from('user_activity')
-            .select('event_type')
-            .gte('created_at', yesterday.toISOString())
-            .lt('created_at', todayStart.toISOString());
-        } catch (err) {
-          return { data: [], error: null };
-        }
-      })(),
+      // Favorites added yesterday
+      supabase
+        .from('user_favorites')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', yesterday.toISOString())
+        .lt('created_at', todayStart.toISOString()),
+
+      // Vehicles added to garages yesterday
+      supabase
+        .from('user_vehicles')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', yesterday.toISOString())
+        .lt('created_at', todayStart.toISOString()),
 
       // Auto-errors (from yesterday)
       supabase
@@ -141,6 +157,11 @@ export async function GET(request) {
         .eq('category', 'auto-error')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
+
+      // Total registered users (for context)
+      supabase
+        .from('user_profiles')
+        .select('id', { count: 'exact', head: true }),
     ]);
 
     // Calculate feedback categories
@@ -167,7 +188,7 @@ export async function GET(request) {
       return sum + calls;
     }, 0) || 0;
 
-    // Calculate activity stats
+    // Calculate activity stats from user_activity table
     const activityByType = {};
     userActivityResult.data?.forEach(a => {
       if (a.event_type) {
@@ -175,16 +196,34 @@ export async function GET(request) {
       }
     });
 
+    // Extract unique cars viewed from activity
+    const carsViewed = userActivityResult.data
+      ?.filter(a => a.event_type === 'car_viewed')
+      .map(a => a.event_data?.car_slug)
+      .filter(Boolean);
+    const uniqueCarsViewed = [...new Set(carsViewed)].length;
+
+    // Active users = users who signed in yesterday
+    const activeUsers = signInsResult.data?.length || signInsResult.count || 0;
+
     // Base stats
     const baseStats = {
       // User metrics
       signups: signupsResult.count || 0,
-      activeUsers: activeUsersResult?.count || activeUsersResult?.data?.[0]?.count || 0,
+      activeUsers: activeUsers,
+      totalUsers: totalUsersResult.count || 0,
       
       // Engagement metrics
       feedback: feedbackResult.count || 0,
       contacts: contactsResult.count || 0,
       eventSubmissions: eventSubmissionsResult.count || 0,
+      favoritesAdded: favoritesResult.count || 0,
+      vehiclesAdded: vehiclesResult.count || 0,
+      
+      // Page view metrics (from user_activity)
+      carPageViews: activityByType['car_viewed'] || 0,
+      uniqueCarsViewed: uniqueCarsViewed,
+      searchesPerformed: activityByType['search_performed'] || 0,
       
       // AL metrics
       alConversations: alConversationsResult.count || 0,
@@ -194,7 +233,7 @@ export async function GET(request) {
       alTokensUsed: totalInputTokens + totalOutputTokens,
       alToolCalls: totalToolCalls,
       
-      // Activity breakdown
+      // Activity breakdown (raw)
       activity: activityByType,
       
       // Issues

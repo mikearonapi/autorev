@@ -25,6 +25,7 @@ import {
   removeUserFavorite,
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
+import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 
 /**
  * @typedef {Object} FavoriteCar
@@ -181,6 +182,9 @@ export function FavoritesProvider({ children }) {
     // Optimistic update
     dispatch({ type: FavoriteActionTypes.ADD, payload: car });
 
+    // Track activity (fire-and-forget)
+    trackFavorite(car.slug, car.name, user?.id);
+
     // If authenticated, save to Supabase
     if (isAuthenticated && user?.id) {
       const { error } = await addUserFavorite(user.id, car);
@@ -197,6 +201,9 @@ export function FavoritesProvider({ children }) {
   const removeFavorite = useCallback(async (slug) => {
     // Optimistic update
     dispatch({ type: FavoriteActionTypes.REMOVE, payload: slug });
+
+    // Track activity (fire-and-forget)
+    trackUnfavorite(slug, user?.id);
 
     // If authenticated, remove from Supabase
     if (isAuthenticated && user?.id) {

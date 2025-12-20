@@ -148,14 +148,14 @@ export async function POST(request) {
       }
     } else {
       // Regular feedback - send immediately
-      notifyFeedback({
-        id: data.id,
-        category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
-        severity: feedbackData.severity,
-        message: normalizedMessage,
-        page_url: feedbackData.page_url,
-        user_tier: feedbackData.user_tier,
-      }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
+    notifyFeedback({
+      id: data.id,
+      category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
+      severity: feedbackData.severity,
+      message: normalizedMessage,
+      page_url: feedbackData.page_url,
+      user_tier: feedbackData.user_tier,
+    }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
     }
 
     return Response.json({

@@ -48,16 +48,16 @@ try {
   
   if (contentType && contentType.includes('application/json')) {
     result = await response.json();
-  } else {
+    } else {
     result = await response.text();
-  }
+    }
 
   if (response.ok) {
     console.log('✅ Daily Digest Posted Successfully!\n');
     console.log('📊 Stats from response:');
     console.log(JSON.stringify(result, null, 2));
     console.log('\n💬 Check your Discord #daily-digest and #al-conversations channels!');
-  } else {
+    } else {
     console.error('❌ Request failed:', response.status, response.statusText);
     console.error('Response:', result);
   }
