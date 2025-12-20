@@ -150,10 +150,10 @@ export async function GET(request) {
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
-      // Auto-errors (from yesterday)
+      // Auto-errors (from yesterday) - get details for deduplication
       supabase
         .from('user_feedback')
-        .select('id', { count: 'exact', head: true })
+        .select('id, error_metadata')
         .eq('category', 'auto-error')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
@@ -206,6 +206,16 @@ export async function GET(request) {
     // Active users = users who signed in yesterday
     const activeUsers = signInsResult.data?.length || signInsResult.count || 0;
 
+    // Deduplicate auto-errors by error message
+    const autoErrorsList = autoErrorsResult.data || [];
+    const uniqueErrorMessages = new Set();
+    autoErrorsList.forEach(err => {
+      const msg = err.error_metadata?.errorMessage || 'Unknown error';
+      uniqueErrorMessages.add(msg);
+    });
+    const uniqueAutoErrors = uniqueErrorMessages.size;
+    const totalAutoErrors = autoErrorsList.length;
+
     // Base stats
     const baseStats = {
       // User metrics
@@ -236,8 +246,9 @@ export async function GET(request) {
       // Activity breakdown (raw)
       activity: activityByType,
       
-      // Issues
-      autoErrors: autoErrorsResult.count || 0,
+      // Issues - now shows unique errors (deduplicated)
+      autoErrors: uniqueAutoErrors,
+      totalAutoErrors: totalAutoErrors,
       unresolvedBugs: unresolvedBugsResult.count || 0,
       topFeedbackCategories: topCategories,
     };
