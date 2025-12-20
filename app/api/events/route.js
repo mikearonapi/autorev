@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { searchEvents } from '@/lib/eventsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
+// Force dynamic rendering - this route uses request.url for query params
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/events
  * 

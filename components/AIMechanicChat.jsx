@@ -13,7 +13,9 @@ import Link from 'next/link';
 import styles from './AIMechanicChat.module.css';
 import { useAuth } from './providers/AuthProvider';
 import { useCarSelection } from './providers/CarSelectionProvider';
+import { useCompare } from './providers/CompareProvider';
 import AuthModal, { useAuthModal } from './AuthModal';
+import { carData } from '@/data/cars.js';
 import { 
   loadALPreferences, 
   saveALPreferences, 
@@ -399,7 +401,7 @@ const AL_INTRO_STORAGE_KEY = 'autorev_al_intro_seen';
 /**
  * Response Actions Component - Shows contextual action buttons after responses
  */
-function ResponseActions({ content, focusedCar, onCarClick }) {
+function ResponseActions({ content, focusedCar, onCarClick, onCompare }) {
   if (!content) return null;
   
   const actions = [];
@@ -435,6 +437,7 @@ function ResponseActions({ content, focusedCar, onCarClick }) {
       label: 'Compare These',
       icon: '⚖️',
       action: 'compare',
+      carMentions: carMentions, // Pass the mentioned cars for comparison
     });
   }
   
@@ -490,9 +493,8 @@ function ResponseActions({ content, focusedCar, onCarClick }) {
             key={i}
             className={styles.responseActionBtn}
             onClick={() => {
-              if (action.action === 'compare' && onCarClick) {
-                // Could trigger compare modal or navigate
-                window.open('/car-selector', '_blank');
+              if (action.action === 'compare' && onCompare) {
+                onCompare(action.carMentions || []);
               }
             }}
           >
@@ -578,6 +580,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { selectedCar } = useCarSelection();
+  const { openCompareWithCars } = useCompare();
   
   // Responsive sizing
   const { isMobile, isSmallMobile, isTablet } = useResponsiveSize();
@@ -818,6 +821,62 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     // Limit to 3 replies max
     return replies.slice(0, 3);
   }, []);
+  
+  // Handle compare action from ResponseActions
+  const handleCompareAction = useCallback((carMentions) => {
+    if (!carMentions || carMentions.length === 0) return;
+    
+    // Try to match mentioned car names to actual cars in carData
+    const matchedCars = [];
+    
+    for (const mention of carMentions) {
+      const mentionLower = mention.toLowerCase();
+      
+      // Search for a matching car in carData
+      const matchedCar = carData.find(car => {
+        const carNameLower = car.name.toLowerCase();
+        const carSlugLower = car.slug.toLowerCase();
+        
+        // Check if the mention is contained in the car name or slug
+        return carNameLower.includes(mentionLower) || 
+               mentionLower.includes(carNameLower.split(' ').slice(-2).join(' ')) ||
+               carSlugLower.includes(mentionLower.replace(/\s+/g, '-'));
+      });
+      
+      if (matchedCar) {
+        matchedCars.push({
+          slug: matchedCar.slug,
+          name: matchedCar.name,
+          years: matchedCar.years,
+          hp: matchedCar.hp,
+          priceRange: matchedCar.priceRange,
+        });
+      }
+    }
+    
+    // If we found at least 2 matches, open compare modal
+    if (matchedCars.length >= 2) {
+      openCompareWithCars(matchedCars.slice(0, 4)); // Max 4 cars
+    } else if (focusedCar?.slug && matchedCars.length >= 1) {
+      // If we have a focused car and at least one match, include focused car
+      const focusedCarData = carData.find(c => c.slug === focusedCar.slug);
+      if (focusedCarData && !matchedCars.some(c => c.slug === focusedCarData.slug)) {
+        matchedCars.unshift({
+          slug: focusedCarData.slug,
+          name: focusedCarData.name,
+          years: focusedCarData.years,
+          hp: focusedCarData.hp,
+          priceRange: focusedCarData.priceRange,
+        });
+      }
+      if (matchedCars.length >= 2) {
+        openCompareWithCars(matchedCars.slice(0, 4));
+      }
+    } else {
+      // Fallback: just open the browse cars page
+      console.log('[AL] Could not match cars for compare:', carMentions);
+    }
+  }, [openCompareWithCars, focusedCar]);
   
   // Load a specific conversation
   const loadConversation = useCallback(async (convId) => {
@@ -1552,6 +1611,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                                 // Navigate to car page
                                 window.open(`/browse-cars/${slug}`, '_blank');
                               }}
+                              onCompare={handleCompareAction}
                             />
                           )}
                           

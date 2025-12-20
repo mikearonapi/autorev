@@ -56,9 +56,8 @@ const Icons = {
 };
 
 export default function CompareBar() {
-  const { cars, count, maxCars, removeFromCompare, clearAll, isHydrated } = useCompare();
+  const { cars, count, maxCars, removeFromCompare, clearAll, isHydrated, showCompareModal, setShowCompareModal } = useCompare();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Don't show until hydrated or if no cars
   if (!isHydrated || count === 0) {
@@ -118,7 +117,7 @@ export default function CompareBar() {
         <div className={styles.actions}>
           {count >= 2 && (
             <button 
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setShowCompareModal(true)}
               className={styles.compareButton}
             >
               Compare Now
@@ -189,8 +188,8 @@ export default function CompareBar() {
 
       {/* Compare Modal */}
       <CompareModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={showCompareModal}
+        onClose={() => setShowCompareModal(false)}
       />
     </div>
   );

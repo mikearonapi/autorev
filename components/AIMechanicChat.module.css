@@ -1050,8 +1050,8 @@
    ---------------------------------------- */
 .thinkingContainer {
   display: flex;
-  justify-content: center;
-  padding: 20px 0;
+  justify-content: flex-start;
+  padding: 8px 0;
   animation: fadeIn 0.3s ease;
 }
 
@@ -1154,7 +1154,7 @@
 /* Mobile thinking bubble */
 @media (max-width: 480px) {
   .thinkingContainer {
-    padding: 16px 0;
+    padding: 6px 0;
   }
   
   .thinkingBubble {

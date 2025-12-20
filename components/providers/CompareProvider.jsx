@@ -104,6 +104,7 @@ export function CompareProvider({ children }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(compareReducer, defaultState);
+  const [showCompareModal, setShowCompareModal] = useState(false);
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -256,6 +257,20 @@ export function CompareProvider({ children }) {
     // TODO: Implementation would require fetching car data from slugs
   }, []);
 
+  /**
+   * Set cars and open the compare modal (for AL integration)
+   * @param {CompareCar[]} cars - Array of cars to compare
+   */
+  const openCompareWithCars = useCallback((cars) => {
+    // Clear existing and set new cars
+    dispatch({ type: CompareActionTypes.CLEAR });
+    cars.forEach(car => {
+      dispatch({ type: CompareActionTypes.ADD, payload: car });
+    });
+    // Open the modal
+    setShowCompareModal(true);
+  }, []);
+
   const value = {
     // Current comparison
     cars: state.cars,
@@ -271,6 +286,11 @@ export function CompareProvider({ children }) {
     toggleCompare,
     isInCompare: checkIsInCompare,
     clearAll,
+    
+    // Modal control (for global access from AL, etc.)
+    showCompareModal,
+    setShowCompareModal,
+    openCompareWithCars,
     
     // Saved lists (auth users only)
     savedLists: state.savedLists,
