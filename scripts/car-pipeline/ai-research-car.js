@@ -503,14 +503,17 @@ Provide comprehensive scores and editorial content. Include ALL fields below:
       "Type 3"
     ],
     "defining_strengths": [
-      "Detailed strength 1 with specific feature",
-      "Detailed strength 2",
-      "Detailed strength 3"
+      {"title": "Strength Title 1", "description": "Detailed explanation of this strength with specific features and why it matters"},
+      {"title": "Strength Title 2", "description": "Another strength with context"},
+      {"title": "Strength Title 3", "description": "Third strength with explanation"},
+      {"title": "Strength Title 4", "description": "Fourth strength if applicable"},
+      {"title": "Strength Title 5", "description": "Fifth strength if applicable"}
     ],
     "honest_weaknesses": [
-      "Honest weakness 1 with context",
-      "Honest weakness 2",
-      "Honest weakness 3"
+      {"title": "Weakness Title 1", "description": "Honest explanation of this weakness with context on real-world impact"},
+      {"title": "Weakness Title 2", "description": "Another weakness with practical implications"},
+      {"title": "Weakness Title 3", "description": "Third weakness with context"},
+      {"title": "Weakness Title 4", "description": "Fourth weakness if applicable"}
     ],
     "direct_competitors": ["competitor-1-slug", "competitor-2-slug"],
     "if_you_want_more": ["more-expensive-alternative-slug"],
@@ -803,6 +806,90 @@ EXCLUSIONS: No people, no text, no watermarks, no logos, no license plates.`;
 }
 
 // =============================================================================
+// YOUTUBE DISCOVERY
+// =============================================================================
+
+async function runYouTubeDiscovery(slug) {
+  log(`Running YouTube discovery for ${slug}...`, 'info');
+  
+  if (flags.dryRun) {
+    log('DRY RUN: Would run YouTube discovery', 'info');
+    return { success: true, dryRun: true, videosLinked: 0, message: 'Dry run - skipped' };
+  }
+  
+  try {
+    // Run the discovery script using child_process
+    const discoveryScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-discovery.js');
+    
+    return new Promise((resolve) => {
+      const { spawn } = require('child_process');
+      const child = spawn('node', [discoveryScript, '--car-slug', slug], {
+        cwd: PROJECT_ROOT,
+        stdio: 'pipe'
+      });
+      
+      let output = '';
+      let videosQueued = 0;
+      
+      child.stdout.on('data', (data) => {
+        const text = data.toString();
+        output += text;
+        
+        // Parse output for video count
+        const queuedMatch = text.match(/Videos queued:\s*(\d+)/);
+        if (queuedMatch) {
+          videosQueued = parseInt(queuedMatch[1], 10);
+        }
+        
+        if (flags.verbose) {
+          process.stdout.write(text);
+        }
+      });
+      
+      child.stderr.on('data', (data) => {
+        if (flags.verbose) {
+          process.stderr.write(data.toString());
+        }
+      });
+      
+      child.on('close', async (code) => {
+        if (code === 0 && videosQueued > 0) {
+          log(`YouTube discovery found ${videosQueued} videos`, 'info');
+          
+          // Try to run transcripts (may fail if no SUPADATA_API_KEY)
+          try {
+            const transcriptScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-transcripts.js');
+            const transcriptChild = spawn('node', [transcriptScript, '--limit', '10'], {
+              cwd: PROJECT_ROOT,
+              stdio: flags.verbose ? 'inherit' : 'pipe'
+            });
+            
+            await new Promise(r => transcriptChild.on('close', r));
+          } catch (err) {
+            log(`Transcript fetch skipped: ${err.message}`, 'warn');
+          }
+          
+          resolve({ 
+            success: true, 
+            videosLinked: videosQueued, 
+            message: `Discovered ${videosQueued} videos from whitelisted channels` 
+          });
+        } else {
+          resolve({ 
+            success: code === 0, 
+            videosLinked: 0, 
+            message: code === 0 ? 'No videos found from whitelisted channels' : 'Discovery failed'
+          });
+        }
+      });
+    });
+  } catch (err) {
+    log(`YouTube discovery error: ${err.message}`, 'error');
+    return { success: false, videosLinked: 0, message: err.message };
+  }
+}
+
+// =============================================================================
 // DATABASE OPERATIONS
 // =============================================================================
 
@@ -1029,11 +1116,17 @@ async function main() {
     });
     
     // =========================================================================
-    // PHASE 7: YouTube (mark as queued for cron)
+    // PHASE 7: YouTube Discovery & Enrichment
     // =========================================================================
+    log('Phase 7: Running YouTube discovery...', 'info');
+    const youtubeResult = await runYouTubeDiscovery(carData.slug);
+    
     await updatePipelineStatus(carData.slug, { 
       phase7_videos_queued: true,
-      phase7_notes: 'Queued for next YouTube enrichment cron run',
+      phase7_videos_processed: youtubeResult.success,
+      phase7_car_links_verified: youtubeResult.videosLinked > 0,
+      phase7_completed_at: new Date().toISOString(),
+      phase7_notes: youtubeResult.message,
     });
     
     // =========================================================================
@@ -1066,6 +1159,7 @@ async function main() {
     console.log(`Scores:             7/7 assigned`);
     console.log(`Hero Image:         ${heroUrl ? '✅' : '⏭️ Skipped'}`);
     console.log(`Garage Image:       ${garageUrl ? '✅' : '⏭️ Skipped'}`);
+    console.log(`YouTube Videos:     ${youtubeResult.videosLinked || 0} linked`);
     console.log('');
     console.log(`Duration:      ${duration}s`);
     console.log('');
