@@ -476,7 +476,7 @@ async function aiScoringAndEditorial(carData) {
   
   const prompt = `You are an expert automotive journalist scoring the ${carData.name} (${carData.years}).
 
-Provide scores (1-10) and editorial content based on real-world characteristics:
+Provide comprehensive scores and editorial content. Include ALL fields below:
 
 {
   "scores": {
@@ -489,32 +489,62 @@ Provide scores (1-10) and editorial content based on real-world characteristics:
     "score_aftermarket": 8
   },
   "editorial": {
+    "pros": [
+      "Pro 1 (e.g., Naturally aspirated engine delivers linear power)",
+      "Pro 2", "Pro 3", "Pro 4", "Pro 5"
+    ],
+    "cons": [
+      "Con 1 (e.g., Limited storage space for daily use)",
+      "Con 2", "Con 3", "Con 4"
+    ],
+    "best_for": [
+      "Type 1 (e.g., Track day enthusiast)",
+      "Type 2",
+      "Type 3"
+    ],
     "defining_strengths": [
-      "Strength 1 (e.g., Naturally aspirated engine character)",
-      "Strength 2",
-      "Strength 3"
+      "Detailed strength 1 with specific feature",
+      "Detailed strength 2",
+      "Detailed strength 3"
     ],
     "honest_weaknesses": [
-      "Weakness 1 (e.g., Limited storage space)",
-      "Weakness 2",
-      "Weakness 3"
+      "Honest weakness 1 with context",
+      "Honest weakness 2",
+      "Honest weakness 3"
     ],
-    "direct_competitors": ["competitor-1-slug", "competitor-2-slug", "competitor-3-slug"],
+    "direct_competitors": ["competitor-1-slug", "competitor-2-slug"],
     "if_you_want_more": ["more-expensive-alternative-slug"],
-    "if_you_want_less": ["less-expensive-alternative-slug"]
+    "if_you_want_less": ["less-expensive-alternative-slug"],
+    "buyers_summary": "2-3 sentence buying advice. What to look for, what to avoid, key considerations.",
+    "best_years_detailed": ["Year recommendation 1 with reason", "Year recommendation 2"],
+    "must_have_options": ["Essential option 1", "Essential option 2"],
+    "nice_to_have_options": ["Optional upgrade 1", "Optional upgrade 2"],
+    "pre_inspection_checklist": ["Check item 1", "Check item 2", "Check item 3", "Check item 4", "Check item 5"],
+    "ppi_recommendations": "Specific pre-purchase inspection advice for this model.",
+    "recommended_years_note": "Brief note on which years are best and why.",
+    "ownership_cost_notes": "Expected annual maintenance costs and considerations.",
+    "track_readiness": "excellent|good|moderate|limited",
+    "track_readiness_notes": "Explanation of track capability and limitations.",
+    "community_strength": "strong|moderate|growing|limited",
+    "community_notes": "Notes about enthusiast community and resources.",
+    "aftermarket_scene_notes": "Available modifications and tuning options.",
+    "diy_friendliness": "high|moderate|low",
+    "diy_notes": "How accessible is DIY maintenance?",
+    "parts_availability": "excellent|good|moderate|limited",
+    "parts_notes": "Parts sourcing considerations."
   }
 }
 
-SCORING GUIDE:
-- Sound (1-10): Engine note, exhaust character
-- Interior (1-10): Materials, ergonomics, tech
-- Track (1-10): Circuit capability, cooling, lap potential
-- Reliability (1-10): Long-term dependability
-- Value (1-10): Performance per dollar
-- Driver Fun (1-10): Engagement, feedback
-- Aftermarket (1-10): Mod support, community
+SCORING GUIDE (1-10):
+- Sound: Engine note, exhaust character, emotional response
+- Interior: Materials quality, ergonomics, tech integration
+- Track: Circuit capability, cooling, brake fade resistance
+- Reliability: Long-term dependability, known issues severity
+- Value: Performance per dollar, depreciation curve
+- Driver Fun: Steering feel, throttle response, engagement
+- Aftermarket: Mod support, parts availability, tuning potential
 
-Be honest and realistic. Use actual competitive landscape.
+Be honest, specific, and realistic. Use actual competitive landscape.
 Return ONLY the JSON object.`;
 
   const response = await anthropic.messages.create({
@@ -795,15 +825,41 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     throw new Error(`Car already exists: ${carData.slug} (ID: ${existing.id})`);
   }
   
-  // Build final car record
+  // Build final car record with ALL editorial fields
+  const editorial = scores.editorial;
   const finalCarData = {
     ...carData,
     ...scores.scores,
-    defining_strengths: scores.editorial.defining_strengths,
-    honest_weaknesses: scores.editorial.honest_weaknesses,
-    direct_competitors: scores.editorial.direct_competitors,
-    if_you_want_more: scores.editorial.if_you_want_more,
-    if_you_want_less: scores.editorial.if_you_want_less,
+    // Editorial content
+    pros: editorial.pros || [],
+    cons: editorial.cons || [],
+    best_for: editorial.best_for || [],
+    defining_strengths: editorial.defining_strengths || [],
+    honest_weaknesses: editorial.honest_weaknesses || [],
+    direct_competitors: editorial.direct_competitors || [],
+    if_you_want_more: editorial.if_you_want_more || [],
+    if_you_want_less: editorial.if_you_want_less || [],
+    // Buying guide content
+    buyers_summary: editorial.buyers_summary || null,
+    best_years_detailed: editorial.best_years_detailed || [],
+    must_have_options: editorial.must_have_options || [],
+    nice_to_have_options: editorial.nice_to_have_options || [],
+    pre_inspection_checklist: editorial.pre_inspection_checklist || [],
+    ppi_recommendations: editorial.ppi_recommendations || null,
+    recommended_years_note: editorial.recommended_years_note || null,
+    ownership_cost_notes: editorial.ownership_cost_notes || null,
+    // Track & community info
+    track_readiness: editorial.track_readiness || null,
+    track_readiness_notes: editorial.track_readiness_notes || null,
+    community_strength: editorial.community_strength || null,
+    community_notes: editorial.community_notes || null,
+    aftermarket_scene_notes: editorial.aftermarket_scene_notes || null,
+    // DIY & parts info
+    diy_friendliness: editorial.diy_friendliness || null,
+    diy_notes: editorial.diy_notes || null,
+    parts_availability: editorial.parts_availability || null,
+    parts_notes: editorial.parts_notes || null,
+    // Image
     image_hero_url: images.heroUrl,
   };
   
