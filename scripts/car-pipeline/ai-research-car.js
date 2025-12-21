@@ -32,6 +32,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -590,7 +591,7 @@ Return ONLY the JSON object, no markdown.`;
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',
-    max_tokens: 2000,
+    max_tokens: 4000, // Increased for larger editorial content
     messages: [{ role: 'user', content: prompt }]
   });
 
@@ -598,7 +599,25 @@ Return ONLY the JSON object, no markdown.`;
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('No JSON in AI response');
   
-  const result = JSON.parse(jsonMatch[0]);
+  let result;
+  try {
+    result = JSON.parse(jsonMatch[0]);
+  } catch (parseError) {
+    // Try to fix common JSON issues
+    let cleaned = jsonMatch[0]
+      .replace(/,\s*}/g, '}')  // Remove trailing commas before }
+      .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
+      .replace(/[\x00-\x1F\x7F]/g, ' ') // Remove control characters
+      .replace(/"\s*\n\s*"/g, '", "'); // Fix broken string arrays
+    
+    try {
+      result = JSON.parse(cleaned);
+      log('Fixed JSON parsing issues', 'warning');
+    } catch (e2) {
+      log(`Raw response (first 500 chars): ${content.substring(0, 500)}...`, 'error');
+      throw new Error(`JSON parse error: ${parseError.message}`);
+    }
+  }
   
   if (flags.verbose) {
     log(`Scores: Sound=${result.scores.score_sound}, Track=${result.scores.score_track}, Fun=${result.scores.score_driver_fun}`, 'info');
@@ -860,7 +879,6 @@ async function runYouTubeDiscovery(slug) {
     const discoveryScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-discovery.js');
     
     return new Promise((resolve) => {
-      const { spawn } = require('child_process');
       const child = spawn('node', [discoveryScript, '--car-slug', slug], {
         cwd: PROJECT_ROOT,
         stdio: 'pipe'
