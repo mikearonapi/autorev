@@ -20,15 +20,45 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 
-// Load environment variables
-config();
+// Get the directory of the current script
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '../..');
+
+// Load environment variables from .env.local
+function loadEnv() {
+  const envPath = path.join(PROJECT_ROOT, '.env.local');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf-8');
+    for (const line of envContent.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        let value = valueParts.join('=');
+        if ((value.startsWith('"') && value.endsWith('"')) || 
+            (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        if (key && value) {
+          process.env[key] = value;
+        }
+      }
+    }
+  }
+}
+
+loadEnv();
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error('❌ Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  console.error('   Make sure .env.local exists in the project root');
   process.exit(1);
 }
 
@@ -62,7 +92,7 @@ const CHECKS = [
     async check(slug) {
       const { data, error } = await supabase
         .from('cars')
-        .select('id, slug, name, hp, torque, price_avg, zero_to_sixty, image_hero_url')
+        .select('*')
         .eq('slug', slug)
         .single();
       
@@ -86,8 +116,13 @@ const CHECKS = [
       const missing = [];
       if (!car.hp) missing.push('hp');
       if (!car.torque) missing.push('torque');
-      if (!car.price_avg) missing.push('price_avg');
+      if (!car.price_avg && !car.price_range) missing.push('price_avg or price_range');
       if (!car.zero_to_sixty) missing.push('zero_to_sixty');
+      if (!car.engine) missing.push('engine');
+      if (!car.drivetrain) missing.push('drivetrain');
+      if (!car.trans) missing.push('trans');
+      if (!car.brand) missing.push('brand');
+      if (!car.years) missing.push('years');
       
       if (missing.length > 0) {
         return { pass: false, message: `Missing: ${missing.join(', ')}` };
@@ -96,6 +131,94 @@ const CHECKS = [
       return { pass: true };
     },
     fixHint: 'Update cars table with missing performance/pricing data',
+  },
+  {
+    id: 'editorial_arrays',
+    name: 'Editorial Arrays Populated',
+    category: 'editorial',
+    severity: 'warning',
+    async check(slug, context) {
+      const car = context.car_exists?.data;
+      if (!car) return { pass: false, message: 'No car data' };
+      
+      const issues = [];
+      
+      // Check simple arrays
+      if (!car.pros || car.pros.length === 0) issues.push('pros (empty)');
+      if (!car.cons || car.cons.length === 0) issues.push('cons (empty)');
+      if (!car.best_for || car.best_for.length === 0) issues.push('best_for (empty)');
+      
+      // Check object arrays
+      if (!car.defining_strengths || car.defining_strengths.length === 0) {
+        issues.push('defining_strengths (empty)');
+      } else if (typeof car.defining_strengths[0] === 'string') {
+        issues.push('defining_strengths (wrong format - should be {title, description})');
+      }
+      
+      if (!car.honest_weaknesses || car.honest_weaknesses.length === 0) {
+        issues.push('honest_weaknesses (empty)');
+      } else if (typeof car.honest_weaknesses[0] === 'string') {
+        issues.push('honest_weaknesses (wrong format - should be {title, description})');
+      }
+      
+      if (issues.length > 0) {
+        return { pass: false, message: issues.join('; ') };
+      }
+      
+      return { pass: true, data: { 
+        pros: car.pros?.length || 0,
+        cons: car.cons?.length || 0,
+        strengths: car.defining_strengths?.length || 0,
+        weaknesses: car.honest_weaknesses?.length || 0
+      }};
+    },
+    fixHint: 'Run AI scoring phase or manually populate editorial arrays',
+  },
+  {
+    id: 'buying_guide',
+    name: 'Buying Guide Content',
+    category: 'editorial',
+    severity: 'warning',
+    async check(slug, context) {
+      const car = context.car_exists?.data;
+      if (!car) return { pass: false, message: 'No car data' };
+      
+      const missing = [];
+      if (!car.buyers_summary) missing.push('buyers_summary');
+      if (!car.best_years_detailed || car.best_years_detailed.length === 0) missing.push('best_years_detailed');
+      if (!car.must_have_options || car.must_have_options.length === 0) missing.push('must_have_options');
+      if (!car.pre_inspection_checklist || car.pre_inspection_checklist.length === 0) missing.push('pre_inspection_checklist');
+      
+      if (missing.length > 0) {
+        return { pass: false, message: `Missing: ${missing.join(', ')}` };
+      }
+      
+      return { pass: true };
+    },
+    fixHint: 'Run AI editorial phase to generate buying guide content',
+  },
+  {
+    id: 'ownership_info',
+    name: 'Ownership Information',
+    category: 'editorial',
+    severity: 'info',
+    async check(slug, context) {
+      const car = context.car_exists?.data;
+      if (!car) return { pass: false, message: 'No car data' };
+      
+      const missing = [];
+      if (!car.track_readiness) missing.push('track_readiness');
+      if (!car.community_strength) missing.push('community_strength');
+      if (!car.diy_friendliness) missing.push('diy_friendliness');
+      if (!car.parts_availability) missing.push('parts_availability');
+      
+      if (missing.length > 0) {
+        return { pass: false, message: `Missing: ${missing.join(', ')}` };
+      }
+      
+      return { pass: true };
+    },
+    fixHint: 'Add ownership info from AI editorial or manual research',
   },
   {
     id: 'hero_image',
@@ -261,21 +384,10 @@ const CHECKS = [
     category: 'content',
     severity: 'info',
     async check(slug) {
-      // First get car ID
-      const { data: car } = await supabase
-        .from('cars')
-        .select('id')
-        .eq('slug', slug)
-        .single();
-      
-      if (!car) {
-        return { pass: false, message: 'Car not found' };
-      }
-      
       const { data, error } = await supabase
         .from('youtube_video_car_links')
         .select('id, video_id')
-        .eq('car_id', car.id);
+        .eq('car_slug', slug);
       
       if (error) {
         return { pass: false, message: 'Could not fetch video links' };
@@ -288,7 +400,102 @@ const CHECKS = [
       
       return { pass: true, data: { count } };
     },
-    fixHint: 'Queue videos in youtube_ingestion_queue or wait for weekly cron',
+    fixHint: 'Run YouTube discovery: node scripts/youtube-discovery.js --car-slug <slug>',
+  },
+  {
+    id: 'youtube_transcripts',
+    name: 'YouTube Transcripts',
+    category: 'content',
+    severity: 'info',
+    async check(slug) {
+      const { data: links } = await supabase
+        .from('youtube_video_car_links')
+        .select('video_id')
+        .eq('car_slug', slug);
+      
+      if (!links || links.length === 0) {
+        return { pass: false, message: 'No videos linked' };
+      }
+      
+      const videoIds = links.map(l => l.video_id);
+      const { data: videos } = await supabase
+        .from('youtube_videos')
+        .select('video_id, processing_status, transcript_text')
+        .in('video_id', videoIds);
+      
+      const withTranscripts = videos?.filter(v => v.transcript_text) || [];
+      const processed = videos?.filter(v => v.processing_status === 'processed') || [];
+      
+      if (withTranscripts.length === 0) {
+        return { pass: false, message: 'No videos have transcripts' };
+      }
+      
+      return { 
+        pass: true, 
+        data: { 
+          total: links.length, 
+          withTranscripts: withTranscripts.length,
+          aiProcessed: processed.length
+        } 
+      };
+    },
+    fixHint: 'Run: node scripts/youtube-transcripts.js && node scripts/youtube-ai-processing.js',
+  },
+  {
+    id: 'recalls_data',
+    name: 'Recalls Data',
+    category: 'enrichment',
+    severity: 'info',
+    async check(slug) {
+      const { data, error } = await supabase
+        .from('car_recalls')
+        .select('id, campaign_number')
+        .eq('car_slug', slug);
+      
+      // It's OK if there are no recalls - many cars don't have any
+      if (error) {
+        return { pass: false, message: `Could not fetch recalls: ${error.message}` };
+      }
+      
+      const count = data?.length || 0;
+      return { 
+        pass: true, 
+        data: { count },
+        message: count === 0 ? 'No recalls found (may be normal)' : `${count} recalls documented`
+      };
+    },
+    fixHint: 'Recalls are fetched automatically via enrichment API',
+  },
+  {
+    id: 'competitors',
+    name: 'Competitors & Alternatives',
+    category: 'editorial',
+    severity: 'info',
+    async check(slug, context) {
+      const car = context.car_exists?.data;
+      if (!car) return { pass: false, message: 'No car data' };
+      
+      const missing = [];
+      if (!car.direct_competitors || car.direct_competitors.length === 0) missing.push('direct_competitors');
+      if (!car.if_you_want_more || car.if_you_want_more.length === 0) missing.push('if_you_want_more');
+      if (!car.if_you_want_less || car.if_you_want_less.length === 0) missing.push('if_you_want_less');
+      
+      if (missing.length > 0) {
+        return { pass: false, message: `Missing: ${missing.join(', ')}` };
+      }
+      
+      // Check format
+      if (typeof car.direct_competitors[0] === 'string') {
+        return { pass: false, message: 'direct_competitors in wrong format (should be objects)' };
+      }
+      
+      return { pass: true, data: {
+        competitors: car.direct_competitors?.length || 0,
+        moreOptions: car.if_you_want_more?.length || 0,
+        lessOptions: car.if_you_want_less?.length || 0
+      }};
+    },
+    fixHint: 'Run AI editorial to populate competitor comparisons',
   },
   {
     id: 'variants',
