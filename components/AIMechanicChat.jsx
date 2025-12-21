@@ -925,6 +925,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           content: msg.content,
         })));
         setSuggestions([]);
+        
+        // On mobile, auto-collapse expanded view after loading a conversation
+        if (typeof window !== 'undefined' && window.innerWidth <= 480) {
+          setIsExpanded(false);
+        }
       }
     } catch (err) {
       console.error('[AL Chat] Error loading conversation:', err);
@@ -978,17 +983,40 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     }
   }, [focusedCar, messages]);
   
-  // Copy message content to clipboard
+  // Clean markdown formatting for plain text copy
+  const cleanMarkdownForCopy = useCallback((text) => {
+    if (!text) return '';
+    
+    let cleaned = text
+      // Remove ## and ### headers but keep the text
+      .replace(/^###\s+/gm, '')
+      .replace(/^##\s+/gm, '')
+      // Remove **bold** markers but keep text
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      // Remove *italic* markers but keep text
+      .replace(/\*([^*]+)\*/g, '$1')
+      // Clean up bullet points - keep as simple dashes
+      .replace(/^[•●]\s*/gm, '- ')
+      // Clean up multiple consecutive newlines to max 2
+      .replace(/\n{3,}/g, '\n\n')
+      // Trim whitespace from start/end
+      .trim();
+    
+    return cleaned;
+  }, []);
+  
+  // Copy message content to clipboard (cleaned for sharing)
   const copyMessageContent = useCallback(async (content, messageIndex) => {
     try {
-      await navigator.clipboard.writeText(content);
+      const cleanedContent = cleanMarkdownForCopy(content);
+      await navigator.clipboard.writeText(cleanedContent);
       setCopiedMessageIndex(messageIndex);
       // Reset after 2 seconds
       setTimeout(() => setCopiedMessageIndex(null), 2000);
     } catch (err) {
       console.warn('[AL] Copy failed:', err);
     }
-  }, []);
+  }, [cleanMarkdownForCopy]);
   
   // Auto-resize textarea
   const autoResizeTextarea = useCallback(() => {
