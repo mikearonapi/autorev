@@ -306,6 +306,17 @@ const Icons = {
       <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
     </svg>
   ),
+  copy: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+    </svg>
+  ),
+  check: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
   trash: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -567,6 +578,9 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [bookmarks, setBookmarks] = useState([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
   
+  // Copy button state
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  
   // Wiggle animation state (like FeedbackCorner)
   const [isWiggling, setIsWiggling] = useState(false);
   
@@ -667,6 +681,15 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen, showIntro]);
+  
+  // Auto-resize textarea when input changes
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      const newHeight = Math.min(inputRef.current.scrollHeight, 120);
+      inputRef.current.style.height = `${newHeight}px`;
+    }
+  }, [input]);
 
   useEffect(() => {
     if (isOpen && messages.length === 0 && !showIntro) {
@@ -954,6 +977,29 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       setBookmarks(loadALBookmarks());
     }
   }, [focusedCar, messages]);
+  
+  // Copy message content to clipboard
+  const copyMessageContent = useCallback(async (content, messageIndex) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedMessageIndex(messageIndex);
+      // Reset after 2 seconds
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
+    } catch (err) {
+      console.warn('[AL] Copy failed:', err);
+    }
+  }, []);
+  
+  // Auto-resize textarea
+  const autoResizeTextarea = useCallback(() => {
+    if (inputRef.current) {
+      // Reset height to auto to get correct scrollHeight
+      inputRef.current.style.height = 'auto';
+      // Set height to scrollHeight, capped at max-height (120px)
+      const newHeight = Math.min(inputRef.current.scrollHeight, 120);
+      inputRef.current.style.height = `${newHeight}px`;
+    }
+  }, []);
   
   // Estimate query cost based on complexity
   const estimateQueryCost = useCallback((query) => {
@@ -1600,6 +1646,21 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                           </div>
                         )}
                         <div className={styles.messageWrapper}>
+                          {/* Copy button for assistant messages - top right corner */}
+                          {msg.role === 'assistant' && (
+                            <button
+                              className={`${styles.messageCopyBtn} ${copiedMessageIndex === i ? styles.messageCopyBtnCopied : ''}`}
+                              onClick={() => copyMessageContent(msg.content, i)}
+                              title={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
+                              aria-label={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
+                            >
+                              {copiedMessageIndex === i ? (
+                                <Icons.check size={14} />
+                              ) : (
+                                <Icons.copy size={14} />
+                              )}
+                            </button>
+                          )}
                           <div 
                             className={styles.messageContent}
                             dangerouslySetInnerHTML={
