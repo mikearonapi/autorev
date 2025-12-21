@@ -9,8 +9,13 @@
  * - ARPU (Average Revenue Per User)
  * - LTV:CAC Ratio
  * - Cash Runway
+ * 
+ * Per data visualization rules:
+ * - Interpretive title (Rule 4.1)
+ * - KPI cards with context (Rule 2)
  */
 
+import { useMemo } from 'react';
 import styles from './UnitEconomics.module.css';
 
 function formatCurrency(amount) {
@@ -46,6 +51,23 @@ const TrendIcon = () => (
   </svg>
 );
 
+// Generate interpretive title (Rule 4.1)
+function generateInterpretiveTitle(ltvCacRatio, runway, conversionRate, payingUsers) {
+  if (ltvCacRatio >= 3) {
+    return `Strong unit economics with ${ltvCacRatio.toFixed(1)}x LTV:CAC ratio`;
+  }
+  if (runway !== Infinity && runway < 6) {
+    return `⚠️ Cash runway under 6 months — action needed`;
+  }
+  if (conversionRate > 0 && payingUsers > 0) {
+    return `${conversionRate.toFixed(0)}% conversion to paid with ${payingUsers} paying user${payingUsers !== 1 ? 's' : ''}`;
+  }
+  if (ltvCacRatio > 0 && ltvCacRatio < 3) {
+    return `Building economics: ${ltvCacRatio.toFixed(1)}x LTV:CAC, targeting 3x`;
+  }
+  return 'Pre-revenue phase — building user base';
+}
+
 export function UnitEconomics({ 
   financials, 
   users, 
@@ -55,8 +77,8 @@ export function UnitEconomics({
   if (loading) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.title}>Unit Economics</h3>
-        <div className={styles.loading}>Calculating metrics...</div>
+        <h3 className={styles.title}>Calculating unit economics...</h3>
+        <div className={styles.loading}>Analyzing metrics</div>
       </div>
     );
   }
@@ -110,9 +132,15 @@ export function UnitEconomics({
   const ltvCacHealth = getLtvCacHealth(ltvCacRatio);
   const runwayHealth = getRunwayHealth(runway);
   
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(ltvCacRatio, runway, conversionRate, payingUsers);
+  }, [ltvCacRatio, runway, conversionRate, payingUsers]);
+  
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>Unit Economics</h3>
+      <h3 className={styles.title}>{interpretiveTitle}</h3>
+      <span className={styles.subtitle}>Unit Economics</span>
       
       {/* Primary Metrics */}
       <div className={styles.metricsGrid}>

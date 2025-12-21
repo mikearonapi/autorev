@@ -5,17 +5,46 @@
  * 
  * Progress ring showing current users vs users needed for break-even.
  * Supports compact mode for sidebar display.
+ * 
+ * Per data visualization rules:
+ * - Progress ring for goal-based metrics (Rule 1.1)
+ * - Interpretive title (Rule 4.1)
  */
 
+import { useMemo } from 'react';
 import styles from './BreakEvenProgress.module.css';
 import { InfoIcon } from './Icons';
 
+// Generate interpretive title (Rule 4.1)
+function generateInterpretiveTitle(breakEven) {
+  if (!breakEven) return 'No break-even data yet';
+  
+  const { currentUsers, usersNeeded, progressPercent } = breakEven;
+  const remaining = Math.max(usersNeeded - currentUsers, 0);
+  
+  if (progressPercent >= 100) {
+    return 'Break-even achieved! 🎉';
+  }
+  if (progressPercent >= 75) {
+    return `Almost there: ${remaining} user${remaining !== 1 ? 's' : ''} to break-even`;
+  }
+  if (progressPercent >= 25) {
+    return `${progressPercent}% to break-even — ${remaining} user${remaining !== 1 ? 's' : ''} needed`;
+  }
+  return `Early stage: ${remaining} paying user${remaining !== 1 ? 's' : ''} to break-even`;
+}
+
 export function BreakEvenProgress({ breakEven, title = 'Path to Break-Even', compact = false }) {
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(breakEven);
+  }, [breakEven]);
+  
   if (!breakEven) {
     return (
       <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
-        <h3 className={styles.title}>{title}</h3>
-        <div className={styles.emptyState}>No data available</div>
+        <h3 className={styles.title}>No break-even data yet</h3>
+        <div className={styles.emptyState}>Data will appear when costs are recorded</div>
       </div>
     );
   }
@@ -44,7 +73,8 @@ export function BreakEvenProgress({ breakEven, title = 'Path to Break-Even', com
   if (compact) {
     return (
       <div className={`${styles.container} ${styles.compact}`}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className={styles.title}>{interpretiveTitle}</h3>
+        <span className={styles.subtitle}>Break-Even Progress</span>
         
         <div className={styles.compactContent}>
           <div className={styles.compactRing}>
@@ -110,7 +140,8 @@ export function BreakEvenProgress({ breakEven, title = 'Path to Break-Even', com
   // Full mode: larger ring with detailed layout
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>{title}</h3>
+      <h3 className={styles.title}>{interpretiveTitle}</h3>
+      <span className={styles.subtitle}>Break-Even Progress</span>
       
       <div className={styles.content}>
         <div className={styles.ringContainer}>

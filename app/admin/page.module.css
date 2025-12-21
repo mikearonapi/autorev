@@ -410,6 +410,20 @@
   gap: 12px;
 }
 
+/* Financial Sidebar Compact - For Level 2 visualizations */
+.financialSidebarCompact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Infrastructure Grid - Vercel + System Health */
+.infrastructureGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 /* Cost Analysis Grid */
 .costAnalysisGrid {
   display: grid;

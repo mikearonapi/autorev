@@ -27,3 +27,4 @@ CREATE INDEX IF NOT EXISTS idx_scrape_jobs_job_type ON scrape_jobs(job_type);
 
 
 
+

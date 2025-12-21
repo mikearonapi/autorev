@@ -5,16 +5,22 @@
  * 
  * Horizontal funnel visualization for conversion stages.
  * Shows count and conversion rate at each stage.
+ * 
+ * Per data visualization rules:
+ * - Horizontal bars for category comparison (Rule 1.1)
+ * - Single-hue progression for 3-4 categories (Rule 3.3)
+ * - Interpretive title (Rule 4.1)
  */
 
 import { useMemo } from 'react';
 import styles from './FunnelChart.module.css';
 
+// Single-hue blue progression for 4 categories (Rule 3.3)
 const STAGE_COLORS = {
-  signups: { bg: '#3b82f6', fill: 'rgba(59, 130, 246, 0.15)' },
-  activeUsers: { bg: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.15)' },
-  alUsers: { bg: '#06b6d4', fill: 'rgba(6, 182, 212, 0.15)' },
-  paid: { bg: '#22c55e', fill: 'rgba(34, 197, 94, 0.15)' },
+  signups: { bg: '#1d4ed8', fill: 'rgba(29, 78, 216, 0.15)' },     // blue-700
+  activeUsers: { bg: '#2563eb', fill: 'rgba(37, 99, 235, 0.15)' }, // blue-600
+  alUsers: { bg: '#3b82f6', fill: 'rgba(59, 130, 246, 0.15)' },    // blue-500
+  paid: { bg: '#60a5fa', fill: 'rgba(96, 165, 250, 0.15)' },       // blue-400
 };
 
 const STAGE_LABELS = {
@@ -23,6 +29,21 @@ const STAGE_LABELS = {
   alUsers: 'AL Users',
   paid: 'Paid (Projected)',
 };
+
+// Generate interpretive title based on funnel data (Rule 4.1)
+function generateInterpretiveTitle(funnel) {
+  if (!funnel) return 'No funnel data yet';
+  
+  const signupToActive = funnel.conversionRates?.signupToActive || 0;
+  const activeToAL = funnel.conversionRates?.activeToAL || 0;
+  
+  if (signupToActive >= 50 && activeToAL >= 50) {
+    return `Strong engagement: ${signupToActive}% become active, ${activeToAL}% use AL`;
+  } else if (signupToActive > 0) {
+    return `${signupToActive}% of ${funnel.signups} signups become active within 7 days`;
+  }
+  return `${funnel.signups} total signups tracked through conversion`;
+}
 
 export function FunnelChart({ funnel, title = 'Conversion Funnel' }) {
   const stages = useMemo(() => {
@@ -60,18 +81,24 @@ export function FunnelChart({ funnel, title = 'Conversion Funnel' }) {
     }));
   }, [funnel]);
   
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(funnel);
+  }, [funnel]);
+  
   if (!funnel) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.title}>{title}</h3>
-        <div className={styles.emptyState}>No funnel data available</div>
+        <h3 className={styles.title}>No funnel data available</h3>
+        <div className={styles.emptyState}>Users will appear here once they sign up</div>
       </div>
     );
   }
   
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>{title}</h3>
+      <h3 className={styles.title}>{interpretiveTitle}</h3>
+      <span className={styles.subtitle}>Conversion Funnel</span>
       
       <div className={styles.funnel}>
         {stages.map((stage, index) => (

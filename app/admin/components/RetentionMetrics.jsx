@@ -4,10 +4,33 @@
  * Retention Metrics Component
  * 
  * Displays D1, D7, D30 retention rates with trend visualization.
+ * 
+ * Per data visualization rules:
+ * - Progress rings for goal-based metrics (Rule 1.1)
+ * - Interpretive title (Rule 4.1)
+ * - Horizontal bars for engagement funnel (Rule 1.1)
  */
 
 import { useMemo } from 'react';
 import styles from './RetentionMetrics.module.css';
+
+// Generate interpretive title based on retention data (Rule 4.1)
+function generateInterpretiveTitle(retention) {
+  if (!retention?.current) return 'No retention data yet';
+  
+  const { d7, d30, mau } = retention.current;
+  const d30Rate = parseFloat(d30?.rate || 0);
+  const d7Rate = parseFloat(d7?.rate || 0);
+  
+  if (d30Rate >= 50) {
+    return `Strong retention: ${d30Rate}% of users active after 30 days`;
+  } else if (d7Rate >= 50) {
+    return `${d7Rate}% of users return within a week, ${mau || 0} monthly active`;
+  } else if (mau > 0) {
+    return `${mau} monthly active users with ${d30Rate}% long-term retention`;
+  }
+  return `Building user base — tracking retention across ${retention.current?.d1?.cohortSize || 0} users`;
+}
 
 function RetentionRing({ label, rate, cohortSize, retained, color }) {
   const radius = 32;
@@ -69,13 +92,18 @@ function FunnelBar({ label, count, total, percentage }) {
 }
 
 export function RetentionMetrics({ retention, loading = false }) {
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(retention);
+  }, [retention]);
+  
   if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h3 className={styles.title}>User Retention & Engagement</h3>
+          <h3 className={styles.title}>Calculating retention...</h3>
         </div>
-        <div className={styles.loading}>Calculating retention...</div>
+        <div className={styles.loading}>Analyzing user cohorts</div>
       </div>
     );
   }
@@ -84,9 +112,9 @@ export function RetentionMetrics({ retention, loading = false }) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h3 className={styles.title}>User Retention & Engagement</h3>
+          <h3 className={styles.title}>No retention data yet</h3>
         </div>
-        <div className={styles.emptyState}>No retention data available</div>
+        <div className={styles.emptyState}>Retention metrics will appear as users return</div>
       </div>
     );
   }
@@ -96,7 +124,8 @@ export function RetentionMetrics({ retention, loading = false }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>User Retention & Engagement</h3>
+        <h3 className={styles.title}>{interpretiveTitle}</h3>
+        <span className={styles.subtitle}>User Retention & Engagement</span>
       </div>
       
       {/* Retention Rings */}

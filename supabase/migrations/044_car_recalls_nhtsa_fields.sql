@@ -44,3 +44,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_car_recalls_recall_campaign_number
 
 
 
+

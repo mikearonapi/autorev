@@ -1,6 +1,6 @@
 # AutoRev Database Schema
 
-> Complete reference for all 68 database tables
+> Complete reference for all 69 database tables
 >
 > **Last Verified:** December 18, 2024 — MCP-verified live query (Row counts audited)
 
@@ -62,8 +62,8 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Events | 6 | 4 | 2 |
 | Event Coverage | 1 | 1 | 0 |
 | Image Library | 2 | 0 | 2 |
-| System | 5 | 4 | 1 |
-| **Total** | **68** | **53** | **15** |
+| System | 6 | 4 | 2 |
+| **Total** | **69** | **53** | **16** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
@@ -602,7 +602,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 ---
 
-## System (5 tables + 2 materialized views)
+## System (6 tables + 2 materialized views)
 
 ### `cars_stats` — Aggregated car statistics (Materialized View)
 | Status | **3 rows** |
@@ -635,6 +635,15 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 |--------|---------------|
 | **Purpose** | Override maintenance specs for specific variants |
 | **Future Use** | E.g., different oil capacity for Competition vs base |
+
+### `car_pipeline_runs` — Car addition pipeline tracking
+| Status | **0 rows** ⬜ |
+|--------|---------------|
+| **Purpose** | Track progress through the 8-phase car addition pipeline |
+| **Key Fields** | `id`, `car_slug`, `car_name`, `status`, `phase1_*` through `phase8_*` fields |
+| **RLS** | Admin-only access |
+| **Used By** | `/internal/car-pipeline` admin dashboard |
+| **Documentation** | See [CAR_PIPELINE.md](CAR_PIPELINE.md) |
 
 ### Views (not tables)
 

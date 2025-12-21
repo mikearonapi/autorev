@@ -1,0 +1,35 @@
+car_slug,service_name,service_description,interval_miles,interval_months,dealer_cost_low,dealer_cost_high,diy_cost_low,diy_cost_high,is_critical
+# Service Intervals Template for Car Pipeline
+#
+# Instructions:
+# 1. Fill in one row per service item
+# 2. car_slug must match the car's slug exactly
+# 3. interval_miles OR interval_months should be set (or both)
+# 4. is_critical: true for safety-related services
+# 5. Minimum 5 service intervals per car recommended
+#
+# Standard services to include:
+# - Oil Change
+# - Brake Fluid Flush
+# - Transmission Service
+# - Differential Service
+# - Coolant Flush
+# - Spark Plugs
+# - Air Filter
+# - Cabin Filter
+# - Brake Pads/Rotors
+#
+# Example rows:
+porsche-911-992,Oil Change,Full synthetic oil and filter change,10000,12,250,350,80,120,true
+porsche-911-992,Brake Fluid Flush,Complete brake fluid replacement,20000,24,150,250,40,60,true
+porsche-911-992,Transmission Service,PDK fluid change (for PDK models),40000,,400,600,200,300,false
+porsche-911-992,Differential Service,Front and rear differential fluid change,40000,,300,450,100,150,false
+porsche-911-992,Coolant Flush,Complete cooling system flush,60000,48,200,350,50,80,false
+porsche-911-992,Spark Plugs,Replace all 6 spark plugs,60000,,400,600,100,150,false
+porsche-911-992,Air Filter,Engine air filter replacement,30000,,50,100,30,50,false
+porsche-911-992,Cabin Filter,HVAC cabin air filter replacement,20000,,80,150,20,40,false
+porsche-911-992,Front Brake Pads,Replace front brake pads,30000,,400,600,150,250,true
+porsche-911-992,Rear Brake Pads,Replace rear brake pads,40000,,350,500,100,200,true
+#
+# Add your data below:
+

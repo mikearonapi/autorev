@@ -1,0 +1,524 @@
+/* Car Pipeline Dashboard Styles */
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: var(--font-mono, 'SF Mono', 'Fira Code', monospace);
+}
+
+.header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color, #2a2a2a);
+  padding-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary, #f0f0f0);
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: var(--text-secondary, #888);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Stats Row */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--card-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary, #f0f0f0);
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statCard.inProgress .statValue {
+  color: #3b82f6;
+}
+
+.statCard.completed .statValue {
+  color: #10b981;
+}
+
+.statCard.blocked .statValue {
+  color: #ef4444;
+}
+
+/* Actions Bar */
+.actionsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filtersGroup {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filterSelect {
+  background: var(--input-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 6px;
+  color: var(--text-primary, #f0f0f0);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.filterSelect:hover {
+  border-color: var(--border-hover, #444);
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--accent, #3b82f6);
+}
+
+.searchInput {
+  background: var(--input-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 6px;
+  color: var(--text-primary, #f0f0f0);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  width: 220px;
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted, #666);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--accent, #3b82f6);
+}
+
+.actionsGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.primaryButton {
+  background: var(--accent, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease;
+}
+
+.primaryButton:hover {
+  background: var(--accent-hover, #2563eb);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  background: transparent;
+  color: var(--text-primary, #f0f0f0);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.secondaryButton:hover {
+  background: var(--card-bg, #1a1a1a);
+  border-color: var(--border-hover, #444);
+}
+
+/* Pipeline List */
+.pipelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Pipeline Card */
+.pipelineCard {
+  background: var(--card-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pipelineCard:hover {
+  border-color: var(--border-hover, #444);
+  transform: translateY(-1px);
+}
+
+.pipelineCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.pipelineCardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.carName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #f0f0f0);
+}
+
+.carSlug {
+  font-size: 0.75rem;
+  color: var(--text-muted, #666);
+  font-family: var(--font-mono, monospace);
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.statusBadge.inProgress {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.statusBadge.completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.statusBadge.blocked {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Progress Bar */
+.progressSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progressBarContainer {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-secondary, #0d0d0d);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  white-space: nowrap;
+}
+
+/* Phase Pills */
+.phasePills {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.phasePill {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--bg-secondary, #0d0d0d);
+  color: var(--text-muted, #666);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.phasePill.complete {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.phasePill.partial {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.phasePill.pending {
+  background: var(--bg-secondary, #0d0d0d);
+  color: var(--text-muted, #666);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--card-bg, #1a1a1a);
+  border: 1px dashed var(--border-color, #2a2a2a);
+  border-radius: 8px;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary, #f0f0f0);
+  margin: 0 0 0.5rem 0;
+}
+
+.emptyState p {
+  color: var(--text-secondary, #888);
+  margin: 0 0 1.5rem 0;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary, #888);
+}
+
+.loadingSpinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color, #2a2a2a);
+  border-top-color: var(--accent, #3b82f6);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.error {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+}
+
+.retryButton {
+  margin-top: 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: #dc2626;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: var(--card-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modalHeader h2 {
+  font-size: 1.25rem;
+  color: var(--text-primary, #f0f0f0);
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-muted, #666);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: var(--text-primary, #f0f0f0);
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #888);
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  background: var(--input-bg, #0d0d0d);
+  border: 1px solid var(--border-color, #2a2a2a);
+  border-radius: 6px;
+  color: var(--text-primary, #f0f0f0);
+  padding: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--accent, #3b82f6);
+}
+
+.formHint {
+  font-size: 0.75rem;
+  color: var(--text-muted, #666);
+  margin-top: 0.25rem;
+}
+
+.aiModalDesc {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.aiModalDesc p {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary, #f0f0f0);
+}
+
+.aiModalDesc ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  color: var(--text-secondary, #888);
+}
+
+.aiModalDesc li {
+  margin: 0.25rem 0;
+}
+
+.aiModalDesc em {
+  color: var(--text-muted, #666);
+  font-style: normal;
+  font-size: 0.85rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, #2a2a2a);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .actionsBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtersGroup {
+    flex-wrap: wrap;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+  
+  .pipelineCardHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .progressSection {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+}
+

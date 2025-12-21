@@ -6,8 +6,13 @@
  * Shows monthly financial trends in a table format.
  * Revenue, costs, and net income by month.
  * Supports compact mode for sidebar display.
+ * 
+ * Per data visualization rules:
+ * - Interpretive title (Rule 4.1)
+ * - Tables are appropriate for Level 3 detail (Rule 2)
  */
 
+import { useMemo } from 'react';
 import styles from './MonthlyTrend.module.css';
 
 function formatCurrency(amount, compact = false) {
@@ -23,27 +28,49 @@ function formatMonth(year, month, compact = false) {
   return new Date(year, month - 1).toLocaleString('en-US', { month: 'short', year: '2-digit' });
 }
 
+// Generate interpretive title (Rule 4.1)
+function generateInterpretiveTitle(data) {
+  if (!data || data.length === 0) return 'No monthly data yet';
+  
+  const totalNet = data.reduce((sum, r) => sum + r.netIncome, 0);
+  const months = data.length;
+  
+  if (totalNet < 0) {
+    return `Investment phase: ${formatCurrency(totalNet)} net over ${months} month${months > 1 ? 's' : ''}`;
+  }
+  return `${formatCurrency(totalNet)} net income across ${months} month${months > 1 ? 's' : ''}`;
+}
+
 export function MonthlyTrend({ data = [], title = 'Monthly Financials', compact = false }) {
+  // Sort and slice data first for interpretive title
+  const sortedData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    return [...data].sort((a, b) => {
+      if (a.year !== b.year) return b.year - a.year;
+      return b.month - a.month;
+    }).slice(0, compact ? 3 : 6);
+  }, [data, compact]);
+  
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(sortedData);
+  }, [sortedData]);
+  
   if (!data || data.length === 0) {
     return (
       <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
-        <h3 className={styles.title}>{title}</h3>
-        <div className={styles.emptyState}>No monthly data available</div>
+        <h3 className={styles.title}>No monthly data yet</h3>
+        <div className={styles.emptyState}>Financial data will appear as it&apos;s recorded</div>
       </div>
     );
   }
-  
-  // Sort by date descending - show fewer in compact mode
-  const sortedData = [...data].sort((a, b) => {
-    if (a.year !== b.year) return b.year - a.year;
-    return b.month - a.month;
-  }).slice(0, compact ? 3 : 6);
   
   // Compact mode: simplified view
   if (compact) {
     return (
       <div className={`${styles.container} ${styles.compact}`}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className={styles.title}>{interpretiveTitle}</h3>
+        <span className={styles.subtitle}>Monthly Financials</span>
         
         <div className={styles.compactList}>
           {sortedData.map((row, i) => (
@@ -72,7 +99,8 @@ export function MonthlyTrend({ data = [], title = 'Monthly Financials', compact 
   // Full mode: detailed table
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>{title}</h3>
+      <h3 className={styles.title}>{interpretiveTitle}</h3>
+      <span className={styles.subtitle}>Monthly Financials</span>
       
       <div className={styles.tableWrapper}>
         <table className={styles.table}>

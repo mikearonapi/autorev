@@ -1,0 +1,16 @@
+car_slug,title,kind,severity,affected_years_text,description,symptoms,prevention,fix_description,estimated_cost_text,source_url
+# Known Issues Template for Car Pipeline
+# 
+# Instructions:
+# 1. Fill in one row per known issue
+# 2. car_slug must match the car's slug exactly
+# 3. kind: mechanical, electrical, structural, cosmetic
+# 4. severity: Critical, Major, Minor
+# 5. symptoms: Pipe-separated list (e.g., "Strange noise|Warning light|Rough idle")
+# 6. Minimum 3 issues per car recommended
+#
+# Example row:
+porsche-911-992,Rear Main Seal Leak,mechanical,Major,"2019-2021","Oil leak from rear main seal at higher mileages. Common on earlier production cars.","Oil spots under car|Burning oil smell|Low oil level","Regular oil changes|Monitor oil level","Requires engine removal to replace seal. Best done with clutch replacement if manual.","$3000-5000","https://rennlist.com/forums/..."
+#
+# Add your data below:
+

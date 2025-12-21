@@ -14,13 +14,14 @@
   margin-bottom: 14px;
 }
 
+/* Interpretive title (Rule 4.1) */
 .title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--admin-text-primary, #f8fafc);
   margin: 0;
+  line-height: 1.3;
+  max-width: 200px;
 }
 
 .totalBadge {
@@ -59,8 +60,8 @@
 
 .bar {
   display: flex;
-  height: 10px;
-  border-radius: 5px;
+  height: 18px;
+  border-radius: 4px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.03);
 }
@@ -69,6 +70,19 @@
   height: 100%;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inline segment label for direct labeling (Rule 4.2) */
+.segmentLabel {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
 }
 
 .segment:first-child {

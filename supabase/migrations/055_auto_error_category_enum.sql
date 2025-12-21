@@ -22,3 +22,4 @@ COMMENT ON COLUMN user_feedback.category IS 'Beta feedback category: bug, featur
 
 
 
+

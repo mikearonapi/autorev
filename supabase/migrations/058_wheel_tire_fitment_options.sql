@@ -229,3 +229,4 @@ COMMENT ON COLUMN wheel_tire_fitment_options.popularity_score IS
 COMMENT ON FUNCTION get_wheel_tire_fitments(TEXT) IS 
   'Returns OEM wheel specs and all compatible fitment options for a car slug as JSONB.';
 
+

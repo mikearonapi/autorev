@@ -5,17 +5,23 @@
  * 
  * Displays fixed, variable, and R&D costs with stacked bar visualization.
  * All values are validated to prevent NaN issues.
+ * 
+ * Per data visualization rules:
+ * - Single-hue progression for 3-4 categories (Rule 3.3)
+ * - No separate legend - use inline labels (Rule 1.3)
+ * - Interpretive title (Rule 4.1)
  */
 
 import { useMemo } from 'react';
 import styles from './CostBreakdown.module.css';
 
+// Single-hue blue progression for cost categories (Rule 3.3)
 const CATEGORY_COLORS = {
-  infrastructure: '#3b82f6',  // Blue
-  development: '#8b5cf6',     // Purple  
-  ai: '#06b6d4',              // Cyan
-  variable: '#f59e0b',        // Amber
-  other: '#64748b',           // Gray
+  infrastructure: '#1e40af',  // blue-800
+  development: '#2563eb',     // blue-600  
+  ai: '#3b82f6',              // blue-500
+  variable: '#60a5fa',        // blue-400
+  other: '#93c5fd',           // blue-300
 };
 
 const CATEGORY_LABELS = {
@@ -38,6 +44,18 @@ const formatCurrency = (val) => {
   const n = safeNum(val);
   return `$${n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 };
+
+// Generate interpretive title (Rule 4.1)
+function generateInterpretiveTitle(breakdown) {
+  if (!breakdown || breakdown.monthlyTotal === 0) return 'No costs recorded yet';
+  
+  const { infrastructure, development, monthlyTotal } = breakdown;
+  const primaryCategory = infrastructure > development ? 'infrastructure' : 'development tools';
+  const primaryAmount = Math.max(infrastructure, development);
+  const percentage = Math.round((primaryAmount / monthlyTotal) * 100);
+  
+  return `${percentage}% of $${monthlyTotal}/mo goes to ${primaryCategory}`;
+}
 
 export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
   const breakdown = useMemo(() => {
@@ -140,13 +158,16 @@ export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
     };
   }, [costs]);
   
+  // Generate interpretive title
+  const interpretiveTitle = generateInterpretiveTitle(breakdown);
+  
   if (!breakdown || breakdown.monthlyTotal === 0) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h3 className={styles.title}>{title}</h3>
+          <h3 className={styles.title}>No cost data available</h3>
         </div>
-        <div className={styles.emptyState}>No cost data available</div>
+        <div className={styles.emptyState}>Costs will appear once recorded</div>
       </div>
     );
   }
@@ -156,7 +177,7 @@ export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className={styles.title}>{interpretiveTitle}</h3>
         <div className={styles.totalBadge}>
           <span className={styles.totalLabel}>Total</span>
           <span className={styles.totalValue}>{formatCurrency(monthlyTotal)}</span>
@@ -164,7 +185,7 @@ export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
         </div>
       </div>
       
-      {/* Stacked bar */}
+      {/* Stacked bar with inline labels (Rule 1.3: no separate legend) */}
       {segments.length > 0 && monthlyTotal > 0 && (
         <div className={styles.barContainer}>
           <div className={styles.bar}>
@@ -177,13 +198,18 @@ export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
                   backgroundColor: segment.color,
                 }}
                 title={`${segment.label}: ${formatCurrency(segment.amount)}`}
-              />
+              >
+                {/* Inline label if segment is wide enough */}
+                {(segment.amount / monthlyTotal) > 0.15 && (
+                  <span className={styles.segmentLabel}>{formatCurrency(segment.amount)}</span>
+                )}
+              </div>
             ))}
           </div>
         </div>
       )}
       
-      {/* Legend */}
+      {/* Inline legend row with values (Rule 4.2: direct labeling) */}
       <div className={styles.legend}>
         {segments.map((segment) => (
           <div key={segment.category} className={styles.legendItem}>

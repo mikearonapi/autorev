@@ -1,0 +1,19 @@
+# Sample Car List for AI Batch Addition
+# 
+# Format: One car per line, with generation/year info in parentheses
+# Lines starting with # are ignored
+#
+# Examples:
+
+Porsche 911 GT3 (992)
+BMW M3 Competition (G80)
+McLaren 570S
+Toyota Supra (A90)
+Ford Mustang Shelby GT500 (S550)
+Chevrolet Corvette Z06 (C8)
+Audi RS3 (8Y)
+Mercedes-AMG GT 63 S (X290)
+Nissan GT-R Nismo (R35)
+Lotus Emira V6
+
+# Add your cars below:

@@ -5,10 +5,32 @@
  * 
  * Area chart showing user growth over time.
  * CSS-only visualization with hover interactions.
+ * 
+ * Per data visualization rules:
+ * - No gridlines by default (Rule 1.3)
+ * - Interpretive title (Rule 4.1)
+ * - Direct labeling at endpoint (Rule 4.2)
  */
 
 import { useMemo, useState } from 'react';
 import styles from './GrowthChart.module.css';
+
+// Generate interpretive title based on data
+function generateInterpretiveTitle(data, fallbackTitle) {
+  if (!data || data.length < 2) return fallbackTitle;
+  
+  const first = data[0]?.count || 0;
+  const last = data[data.length - 1]?.count || 0;
+  const change = last - first;
+  const percentChange = first > 0 ? Math.round((change / first) * 100) : 0;
+  
+  if (change > 0) {
+    return `User base grew to ${last}, adding ${change} user${change !== 1 ? 's' : ''} (+${percentChange}%)`;
+  } else if (change < 0) {
+    return `User base at ${last}, down ${Math.abs(change)} user${Math.abs(change) !== 1 ? 's' : ''} (${percentChange}%)`;
+  }
+  return `User base stable at ${last} users`;
+}
 
 export function GrowthChart({ data, title = 'User Growth', height = 200 }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -50,6 +72,11 @@ export function GrowthChart({ data, title = 'User Growth', height = 200 }) {
     };
   }, [data]);
   
+  // Generate interpretive title
+  const interpretiveTitle = useMemo(() => {
+    return generateInterpretiveTitle(data, title);
+  }, [data, title]);
+  
   // Now we can safely do conditional returns
   if (!chartData || chartData.points.length === 0) {
     return (
@@ -67,7 +94,7 @@ export function GrowthChart({ data, title = 'User Growth', height = 200 }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className={styles.title}>{interpretiveTitle}</h3>
         <span className={styles.maxValue}>Peak: {max.toLocaleString()}</span>
       </div>
       
@@ -84,10 +111,7 @@ export function GrowthChart({ data, title = 'User Growth', height = 200 }) {
             </linearGradient>
           </defs>
           
-          {/* Grid lines */}
-          <line x1="0" y1="25" x2="100" y2="25" className={styles.gridLine} />
-          <line x1="0" y1="50" x2="100" y2="50" className={styles.gridLine} />
-          <line x1="0" y1="75" x2="100" y2="75" className={styles.gridLine} />
+          {/* No gridlines per Rule 1.3 - removed */}
           
           {/* Area fill */}
           <path d={svgPath.areaPath} fill="url(#growthGradient)" />

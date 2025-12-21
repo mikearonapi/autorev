@@ -1,0 +1,171 @@
+field,value,notes
+# Maintenance Specs Template for Car Pipeline
+#
+# Instructions:
+# 1. Fill in the value column for each field
+# 2. Use notes column for source/caveats
+# 3. Not all fields are required - fill what's available
+# 4. This is for the vehicle_maintenance_specs table (130 columns)
+#
+# car_slug must be set in the import script
+# Source URL should be OEM manual or reliable reference
+#
+# === OIL ===
+oil_type,"Full Synthetic",
+oil_viscosity,"0W-40",
+oil_spec,"API SN Plus / ACEA A3/B4",
+oil_capacity_liters,,Include filter
+oil_capacity_quarts,,Include filter
+oil_filter_oem_part,,
+oil_filter_alternatives,,Pipe-separated list
+oil_change_interval_miles,,
+oil_change_interval_months,,
+#
+# === COOLANT ===
+coolant_type,"OAT",Organic Acid Technology
+coolant_color,"Pink",
+coolant_spec,,
+coolant_capacity_liters,,
+coolant_change_interval_miles,,
+coolant_change_interval_years,,
+#
+# === BRAKE FLUID ===
+brake_fluid_type,"DOT 4",
+brake_fluid_spec,,
+brake_fluid_change_interval_miles,,
+brake_fluid_change_interval_years,,Usually 2 years
+#
+# === TRANSMISSION ===
+trans_fluid_manual,,
+trans_fluid_manual_capacity,,Liters
+trans_fluid_auto,,
+trans_fluid_auto_capacity,,Liters
+trans_fluid_change_interval_miles,,
+#
+# === DIFFERENTIAL ===
+diff_fluid_type,,
+diff_fluid_front_capacity,,Liters
+diff_fluid_rear_capacity,,Liters
+diff_fluid_change_interval_miles,,
+#
+# === FUEL ===
+fuel_type,"Premium",
+fuel_octane_minimum,,
+fuel_octane_recommended,,
+fuel_tank_capacity_gallons,,
+fuel_tank_capacity_liters,,
+#
+# === FILTERS ===
+air_filter_oem_part,,
+air_filter_alternatives,,Pipe-separated list
+air_filter_change_interval_miles,,
+cabin_filter_oem_part,,
+cabin_filter_alternatives,,
+cabin_filter_change_interval_miles,,
+fuel_filter_oem_part,,
+fuel_filter_in_tank,false,true if in-tank
+fuel_filter_change_interval_miles,,
+#
+# === TIRES ===
+tire_size_front,,e.g. 245/35ZR20
+tire_size_rear,,
+tire_pressure_front_psi,,
+tire_pressure_rear_psi,,
+tire_pressure_spare_psi,,
+tire_rotation_pattern,,e.g. "not rotatable" for staggered
+tire_rotation_interval_miles,,
+tire_oem_brand,,
+tire_recommended_brands,,Pipe-separated
+#
+# === WHEELS ===
+wheel_size_front,,e.g. 20x8.5
+wheel_size_rear,,
+wheel_bolt_pattern,,e.g. 5x130
+wheel_center_bore_mm,,
+wheel_lug_torque_ft_lbs,,
+wheel_lug_torque_nm,,
+#
+# === BRAKES (FRONT) ===
+brake_front_rotor_diameter_mm,,
+brake_front_rotor_thickness_mm,,New thickness
+brake_front_rotor_min_thickness_mm,,
+brake_front_rotor_oem_part,,
+brake_front_pad_oem_part,,
+brake_front_pad_wear_indicator,true,
+brake_front_caliper_type,,e.g. "4-piston fixed"
+#
+# === BRAKES (REAR) ===
+brake_rear_rotor_diameter_mm,,
+brake_rear_rotor_thickness_mm,,
+brake_rear_rotor_min_thickness_mm,,
+brake_rear_rotor_oem_part,,
+brake_rear_pad_oem_part,,
+brake_rear_pad_wear_indicator,true,
+brake_rear_caliper_type,,
+#
+# === SPARK PLUGS ===
+spark_plug_type,,e.g. "Iridium"
+spark_plug_gap_mm,,
+spark_plug_oem_part,,
+spark_plug_alternatives,,
+spark_plug_change_interval_miles,,
+spark_plug_quantity,,
+#
+# === TIMING ===
+timing_type,"Chain",Chain or Belt
+timing_change_interval_miles,,Leave blank if chain
+timing_change_interval_years,,
+timing_tensioner_oem_part,,
+#
+# === BELTS ===
+serpentine_belt_oem_part,,
+serpentine_belt_change_interval_miles,,
+ac_belt_separate,false,
+ac_belt_oem_part,,
+#
+# === BATTERY ===
+battery_group_size,,
+battery_cca,,Cold Cranking Amps
+battery_voltage,12,
+battery_oem_brand,,
+battery_location,"Trunk",Trunk, Engine Bay, Under Seat
+battery_agm,true,
+alternator_output_amps,,
+alternator_oem_part,,
+#
+# === WIPERS ===
+wiper_driver_size_inches,,
+wiper_passenger_size_inches,,
+wiper_rear_size_inches,,Leave blank if none
+wiper_type,,
+washer_fluid_capacity_liters,,
+#
+# === LIGHTS ===
+headlight_low_beam_type,"LED",
+headlight_high_beam_type,"LED",
+headlight_fog_type,,
+turn_signal_front_type,,
+turn_signal_rear_type,,
+brake_light_type,,
+reverse_light_type,,
+#
+# === ALIGNMENT ===
+alignment_camber_front_degrees,,Factory spec
+alignment_camber_rear_degrees,,
+alignment_toe_front_degrees,,
+alignment_toe_rear_degrees,,
+alignment_caster_degrees,,
+#
+# === SUSPENSION ===
+shock_front_oem_part,,
+shock_rear_oem_part,,
+spring_front_oem_part,,
+spring_rear_oem_part,,
+sway_bar_front_diameter_mm,,
+sway_bar_rear_diameter_mm,,
+#
+# === SOURCE ===
+source_manual_year,,Which year manual was used
+source_url,,Link to source
+verified_by,,Your name/initials
+

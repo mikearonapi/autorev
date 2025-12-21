@@ -543,3 +543,4 @@ COMMENT ON MATERIALIZED VIEW cars_stats IS 'Public aggregate car statistics - in
 
 
 
+
