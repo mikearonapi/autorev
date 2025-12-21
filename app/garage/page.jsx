@@ -28,7 +28,7 @@ import CarActionMenu from '@/components/CarActionMenu';
 import BuildDetailView from '@/components/BuildDetailView';
 import ServiceLogModal from '@/components/ServiceLogModal';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore } from '@/lib/scoring';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateServiceLog, deleteServiceLog } from '@/lib/maintenanceService';
@@ -1944,7 +1944,7 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
 }
 
 // Car Picker Modal for starting new projects on ANY car
-function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds }) {
+function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Default weights for scoring
@@ -1958,13 +1958,13 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds }) {
     soundEmotion: 1.2,
   };
   
-  // Filter and sort cars
+  // Filter and sort cars (from database via allCars prop)
   const filteredCars = React.useMemo(() => {
-    let results = carData;
+    let results = allCars;
     
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      results = carData.filter(car => 
+      results = allCars.filter(car => 
         car.name?.toLowerCase().includes(query) ||
         car.brand?.toLowerCase().includes(query) ||
         car.category?.toLowerCase().includes(query) ||
@@ -2043,6 +2043,7 @@ function GarageContent() {
   const [isAddFavoritesOpen, setIsAddFavoritesOpen] = useState(false);
   const [addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
+  const [allCars, setAllCars] = useState([]);
   
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
@@ -2053,27 +2054,32 @@ function GarageContent() {
   const { builds, deleteBuild, getBuildById } = useSavedBuilds();
   const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications } = useOwnedVehicles();
 
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
+
   // Reset selection when tab changes
   useEffect(() => {
     setSelectedIndex(0);
   }, [activeTab]);
   
-  // Merge favorites with full car data
+  // Merge favorites with full car data (from database)
   const favoriteCars = favorites.map(fav => {
-    const fullCarData = carData.find(c => c.slug === fav.slug);
+    const fullCarData = allCars.find(c => c.slug === fav.slug);
     return fullCarData ? { ...fullCarData, addedAt: fav.addedAt } : fav;
   });
   
-  // Get cars for builds
+  // Get cars for builds (from database)
   const buildsWithCars = builds.map(build => ({
     ...build,
-    car: carData.find(c => c.slug === build.carSlug)
+    car: allCars.find(c => c.slug === build.carSlug)
   })).filter(b => b.car);
 
-  // Get matched car data for owned vehicles
+  // Get matched car data for owned vehicles (from database)
   const vehiclesWithCars = vehicles.map(vehicle => ({
     vehicle,
-    matchedCar: vehicle.matchedCarSlug ? carData.find(c => c.slug === vehicle.matchedCarSlug) : null,
+    matchedCar: vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null,
     id: vehicle.id,
   }));
 
@@ -2255,7 +2261,7 @@ function GarageContent() {
       <div className={styles.page}>
         <BuildDetailView 
           build={selectedBuild}
-          car={carData.find(c => c.slug === selectedBuild.carSlug)}
+          car={allCars.find(c => c.slug === selectedBuild.carSlug)}
           onBack={() => {
             setSelectedBuild(null);
             window.history.pushState({}, '', '/garage');

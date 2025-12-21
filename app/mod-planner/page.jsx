@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
-import { fetchCars } from '@/lib/carsClient.js';
-import { carData as localCarData, tierConfig } from '@/data/cars.js';
+import { fetchCars, tierConfig } from '@/lib/carsClient.js';
 import { calculateWeightedScore } from '@/lib/scoring';
 import { loadPreferences, hasUserPreferences, defaultPreferences } from '@/lib/stores/userPreferencesStore';
 import PerformanceHub from '@/components/PerformanceHub';
@@ -102,16 +101,16 @@ function PerformanceContent() {
   const { vehicles, isHydrated: vehiclesHydrated } = useOwnedVehicles();
   const { isAuthenticated } = useAuth();
 
-  // Load cars
+  // Load cars from database via carsClient (has fallback built-in)
   useEffect(() => {
     async function loadCars() {
       try {
         setIsLoading(true);
         const fetchedCars = await fetchCars();
-        setCars(fetchedCars.length > 0 ? fetchedCars : localCarData);
+        setCars(fetchedCars);
       } catch (err) {
         console.error('[Performance] Error loading cars:', err);
-        setCars(localCarData);
+        setCars([]);
       } finally {
         setIsLoading(false);
       }

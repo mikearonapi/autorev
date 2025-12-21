@@ -6,6 +6,8 @@
  * Full-screen modal for side-by-side car comparison.
  * Shows specs, highlights winners, and provides recommendations.
  * Uses React Portal to render at document body level for proper centering.
+ * 
+ * Now fetches car data from database via carsClient.
  */
 
 import { useMemo, useEffect, useState } from 'react';
@@ -15,7 +17,7 @@ import Image from 'next/image';
 import styles from './CompareModal.module.css';
 import { useCompare } from '@/components/providers/CompareProvider';
 import { getCarHeroImage } from '@/lib/images';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import { loadPreferences, hasUserPreferences, checkCarAgainstPreferences } from '@/lib/stores/userPreferencesStore';
 import { calculateWeightedScore } from '@/lib/scoring';
 
@@ -192,6 +194,12 @@ export default function CompareModal({ isOpen, onClose }) {
   const [mounted, setMounted] = useState(false);
   const [userPreferences, setUserPreferences] = useState(null);
   const [hasPrefs, setHasPrefs] = useState(false);
+  const [allCars, setAllCars] = useState([]);
+
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
 
   // Ensure we only render portal on client side
   useEffect(() => {
@@ -220,13 +228,13 @@ export default function CompareModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
-  // Get full car data for images and additional info
+  // Get full car data for images and additional info (from database)
   const carsWithFullData = useMemo(() => {
     return compareCars.map(car => {
-      const fullCar = carData.find(c => c.slug === car.slug);
+      const fullCar = allCars.find(c => c.slug === car.slug);
       return fullCar || car;
     });
-  }, [compareCars]);
+  }, [compareCars, allCars]);
 
   // Check each car against user preferences
   const carPreferenceMatches = useMemo(() => {

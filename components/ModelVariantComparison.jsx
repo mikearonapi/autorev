@@ -10,12 +10,14 @@
  * - Corvette Stingray vs Z06
  * 
  * Helps users understand what makes each variant unique.
+ * 
+ * Now fetches car data from database via carsClient.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import styles from './ModelVariantComparison.module.css';
 import CarImage from './CarImage';
-import { carData } from '@/data/cars';
+import { fetchCars } from '@/lib/carsClient';
 
 // Icons
 const Icons = {
@@ -325,11 +327,17 @@ function generateSummary(car1, car2, comparison) {
  */
 export default function ModelVariantComparison({ car, onClose }) {
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [allCars, setAllCars] = useState([]);
   
-  // Find related variants
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
+  
+  // Find related variants (from database)
   const relatedVariants = useMemo(() => 
-    findRelatedVariants(car, carData),
-    [car]
+    findRelatedVariants(car, allCars),
+    [car, allCars]
   );
   
   // Generate comparison when variant selected
@@ -472,9 +480,16 @@ export default function ModelVariantComparison({ car, onClose }) {
  * Compact variant for car detail pages
  */
 export function RelatedVariantsChips({ car, onSelectVariant }) {
+  const [allCars, setAllCars] = useState([]);
+  
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
+  
   const relatedVariants = useMemo(() => 
-    findRelatedVariants(car, carData),
-    [car]
+    findRelatedVariants(car, allCars),
+    [car, allCars]
   );
   
   if (relatedVariants.length === 0) return null;

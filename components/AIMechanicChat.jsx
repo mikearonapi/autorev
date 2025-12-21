@@ -15,7 +15,7 @@ import { useAuth } from './providers/AuthProvider';
 import { useCarSelection } from './providers/CarSelectionProvider';
 import { useCompare } from './providers/CompareProvider';
 import AuthModal, { useAuthModal } from './AuthModal';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import { 
   loadALPreferences, 
   saveALPreferences, 
@@ -581,6 +581,9 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   // Copy button state
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
   
+  // Car data from database
+  const [allCars, setAllCars] = useState([]);
+  
   // Wiggle animation state (like FeedbackCorner)
   const [isWiggling, setIsWiggling] = useState(false);
   
@@ -633,6 +636,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         setShowIntro(false);
       }
     }
+  }, []);
+  
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
   }, []);
   
   // Wiggle animation effect (like FeedbackCorner) - only when button is visible
@@ -864,8 +872,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     for (const mention of carMentions) {
       const mentionLower = mention.toLowerCase();
       
-      // Search for a matching car in carData
-      const matchedCar = carData.find(car => {
+      // Search for a matching car in allCars (from database)
+      const matchedCar = allCars.find(car => {
         const carNameLower = car.name.toLowerCase();
         const carSlugLower = car.slug.toLowerCase();
         
@@ -891,7 +899,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       openCompareWithCars(matchedCars.slice(0, 4)); // Max 4 cars
     } else if (focusedCar?.slug && matchedCars.length >= 1) {
       // If we have a focused car and at least one match, include focused car
-      const focusedCarData = carData.find(c => c.slug === focusedCar.slug);
+      const focusedCarData = allCars.find(c => c.slug === focusedCar.slug);
       if (focusedCarData && !matchedCars.some(c => c.slug === focusedCarData.slug)) {
         matchedCars.unshift({
           slug: focusedCarData.slug,

@@ -7,7 +7,6 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import styles from './page.module.css';
-import { carData } from '@/data/cars.js';
 import upgradeDetails from '@/data/upgradeEducation.js';
 import { usePlatformStats } from '@/hooks/usePlatformStats';
 
@@ -130,8 +129,8 @@ const AlIcon = ({ size = 18 }) => (
   />
 );
 
-// Get dynamic car count from database
-const CAR_COUNT = carData?.length || 98;
+// Car count for display (actual count from database via stats hook)
+const CAR_COUNT = '100+';
 
 // Membership tiers - clean & accurate
 const tiers = [
@@ -301,9 +300,9 @@ export default function JoinPage() {
   const [suffixIndex, setSuffixIndex] = useState(0);
   const [suffixVisible, setSuffixVisible] = useState(true);
 
-  // Dynamic stats pulled from database or local fallback
+  // Dynamic stats pulled from database via usePlatformStats
   const quickStats = useMemo(() => {
-    const carCount = stats?.cars || carData?.length || 98;
+    const carCount = stats?.cars || 100;
     const upgradeCount = Object.keys(upgradeDetails || {}).length || 77;
     
     return [

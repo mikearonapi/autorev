@@ -26,7 +26,7 @@ import CarImage from '@/components/CarImage';
 import CarActionMenu from '@/components/CarActionMenu';
 import UpgradeCenter from '@/components/UpgradeCenter';
 import OnboardingPopup, { tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 
 // Sort options for projects
 const SORT_OPTIONS = [
@@ -201,9 +201,9 @@ function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   
   const filteredCars = useMemo(() => {
-    if (!searchTerm) return carData;
+    if (!searchTerm) return allCars;
     const term = searchTerm.toLowerCase();
-    return carData.filter(car => 
+    return allCars.filter(car => 
       car.name.toLowerCase().includes(term) ||
       car.brand?.toLowerCase().includes(term) ||
       car.category?.toLowerCase().includes(term)
@@ -604,6 +604,7 @@ function TuningShopContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [showCarPicker, setShowCarPicker] = useState(false);
+  const [allCars, setAllCars] = useState([]);
   
   // Projects tab state
   const [projectsSort, setProjectsSort] = useState('date-desc');
@@ -619,6 +620,11 @@ function TuningShopContent() {
   const { favorites = [] } = useFavorites() || {};
   const { builds = [], deleteBuild, getBuildById } = useSavedBuilds() || {};
   const { vehicles = [] } = useOwnedVehicles() || {};
+  
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
   
   // Handle URL params for direct build access
   // Use a mounted ref to prevent state updates during navigation transitions
@@ -649,7 +655,7 @@ function TuningShopContent() {
     if (buildId && builds.length > 0) {
       const build = getBuildById(buildId);
       if (build) {
-        const car = carData.find(c => c.slug === build.carSlug);
+        const car = allCars.find(c => c.slug === build.carSlug);
         if (car && isMountedRef.current) {
           setSelectedCar(car);
           setCurrentBuildId(buildId);
@@ -657,7 +663,7 @@ function TuningShopContent() {
         }
       }
     } else if (planCar) {
-      const car = carData.find(c => c.slug === planCar);
+      const car = allCars.find(c => c.slug === planCar);
       if (car && isMountedRef.current) {
         setSelectedCar(car);
         setCurrentBuildId(null);
@@ -679,14 +685,14 @@ function TuningShopContent() {
   // Get cars from favorites with full car data
   const favoriteCars = useMemo(() => {
     return favorites
-      .map(fav => carData.find(c => c.slug === fav.slug))
+      .map(fav => allCars.find(c => c.slug === fav.slug))
       .filter(Boolean);
   }, [favorites]);
   
   // Get cars from owned vehicles
   const ownedCars = useMemo(() => {
     return vehicles
-      .map(v => carData.find(c => c.slug === v.matchedCarSlug))
+      .map(v => allCars.find(c => c.slug === v.matchedCarSlug))
       .filter(Boolean);
   }, [vehicles]);
   
@@ -707,7 +713,7 @@ function TuningShopContent() {
     return builds
       .map(build => ({
         ...build,
-        car: carData.find(c => c.slug === build.carSlug)
+        car: allCars.find(c => c.slug === build.carSlug)
       }))
       .filter(b => b.car);
   }, [builds]);
@@ -800,7 +806,7 @@ function TuningShopContent() {
   };
 
   const handleLoadBuild = (build) => {
-    const car = carData.find(c => c.slug === build.carSlug);
+    const car = allCars.find(c => c.slug === build.carSlug);
     if (car) {
       setSelectedCar(car);
       setCurrentBuildId(build.id);

@@ -3,8 +3,8 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './SportsCarComparison.module.css';
-import { carData as localCarData, categories, tierConfig, recommendationTypes } from '@/data/cars.js';
-import { fetchCars } from '@/lib/carsClient.js';
+import { fetchCars, tierConfig, categories } from '@/lib/carsClient.js';
+import { recommendationTypes } from '@/data/cars.js';
 import { getDescriptorForValue, priorityDescriptors } from '@/data/selectorDescriptors.js';
 import { 
   calculateWeightedScore, 
@@ -255,8 +255,8 @@ const getTotalScoreClass = (score, maxScore) => {
 };
 
 export default function SportsCarComparison() {
-  // State for car data (fetched from Supabase or local fallback)
-  const [carData, setCarData] = useState(localCarData);
+  // State for car data (fetched from database via carsClient)
+  const [carData, setCarData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
@@ -264,7 +264,7 @@ export default function SportsCarComparison() {
   // All categories start at "Normal" (1.0) - user adjusts from there
   const [weights, setWeights] = useState(() => DEFAULT_WEIGHTS);
   const [sortBy, setSortBy] = useState('total');
-  const [priceMax, setPriceMax] = useState(100000);
+  const [priceMax, setPriceMax] = useState(Infinity);
   const [priceMin, setPriceMin] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   // selectedCategory removed - now using mustHaveFilters.engineLayoutFilter
@@ -332,10 +332,10 @@ export default function SportsCarComparison() {
         console.error('[SportsCarComparison] Error loading cars:', err);
         if (isMounted) {
           const errorMsg = err.message?.includes('timeout') 
-            ? 'Loading timed out. Using cached data.' 
-            : 'Failed to load vehicle data. Using cached data.';
+            ? 'Loading timed out. Please refresh.' 
+            : 'Failed to load vehicle data. Please refresh.';
           setLoadError(errorMsg);
-          setCarData(localCarData); // Fallback to local data
+          // fetchCars has internal fallback, so if we get here, something else failed
           setIsLoading(false);
         }
       }
@@ -541,7 +541,9 @@ export default function SportsCarComparison() {
 
   // Handle price filter change
   const handlePriceChange = useCallback((e) => {
-    const [min, max] = e.target.value.split('-').map(Number);
+    const [minStr, maxStr] = e.target.value.split('-');
+    const min = minStr === 'Infinity' ? Infinity : Number(minStr);
+    const max = maxStr === 'Infinity' ? Infinity : Number(maxStr);
     setPriceMin(min);
     setPriceMax(max);
   }, []);
@@ -599,12 +601,17 @@ export default function SportsCarComparison() {
                 className={styles.requirementSelect}
                 aria-label="Budget range"
               >
+                <option value="0-Infinity">All Prices</option>
+                <option value="0-300000">Under $300K</option>
+                <option value="0-200000">Under $200K</option>
+                <option value="0-150000">Under $150K</option>
                 <option value="0-100000">Under $100K</option>
                 <option value="0-75000">Under $75K</option>
                 <option value="0-60000">Under $60K</option>
                 <option value="0-50000">Under $50K</option>
                 <option value="0-40000">Under $40K</option>
-                <option value="0-30000">Under $30K</option>
+                <option value="100000-Infinity">$100K+</option>
+                <option value="150000-Infinity">$150K+</option>
               </select>
             </div>
 
@@ -957,14 +964,17 @@ export default function SportsCarComparison() {
                 className={styles.filterSelect}
                 aria-label="Filter by budget"
               >
+                <option value="0-Infinity">All Prices</option>
+                <option value="0-300000">Under $300K</option>
+                <option value="0-200000">Under $200K</option>
+                <option value="0-150000">Under $150K</option>
                 <option value="0-100000">Under $100K</option>
-                <option value="0-90000">Under $90K</option>
-                <option value="0-80000">Under $80K</option>
-                <option value="0-70000">Under $70K</option>
+                <option value="0-75000">Under $75K</option>
                 <option value="0-60000">Under $60K</option>
                 <option value="0-50000">Under $50K</option>
                 <option value="0-40000">Under $40K</option>
-                <option value="0-30000">Under $30K</option>
+                <option value="100000-Infinity">$100K+</option>
+                <option value="150000-Infinity">$150K+</option>
               </select>
 
               <select 

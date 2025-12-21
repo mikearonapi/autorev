@@ -9,7 +9,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
-import { carData } from '@/data/cars.js';
+// Car count now comes from usePlatformStats hook or default
 
 // Format fuel units for display (1 cent = 1 fuel)
 const formatFuel = (cents) => `${cents || 0}`;
@@ -153,8 +153,8 @@ const Icons = {
   ),
 };
 
-// Get dynamic car count from database
-const CAR_COUNT = carData?.length || 98;
+// Car count for display (actual count from database via stats hook)
+const CAR_COUNT = '100+';
 
 // Subscription plans configuration - matches join page
 const PLANS = {

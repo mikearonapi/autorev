@@ -3,20 +3,20 @@
  * 
  * Generates sitemap.xml at /sitemap.xml including:
  * - Static pages (home, browse, car selector, etc.)
- * - All car detail pages (from cars table)
+ * - All car detail pages (from cars table via carsClient)
  * - Event pages (from events table)
  * - Encyclopedia topics (from static data)
  * 
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 
-import { carData as localCarData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import { createClient } from '@supabase/supabase-js';
 import { getNavigationTree } from '@/lib/encyclopediaData';
 
 const SITE_URL = 'https://autorev.app';
 
-// Supabase client for fetching dynamic data
+// Supabase client for fetching dynamic data (events only)
 function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -25,28 +25,16 @@ function getSupabaseClient() {
 }
 
 /**
- * Fetch all car slugs from database (with fallback to static data).
+ * Fetch all car slugs from database via carsClient.
  * @returns {Promise<Array>}
  */
 async function fetchCarSlugs() {
   try {
-    const supabase = getSupabaseClient();
-    if (!supabase) return localCarData.map(c => ({ slug: c.slug }));
-
-    const { data, error } = await supabase
-      .from('cars')
-      .select('slug, updated_at')
-      .order('name', { ascending: true });
-
-    if (error || !data || data.length === 0) {
-      console.warn('[Sitemap] Falling back to local car data');
-      return localCarData.map(c => ({ slug: c.slug }));
-    }
-
-    return data;
+    const cars = await fetchCars();
+    return cars.map(c => ({ slug: c.slug }));
   } catch (err) {
     console.warn('[Sitemap] Error fetching cars:', err.message);
-    return localCarData.map(c => ({ slug: c.slug }));
+    return [];
   }
 }
 

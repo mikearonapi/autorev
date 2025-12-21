@@ -16,8 +16,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { carData } from '@/data/cars';
+import { fetchCarBySlug } from '@/lib/carsClient';
 import * as dataAggregator from '@/lib/dataAggregator';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
@@ -42,25 +41,8 @@ async function handleGet(request, { params }) {
     const safetyOnly = searchParams.get('safety') === 'true';
     const reviewsOnly = searchParams.get('reviews') === 'true';
     
-    // Find the car in our database
-    let car = carData.find(c => c.slug === slug);
-    
-    // Try Supabase for more complete data
-    if (isSupabaseConfigured) {
-      try {
-        const { data, error } = await supabase
-          .from('cars')
-          .select('*')
-          .eq('slug', slug)
-          .single();
-        
-        if (!error && data) {
-          car = { ...car, ...data };
-        }
-      } catch (err) {
-        console.warn('[Enriched API] Supabase fetch failed:', err.message);
-      }
-    }
+    // Find the car in our database via carsClient
+    const car = await fetchCarBySlug(slug);
     
     if (!car) {
       return NextResponse.json(

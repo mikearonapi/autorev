@@ -5,24 +5,20 @@ import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
 import PillarsSection from '@/components/PillarsSection';
 import styles from './page.module.css';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { carData as localCarData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 
-// Fetch car count from database (with fallback)
+// Fetch car count from database via carsClient
 async function getCarCount() {
-  if (!isSupabaseConfigured || !supabase) {
-    return localCarData.length;
-  }
   try {
-    const { count, error } = await supabase
-      .from('cars')
-      .select('*', { count: 'exact', head: true });
-    if (error || count === null) return localCarData.length;
-    return count;
+    const cars = await fetchCars();
+    return cars?.length || 100;
   } catch {
-    return localCarData.length;
+    return 100; // Fallback count
   }
 }
+
+// Revalidate homepage every hour to pick up new car counts
+export const revalidate = 3600;
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
 export const metadata = {

@@ -8,12 +8,11 @@
  * - Vehicle schema (schema.org/Car)
  * - BreadcrumbList schema for navigation
  * 
- * Now fetches from Supabase with fallback to static data.
+ * Now fetches from database via carsClient.
  */
 
-import { carData as localCarData } from '@/data/cars.js';
+import { fetchCarBySlug, fetchCars } from '@/lib/carsClient';
 import SchemaOrg from '@/components/SchemaOrg';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { 
   generateCarMetadata, 
   generateVehicleSchema, 
@@ -22,59 +21,18 @@ import {
 } from '@/lib/seoUtils';
 
 /**
- * Fetch car by slug from database with fallback to static data.
+ * Fetch car by slug from database via carsClient.
  */
 async function getCarBySlug(slug) {
-  // Try database first
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('cars')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-      
-      if (!error && data) {
-        // Transform snake_case to camelCase for compatibility
-        return {
-          ...data,
-          priceRange: data.price_range,
-          priceAvg: data.price_avg,
-          curbWeight: data.curb_weight,
-          zeroToSixty: data.zero_to_sixty,
-          topSpeed: data.top_speed,
-          heroBlurb: data.hero_blurb,
-          imageHeroUrl: data.image_hero_url,
-        };
-      }
-    } catch {
-      // Fall through to static data
-    }
-  }
-  
-  // Fallback to static data
-  return localCarData.find((c) => c.slug === slug) || null;
+  return await fetchCarBySlug(slug);
 }
 
 /**
- * Fetch all car slugs for static generation.
+ * Fetch all car slugs for static generation via carsClient.
  */
 async function getAllCarSlugs() {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('cars')
-        .select('slug');
-      
-      if (!error && data && data.length > 0) {
-        return data.map(c => ({ slug: c.slug }));
-      }
-    } catch {
-      // Fall through to static data
-    }
-  }
-  
-  return localCarData.map(c => ({ slug: c.slug }));
+  const cars = await fetchCars();
+  return cars.map(c => ({ slug: c.slug }));
 }
 
 /**

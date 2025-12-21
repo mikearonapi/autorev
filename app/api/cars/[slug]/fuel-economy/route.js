@@ -15,8 +15,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { carData } from '@/data/cars';
+import { fetchCarBySlug } from '@/lib/carsClient';
 import * as epaService from '@/lib/epaFuelEconomyService';
 
 /**
@@ -34,24 +33,8 @@ export async function GET(request, { params }) {
   }
   
   try {
-    // Find the car in our database
-    let car = carData.find(c => c.slug === slug);
-    
-    if (isSupabaseConfigured) {
-      try {
-        const { data, error } = await supabase
-          .from('cars')
-          .select('*')
-          .eq('slug', slug)
-          .single();
-        
-        if (!error && data) {
-          car = { ...car, ...data };
-        }
-      } catch (err) {
-        console.warn('[Fuel Economy API] Supabase fetch failed:', err.message);
-      }
-    }
+    // Find the car in our database via carsClient
+    const car = await fetchCarBySlug(slug);
     
     if (!car) {
       return NextResponse.json(
@@ -149,6 +132,7 @@ export async function GET(request, { params }) {
     );
   }
 }
+
 
 
 

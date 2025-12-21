@@ -7,13 +7,13 @@
  * Two rows scroll in opposite directions for a dynamic, premium feel.
  * Mobile-optimized: pauses on touch, allows manual scrolling.
  * 
- * Now fetches from database API with fallback to static data.
+ * Now fetches from database via carsClient with fallback.
  */
 
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { carData as localCarData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import styles from './CarCarousel.module.css';
 
 // Blob base URL for car images
@@ -177,22 +177,13 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
 export default function CarCarousel() {
   const isPausedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [carData, setCarData] = useState(localCarData);
+  const [carData, setCarData] = useState([]);
   
-  // Fetch cars from API (with fallback to static data already set)
+  // Fetch cars from database via carsClient
   useEffect(() => {
-    async function fetchCars() {
-      try {
-        const res = await fetch('/api/cars');
-        const data = await res.json();
-        if (data.cars && data.cars.length > 0) {
-          setCarData(data.cars);
-        }
-      } catch (err) {
-        console.warn('[CarCarousel] Using static data fallback:', err.message);
-      }
-    }
-    fetchCars();
+    fetchCars()
+      .then(cars => setCarData(cars))
+      .catch(err => console.warn('[CarCarousel] Error loading cars:', err.message));
   }, []);
   
   // Check for mobile viewport

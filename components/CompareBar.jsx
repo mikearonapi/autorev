@@ -5,15 +5,17 @@
  * 
  * A persistent bar at the bottom of the screen that appears
  * when cars are added to the compare list. Works site-wide.
+ * 
+ * Now fetches car data from database via carsClient.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './CompareBar.module.css';
 import { useCompare } from '@/components/providers/CompareProvider';
 import { getCarHeroImage } from '@/lib/images';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import CompareModal from './CompareModal';
 
 // Icons
@@ -58,15 +60,21 @@ const Icons = {
 export default function CompareBar() {
   const { cars, count, maxCars, removeFromCompare, clearAll, isHydrated, showCompareModal, setShowCompareModal } = useCompare();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [allCars, setAllCars] = useState([]);
+
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
 
   // Don't show until hydrated or if no cars
   if (!isHydrated || count === 0) {
     return null;
   }
 
-  // Get full car data for images
+  // Get full car data for images (from database)
   const carsWithImages = cars.map(car => {
-    const fullCar = carData.find(c => c.slug === car.slug);
+    const fullCar = allCars.find(c => c.slug === car.slug);
     return fullCar || car;
   });
 

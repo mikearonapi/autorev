@@ -5,11 +5,13 @@
  * 
  * Modal for adding cars to user's favorites within the garage.
  * Simple search interface - tap a car to add it to favorites.
+ * 
+ * Now fetches car data from database via carsClient.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import styles from './AddFavoritesModal.module.css';
-import { carData } from '@/data/cars.js';
+import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore } from '@/lib/scoring';
 import CarImage from './CarImage';
 
@@ -43,6 +45,12 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
   const [searchQuery, setSearchQuery] = useState('');
   const [addingSlug, setAddingSlug] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
+  const [allCars, setAllCars] = useState([]);
+
+  // Fetch car data from database on mount
+  useEffect(() => {
+    fetchCars().then(setAllCars).catch(console.error);
+  }, []);
 
   // Default weights for scoring (balanced enthusiast preferences)
   const defaultWeights = {
@@ -55,13 +63,13 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
     soundEmotion: 1.2,
   };
 
-  // Filter and sort cars based on search
+  // Filter and sort cars based on search (from database)
   const filteredCars = useMemo(() => {
-    let results = carData;
+    let results = allCars;
     
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      results = carData.filter(car => 
+      results = allCars.filter(car => 
         car.name?.toLowerCase().includes(query) ||
         car.brand?.toLowerCase().includes(query) ||
         car.category?.toLowerCase().includes(query) ||
@@ -79,7 +87,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
       .sort((a, b) => b.score - a.score)
       .map(item => item.car)
       .slice(0, 30);
-  }, [searchQuery]);
+  }, [searchQuery, allCars]);
 
   // Check if a car is already favorited
   const isFavorited = (slug) => {

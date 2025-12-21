@@ -4,8 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { fetchCarBySlug } from '@/lib/carsClient.js';
-import { getCarBySlug as getLocalCarBySlug, tierConfig } from '@/data/cars.js';
+import { fetchCarBySlug, tierConfig } from '@/lib/carsClient.js';
 import { calculateScoreBreakdown, getScoreLabel, DEFAULT_WEIGHTS } from '@/lib/scoring.js';
 import { getCarHeroImage, preloadImage } from '@/lib/images.js';
 import { getAvailableUpgrades } from '@/lib/performance.js';
@@ -355,17 +354,8 @@ export default function CarDetail() {
               preloadImage(heroUrl);
             }
           } else {
-            const localCar = getLocalCarBySlug(slug);
-            if (localCar) {
-              setCar(localCar);
-              // Preload hero image for local car too
-              const heroUrl = getCarHeroImage(localCar);
-              if (heroUrl) {
-                preloadImage(heroUrl);
-              }
-            } else {
-              setError('Vehicle not found');
-            }
+            // fetchCarBySlug has fallback built-in, so null means car doesn't exist
+            setError('Vehicle not found');
           }
           setIsLoading(false);
           setIsLoadingSlow(false);
@@ -384,17 +374,8 @@ export default function CarDetail() {
         }
         
         if (isMounted) {
-          const localCar = getLocalCarBySlug(slug);
-          if (localCar) {
-            setCar(localCar);
-            // Preload hero image for local car
-            const heroUrl = getCarHeroImage(localCar);
-            if (heroUrl) {
-              preloadImage(heroUrl);
-            }
-          } else {
-            setError('Failed to load vehicle data');
-          }
+          // fetchCarBySlug handles fallback internally, so error means real failure
+          setError('Failed to load vehicle data');
           setIsLoading(false);
           setIsLoadingSlow(false);
         }
