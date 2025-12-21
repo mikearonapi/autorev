@@ -29,13 +29,15 @@ import {
 
 /**
  * Hook for responsive screen size detection
- * Returns breakpoint information for adaptive UI
+ * Returns breakpoint information for adaptive UI including viewport height
  */
 function useResponsiveSize() {
   const [screenSize, setScreenSize] = useState({
     isMobile: false,
     isSmallMobile: false,
     isTablet: false,
+    isShortViewport: false,
+    isVeryShortViewport: false,
   });
   
   useEffect(() => {
@@ -43,10 +45,13 @@ function useResponsiveSize() {
     
     const checkSize = () => {
       const width = window.innerWidth;
+      const height = window.innerHeight;
       setScreenSize({
         isMobile: width <= 480,
         isSmallMobile: width <= 375,
         isTablet: width > 480 && width <= 1024,
+        isShortViewport: height <= 600,
+        isVeryShortViewport: height <= 500,
       });
     };
     
@@ -583,22 +588,27 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const { openCompareWithCars } = useCompare();
   
   // Responsive sizing
-  const { isMobile, isSmallMobile, isTablet } = useResponsiveSize();
+  const { isMobile, isSmallMobile, isTablet, isShortViewport, isVeryShortViewport } = useResponsiveSize();
   
-  // Calculate responsive mascot sizes
+  // Calculate responsive mascot sizes based on both width and height
   const introMascotSize = useMemo(() => {
+    // Prioritize viewport height for very constrained spaces
+    if (isVeryShortViewport) return 70;
+    if (isShortViewport) return 90;
     if (isSmallMobile) return 100;
-    if (isMobile) return 120;
-    if (isTablet) return 140;
-    return 160;
-  }, [isMobile, isSmallMobile, isTablet]);
+    if (isMobile) return 110;
+    if (isTablet) return 130;
+    return 140;
+  }, [isMobile, isSmallMobile, isTablet, isShortViewport, isVeryShortViewport]);
   
   const signInMascotSize = useMemo(() => {
+    if (isVeryShortViewport) return 60;
+    if (isShortViewport) return 70;
     if (isSmallMobile) return 80;
-    if (isMobile) return 100;
-    if (isTablet) return 110;
-    return 120;
-  }, [isMobile, isSmallMobile, isTablet]);
+    if (isMobile) return 90;
+    if (isTablet) return 100;
+    return 110;
+  }, [isMobile, isSmallMobile, isTablet, isShortViewport, isVeryShortViewport]);
   
   // Check localStorage on mount to see if user has seen intro
   useEffect(() => {
