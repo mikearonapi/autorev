@@ -5,8 +5,15 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
-import { carData as cars, tierConfig } from '@/data/cars.js';
 import CarImage from '@/components/CarImage';
+
+// Tier configuration for display
+const tierConfig = {
+  premium: { label: 'Premium', priceRange: '$75K+', order: 1 },
+  'upper-mid': { label: 'Upper', priceRange: '$55-75K', order: 2 },
+  mid: { label: 'Mid', priceRange: '$35-55K', order: 3 },
+  budget: { label: 'Budget', priceRange: 'Under $35K', order: 4 },
+};
 import ScrollIndicator from '@/components/ScrollIndicator';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useCompare } from '@/components/providers/CompareProvider';
@@ -109,8 +116,27 @@ function CarCatalogContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   
+  // Fetch cars from database
+  const [cars, setCars] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    async function fetchCars() {
+      try {
+        const res = await fetch('/api/cars');
+        const data = await res.json();
+        setCars(data.cars || []);
+      } catch (err) {
+        console.error('[CarCatalog] Failed to fetch cars:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCars();
+  }, []);
+  
   // Get filter options
-  const makes = useMemo(() => getUniqueMakes(cars), []);
+  const makes = useMemo(() => getUniqueMakes(cars), [cars]);
   
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -195,7 +221,7 @@ function CarCatalogContent() {
     }
   };
 
-  const categories = useMemo(() => getUniqueCategories(cars), []);
+  const categories = useMemo(() => getUniqueCategories(cars), [cars]);
   const tiers = Object.keys(tierConfig);
 
   // Filter and sort cars
@@ -260,7 +286,7 @@ function CarCatalogContent() {
     }
 
     return result;
-  }, [searchQuery, selectedMake, selectedTier, selectedCategory, sortBy]);
+  }, [cars, searchQuery, selectedMake, selectedTier, selectedCategory, sortBy]);
 
   return (
     <div className={styles.catalogPage}>
@@ -284,7 +310,7 @@ function CarCatalogContent() {
             <span className={styles.titleAccent}>Discover.</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Explore our collection of {cars.length}+ sports cars. Compare specs, 
+            Explore our collection of {cars.length} sports cars. Compare specs, 
             find your perfect match, and learn what makes each one special.
           </p>
         </div>
@@ -363,6 +389,14 @@ function CarCatalogContent() {
 
       {/* Car Grid */}
       <section className={styles.gridSection}>
+        {isLoading && (
+          <div className={styles.loadingState}>
+            <div className={styles.loadingSpinner} />
+            <p>Loading vehicles...</p>
+          </div>
+        )}
+        
+        {!isLoading && (
         <div className={styles.carGrid}>
           {filteredCars.map(car => (
               <div key={car.id || car.slug} className={styles.carCardWrapper}>
@@ -414,9 +448,10 @@ function CarCatalogContent() {
               </div>
           ))}
         </div>
+        )}
 
         {/* No results */}
-        {filteredCars.length === 0 && (
+        {filteredCars.length === 0 && !isLoading && (
           <div className={styles.noResults}>
             <h3>No cars found</h3>
             <p>Try adjusting your filters or search query.</p>

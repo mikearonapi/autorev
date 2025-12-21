@@ -5,7 +5,24 @@ import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
 import PillarsSection from '@/components/PillarsSection';
 import styles from './page.module.css';
-import { carData } from '@/data/cars.js';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { carData as localCarData } from '@/data/cars.js';
+
+// Fetch car count from database (with fallback)
+async function getCarCount() {
+  if (!isSupabaseConfigured || !supabase) {
+    return localCarData.length;
+  }
+  try {
+    const { count, error } = await supabase
+      .from('cars')
+      .select('*', { count: 'exact', head: true });
+    if (error || count === null) return localCarData.length;
+    return count;
+  } catch {
+    return localCarData.length;
+  }
+}
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
 export const metadata = {
@@ -26,7 +43,9 @@ const CheckIcon = () => (
   </svg>
 );
 
-export default function Home() {
+export default async function Home() {
+  const carCount = await getCarCount();
+  
   return (
     <div className={styles.page}>
       {/* Hero Section with cycling text */}
@@ -38,7 +57,7 @@ export default function Home() {
       {/* Car Showcase Carousel */}
       <section className={styles.carShowcase}>
         <div className={styles.carShowcaseHeader}>
-          <h2 className={styles.carShowcaseTitle}>{carData.length} Sports Cars to Explore</h2>
+          <h2 className={styles.carShowcaseTitle}>{carCount} Sports Cars to Explore</h2>
           <p className={styles.carShowcaseSubtitle}>From weekend warriors to track machines</p>
         </div>
         <CarCarousel />

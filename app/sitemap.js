@@ -10,7 +10,7 @@
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 
-import { carData } from '@/data/cars.js';
+import { carData as localCarData } from '@/data/cars.js';
 import { createClient } from '@supabase/supabase-js';
 import { getNavigationTree } from '@/lib/encyclopediaData';
 
@@ -22,6 +22,32 @@ function getSupabaseClient() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   return createClient(url, key);
+}
+
+/**
+ * Fetch all car slugs from database (with fallback to static data).
+ * @returns {Promise<Array>}
+ */
+async function fetchCarSlugs() {
+  try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return localCarData.map(c => ({ slug: c.slug }));
+
+    const { data, error } = await supabase
+      .from('cars')
+      .select('slug, updated_at')
+      .order('name', { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      console.warn('[Sitemap] Falling back to local car data');
+      return localCarData.map(c => ({ slug: c.slug }));
+    }
+
+    return data;
+  } catch (err) {
+    console.warn('[Sitemap] Error fetching cars:', err.message);
+    return localCarData.map(c => ({ slug: c.slug }));
+  }
 }
 
 /**
@@ -179,11 +205,12 @@ export default async function sitemap() {
   ];
 
   // ==========================================================================
-  // CAR DETAIL PAGES (from static carData - 98 cars)
+  // CAR DETAIL PAGES (from database)
   // ==========================================================================
-  const carPages = carData.map((car) => ({
+  const cars = await fetchCarSlugs();
+  const carPages = cars.map((car) => ({
     url: `${SITE_URL}/browse-cars/${car.slug}`,
-    lastModified: now,
+    lastModified: car.updated_at ? new Date(car.updated_at) : now,
     changeFrequency: 'monthly',
     priority: 0.7,
   }));

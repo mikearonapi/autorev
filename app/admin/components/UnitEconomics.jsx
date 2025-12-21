@@ -15,7 +15,6 @@
  * - KPI cards with context (Rule 2)
  */
 
-import { useMemo } from 'react';
 import styles from './UnitEconomics.module.css';
 
 function formatCurrency(amount) {
@@ -132,10 +131,8 @@ export function UnitEconomics({
   const ltvCacHealth = getLtvCacHealth(ltvCacRatio);
   const runwayHealth = getRunwayHealth(runway);
   
-  // Generate interpretive title
-  const interpretiveTitle = useMemo(() => {
-    return generateInterpretiveTitle(ltvCacRatio, runway, conversionRate, payingUsers);
-  }, [ltvCacRatio, runway, conversionRate, payingUsers]);
+  // Generate interpretive title (no useMemo needed - simple calculation)
+  const interpretiveTitle = generateInterpretiveTitle(ltvCacRatio, runway, conversionRate, payingUsers);
   
   return (
     <div className={styles.container}>

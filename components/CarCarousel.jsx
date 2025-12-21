@@ -6,12 +6,14 @@
  * A dual-row marquee showcasing all ~100 sports cars.
  * Two rows scroll in opposite directions for a dynamic, premium feel.
  * Mobile-optimized: pauses on touch, allows manual scrolling.
+ * 
+ * Now fetches from database API with fallback to static data.
  */
 
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { carData } from '@/data/cars.js';
+import { carData as localCarData } from '@/data/cars.js';
 import styles from './CarCarousel.module.css';
 
 // Blob base URL for car images
@@ -175,6 +177,23 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
 export default function CarCarousel() {
   const isPausedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [carData, setCarData] = useState(localCarData);
+  
+  // Fetch cars from API (with fallback to static data already set)
+  useEffect(() => {
+    async function fetchCars() {
+      try {
+        const res = await fetch('/api/cars');
+        const data = await res.json();
+        if (data.cars && data.cars.length > 0) {
+          setCarData(data.cars);
+        }
+      } catch (err) {
+        console.warn('[CarCarousel] Using static data fallback:', err.message);
+      }
+    }
+    fetchCars();
+  }, []);
   
   // Check for mobile viewport
   useEffect(() => {
@@ -195,8 +214,8 @@ export default function CarCarousel() {
   }, []);
   
   // Create two varied mixes with different seeds for each row
-  const topRowCars = useMemo(() => createVarietyMix(carData, 42), []);
-  const bottomRowCars = useMemo(() => createVarietyMix(carData, 137), []);
+  const topRowCars = useMemo(() => createVarietyMix(carData, 42), [carData]);
+  const bottomRowCars = useMemo(() => createVarietyMix(carData, 137), [carData]);
   
   return (
     <div 

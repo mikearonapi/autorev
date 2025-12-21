@@ -306,7 +306,7 @@ CRITICAL: Use this exact JSON format with these exact enum values:
 
 ENUM VALUES:
 - kind: ONLY use "common_issue", "recall", "tsb", or "other"
-- severity: ONLY use "critical", "major", or "minor" (lowercase)
+- severity: ONLY use "critical", "high", "medium", "low", or "cosmetic" (lowercase)
 - symptoms: MUST be an array of strings, NOT pipe-separated text
 
 RULES:
@@ -820,11 +820,15 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
   
   log(`Car inserted: ${car.slug} (ID: ${car.id})`, 'success');
   
-  // Insert known issues
+  // Insert known issues (need car_id)
   if (issues.length > 0) {
+    const issuesWithCarId = issues.map(issue => ({
+      ...issue,
+      car_id: car.id,
+    }));
     const { error: issuesError } = await supabase
       .from('car_issues')
-      .insert(issues);
+      .insert(issuesWithCarId);
     if (issuesError) {
       log(`Warning: Failed to insert issues: ${issuesError.message}`, 'warning');
     } else {
