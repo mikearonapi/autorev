@@ -682,15 +682,17 @@
 .suggestionsTop {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   width: 100%;
 }
 
 .suggestionsLabel {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
-  color: #6b7280;
-  margin: 0 0 4px 0;
+  color: #9ca3af;
+  margin: 0 0 2px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ----------------------------------------
@@ -705,17 +707,16 @@
 }
 
 .suggestionBtn {
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 13px;
   color: #374151;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
-  /* Ensure good touch target */
-  min-height: 44px;
+  line-height: 1.4;
 }
 
 .suggestionBtn:hover {
@@ -727,24 +728,23 @@
 /* Mobile suggestions */
 @media (max-width: 480px) {
   .suggestionsTop {
-    gap: 8px;
+    gap: 5px;
   }
   
   .suggestionsLabel {
-    font-size: 13px;
-    margin-bottom: 2px;
+    font-size: 11px;
   }
   
   .suggestionBtn {
-    padding: 10px 14px;
-    font-size: 13px;
-    border-radius: 10px;
+    padding: 7px 10px;
+    font-size: 12.5px;
+    border-radius: 8px;
   }
 }
 
 @media (max-width: 375px) {
   .suggestionBtn {
-    padding: 9px 12px;
+    padding: 6px 10px;
     font-size: 12px;
   }
 }
