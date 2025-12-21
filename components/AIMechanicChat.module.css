@@ -794,8 +794,18 @@
   box-shadow: 0 2px 6px rgba(212, 160, 74, 0.15);
 }
 
-.messageContent {
+/* Message bubble wrapper - contains content + copy button */
+.messageBubble {
+  position: relative;
+  display: inline-block;
   max-width: 80%;
+}
+
+.assistantBubble {
+  /* Allow hover effects on the bubble */
+}
+
+.messageContent {
   padding: 10px 14px;
   border-radius: 14px;
   font-size: 13px;
@@ -810,6 +820,8 @@
   border: 1px solid #e5e7eb;
   border-radius: 16px 16px 16px 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  /* Add padding for copy button */
+  padding-right: 40px;
 }
 
 .message.user .messageContent {
@@ -932,8 +944,11 @@
     height: 24px;
   }
   
-  .messageContent {
+  .messageBubble {
     max-width: 88%;
+  }
+  
+  .messageContent {
     padding: 8px 12px;
     font-size: 12.5px;
     line-height: 1.5;
@@ -942,6 +957,7 @@
   
   .message.assistant .messageContent {
     border-radius: 12px 12px 12px 4px;
+    padding-right: 38px;
   }
   
   .message.user .messageContent {
@@ -950,18 +966,23 @@
   
   /* Copy button always visible on mobile (no hover) */
   .messageCopyBtn {
-    opacity: 0.7;
-    width: 32px;
-    height: 32px;
-    top: -4px;
-    right: -4px;
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    opacity: 0.85;
+    width: 28px;
+    height: 28px;
+    top: 6px;
+    right: 6px;
+    background: rgba(243, 244, 246, 0.95);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   }
   
   .messageCopyBtn:active {
     opacity: 1;
     background: #e5e7eb;
+  }
+  
+  /* Adjust padding for copy button on mobile */
+  .message.assistant .messageContent {
+    padding-right: 38px;
   }
   
   .messageContent :global(.responseH3) {
@@ -985,11 +1006,25 @@
     height: 22px;
   }
   
-  .messageContent {
+  .messageBubble {
     max-width: 90%;
+  }
+  
+  .messageContent {
     padding: 7px 10px;
     font-size: 12px;
     line-height: 1.45;
+  }
+  
+  .message.assistant .messageContent {
+    padding-right: 36px;
+  }
+  
+  .messageCopyBtn {
+    width: 26px;
+    height: 26px;
+    top: 5px;
+    right: 5px;
   }
 }
 
@@ -1057,24 +1092,23 @@
   display: flex;
   flex-direction: column;
   max-width: 80%;
-  position: relative;
 }
 
 .message.user .messageWrapper {
   align-items: flex-end;
 }
 
-/* Copy button for assistant messages */
+/* Copy button for assistant messages - sits inside the message bubble */
 .messageCopyBtn {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 8px;
+  right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: #f3f4f6;
+  width: 26px;
+  height: 26px;
+  background: rgba(243, 244, 246, 0.95);
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   color: #6b7280;
@@ -1084,13 +1118,14 @@
   z-index: 1;
 }
 
-.messageWrapper:hover .messageCopyBtn {
+.messageBubble:hover .messageCopyBtn {
   opacity: 1;
 }
 
 .messageCopyBtn:hover {
   background: #e5e7eb;
   color: #374151;
+  border-color: #d1d5db;
 }
 
 .messageCopyBtn:active {

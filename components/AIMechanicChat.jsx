@@ -1646,30 +1646,33 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                           </div>
                         )}
                         <div className={styles.messageWrapper}>
-                          {/* Copy button for assistant messages - top right corner */}
-                          {msg.role === 'assistant' && (
-                            <button
-                              className={`${styles.messageCopyBtn} ${copiedMessageIndex === i ? styles.messageCopyBtnCopied : ''}`}
-                              onClick={() => copyMessageContent(msg.content, i)}
-                              title={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
-                              aria-label={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
+                          {/* Message bubble with copy button wrapper */}
+                          <div className={`${styles.messageBubble} ${msg.role === 'assistant' ? styles.assistantBubble : ''}`}>
+                            <div 
+                              className={styles.messageContent}
+                              dangerouslySetInnerHTML={
+                                msg.role === 'assistant' 
+                                  ? { __html: formatResponse(msg.content) }
+                                  : undefined
+                              }
                             >
-                              {copiedMessageIndex === i ? (
-                                <Icons.check size={14} />
-                              ) : (
-                                <Icons.copy size={14} />
-                              )}
-                            </button>
-                          )}
-                          <div 
-                            className={styles.messageContent}
-                            dangerouslySetInnerHTML={
-                              msg.role === 'assistant' 
-                                ? { __html: formatResponse(msg.content) }
-                                : undefined
-                            }
-                          >
-                            {msg.role === 'user' ? msg.content : null}
+                              {msg.role === 'user' ? msg.content : null}
+                            </div>
+                            {/* Copy button for assistant messages - inside the bubble */}
+                            {msg.role === 'assistant' && (
+                              <button
+                                className={`${styles.messageCopyBtn} ${copiedMessageIndex === i ? styles.messageCopyBtnCopied : ''}`}
+                                onClick={() => copyMessageContent(msg.content, i)}
+                                title={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
+                                aria-label={copiedMessageIndex === i ? 'Copied!' : 'Copy response'}
+                              >
+                                {copiedMessageIndex === i ? (
+                                  <Icons.check size={14} />
+                                ) : (
+                                  <Icons.copy size={14} />
+                                )}
+                              </button>
+                            )}
                           </div>
                           
                           {/* Action buttons for assistant messages */}
