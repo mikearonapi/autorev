@@ -169,6 +169,65 @@ function parseDuration(duration) {
 }
 
 // ============================================================================
+// Exa Search Fallback (when YouTube API quota is exceeded)
+// ============================================================================
+
+const EXA_API_KEY = process.env.EXA_API_KEY;
+
+/**
+ * Search for YouTube videos using Exa when YouTube API quota is exceeded
+ * @param {string} query - Search query
+ * @returns {Promise<Array>} Array of video URLs and titles
+ */
+async function searchVideosWithExa(query) {
+  if (!EXA_API_KEY) {
+    logVerbose('Exa API key not configured, skipping fallback search');
+    return [];
+  }
+
+  try {
+    const response = await fetch('https://api.exa.ai/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': EXA_API_KEY
+      },
+      body: JSON.stringify({
+        query: `site:youtube.com ${query} review`,
+        numResults: 10,
+        type: 'keyword'
+      })
+    });
+
+    if (!response.ok) {
+      logVerbose(`Exa search failed: ${response.status}`);
+      return [];
+    }
+
+    const data = await response.json();
+    
+    // Extract video IDs from YouTube URLs
+    const videos = (data.results || [])
+      .filter(r => r.url && r.url.includes('youtube.com/watch'))
+      .map(r => {
+        const match = r.url.match(/[?&]v=([^&]+)/);
+        return match ? {
+          videoId: match[1],
+          title: r.title || '',
+          url: r.url
+        } : null;
+      })
+      .filter(Boolean);
+
+    log(`  Exa fallback found ${videos.length} videos`);
+    return videos;
+  } catch (err) {
+    logVerbose(`Exa search error: ${err.message}`);
+    return [];
+  }
+}
+
+// ============================================================================
 // Discovery Logic
 // ============================================================================
 
