@@ -206,6 +206,44 @@ function generateSearchQueries(car) {
 }
 
 /**
+ * Extract model designation from car name (e.g., "DB9" from "Aston Martin DB9")
+ * This identifies the alphanumeric model code that distinguishes specific models
+ */
+function extractModelDesignation(carName) {
+  // Common patterns for model designations (alphanumeric codes)
+  // e.g., DB9, RS7, M3, 911, GT3, AMG GT, etc.
+  const modelPatterns = [
+    /\b([A-Z]{1,3}\d{1,3}[A-Z]?)\b/i,           // M3, RS7, DB9, GT3, E63, C8
+    /\b(\d{3}[A-Z]?)\b/i,                         // 911, 718, 488
+    /\b(AMG\s*GT)\b/i,                            // AMG GT
+    /\b(GT-?R)\b/i,                               // GT-R, GTR
+    /\b([A-Z]-?Class)\b/i,                        // S-Class, E-Class
+    /\b(Cayman|Boxster|Cayenne|Panamera)\b/i,    // Porsche models
+    /\b(Mustang|Corvette|Camaro|Challenger)\b/i, // American muscle
+    /\b(Supra|NSX|LFA|RC-?F|LC)\b/i,             // Japanese sports
+  ];
+  
+  const name = carName.toLowerCase();
+  for (const pattern of modelPatterns) {
+    const match = carName.match(pattern);
+    if (match) {
+      return match[1].toLowerCase();
+    }
+  }
+  
+  // Fallback: try to find any alphanumeric designation after the brand
+  const words = carName.split(' ');
+  for (let i = 1; i < words.length; i++) {
+    // Look for words with numbers or short alphanumeric codes
+    if (/\d/.test(words[i]) || (words[i].length <= 4 && /^[a-z0-9]+$/i.test(words[i]))) {
+      return words[i].toLowerCase();
+    }
+  }
+  
+  return null;
+}
+
+/**
  * Filter candidate videos based on relevance criteria
  * @param {Object} video - Video object from YouTube API
  * @param {Object} car - Car object
@@ -216,27 +254,37 @@ function filterAndScoreVideo(video, car) {
   const description = video.snippet?.description?.toLowerCase() || '';
   const carName = car.name.toLowerCase();
   const carSlug = car.slug.toLowerCase().replace(/-/g, ' ');
+  const brand = car.brand?.toLowerCase() || '';
   
-  // Generate alternative name variations for better matching
-  // e.g., "Audi RS7 Sportback" -> ["audi rs7 sportback", "audi rs7", "rs7 sportback", "rs7"]
+  // Extract the model designation (e.g., "db9" from "Aston Martin DB9")
+  const modelDesignation = extractModelDesignation(car.name);
+  
+  // STRICT MATCHING: The model designation MUST appear in the title
+  // This prevents "Aston Martin Vanquish" videos matching "Aston Martin DB9"
+  if (modelDesignation) {
+    const modelInTitle = title.includes(modelDesignation);
+    const modelInDesc = description.includes(modelDesignation);
+    
+    if (!modelInTitle && !modelInDesc) {
+      logVerbose(`Skipping "${video.snippet?.title}" - model "${modelDesignation}" not found`);
+      return null;
+    }
+  }
+  
+  // Generate name variations for additional matching
   const nameVariations = [carName, carSlug];
   
-  // Add shorter variations (remove common suffixes like Sportback, Coupe, Sedan)
-  const suffixes = ['sportback', 'coupe', 'sedan', 'wagon', 'convertible', 'roadster', 'cabriolet', 'gran coupe', 'competition'];
+  // Add shorter variations (remove common suffixes)
+  const suffixes = ['sportback', 'coupe', 'sedan', 'wagon', 'convertible', 'roadster', 'cabriolet', 'gran coupe', 'competition', 'first generation', 'second generation'];
   for (const suffix of suffixes) {
     if (carName.includes(suffix)) {
       nameVariations.push(carName.replace(suffix, '').trim());
     }
   }
   
-  // Also try brand + model without generation code (e.g., "Audi RS7" from "Audi RS7 Sportback")
-  const brand = car.brand?.toLowerCase() || '';
-  const words = carName.split(' ');
-  if (words.length >= 2) {
-    // Try "brand model" combo (e.g., "audi rs7")
-    nameVariations.push(`${words[0]} ${words[1]}`);
-    // Try just the model (e.g., "rs7")
-    if (words[1]) nameVariations.push(words[1]);
+  // Brand + model combo (e.g., "aston martin db9")
+  if (modelDesignation && brand) {
+    nameVariations.push(`${brand} ${modelDesignation}`);
   }
 
   // Check if video title or description contains any name variation
@@ -244,7 +292,7 @@ function filterAndScoreVideo(video, car) {
   const descMatch = nameVariations.some(v => v && description.includes(v));
 
   if (!titleMatch && !descMatch) {
-    logVerbose(`Skipping "${video.snippet?.title}" - no car name match (tried: ${nameVariations.slice(0, 3).join(', ')}...)`);
+    logVerbose(`Skipping "${video.snippet?.title}" - no full name match (tried: ${nameVariations.slice(0, 3).join(', ')}...)`);
     return null;
   }
 
