@@ -1841,21 +1841,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 </div>
               )}
               
-              {/* Quick Reply Chips */}
-              {quickReplies.length > 0 && !isLoading && messages.length > 0 && (
-                <div className={styles.quickRepliesBar}>
-                  {quickReplies.map((reply, i) => (
-                    <button
-                      key={i}
-                      className={styles.quickReplyChip}
-                      onClick={() => sendMessage(reply.text)}
-                    >
-                      {reply.icon && <span className={styles.quickReplyIcon}>{reply.icon}</span>}
-                      <span>{reply.text}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* Quick Reply Chips - Hidden to save space; suggestions appear in messages */}
 
               {/* Cost Preview */}
               {showCostPreview && estimatedCost && (
