@@ -252,10 +252,15 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const [vinLookupLoading, setVinLookupLoading] = useState(false);
   const [vinData, setVinData] = useState(null);
   const [vinError, setVinError] = useState(null);
+  const [vinSaveStatus, setVinSaveStatus] = useState(null); // 'saving', 'saved', 'error', null
   
   // Maintenance data for owned vehicles
   const [maintenanceData, setMaintenanceData] = useState({ specs: null, issues: [], intervals: [] });
   const [loadingMaintenance, setLoadingMaintenance] = useState(false);
+  
+  // Wheel/tire fitment options
+  const [fitmentOptions, setFitmentOptions] = useState([]);
+  const [showFitmentOptions, setShowFitmentOptions] = useState(false);
 
   // Variant match display (resolve display_name from car_variants when available)
   const [variantMeta, setVariantMeta] = useState(null);
@@ -308,6 +313,36 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     
     loadMaintenanceData();
   }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug, item?.vehicle?.matchedCarVariantKey]);
+
+  // Fetch wheel/tire fitment options when panel is expanded
+  useEffect(() => {
+    const loadFitmentOptions = async () => {
+      if (type !== 'mycars') return;
+      if (panelState !== 'expanded' && panelState !== 'details') return;
+      
+      const carSlug = item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug;
+      if (!carSlug) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('wheel_tire_fitment_options')
+          .select('*')
+          .eq('car_slug', carSlug)
+          .order('fitment_type', { ascending: true });
+        
+        if (!error && data) {
+          // Sort by fitment type priority: oem first, then upgrades
+          const sortOrder = { oem: 1, oem_optional: 2, plus_one: 3, plus_two: 4, square: 5, aggressive: 6, conservative: 7 };
+          data.sort((a, b) => (sortOrder[a.fitment_type] || 99) - (sortOrder[b.fitment_type] || 99));
+          setFitmentOptions(data);
+        }
+      } catch (err) {
+        console.error('[HeroVehicleDisplay] Error loading fitment options:', err);
+      }
+    };
+    
+    loadFitmentOptions();
+  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
 
   // Resolve matched variant display_name for UI (best-effort)
   useEffect(() => {
@@ -470,6 +505,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
       // Persist VIN decode + attempt to resolve an exact car_variant match
       if (isOwnedVehicle && item?.vehicle?.id && typeof onUpdateVehicle === 'function') {
+        setVinSaveStatus('saving');
         try {
           const res = await fetch('/api/vin/resolve', {
             method: 'POST',
@@ -492,6 +528,11 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
           await onUpdateVehicle(item.vehicle.id, {
             vin: decoded.vin,
+            // Update year/make/model/trim from VIN decode for accuracy
+            year: decoded.year,
+            make: decoded.make,
+            model: decoded.model,
+            trim: decoded.trim || item.vehicle.trim, // Keep existing trim if VIN doesn't provide one
             vinDecodeData: decoded.raw,
             // Do not override a manually-selected car slug unless missing.
             matchedCarSlug: item.vehicle.matchedCarSlug || match?.carSlug,
@@ -501,8 +542,12 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
             vinMatchNotes: Array.isArray(match?.reasons) ? match.reasons.join(', ') : null,
             vinMatchedAt: new Date().toISOString(),
           });
+          setVinSaveStatus('saved');
+          // Clear saved status after 3 seconds
+          setTimeout(() => setVinSaveStatus(null), 3000);
         } catch (err) {
           console.warn('[VIN Lookup] Failed to persist VIN/variant match:', err);
+          setVinSaveStatus('error');
         }
       }
       
@@ -1013,9 +1058,79 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     disabled={vinInput.length !== 17 || vinLookupLoading}
                     className={styles.vinLookupBtnCompact}
                   >
-                    {vinLookupLoading ? 'Loading...' : 'Decode VIN'}
+                    {vinLookupLoading ? 'Decoding...' : 'Decode & Save'}
                   </button>
                 </div>
+
+                {/* VIN Decode Results */}
+                {vinData && (
+                  <div className={styles.vinDecodeResults}>
+                    <div className={styles.vinDecodeHeader}>
+                      <h4 className={styles.detailBlockTitle}>
+                        VIN Decoded
+                        {vinSaveStatus === 'saved' && (
+                          <span className={styles.vinSaveSuccess}>✓ Saved to vehicle</span>
+                        )}
+                        {vinSaveStatus === 'saving' && (
+                          <span className={styles.vinSaving}>Saving...</span>
+                        )}
+                        {vinSaveStatus === 'error' && (
+                          <span className={styles.vinSaveError}>Save failed</span>
+                        )}
+                      </h4>
+                    </div>
+                    <div className={styles.vinDecodeGrid}>
+                      <div className={styles.vinDecodeItem}>
+                        <span>Year</span>
+                        <span className={vinData.modelYear !== item?.vehicle?.year ? styles.vinDataChanged : ''}>
+                          {vinData.modelYear}
+                          {vinData.modelYear !== item?.vehicle?.year && (
+                            <span className={styles.vinDataOld}> (was {item?.vehicle?.year})</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className={styles.vinDecodeItem}>
+                        <span>Make</span>
+                        <span>{vinData.make}</span>
+                      </div>
+                      <div className={styles.vinDecodeItem}>
+                        <span>Model</span>
+                        <span>{vinData.model}</span>
+                      </div>
+                      {vinData.trim && (
+                        <div className={styles.vinDecodeItem}>
+                          <span>Trim</span>
+                          <span>{vinData.trim}</span>
+                        </div>
+                      )}
+                      {vinData.engine && (
+                        <div className={styles.vinDecodeItem}>
+                          <span>Engine</span>
+                          <span>{vinData.engine}</span>
+                        </div>
+                      )}
+                      {vinData.transmission && (
+                        <div className={styles.vinDecodeItem}>
+                          <span>Transmission</span>
+                          <span>{vinData.transmission}</span>
+                        </div>
+                      )}
+                      {vinData.drivetrain && (
+                        <div className={styles.vinDecodeItem}>
+                          <span>Drivetrain</span>
+                          <span>{vinData.drivetrain}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* VIN Error */}
+                {vinError && (
+                  <div className={styles.vinErrorMsg}>
+                    {vinError}
+                  </div>
+                )}
 
                 {/* Variant Match Info */}
                 <div className={styles.detailBlock}>
@@ -1070,16 +1185,66 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     </div>
                   </div>
 
-                  {/* Tires */}
+                  {/* Tires & Wheels */}
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>Tires & Wheels</h4>
                     <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Front Tire</span><span>{maintenanceData.specs?.tire_size_front || '295/35R19'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear Tire</span><span>{maintenanceData.specs?.tire_size_rear || '305/35R19'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Front PSI</span><span>{maintenanceData.specs?.tire_pressure_front_psi ? `${maintenanceData.specs.tire_pressure_front_psi} PSI` : '35-38 PSI'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear PSI</span><span>{maintenanceData.specs?.tire_pressure_rear_psi ? `${maintenanceData.specs.tire_pressure_rear_psi} PSI` : '38-40 PSI'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Lug Torque</span><span>{maintenanceData.specs?.wheel_lug_torque_ft_lbs ? `${maintenanceData.specs.wheel_lug_torque_ft_lbs} ft-lbs` : '150 ft-lbs'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Lug Pattern</span><span>{maintenanceData.specs?.wheel_bolt_pattern || '5x120'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Center Bore</span><span>{maintenanceData.specs?.wheel_center_bore_mm ? `${maintenanceData.specs.wheel_center_bore_mm} mm` : '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Front Wheel</span><span>{maintenanceData.specs?.wheel_size_front || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Rear Wheel</span><span>{maintenanceData.specs?.wheel_size_rear || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Front Tire</span><span>{maintenanceData.specs?.tire_size_front || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Rear Tire</span><span>{maintenanceData.specs?.tire_size_rear || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Front PSI</span><span>{maintenanceData.specs?.tire_pressure_front_psi ? `${maintenanceData.specs.tire_pressure_front_psi} PSI` : '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Rear PSI</span><span>{maintenanceData.specs?.tire_pressure_rear_psi ? `${maintenanceData.specs.tire_pressure_rear_psi} PSI` : '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Lug Torque</span><span>{maintenanceData.specs?.wheel_lug_torque_ft_lbs ? `${maintenanceData.specs.wheel_lug_torque_ft_lbs} ft-lbs` : '—'}</span></div>
                     </div>
+                    
+                    {/* Compatible Fitments Toggle */}
+                    {fitmentOptions.length > 1 && (
+                      <button 
+                        className={styles.fitmentToggle}
+                        onClick={() => setShowFitmentOptions(!showFitmentOptions)}
+                      >
+                        {showFitmentOptions ? '▾' : '▸'} Compatible Sizes ({fitmentOptions.length - 1} upgrade options)
+                      </button>
+                    )}
+                    
+                    {/* Compatible Fitments List */}
+                    {showFitmentOptions && fitmentOptions.length > 1 && (
+                      <div className={styles.fitmentOptionsList}>
+                        {fitmentOptions.filter(f => f.fitment_type !== 'oem').map((fit, idx) => (
+                          <div key={fit.id || idx} className={styles.fitmentOption}>
+                            <div className={styles.fitmentHeader}>
+                              <span className={styles.fitmentType}>
+                                {fit.fitment_type === 'oem_optional' ? 'OEM Option' :
+                                 fit.fitment_type === 'plus_one' ? '+1 Size' :
+                                 fit.fitment_type === 'plus_two' ? '+2 Size' :
+                                 fit.fitment_type === 'aggressive' ? 'Aggressive' :
+                                 fit.fitment_type === 'square' ? 'Square' :
+                                 fit.fitment_type === 'conservative' ? 'Conservative' :
+                                 fit.fitment_type}
+                              </span>
+                              {fit.verified && <span className={styles.fitmentVerified}>✓</span>}
+                            </div>
+                            <div className={styles.fitmentSpecs}>
+                              <span>Wheels: {fit.wheel_diameter_inches}×{fit.wheel_width_front}F / {fit.wheel_diameter_inches}×{fit.wheel_width_rear}R</span>
+                              <span>Tires: {fit.tire_size_front} / {fit.tire_size_rear}</span>
+                            </div>
+                            {fit.clearance_notes && (
+                              <div className={styles.fitmentNotes}>{fit.clearance_notes}</div>
+                            )}
+                            {fit.recommended_for?.length > 0 && (
+                              <div className={styles.fitmentTags}>
+                                {fit.recommended_for.map(tag => (
+                                  <span key={tag} className={styles.fitmentTag}>{tag}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Fluids */}

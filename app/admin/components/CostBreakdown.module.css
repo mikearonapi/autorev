@@ -1,0 +1,191 @@
+/* CostBreakdown Component Styles - Compact */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.totalBadge {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.totalLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-muted, #64748b);
+  margin-right: 3px;
+}
+
+.totalValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.totalPeriod {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Stacked bar */
+.barContainer {
+  margin-bottom: 10px;
+}
+
+.bar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.segment {
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 3px;
+}
+
+.segment:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.segment:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legendLabel {
+  font-size: 11px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.legendValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+/* Cost details */
+.details {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detailSection {
+  margin-bottom: 10px;
+}
+
+.detailTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0 0 6px 0;
+}
+
+.detailList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  padding: 2px 0;
+}
+
+.detailItem span:last-child {
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.rndNote {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 5px;
+  margin-top: 8px;
+}
+
+.rndLabel {
+  font-size: 11px;
+  color: var(--admin-accent-purple, #8b5cf6);
+}
+
+.rndValue {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .legend {
+    flex-direction: column;
+    gap: 6px;
+  }
+}

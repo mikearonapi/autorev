@@ -1,0 +1,173 @@
+/* PLStatement Component Styles */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-primary, #f8fafc);
+  margin: 0;
+}
+
+.period {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-muted, #64748b);
+  margin: 8px 0 6px 0;
+}
+
+/* Rows */
+.row,
+.subtotalRow,
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.row {
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.subtotalRow {
+  color: var(--admin-text-primary, #f8fafc);
+  font-weight: 500;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.totalRow {
+  color: var(--admin-text-primary, #f8fafc);
+  font-weight: 600;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  margin: 8px -8px;
+  border-radius: 6px;
+}
+
+.label {
+  flex: 1;
+}
+
+.values {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.amount {
+  min-width: 80px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.positive {
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.negative {
+  color: var(--admin-negative, #ef4444);
+}
+
+.percentage {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Net Income special styling */
+.netIncome {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.netIncome .totalRow {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  font-size: 14px;
+}
+
+/* Note */
+.note {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border-left: 3px solid var(--admin-accent-blue, #3b82f6);
+}
+
+.note p {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Breakdown section */
+.breakdown {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--admin-text-secondary, #94a3b8);
+  padding: 4px 0;
+}
+
+.breakdownTotal {
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 6px;
+  padding-top: 8px;
+}
+
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}
+

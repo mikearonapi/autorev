@@ -1,0 +1,206 @@
+/* MonthlyTrend Component Styles */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0 0 12px 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-muted, #64748b);
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.table td {
+  padding: 8px 6px;
+  color: var(--admin-text-secondary, #94a3b8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-variant-numeric: tabular-nums;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.currentRow {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.currentRow td {
+  color: var(--admin-text-primary, #f8fafc);
+  font-weight: 500;
+}
+
+.right {
+  text-align: right;
+}
+
+.period {
+  font-weight: 500;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.positive {
+  color: var(--admin-positive, #22c55e);
+}
+
+.negative {
+  color: var(--admin-negative, #ef4444);
+}
+
+/* Summary */
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.summaryValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}
+
+/* Compact variant */
+.compact {
+  padding: 12px;
+}
+
+.compact .title {
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.compactList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compactRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.compactRow.currentRow {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.compactPeriod {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.compactRow.currentRow .compactPeriod {
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.compactValues {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compactCosts {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  font-variant-numeric: tabular-nums;
+}
+
+.compactNet {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.compactFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.compactLabel {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.compactTotal {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .table {
+    font-size: 11px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+  }
+  
+  .summary {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+

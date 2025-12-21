@@ -1,0 +1,758 @@
+'use client';
+
+/**
+ * Admin Dashboard - Executive Command Center
+ * 
+ * A comprehensive growth-focused dashboard for CEO/COO/CFO.
+ * Features:
+ * - Tabbed navigation (Overview, Financials, Growth, Operations)
+ * - Time-range filtering (Today, 7D, 30D, All Time)
+ * - Hero KPIs with sparklines
+ * - User growth and funnel analytics
+ * - Full P&L statement with GL structure
+ * - Monthly financial trends
+ * - Cost entry management
+ * - Operations monitoring
+ * 
+ * Access restricted to admin users only.
+ */
+
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { isAdminEmail } from '@/lib/adminAccess';
+
+// Components
+import { TabNav } from './components/TabNav';
+import { TimeRangeToggle } from './components/TimeRangeToggle';
+import { KPICard } from './components/KPICard';
+import { GrowthChart } from './components/GrowthChart';
+import { FunnelChart } from './components/FunnelChart';
+import { CostBreakdown } from './components/CostBreakdown';
+import { BreakEvenProgress } from './components/BreakEvenProgress';
+import { SystemHealth } from './components/SystemHealth';
+import { ContentStats } from './components/ContentStats';
+import { AlertsList } from './components/AlertsList';
+import { PLStatement } from './components/PLStatement';
+import { MonthlyTrend } from './components/MonthlyTrend';
+import { CostInputForm } from './components/CostInputForm';
+import { UsageEstimate } from './components/UsageEstimate';
+import { RetentionMetrics } from './components/RetentionMetrics';
+import { SystemHealthPanel } from './components/SystemHealthPanel';
+import { ContentInventory } from './components/ContentInventory';
+import { QuickActions } from './components/QuickActions';
+import { ExportButtons } from './components/ExportButtons';
+import { ExecutiveInsights } from './components/ExecutiveInsights';
+import { UnitEconomics } from './components/UnitEconomics';
+
+// Icons
+import {
+  UsersIcon,
+  TrendingUpIcon,
+  MessageCircleIcon,
+  TargetIcon,
+  BarChartIcon,
+  DollarSignIcon,
+  SettingsIcon,
+  RefreshIcon,
+  LockIcon,
+  ArrowLeftIcon,
+  FlaskIcon,
+  CalendarIcon,
+  BugIcon,
+  CarIcon,
+  ActivityIcon,
+  PlusIcon,
+  XIcon,
+} from './components/Icons';
+
+import styles from './page.module.css';
+
+// Time range mapping
+const TIME_RANGE_MAP = {
+  'day': { label: 'Today', apiRange: 'day', days: 1 },
+  'week': { label: '7 Days', apiRange: 'week', days: 7 },
+  'month': { label: '30 Days', apiRange: 'month', days: 30 },
+  'all': { label: 'All Time', apiRange: 'all', days: 365 },
+};
+
+export default function AdminDashboardPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading, session } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  
+  // State
+  const [activeTab, setActiveTab] = useState('overview');
+  const [timeRange, setTimeRange] = useState('all'); // Default to all time to show December
+  const [data, setData] = useState(null);
+  const [financials, setFinancials] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [showCostForm, setShowCostForm] = useState(false);
+  const [usageData, setUsageData] = useState(null);
+  const [retentionData, setRetentionData] = useState(null);
+  const [healthData, setHealthData] = useState(null);
+  const [alertsData, setAlertsData] = useState(null);
+  
+  // Check admin access
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated || !user?.email) {
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(isAdminEmail(user.email));
+      }
+      setAuthChecked(true);
+    }
+  }, [isAuthenticated, user, authLoading]);
+  
+  // Fetch dashboard data
+  const fetchData = useCallback(async () => {
+    if (!session?.access_token) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    const apiRange = TIME_RANGE_MAP[timeRange]?.apiRange || 'all';
+    
+    try {
+      const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes] = await Promise.all([
+        fetch(`/api/admin/dashboard?range=${apiRange}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch(`/api/admin/financials?range=${apiRange}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch(`/api/admin/usage?range=${apiRange}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch('/api/admin/retention', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch('/api/admin/system-health', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch('/api/admin/alerts', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        })
+      ]);
+      
+      if (!dashboardRes.ok) {
+        throw new Error(`Dashboard API error: ${dashboardRes.status}`);
+      }
+      
+      const dashboardData = await dashboardRes.json();
+      setData(dashboardData);
+      
+      if (financialsRes.ok) {
+        const financialData = await financialsRes.json();
+        setFinancials(financialData);
+      }
+      
+      if (usageRes.ok) {
+        const usageResult = await usageRes.json();
+        setUsageData(usageResult);
+      }
+      
+      if (retentionRes.ok) {
+        const retentionResult = await retentionRes.json();
+        setRetentionData(retentionResult);
+      }
+      
+      if (healthRes.ok) {
+        const healthResult = await healthRes.json();
+        setHealthData(healthResult);
+      }
+      
+      if (alertsRes.ok) {
+        const alertsResult = await alertsRes.json();
+        setAlertsData(alertsResult);
+      }
+      
+      setLastUpdated(new Date());
+      
+    } catch (err) {
+      console.error('Failed to fetch admin data:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [session?.access_token, timeRange]);
+  
+  useEffect(() => {
+    if (isAdmin && session?.access_token) {
+      fetchData();
+    }
+  }, [isAdmin, session?.access_token, fetchData]);
+  
+  // Handle cost submission
+  const handleCostSubmit = async (costData) => {
+    if (!session?.access_token) throw new Error('Not authenticated');
+    
+    const response = await fetch('/api/admin/financials', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(costData),
+    });
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to add cost entry');
+    }
+    
+    await fetchData();
+  };
+  
+  // Loading state
+  if (authLoading || !authChecked) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.loadingState}>
+          <div className={styles.loadingSpinner} />
+          <p>Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Access denied
+  if (!isAdmin) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.accessDenied}>
+          <div className={styles.accessDeniedIconWrapper}>
+            <LockIcon size={48} />
+          </div>
+          <h1>Access Denied</h1>
+          <p>This dashboard is restricted to authorized administrators.</p>
+          <button onClick={() => router.push('/')} className={styles.backButton}>
+            <ArrowLeftIcon size={16} />
+            Return to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  // Calculate metrics from actual API data - no hardcoded fallbacks
+  // Use operatingExpenses from P&L structure (infrastructure + development + other)
+  const operatingExpenses = financials?.pnl?.operatingExpenses?.total || 0;
+  const monthlyBurn = operatingExpenses / 100; // Convert from cents
+  const productDevTotal = (financials?.pnl?.productDevelopment || 0) / 100;
+  const totalLoss = monthlyBurn + productDevTotal;
+  const breakEvenUsers = financials?.executive?.breakEvenUsers || data?.breakEven?.usersNeeded || 0;
+  const actualRevenue = (financials?.pnl?.revenue?.total || 0) / 100;
+  
+  // Interpretations
+  const getUserInterpretation = () => {
+    if (!data?.users) return 'Loading...';
+    const { newThisPeriod, growthPercent, total } = data.users;
+    const period = timeRange === 'day' ? 'today' : timeRange === 'week' ? 'this week' : timeRange === 'month' ? 'this month' : 'since launch';
+    if (newThisPeriod === 0) return `No new signups ${period}. Total: ${total}.`;
+    if (growthPercent > 0) return `+${growthPercent}% growth ${period}. ${newThisPeriod} new user${newThisPeriod > 1 ? 's' : ''}.`;
+    return `${newThisPeriod} new user${newThisPeriod > 1 ? 's' : ''} joined ${period}.`;
+  };
+  
+  return (
+    <div className={styles.pageContainer}>
+      {/* Dashboard Header */}
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <div className={styles.headerTitle}>
+            <div className={styles.brandMark}>
+              <ActivityIcon size={24} />
+            </div>
+            <div>
+              <h1 className={styles.title}>AutoRev Command Center</h1>
+              <p className={styles.subtitle}>Executive Dashboard</p>
+            </div>
+          </div>
+          
+          <div className={styles.headerControls}>
+            <TimeRangeToggle
+              value={timeRange}
+              onChange={setTimeRange}
+              disabled={loading}
+            />
+            
+            <button 
+              onClick={fetchData} 
+              className={styles.refreshButton}
+              disabled={loading}
+              title="Refresh data"
+            >
+              <RefreshIcon size={18} className={loading ? styles.spinning : ''} />
+            </button>
+          </div>
+        </div>
+        
+        <div className={styles.headerMeta}>
+          {lastUpdated && (
+            <span className={styles.lastUpdated}>
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+        </div>
+      </header>
+      
+      {/* Tab Navigation */}
+      <TabNav activeTab={activeTab} onChange={setActiveTab} disabled={loading} />
+      
+      {/* Error state */}
+      {error && (
+        <div className={styles.errorBanner}>
+          <span>Error: {error}</span>
+          <button onClick={fetchData}>Retry</button>
+        </div>
+      )}
+      
+      {/* Tab Content */}
+      <div className={styles.tabContent}>
+        
+        {/* OVERVIEW TAB */}
+        {activeTab === 'overview' && (
+          <>
+            {/* Hero KPIs */}
+            <section className={styles.section}>
+              <div className={styles.kpiGrid}>
+                <KPICard
+                  label="Total Users"
+                  value={data?.users?.total || 0}
+                  trend={data?.users?.growthPercent}
+                  interpretation={getUserInterpretation()}
+                  sparklineData={data?.users?.cumulativeGrowth?.map(d => d.count)}
+                  sparklineColor="#3b82f6"
+                  icon={<UsersIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="AL Conversations"
+                  value={data?.engagement?.alConversations || 0}
+                  trend={data?.engagement?.engagementChange}
+                  interpretation={`${data?.engagement?.alUsers || 0} users engaged with AL assistant.`}
+                  sparklineColor="#8b5cf6"
+                  icon={<MessageCircleIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Total Cash Outflow"
+                  value={`$${totalLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={totalLoss > 0 
+                    ? `$${monthlyBurn.toFixed(2)}/mo operating + $${productDevTotal.toFixed(2)} R&D.`
+                    : 'No cost data available for this period.'
+                  }
+                  sparklineColor="#ef4444"
+                  icon={<DollarSignIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Break-Even Progress"
+                  value={data?.breakEven?.progressPercent || 0}
+                  valueSuffix="%"
+                  interpretation={`${data?.breakEven?.currentUsers || 0} of ${breakEvenUsers} paying users needed.`}
+                  sparklineColor="#22c55e"
+                  icon={<TargetIcon size={18} />}
+                  loading={loading}
+                />
+              </div>
+            </section>
+            
+            {/* Executive Overview - Two Column Layout */}
+            <section className={styles.section}>
+              <div className={styles.executiveGrid}>
+                {/* Left: Financial Summary + Growth Chart */}
+                <div className={styles.executiveMain}>
+                  <div className={styles.summaryCard}>
+                    <h3>{financials?.period?.month 
+                      ? `${new Date(2024, financials.period.month - 1).toLocaleString('en-US', { month: 'long' })} ${financials?.period?.year || new Date().getFullYear()} Summary`
+                      : `${TIME_RANGE_MAP[timeRange]?.label || 'Period'} Summary`
+                    }</h3>
+                    <div className={styles.summaryContent}>
+                      <div className={styles.summaryRow}>
+                        <span>Revenue</span>
+                        <span className={actualRevenue > 0 ? styles.positive : styles.neutral}>
+                          ${actualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div className={styles.summaryRow}>
+                        <span>Operating Costs</span>
+                        <span className={monthlyBurn > 0 ? styles.negative : styles.neutral}>
+                          {monthlyBurn > 0 ? `-$${monthlyBurn.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '$0.00'}
+                        </span>
+                      </div>
+                      <div className={styles.summaryRow}>
+                        <span>R&D Investment</span>
+                        <span className={productDevTotal > 0 ? styles.negative : styles.neutral}>
+                          {productDevTotal > 0 ? `-$${productDevTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '$0.00'}
+                        </span>
+                      </div>
+                      <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
+                        <span>Net Position</span>
+                        <span className={(actualRevenue - totalLoss) < 0 ? styles.negative : styles.positive}>
+                          {(actualRevenue - totalLoss) < 0 
+                            ? `-$${Math.abs(actualRevenue - totalLoss).toLocaleString(undefined, { minimumFractionDigits: 2 })}` 
+                            : `$${(actualRevenue - totalLoss).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+                          }
+                        </span>
+                      </div>
+                    </div>
+                    <p className={styles.summaryNote}>
+                      {actualRevenue === 0 
+                        ? 'Pre-revenue investment phase. Building product & user base.'
+                        : `Net margin: ${((actualRevenue - totalLoss) / actualRevenue * 100).toFixed(1)}%`
+                      }
+                    </p>
+                  </div>
+                  
+                  <GrowthChart 
+                    data={data?.users?.cumulativeGrowth} 
+                    title="User Growth"
+                    height={140}
+                  />
+                </div>
+                
+                {/* Right: Executive Insights */}
+                <ExecutiveInsights 
+                  data={data}
+                  financials={financials}
+                  health={healthData}
+                  token={session?.access_token}
+                  loading={loading}
+                />
+              </div>
+            </section>
+            
+            {/* Unit Economics */}
+            <section className={styles.section}>
+              <UnitEconomics 
+                financials={financials}
+                users={data?.users}
+                loading={loading}
+              />
+            </section>
+            
+            {/* Quick Links */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Quick Access</h2>
+              <div className={styles.quickLinks}>
+                <button onClick={() => setActiveTab('financials')} className={styles.quickLink}>
+                  <DollarSignIcon size={18} />
+                  <span>View Full P&L</span>
+                </button>
+                <button onClick={() => setActiveTab('growth')} className={styles.quickLink}>
+                  <TrendingUpIcon size={18} />
+                  <span>Growth Analytics</span>
+                </button>
+                <button onClick={() => setActiveTab('operations')} className={styles.quickLink}>
+                  <SettingsIcon size={18} />
+                  <span>Operations</span>
+                </button>
+                <a href="/internal/qa" className={styles.quickLink}>
+                  <FlaskIcon size={18} />
+                  <span>QA Dashboard</span>
+                </a>
+              </div>
+            </section>
+          </>
+        )}
+        
+        {/* FINANCIALS TAB */}
+        {activeTab === 'financials' && (
+          <>
+            {/* Financial KPIs - Hero Section */}
+            <section className={styles.section}>
+              <div className={styles.financialHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <DollarSignIcon size={18} className={styles.sectionIcon} />
+                  Financial Management
+                </h2>
+                <div className={styles.financialActions}>
+                  <ExportButtons 
+                    token={session?.access_token}
+                    year={new Date().getFullYear()}
+                    month={new Date().getMonth() + 1}
+                    compact
+                  />
+                  <button 
+                    onClick={() => setShowCostForm(!showCostForm)}
+                    className={styles.addButton}
+                  >
+                    {showCostForm ? <XIcon size={14} /> : <PlusIcon size={14} />}
+                    {showCostForm ? 'Close' : 'Add Cost'}
+                  </button>
+                </div>
+              </div>
+              
+              {/* Financial KPI Tiles */}
+              <div className={styles.kpiGrid}>
+                <KPICard
+                  label="Revenue"
+                  value={`$${actualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={actualRevenue === 0 ? 'Pre-revenue phase' : 'Total collected revenue'}
+                  sparklineColor="#22c55e"
+                  icon={<TrendingUpIcon size={18} />}
+                  loading={loading}
+                  compact
+                />
+                
+                <KPICard
+                  label="Operating Costs"
+                  value={`$${monthlyBurn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation="Monthly fixed + variable"
+                  sparklineColor="#f59e0b"
+                  icon={<DollarSignIcon size={18} />}
+                  loading={loading}
+                  compact
+                />
+                
+                <KPICard
+                  label="R&D Investment"
+                  value={`$${productDevTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation="Product development"
+                  sparklineColor="#8b5cf6"
+                  icon={<FlaskIcon size={18} />}
+                  loading={loading}
+                  compact
+                />
+                
+                <KPICard
+                  label="Net Position"
+                  value={`${(actualRevenue - totalLoss) < 0 ? '-' : ''}$${Math.abs(actualRevenue - totalLoss).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={(actualRevenue - totalLoss) < 0 ? 'Investment phase' : 'Profitable'}
+                  sparklineColor={(actualRevenue - totalLoss) < 0 ? '#ef4444' : '#22c55e'}
+                  icon={<TargetIcon size={18} />}
+                  loading={loading}
+                  compact
+                />
+              </div>
+              
+              {/* Cost Entry Form (collapsible) */}
+              {showCostForm && (
+                <div className={styles.formWrapper}>
+                  <CostInputForm 
+                    onSubmit={handleCostSubmit}
+                    onCancel={() => setShowCostForm(false)}
+                    glAccounts={financials?.glAccounts || []}
+                  />
+                </div>
+              )}
+            </section>
+            
+            {/* Main Financial Layout - P&L + Sidebar */}
+            <section className={styles.section}>
+              <div className={styles.financialMainGrid}>
+                {/* Left: P&L Statement (primary focus) */}
+                <PLStatement 
+                  pnl={financials?.pnl}
+                  revenue={financials?.revenue}
+                  costs={financials?.costs}
+                  period={financials?.period}
+                  title="Income Statement (P&L)"
+                />
+                
+                {/* Right: Stacked cards */}
+                <div className={styles.financialSidebar}>
+                  <MonthlyTrend 
+                    data={financials?.monthlyTrend}
+                    title="Monthly Financials"
+                    compact
+                  />
+                  
+                  <BreakEvenProgress 
+                    breakEven={data?.breakEven}
+                    title="Break-Even"
+                    compact
+                  />
+                </div>
+              </div>
+            </section>
+            
+            {/* Cost Analysis Row */}
+            <section className={styles.section}>
+              <div className={styles.costAnalysisGrid}>
+                <CostBreakdown 
+                  costs={financials?.costs || data?.costs}
+                  title="Cost Breakdown"
+                />
+                
+                <UsageEstimate 
+                  usage={usageData}
+                  loading={loading}
+                  compact
+                />
+              </div>
+            </section>
+          </>
+        )}
+        
+        {/* GROWTH TAB */}
+        {activeTab === 'growth' && (
+          <>
+            {/* User KPIs */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <UsersIcon size={18} className={styles.sectionIcon} />
+                User Metrics
+              </h2>
+              <div className={styles.kpiGrid}>
+                <KPICard
+                  label="Total Users"
+                  value={data?.users?.total || 0}
+                  trend={data?.users?.growthPercent}
+                  interpretation={getUserInterpretation()}
+                  sparklineData={data?.users?.cumulativeGrowth?.map(d => d.count)}
+                  sparklineColor="#3b82f6"
+                  icon={<UsersIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Weekly Active Users"
+                  value={data?.engagement?.weeklyActiveUsers || 0}
+                  trend={data?.engagement?.wauPercent}
+                  trendSuffix="% of total"
+                  interpretation={`${data?.engagement?.wauPercent || 0}% of users active in 7 days.`}
+                  sparklineColor="#8b5cf6"
+                  icon={<TrendingUpIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="AL Conversations"
+                  value={data?.engagement?.alConversations || 0}
+                  trend={data?.engagement?.engagementChange}
+                  interpretation={`${data?.engagement?.conversationsPerUser || 0} avg per user.`}
+                  sparklineColor="#06b6d4"
+                  icon={<MessageCircleIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Conversion to Paid"
+                  value={financials?.executive?.conversionRate || 0}
+                  valueSuffix="%"
+                  interpretation={`${financials?.executive?.payingUsers || 0} paying users.`}
+                  sparklineColor="#22c55e"
+                  icon={<TargetIcon size={18} />}
+                  loading={loading}
+                />
+              </div>
+            </section>
+            
+            {/* Charts */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <BarChartIcon size={18} className={styles.sectionIcon} />
+                Growth Analytics
+              </h2>
+              <div className={styles.chartsGrid}>
+                <GrowthChart 
+                  data={data?.users?.cumulativeGrowth} 
+                  title="User Growth (Cumulative)"
+                  height={180}
+                />
+                
+                <FunnelChart 
+                  funnel={data?.funnel}
+                  title="Conversion Funnel"
+                />
+              </div>
+            </section>
+            
+            {/* Retention & Engagement */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <TrendingUpIcon size={18} className={styles.sectionIcon} />
+                Retention & Engagement
+              </h2>
+              <RetentionMetrics 
+                retention={retentionData}
+                loading={loading}
+              />
+            </section>
+          </>
+        )}
+        
+        {/* OPERATIONS TAB */}
+        {activeTab === 'operations' && (
+          <>
+            {/* Primary Operations Grid */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <SettingsIcon size={18} className={styles.sectionIcon} />
+                System & Operations
+              </h2>
+              <div className={styles.operationsPrimaryGrid}>
+                {/* Left Column: System Health */}
+                <SystemHealthPanel 
+                  health={healthData}
+                  loading={loading}
+                />
+                
+                {/* Right Column: Content + Actions */}
+                <div className={styles.operationsRightColumn}>
+                  <ContentInventory 
+                    content={usageData?.content || data?.content}
+                    loading={loading}
+                  />
+                  
+                  <QuickActions 
+                    token={session?.access_token}
+                    onRefresh={fetchData}
+                  />
+                </div>
+              </div>
+            </section>
+            
+            {/* Action Items & System Status */}
+            <section className={styles.section}>
+              <div className={styles.operationsSecondaryGrid}>
+                <AlertsList 
+                  alerts={alertsData?.alerts || data?.alerts || healthData?.alerts}
+                  title="Action Items"
+                />
+                
+                <SystemHealth 
+                  system={data?.system}
+                  title="Infrastructure Status"
+                />
+              </div>
+            </section>
+            
+            {/* Internal Tools */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Internal Tools</h2>
+              <div className={styles.quickLinks}>
+                <a href="/internal/qa" className={styles.quickLink}>
+                  <FlaskIcon size={18} />
+                  <span>QA Dashboard</span>
+                </a>
+                <a href="/internal/events" className={styles.quickLink}>
+                  <CalendarIcon size={18} />
+                  <span>Event Moderation</span>
+                </a>
+                <a href="/internal/errors" className={styles.quickLink}>
+                  <BugIcon size={18} />
+                  <span>Error Logs</span>
+                </a>
+                <a href="/internal/vehicles" className={styles.quickLink}>
+                  <CarIcon size={18} />
+                  <span>Vehicle Data</span>
+                </a>
+              </div>
+            </section>
+          </>
+        )}
+        
+      </div>
+    </div>
+  );
+}

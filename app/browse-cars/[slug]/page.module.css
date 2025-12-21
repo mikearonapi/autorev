@@ -146,10 +146,19 @@
 
 .heroMain {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   align-items: center;
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Side-by-side layout only on larger screens */
+@media (min-width: 1024px) {
+  .heroMain {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 2rem;
+  }
 }
 
 .specBar {
@@ -363,11 +372,21 @@
 .heroImageWrapper {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   width: 100%;
-  height: 500px;
-  min-height: 400px;
+  /* Use aspect-ratio for consistent sizing across breakpoints */
+  aspect-ratio: 16 / 10;
+  max-height: 400px;
+}
+
+/* Larger image container on desktop */
+@media (min-width: 1024px) {
+  .heroImageWrapper {
+    aspect-ratio: 4 / 3;
+    max-height: 480px;
+    align-items: flex-end;
+  }
 }
 
 /* Override CarImage component styles for seamless hero integration */
@@ -381,8 +400,15 @@
 
 .heroImageWrapper img {
   object-fit: contain !important;
-  object-position: center bottom !important;
+  object-position: center center !important;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+}
+
+/* On larger screens, position car towards bottom for visual appeal */
+@media (min-width: 1024px) {
+  .heroImageWrapper img {
+    object-position: center bottom !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -2053,32 +2079,41 @@
 /* --------------------------------------------------------------------------
    Responsive - Tablet
    -------------------------------------------------------------------------- */
-@media (max-width: 900px) {
-  .heroMain {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    gap: 1.25rem;
-    padding-bottom: 1.25rem;
-  }
-
-  .specBar {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.875rem;
-    padding: 1rem;
-  }
-
+@media (max-width: 1023px) {
+  /* Stack layout with content first, image second */
   .heroContent {
     order: 1;
   }
 
   .heroImageWrapper {
     order: 2;
-    max-width: 320px;
-    height: auto;
-    min-height: 220px;
-    max-height: 280px;
+    /* Center the image and constrain width proportionally */
+    max-width: min(100%, 500px);
     margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    max-height: 320px;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+}
+
+/* Medium tablets - between phone and large tablet */
+@media (min-width: 601px) and (max-width: 900px) {
+  .heroImageWrapper {
+    max-width: min(90%, 450px);
+    aspect-ratio: 16 / 9;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .specBar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.875rem;
+    padding: 1rem;
   }
 
   .heroTitle {
@@ -2172,19 +2207,13 @@
     margin-top: 0.75rem;
   }
 
-  /* Compact car image on mobile - remove fixed height, let content dictate */
+  /* Car image on mobile - full width with constrained height via aspect ratio */
   .heroImageWrapper {
-    max-width: 100%;
     width: 100%;
-    height: auto;
-    min-height: 180px;
-    max-height: 220px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 240px;
     margin: 0 auto;
-  }
-
-  .heroImageWrapper img {
-    max-height: 200px;
-    object-fit: contain;
   }
 
   /* Spec bar: 2 columns on mobile for better readability */

@@ -1,0 +1,133 @@
+/* GrowthChart Component Styles - Compact */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.maxValue {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.chartWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
+}
+
+.gridLine {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+
+.hoverZone {
+  flex: 1;
+  position: relative;
+  cursor: crosshair;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e293b;
+}
+
+.tooltipDate {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.tooltipValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #3b82f6;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dotActive {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.2);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+.xAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.emptyState {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}

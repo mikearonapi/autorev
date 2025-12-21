@@ -1,0 +1,338 @@
+/* UsageEstimate Component Styles */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.period {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+/* Summary */
+.summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.summaryValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+/* Services */
+.services {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.service {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.serviceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.serviceName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.serviceCost {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--admin-accent-blue, #3b82f6);
+}
+
+.serviceDetails {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.metricLabel {
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.metricValue {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.rates {
+  margin-top: 6px;
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Progress Bar */
+.progressBar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Projection */
+.projection {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.projectionTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-muted, #64748b);
+  margin: 0 0 8px 0;
+}
+
+.projectionContent {
+  padding: 10px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 6px;
+}
+
+.projectionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.projectionValue {
+  font-weight: 700;
+  color: var(--admin-accent-purple, #8b5cf6);
+}
+
+.projectionNote {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  margin: 6px 0 0 0;
+  font-style: italic;
+}
+
+/* States */
+.loading,
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}
+
+/* Actual data badge */
+.actualBadge {
+  font-size: 8px;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Content Section */
+.contentSection {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.contentItem {
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.contentValue {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.contentLabel {
+  display: block;
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+/* Compact variant */
+.compact {
+  padding: 12px;
+}
+
+.compact .header {
+  margin-bottom: 10px;
+}
+
+.compact .title {
+  font-size: 11px;
+}
+
+.compactSummary {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.compactTotal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compactLabel {
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.compactValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.compactServices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compactService {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.compactServiceName {
+  font-size: 11px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.compactServiceCost {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-accent-blue, #3b82f6);
+  font-variant-numeric: tabular-nums;
+}
+
+.compactProjection {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.compactProjectionValue {
+  font-weight: 600;
+  color: var(--admin-accent-purple, #8b5cf6);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .summary {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .serviceDetails {
+    gap: 12px;
+  }
+  
+  .contentGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+

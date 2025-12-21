@@ -326,15 +326,24 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 ---
 
-## Maintenance (3 tables)
+## Maintenance (4 tables)
 
 ### `vehicle_maintenance_specs` — Fluid/capacity specs
 | Status | **98 rows** ✅ |
 |--------|--------------|
 | **Purpose** | Oil, coolant, brake fluid, tire specs per car |
 | **Columns** | 130 columns (comprehensive!) |
-| **Key Fields** | `car_slug`, `oil_type`, `oil_viscosity`, `oil_capacity_liters`, `oil_change_interval_miles`, `coolant_type`, `brake_fluid_type`, `tire_size_front`, `tire_size_rear`, `tire_pressure_front_psi` |
+| **Key Fields** | `car_slug`, `oil_type`, `oil_viscosity`, `oil_capacity_liters`, `oil_change_interval_miles`, `coolant_type`, `brake_fluid_type`, `tire_size_front`, `tire_size_rear`, `tire_pressure_front_psi`, `wheel_bolt_pattern`, `wheel_center_bore_mm`, `wheel_size_front`, `wheel_size_rear` |
 | **Used By** | Owner's Reference, AL `get_maintenance_schedule` tool |
+
+### `wheel_tire_fitment_options` — Compatible wheel/tire sizes
+| Status | **105 rows** ✅ |
+|--------|----------------|
+| **Purpose** | Store OEM and upgrade wheel/tire combinations per car that fit without rubbing |
+| **Columns** | 40+ columns |
+| **Key Fields** | `car_slug`, `fitment_type` (oem/oem_optional/plus_one/plus_two/aggressive/square), `wheel_diameter_inches`, `wheel_width_front`, `wheel_width_rear`, `wheel_offset_front_mm`, `tire_size_front`, `tire_size_rear`, `requires_fender_roll`, `requires_camber_adjustment`, `clearance_notes`, `recommended_for` |
+| **Used By** | Owner's Reference "Tires & Wheels" section, wheel shopping |
+| **Helper Function** | `get_wheel_tire_fitments(car_slug)` returns OEM specs + all fitment options as JSONB |
 
 ### `vehicle_service_intervals` — Service schedules
 | Status | **976 rows** ✅ |

@@ -501,7 +501,13 @@
 
 /* Brand Logo */
 .brandLogo {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 767px) {
+  .brandLogo {
+    margin-bottom: 2px;
+  }
 }
 
 .brandName {
@@ -511,6 +517,13 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   opacity: 0.9;
+}
+
+@media (max-width: 767px) {
+  .brandName {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
 }
 
 @media (min-width: 768px) {
@@ -529,6 +542,22 @@
   line-height: 1.2;
 }
 
+/* Mobile: More compact vehicle name */
+@media (max-width: 767px) {
+  .heroVehicleName {
+    font-size: 17px;
+    line-height: 1.15;
+    margin: 0;
+  }
+}
+
+/* Very narrow screens */
+@media (max-width: 374px) {
+  .heroVehicleName {
+    font-size: 15px;
+  }
+}
+
 @media (min-width: 768px) {
   .heroVehicleName {
     font-size: 24px;
@@ -545,6 +574,13 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
+}
+
+@media (max-width: 767px) {
+  .heroSubInfo {
+    font-size: 11px;
+    margin-top: 2px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -714,6 +750,13 @@
   gap: 12px;
 }
 
+/* Mobile: Tighter header layout */
+@media (max-width: 767px) {
+  .specPanelHeader {
+    gap: 8px;
+  }
+}
+
 .specPanelHeaderInfo {
   flex: 1;
   min-width: 0;
@@ -725,6 +768,13 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+}
+
+/* Mobile: Smaller action buttons */
+@media (max-width: 767px) {
+  .headerActions {
+    gap: 4px;
+  }
 }
 
 /* CF-001: Touch target compliance - minimum 44px */
@@ -742,6 +792,15 @@
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Mobile: Slightly smaller but still touch-friendly */
+@media (max-width: 767px) {
+  .headerActionBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+  }
 }
 
 .headerActionBtn:hover {
@@ -774,6 +833,15 @@
   touch-action: manipulation;
 }
 
+/* Mobile: Slightly smaller but still touch-friendly */
+@media (max-width: 767px) {
+  .headerActionBtnOwn {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+  }
+}
+
 .headerActionBtnOwn:hover {
   background: rgba(46, 204, 113, 0.25);
   border-color: #4ade80;
@@ -803,6 +871,15 @@
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Mobile: Slightly smaller but still touch-friendly */
+@media (max-width: 767px) {
+  .collapseToggle {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+  }
 }
 
 .collapseToggle:hover {
@@ -984,6 +1061,112 @@
 .vinLookupBtnCompact:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* VIN Decode Results */
+.vinDecodeResults {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 0.5rem;
+}
+
+.vinDecodeHeader {
+  margin-bottom: 0.5rem;
+}
+
+.vinDecodeHeader .detailBlockTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.vinSaveSuccess {
+  font-size: 10px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.vinSaving {
+  font-size: 10px;
+  font-weight: 600;
+  color: #D4AF37;
+  background: rgba(196, 165, 100, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.vinSaveError {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.vinDecodeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 600px) {
+  .vinDecodeGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vinDecodeItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vinDecodeItem span:first-child {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vinDecodeItem span:last-child {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.vinDataChanged {
+  color: #22c55e !important;
+}
+
+.vinDataOld {
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.vinErrorMsg {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  font-size: 12px;
+  color: #f87171;
 }
 
 .vinValueSmall {
@@ -1612,6 +1795,102 @@
 
 .ratingValue {
   color: var(--sn-gold) !important;
+}
+
+/* Wheel/Tire Fitment Options */
+.fitmentToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: var(--sn-gold);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.fitmentToggle:hover {
+  opacity: 0.8;
+}
+
+.fitmentOptionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fitmentOption {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fitmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.fitmentType {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sn-gold);
+}
+
+.fitmentVerified {
+  font-size: 10px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.fitmentSpecs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.fitmentNotes {
+  margin-top: 6px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.fitmentTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.fitmentTag {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(196, 165, 100, 0.1);
+  border: 1px solid rgba(196, 165, 100, 0.2);
+  border-radius: 10px;
+  font-size: 9px;
+  color: rgba(196, 165, 100, 0.8);
+  text-transform: lowercase;
 }
 
 /* Best For Section inside highlight block */
@@ -3454,6 +3733,13 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* Mobile: Tighter name row */
+@media (max-width: 767px) {
+  .heroVehicleNameRow {
+    gap: 8px;
+  }
 }
 
 .modifiedBadge {

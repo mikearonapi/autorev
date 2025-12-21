@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -8,6 +8,7 @@ import styles from './Header.module.css';
 import AuthModal, { useAuthModal } from './AuthModal';
 import { useAIChat } from './AIMechanicChat';
 import { useAuth } from './providers/AuthProvider';
+import { isAdminEmail } from '@/lib/adminAccess';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -128,6 +129,11 @@ export default function Header() {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0];
   const initials = (displayName || 'U').charAt(0).toUpperCase();
+  
+  // Check if user is admin
+  const isAdmin = useMemo(() => {
+    return user?.email && isAdminEmail(user.email);
+  }, [user?.email]);
   
   // Handle sign out
   const handleSignOut = async () => {
@@ -317,6 +323,23 @@ export default function Header() {
                     <span className={styles.profileDropdownEmail}>{user?.email}</span>
                   </div>
                   <div className={styles.profileDropdownDivider} />
+                  {isAdmin && (
+                    <>
+                      <Link 
+                        href="/admin" 
+                        className={styles.profileDropdownItem}
+                        onClick={() => setShowProfileDropdown(false)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="3" y1="9" x2="21" y2="9"/>
+                          <line x1="9" y1="21" x2="9" y2="9"/>
+                        </svg>
+                        Admin Dashboard
+                      </Link>
+                      <div className={styles.profileDropdownDivider} />
+                    </>
+                  )}
                   <Link 
                     href="/profile" 
                     className={styles.profileDropdownItem}
@@ -425,6 +448,22 @@ export default function Header() {
             <ALMascotIcon size={32} />
             <span>Ask AL</span>
           </button>
+          
+          {/* Admin Dashboard - only visible for admins */}
+          {isAdmin && (
+            <Link 
+              href="/admin"
+              className={styles.mobileAdminLink}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+              <span>Admin Dashboard</span>
+            </Link>
+          )}
           
           {/* Profile link - always visible, leads to profile page */}
           <Link 

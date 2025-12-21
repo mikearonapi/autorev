@@ -401,6 +401,25 @@
   color: var(--sn-primary);
 }
 
+/* Admin Dashboard Link in Dropdown */
+.profileDropdownItem[href="/admin"] {
+  color: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+}
+
+.profileDropdownItem[href="/admin"] svg {
+  color: #3b82f6;
+}
+
+.profileDropdownItem[href="/admin"]:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  color: #2563eb;
+}
+
+.profileDropdownItem[href="/admin"]:hover svg {
+  color: #2563eb;
+}
+
 .profileDropdownSignOut {
   display: flex;
   align-items: center;
@@ -479,6 +498,30 @@
 .mobileSettingsLink:active {
   background: var(--color-gray-200);
   color: var(--color-gray-900);
+}
+
+/* Mobile Admin Link - Only visible for admins */
+.mobileAdminLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: var(--space-sm);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  color: #3b82f6;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.mobileAdminLink:hover,
+.mobileAdminLink:active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  border-color: rgba(59, 130, 246, 0.5);
 }
 
 /* Mobile Auth Buttons */

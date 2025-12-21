@@ -1,0 +1,298 @@
+/* SystemHealthPanel Component Styles */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusText {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-muted, #64748b);
+  margin: 0 0 10px 0;
+}
+
+/* Alerts */
+.alertsSection {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alertItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid;
+}
+
+.alertItem.critical { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+.alertItem.high { border-color: #f97316; background: rgba(249, 115, 22, 0.08); }
+.alertItem.medium { border-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
+.alertItem.low { border-color: #3b82f6; background: rgba(59, 130, 246, 0.08); }
+
+.alertIcon {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.alertContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alertMessage {
+  font-size: 11px;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.alertAction {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Error Section */
+.errorsSection {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.errorStats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.errorStatsSecondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.secondaryStat {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.secondaryValue {
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.secondaryDivider {
+  color: rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+}
+
+.errorStat, .pipelineStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.statLabel {
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.recentLabel {
+  display: block;
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.recentErrors, .recentJobs {
+  margin-top: 10px;
+}
+
+.errorRow {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.errorHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.severityBadge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.severityBadge.blocking { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.severityBadge.major { background: rgba(249, 115, 22, 0.2); color: #f97316; }
+.severityBadge.minor { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.severityBadge.unknown { background: rgba(100, 116, 139, 0.2); color: #64748b; }
+
+.errorStatus {
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.occurrences {
+  font-size: 9px;
+  color: var(--admin-accent-purple, #8b5cf6);
+  font-weight: 600;
+}
+
+.errorMessage {
+  font-size: 11px;
+  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.errorPage {
+  font-size: 9px;
+  color: var(--admin-text-muted, #64748b);
+  display: block;
+  margin-top: 4px;
+}
+
+/* Pipeline Section */
+.pipelineSection {}
+
+.pipelineStats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.subStats {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+  margin-bottom: 10px;
+}
+
+.subStatsLabel {
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.pipelineJob {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 10px;
+}
+
+.jobStatus {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.jobStatus.completed { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.jobStatus.pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.jobStatus.failed { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.jobStatus.in_progress { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+.jobType {
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.jobCar {
+  color: var(--admin-text-muted, #64748b);
+}
+
+.jobError {
+  color: #ef4444;
+  font-size: 9px;
+  margin-left: auto;
+}
+
+/* States */
+.loading,
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+}
+
