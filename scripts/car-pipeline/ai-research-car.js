@@ -912,23 +912,40 @@ async function runYouTubeDiscovery(slug) {
         if (code === 0 && videosQueued > 0) {
           log(`YouTube discovery found ${videosQueued} videos`, 'info');
           
-          // Try to run transcripts (may fail if no SUPADATA_API_KEY)
+          // Try to run transcripts (requires SUPADATA_API_KEY)
+          let transcriptsSuccess = false;
           try {
+            log('  Fetching YouTube transcripts...', 'info');
             const transcriptScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-transcripts.js');
-            const transcriptChild = spawn('node', [transcriptScript, '--limit', '10'], {
+            const transcriptChild = spawn('node', [transcriptScript, '--car-slug', slug], {
               cwd: PROJECT_ROOT,
               stdio: flags.verbose ? 'inherit' : 'pipe'
             });
             
-            await new Promise(r => transcriptChild.on('close', r));
+            await new Promise(r => transcriptChild.on('close', (exitCode) => {
+              transcriptsSuccess = exitCode === 0;
+              r();
+            }));
+            
+            // Try to run AI processing on transcripts
+            if (transcriptsSuccess) {
+              log('  Running AI processing on transcripts...', 'info');
+              const aiScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-ai-processing.js');
+              const aiChild = spawn('node', [aiScript, '--car-slug', slug], {
+                cwd: PROJECT_ROOT,
+                stdio: flags.verbose ? 'inherit' : 'pipe'
+              });
+              
+              await new Promise(r => aiChild.on('close', r));
+            }
           } catch (err) {
-            log(`Transcript fetch skipped: ${err.message}`, 'warn');
+            log(`Transcript/AI processing skipped: ${err.message}`, 'warn');
           }
           
           resolve({ 
             success: true, 
             videosLinked: videosQueued, 
-            message: `Discovered ${videosQueued} videos from whitelisted channels` 
+            message: `Discovered ${videosQueued} videos${transcriptsSuccess ? ' with transcripts processed' : ''}` 
           });
         } else {
           resolve({ 

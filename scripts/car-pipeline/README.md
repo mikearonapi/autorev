@@ -76,8 +76,13 @@ Required for AI scripts:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `ANTHROPIC_API_KEY` (for AI research)
 
+Required for full YouTube integration:
+- `SUPADATA_API_KEY` (for reliable YouTube transcript fetching)
+- `GOOGLE_AI_API_KEY` (for YouTube Data API and image generation)
+
 Optional:
 - `BLOB_READ_WRITE_TOKEN` (for image upload)
+- `EXA_API_KEY` (fallback when YouTube API quota exceeded)
 
 ## 🚀 Recommended Workflow
 
@@ -135,6 +140,41 @@ All scripts include:
 
 - `templates/car-pipeline/sample-cars-list.txt` - Example car list format
 - Use proper car names with generation info: "BMW M3 (G80)", not just "M3"
+
+## ⚠️ Post-Addition Verification
+
+After AI adds a car, **always verify these items**:
+
+### 1. YouTube Videos
+Check that linked videos are actually about your specific car model:
+
+```bash
+# Re-run validation to check video links
+node scripts/car-pipeline/validate-car.js your-car-slug
+```
+
+**Common issues:**
+- Videos about similar but different models (e.g., "Vanquish" vs "DB9")
+- Compilation videos that mention but don't review the car
+
+### 2. HP/Torque for Multi-Year Cars
+Cars with 10+ year production runs often had power updates. The AI uses research-based values but verify for accuracy.
+
+### 3. Editorial Content Format
+Ensure `defining_strengths` and `honest_weaknesses` are formatted as:
+```json
+[{"title": "Strength Title", "description": "Detailed explanation..."}]
+```
+
+See `docs/CAR_PIPELINE.md` for full verification checklist.
+
+## 🔄 YouTube Quota & Fallback
+
+The YouTube Data API has a **10,000 units/day quota**. When exceeded:
+
+1. **Exa Fallback**: Discovery automatically tries Exa search
+2. **Manual Addition**: Add videos via SQL (see `docs/CAR_PIPELINE.md`)
+3. **Retry Tomorrow**: Quota resets at midnight Pacific time
 
 ## Exit Codes
 

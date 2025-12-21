@@ -403,6 +403,78 @@ const CHECKS = [
     fixHint: 'Run YouTube discovery: node scripts/youtube-discovery.js --car-slug <slug>',
   },
   {
+    id: 'youtube_video_relevance',
+    name: 'YouTube Video Relevance',
+    category: 'content',
+    severity: 'warning',
+    async check(slug) {
+      // Get car name for comparison
+      const { data: car } = await supabase
+        .from('cars')
+        .select('name, brand')
+        .eq('slug', slug)
+        .single();
+      
+      if (!car) {
+        return { pass: false, message: 'Car not found' };
+      }
+      
+      // Get linked videos
+      const { data: links } = await supabase
+        .from('youtube_video_car_links')
+        .select('video_id')
+        .eq('car_slug', slug);
+      
+      if (!links || links.length === 0) {
+        return { pass: true, message: 'No videos to check' };
+      }
+      
+      const videoIds = links.map(l => l.video_id);
+      const { data: videos } = await supabase
+        .from('youtube_videos')
+        .select('video_id, title')
+        .in('video_id', videoIds);
+      
+      if (!videos) {
+        return { pass: false, message: 'Could not fetch video details' };
+      }
+      
+      // Extract model designation from car name (e.g., "DB9" from "Aston Martin DB9")
+      const carNameLower = car.name.toLowerCase();
+      const brandLower = (car.brand || '').toLowerCase();
+      
+      // Try to extract model code (DB9, RS7, M3, 911, etc.)
+      const modelMatch = car.name.match(/\b([A-Z]{1,3}\d{1,3}[A-Z]?|\d{3}[A-Z]?)\b/i);
+      const modelCode = modelMatch ? modelMatch[1].toLowerCase() : null;
+      
+      // Check each video title for relevance
+      const suspicious = [];
+      for (const video of videos) {
+        const titleLower = (video.title || '').toLowerCase();
+        
+        // Must contain either full car name OR (brand + model code)
+        const hasFullName = titleLower.includes(carNameLower);
+        const hasModelCode = modelCode && titleLower.includes(modelCode);
+        const hasBrand = titleLower.includes(brandLower);
+        
+        if (!hasFullName && !(hasBrand && hasModelCode)) {
+          suspicious.push(video.title?.substring(0, 50) + '...');
+        }
+      }
+      
+      if (suspicious.length > 0) {
+        return { 
+          pass: false, 
+          message: `${suspicious.length} video(s) may not be about ${car.name}: ${suspicious[0]}`,
+          data: { suspiciousCount: suspicious.length }
+        };
+      }
+      
+      return { pass: true, data: { checked: videos.length } };
+    },
+    fixHint: 'Check video titles match car model. Remove incorrect links with SQL DELETE from youtube_video_car_links',
+  },
+  {
     id: 'youtube_transcripts',
     name: 'YouTube Transcripts',
     category: 'content',

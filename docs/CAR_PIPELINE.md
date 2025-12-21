@@ -33,6 +33,89 @@ node scripts/car-pipeline/ai-batch-add-cars.js new-cars.txt
 - `GOOGLE_AI_API_KEY` - For image generation (Nano Banana Pro)
 - `BLOB_READ_WRITE_TOKEN` - For uploading to Vercel Blob
 - `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` - Database
+- `SUPADATA_API_KEY` - For reliable YouTube transcript fetching
+- `EXA_API_KEY` - (Optional) Fallback for YouTube discovery when quota exceeded
+
+---
+
+## ⚠️ Post-Addition Verification Checklist
+
+After running the AI pipeline, **always verify these items**:
+
+### 1. YouTube Videos Are Correct Model
+The YouTube discovery uses strict model matching, but verify linked videos are actually for your car:
+
+```sql
+-- Check what videos are linked
+SELECT v.title, v.channel_name, l.match_confidence
+FROM youtube_videos v
+JOIN youtube_video_car_links l ON v.video_id = l.video_id
+WHERE l.car_slug = 'your-car-slug';
+```
+
+**Common issues:**
+- "Aston Martin Vanquish" videos matching "Aston Martin DB9" (different models)
+- Compilation videos mentioning the car but not reviewing it
+- Videos about similar but different variants
+
+**To fix:** Remove incorrect links:
+```sql
+DELETE FROM youtube_video_car_links 
+WHERE car_slug = 'your-car-slug' 
+AND video_id IN ('wrong-video-id');
+```
+
+### 2. HP/Torque Accuracy for Multi-Year Cars
+Cars with long production runs often had power upgrades. Verify specs represent the typical/common configuration:
+
+| Car | Early Years | Late Years | What to Use |
+|-----|-------------|------------|-------------|
+| Aston Martin DB9 | 450hp (2004-2007) | 510hp (2012-2016) | 470hp (mid-range) |
+| BMW M3 E9x | 414hp (2008) | 420hp (2011+) | 414hp |
+| Porsche 997 | 325hp (base) | 385hp (S) | Depends on variant |
+
+### 3. Editorial Arrays Format
+Ensure `defining_strengths` and `honest_weaknesses` are objects, not strings:
+
+```sql
+-- Check format (should return objects with title/description)
+SELECT defining_strengths, honest_weaknesses FROM cars WHERE slug = 'your-car-slug';
+```
+
+**Correct format:**
+```json
+[{"title": "V12 Symphony", "description": "The engine produces one of the finest sounds..."}]
+```
+
+**Wrong format:**
+```json
+["Stunning naturally aspirated V12 soundtrack"]
+```
+
+### 4. Category Value
+The `category` column must be one of: `Front-Engine`, `Mid-Engine`, `Rear-Engine` (engine layout, not car type).
+
+---
+
+## 🔄 YouTube API Quota & Fallback
+
+YouTube Data API has a **10,000 units/day quota**. If exceeded:
+
+1. **Exa Fallback**: The discovery script automatically tries Exa search to find videos
+2. **Manual Addition**: Use Exa web search to find videos, then manually add:
+
+```sql
+-- Add video record
+INSERT INTO youtube_videos (video_id, url, title, channel_name)
+VALUES ('VIDEO_ID', 'https://youtube.com/watch?v=VIDEO_ID', 'Title', 'Channel');
+
+-- Link to car
+INSERT INTO youtube_video_car_links (video_id, car_id, car_slug, match_confidence, match_method, role)
+VALUES ('VIDEO_ID', 'CAR_UUID', 'car-slug', 0.95, 'manual', 'primary');
+```
+
+3. **Fetch Transcripts**: `node scripts/youtube-transcripts.js --car-slug your-car-slug`
+4. **AI Process**: `node scripts/youtube-ai-processing.js --car-slug your-car-slug`
 
 ---
 
