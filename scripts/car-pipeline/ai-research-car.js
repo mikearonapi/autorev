@@ -476,7 +476,7 @@ async function aiScoringAndEditorial(carData) {
   
   const prompt = `You are an expert automotive journalist scoring the ${carData.name} (${carData.years}).
 
-Provide comprehensive scores and editorial content. Include ALL fields below:
+Provide comprehensive scores and editorial content. CRITICAL: Match the EXACT JSON structure below.
 
 {
   "scores": {
@@ -489,66 +489,104 @@ Provide comprehensive scores and editorial content. Include ALL fields below:
     "score_aftermarket": 8
   },
   "editorial": {
-    "pros": [
-      "Pro 1 (e.g., Naturally aspirated engine delivers linear power)",
-      "Pro 2", "Pro 3", "Pro 4", "Pro 5"
-    ],
-    "cons": [
-      "Con 1 (e.g., Limited storage space for daily use)",
-      "Con 2", "Con 3", "Con 4"
-    ],
-    "best_for": [
-      "Type 1 (e.g., Track day enthusiast)",
-      "Type 2",
-      "Type 3"
-    ],
+    "pros": ["Specific pro 1", "Pro 2", "Pro 3", "Pro 4", "Pro 5"],
+    "cons": ["Specific con 1", "Con 2", "Con 3", "Con 4"],
+    "best_for": ["Enthusiast type 1", "Type 2", "Type 3"],
+    
     "defining_strengths": [
-      {"title": "Strength Title 1", "description": "Detailed explanation of this strength with specific features and why it matters"},
-      {"title": "Strength Title 2", "description": "Another strength with context"},
-      {"title": "Strength Title 3", "description": "Third strength with explanation"},
-      {"title": "Strength Title 4", "description": "Fourth strength if applicable"},
-      {"title": "Strength Title 5", "description": "Fifth strength if applicable"}
+      {"title": "Short Title", "description": "2-3 sentence detailed explanation of this strength"},
+      {"title": "Another Title", "description": "Detailed explanation..."}
     ],
     "honest_weaknesses": [
-      {"title": "Weakness Title 1", "description": "Honest explanation of this weakness with context on real-world impact"},
-      {"title": "Weakness Title 2", "description": "Another weakness with practical implications"},
-      {"title": "Weakness Title 3", "description": "Third weakness with context"},
-      {"title": "Weakness Title 4", "description": "Fourth weakness if applicable"}
+      {"title": "Short Title", "description": "2-3 sentence honest explanation of this weakness"},
+      {"title": "Another Title", "description": "Detailed explanation..."}
     ],
-    "direct_competitors": ["competitor-1-slug", "competitor-2-slug"],
-    "if_you_want_more": ["more-expensive-alternative-slug"],
-    "if_you_want_less": ["less-expensive-alternative-slug"],
-    "buyers_summary": "2-3 sentence buying advice. What to look for, what to avoid, key considerations.",
-    "best_years_detailed": ["Year recommendation 1 with reason", "Year recommendation 2"],
-    "must_have_options": ["Essential option 1", "Essential option 2"],
-    "nice_to_have_options": ["Optional upgrade 1", "Optional upgrade 2"],
-    "pre_inspection_checklist": ["Check item 1", "Check item 2", "Check item 3", "Check item 4", "Check item 5"],
-    "ppi_recommendations": "Specific pre-purchase inspection advice for this model.",
-    "recommended_years_note": "Brief note on which years are best and why.",
-    "ownership_cost_notes": "Expected annual maintenance costs and considerations.",
+    
+    "direct_competitors": [
+      {"name": "Competitor Name", "slug": "competitor-slug", "comparison": "How this compares to the subject car"}
+    ],
+    "if_you_want_more": [
+      {"name": "More Expensive Alt", "slug": "slug-here", "reason": "Why choose this over subject car"}
+    ],
+    "if_you_want_less": [
+      {"name": "Less Expensive Alt", "slug": "slug-here", "comparison": "Trade-offs vs subject car"}
+    ],
+    "similar_driving_experience": [
+      {"name": "Similar Car", "slug": "slug-here", "reason": "Why the driving experience is similar"}
+    ],
+    
+    "buyers_summary": "2-3 sentence buying advice summary.",
+    
+    "best_years_detailed": [
+      {"years": "2021-2023", "reason": "Why these years are recommended"}
+    ],
+    "must_have_options": [
+      {"name": "Option Name", "reason": "Why this option is essential"}
+    ],
+    "nice_to_have_options": [
+      {"name": "Option Name", "reason": "Why this is nice but not required"}
+    ],
+    "pre_inspection_checklist": ["Check item 1 - what to look for", "Check item 2", "Check item 3", "Check item 4", "Check item 5"],
+    "ppi_recommendations": "Specific pre-purchase inspection advice.",
+    
+    "recommended_years_note": "Brief note on best model years.",
+    "ownership_cost_notes": "Expected annual costs.",
+    "years_to_avoid_detailed": "Which years to avoid and why.",
+    
     "track_readiness": "excellent|good|moderate|limited",
-    "track_readiness_notes": "Explanation of track capability and limitations.",
+    "track_readiness_notes": "Track capability explanation.",
+    "recommended_track_prep": [
+      {"item": "Item Name", "cost": "$X-Y", "notes": "Why needed", "priority": "essential|recommended|optional"}
+    ],
+    "popular_track_mods": [
+      {"mod": "Mod Name", "cost": "$X-Y", "purpose": "What it does"}
+    ],
+    "laptime_benchmarks": [
+      {"track": "Track Name", "time": "X:XX.X", "source": "Who recorded it", "notes": "Conditions/tires"}
+    ],
+    
     "community_strength": "strong|moderate|growing|limited",
-    "community_notes": "Notes about enthusiast community and resources.",
-    "aftermarket_scene_notes": "Available modifications and tuning options.",
+    "community_notes": "Community description.",
+    "key_resources": [
+      {"name": "Forum Name", "url": "https://...", "type": "forum|youtube|facebook|website", "notes": "What makes it useful"}
+    ],
+    "facebook_groups": ["Group Name 1", "Group Name 2"],
+    "annual_events": [
+      {"name": "Event Name", "location": "City, State", "frequency": "Annual|Biannual|etc", "notes": "Description"}
+    ],
+    
+    "aftermarket_scene_notes": "Tuning/mod options.",
     "diy_friendliness": "high|moderate|low",
-    "diy_notes": "How accessible is DIY maintenance?",
+    "diy_notes": "DIY accessibility.",
     "parts_availability": "excellent|good|moderate|limited",
-    "parts_notes": "Parts sourcing considerations."
+    "parts_notes": "Parts sourcing info.",
+    
+    "common_issues_detailed": [
+      {"issue": "Issue Name", "severity": "high|moderate|low", "frequency": "common|occasional|rare", "cost": "$X-Y", "notes": "Details"}
+    ],
+    "notable_reviews": [
+      {"source": "Publication", "title": "Review Title", "rating": "X/5 stars", "quote": "Notable quote from review"}
+    ],
+    "must_watch_videos": [
+      {"channel": "Channel Name", "title": "Video Title", "url": "https://youtube.com/...", "duration": "MM:SS"}
+    ],
+    "expert_quotes": [
+      {"person": "Person Name", "outlet": "Publication", "quote": "Their quote about the car"}
+    ]
   }
 }
 
 SCORING GUIDE (1-10):
-- Sound: Engine note, exhaust character, emotional response
-- Interior: Materials quality, ergonomics, tech integration
-- Track: Circuit capability, cooling, brake fade resistance
-- Reliability: Long-term dependability, known issues severity
-- Value: Performance per dollar, depreciation curve
-- Driver Fun: Steering feel, throttle response, engagement
-- Aftermarket: Mod support, parts availability, tuning potential
+- Sound: Engine note, exhaust character
+- Interior: Materials, ergonomics, tech
+- Track: Circuit capability, cooling, brakes
+- Reliability: Dependability, issue severity
+- Value: Performance per dollar
+- Driver Fun: Steering, throttle, engagement
+- Aftermarket: Mod support, tuning potential
 
-Be honest, specific, and realistic. Use actual competitive landscape.
-Return ONLY the JSON object.`;
+IMPORTANT: Use real car slugs for competitors (e.g., "bmw-m3-g80", "porsche-911-carrera"). Be factual and specific.
+Return ONLY the JSON object, no markdown.`;
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',
@@ -917,35 +955,55 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
   const finalCarData = {
     ...carData,
     ...scores.scores,
-    // Editorial content
+    // Editorial content - simple string arrays
     pros: editorial.pros || [],
     cons: editorial.cons || [],
     best_for: editorial.best_for || [],
+    pre_inspection_checklist: editorial.pre_inspection_checklist || [],
+    facebook_groups: editorial.facebook_groups || [],
+    
+    // Editorial content - object arrays
     defining_strengths: editorial.defining_strengths || [],
     honest_weaknesses: editorial.honest_weaknesses || [],
     direct_competitors: editorial.direct_competitors || [],
     if_you_want_more: editorial.if_you_want_more || [],
     if_you_want_less: editorial.if_you_want_less || [],
-    // Buying guide content
-    buyers_summary: editorial.buyers_summary || null,
+    similar_driving_experience: editorial.similar_driving_experience || [],
     best_years_detailed: editorial.best_years_detailed || [],
     must_have_options: editorial.must_have_options || [],
     nice_to_have_options: editorial.nice_to_have_options || [],
-    pre_inspection_checklist: editorial.pre_inspection_checklist || [],
-    ppi_recommendations: editorial.ppi_recommendations || null,
-    recommended_years_note: editorial.recommended_years_note || null,
-    ownership_cost_notes: editorial.ownership_cost_notes || null,
-    // Track & community info
+    key_resources: editorial.key_resources || [],
+    annual_events: editorial.annual_events || [],
+    common_issues_detailed: editorial.common_issues_detailed || [],
+    notable_reviews: editorial.notable_reviews || [],
+    must_watch_videos: editorial.must_watch_videos || [],
+    expert_quotes: editorial.expert_quotes || [],
+    
+    // Track content
     track_readiness: editorial.track_readiness || null,
     track_readiness_notes: editorial.track_readiness_notes || null,
+    recommended_track_prep: editorial.recommended_track_prep || [],
+    popular_track_mods: editorial.popular_track_mods || [],
+    laptime_benchmarks: editorial.laptime_benchmarks || [],
+    
+    // Buying guide content
+    buyers_summary: editorial.buyers_summary || null,
+    ppi_recommendations: editorial.ppi_recommendations || null,
+    recommended_years_note: editorial.recommended_years_note || null,
+    years_to_avoid_detailed: editorial.years_to_avoid_detailed || null,
+    ownership_cost_notes: editorial.ownership_cost_notes || null,
+    
+    // Community info
     community_strength: editorial.community_strength || null,
     community_notes: editorial.community_notes || null,
     aftermarket_scene_notes: editorial.aftermarket_scene_notes || null,
+    
     // DIY & parts info
     diy_friendliness: editorial.diy_friendliness || null,
     diy_notes: editorial.diy_notes || null,
     parts_availability: editorial.parts_availability || null,
     parts_notes: editorial.parts_notes || null,
+    
     // Image
     image_hero_url: images.heroUrl,
   };
