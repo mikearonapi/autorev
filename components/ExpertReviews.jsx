@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './ExpertReviews.module.css';
 import { getUpgradeSuggestions, formatTag } from '@/lib/expertFeedback';
+import { useCarExpertReviews } from '@/hooks/useCarData';
 
 // Category labels for sentiment display
 const CATEGORY_LABELS = {
@@ -21,17 +22,25 @@ const CATEGORY_LABELS = {
  * 
  * Displays AI-processed expert reviews from YouTube for a specific car.
  * Shows embedded videos, summaries, key quotes, and consensus indicators.
+ * Uses React Query for data caching and deduplication.
  * 
  * @param {Object} props
  * @param {string} props.carSlug - The car's slug for fetching reviews
  * @param {Object} props.car - The car object (for consensus data if available)
  */
 export default function ExpertReviews({ carSlug, car }) {
-  const [videos, setVideos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [expandedVideo, setExpandedVideo] = useState(null);
   const [showAllVideos, setShowAllVideos] = useState(false);
+
+  // Use React Query for expert reviews with caching
+  const { 
+    data: reviewsData, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useCarExpertReviews(carSlug, { limit: 10 });
+  
+  const videos = reviewsData?.videos || [];
 
   // Extract consensus data from car if available
   const consensus = car?.externalConsensus || car?.external_consensus;
@@ -82,38 +91,6 @@ export default function ExpertReviews({ carSlug, car }) {
     return getUpgradeSuggestions(weaknessTags).slice(0, 4);
   }, [consensus]);
 
-  useEffect(() => {
-    async function fetchExpertReviews() {
-      try {
-        setIsLoading(true);
-        
-        // Fetch from API endpoint (to be created)
-        const response = await fetch(`/api/cars/${carSlug}/expert-reviews`);
-        
-        if (!response.ok) {
-          // If API doesn't exist yet or returns error, fail gracefully
-          if (response.status === 404) {
-            setVideos([]);
-            return;
-          }
-          throw new Error('Failed to fetch expert reviews');
-        }
-
-        const data = await response.json();
-        setVideos(data.videos || []);
-      } catch (err) {
-        console.error('[ExpertReviews] Error:', err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (carSlug) {
-      fetchExpertReviews();
-    }
-  }, [carSlug]);
-
   // Don't render if no reviews and no consensus data (and no error)
   if (!isLoading && !error && videos.length === 0 && !consensus && reviewCount === 0) {
     return null;
@@ -146,18 +123,7 @@ export default function ExpertReviews({ carSlug, car }) {
           <span>Unable to load expert reviews</span>
           <button 
             className={styles.retryButton}
-            onClick={() => {
-              setError(null);
-              setIsLoading(true);
-              fetch(`/api/cars/${carSlug}/expert-reviews`)
-                .then(res => {
-                  if (!res.ok) throw new Error('Failed to fetch');
-                  return res.json();
-                })
-                .then(data => setVideos(data.videos || []))
-                .catch(err => setError(err.message))
-                .finally(() => setIsLoading(false));
-            }}
+            onClick={() => refetch()}
           >
             Try Again
           </button>

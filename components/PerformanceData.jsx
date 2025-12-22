@@ -5,12 +5,14 @@
  * 
  * Displays dyno runs and lap times data from the database.
  * Tuner tier feature - shows real performance data from actual cars.
+ * Uses React Query for caching and automatic deduplication.
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import PremiumGate, { TeaserPrompt, usePremiumAccess } from './PremiumGate';
 import { TEASER_LIMITS } from '@/lib/tierAccess';
+import { useCarDynoRuns, useCarLapTimes } from '@/hooks/useCarData';
 import styles from './PerformanceData.module.css';
 
 // Icons
@@ -61,41 +63,20 @@ const Icons = {
 /**
  * Dyno Data Section
  * Shows real HP/torque measurements from dynamometer runs
+ * Uses React Query for caching
  */
 export function DynoDataSection({ carSlug, carName, limit = null }) {
-  const [dynoRuns, setDynoRuns] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
   const { hasAccess, showUpgradePrompt } = usePremiumAccess('dynoDatabase');
   
-  useEffect(() => {
-    let isCancelled = false;
-    
-    const fetchDynoData = async () => {
-      if (!carSlug) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Use the RPC function we created
-        const response = await fetch(`/api/cars/${carSlug}/dyno`);
-        if (!response.ok) throw new Error('Failed to fetch dyno data');
-        
-        const data = await response.json();
-        if (!isCancelled) setDynoRuns(data.runs || []);
-      } catch (err) {
-        console.error('[DynoDataSection] Error:', err);
-        if (!isCancelled) setError(err.message);
-      } finally {
-        if (!isCancelled) setLoading(false);
-      }
-    };
-    
-    fetchDynoData();
-    return () => { isCancelled = true; };
-  }, [carSlug]);
+  // Use React Query for dyno data
+  const { 
+    data: dynoData, 
+    isLoading: loading, 
+    error, 
+    refetch 
+  } = useCarDynoRuns(carSlug, { limit: 20 });
+  
+  const dynoRuns = dynoData?.runs || [];
   
   // Determine how many to show
   const displayLimit = hasAccess ? (limit || dynoRuns.length) : TEASER_LIMITS.dynoRuns;
@@ -116,20 +97,6 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
       </div>
     );
   }
-  
-  // Refetch function for retry
-  const refetchDyno = () => {
-    setError(null);
-    setLoading(true);
-    fetch(`/api/cars/${carSlug}/dyno`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch dyno data');
-        return res.json();
-      })
-      .then(data => setDynoRuns(data.runs || []))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  };
 
   if (error) {
     return (
@@ -141,7 +108,7 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
         <div className={styles.errorState}>
           <Icons.info size={20} />
           <span>Unable to load dyno data</span>
-          <button className={styles.retryButton} onClick={refetchDyno}>
+          <button className={styles.retryButton} onClick={() => refetch()}>
             Try Again
           </button>
         </div>
@@ -244,40 +211,20 @@ export function DynoDataSection({ carSlug, carName, limit = null }) {
 /**
  * Lap Times Section  
  * Shows track benchmark times from various venues
+ * Uses React Query for caching
  */
 export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = false }) {
-  const [lapTimes, setLapTimes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
   const { hasAccess, showUpgradePrompt } = usePremiumAccess('fullLapTimes');
   
-  useEffect(() => {
-    let isCancelled = false;
-    
-    const fetchLapTimes = async () => {
-      if (!carSlug) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`/api/cars/${carSlug}/lap-times`);
-        if (!response.ok) throw new Error('Failed to fetch lap times');
-        
-        const data = await response.json();
-        if (!isCancelled) setLapTimes(data.lapTimes || []);
-      } catch (err) {
-        console.error('[LapTimesSection] Error:', err);
-        if (!isCancelled) setError(err.message);
-      } finally {
-        if (!isCancelled) setLoading(false);
-      }
-    };
-    
-    fetchLapTimes();
-    return () => { isCancelled = true; };
-  }, [carSlug]);
+  // Use React Query for lap times
+  const { 
+    data: lapTimesData, 
+    isLoading: loading, 
+    error, 
+    refetch 
+  } = useCarLapTimes(carSlug, { limit: 20 });
+  
+  const lapTimes = lapTimesData?.lapTimes || [];
   
   // Determine display limit based on context and access
   const effectiveLimit = isTeaser 
@@ -300,20 +247,6 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
       </div>
     );
   }
-  
-  // Refetch function for retry
-  const refetchLapTimes = () => {
-    setError(null);
-    setLoading(true);
-    fetch(`/api/cars/${carSlug}/lap-times`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch lap times');
-        return res.json();
-      })
-      .then(data => setLapTimes(data.lapTimes || []))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  };
 
   if (error) {
     return (
@@ -325,7 +258,7 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
         <div className={styles.errorState}>
           <Icons.info size={20} />
           <span>Unable to load lap times</span>
-          <button className={styles.retryButton} onClick={refetchLapTimes}>
+          <button className={styles.retryButton} onClick={() => refetch()}>
             Try Again
           </button>
         </div>

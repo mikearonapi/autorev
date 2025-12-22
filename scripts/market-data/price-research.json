@@ -1,0 +1,157 @@
+{
+  "metadata": {
+    "created": "2024-12-22",
+    "sources": ["cars.com", "classic.com"],
+    "notes": "Nationwide market research using browser automation and Classic.com CMB data"
+  },
+  "cars": [
+    {
+      "name": "981 Cayman GTS",
+      "slug": "981-cayman-gts",
+      "years": "2015-2016",
+      "db_price_avg": 62500,
+      "db_price_range": "$55-70K",
+      "market_research": {
+        "source": "classic.com + cars.com",
+        "date": "2024-12-22",
+        "classic_com_cmb": 62203,
+        "cars_com_listings": 11,
+        "cars_com_range": [64988, 73995],
+        "notes": "Classic.com CMB confirms $62,203. DB is accurate."
+      },
+      "status": "ACCURATE",
+      "action_needed": false
+    },
+    {
+      "name": "McLaren 720S",
+      "slug": "mclaren-720s",
+      "years": "2017-2022",
+      "db_price_avg": 300000,
+      "db_price_range": "$280,000 - $320,000",
+      "market_research": {
+        "source": "cars.com",
+        "date": "2024-12-22",
+        "cars_com_listings": 120,
+        "cars_com_low": 280887,
+        "notes": "Low end matches DB perfectly at $280K"
+      },
+      "status": "ACCURATE",
+      "action_needed": false
+    },
+    {
+      "name": "Porsche 911 GT3 992",
+      "slug": "porsche-911-gt3-992",
+      "years": "2021-2024",
+      "db_price_avg_old": 180000,
+      "db_price_avg_new": 285000,
+      "db_price_range_new": "$270,000 - $310,000",
+      "market_research": {
+        "source": "cars.com",
+        "date": "2024-12-22",
+        "cars_com_listings": 343,
+        "cars_com_range": [277899, 287999],
+        "notes": "UPDATED - was $100K too low"
+      },
+      "status": "UPDATED",
+      "action_needed": false
+    },
+    {
+      "name": "BMW M3 F80",
+      "slug": "bmw-m3-f80",
+      "years": "2015-2018",
+      "db_price_avg": 52000,
+      "db_price_range": "$42-65K",
+      "market_research": {
+        "source": "cars.com",
+        "date": "2024-12-22",
+        "cars_com_listings": 162,
+        "cars_com_range": [40490, 57943],
+        "notes": "Prices fit within DB range"
+      },
+      "status": "ACCURATE",
+      "action_needed": false
+    },
+    {
+      "name": "C8 Corvette Stingray",
+      "slug": "c8-corvette-stingray",
+      "years": "2020-2024",
+      "db_price_avg": 65000,
+      "db_price_range": "$55-75K",
+      "market_research": {
+        "source": "cars.com",
+        "date": "2024-12-22",
+        "cars_com_listings": 2600,
+        "cars_com_range": [62900, 72994],
+        "notes": "Huge inventory, prices match DB perfectly"
+      },
+      "status": "ACCURATE",
+      "action_needed": false
+    },
+    {
+      "name": "Ferrari 458 Italia",
+      "slug": "ferrari-458-italia",
+      "years": "2009-2015",
+      "db_price_avg": 250000,
+      "db_price_range": "$230,000 - $270,000",
+      "market_research": {
+        "source": "classic.com",
+        "date": "2024-12-22",
+        "classic_com_cmb": 184359,
+        "notes": "DB is $66K too high. CMB shows $184K for Italia Coupe."
+      },
+      "status": "NEEDS_UPDATE",
+      "action_needed": true,
+      "recommended_update": {
+        "price_avg": 190000,
+        "price_range": "$170,000 - $220,000"
+      }
+    },
+    {
+      "name": "Porsche 911 GT3 997",
+      "slug": "porsche-911-gt3-997",
+      "years": "2007-2011",
+      "db_price_avg": 105000,
+      "db_price_range": "$85-130K",
+      "market_research": {
+        "source": "classic.com",
+        "date": "2024-12-22",
+        "classic_com_cmb_997_1": 128256,
+        "classic_com_cmb_997_2": 157005,
+        "notes": "DB is too low. 997.1 = $128K, 997.2 = $157K"
+      },
+      "status": "NEEDS_UPDATE",
+      "action_needed": true,
+      "recommended_update": {
+        "price_avg": 140000,
+        "price_range": "$115,000 - $170,000"
+      }
+    },
+    {
+      "name": "Lamborghini Gallardo LP570-4 Superleggera",
+      "slug": "lamborghini-gallardo",
+      "years": "2004-2014",
+      "db_price_avg": 92500,
+      "db_price_range": "$85-100K",
+      "market_research": {
+        "source": "classic.com",
+        "date": "2024-12-22",
+        "classic_com_cmb_superleggera": 149881,
+        "notes": "DB covers base Gallardo. Superleggera variants are $150K+. Consider splitting variants."
+      },
+      "status": "REVIEW_NEEDED",
+      "action_needed": true,
+      "notes": "Gallardo variants span $85K (base) to $150K+ (Superleggera). May need separate entries."
+    }
+  ],
+  "summary": {
+    "total_researched": 8,
+    "accurate": 4,
+    "already_updated": 1,
+    "needs_update": 3,
+    "cars_needing_update": [
+      "ferrari-458-italia",
+      "porsche-911-gt3-997",
+      "lamborghini-gallardo"
+    ]
+  }
+}

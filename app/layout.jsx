@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import MobileBottomCta from '@/components/MobileBottomCta';
 import ScrollToTop from '@/components/ScrollToTop';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { QueryProvider } from '@/components/providers/QueryProvider';
 import { AppConfigProvider } from '@/lib/hooks/useAppConfig';
 import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
 import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
@@ -210,6 +211,7 @@ export default function RootLayout({ children }) {
           <FetchInterceptor>
             <ConsoleErrorInterceptor>
             <ErrorBoundary name="RootLayout" featureContext="app">
+              <QueryProvider>
               <AuthProvider>
             <AppConfigProvider>
             <FeedbackProvider>
@@ -249,6 +251,7 @@ export default function RootLayout({ children }) {
             </FeedbackProvider>
             </AppConfigProvider>
             </AuthProvider>
+            </QueryProvider>
             </ErrorBoundary>
             </ConsoleErrorInterceptor>
           </FetchInterceptor>

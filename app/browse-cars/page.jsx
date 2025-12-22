@@ -15,6 +15,8 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CarActionMenu from '@/components/CarActionMenu';
 import { useFeedback } from '@/components/FeedbackWidget';
+import { useCarsList } from '@/hooks/useCarData';
+import { usePrefetchCar } from '@/components/PrefetchCarLink';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';
@@ -113,24 +115,12 @@ function CarCatalogContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   
-  // Fetch cars from database
-  const [cars, setCars] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Fetch cars using React Query (cached, deduplicated)
+  const { data: carsData, isLoading } = useCarsList();
+  const cars = useMemo(() => carsData?.cars || [], [carsData]);
   
-  useEffect(() => {
-    async function fetchCars() {
-      try {
-        const res = await fetch('/api/cars');
-        const data = await res.json();
-        setCars(data.cars || []);
-      } catch (err) {
-        console.error('[CarCatalog] Failed to fetch cars:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchCars();
-  }, []);
+  // Prefetch function for hover
+  const prefetchCar = usePrefetchCar();
   
   // Get filter options
   const makes = useMemo(() => getUniqueMakes(cars), [cars]);
@@ -396,7 +386,11 @@ function CarCatalogContent() {
         {!isLoading && (
         <div className={styles.carGrid}>
           {filteredCars.map(car => (
-              <div key={car.id || car.slug} className={styles.carCardWrapper}>
+              <div 
+                key={car.id || car.slug} 
+                className={styles.carCardWrapper}
+                onMouseEnter={() => prefetchCar(car.slug)}
+              >
                 {/* Actions positioned outside the card link to prevent clipping */}
                 <div 
                   className={styles.cardActions}
@@ -407,6 +401,7 @@ function CarCatalogContent() {
                 <Link 
                   href={`/browse-cars/${car.slug}`}
                   className={styles.carCard}
+                  prefetch={true}
                 >
                   <div className={styles.cardImage}>
                     <CarImage 

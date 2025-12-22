@@ -2682,3 +2682,156 @@
     gap: 0.3rem;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Skeleton Loading States
+   -------------------------------------------------------------------------- */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonBase {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 0%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeletonBadge {
+  composes: skeletonBase;
+  width: 80px;
+  height: 24px;
+  border-radius: 12px;
+}
+
+.skeletonTitle {
+  composes: skeletonBase;
+  width: 300px;
+  max-width: 80%;
+  height: 40px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonYears {
+  composes: skeletonBase;
+  width: 120px;
+  height: 20px;
+  margin-bottom: 1rem;
+}
+
+.skeletonEssence {
+  composes: skeletonBase;
+  width: 100%;
+  max-width: 400px;
+  height: 48px;
+  margin-bottom: 1rem;
+}
+
+.skeletonHighlight {
+  composes: skeletonBase;
+  width: 250px;
+  height: 24px;
+}
+
+.skeletonImage {
+  composes: skeletonBase;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border-radius: 12px;
+}
+
+.skeletonIcon {
+  composes: skeletonBase;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.skeletonSpecLabel {
+  composes: skeletonBase;
+  width: 50px;
+  height: 12px;
+  margin-bottom: 4px;
+}
+
+.skeletonSpecValue {
+  composes: skeletonBase;
+  width: 80px;
+  height: 16px;
+}
+
+.skeletonQuickTitle {
+  composes: skeletonBase;
+  width: 120px;
+  height: 28px;
+}
+
+.skeletonQuickScore {
+  composes: skeletonBase;
+  width: 60px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.skeletonSummary {
+  composes: skeletonBase;
+  width: 100%;
+  height: 60px;
+  margin-bottom: 1.5rem;
+}
+
+.skeletonCardTitle {
+  composes: skeletonBase;
+  width: 80px;
+  height: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonCardContent {
+  composes: skeletonBase;
+  width: 100%;
+  height: 40px;
+}
+
+.skeletonTab {
+  composes: skeletonBase;
+  width: 100px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.skeletonSectionHeader {
+  composes: skeletonBase;
+  width: 200px;
+  height: 28px;
+  margin-bottom: 1.5rem;
+}
+
+.skeletonParagraph {
+  composes: skeletonBase;
+  width: 100%;
+  height: 16px;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .skeletonTitle {
+    width: 200px;
+    height: 32px;
+  }
+  
+  .skeletonEssence {
+    max-width: 100%;
+  }
+}

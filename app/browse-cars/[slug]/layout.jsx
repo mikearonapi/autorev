@@ -11,7 +11,7 @@
  * Now fetches from database via carsClient.
  */
 
-import { fetchCarBySlug, fetchCars } from '@/lib/carsClient';
+import { getCachedCarBySlug, getCachedCars, getCachedCarSlugs } from '@/lib/carsCache';
 import SchemaOrg from '@/components/SchemaOrg';
 import { 
   generateCarMetadata, 
@@ -21,18 +21,18 @@ import {
 } from '@/lib/seoUtils';
 
 /**
- * Fetch car by slug from database via carsClient.
+ * Fetch car by slug from database with caching.
  */
 async function getCarBySlug(slug) {
-  return await fetchCarBySlug(slug);
+  return await getCachedCarBySlug(slug);
 }
 
 /**
- * Fetch all car slugs for static generation via carsClient.
+ * Fetch all car slugs for static generation with caching.
  */
 async function getAllCarSlugs() {
-  const cars = await fetchCars();
-  return cars.map(c => ({ slug: c.slug }));
+  const slugs = await getCachedCarSlugs();
+  return slugs.map(slug => ({ slug }));
 }
 
 /**

@@ -1,0 +1,26 @@
+# Batch Dec 22, 2025 - Remaining 12 cars from CSV
+# Previous 3 completed: Ferrari 488 GTB, F8 Tributo, 812 Superfast
+
+# Ferrari lineup (remaining)
+Ferrari Roma (2020-2024)
+Ferrari SF90 Stradale (2019-2024)
+
+# McLaren lineup
+McLaren 570S (2015-2021)
+McLaren 765LT (2020-2022)
+McLaren MP4-12C (2011-2014)
+
+# Lamborghini lineup
+Lamborghini Huracán STO (2021-2024)
+Lamborghini Aventador LP 700-4 (2011-2016)
+
+# Porsche lineup
+Porsche 911 GT3 992 (2021-2024)
+Porsche 911 Turbo S 992 (2020-2024)
+Porsche Carrera GT (2004-2007)
+
+# Mercedes-AMG
+Mercedes-AMG GT Black Series (2020-2022)
+
+# Nissan JDM
+Nissan Skyline GT-R R34 (1999-2002)

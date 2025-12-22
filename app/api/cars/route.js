@@ -8,8 +8,9 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
-// Cache for 60 seconds, revalidate in background
-export const revalidate = 60;
+// Cache for 30 seconds, revalidate in background
+// Shorter cache to pick up new cars faster
+export const revalidate = 30;
 
 export async function GET() {
   if (!isSupabaseConfigured || !supabase) {

@@ -7,10 +7,15 @@
  * - Fuel Economy (EPA data) - FREE
  * - Safety Ratings (NHTSA/IIHS) - FREE
  * - Price by Year (Best value years) - FREE
+ * 
+ * Uses React Query for caching and automatic deduplication.
+ * 
+ * @module components/CarDetailSections
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './CarDetailSections.module.css';
+import { useCarEfficiency, useCarSafety, useCarPriceByYear } from '@/hooks/useCarData';
 
 // Icons
 const Icons = {
@@ -112,36 +117,17 @@ function DataLoadError({ message, onRetry }) {
 
 /**
  * Fuel Economy Section
+ * Uses React Query for caching
  */
 export function FuelEconomySection({ carSlug }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { 
+    data, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useCarEfficiency(carSlug);
   
-  const fetchData = async () => {
-    if (!carSlug) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/cars/${carSlug}/efficiency`);
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const json = await res.json();
-      setData(json.efficiency);
-    } catch (err) {
-      console.error('[FuelEconomySection] Error:', err);
-      setError('Unable to load fuel economy data');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData();
-  }, [carSlug]);
-  
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -163,7 +149,7 @@ export function FuelEconomySection({ carSlug }) {
           <Icons.fuel size={22} />
           <h2>Fuel Economy</h2>
         </div>
-        <DataLoadError message={error} onRetry={fetchData} />
+        <DataLoadError message="Unable to load fuel economy data" onRetry={refetch} />
       </div>
     );
   }
@@ -247,36 +233,17 @@ export function FuelEconomySection({ carSlug }) {
 
 /**
  * Safety Ratings Section
+ * Uses React Query for caching
  */
 export function SafetyRatingsSection({ carSlug }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { 
+    data, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useCarSafety(carSlug);
   
-  const fetchData = async () => {
-    if (!carSlug) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/cars/${carSlug}/safety-ratings`);
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const json = await res.json();
-      setData(json.safety);
-    } catch (err) {
-      console.error('[SafetyRatingsSection] Error:', err);
-      setError('Unable to load safety data');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData();
-  }, [carSlug]);
-  
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -298,7 +265,7 @@ export function SafetyRatingsSection({ carSlug }) {
           <Icons.shield size={22} />
           <h2>Safety Ratings</h2>
         </div>
-        <DataLoadError message={error} onRetry={fetchData} />
+        <DataLoadError message="Unable to load safety data" onRetry={refetch} />
       </div>
     );
   }
@@ -418,36 +385,17 @@ export function SafetyRatingsSection({ carSlug }) {
 
 /**
  * Price by Year Section (Best Value Years)
+ * Uses React Query for caching
  */
 export function PriceByYearSection({ carSlug, carName }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { 
+    data, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useCarPriceByYear(carSlug);
   
-  const fetchData = async () => {
-    if (!carSlug) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/cars/${carSlug}/price-by-year`);
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const json = await res.json();
-      setData(json);
-    } catch (err) {
-      console.error('[PriceByYearSection] Error:', err);
-      setError('Unable to load pricing data');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData();
-  }, [carSlug]);
-  
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -469,7 +417,7 @@ export function PriceByYearSection({ carSlug, carName }) {
           <Icons.dollar size={22} />
           <h2>Price by Model Year</h2>
         </div>
-        <DataLoadError message={error} onRetry={fetchData} />
+        <DataLoadError message="Unable to load pricing data" onRetry={refetch} />
       </div>
     );
   }
@@ -533,8 +481,3 @@ export default {
   SafetyRatingsSection,
   PriceByYearSection,
 };
-
-
-
-
-

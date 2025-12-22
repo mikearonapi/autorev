@@ -532,7 +532,9 @@ Provide comprehensive scores and editorial content. CRITICAL: Match the EXACT JS
     
     "recommended_years_note": "Brief note on best model years.",
     "ownership_cost_notes": "Expected annual costs.",
-    "years_to_avoid_detailed": "Which years to avoid and why.",
+    "years_to_avoid_detailed": [
+      {"years": "YYYY or YYYY-YYYY", "reason": "Why these specific years should be avoided"}
+    ],
     
     "track_readiness": "excellent|good|moderate|limited",
     "track_readiness_notes": "Track capability explanation.",
@@ -1240,7 +1242,7 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     buyers_summary: editorial.buyers_summary || null,
     ppi_recommendations: editorial.ppi_recommendations || null,
     recommended_years_note: editorial.recommended_years_note || null,
-    years_to_avoid_detailed: editorial.years_to_avoid_detailed || null,
+    years_to_avoid_detailed: editorial.years_to_avoid_detailed || [],
     ownership_cost_notes: editorial.ownership_cost_notes || null,
     
     // Community info
