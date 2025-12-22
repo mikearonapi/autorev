@@ -4,13 +4,12 @@
  * PillarsSection Component
  * 
  * Displays the main feature pillars on the homepage.
- * Car count is fetched from database via usePlatformStats hook.
+ * Car count is passed from page.jsx to ensure consistency with headline.
  */
 
 import { useState, useMemo } from 'react';
 import Button from '@/components/Button';
 import OnboardingPopup, { garageOnboardingSteps, tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
-import { usePlatformStats } from '@/hooks/usePlatformStats';
 import styles from '@/app/page.module.css';
 
 // Icons
@@ -57,14 +56,8 @@ const BookIcon = () => (
   </svg>
 );
 
-export default function PillarsSection() {
+export default function PillarsSection({ carCount = 100 }) {
   const [activeOnboarding, setActiveOnboarding] = useState(null);
-  
-  // Platform stats from database (with fallback)
-  const { stats } = usePlatformStats();
-  
-  // Get dynamic car count from database
-  const carCount = stats?.cars || 100;
 
   const pillars = useMemo(() => [
     {

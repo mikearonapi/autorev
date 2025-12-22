@@ -61,7 +61,7 @@ export default async function Home() {
       <HeroSection />
 
       {/* Pillars Section */}
-      <PillarsSection />
+      <PillarsSection carCount={carCount} />
 
       {/* Car Showcase Carousel */}
       <section className={styles.carShowcase}>
