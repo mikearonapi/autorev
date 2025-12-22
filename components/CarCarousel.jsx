@@ -13,7 +13,7 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchCars } from '@/lib/carsClient';
+import { useCarsList } from '@/hooks/useCarData';
 import styles from './CarCarousel.module.css';
 
 // Blob base URL for car images
@@ -177,14 +177,10 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
 export default function CarCarousel() {
   const isPausedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [carData, setCarData] = useState([]);
   
-  // Fetch cars from database via carsClient
-  useEffect(() => {
-    fetchCars()
-      .then(cars => setCarData(cars))
-      .catch(err => console.warn('[CarCarousel] Error loading cars:', err.message));
-  }, []);
+  // Fetch cars using React Query (consistent with other pages)
+  const { data: carsResponse } = useCarsList();
+  const carData = useMemo(() => carsResponse?.cars || [], [carsResponse]);
   
   // Check for mobile viewport
   useEffect(() => {

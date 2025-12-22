@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './SportsCarComparison.module.css';
-import { fetchCars } from '@/lib/carsClient.js';
+import { useCarsList } from '@/hooks/useCarData';
 import { useAppConfig, getDescriptorForValueSync } from '@/lib/hooks/useAppConfig.js';
 import { 
   calculateWeightedScore, 
@@ -272,10 +272,9 @@ export default function SportsCarComparison() {
     [categories]
   );
 
-  // State for car data (fetched from database via carsClient)
-  const [carData, setCarData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState(null);
+  // Fetch car data using React Query (same as browse-cars page)
+  const { data: carsResponse, isLoading, error: loadError } = useCarsList();
+  const carData = useMemo(() => carsResponse?.cars || [], [carsResponse]);
 
   // State for user preferences
   // All categories start at "Normal" (1.0) - user adjusts from there
@@ -315,56 +314,6 @@ export default function SportsCarComparison() {
   const tableRef = useRef(null);
   const rowRefs = useRef({});
 
-  // Fetch car data on mount
-  useEffect(() => {
-    let isMounted = true;
-    let timeoutId;
-    
-    async function loadCars() {
-      try {
-        setIsLoading(true);
-        setLoadError(null);
-        
-        // Create a timeout promise that rejects after 10 seconds
-        const timeoutPromise = new Promise((_, reject) => {
-          timeoutId = setTimeout(() => {
-            reject(new Error('Request timeout - loading took too long'));
-          }, 10000);
-        });
-        
-        // Race between the fetch and the timeout
-        const cars = await Promise.race([
-          fetchCars(),
-          timeoutPromise
-        ]);
-        
-        // Clear timeout if fetch succeeded
-        if (timeoutId) clearTimeout(timeoutId);
-        
-        if (isMounted) {
-          setCarData(cars);
-          setIsLoading(false);
-        }
-      } catch (err) {
-        console.error('[SportsCarComparison] Error loading cars:', err);
-        if (isMounted) {
-          const errorMsg = err.message?.includes('timeout') 
-            ? 'Loading timed out. Please refresh.' 
-            : 'Failed to load vehicle data. Please refresh.';
-          setLoadError(errorMsg);
-          // fetchCars has internal fallback, so if we get here, something else failed
-          setIsLoading(false);
-        }
-      }
-    }
-    
-    loadCars();
-    
-    return () => {
-      isMounted = false;
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, []);
 
   // Check for mobile viewport
   useEffect(() => {
@@ -593,7 +542,7 @@ export default function SportsCarComparison() {
         {loadError && (
           <div className={styles.errorNotice}>
             <Icons.alertCircle size={16} />
-            <span>{loadError}</span>
+            <span>{loadError.message || 'Failed to load vehicle data. Please refresh.'}</span>
           </div>
         )}
 
