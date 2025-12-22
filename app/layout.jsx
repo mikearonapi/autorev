@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import MobileBottomCta from '@/components/MobileBottomCta';
 import ScrollToTop from '@/components/ScrollToTop';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { AppConfigProvider } from '@/lib/hooks/useAppConfig';
 import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
 import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { CompareProvider } from '@/components/providers/CompareProvider';
@@ -210,6 +211,7 @@ export default function RootLayout({ children }) {
             <ConsoleErrorInterceptor>
             <ErrorBoundary name="RootLayout" featureContext="app">
               <AuthProvider>
+            <AppConfigProvider>
             <FeedbackProvider>
             <CarSelectionProvider>
             <FavoritesProvider>
@@ -245,6 +247,7 @@ export default function RootLayout({ children }) {
             </FavoritesProvider>
             </CarSelectionProvider>
             </FeedbackProvider>
+            </AppConfigProvider>
             </AuthProvider>
             </ErrorBoundary>
             </ConsoleErrorInterceptor>

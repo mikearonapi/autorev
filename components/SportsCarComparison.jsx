@@ -3,9 +3,8 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './SportsCarComparison.module.css';
-import { fetchCars, tierConfig, categories } from '@/lib/carsClient.js';
-import { recommendationTypes } from '@/data/cars.js';
-import { getDescriptorForValue, priorityDescriptors } from '@/data/selectorDescriptors.js';
+import { fetchCars } from '@/lib/carsClient.js';
+import { useAppConfig, getDescriptorForValueSync } from '@/lib/hooks/useAppConfig.js';
 import { 
   calculateWeightedScore, 
   calculateMaxScore, 
@@ -214,21 +213,7 @@ const Icons = {
 
 // Car data, categories, and tier config are imported from src/data/cars.js
 
-// Categories with icons for UI (extending imported categories)
-const categoriesWithIcons = categories.map(cat => ({
-  ...cat,
-  icon: Icons[cat.key] || Icons.alertCircle
-}));
-
-// Tier configuration with CSS classes
-const tierConfigWithStyles = {
-  premium: { ...tierConfig.premium, className: styles.tierPremium },
-  'upper-mid': { ...tierConfig['upper-mid'], className: styles.tierUpper },
-  mid: { ...tierConfig.mid, className: styles.tierMid },
-  budget: { ...tierConfig.budget, className: styles.tierEntry }
-};
-
-// Recommendation types with icons for UI
+// Recommendation types with icons for UI (static - these rarely change)
 const recommendationTypesWithIcons = [
   { key: 'top', label: 'Top Match', icon: Icons.trophy, colorVar: '--rec-top' },
   { key: 'sound', label: 'Best Sound & Feel', icon: Icons.sound, colorVar: '--rec-sound' },
@@ -237,6 +222,20 @@ const recommendationTypesWithIcons = [
   { key: 'reliable', label: 'Most Reliable', icon: Icons.shield, colorVar: '--rec-reliable' },
   { key: 'modder', label: 'Best Aftermarket', icon: Icons.tool, colorVar: '--rec-aftermarket' }
 ];
+
+// Helper to build tier config with styles (called inside component with hook data)
+const buildTierConfigWithStyles = (tierConfig) => ({
+  premium: { ...tierConfig.premium, className: styles.tierPremium },
+  'upper-mid': { ...tierConfig['upper-mid'], className: styles.tierUpper },
+  mid: { ...tierConfig.mid, className: styles.tierMid },
+  budget: { ...tierConfig.budget, className: styles.tierEntry }
+});
+
+// Helper to build categories with icons (called inside component with hook data)
+const buildCategoriesWithIcons = (categories) => categories.map(cat => ({
+  ...cat,
+  icon: Icons[cat.key] || Icons.alertCircle
+}));
 
 // Get score badge class
 const getScoreBadgeClass = (score) => {
@@ -255,6 +254,24 @@ const getTotalScoreClass = (score, maxScore) => {
 };
 
 export default function SportsCarComparison() {
+  // Get configuration from database via AppConfigProvider
+  const { 
+    tierConfig, 
+    categories, 
+    priorityDescriptors,
+    isLoading: configLoading 
+  } = useAppConfig();
+
+  // Build derived config values from database configs
+  const tierConfigWithStyles = useMemo(
+    () => buildTierConfigWithStyles(tierConfig),
+    [tierConfig]
+  );
+  const categoriesWithIcons = useMemo(
+    () => buildCategoriesWithIcons(categories),
+    [categories]
+  );
+
   // State for car data (fetched from database via carsClient)
   const [carData, setCarData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -781,7 +798,7 @@ export default function SportsCarComparison() {
               const isHighPriority = weights[cat.key] > 1;
               const isLowPriority = weights[cat.key] < 1;
               const badge = getPriorityBadge(weights[cat.key]);
-              const descriptor = getDescriptorForValue(cat.key, weights[cat.key]);
+              const descriptor = getDescriptorForValueSync(priorityDescriptors, cat.key, weights[cat.key]);
               
               return (
                 <div 

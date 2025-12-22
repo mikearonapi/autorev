@@ -31,8 +31,7 @@ import {
   getConflictSummary,
 } from '@/lib/upgradeCalculator.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
-import { upgradeTiers } from '@/data/performanceCategories.js';
-import { tierConfig } from '@/data/cars.js';
+import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
 import { 
   hasRecommendations, 
   getPrimaryFocus, 
@@ -968,6 +967,9 @@ function ExpertTrackInsights({ car }) {
  * @param {boolean} hideChangeCar - If true, hides the Change Car button (useful in garage context)
  */
 export default function PerformanceHub({ car, initialBuildId = null, onChangeCar = null, hideChangeCar = false }) {
+  // Get configuration from database
+  const { tierConfig } = useAppConfig();
+  
   // Global car selection integration
   const { selectCar, setUpgrades, clearCar, isHydrated } = useCarSelection();
   

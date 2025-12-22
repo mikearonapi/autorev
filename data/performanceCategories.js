@@ -9,6 +9,22 @@
  * 1. Be memorable and intuitive
  * 2. Map to real-world driving experiences
  * 3. Show clear improvement paths through upgrades
+ * 
+ * =============================================================================
+ * DEPRECATION NOTICE (December 2025):
+ * 
+ * The following DATA exports have been migrated to Supabase app_config:
+ * - performanceCategories → Use: getPerformanceCategories() from configClient.js
+ * - upgradeTiers → Use: getUpgradeTiers() from configClient.js  
+ * - upgradeModuleCategories → Use: getUpgradeModuleCategories() from configClient.js
+ * 
+ * For React client components, use the hook:
+ *   import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
+ *   const { performanceCategories, upgradeTiers } = useAppConfig();
+ * 
+ * The CALCULATION FUNCTIONS in this file (mapCarToPerformanceScores, etc.)
+ * remain as code - they are business logic, not configuration data.
+ * =============================================================================
  */
 
 /**

@@ -863,7 +863,7 @@ EXCLUSIONS: No people, no text, no watermarks, no logos, no license plates.`;
 }
 
 // =============================================================================
-// YOUTUBE DISCOVERY
+// YOUTUBE DISCOVERY (Exa + Supadata - No YouTube API quota issues!)
 // =============================================================================
 
 async function runYouTubeDiscovery(slug) {
@@ -874,8 +874,83 @@ async function runYouTubeDiscovery(slug) {
     return { success: true, dryRun: true, videosLinked: 0, message: 'Dry run - skipped' };
   }
   
+  // Check if we have the required API keys for Exa + Supadata approach
+  const EXA_API_KEY = process.env.EXA_API_KEY;
+  const SUPADATA_API_KEY = process.env.SUPADATA_API_KEY;
+  
+  if (!EXA_API_KEY || !SUPADATA_API_KEY) {
+    log('Exa/Supadata not configured, falling back to YouTube API...', 'warning');
+    return runYouTubeDiscoveryLegacy(slug);
+  }
+  
   try {
-    // Run the discovery script using child_process
+    // Use Exa + Supadata discovery (no YouTube API quota issues!)
+    const discoveryScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-exa-discovery.js');
+    
+    return new Promise((resolve) => {
+      const child = spawn('node', [discoveryScript, '--car-slug', slug, '--limit', '5'], {
+        cwd: PROJECT_ROOT,
+        stdio: 'pipe'
+      });
+      
+      let output = '';
+      let videosSaved = 0;
+      let transcriptsFetched = 0;
+      let aiProcessed = 0;
+      
+      child.stdout.on('data', (data) => {
+        const text = data.toString();
+        output += text;
+        
+        // Parse output for stats
+        const savedMatch = text.match(/Videos saved:\s*(\d+)/);
+        if (savedMatch) videosSaved = parseInt(savedMatch[1], 10);
+        
+        const transcriptsMatch = text.match(/Transcripts:\s*(\d+)/);
+        if (transcriptsMatch) transcriptsFetched = parseInt(transcriptsMatch[1], 10);
+        
+        const aiMatch = text.match(/AI processed:\s*(\d+)/);
+        if (aiMatch) aiProcessed = parseInt(aiMatch[1], 10);
+        
+        if (flags.verbose) {
+          process.stdout.write(text);
+        }
+      });
+      
+      child.stderr.on('data', (data) => {
+        if (flags.verbose) {
+          process.stderr.write(data.toString());
+        }
+      });
+      
+      child.on('close', (code) => {
+        if (code === 0 && videosSaved > 0) {
+          log(`YouTube discovery: ${videosSaved} videos, ${transcriptsFetched} transcripts, ${aiProcessed} AI processed`, 'info');
+          resolve({ 
+            success: true, 
+            videosLinked: videosSaved, 
+            message: `Discovered ${videosSaved} videos with ${transcriptsFetched} transcripts (Exa+Supadata)` 
+          });
+        } else {
+          resolve({ 
+            success: code === 0, 
+            videosLinked: 0, 
+            message: code === 0 ? 'No relevant videos found' : 'Discovery failed'
+          });
+        }
+      });
+    });
+  } catch (err) {
+    log(`YouTube discovery error: ${err.message}`, 'error');
+    return { success: false, videosLinked: 0, message: err.message };
+  }
+}
+
+/**
+ * Legacy YouTube discovery using YouTube Data API (has quota limits)
+ */
+async function runYouTubeDiscoveryLegacy(slug) {
+  try {
     const discoveryScript = path.join(PROJECT_ROOT, 'scripts', 'youtube-discovery.js');
     
     return new Promise((resolve) => {
@@ -891,7 +966,6 @@ async function runYouTubeDiscovery(slug) {
         const text = data.toString();
         output += text;
         
-        // Parse output for video count
         const queuedMatch = text.match(/Videos queued:\s*(\d+)/);
         if (queuedMatch) {
           videosQueued = parseInt(queuedMatch[1], 10);

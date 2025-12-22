@@ -22,7 +22,7 @@ name,brand,years,category,engine,hp,torque,price_avg,tier,drivetrain,trans,zero_
 "McLaren 570GT",McLaren,2016-2020,Mid-Engine,3.8L Twin-Turbo V8,562,443,155000,premium,RWD,"7-speed DCT",3.4,204,2,"Grand touring version with more luggage space.",,
 "McLaren 600LT",McLaren,2018-2020,Mid-Engine,3.8L Twin-Turbo V8,592,457,225000,premium,RWD,"7-speed DCT",2.9,204,1,"Longtail variant. Track-focused lightweight.",,
 "McLaren 600LT Spider",McLaren,2019-2020,Mid-Engine,3.8L Twin-Turbo V8,592,457,250000,premium,RWD,"7-speed DCT",2.9,201,2,"Convertible Longtail with no performance compromise.",,
-"McLaren 720S",McLaren,2017-2024,Mid-Engine,4.0L Twin-Turbo V8,710,568,225000,premium,RWD,"7-speed DCT",2.8,212,1,"Super Series flagship. Incredible performance and visibility.",,
+"McLaren 720S",McLaren,2017-2024,Mid-Engine,4.0L Twin-Turbo V8,710,568,225000,premium,RWD,"7-speed DCT",2.8,212,1,"Super Series flagship. Incredible performance and visibility.",complete,2024-12-21,
 "McLaren 720S Spider",McLaren,2019-2024,Mid-Engine,4.0L Twin-Turbo V8,710,568,250000,premium,RWD,"7-speed DCT",2.9,212,2,"Convertible Super Series with retractable roof.",,
 "McLaren 765LT",McLaren,2020-2022,Mid-Engine,4.0L Twin-Turbo V8,755,590,375000,premium,RWD,"7-speed DCT",2.7,205,1,"Ultimate Super Series. Limited production Longtail.",,
 "McLaren MP4-12C",McLaren,2011-2014,Mid-Engine,3.8L Twin-Turbo V8,592,443,115000,premium,RWD,"7-speed DCT",3.3,205,1,"First McLaren road car. Groundbreaking carbon tub.",,
@@ -31,7 +31,7 @@ name,brand,years,category,engine,hp,torque,price_avg,tier,drivetrain,trans,zero_
 "McLaren GT",McLaren,2019-2024,Mid-Engine,4.0L Twin-Turbo V8,612,465,210000,premium,RWD,"7-speed DCT",3.2,203,2,"Grand touring McLaren with usable trunk.",,
 "McLaren Senna",McLaren,2018-2020,Mid-Engine,4.0L Twin-Turbo V8,789,590,900000,premium,RWD,"7-speed DCT",2.7,208,2,"Ultimate track car. Named after the legend.",,
 "Lamborghini Huracán LP 610-4",Lamborghini,2014-2019,Mid-Engine,5.2L V10,602,413,200000,premium,AWD,"7-speed DCT",3.2,202,1,"Entry-level V10 supercar. Natural successor to Gallardo.",,
-"Lamborghini Huracán Performante",Lamborghini,2017-2019,Mid-Engine,5.2L V10,640,443,300000,premium,AWD,"7-speed DCT",2.9,202,1,"Active aero Huracán. Nürburgring record holder.",,
+"Lamborghini Huracán Performante",Lamborghini,2017-2019,Mid-Engine,5.2L V10,640,443,300000,premium,AWD,"7-speed DCT",2.9,202,1,"Active aero Huracán. Nürburgring record holder.",complete,2024-12-21
 "Lamborghini Huracán STO",Lamborghini,2021-2024,Mid-Engine,5.2L V10,640,417,350000,premium,RWD,"7-speed DCT",3.0,193,1,"Street-legal Super Trofeo. Ultimate track Huracán.",,
 "Lamborghini Huracán Tecnica",Lamborghini,2022-2024,Mid-Engine,5.2L V10,631,417,275000,premium,RWD,"7-speed DCT",3.2,202,1,"RWD performance variant. Best all-rounder Huracán.",,
 "Lamborghini Huracán EVO",Lamborghini,2019-2024,Mid-Engine,5.2L V10,631,443,265000,premium,AWD,"7-speed DCT",2.9,202,2,"Updated Huracán with rear-wheel steering.",,

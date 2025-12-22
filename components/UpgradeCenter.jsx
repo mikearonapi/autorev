@@ -17,7 +17,7 @@ import {
   calculateTotalCost,
 } from '@/lib/performance.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
-import { tierConfig } from '@/data/cars.js';
+import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
 import { 
   getRecommendationSummary, 
   getFocusLabel 
@@ -543,6 +543,7 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
 export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar = null }) {
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
+  const { tierConfig } = useTierConfig();
   
   // All useState hooks must be called unconditionally (before any early returns)
   const [selectedPackage, setSelectedPackage] = useState('stock');

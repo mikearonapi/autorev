@@ -4,7 +4,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { fetchCarBySlug, tierConfig } from '@/lib/carsClient.js';
+import { fetchCarBySlug } from '@/lib/carsClient.js';
+import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
 import { calculateScoreBreakdown, getScoreLabel, DEFAULT_WEIGHTS } from '@/lib/scoring.js';
 import { getCarHeroImage, preloadImage } from '@/lib/images.js';
 import { getAvailableUpgrades } from '@/lib/performance.js';
@@ -278,6 +279,10 @@ const LOADING_MAX_TIMEOUT_MS = 12000; // Force error state after 12s
 export default function CarDetail() {
   const params = useParams();
   const slug = params.slug;
+  
+  // Get tier configuration from database
+  const { tierConfig } = useTierConfig();
+  
   const [car, setCar] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingSlow, setIsLoadingSlow] = useState(false);

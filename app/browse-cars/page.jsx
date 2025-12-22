@@ -6,15 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import CarImage from '@/components/CarImage';
-
-// Tier configuration for display
-const tierConfig = {
-  premium: { label: 'Premium', priceRange: '$75K+', order: 1 },
-  'upper-mid': { label: 'Upper', priceRange: '$55-75K', order: 2 },
-  mid: { label: 'Mid', priceRange: '$35-55K', order: 3 },
-  budget: { label: 'Budget', priceRange: 'Under $35K', order: 4 },
-};
 import ScrollIndicator from '@/components/ScrollIndicator';
+import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useCompare } from '@/components/providers/CompareProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
@@ -110,6 +103,10 @@ function getUniqueCategories(carList) {
 
 function CarCatalogContent() {
   const searchParams = useSearchParams();
+  
+  // Get tier configuration from database
+  const { tierConfig } = useTierConfig();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');

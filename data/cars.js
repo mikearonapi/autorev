@@ -1,18 +1,30 @@
 /**
- * AutoRev - Car Database
+ * AutoRev - Car Database (DEPRECATED)
  * 
- * This is the single source of truth for all car data in the application.
- * Each car has scoring fields (1-10), specifications, and metadata for hero pages.
+ * =============================================================================
+ * ⚠️  DEPRECATED - DO NOT USE IN PRODUCTION CODE  ⚠️
+ * =============================================================================
  * 
- * To update a car: Edit the corresponding entry in the carData array below.
- * To add a car: Add a new object following the Car structure.
+ * SUPABASE IS THE SINGLE SOURCE OF TRUTH FOR ALL CAR DATA.
  * 
- * This file is also used to seed the Supabase database.
+ * This file exists ONLY for:
+ * 1. Development database seeding (scripts/seed-cars-from-local.js)
+ * 2. Reference during development
  * 
- * DATA ACCURACY NOTES:
+ * DO NOT import this file in production code. Use:
+ * - Car data: import { fetchCars, fetchCarBySlug } from '@/lib/carsClient.js'
+ * - Config: import { getTierConfig, getCategories } from '@/lib/configClient.js'
+ * - React hooks: import { useAppConfig } from '@/lib/hooks/useAppConfig.js'
+ * 
+ * To add/edit cars: Edit DIRECTLY in Supabase database
+ * To add new cars to seed: Edit this file, then run:
+ *   node scripts/seed-cars-from-local.js
+ * 
+ * =============================================================================
+ * 
+ * DATA ACCURACY NOTES (for seeding reference):
  * - Hard metrics (HP, torque, weight, 0-60) are verified against OEM specifications
  * - Advisory scores (sound, interior, track, etc.) reflect aggregated expert opinions
- *   and community sentiment. Individual experiences may vary.
  * - Performance Hub scores are derived from hard metrics and expert analysis
  * 
  * Last validated against OEM sources: December 8, 2025
