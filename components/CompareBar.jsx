@@ -67,18 +67,19 @@ export default function CompareBar() {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
 
-  // Don't show until hydrated or if no cars
-  if (!isHydrated || count === 0) {
-    return null;
-  }
-
   // Get full car data for images (from database)
+  // Must be called before any conditional returns to satisfy React hooks rules
   const carsWithImages = useMemo(() => {
     return cars.map(car => {
       const fullCar = allCars.find(c => c.slug === car.slug);
       return fullCar || car;
     });
   }, [cars, allCars]);
+
+  // Don't show until hydrated or if no cars
+  if (!isHydrated || count === 0) {
+    return null;
+  }
 
   return (
     <div className={`${styles.bar} ${isExpanded ? styles.expanded : ''}`}>
