@@ -287,7 +287,35 @@ function ExpandableSection({ title, children, defaultOpen = false }) {
  * @param {Object} props
  * @param {Object} props.car - Pre-fetched car data from server
  */
-export default function CarDetailClient({ car }) {
+export default function CarDetailClient({ car: rawCar }) {
+  // Normalize array fields to prevent hydration/serialization errors
+  // This ensures arrays are always arrays even if data comes through incorrectly
+  const car = useMemo(() => {
+    if (!rawCar) return null;
+    return {
+      ...rawCar,
+      bestYearsDetailed: Array.isArray(rawCar.bestYearsDetailed) ? rawCar.bestYearsDetailed : [],
+      yearsToAvoidDetailed: Array.isArray(rawCar.yearsToAvoidDetailed) ? rawCar.yearsToAvoidDetailed : [],
+      mustHaveOptions: Array.isArray(rawCar.mustHaveOptions) ? rawCar.mustHaveOptions : [],
+      niceToHaveOptions: Array.isArray(rawCar.niceToHaveOptions) ? rawCar.niceToHaveOptions : [],
+      preInspectionChecklist: Array.isArray(rawCar.preInspectionChecklist) ? rawCar.preInspectionChecklist : [],
+      definingStrengths: Array.isArray(rawCar.definingStrengths) ? rawCar.definingStrengths : [],
+      honestWeaknesses: Array.isArray(rawCar.honestWeaknesses) ? rawCar.honestWeaknesses : [],
+      commonIssuesDetailed: Array.isArray(rawCar.commonIssuesDetailed) ? rawCar.commonIssuesDetailed : [],
+      recommendedTrackPrep: Array.isArray(rawCar.recommendedTrackPrep) ? rawCar.recommendedTrackPrep : [],
+      popularTrackMods: Array.isArray(rawCar.popularTrackMods) ? rawCar.popularTrackMods : [],
+      laptimeBenchmarks: Array.isArray(rawCar.laptimeBenchmarks) ? rawCar.laptimeBenchmarks : [],
+      directCompetitors: Array.isArray(rawCar.directCompetitors) ? rawCar.directCompetitors : [],
+      ifYouWantMore: Array.isArray(rawCar.ifYouWantMore) ? rawCar.ifYouWantMore : [],
+      ifYouWantLess: Array.isArray(rawCar.ifYouWantLess) ? rawCar.ifYouWantLess : [],
+      similarDrivingExperience: Array.isArray(rawCar.similarDrivingExperience) ? rawCar.similarDrivingExperience : [],
+      pros: Array.isArray(rawCar.pros) ? rawCar.pros : [],
+      cons: Array.isArray(rawCar.cons) ? rawCar.cons : [],
+      bestFor: Array.isArray(rawCar.bestFor) ? rawCar.bestFor : [],
+      commonIssues: Array.isArray(rawCar.commonIssues) ? rawCar.commonIssues : [],
+    };
+  }, [rawCar]);
+
   // Get tier configuration from database
   const { tierConfig } = useTierConfig();
   

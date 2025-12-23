@@ -9,7 +9,7 @@
  * Now fetches car data from database via carsClient.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './CompareBar.module.css';
@@ -73,10 +73,12 @@ export default function CompareBar() {
   }
 
   // Get full car data for images (from database)
-  const carsWithImages = cars.map(car => {
-    const fullCar = allCars.find(c => c.slug === car.slug);
-    return fullCar || car;
-  });
+  const carsWithImages = useMemo(() => {
+    return cars.map(car => {
+      const fullCar = allCars.find(c => c.slug === car.slug);
+      return fullCar || car;
+    });
+  }, [cars, allCars]);
 
   return (
     <div className={`${styles.bar} ${isExpanded ? styles.expanded : ''}`}>

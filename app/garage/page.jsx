@@ -2065,23 +2065,30 @@ function GarageContent() {
   }, [activeTab]);
   
   // Merge favorites with full car data (from database)
-  const favoriteCars = favorites.map(fav => {
-    const fullCarData = allCars.find(c => c.slug === fav.slug);
-    return fullCarData ? { ...fullCarData, addedAt: fav.addedAt } : fav;
-  });
+  const favoriteCars = useMemo(() => {
+    return favorites.map(fav => {
+      const fullCarData = allCars.find(c => c.slug === fav.slug);
+      return fullCarData ? { ...fullCarData, addedAt: fav.addedAt } : fav;
+    });
+  }, [favorites, allCars]);
   
   // Get cars for builds (from database)
-  const buildsWithCars = builds.map(build => ({
-    ...build,
-    car: allCars.find(c => c.slug === build.carSlug)
-  })).filter(b => b.car);
+  const buildsWithCars = useMemo(() => {
+    if (allCars.length === 0) return [];
+    return builds.map(build => ({
+      ...build,
+      car: allCars.find(c => c.slug === build.carSlug)
+    })).filter(b => b.car);
+  }, [builds, allCars]);
 
   // Get matched car data for owned vehicles (from database)
-  const vehiclesWithCars = vehicles.map(vehicle => ({
-    vehicle,
-    matchedCar: vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null,
-    id: vehicle.id,
-  }));
+  const vehiclesWithCars = useMemo(() => {
+    return vehicles.map(vehicle => ({
+      vehicle,
+      matchedCar: vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null,
+      id: vehicle.id,
+    }));
+  }, [vehicles, allCars]);
 
   // Check if a car is already in My Collection
   const isInMyCars = (slug) => vehicles.some(v => v.matchedCarSlug === slug);

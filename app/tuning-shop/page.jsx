@@ -197,18 +197,18 @@ const Icons = {
 };
 
 // Car Picker Modal for searching/selecting cars
-function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [] }) {
+function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [], cars = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   
   const filteredCars = useMemo(() => {
-    if (!searchTerm) return allCars;
+    if (!searchTerm) return cars;
     const term = searchTerm.toLowerCase();
-    return allCars.filter(car => 
+    return cars.filter(car => 
       car.name.toLowerCase().includes(term) ||
       car.brand?.toLowerCase().includes(term) ||
       car.category?.toLowerCase().includes(term)
     );
-  }, [searchTerm]);
+  }, [searchTerm, cars]);
   
   if (!isOpen) return null;
   
@@ -640,6 +640,9 @@ function TuningShopContent() {
     // Guard against updates during navigation/unmount
     if (!isMountedRef.current) return;
     
+    // Wait for cars to load before processing URL params
+    if (allCars.length === 0) return;
+    
     // Safely access search params - can throw during navigation transitions
     let buildId = null;
     let planCar = null;
@@ -670,7 +673,7 @@ function TuningShopContent() {
         setActiveTab('upgrades');
       }
     }
-  }, [searchParams, builds, getBuildById]);
+  }, [searchParams, builds, getBuildById, allCars]);
 
   // Handle tab changes
   const handleTabChange = (tabId) => {
@@ -684,17 +687,19 @@ function TuningShopContent() {
 
   // Get cars from favorites with full car data
   const favoriteCars = useMemo(() => {
+    if (allCars.length === 0) return [];
     return favorites
       .map(fav => allCars.find(c => c.slug === fav.slug))
       .filter(Boolean);
-  }, [favorites]);
+  }, [favorites, allCars]);
   
   // Get cars from owned vehicles
   const ownedCars = useMemo(() => {
+    if (allCars.length === 0) return [];
     return vehicles
       .map(v => allCars.find(c => c.slug === v.matchedCarSlug))
       .filter(Boolean);
-  }, [vehicles]);
+  }, [vehicles, allCars]);
   
   // Combined unique cars for quick selection
   const allUserCars = useMemo(() => {
@@ -710,13 +715,14 @@ function TuningShopContent() {
   
   // Builds with car data
   const buildsWithCars = useMemo(() => {
+    if (allCars.length === 0) return [];
     return builds
       .map(build => ({
         ...build,
         car: allCars.find(c => c.slug === build.carSlug)
       }))
       .filter(b => b.car);
-  }, [builds]);
+  }, [builds, allCars]);
   
   // Get unique vehicles for filter dropdown
   const uniqueVehicles = useMemo(() => {
@@ -1222,6 +1228,7 @@ function TuningShopContent() {
         isOpen={showCarPicker}
         onClose={() => setShowCarPicker(false)}
         onSelect={handleSelectCar}
+        cars={allCars}
       />
       
       <AuthModal 
