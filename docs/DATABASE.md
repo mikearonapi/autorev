@@ -1,6 +1,6 @@
 # AutoRev Database Schema
 
-> Complete reference for all 69 database tables
+> Complete reference for all 71 database tables
 >
 > **Last Verified:** December 18, 2024 — MCP-verified live query (Row counts audited)
 
@@ -61,9 +61,10 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Forum Intelligence | 5 | 5 | 0 |
 | Events | 6 | 4 | 2 |
 | Event Coverage | 1 | 1 | 0 |
+| Featured Content | 2 | 2 | 0 |
 | Image Library | 2 | 0 | 2 |
 | System | 6 | 4 | 2 |
-| **Total** | **69** | **53** | **16** |
+| **Total** | **71** | **55** | **16** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
@@ -570,6 +571,40 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Meta Fields** | `nearest_event_distance_miles`, `coverage_notes`, `last_coverage_check` |
 | **Used By** | Coverage reports, event expansion planning |
 | **RLS** | Public read, service role write |
+
+---
+
+## Featured Content (2 tables)
+
+> Curated high-quality automotive content from YouTube and other sources
+
+### `featured_content` — Editorial and feature content
+| Status | **15 rows** |
+|--------|-------------|
+| **Purpose** | Store curated, high-quality automotive content for editorial features, AI context enrichment, and community knowledge |
+| **Columns** | 30+ columns |
+| **Key Fields** | `id`, `source_type` (youtube/vimeo/podcast/article), `source_video_id`, `source_url`, `title`, `description`, `channel_name`, `channel_id` |
+| **Categorization** | `category` (brand_documentary/engineering_deep_dive/driving_experience/comparison/review/motorsport/restoration/culture/educational/interview/other), `brands_featured[]`, `topics[]` |
+| **Component Focus** | `component_focus[]` — Array of components: tires, wheels, brakes, suspension, exhaust, intake, turbo_supercharger, engine_internals, ecu_tuning, cooling, drivetrain, aero, lighting, interior, safety, fluids, detailing, audio, general |
+| **Engagement** | `view_count`, `like_count`, `published_at`, `duration_seconds`, `thumbnail_url` |
+| **Transcript Fields** | `transcript_text`, `transcript_language`, `transcript_source`, `transcript_fetched_at` |
+| **AI Fields** | `ai_summary`, `ai_key_points`, `ai_notable_quotes`, `ai_processed_at`, `ai_model` |
+| **Curation** | `quality_score` (0-1), `is_editors_pick`, `is_featured`, `curation_notes` |
+| **Status** | `status` (pending/transcript_fetched/processed/published/archived), `is_active` |
+| **Used By** | Future editorial features, AI context enrichment, component guides, community knowledge base |
+| **Differs From** | `youtube_videos` table stores car-specific reviews linked to cars in our database; `featured_content` stores general automotive content not necessarily car-specific |
+| **Note** | Content from Hagerty, Top Gear, Throttle House, Cars with Miles, Tyre Reviews |
+
+### `featured_content_channels` — Trusted content creators
+| Status | **9 rows** |
+|--------|----------|
+| **Purpose** | Registry of trusted YouTube channels for component-specific content discovery |
+| **Key Fields** | `channel_id`, `channel_name`, `channel_url`, `platform` |
+| **Expertise** | `expertise_areas[]` (component_focus_type array), `content_types[]` |
+| **Quality** | `credibility_tier` (tier1/tier2/tier3), `quality_notes` |
+| **Tracking** | `videos_ingested`, `last_ingested_at`, `is_active` |
+| **Channels** | Tyre Reviews, Engineering Explained, Speed Academy, Donut Media, savagegeese, Hagerty, Top Gear, Throttle House, Cars with Miles |
+| **Used By** | Content discovery, curation recommendations |
 
 ---
 
