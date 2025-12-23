@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/dyno
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Fetches dyno run data for a specific car.
  * Uses the get_car_dyno_runs RPC function.
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -56,6 +57,9 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/dyno', feature: 'browse-cars' });
+
 
 
 

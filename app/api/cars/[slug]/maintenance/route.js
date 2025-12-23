@@ -7,8 +7,9 @@
 
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = await params;
 
   if (!slug) {
@@ -68,3 +69,5 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/maintenance', feature: 'browse-cars' });

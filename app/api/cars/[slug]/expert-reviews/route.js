@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Tier 1 channels - highest trust
 const TIER_1_CHANNELS = [
@@ -23,7 +24,7 @@ const TIER_1_CHANNELS = [
  * - min_confidence: Minimum match confidence (0-1)
  * - tier1_only: Only return Tier 1 channel videos
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
@@ -183,6 +184,8 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/expert-reviews', feature: 'browse-cars' });
 
 
 

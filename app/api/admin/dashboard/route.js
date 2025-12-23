@@ -11,6 +11,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -146,7 +147,7 @@ function generateCumulativeData(records, dateField) {
   return result;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   // Get time range from query params
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'week';
@@ -492,3 +493,5 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch dashboard data' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/dashboard', feature: 'internal' });

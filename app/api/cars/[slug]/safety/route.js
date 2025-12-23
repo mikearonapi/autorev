@@ -14,6 +14,7 @@ import { NextResponse } from 'next/server';
 import { fetchCarBySlug } from '@/lib/carsClient';
 import * as nhtsaService from '@/lib/nhtsaSafetyService';
 import * as iihsScraper from '@/lib/scrapers/iihsScraper';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Parse year/make/model from car data
@@ -43,7 +44,7 @@ function parseCarIdentifiers(car) {
  * GET /api/cars/[slug]/safety
  * Fetch comprehensive safety data for a car
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -292,6 +293,8 @@ function generateSafetySummary(data) {
   
   return summary;
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/safety', feature: 'browse-cars' });
 
 
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getEventBySlug } from '@/lib/eventsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/events/[slug]
@@ -15,7 +16,7 @@ import { getEventBySlug } from '@/lib/eventsService';
  *   404 - Event not found or not approved
  *   500 - Server error
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { slug } = await params;
     
@@ -44,4 +45,6 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'events/[slug]', feature: 'events' });
 

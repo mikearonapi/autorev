@@ -1,8 +1,17 @@
 import { getServiceClient } from '@/lib/supabaseServer';
 import { notifyFeedback } from '@/lib/discord';
-import { aggregateError, formatAggregateForDiscord } from '@/lib/errorAggregator';
 import { notifyAggregatedError } from '@/lib/discord';
 
+/**
+ * Feedback API - Handles TWO separate concerns:
+ * 
+ * 1. USER FEEDBACK (category != 'auto-error') → user_feedback table
+ *    - Human-submitted bugs, feature requests, praise, questions
+ *    
+ * 2. AUTO ERRORS (category == 'auto-error') → application_errors table ONLY
+ *    - Automatic client-side and server-side errors
+ *    - NOT stored in user_feedback (clean separation)
+ */
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -24,13 +33,15 @@ export async function POST(request) {
       featureContext,
       errorMetadata,
       userTier,
-      // New enhanced tracking fields
+      // Error tracking fields (for auto-errors)
       errorSource,
       errorHash,
       appVersion,
     } = body;
 
     const normalizedMessage = message || body?.errorMetadata?.errorMessage;
+    const categoryToInsert = category || body?.category || null;
+    const isAutoError = categoryToInsert === 'auto-error';
 
     if (!normalizedMessage) {
       return Response.json(
@@ -39,14 +50,69 @@ export async function POST(request) {
       );
     }
 
+    // Get shared Supabase client (service role for bypassing RLS)
+    const supabase = getServiceClient();
+    if (!supabase) {
+      console.error('[Feedback API] Database not configured');
+      return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
+    }
+
+    const userAgent = request.headers.get('user-agent') || null;
+    const browserInfoPayload = browserInfo || metadata || null;
+
+    // =========================================================================
+    // AUTO-ERRORS → application_errors table ONLY
+    // =========================================================================
+    if (isAutoError) {
+      try {
+        const { data, error } = await supabase.rpc('upsert_application_error', {
+          p_error_hash: errorHash || `auto_${Date.now()}`,
+          p_message: normalizedMessage,
+          p_error_type: errorMetadata?.errorType || 'client_error',
+          p_error_source: errorSource || 'client',
+          p_severity: severity || 'major',
+          p_page_url: page_url || pageUrl || null,
+          p_component_name: errorMetadata?.componentName || null,
+          p_feature_context: featureContext || null,
+          p_stack_trace: errorMetadata?.stackTrace || null,
+          p_browser: browserInfoPayload?.browser || null,
+          p_os: browserInfoPayload?.os || null,
+          p_is_mobile: errorMetadata?.isMobile || false,
+          p_app_version: appVersion || null,
+          p_metadata: errorMetadata || {},
+        });
+
+        if (error) {
+          console.error('[Feedback API] Failed to log auto-error:', error);
+          return Response.json(
+            { success: false, error: 'Failed to log error' },
+            { status: 500 }
+          );
+        }
+
+        return Response.json({
+          success: true,
+          data: { id: data, logged_to: 'application_errors' }
+        });
+      } catch (err) {
+        console.error('[Feedback API] Auto-error logging failed:', err);
+        return Response.json(
+          { success: false, error: 'Failed to log error' },
+          { status: 500 }
+        );
+      }
+    }
+
+    // =========================================================================
+    // USER FEEDBACK → user_feedback table
+    // =========================================================================
     const validTypes = ['like', 'dislike', 'feature', 'bug', 'question', 'car_request', 'other', 'al-feedback'];
-    const validCategories = ['bug', 'feature', 'data', 'general', 'praise', 'auto-error'];
+    const validCategories = ['bug', 'feature', 'data', 'general', 'praise'];
     const validSeverities = ['blocking', 'major', 'minor'];
 
-    const categoryToInsert = category || body?.category || null;
     const feedbackTypeToInsert = feedback_type && validTypes.includes(feedback_type)
       ? feedback_type
-      : (categoryToInsert === 'auto-error' ? 'bug' : 'other');
+      : 'other';
 
     if (!validTypes.includes(feedbackTypeToInsert)) {
       return Response.json(
@@ -69,21 +135,6 @@ export async function POST(request) {
       );
     }
 
-    // Get shared Supabase client (service role for bypassing RLS)
-    const supabase = getServiceClient();
-    if (!supabase) {
-      console.error('[Feedback API] Database not configured');
-      return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
-    }
-
-    const userAgent = request.headers.get('user-agent') || null;
-    const browserInfoPayload = browserInfo || metadata || null;
-
-    // Determine priority based on severity
-    const priorityFromSeverity = severity === 'blocking' ? 'urgent' 
-      : severity === 'major' ? 'high' 
-      : 'normal';
-
     const feedbackData = {
       feedback_type: feedbackTypeToInsert,
       category: categoryToInsert || null,
@@ -97,16 +148,11 @@ export async function POST(request) {
       browser_info: browserInfoPayload,
       tags: tags || [],
       status: 'new',
-      priority: categoryToInsert === 'auto-error' ? priorityFromSeverity : 'normal',
+      priority: 'normal',
       severity: severity || null,
       rating: rating || null,
       feature_context: featureContext || null,
       user_tier: userTier || null,
-      error_metadata: errorMetadata || null,
-      // Enhanced tracking fields
-      error_source: errorSource || null,
-      error_hash: errorHash || null,
-      app_version: appVersion || null,
     };
 
     const { data, error } = await supabase
@@ -123,6 +169,7 @@ export async function POST(request) {
       );
     }
 
+    // Send Discord notification for human feedback
     const categoryMap = {
       'like': 'Praise',
       'dislike': 'Dislike', 
@@ -131,36 +178,8 @@ export async function POST(request) {
       'question': 'Question',
       'other': 'Other',
       'car_request': 'Car Request',
-      'auto-error': 'Auto Error',
     };
-    
-    // Handle auto-errors differently - use aggregation
-    if (categoryToInsert === 'auto-error') {
-      try {
-        const { shouldFlushNow, aggregate } = aggregateError(data);
-        
-        if (shouldFlushNow) {
-          // Send aggregated error immediately if threshold reached
-          const formatted = formatAggregateForDiscord(aggregate);
-          notifyAggregatedError(formatted).catch(err => 
-            console.error('[Feedback API] Aggregated error notification failed:', err)
-          );
-        }
-        // Otherwise error is queued and will be sent by the flush cron job
-      } catch (aggErr) {
-        console.error('[Feedback API] Error aggregation failed:', aggErr);
-        // Fallback to regular notification
-        notifyFeedback({
-          id: data.id,
-          category: 'Auto Error',
-          severity: feedbackData.severity,
-          message: normalizedMessage,
-          page_url: feedbackData.page_url,
-          user_tier: feedbackData.user_tier,
-        }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
-      }
-    } else {
-      // Regular feedback - send immediately
+
     notifyFeedback({
       id: data.id,
       category: categoryToInsert || categoryMap[feedbackTypeToInsert] || feedbackTypeToInsert,
@@ -169,13 +188,13 @@ export async function POST(request) {
       page_url: feedbackData.page_url,
       user_tier: feedbackData.user_tier,
     }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
-    }
 
     return Response.json({
       success: true,
       data: {
         id: data.id,
         created_at: data.created_at,
+        logged_to: 'user_feedback'
       }
     });
   } catch (err) {

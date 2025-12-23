@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/price-by-year
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Fetches year-by-year pricing data for a specific car.
  * FREE tier - helps buyers find best value years.
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -79,6 +80,9 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Failed to fetch pricing data' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/price-by-year', feature: 'browse-cars' });
+
 
 
 

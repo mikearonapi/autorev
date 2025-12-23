@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/market-value
@@ -19,7 +20,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  *   }
  * }
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -87,6 +88,9 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/market-value', feature: 'browse-cars' });
+
 
 
 

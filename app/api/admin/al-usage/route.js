@@ -11,11 +11,12 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { ANTHROPIC_PRICING } from '@/lib/alConfig';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
   const limit = parseInt(searchParams.get('limit') || '50', 10);
@@ -249,4 +250,6 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch AL usage data' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/al-usage', feature: 'internal' });
 

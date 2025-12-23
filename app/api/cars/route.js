@@ -7,12 +7,13 @@
 
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Cache for 30 seconds, revalidate in background
 // Shorter cache to pick up new cars faster
 export const revalidate = 30;
 
-export async function GET() {
+async function handleGet() {
   if (!isSupabaseConfigured || !supabase) {
     return NextResponse.json({ 
       error: 'Database not configured',
@@ -134,3 +135,5 @@ export async function GET() {
     }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars', feature: 'browse-cars' });

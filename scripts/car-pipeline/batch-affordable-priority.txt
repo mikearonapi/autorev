@@ -1,0 +1,99 @@
+# =============================================================================
+# AFFORDABLE BUILDABLE CARS - PRIORITY BATCH
+# =============================================================================
+# These cars are prioritized based on user feedback and community interest
+# Focus: $5K-$50K enthusiast cars from the 90s/2000s with strong mod communities
+# Run with: node scripts/car-pipeline/ai-batch-add-cars.js scripts/car-pipeline/batch-affordable-priority.txt
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# WAVE 1: USER REQUESTED (Highest Priority)
+# -----------------------------------------------------------------------------
+Honda Prelude Si VTEC (1992-2001)
+Ford Mustang SVT Cobra (1996-2004)
+
+# -----------------------------------------------------------------------------
+# WAVE 2: HONDA - Major Platform Gap
+# -----------------------------------------------------------------------------
+Honda Civic Si EM1 (1999-2000)
+Honda Civic Si EP3 (2002-2005)
+Honda Civic Si FG2 (2006-2011)
+Honda CRX Si (1988-1991)
+Honda Del Sol VTEC (1993-1997)
+
+# -----------------------------------------------------------------------------
+# WAVE 3: MUSTANG CLASSICS
+# -----------------------------------------------------------------------------
+Ford Mustang Cobra Terminator (2003-2004)
+Ford Mustang GT Fox Body (1987-1993)
+Ford Mustang Mach 1 (2003-2004)
+Ford Mustang GT SN95 (1996-1998)
+
+# -----------------------------------------------------------------------------
+# WAVE 4: JDM LEGENDS
+# -----------------------------------------------------------------------------
+Toyota MR2 Turbo SW20 (1991-1995)
+Toyota MR2 Spyder (2000-2005)
+Toyota Celica GT-Four ST205 (1994-1999)
+Toyota GR Corolla (2023-2024)
+Nissan 240SX S13 (1989-1994)
+Nissan 240SX S14 (1995-1998)
+Nissan Silvia S15 (1999-2002)
+Nissan Skyline GT-R R32 (1989-1994)
+Nissan Skyline GT-R R33 (1995-1998)
+
+# -----------------------------------------------------------------------------
+# WAVE 5: MAZDA SPEED & ROTARY
+# -----------------------------------------------------------------------------
+Mazdaspeed3 (2007-2013)
+Mazdaspeed6 (2006-2007)
+Mazda RX-8 R3 (2009-2011)
+
+# -----------------------------------------------------------------------------
+# WAVE 6: GERMAN AFFORDABLE BUILDS
+# -----------------------------------------------------------------------------
+Volkswagen GTI Mk4 (1999-2005)
+Volkswagen GTI Mk5 (2006-2009)
+Volkswagen GTI Mk6 (2010-2014)
+Volkswagen R32 Mk4 (2004)
+Volkswagen Corrado VR6 (1992-1995)
+Audi S4 B5 (2000-2002)
+Audi S4 B6/B7 (2004-2008)
+BMW M3 E36 (1995-1999)
+BMW E30 325is (1987-1991)
+BMW 135i N54 (2008-2010)
+
+# -----------------------------------------------------------------------------
+# WAVE 7: AMERICAN MUSCLE CLASSICS
+# -----------------------------------------------------------------------------
+Chevrolet Camaro SS LS1 (1998-2002)
+Pontiac Firebird Trans Am WS6 (1998-2002)
+Ford Mustang GT 5.0 S197 (2011-2014)
+Buick Grand National (1984-1987)
+Chevrolet Corvette C4 ZR-1 (1990-1995)
+
+# -----------------------------------------------------------------------------
+# WAVE 8: SUBARU & MITSUBISHI CLASSICS
+# -----------------------------------------------------------------------------
+Subaru Impreza WRX GC8 (1992-2000)
+Subaru Legacy GT Spec.B (2006-2009)
+Subaru Forester XT (2004-2008)
+Mitsubishi Eclipse GSX (1990-1999)
+Mitsubishi 3000GT VR-4 (1991-1999)
+Mitsubishi Lancer Evolution VII (2001-2003)
+
+# -----------------------------------------------------------------------------
+# WAVE 9: SPORT SEDANS & SLEEPERS
+# -----------------------------------------------------------------------------
+Lexus IS300 (2001-2005)
+Lexus IS F (2008-2014)
+Lexus GS F (2016-2020)
+Infiniti G35 Coupe (2003-2007)
+Infiniti G37 Coupe (2008-2013)
+
+# =============================================================================
+# LOWER PRIORITY - EXPENSIVE SUPERCARS (Move to separate batch)
+# =============================================================================
+# These should be added AFTER the affordable builds are complete
+# See: batch-supercars-later.txt for Ferrari, McLaren, Lambo additions
+

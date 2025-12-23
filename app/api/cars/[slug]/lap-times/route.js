@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/lap-times
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Fetches track lap time data for a specific car.
  * Uses the get_car_track_lap_times RPC function.
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -98,6 +99,9 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/lap-times', feature: 'browse-cars' });
+
 
 
 

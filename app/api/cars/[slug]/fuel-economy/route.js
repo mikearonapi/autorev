@@ -17,12 +17,13 @@
 import { NextResponse } from 'next/server';
 import { fetchCarBySlug } from '@/lib/carsClient';
 import * as epaService from '@/lib/epaFuelEconomyService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/fuel-economy
  * Fetch EPA fuel economy data for a car
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -132,6 +133,8 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/fuel-economy', feature: 'browse-cars' });
 
 
 

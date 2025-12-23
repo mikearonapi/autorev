@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/health
@@ -18,7 +19,7 @@ import { isSupabaseConfigured } from '@/lib/supabase';
  *     version?: string
  *   }
  */
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const deep = searchParams.get('deep') === 'true';
 
@@ -50,6 +51,9 @@ export async function GET(request) {
     },
   });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'health', feature: 'internal' });
+
 
 
 

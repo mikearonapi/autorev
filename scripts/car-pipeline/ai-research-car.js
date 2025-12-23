@@ -963,10 +963,16 @@ async function runYouTubeDiscoveryLegacy(slug) {
       
       let output = '';
       let videosQueued = 0;
+      let quotaExceeded = false;
       
       child.stdout.on('data', (data) => {
         const text = data.toString();
         output += text;
+        
+        // Check for quota exceeded error
+        if (text.includes('quota') || text.includes('403')) {
+          quotaExceeded = true;
+        }
         
         const queuedMatch = text.match(/Videos queued:\s*(\d+)/);
         if (queuedMatch) {
@@ -979,12 +985,29 @@ async function runYouTubeDiscoveryLegacy(slug) {
       });
       
       child.stderr.on('data', (data) => {
+        const text = data.toString();
+        if (text.includes('quota') || text.includes('403')) {
+          quotaExceeded = true;
+        }
         if (flags.verbose) {
-          process.stderr.write(data.toString());
+          process.stderr.write(text);
         }
       });
       
       child.on('close', async (code) => {
+        // Handle quota exceeded case gracefully
+        if (quotaExceeded) {
+          log('⚠️  YouTube API quota exceeded. Videos can be added manually using:', 'warning');
+          log(`   node scripts/youtube-add-videos-for-car.js ${slug} <youtube_url_1> <youtube_url_2>`, 'info');
+          log('   Use Exa/web search to find relevant review videos, then run the above command.', 'info');
+          resolve({ 
+            success: true, 
+            videosLinked: 0, 
+            message: 'YouTube API quota exceeded - use manual script'
+          });
+          return;
+        }
+        
         if (code === 0 && videosQueued > 0) {
           log(`YouTube discovery found ${videosQueued} videos`, 'info');
           
@@ -1202,6 +1225,21 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     throw new Error(`Car already exists: ${carData.slug} (ID: ${existing.id})`);
   }
   
+  // Normalize drivetrain to valid values (RWD, AWD, FWD)
+  const validDrivetrains = ['RWD', 'AWD', 'FWD'];
+  if (carData.drivetrain && !validDrivetrains.includes(carData.drivetrain)) {
+    // Handle cases like "RWD/AWD" - pick the first valid one
+    const normalized = carData.drivetrain.split(/[\/,\s]+/).find(d => validDrivetrains.includes(d.toUpperCase()));
+    if (normalized) {
+      log(`Normalized drivetrain: "${carData.drivetrain}" → "${normalized.toUpperCase()}"`, 'info');
+      carData.drivetrain = normalized.toUpperCase();
+    } else {
+      // Default to RWD if we can't parse
+      log(`Invalid drivetrain "${carData.drivetrain}", defaulting to RWD`, 'warn');
+      carData.drivetrain = 'RWD';
+    }
+  }
+
   // Build final car record with ALL editorial fields
   const editorial = scores.editorial;
   const finalCarData = {

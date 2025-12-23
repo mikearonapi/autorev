@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/enriched
@@ -15,7 +16,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * 
  * Cache: 1 hour, stale-while-revalidate for 2 hours
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { slug } = await params;
 
@@ -173,3 +174,5 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/enriched', feature: 'browse-cars' });

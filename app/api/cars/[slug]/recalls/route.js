@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/recalls
@@ -11,7 +12,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * - limit (default 50, max 200)
  * - includeIncomplete (default true) -> when false, filters out is_incomplete=true rows
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const slug = params?.slug;
 
   if (!slug) {
@@ -80,6 +81,9 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Failed to fetch recalls', code: 'SERVER_ERROR' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/recalls', feature: 'browse-cars' });
+
 
 
 

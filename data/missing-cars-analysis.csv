@@ -143,3 +143,76 @@ name,brand,years,category,engine,hp,torque,price_avg,tier,drivetrain,trans,zero_
 "Alfa Romeo Giulia GTAm",Alfa Romeo,2020-2021,Front-Engine,2.9L Twin-Turbo V6,540,443,200000,premium,RWD,"8-speed Auto",3.6,192,2,"Track-focused Giulia. Carbon fiber and roll cage.",,
 "Genesis G70",Genesis,2018-2024,Front-Engine,3.3L Twin-Turbo V6,365,376,50000,mid,RWD/AWD,"8-speed Auto",4.5,167,3,"Korean sports sedan. Strong value proposition.",,
 "Kia Stinger GT",Kia,2018-2023,Front-Engine,3.3L Twin-Turbo V6,365-368,376,52000,mid,RWD/AWD,"8-speed Auto",4.7,167,3,"Korean gran turismo. Underrated performer.",,
+# ================================================================================
+# AFFORDABLE BUILDABLE ENTHUSIAST CARS (User Requested - Priority Tier)
+# These are the cars real enthusiasts can afford to buy and modify
+# Price target: $5K-$50K | Build-friendly | Strong aftermarket | Community support
+# ================================================================================
+# --- HONDA (Major Gap - High Priority) ---
+"Honda Prelude Si VTEC",Honda,1992-2001,Front-Engine,2.2L VTEC I4,200,156,12000,budget,FWD,"5-speed Manual",6.8,140,1,"USER REQUESTED. Last great Honda coupe. H22 VTEC legend. Huge mod community.",,
+"Honda Civic Si EM1",Honda,1999-2000,Front-Engine,1.6L VTEC I4,160,111,15000,budget,FWD,"5-speed Manual",7.5,130,1,"B16A2 VTEC. Rare coupe. Peak 90s Honda.",,
+"Honda Civic Si EP3",Honda,2002-2005,Front-Engine,2.0L i-VTEC I4,160,132,10000,budget,FWD,"5-speed Manual",7.2,130,1,"K20A3 hatchback. Underrated chassis. Great autocross platform.",,
+"Honda Civic Si FG2",Honda,2006-2011,Front-Engine,2.0L i-VTEC I4,197,139,14000,budget,FWD,"6-speed Manual",6.7,140,1,"K20Z3 coupe. Rev happy. Last naturally aspirated Si.",,
+"Honda CRX Si",Honda,1988-1991,Front-Engine,1.6L VTEC I4,108,100,18000,budget,FWD,"5-speed Manual",8.5,120,2,"Lightweight legend. Kammback design. Swap heaven.",,
+"Honda Del Sol VTEC",Honda,1993-1997,Front-Engine,1.6L VTEC I4,160,111,12000,budget,FWD,"5-speed Manual",7.5,130,2,"Targa top fun. B16A engine. Underappreciated gem.",,
+# --- FORD MUSTANG (Major Gap - User Requested) ---
+"Ford Mustang SVT Cobra",Ford,1996-1998,Front-Engine,4.6L DOHC V8,305,300,22000,budget,RWD,"5-speed Manual",5.9,150,1,"USER REQUESTED. Mod motor Cobra. Great value V8.",,
+"Ford Mustang SVT Cobra",Ford,1999-2001,Front-Engine,4.6L DOHC V8,320,317,28000,budget,RWD,"5-speed Manual",5.5,155,1,"New Edge Cobra. IRS suspension. Track capable.",,
+"Ford Mustang Cobra Terminator",Ford,2003-2004,Front-Engine,4.6L Supercharged V8,390,390,45000,mid,RWD,"6-speed Manual",4.5,155,1,"Iron block supercharged legend. Easy 500+whp.",,
+"Ford Mustang Mach 1 SN95",Ford,2003-2004,Front-Engine,4.6L DOHC V8,305,320,25000,budget,RWD,"5-speed Manual",5.2,155,2,"Shaker hood. Handling package. Modern classic.",,
+"Ford Mustang GT Fox Body",Ford,1987-1993,Front-Engine,5.0L V8,225,300,18000,budget,RWD,"5-speed Manual",6.5,140,1,"The OG mod platform. Endless aftermarket. Lightweight.",,
+"Ford Mustang GT SN95",Ford,1996-1998,Front-Engine,4.6L V8,215,285,12000,budget,RWD,"5-speed Manual",6.8,145,2,"Mod motor GT. Cheap entry to V8. Huge parts support.",,
+# --- TOYOTA (Missing Buildable Classics) ---
+"Toyota MR2 Turbo SW20",Toyota,1991-1995,Mid-Engine,2.0L Turbo I4,200,200,28000,budget,RWD,"5-speed Manual",6.1,143,1,"Mid-engine turbo gem. Snap oversteer reputation. Rewarding driver.",,
+"Toyota MR2 Spyder ZZW30",Toyota,2000-2005,Mid-Engine,1.8L I4,138,125,15000,budget,RWD,"5-speed Manual/6-speed SMT",7.0,130,2,"Lightweight roadster. K-swap popular. Pure driving.",,
+"Toyota Celica GT-Four ST205",Toyota,1994-1999,Front-Engine,2.0L Turbo I4,252,224,35000,mid,AWD,"5-speed Manual",5.9,155,2,"WRC homologation. Rally legend. Rare and capable.",,
+"Toyota GR Corolla",Toyota,2023-2024,Front-Engine,1.6L Turbo I3,300,273,50000,mid,AWD,"6-speed Manual",4.99,143,1,"AWD hot hatch. Rally-bred performance. Modern classic in making.",,
+"Toyota Celica GT-S ZZT231",Toyota,2000-2005,Front-Engine,1.8L I4,180,130,12000,budget,FWD,"6-speed Manual",7.2,140,3,"2ZZ-GE with lift. Reliable fun. Underrated.",,
+# --- NISSAN (Missing JDM Icons) ---
+"Nissan 240SX S13",Nissan,1989-1994,Front-Engine,2.4L I4,155,160,22000,budget,RWD,"5-speed Manual",8.5,130,1,"Drift king platform. SR20 swap heaven. Iconic styling.",,
+"Nissan 240SX S14",Nissan,1995-1998,Front-Engine,2.4L I4,155,160,28000,budget,RWD,"5-speed Manual",8.2,135,1,"Zenki/Kouki. Better chassis. Premium over S13.",,
+"Nissan Silvia S15",Nissan,1999-2002,Front-Engine,2.0L Turbo I4,247,203,45000,mid,RWD,"6-speed Manual",5.5,155,1,"JDM only. Final Silvia. Becoming legal. Holy grail.",,
+"Nissan Skyline GT-R R32",Nissan,1989-1994,Front-Engine,2.6L Twin-Turbo I6,276,260,65000,upper-mid,AWD,"5-speed Manual",5.6,156,1,"Original Godzilla. Started the legend. Now legal.",,
+"Nissan Skyline GT-R R33",Nissan,1995-1998,Front-Engine,2.6L Twin-Turbo I6,276,271,55000,upper-mid,AWD,"5-speed Manual",5.4,155,1,"Middle GT-R generation. Le Mans tested. Underrated.",,
+# --- MAZDA (Missing Rotary & Speed) ---
+"Mazdaspeed3",Mazda,2007-2013,Front-Engine,2.3L Turbo I4,263,280,15000,budget,FWD,"6-speed Manual",5.8,155,1,"Torque steer monster. Huge power potential. Great value.",,
+"Mazdaspeed6",Mazda,2006-2007,Front-Engine,2.3L Turbo I4,274,280,18000,budget,AWD,"6-speed Manual",5.7,149,2,"AWD sleeper sedan. MPS platform. Underappreciated.",,
+"Mazda RX-8 R3",Mazda,2009-2011,Front-Engine,1.3L Rotary,232,159,15000,budget,RWD,"6-speed Manual",6.0,147,2,"Best RX-8 variant. Recaro seats. Limited slip diff.",,
+# --- VOLKSWAGEN/AUDI (Missing Classics) ---
+"Volkswagen GTI Mk4",Volkswagen,1999-2005,Front-Engine,1.8L Turbo I4,180,174,8000,budget,FWD,"5-speed Manual/6-speed Auto",7.0,130,1,"The OG hot hatch. 1.8T legend. Mod friendly.",,
+"Volkswagen GTI Mk5",Volkswagen,2006-2009,Front-Engine,2.0L Turbo I4,200,207,12000,budget,FWD,"6-speed Manual/6-speed DSG",6.7,148,1,"Modern GTI starts here. FSI reliability concerns but fixable.",,
+"Volkswagen GTI Mk6",Volkswagen,2010-2014,Front-Engine,2.0L Turbo I4,200,207,15000,budget,FWD,"6-speed Manual/6-speed DSG",6.5,150,1,"Refined GTI. Best of the TSI era. Strong aftermarket.",,
+"Volkswagen R32 Mk4",Volkswagen,2004,Front-Engine,3.2L VR6,240,236,25000,budget,AWD,"6-speed Manual",6.2,155,2,"Rare VR6 AWD. Manual only. Cult classic.",,
+"Volkswagen R32 Mk5",Volkswagen,2008,Front-Engine,3.2L VR6,250,236,22000,budget,AWD,"6-speed DSG",5.8,155,2,"Last VR6 Golf. DSG only. Appreciating.",,
+"Volkswagen Corrado VR6",Volkswagen,1992-1995,Front-Engine,2.8L VR6,178,177,15000,budget,FWD,"5-speed Manual",7.0,140,2,"Active rear spoiler. Beautiful design. Getting rare.",,
+"Audi S4 B5",Audi,2000-2002,Front-Engine,2.7L Twin-Turbo V6,250,258,15000,budget,AWD,"6-speed Manual",5.6,155,1,"Twin turbo Quattro. K04 upgrade popular. Sleeper sedan.",,
+"Audi S4 B6/B7",Audi,2004-2008,Front-Engine,4.2L V8,340,302,18000,budget,AWD,"6-speed Manual/6-speed Auto",5.4,155,1,"V8 Quattro. Timing chain issues but sounds amazing.",,
+# --- BMW (Missing E36 and Affordable Entries) ---
+"BMW M3 E36",BMW,1995-1999,Front-Engine,3.2L I6,240,236,28000,budget,RWD,"5-speed Manual",5.5,155,1,"The balanced M3. Lightweight. Excellent chassis. Affordable entry.",,
+"BMW E30 325is",BMW,1987-1991,Front-Engine,2.5L I6,168,164,20000,budget,RWD,"5-speed Manual",8.0,132,1,"Classic BMW handling. Great starter project. Appreciating.",,
+"BMW 135i N54",BMW,2008-2010,Front-Engine,3.0L Twin-Turbo I6,300,300,18000,budget,RWD,"6-speed Manual/6-speed Auto",5.0,155,1,"N54 twin turbo legend. JB4 friendly. 400+whp easy.",,
+"BMW E36 328is",BMW,1996-1999,Front-Engine,2.8L I6,190,210,10000,budget,RWD,"5-speed Manual",6.5,140,2,"Budget E36. M52 reliability. Great track platform.",,
+"BMW E30 M3",BMW,1988-1991,Front-Engine,2.3L I4,192,170,65000,upper-mid,RWD,"5-speed Manual",6.9,145,2,"Homologation legend. S14 screamer. Investment grade.",,
+# --- AMERICAN MUSCLE (Missing Classics) ---
+"Chevrolet Camaro SS LS1",Chevrolet,1998-2002,Front-Engine,5.7L V8,305-325,335,18000,budget,RWD,"6-speed Manual/4-speed Auto",5.2,160,1,"4th gen LS power. Cheap V8 fun. Huge aftermarket.",,
+"Pontiac Firebird Trans Am WS6",Pontiac,1998-2002,Front-Engine,5.7L V8,305-325,335,25000,budget,RWD,"6-speed Manual/4-speed Auto",5.0,160,1,"Ram Air WS6 package. LS1 glory days. Last Firebird.",,
+"Chevrolet Corvette C4 ZR-1",Chevrolet,1990-1995,Front-Engine,5.7L V8,375-405,370,40000,mid,RWD,"6-speed Manual",4.9,175,2,"LT5 DOHC. King of the Hill. Appreciating.",,
+"Buick Grand National GNX",Buick,1987,Front-Engine,3.8L Turbo V6,276,360,75000,upper-mid,RWD,"4-speed Auto",4.7,124,2,"Turbo V6 legend. Limited production. Collectible.",,
+"Buick Grand National",Buick,1984-1987,Front-Engine,3.8L Turbo V6,245,355,45000,mid,RWD,"4-speed Auto",5.5,124,2,"Turbo Regal. Sleeper sedan. Easy power gains.",,
+"Ford Mustang GT 5.0 S197",Ford,2011-2014,Front-Engine,5.0L V8,412-420,390,25000,budget,RWD,"6-speed Manual/6-speed Auto",4.6,155,1,"Coyote era begins. Great mod platform. Modern muscle.",,
+# --- SUBARU (Missing Budget Builds) ---
+"Subaru Impreza WRX GC8",Subaru,1992-2000,Front-Engine,2.0L Turbo Flat-4,217,214,28000,budget,AWD,"5-speed Manual",5.9,143,1,"Original WRX. JDM legend. 25-year rule applies.",,
+"Subaru Legacy GT Spec.B",Subaru,2006-2009,Front-Engine,2.5L Turbo Flat-4,250,250,18000,budget,AWD,"6-speed Manual",5.5,150,2,"6-speed manual wagon/sedan. Sleeper spec. Rare.",,
+"Subaru Forester XT",Subaru,2004-2008,Front-Engine,2.5L Turbo Flat-4,224,226,15000,budget,AWD,"5-speed Manual/4-speed Auto",5.8,130,2,"Turbo crossover. Rally practical. Manual available.",,
+# --- MITSUBISHI (Missing DSM & 3000GT) ---
+"Mitsubishi Eclipse GSX",Mitsubishi,1990-1999,Front-Engine,2.0L Turbo I4,210,214,18000,budget,AWD,"5-speed Manual",6.0,145,1,"DSM turbo AWD. 4G63 legend. Big turbo builds popular.",,
+"Mitsubishi 3000GT VR-4",Mitsubishi,1991-1999,Front-Engine,3.0L Twin-Turbo V6,300,307,28000,budget,AWD,"6-speed Manual",5.4,155,1,"Twin turbo AWD grand tourer. Complex but rewarding.",,
+"Mitsubishi Lancer Evolution VII",Mitsubishi,2001-2003,Front-Engine,2.0L Turbo I4,276,274,35000,mid,AWD,"5-speed Manual",4.9,155,1,"JDM Evo. AYC debut. Raw and focused.",,
+# --- LEXUS (Missing Budget Sport Sedans) ---
+"Lexus IS300",Lexus,2001-2005,Front-Engine,3.0L I6,215,218,15000,budget,RWD,"5-speed Manual/5-speed Auto",6.7,143,1,"2JZ-GE power. Manual available. Drift popular. Reliable.",,
+"Lexus IS F",Lexus,2008-2014,Front-Engine,5.0L V8,416,371,32000,budget,RWD,"8-speed Auto",4.6,170,1,"V8 sports sedan. Reliable performance. Undervalued.",,
+"Lexus GS F",Lexus,2016-2020,Front-Engine,5.0L V8,467,389,48000,mid,RWD,"8-speed Auto",4.5,168,2,"V8 sport sedan. Underrated performance. Daily friendly.",,
+# --- INFINITI (Missing G Platform) ---
+"Infiniti G35 Coupe",Infiniti,2003-2007,Front-Engine,3.5L V6,280-298,270,15000,budget,RWD,"6-speed Manual/5-speed Auto",5.6,155,1,"VQ35DE. Great chassis. Manual available. Track capable.",,
+"Infiniti G37 Coupe",Infiniti,2008-2013,Front-Engine,3.7L V6,330,270,20000,budget,RWD,"6-speed Manual/7-speed Auto",5.2,160,1,"VQ37VHR. Rev happy. Last great G. Manual rare.",,
+"Infiniti Q60 Red Sport",Infiniti,2017-2022,Front-Engine,3.0L Twin-Turbo V6,400,350,38000,mid,RWD/AWD,"7-speed Auto",4.5,155,2,"Twin turbo VR30. Underrated. Growing aftermarket.",,

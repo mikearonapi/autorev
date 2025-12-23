@@ -5,6 +5,7 @@ import {
   getErrorAnalysisReport,
   markErrorsFixed 
 } from '@/lib/errorAnalysis';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic - this uses query params
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export const dynamic = 'force-dynamic';
  *   - limit: Max results
  *   - days: Look back period in days (default 7)
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'report';
@@ -67,6 +68,8 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'internal/errors', feature: 'internal' });
+
 /**
  * POST /api/internal/errors
  * 
@@ -78,7 +81,7 @@ export async function GET(request) {
  *   - version: string - Version where fix was applied
  *   - notes: string - Notes about the fix
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const { errorHashes, version, notes } = body;
@@ -104,3 +107,5 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'internal/errors', feature: 'internal' });

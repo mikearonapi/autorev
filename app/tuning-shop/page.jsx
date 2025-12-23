@@ -622,8 +622,24 @@ function TuningShopContent() {
   const { vehicles = [] } = useOwnedVehicles() || {};
   
   // Fetch car data from database on mount
+  // Enhanced error handling to prevent undefined states
   useEffect(() => {
-    fetchCars().then(setAllCars).catch(console.error);
+    let cancelled = false;
+    
+    fetchCars()
+      .then(cars => {
+        if (!cancelled && Array.isArray(cars)) {
+          setAllCars(cars);
+        }
+      })
+      .catch(err => {
+        console.error('[TuningShop] Failed to fetch cars:', err);
+        // Keep allCars as empty array - don't set to undefined/null
+      });
+    
+    return () => {
+      cancelled = true;
+    };
   }, []);
   
   // Handle URL params for direct build access

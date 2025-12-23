@@ -7,8 +7,9 @@
 
 import { NextResponse } from 'next/server';
 import { getUserConversations } from '@/lib/alConversationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { userId } = await params;
     const { searchParams } = new URL(request.url);
@@ -45,6 +46,8 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/[userId]/al-conversations', feature: 'al' });
 
 
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/efficiency
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Fetches fuel economy data (EPA) for a specific car.
  * FREE tier - basic buying research data.
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -55,6 +56,9 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Failed to fetch efficiency data' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/efficiency', feature: 'browse-cars' });
+
 
 
 

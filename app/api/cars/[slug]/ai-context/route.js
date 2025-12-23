@@ -9,8 +9,9 @@
 
 import { NextResponse } from 'next/server';
 import { getCarAIContext } from '@/lib/alTools';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = await params;
   
   if (!slug) {
@@ -51,4 +52,6 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/ai-context', feature: 'al' });
 

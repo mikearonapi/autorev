@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/safety-ratings
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Fetches safety ratings (NHTSA/IIHS) for a specific car.
  * FREE tier - part of buying research, not ownership.
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -67,6 +68,9 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Failed to fetch safety data' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/safety-ratings', feature: 'browse-cars' });
+
 
 
 
