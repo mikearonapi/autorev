@@ -2,7 +2,7 @@
 
 > How the system works
 >
-> **Last Verified:** December 15, 2024 — MCP-verified audit
+> **Last Verified:** December 24, 2024 — MCP-verified audit + counts updated
 
 ---
 
@@ -24,7 +24,7 @@
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │            COMPONENTS (53 files)                         │    │
+│  │            COMPONENTS (64 files)                         │    │
 │  │  • Providers (Auth, Favorites, Compare, etc.)           │    │
 │  │  • UI Components (Header, Footer, CarImage, etc.)       │    │
 │  │  • Feature Components (PerformanceHub, ExpertReviews)   │    │
@@ -34,7 +34,7 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     API LAYER (55 routes)                        │
+│                     API LAYER (85 routes)                        │
 │                                                                  │
 │  /api/cars/*          Car data (specs, safety, pricing)         │
 │  /api/parts/*         Parts catalog and search                  │
@@ -47,7 +47,7 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   SERVICE LAYER (69 files)                       │
+│                   SERVICE LAYER (122 files)                      │
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
 │  │ tierAccess  │  │ carsClient  │  │ alTools     │             │

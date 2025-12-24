@@ -1,8 +1,8 @@
 # AutoRev Pages & Routes
 
-> Complete inventory of all 24 pages
+> Complete inventory of all 37 pages & routes
 >
-> **Last Verified:** December 15, 2024
+> **Last Verified:** December 24, 2024 — MCP-verified file listing (updated counts)
 
 ---
 

@@ -1,8 +1,8 @@
 # AutoRev API Reference
 
-> Complete reference for all 55 API routes
+> Complete reference for all 85 API routes
 >
-> **Last Verified:** December 15, 2024 — MCP-verified file listing
+> **Last Verified:** December 24, 2024 — MCP-verified file listing (updated counts)
 
 ---
 

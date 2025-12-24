@@ -1,8 +1,8 @@
 # AutoRev Components
 
-> Reference for all 53 React components
+> Reference for all 64 React components
 >
-> **Last Verified:** December 15, 2024 — MCP-verified file listing
+> **Last Verified:** December 24, 2024 — MCP-verified file listing (updated counts)
 
 ---
 
