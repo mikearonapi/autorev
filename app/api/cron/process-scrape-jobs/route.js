@@ -49,6 +49,12 @@ export async function GET(request) {
     const maxJobs = parseInt(searchParams.get('max')) || 5;
     const delayBetweenJobs = parseInt(searchParams.get('delay')) || 30000;
     
+    // First, clean up any stuck jobs (running for more than 2 hours)
+    const stuckCleanup = await scrapeJobService.cleanupStuckJobs(2);
+    if (stuckCleanup.cleanedCount > 0) {
+      console.log(`[Cron] Cleaned up ${stuckCleanup.cleanedCount} stuck jobs before processing`);
+    }
+    
     console.log(`[Cron] Processing up to ${maxJobs} scrape jobs...`);
     
     // Process jobs
@@ -139,6 +145,16 @@ export async function POST(request) {
       });
     }
     
+    if (action === 'cleanup_stuck') {
+      const result = await scrapeJobService.cleanupStuckJobs(body.maxHours || 2);
+      
+      return NextResponse.json({
+        success: true,
+        action: 'cleanup_stuck',
+        ...result,
+      });
+    }
+    
     if (action === 'schedule_parts_ingest') {
       const vendorKeys = Array.isArray(body.vendorKeys) ? body.vendorKeys : ['performancebyie', 'eqtuning', 'bmptuning'];
       const result = await scrapeJobService.schedulePartsVendorIngestJobs({
@@ -185,7 +201,7 @@ export async function POST(request) {
     }
     
     return NextResponse.json(
-      { error: 'Unknown action', validActions: ['schedule_refresh', 'schedule_parts_ingest', 'schedule_knowledge_index', 'cleanup', 'stats'] },
+      { error: 'Unknown action', validActions: ['schedule_refresh', 'schedule_parts_ingest', 'schedule_knowledge_index', 'cleanup', 'cleanup_stuck', 'stats'] },
       { status: 400 }
     );
   } catch (err) {
@@ -196,6 +212,7 @@ export async function POST(request) {
     );
   }
 }
+
 
 
 

@@ -163,7 +163,7 @@ export async function GET(request) {
       }
     }
     
-    // 2. Get existing events for deduplication
+    // 2. Get existing events for deduplication (future events only for dedup logic)
     const { data: existingEvents, error: existingErr } = await supabaseServiceRole
       .from('events')
       .select('id, slug, name, source_url, start_date, city, state')
@@ -174,10 +174,23 @@ export async function GET(request) {
       results.errors.push(`Failed to fetch existing events: ${existingErr.message}`);
     }
     
+    // 2b. Get ALL existing slugs to prevent unique constraint violations
+    // (includes past/expired events that still occupy slug namespace)
+    const { data: allSlugs, error: slugsErr } = await supabaseServiceRole
+      .from('events')
+      .select('slug');
+    
+    if (slugsErr) {
+      console.error('[refresh-events] Error fetching all slugs:', slugsErr);
+    }
+    
     const existingEventsList = existingEvents || [];
     const existingSlugByConflictKey = new Map(
       existingEventsList.map((e) => [`${String(e.source_url || '').trim()}|${String(e.start_date || '').trim()}`, e.slug])
     );
+    
+    // Include ALL slugs (past + future) to prevent slug collisions
+    const allExistingSlugs = new Set((allSlugs || []).map(e => e.slug));
     
     // 3. Process each source (create a scrape_jobs record per source for provenance)
     for (const source of sources) {
@@ -266,13 +279,13 @@ export async function GET(request) {
         const { unique: uniqueWithinBatch } = deduplicateBatch(rawEvents, []);
 
         // Build DB rows w/ provenance (and keep existing slugs stable)
-        const existingSlugs = new Set(existingEventsList.map((e) => e.slug));
+        // Use allExistingSlugs (includes past events) to prevent slug collisions
         const eventsToCreate = buildEventRows({
           events: uniqueWithinBatch,
           source,
           eventTypeIdBySlug,
           otherTypeId,
-          existingSlugs,
+          existingSlugs: allExistingSlugs,
           existingSlugByConflictKey,
           verifiedAtIso: nowIso,
           scrapeJobId,
@@ -311,16 +324,44 @@ export async function GET(request) {
           
           const { data: insertedEvents, error: insertErr } = await supabaseServiceRole
             .from('events')
-            .upsert(eventsToCreate, { onConflict: 'source_url,start_date' })
+            .upsert(eventsToCreate, { onConflict: 'source_url,start_date', ignoreDuplicates: false })
             .select('id, slug');
           
           if (insertErr) {
-            console.error(`[refresh-events] Error inserting events:`, insertErr);
-            sourceResult.errors.push(`Insert failed: ${insertErr.message}`);
-            results.errors.push(`[${source.name}] Insert failed: ${insertErr.message}`);
+            // If batch upsert fails (e.g., slug collision), try inserting one-by-one
+            console.warn(`[refresh-events] Batch upsert failed, trying individual inserts:`, insertErr.message);
+            let successCount = 0;
+            const individualErrors = [];
+            
+            for (const event of eventsToCreate) {
+              const { error: singleErr } = await supabaseServiceRole
+                .from('events')
+                .upsert([event], { onConflict: 'source_url,start_date', ignoreDuplicates: true })
+                .select('id');
+              
+              if (singleErr) {
+                // Skip this event but continue with others
+                individualErrors.push(`${event.name}: ${singleErr.message}`);
+              } else {
+                successCount++;
+                // Track the slug as used for future events in this batch
+                allExistingSlugs.add(event.slug);
+              }
+            }
+            
+            if (individualErrors.length > 0) {
+              console.warn(`[refresh-events] ${individualErrors.length} events failed individually:`, individualErrors.slice(0, 3));
+              sourceResult.errors.push(`${individualErrors.length} events failed: ${individualErrors[0]}`);
+            }
+            
+            sourceResult.eventsCreated = successCount;
+            results.eventsCreated += successCount;
+            console.log(`[refresh-events] Created ${successCount}/${eventsToCreate.length} events from ${source.name} (individual inserts)`);
           } else {
             sourceResult.eventsCreated = insertedEvents?.length || 0;
             results.eventsCreated += sourceResult.eventsCreated;
+            // Track all inserted slugs
+            (insertedEvents || []).forEach(e => allExistingSlugs.add(e.slug));
             console.log(`[refresh-events] Created ${sourceResult.eventsCreated} events from ${source.name}`);
           }
         } else if (dryRun) {
