@@ -48,6 +48,7 @@ import { ALUserUsage } from './components/ALUserUsage';
 import { VercelStatus } from './components/VercelStatus';
 import { WebVitalsPanel } from './components/WebVitalsPanel';
 import EmailDashboard from './components/EmailDashboard';
+import { StripeDashboard } from './components/StripeDashboard';
 
 // Icons
 import {
@@ -68,6 +69,7 @@ import {
   ActivityIcon,
   PlusIcon,
   XIcon,
+  CreditCardIcon,
 } from './components/Icons';
 
 import styles from './page.module.css';
@@ -99,6 +101,7 @@ export default function AdminDashboardPage() {
   const [retentionData, setRetentionData] = useState(null);
   const [healthData, setHealthData] = useState(null);
   const [alertsData, setAlertsData] = useState(null);
+  const [stripeData, setStripeData] = useState(null);
   
   // Check admin access
   useEffect(() => {
@@ -122,7 +125,7 @@ export default function AdminDashboardPage() {
     const apiRange = TIME_RANGE_MAP[timeRange]?.apiRange || 'all';
     
     try {
-      const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes] = await Promise.all([
+      const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes, stripeRes] = await Promise.all([
         fetch(`/api/admin/dashboard?range=${apiRange}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
@@ -139,6 +142,9 @@ export default function AdminDashboardPage() {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
         fetch('/api/admin/alerts', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch(`/api/admin/stripe?range=${apiRange}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         })
       ]);
@@ -173,6 +179,11 @@ export default function AdminDashboardPage() {
       if (alertsRes.ok) {
         const alertsResult = await alertsRes.json();
         setAlertsData(alertsResult);
+      }
+      
+      if (stripeRes.ok) {
+        const stripeResult = await stripeRes.json();
+        setStripeData(stripeResult);
       }
       
       setLastUpdated(new Date());
@@ -380,10 +391,20 @@ export default function AdminDashboardPage() {
                       : `${TIME_RANGE_MAP[timeRange]?.label || 'Period'} Summary`
                     }</h3>
                     <div className={styles.summaryContent}>
+                      {/* Stripe MRR Row - Real-time from Stripe */}
+                      <div className={`${styles.summaryRow} ${styles.stripeRow}`}>
+                        <span>
+                          <CreditCardIcon size={14} className={styles.stripeIcon} />
+                          Stripe MRR
+                        </span>
+                        <span className={stripeData?.revenue?.mrr > 0 ? styles.positive : styles.neutral}>
+                          ${((stripeData?.revenue?.mrr || 0) / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
                       <div className={styles.summaryRow}>
-                        <span>Revenue</span>
-                        <span className={actualRevenue > 0 ? styles.positive : styles.neutral}>
-                          ${actualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        <span>Period Revenue</span>
+                        <span className={(stripeData?.revenue?.periodTotal || actualRevenue) > 0 ? styles.positive : styles.neutral}>
+                          ${(((stripeData?.revenue?.periodTotal || 0) / 100) || actualRevenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                       <div className={styles.summaryRow}>
@@ -409,9 +430,9 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <p className={styles.summaryNote}>
-                      {actualRevenue === 0 
-                        ? 'Pre-revenue investment phase. Building product & user base.'
-                        : `Net margin: ${((actualRevenue - totalLoss) / actualRevenue * 100).toFixed(1)}%`
+                      {(stripeData?.subscriptions?.active || 0) > 0 
+                        ? `${stripeData.subscriptions.active} active subscriber${stripeData.subscriptions.active > 1 ? 's' : ''} • ARR: $${((stripeData?.revenue?.arr || 0) / 100).toLocaleString()}`
+                        : 'Pre-revenue investment phase. Building product & user base.'
                       }
                     </p>
                   </div>
@@ -447,6 +468,10 @@ export default function AdminDashboardPage() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Quick Access</h2>
               <div className={styles.quickLinks}>
+                <button onClick={() => setActiveTab('revenue')} className={`${styles.quickLink} ${styles.stripeLink}`}>
+                  <CreditCardIcon size={18} />
+                  <span>Stripe Revenue</span>
+                </button>
                 <button onClick={() => setActiveTab('financials')} className={styles.quickLink}>
                   <DollarSignIcon size={18} />
                   <span>View Full P&L</span>
@@ -466,6 +491,17 @@ export default function AdminDashboardPage() {
               </div>
             </section>
           </>
+        )}
+        
+        {/* REVENUE TAB - Stripe Dashboard */}
+        {activeTab === 'revenue' && (
+          <section className={styles.section}>
+            <StripeDashboard 
+              token={session?.access_token}
+              range={timeRange}
+              loading={loading}
+            />
+          </section>
         )}
         
         {/* FINANCIALS TAB */}

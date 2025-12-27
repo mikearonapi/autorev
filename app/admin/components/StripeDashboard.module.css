@@ -1,0 +1,544 @@
+/* StripeDashboard Component Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stripeLogoWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #635BFF 0%, #8B7DFF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(99, 91, 255, 0.3);
+}
+
+.stripeLogo {
+  width: 28px;
+  height: auto;
+}
+
+.stripeLogo path {
+  fill: white !important;
+}
+
+.headerTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.headerTitle p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refreshButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--admin-text-secondary, #94a3b8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.stripeLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #635BFF 0%, #8B7DFF 100%);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.stripeLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 91, 255, 0.4);
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+/* KPI Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Subscriptions Section */
+.subscriptionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .subscriptionsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statsCard,
+.tiersCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.statHeader {
+  margin-bottom: 12px;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.statItem .statLabel {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+/* Tiers */
+.tiersList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tierRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.tierInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tierBadge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tierCount {
+  font-size: 12px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.tierMRR {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-positive, #22c55e);
+}
+
+/* Revenue Breakdown */
+.breakdownGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .breakdownGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.breakdownCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.breakdownIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.breakdownContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.breakdownLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.breakdownValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.breakdownSub {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Customers */
+.customersGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .customersGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.customerStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.customerValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.customerLabel {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+/* Payments Table */
+.paymentsTable {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.paymentsTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.paymentsTable th,
+.paymentsTable td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.paymentsTable th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-text-secondary, #94a3b8);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.paymentsTable td {
+  font-size: 13px;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.paymentsTable tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.paymentsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.amountCell {
+  font-weight: 600;
+  color: var(--admin-positive, #22c55e) !important;
+}
+
+.customerCell {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px !important;
+  color: var(--admin-text-secondary, #94a3b8) !important;
+}
+
+.timeCell {
+  font-size: 12px !important;
+  color: var(--admin-text-muted, #64748b) !important;
+}
+
+.paymentBadge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Invoices */
+.invoicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.invoiceStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.invoiceStat.overdue {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.invoiceStat.overdue .invoiceValue {
+  color: var(--admin-negative, #ef4444);
+}
+
+.invoiceValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.invoiceLabel {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.invoiceAmount {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Products */
+.productsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.productItem {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.productName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.productId {
+  font-size: 10px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Error State */
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+}
+
+.errorState p {
+  margin: 0;
+  color: var(--admin-negative, #ef4444);
+  font-size: 13px;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: var(--admin-text-primary, #f8fafc);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Footer */
+.footer {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  text-align: right;
+}
+
+.footer span {
+  font-size: 10px;
+  color: var(--admin-text-muted, #64748b);
+}
+

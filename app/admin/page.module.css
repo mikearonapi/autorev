@@ -326,6 +326,28 @@
   color: var(--admin-text-muted, #64748b);
 }
 
+/* Stripe-specific row styling */
+.summaryRow.stripeRow {
+  background: linear-gradient(90deg, rgba(99, 91, 255, 0.1), transparent);
+  margin: -4px -8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.summaryRow.stripeRow span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #a5b4fc;
+}
+
+.stripeIcon {
+  color: #635BFF;
+  width: 14px;
+  height: 14px;
+}
+
 .summaryNote {
   font-size: 11px;
   color: var(--admin-text-muted, #64748b);
@@ -555,6 +577,24 @@
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--admin-accent-blue);
   transform: translateY(-1px);
+}
+
+/* Stripe-specific quick link styling */
+.quickLink.stripeLink {
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.15), rgba(139, 92, 246, 0.1));
+  border-color: rgba(99, 91, 255, 0.3);
+  color: #a5b4fc;
+}
+
+.quickLink.stripeLink:hover {
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.25), rgba(139, 92, 246, 0.2));
+  border-color: #635BFF;
+  box-shadow: 0 2px 8px rgba(99, 91, 255, 0.2);
+}
+
+.quickLink.stripeLink svg {
+  color: #635BFF;
+  opacity: 1;
 }
 
 .quickLink svg {

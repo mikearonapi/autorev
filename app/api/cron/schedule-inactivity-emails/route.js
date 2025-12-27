@@ -2,15 +2,9 @@
  * Inactivity Email Scheduling Cron Job
  * 
  * Checks for inactive users and queues reminder emails.
- * Should run daily (e.g., 6am).
+ * Should run daily at 6am UTC.
  * 
- * Vercel cron config (vercel.json):
- * {
- *   "crons": [{
- *     "path": "/api/cron/schedule-inactivity-emails",
- *     "schedule": "0 6 * * *"
- *   }]
- * }
+ * @route GET /api/cron/schedule-inactivity-emails
  */
 
 import { NextResponse } from 'next/server';

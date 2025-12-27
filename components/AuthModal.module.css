@@ -344,6 +344,21 @@
   cursor: not-allowed;
 }
 
+/* Security Note */
+.securityNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  margin-top: var(--space-md);
+}
+
+.securityNote svg {
+  color: var(--color-success);
+}
+
 /* Toggle Mode */
 .toggleMode {
   text-align: center;

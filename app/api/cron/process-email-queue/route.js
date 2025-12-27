@@ -4,13 +4,10 @@
  * Processes scheduled emails from the queue.
  * Should be called every 5-15 minutes via Vercel cron or external scheduler.
  * 
- * Vercel cron config (vercel.json):
- * {
- *   "crons": [{
- *     "path": "/api/cron/process-email-queue",
- *     "schedule": "*/5 * * * *"
- *   }]
- * }
+ * Vercel cron config: Add to vercel.json crons array with
+ * path "/api/cron/process-email-queue" and schedule "every 5 minutes"
+ * 
+ * @route GET /api/cron/process-email-queue
  */
 
 import { NextResponse } from 'next/server';
