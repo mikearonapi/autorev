@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { 
   signInWithGoogle, 
@@ -27,14 +27,96 @@ const defaultAuthState = {
   session: null,
   isLoading: true,
   isAuthenticated: false,
+  authError: null,
 };
+
+/**
+ * Session initialization with retry logic
+ * Handles race conditions after OAuth callback
+ */
+async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
+  let lastError = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      // Use getUser() for server-validated session (more secure than getSession)
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        // If it's a refresh error, try to get a new session
+        if (userError.message?.includes('refresh') || userError.message?.includes('token')) {
+          console.log(`[AuthProvider] Token refresh needed on attempt ${attempt}`);
+          // Trigger a session refresh
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          if (!sessionError && session) {
+            return { session, user: session.user, error: null };
+          }
+        }
+        lastError = userError;
+        throw userError;
+      }
+      
+      if (user) {
+        // User validated, now get full session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          lastError = sessionError;
+          throw sessionError;
+        }
+        
+        console.log(`[AuthProvider] Session initialized on attempt ${attempt}`);
+        return { session, user, error: null };
+      }
+      
+      // No user found - this is valid (not logged in)
+      return { session: null, user: null, error: null };
+      
+    } catch (err) {
+      lastError = err;
+      console.warn(`[AuthProvider] Init attempt ${attempt}/${maxRetries} failed:`, err.message);
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff: 100ms, 200ms, 400ms
+        const delay = initialDelay * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  console.error('[AuthProvider] Session init failed after all retries');
+  return { session: null, user: null, error: lastError };
+}
+
+/**
+ * Check for auth callback completion cookie
+ * Set by the OAuth callback route to signal successful auth
+ */
+function checkAuthCallbackCookie() {
+  if (typeof document === 'undefined') return false;
+  
+  const cookies = document.cookie.split(';');
+  const authCookie = cookies.find(c => c.trim().startsWith('auth_callback_complete='));
+  
+  if (authCookie) {
+    // Clear the cookie after reading
+    document.cookie = 'auth_callback_complete=; max-age=0; path=/';
+    return true;
+  }
+  return false;
+}
 
 /**
  * AuthProvider Component
  * Wraps the app and provides auth context
+ * 
+ * ENHANCED: Includes retry logic, cross-tab sync, and proactive token refresh
  */
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
+  const refreshIntervalRef = useRef(null);
+  const initAttemptRef = useRef(0);
+  const lastVisibilityChangeRef = useRef(Date.now());
 
   // Fetch user profile when authenticated
   const fetchProfile = useCallback(async (userId) => {
@@ -53,6 +135,45 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Proactive session refresh (before expiry)
+  const scheduleSessionRefresh = useCallback((session) => {
+    if (refreshIntervalRef.current) {
+      clearTimeout(refreshIntervalRef.current);
+    }
+    
+    if (!session?.expires_at) return;
+    
+    const expiresAt = session.expires_at * 1000; // Convert to ms
+    const now = Date.now();
+    const timeUntilExpiry = expiresAt - now;
+    
+    // Refresh 5 minutes before expiry (or immediately if less than 5 min left)
+    const refreshBuffer = 5 * 60 * 1000; // 5 minutes
+    const refreshIn = Math.max(timeUntilExpiry - refreshBuffer, 1000);
+    
+    console.log(`[AuthProvider] Scheduling token refresh in ${Math.round(refreshIn / 1000 / 60)} minutes`);
+    
+    refreshIntervalRef.current = setTimeout(async () => {
+      console.log('[AuthProvider] Proactive token refresh triggered');
+      try {
+        const { data: { session: newSession }, error } = await supabase.auth.refreshSession();
+        if (!error && newSession) {
+          console.log('[AuthProvider] Token refreshed proactively');
+          setState(prev => ({
+            ...prev,
+            session: newSession,
+          }));
+          // Schedule next refresh
+          scheduleSessionRefresh(newSession);
+        } else if (error) {
+          console.warn('[AuthProvider] Proactive refresh failed:', error.message);
+        }
+      } catch (err) {
+        console.error('[AuthProvider] Proactive refresh error:', err);
+      }
+    }, refreshIn);
+  }, []);
+
   // Handle auth state changes
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
@@ -61,35 +182,67 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    // Get initial session
+    // Check if we just came from OAuth callback
+    const fromCallback = checkAuthCallbackCookie();
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const hasAuthTimestamp = urlParams?.has('auth_ts');
+
+    // Get initial session with retry logic
     const initializeAuth = async () => {
       try {
-        console.log('[AuthProvider] Initializing auth, checking session...');
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        initAttemptRef.current += 1;
+        const attemptNum = initAttemptRef.current;
         
-        if (sessionError) {
-          console.error('[AuthProvider] Session error:', sessionError);
+        console.log(`[AuthProvider] Initializing auth (attempt ${attemptNum})...`, {
+          fromCallback,
+          hasAuthTimestamp,
+        });
+        
+        // If coming from OAuth callback, use retry logic to handle race conditions
+        const maxRetries = (fromCallback || hasAuthTimestamp) ? 5 : 3;
+        const { session, user, error: initError } = await initializeSessionWithRetry(maxRetries);
+        
+        if (initError) {
+          console.error('[AuthProvider] Session init error:', initError);
+          setState({
+            ...defaultAuthState,
+            isLoading: false,
+            authError: initError.message,
+          });
+          return;
         }
         
         console.log('[AuthProvider] Session check result:', {
           hasSession: !!session,
-          userId: session?.user?.id?.slice(0, 8) + '...',
+          userId: user?.id?.slice(0, 8) + '...',
           expiresAt: session?.expires_at,
         });
         
-        if (session?.user) {
-          const profile = await fetchProfile(session.user.id);
+        if (user && session) {
+          const profile = await fetchProfile(user.id);
           console.log('[AuthProvider] User authenticated, profile loaded:', {
-            userId: session.user.id.slice(0, 8) + '...',
+            userId: user.id.slice(0, 8) + '...',
             tier: profile?.subscription_tier,
           });
+          
+          // Clean up the auth_ts query param if present
+          if (hasAuthTimestamp && typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('auth_ts');
+            window.history.replaceState({}, '', url.pathname + url.search);
+          }
+          
           setState({
-            user: session.user,
+            user,
             profile,
             session,
             isLoading: false,
             isAuthenticated: true,
+            authError: null,
           });
+          
+          // Schedule proactive token refresh
+          scheduleSessionRefresh(session);
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
@@ -99,7 +252,7 @@ export function AuthProvider({ children }) {
         }
       } catch (err) {
         console.error('[AuthProvider] Error initializing auth:', err);
-        setState(prev => ({ ...prev, isLoading: false }));
+        setState(prev => ({ ...prev, isLoading: false, authError: err.message }));
       }
     };
 
@@ -132,7 +285,9 @@ export function AuthProvider({ children }) {
               session,
               isLoading: false,
               isAuthenticated: true,
+              authError: null,
             });
+            scheduleSessionRefresh(session);
             return;
           } catch (err) {
             console.error('[AuthProvider] Failed to apply selected tier:', err);
@@ -146,17 +301,26 @@ export function AuthProvider({ children }) {
           session,
           isLoading: false,
           isAuthenticated: true,
+          authError: null,
         });
+        scheduleSessionRefresh(session);
       } else if (event === 'SIGNED_OUT') {
+        // Clear refresh timer on signout
+        if (refreshIntervalRef.current) {
+          clearTimeout(refreshIntervalRef.current);
+        }
         setState({
           ...defaultAuthState,
           isLoading: false,
         });
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        console.log('[AuthProvider] Token refreshed via Supabase');
         setState(prev => ({
           ...prev,
           session,
+          authError: null,
         }));
+        scheduleSessionRefresh(session);
       } else if (event === 'USER_UPDATED' && session?.user) {
         const profile = await fetchProfile(session.user.id);
         setState(prev => ({
@@ -167,10 +331,82 @@ export function AuthProvider({ children }) {
       }
     });
 
+    // Cross-tab session synchronization via visibility change
+    // When user switches back to this tab, verify session is still valid
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible') {
+        const now = Date.now();
+        const timeSinceLastCheck = now - lastVisibilityChangeRef.current;
+        lastVisibilityChangeRef.current = now;
+        
+        // Only check if tab was hidden for more than 30 seconds
+        if (timeSinceLastCheck > 30000) {
+          console.log('[AuthProvider] Tab became visible after long absence, verifying session...');
+          try {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            
+            if (error) {
+              console.warn('[AuthProvider] Session invalid after tab switch:', error.message);
+              // Try to refresh
+              const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
+              if (refreshError || !newSession) {
+                // Session is truly invalid - user needs to re-auth
+                console.warn('[AuthProvider] Session refresh failed, user logged out');
+                setState({
+                  ...defaultAuthState,
+                  isLoading: false,
+                  authError: 'Session expired. Please sign in again.',
+                });
+              } else {
+                console.log('[AuthProvider] Session restored after tab switch');
+                setState(prev => ({
+                  ...prev,
+                  session: newSession,
+                  user: newSession.user,
+                  authError: null,
+                }));
+                scheduleSessionRefresh(newSession);
+              }
+            } else if (!user && state.isAuthenticated) {
+              // User was authenticated but now no user - logged out in another tab
+              console.log('[AuthProvider] User logged out in another tab');
+              setState({
+                ...defaultAuthState,
+                isLoading: false,
+              });
+            }
+          } catch (err) {
+            console.error('[AuthProvider] Error checking session on tab focus:', err);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Storage event listener for cross-tab logout sync
+    const handleStorageChange = (e) => {
+      // Supabase stores auth in localStorage with this key pattern
+      if (e.key?.includes('supabase.auth') && e.newValue === null && state.isAuthenticated) {
+        console.log('[AuthProvider] Auth storage cleared in another tab, logging out');
+        setState({
+          ...defaultAuthState,
+          isLoading: false,
+        });
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
       unsubscribe();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('storage', handleStorageChange);
+      if (refreshIntervalRef.current) {
+        clearTimeout(refreshIntervalRef.current);
+      }
     };
-  }, [fetchProfile]);
+  }, [fetchProfile, scheduleSessionRefresh, state.isAuthenticated]);
 
   // Sign in with Google
   const loginWithGoogle = useCallback(async (redirectTo) => {
@@ -241,6 +477,45 @@ export function AuthProvider({ children }) {
     }
   }, [state.user?.id, fetchProfile]);
 
+  // Force session refresh - useful when API returns 401
+  const refreshSession = useCallback(async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      return { error: new Error('Supabase not configured') };
+    }
+
+    try {
+      console.log('[AuthProvider] Manual session refresh requested');
+      const { data: { session }, error } = await supabase.auth.refreshSession();
+      
+      if (error) {
+        console.error('[AuthProvider] Manual refresh failed:', error);
+        return { error };
+      }
+      
+      if (session) {
+        setState(prev => ({
+          ...prev,
+          session,
+          user: session.user,
+          authError: null,
+        }));
+        scheduleSessionRefresh(session);
+        console.log('[AuthProvider] Manual refresh succeeded');
+        return { session, error: null };
+      }
+      
+      return { error: new Error('No session returned') };
+    } catch (err) {
+      console.error('[AuthProvider] Manual refresh error:', err);
+      return { error: err };
+    }
+  }, [scheduleSessionRefresh]);
+
+  // Clear auth error
+  const clearAuthError = useCallback(() => {
+    setState(prev => ({ ...prev, authError: null }));
+  }, []);
+
   // Context value
   const value = useMemo(() => ({
     // State
@@ -249,6 +524,7 @@ export function AuthProvider({ children }) {
     session: state.session,
     isLoading: state.isLoading,
     isAuthenticated: state.isAuthenticated,
+    authError: state.authError,
     
     // Methods
     loginWithGoogle,
@@ -257,6 +533,8 @@ export function AuthProvider({ children }) {
     logout,
     updateProfile,
     refreshProfile,
+    refreshSession,
+    clearAuthError,
     
     // Helpers
     isSupabaseConfigured,
@@ -268,6 +546,8 @@ export function AuthProvider({ children }) {
     logout,
     updateProfile,
     refreshProfile,
+    refreshSession,
+    clearAuthError,
   ]);
 
   return (
