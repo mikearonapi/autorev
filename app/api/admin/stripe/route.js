@@ -180,6 +180,9 @@ export async function GET(request) {
       customers,
       invoices,
       products,
+      prices,
+      refunds,
+      disputes,
     ] = await Promise.all([
       // Current balance
       stripe.balance.retrieve(),
@@ -193,7 +196,7 @@ export async function GET(request) {
         created: { gte: startTime, lte: endTime },
       }),
 
-      // Charges in range
+      // Charges in range (includes refund info)
       stripe.charges.list({
         limit: 100,
         created: { gte: startTime, lte: endTime },
@@ -210,6 +213,18 @@ export async function GET(request) {
 
       // Products for reference
       stripe.products.list({ limit: 20, active: true }),
+
+      // Prices (for product pricing display)
+      stripe.prices.list({ limit: 50, active: true }),
+
+      // Refunds in period
+      stripe.refunds.list({
+        limit: 100,
+        created: { gte: startTime, lte: endTime },
+      }),
+
+      // Disputes (chargebacks)
+      stripe.disputes.list({ limit: 50 }),
     ]);
 
     // Calculate metrics
@@ -345,13 +360,71 @@ export async function GET(request) {
         openAmount: openInvoices.reduce((sum, i) => sum + (i.amount_due || 0), 0),
       },
 
-      // Products
-      products: (products.data || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        active: p.active,
-      })),
+      // Products with prices
+      products: (products.data || []).map(p => {
+        const productPrices = (prices.data || []).filter(pr => pr.product === p.id);
+        return {
+          id: p.id,
+          name: p.name,
+          description: p.description,
+          active: p.active,
+          prices: productPrices.map(pr => ({
+            id: pr.id,
+            amount: pr.unit_amount,
+            currency: pr.currency,
+            type: pr.type,
+            interval: pr.recurring?.interval || null,
+          })),
+        };
+      }),
+
+      // Refunds
+      refunds: {
+        count: (refunds.data || []).length,
+        totalAmount: (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
+        recent: (refunds.data || []).slice(0, 5).map(r => ({
+          id: r.id,
+          amount: r.amount,
+          currency: r.currency,
+          status: r.status,
+          reason: r.reason,
+          created: new Date(r.created * 1000).toISOString(),
+        })),
+      },
+
+      // Disputes (chargebacks)
+      disputes: {
+        open: (disputes.data || []).filter(d => d.status === 'needs_response' || d.status === 'under_review').length,
+        won: (disputes.data || []).filter(d => d.status === 'won').length,
+        lost: (disputes.data || []).filter(d => d.status === 'lost').length,
+        totalAmount: (disputes.data || []).reduce((sum, d) => sum + (d.amount || 0), 0),
+        recent: (disputes.data || []).slice(0, 5).map(d => ({
+          id: d.id,
+          amount: d.amount,
+          currency: d.currency,
+          status: d.status,
+          reason: d.reason,
+          created: new Date(d.created * 1000).toISOString(),
+        })),
+      },
+
+      // Charges breakdown (successful, failed, refunded)
+      charges: {
+        successful: (charges.data || []).filter(c => c.status === 'succeeded' && !c.refunded).length,
+        failed: (charges.data || []).filter(c => c.status === 'failed').length,
+        refunded: (charges.data || []).filter(c => c.refunded).length,
+        partiallyRefunded: (charges.data || []).filter(c => c.amount_refunded > 0 && !c.refunded).length,
+        successAmount: (charges.data || []).filter(c => c.status === 'succeeded').reduce((sum, c) => sum + (c.amount - (c.amount_refunded || 0)), 0),
+        failedAmount: (charges.data || []).filter(c => c.status === 'failed').reduce((sum, c) => sum + (c.amount || 0), 0),
+        refundedAmount: (charges.data || []).reduce((sum, c) => sum + (c.amount_refunded || 0), 0),
+      },
+
+      // Net revenue (gross - refunds)
+      netRevenue: {
+        gross: totalRevenueInPeriod,
+        refunds: (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
+        net: totalRevenueInPeriod - (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
+      },
 
       // Stripe dashboard link
       dashboardUrl: 'https://dashboard.stripe.com',

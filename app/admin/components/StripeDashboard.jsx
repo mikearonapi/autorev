@@ -447,6 +447,65 @@ export function StripeDashboard({ token, range = 'month', loading: parentLoading
         </div>
       </section>
 
+      {/* Charges & Refunds Summary */}
+      <section className={styles.section}>
+        <h4 className={styles.sectionTitle}>Charges & Refunds</h4>
+        <div className={styles.chargesGrid}>
+          <div className={styles.chargeStat}>
+            <span className={styles.chargeValue}>{data?.charges?.successful || 0}</span>
+            <span className={styles.chargeLabel}>Successful</span>
+            <span className={styles.chargeAmount + ' ' + styles.positive}>
+              {formatCurrency(data?.charges?.successAmount || 0)}
+            </span>
+          </div>
+          <div className={styles.chargeStat}>
+            <span className={styles.chargeValue}>{data?.charges?.failed || 0}</span>
+            <span className={styles.chargeLabel}>Failed</span>
+            <span className={styles.chargeAmount + ' ' + styles.warning}>
+              {formatCurrency(data?.charges?.failedAmount || 0)}
+            </span>
+          </div>
+          <div className={styles.chargeStat}>
+            <span className={styles.chargeValue}>{data?.refunds?.count || 0}</span>
+            <span className={styles.chargeLabel}>Refunded</span>
+            <span className={styles.chargeAmount + ' ' + styles.negative}>
+              -{formatCurrency(data?.refunds?.totalAmount || 0)}
+            </span>
+          </div>
+          <div className={styles.chargeStat + ' ' + styles.netRevenue}>
+            <span className={styles.chargeLabel}>Net Revenue</span>
+            <span className={styles.chargeValue}>
+              {formatCurrency(data?.netRevenue?.net || 0)}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Disputes (Chargebacks) */}
+      {(data?.disputes?.open > 0 || data?.disputes?.lost > 0 || data?.disputes?.won > 0) && (
+        <section className={styles.section}>
+          <h4 className={styles.sectionTitle + ' ' + styles.warningTitle}>Disputes & Chargebacks</h4>
+          <div className={styles.disputesGrid}>
+            <div className={styles.disputeStat + (data?.disputes?.open > 0 ? ' ' + styles.urgent : '')}>
+              <span className={styles.disputeValue}>{data?.disputes?.open || 0}</span>
+              <span className={styles.disputeLabel}>Needs Response</span>
+            </div>
+            <div className={styles.disputeStat}>
+              <span className={styles.disputeValue}>{data?.disputes?.won || 0}</span>
+              <span className={styles.disputeLabel}>Won</span>
+            </div>
+            <div className={styles.disputeStat + (data?.disputes?.lost > 0 ? ' ' + styles.lost : '')}>
+              <span className={styles.disputeValue}>{data?.disputes?.lost || 0}</span>
+              <span className={styles.disputeLabel}>Lost</span>
+            </div>
+            <div className={styles.disputeStat}>
+              <span className={styles.disputeLabel}>Total Disputed</span>
+              <span className={styles.disputeValue}>{formatCurrency(data?.disputes?.totalAmount || 0)}</span>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Invoice Summary */}
       {data?.invoices && (
         <section className={styles.section}>
@@ -470,14 +529,27 @@ export function StripeDashboard({ token, range = 'month', loading: parentLoading
         </section>
       )}
 
-      {/* Products */}
+      {/* Products with Pricing */}
       {data?.products?.length > 0 && (
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle}>Active Products</h4>
-          <div className={styles.productsList}>
+          <h4 className={styles.sectionTitle}>Products & Pricing</h4>
+          <div className={styles.productsGrid}>
             {data.products.map((product) => (
-              <div key={product.id} className={styles.productItem}>
-                <span className={styles.productName}>{product.name}</span>
+              <div key={product.id} className={styles.productCard}>
+                <div className={styles.productHeader}>
+                  <span className={styles.productName}>{product.name}</span>
+                  {product.prices?.length > 0 && (
+                    <span className={styles.productPrice}>
+                      {product.prices[0].interval 
+                        ? `${formatCurrency(product.prices[0].amount)}/${product.prices[0].interval}`
+                        : formatCurrency(product.prices[0].amount)
+                      }
+                    </span>
+                  )}
+                </div>
+                {product.description && (
+                  <p className={styles.productDescription}>{product.description}</p>
+                )}
                 <span className={styles.productId}>{product.id}</span>
               </div>
             ))}
