@@ -4,7 +4,9 @@
  * Handles the redirect from OAuth providers (Google, etc.)
  * Exchanges the code for a session and redirects to the intended page
  * 
- * Uses the official Supabase SSR pattern for Next.js App Router
+ * CRITICAL: Cookies set during exchangeCodeForSession MUST be explicitly
+ * copied to the NextResponse.redirect() response for the browser to receive them.
+ * 
  * @see https://supabase.com/docs/guides/auth/server-side/nextjs
  */
 
@@ -32,6 +34,9 @@ export async function GET(request) {
   if (code) {
     const cookieStore = await cookies();
     
+    // Track cookies that need to be set on the response
+    const responseCookies = [];
+    
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -41,14 +46,16 @@ export async function GET(request) {
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch (error) {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing sessions.
-            }
+            // Store cookies to set on the final response
+            cookiesToSet.forEach(({ name, value, options }) => {
+              responseCookies.push({ name, value, options });
+              // Also set on cookieStore for subsequent reads within this request
+              try {
+                cookieStore.set(name, value, options);
+              } catch (e) {
+                // Ignore errors from Server Component context
+              }
+            });
           },
         },
       }
@@ -63,7 +70,7 @@ export async function GET(request) {
       );
     }
 
-    console.log('[Auth Callback] Code exchanged successfully');
+    console.log('[Auth Callback] Code exchanged successfully, setting', responseCookies.length, 'cookies');
 
     // Handle new user notifications (non-blocking)
     try {
@@ -116,13 +123,25 @@ export async function GET(request) {
     const forwardedHost = request.headers.get('x-forwarded-host');
     const isLocalEnv = process.env.NODE_ENV === 'development';
     
+    let finalUrl;
     if (isLocalEnv) {
-      return NextResponse.redirect(`${origin}${redirectUrl}`);
+      finalUrl = `${origin}${redirectUrl}`;
     } else if (forwardedHost) {
-      return NextResponse.redirect(`https://${forwardedHost}${redirectUrl}`);
+      finalUrl = `https://${forwardedHost}${redirectUrl}`;
     } else {
-      return NextResponse.redirect(`${origin}${redirectUrl}`);
+      finalUrl = `${origin}${redirectUrl}`;
     }
+
+    // Create response and EXPLICITLY set all auth cookies on it
+    const response = NextResponse.redirect(finalUrl);
+    
+    // CRITICAL: Transfer all cookies from the exchange to the response
+    for (const { name, value, options } of responseCookies) {
+      response.cookies.set(name, value, options);
+    }
+
+    console.log('[Auth Callback] Redirecting to', finalUrl, 'with', responseCookies.length, 'auth cookies');
+    return response;
   }
 
   // No code provided - redirect to error
