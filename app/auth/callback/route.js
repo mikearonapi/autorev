@@ -182,7 +182,8 @@ export async function GET(request) {
   let redirectUrl = new URL(next, requestUrl.origin);
   
   // Check if there's a pending checkout intent (stored as cookie)
-  const checkoutIntent = cookieStore.get('autorev_checkout_intent')?.value;
+  const cookieStoreForCheckout = await cookies();
+  const checkoutIntent = cookieStoreForCheckout.get('autorev_checkout_intent')?.value;
   if (checkoutIntent) {
     // Redirect to profile with intent to resume checkout
     redirectUrl = new URL('/profile', requestUrl.origin);
