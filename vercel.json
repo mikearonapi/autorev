@@ -59,6 +59,14 @@
     {
       "path": "/api/cron/daily-metrics",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/process-email-queue",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/schedule-inactivity-emails",
+      "schedule": "0 10 * * *"
     }
   ]
 }

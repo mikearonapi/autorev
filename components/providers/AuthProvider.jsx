@@ -11,6 +11,12 @@ import {
   getUserProfile,
   updateUserProfile,
 } from '@/lib/auth';
+import dynamic from 'next/dynamic';
+
+// Dynamically import OnboardingFlow to avoid SSR issues
+const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {
+  ssr: false,
+});
 
 /**
  * Auth Context
@@ -28,6 +34,16 @@ const defaultAuthState = {
   isLoading: true,
   isAuthenticated: false,
   authError: null,
+};
+
+/**
+ * Default onboarding state
+ */
+const defaultOnboardingState = {
+  showOnboarding: false,
+  onboardingStep: 1,
+  onboardingData: {},
+  onboardingDismissed: false,
 };
 
 /**
@@ -114,6 +130,7 @@ function checkAuthCallbackCookie() {
  */
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
+  const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
@@ -516,6 +533,67 @@ export function AuthProvider({ children }) {
     setState(prev => ({ ...prev, authError: null }));
   }, []);
 
+  // Check if user needs onboarding
+  const checkOnboardingStatus = useCallback(async (profile) => {
+    // If onboarding is already completed, don't show
+    if (profile?.onboarding_completed_at) {
+      setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
+      return;
+    }
+    
+    // If user has dismissed for this session, don't show
+    const dismissed = sessionStorage.getItem('onboarding_dismissed');
+    if (dismissed) {
+      setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
+      return;
+    }
+
+    // Show onboarding for users who haven't completed it
+    setOnboardingState({
+      showOnboarding: true,
+      onboardingStep: profile?.onboarding_step || 1,
+      onboardingData: {
+        referral_source: profile?.referral_source || null,
+        referral_source_other: profile?.referral_source_other || '',
+        user_intent: profile?.user_intent || null,
+        email_opt_in_features: profile?.email_opt_in_features || false,
+        email_opt_in_events: profile?.email_opt_in_events || false,
+      },
+      onboardingDismissed: false,
+    });
+  }, []);
+
+  // Handle onboarding close (dismiss for session)
+  const dismissOnboarding = useCallback(() => {
+    sessionStorage.setItem('onboarding_dismissed', 'true');
+    setOnboardingState(prev => ({ 
+      ...prev, 
+      showOnboarding: false, 
+      onboardingDismissed: true 
+    }));
+  }, []);
+
+  // Handle onboarding complete
+  const completeOnboarding = useCallback((data) => {
+    setState(prev => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        onboarding_completed_at: new Date().toISOString(),
+        ...data,
+      },
+    }));
+    setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
+    sessionStorage.removeItem('onboarding_dismissed');
+  }, []);
+
+  // Check onboarding status when profile loads
+  useEffect(() => {
+    if (state.isAuthenticated && state.profile) {
+      checkOnboardingStatus(state.profile);
+    }
+  }, [state.isAuthenticated, state.profile, checkOnboardingStatus]);
+
   // Context value
   const value = useMemo(() => ({
     // State
@@ -526,6 +604,11 @@ export function AuthProvider({ children }) {
     isAuthenticated: state.isAuthenticated,
     authError: state.authError,
     
+    // Onboarding State
+    showOnboarding: onboardingState.showOnboarding,
+    onboardingDismissed: onboardingState.onboardingDismissed,
+    needsOnboarding: state.isAuthenticated && !state.profile?.onboarding_completed_at,
+    
     // Methods
     loginWithGoogle,
     loginWithEmail,
@@ -535,11 +618,15 @@ export function AuthProvider({ children }) {
     refreshProfile,
     refreshSession,
     clearAuthError,
+    dismissOnboarding,
+    completeOnboarding,
     
     // Helpers
     isSupabaseConfigured,
   }), [
     state,
+    onboardingState.showOnboarding,
+    onboardingState.onboardingDismissed,
     loginWithGoogle,
     loginWithEmail,
     signUp,
@@ -548,11 +635,26 @@ export function AuthProvider({ children }) {
     refreshProfile,
     refreshSession,
     clearAuthError,
+    dismissOnboarding,
+    completeOnboarding,
   ]);
 
   return (
     <AuthContext.Provider value={value}>
       {children}
+      
+      {/* Onboarding Modal - shown for new users who haven't completed it */}
+      {onboardingState.showOnboarding && state.isAuthenticated && (
+        <OnboardingFlow
+          isOpen={onboardingState.showOnboarding}
+          onClose={dismissOnboarding}
+          onComplete={completeOnboarding}
+          user={state.user}
+          profile={state.profile}
+          initialStep={onboardingState.onboardingStep}
+          initialData={onboardingState.onboardingData}
+        />
+      )}
     </AuthContext.Provider>
   );
 }

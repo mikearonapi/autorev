@@ -9,6 +9,8 @@ import ScrollIndicator from '@/components/ScrollIndicator';
 import styles from './page.module.css';
 import upgradeDetails from '@/data/upgradeEducation.js';
 import { usePlatformStats } from '@/hooks/usePlatformStats';
+import { IS_BETA } from '@/lib/tierAccess';
+import { useCheckout } from '@/hooks/useCheckout';
 
 // Icons
 const Icons = {
@@ -292,6 +294,7 @@ const heroImageUrl = '/images/pages/join-hero.jpg';
 export default function JoinPage() {
   const { user, isLoading } = useAuth();
   const authModal = useAuthModal();
+  const { checkoutSubscription, isLoading: checkoutLoading } = useCheckout();
   
   // Platform stats from database (with fallbacks to local data)
   const { stats } = usePlatformStats();
@@ -325,9 +328,32 @@ export default function JoinPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleJoin = (tierId = 'free') => {
-    // Store selected tier in localStorage for the auth callback to read
+  const handleJoin = async (tierId = 'free') => {
+    // If user is already logged in
+    if (user) {
+      // During beta or free tier, just go to garage
+      if (IS_BETA || tierId === 'free') {
+        window.location.href = '/garage';
+        return;
+      }
+      // For paid tiers after beta, go to checkout
+      await checkoutSubscription(tierId);
+      return;
+    }
+    
+    // Not logged in - store selected tier and open auth modal
+    // During beta, all tiers are free so just do normal signup flow
+    // After beta, paid tiers will redirect to checkout after auth
     localStorage.setItem('autorev_selected_tier', tierId);
+    
+    // For paid tiers after beta, also store checkout intent
+    if (!IS_BETA && tierId !== 'free') {
+      localStorage.setItem('autorev_checkout_intent', JSON.stringify({ 
+        type: 'subscription', 
+        tier: tierId 
+      }));
+    }
+    
     authModal.openSignUp();
   };
 
@@ -454,9 +480,9 @@ export default function JoinPage() {
                 <button 
                   className={styles.tierCta}
                   onClick={() => handleJoin(tier.id)}
-                  disabled={isLoading}
+                  disabled={isLoading || checkoutLoading}
                 >
-                  {user ? 'Access Your Garage' : tier.cta}
+                  {checkoutLoading ? 'Processing...' : user ? 'Access Your Garage' : tier.cta}
                 </button>
               </div>
             ))}

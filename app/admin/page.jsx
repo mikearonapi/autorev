@@ -47,6 +47,7 @@ import { UnitEconomics } from './components/UnitEconomics';
 import { ALUserUsage } from './components/ALUserUsage';
 import { VercelStatus } from './components/VercelStatus';
 import { WebVitalsPanel } from './components/WebVitalsPanel';
+import EmailDashboard from './components/EmailDashboard';
 
 // Icons
 import {
@@ -848,6 +849,13 @@ export default function AdminDashboardPage() {
               </div>
             </section>
           </>
+        )}
+        
+        {/* EMAILS TAB */}
+        {activeTab === 'emails' && (
+          <section className={styles.section}>
+            <EmailDashboard />
+          </section>
         )}
         
       </div>

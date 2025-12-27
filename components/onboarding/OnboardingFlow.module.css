@@ -1,0 +1,718 @@
+/* OnboardingFlow - First-time User Onboarding Modal */
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  animation: overlayFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayFadeIn {
+  from { 
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to { 
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Modal Container - Dark theme */
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  box-shadow: 
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Progress Dots at Top */
+.progressDots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--space-lg) var(--space-lg) var(--space-sm);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dot:hover:not(.dotActive):not(.dotCompleted) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.2);
+}
+
+.dotActive {
+  width: 24px;
+  background: var(--sn-accent);
+}
+
+.dotCompleted {
+  background: var(--sn-accent);
+  opacity: 0.6;
+}
+
+/* Close Button */
+.closeBtn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  transform: rotate(90deg);
+}
+
+/* Step Content Container */
+.stepContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Slide Animations */
+.slideIn {
+  animation: slideInContent 0.3s ease-out;
+}
+
+.slideOutLeft {
+  animation: slideOutLeftContent 0.2s ease-in forwards;
+}
+
+.slideOutRight {
+  animation: slideOutRightContent 0.2s ease-in forwards;
+}
+
+@keyframes slideInContent {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeftContent {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes slideOutRightContent {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+/* Step Title */
+.stepTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-sm);
+  text-align: center;
+  line-height: var(--line-height-tight);
+}
+
+/* Step Description */
+.stepDescription {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0 0 var(--space-lg);
+  text-align: center;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Selection Cards (for referral, intent) */
+.optionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.optionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.optionCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.optionCard.selected {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--sn-accent);
+}
+
+.optionCardWide {
+  grid-column: span 2;
+}
+
+.optionEmoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.optionLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-white);
+}
+
+.optionSublabel {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Intent Cards - Larger format */
+.intentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.intentCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.intentCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+}
+
+.intentCard.selected {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--sn-accent);
+}
+
+.intentEmoji {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.intentContent {
+  flex: 1;
+  text-align: left;
+}
+
+.intentTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 2px;
+}
+
+.intentDesc {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Other Input Field */
+.otherInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-sm);
+  transition: all 0.2s ease;
+}
+
+.otherInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.otherInput:focus {
+  outline: none;
+  border-color: var(--sn-accent);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Feature Carousel */
+.carouselContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.carousel {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.featureCard {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.featureIcon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-md);
+  color: var(--color-white);
+}
+
+.featureTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-xs);
+}
+
+.featureDescription {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0 0 var(--space-md);
+  max-width: 280px;
+}
+
+.featureHighlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.featureTag {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.featureTagHighlight {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--sn-accent);
+}
+
+/* Carousel Navigation */
+.carouselNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.carouselDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carouselDot.active {
+  width: 16px;
+  background: var(--sn-accent);
+}
+
+.carouselArrow {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carouselArrow:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+}
+
+.carouselArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Email Preferences (Final Step) */
+.emailPrefs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-bottom: var(--space-lg);
+}
+
+.emailCheckbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emailCheckbox:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.emailCheckbox input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.emailCheckbox input:checked + .checkmark {
+  background: var(--sn-accent);
+  border-color: var(--sn-accent);
+  color: #1a1a1a;
+}
+
+.checkmarkIcon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.emailCheckbox input:checked + .checkmark .checkmarkIcon {
+  opacity: 1;
+}
+
+.emailLabel {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.8);
+  flex: 1;
+}
+
+/* Footer Navigation */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.navButtons {
+  display: flex;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+}
+
+.nextBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 24px;
+  background: var(--sn-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.nextBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.nextBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.skipLink {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  transition: color 0.2s ease;
+}
+
+.skipLink:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Welcome Step Specific */
+.welcomeIcon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
+  border-radius: var(--radius-xl);
+  margin: var(--space-lg) auto var(--space-xl);
+  color: var(--color-white);
+}
+
+.welcomeTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-sm);
+  text-align: center;
+  line-height: var(--line-height-tight);
+}
+
+.welcomeTagline {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.welcomeHighlight {
+  color: var(--sn-accent);
+  font-weight: 600;
+}
+
+/* Final Step CTA */
+.ctaSection {
+  text-align: center;
+  margin-top: auto;
+  padding-top: var(--space-md);
+}
+
+.ctaIcon {
+  font-size: 48px;
+  margin-bottom: var(--space-sm);
+}
+
+.ctaTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-xs);
+}
+
+.ctaDesc {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Mobile Full Screen */
+@media (max-width: 480px) {
+  .overlay {
+    padding: 0;
+  }
+  
+  .modal {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .stepContainer {
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .optionGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .optionCardWide {
+    grid-column: span 1;
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .modal {
+    max-width: 480px;
+    min-height: 560px;
+  }
+  
+  .stepContainer {
+    padding: var(--space-lg) var(--space-2xl) var(--space-xl);
+  }
+  
+  .welcomeIcon {
+    width: 96px;
+    height: 96px;
+  }
+  
+  .welcomeTitle {
+    font-size: var(--font-size-4xl);
+  }
+}
+

@@ -9,6 +9,9 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
+import { useCheckout } from '@/hooks/useCheckout';
+import { IS_BETA } from '@/lib/tierAccess';
+import { AL_CREDIT_PACKS, SUBSCRIPTION_TIERS } from '@/lib/stripe';
 // Car count now comes from usePlatformStats hook or default
 
 // Format fuel units for display (1 cent = 1 fuel)
@@ -206,6 +209,36 @@ export default function ProfilePage() {
   const { user, profile, isAuthenticated, isLoading, logout, updateProfile } = useAuth();
   const { count: favoritesCount } = useFavorites();
   const { builds } = useSavedBuilds();
+  const { checkoutSubscription, checkoutCredits, resumeCheckout, isLoading: checkoutLoading, error: checkoutError } = useCheckout();
+  
+  // Check for checkout success or resume intent from URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const params = new URLSearchParams(window.location.search);
+    
+    // Handle successful checkout
+    if (params.get('checkout') === 'success') {
+      // Clean up URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('checkout');
+      url.searchParams.delete('session_id');
+      window.history.replaceState({}, '', url.pathname + url.search);
+      
+      // Show success message and refresh profile
+      alert('Payment successful! Your account has been updated.');
+    }
+    
+    // Handle checkout resume after auth
+    if (params.get('resume_checkout') === 'true' && user) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('resume_checkout');
+      window.history.replaceState({}, '', url.pathname + url.search);
+      
+      // Resume the pending checkout
+      resumeCheckout();
+    }
+  }, [user, resumeCheckout]);
   
   const [activeTab, setActiveTab] = useState('profile');
   const [displayName, setDisplayName] = useState('');
@@ -228,7 +261,7 @@ export default function ProfilePage() {
     isUnlimited: false,
   });
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
-  const [isPurchasing, setIsPurchasing] = useState(false);
+  // isPurchasing now driven by checkoutLoading from hook
 
   // Data clearing state
   const [clearingData, setClearingData] = useState(null);
@@ -332,24 +365,32 @@ export default function ProfilePage() {
     fetchAlBalance();
   }, [user?.id, currentPlan]);
 
-  // Handle fuel top-up purchase
+  // Handle fuel top-up purchase via Stripe
   const handlePurchaseTopup = async (packageId) => {
-    setIsPurchasing(true);
-    try {
-      const package_ = AL_TOPUP_PACKAGES.find(p => p.id === packageId);
-      if (package_) {
-        setAlBalance(prev => ({
-          ...prev,
-          fuel: (prev.fuel || 0) + package_.cents,
-          purchasedFuel: (prev.purchasedFuel || 0) + package_.cents,
-        }));
-        alert(`Successfully added ${package_.cents} fuel to your tank!`);
+    // Map the old package IDs to new Stripe pack IDs
+    const packMapping = {
+      'starter': 'small',
+      'popular': 'medium', 
+      'value': 'large',
+      'small': 'small',
+      'medium': 'medium',
+      'large': 'large',
+    };
+    const stripePack = packMapping[packageId] || packageId;
+    await checkoutCredits(stripePack);
+  };
+
+  // Handle subscription upgrade
+  const handleUpgrade = async (tier) => {
+    if (IS_BETA) {
+      // During beta, just update the tier directly (free upgrade)
+      const { error } = await updateProfile({ subscription_tier: tier });
+      if (!error) {
+        alert(`Upgraded to ${PLANS[tier]?.name || tier}! Enjoy your new features.`);
       }
-    } catch (err) {
-      console.error('Failed to purchase top-up:', err);
-      alert('Purchase failed. Please try again.');
-    } finally {
-      setIsPurchasing(false);
+    } else {
+      // After beta, go through Stripe checkout
+      await checkoutSubscription(tier);
     }
   };
 
@@ -738,9 +779,9 @@ export default function ProfilePage() {
                         <button
                           className={styles.purchaseButton}
                           onClick={() => handlePurchaseTopup(pkg.id)}
-                          disabled={isPurchasing}
+                          disabled={checkoutLoading}
                         >
-                          {isPurchasing ? '...' : 'Buy'}
+                          {checkoutLoading ? '...' : 'Buy'}
                         </button>
                       </div>
                     ))}
@@ -815,12 +856,20 @@ export default function ProfilePage() {
                         Current Plan
                       </button>
                     ) : index > Object.keys(PLANS).indexOf(currentPlan) ? (
-                      <button className={styles.planButtonUpgrade}>
-                        Upgrade to {plan.name}
+                      <button 
+                        className={styles.planButtonUpgrade}
+                        onClick={() => handleUpgrade(plan.id)}
+                        disabled={checkoutLoading}
+                      >
+                        {checkoutLoading ? 'Processing...' : `Upgrade to ${plan.name}`}
                       </button>
                     ) : (
-                      <button className={styles.planButtonDowngrade}>
-                        Switch to {plan.name}
+                      <button 
+                        className={styles.planButtonDowngrade}
+                        onClick={() => handleUpgrade(plan.id)}
+                        disabled={checkoutLoading}
+                      >
+                        {checkoutLoading ? 'Processing...' : `Switch to ${plan.name}`}
                       </button>
                     )}
                   </div>
@@ -837,7 +886,19 @@ export default function ProfilePage() {
                 Billing & Payment
               </h2>
 
-              {currentPlan === 'free' ? (
+              {IS_BETA ? (
+                <div className={styles.betaBanner}>
+                  <Icons.sparkle size={20} />
+                  <div>
+                    <h3>Beta Period - All Features Free!</h3>
+                    <p>During our beta, all subscription tiers are free. After beta ends, you&apos;ll be notified before any charges begin.</p>
+                    <p style={{ marginTop: '8px', opacity: 0.8 }}>
+                      Current tier: <strong>{PLANS[currentPlan]?.name || 'Free'}</strong>
+                      {PLANS[currentPlan]?.futurePrice && ` (Will be ${PLANS[currentPlan].futurePrice} after beta)`}
+                    </p>
+                  </div>
+                </div>
+              ) : !profile?.stripe_customer_id ? (
                 <div className={styles.emptyState}>
                   <Icons.creditCard size={48} />
                   <h3>No Payment Method</h3>
@@ -853,39 +914,61 @@ export default function ProfilePage() {
                 <>
                   <div className={styles.billingCard}>
                     <div className={styles.billingInfo}>
-                      <h3>Payment Method</h3>
-                      <p className={styles.cardDisplay}>
-                        <Icons.creditCard size={20} />
-                        •••• •••• •••• 4242
+                      <h3>Subscription Status</h3>
+                      <p className={styles.subscriptionStatus}>
+                        <span className={styles.statusBadge} data-status={profile?.stripe_subscription_status || 'none'}>
+                          {profile?.stripe_subscription_status === 'active' ? '✓ Active' : 
+                           profile?.stripe_subscription_status === 'canceled' ? '✗ Canceled' :
+                           profile?.stripe_subscription_status || 'None'}
+                        </span>
                       </p>
-                      <p className={styles.cardExpiry}>Expires 12/2025</p>
+                      {profile?.subscription_ends_at && (
+                        <p className={styles.billingDate}>
+                          {profile?.stripe_subscription_status === 'canceled' ? 'Access ends: ' : 'Renews: '}
+                          {new Date(profile.subscription_ends_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      )}
                     </div>
-                    <button className={styles.updateButton}>
-                      Update
-                    </button>
                   </div>
 
                   <div className={styles.billingCard}>
                     <div className={styles.billingInfo}>
-                      <h3>Next Billing Date</h3>
-                      <p className={styles.billingDate}>January 1, 2026</p>
-                      <p className={styles.billingAmount}>${PLANS[currentPlan]?.price}/month</p>
+                      <h3>Manage Subscription</h3>
+                      <p>Update payment method, view invoices, or cancel subscription.</p>
                     </div>
+                    <button 
+                      className={styles.updateButton}
+                      onClick={async () => {
+                        try {
+                          const res = await fetch('/api/billing/portal', { method: 'POST' });
+                          const data = await res.json();
+                          if (data.url) {
+                            window.location.href = data.url;
+                          } else {
+                            alert(data.error || 'Failed to open billing portal');
+                          }
+                        } catch (err) {
+                          alert('Failed to open billing portal');
+                        }
+                      }}
+                    >
+                      Manage Billing
+                    </button>
                   </div>
 
-                  <div className={styles.billingHistory}>
-                    <h3>Billing History</h3>
-                    <div className={styles.invoiceList}>
-                      <div className={styles.invoiceItem}>
-                        <span className={styles.invoiceDate}>Dec 1, 2025</span>
-                        <span className={styles.invoiceAmount}>${PLANS[currentPlan]?.price}</span>
-                        <span className={styles.invoiceStatus}>Paid</span>
-                        <button className={styles.invoiceLink}>
-                          <Icons.externalLink size={14} />
-                        </button>
+                  {profile?.al_credits_purchased > 0 && (
+                    <div className={styles.billingCard}>
+                      <div className={styles.billingInfo}>
+                        <h3>AL Credits Purchased</h3>
+                        <p className={styles.billingAmount}>{profile.al_credits_purchased} credits</p>
+                        <p style={{ opacity: 0.7, fontSize: '0.875rem' }}>Lifetime total (never expires)</p>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </section>

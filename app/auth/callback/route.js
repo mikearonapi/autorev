@@ -11,6 +11,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
+import { sendWelcomeEmail } from '@/lib/email';
 
 // Session verification with retry
 async function verifySessionEstablished(supabase, maxRetries = 3) {
@@ -158,8 +159,15 @@ export async function GET(request) {
           notifySignup({
             id: user.id,
             email: user.email,
+            name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+            avatar_url: user.user_metadata?.avatar_url || null,
             provider: user.app_metadata?.provider || 'email',
           }, signupContext).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
+
+          // Send welcome email to new user
+          sendWelcomeEmail(user).catch(err => 
+            console.error('[Auth Callback] Welcome email failed:', err)
+          );
         }
       }
     } catch (err) {
@@ -171,7 +179,15 @@ export async function GET(request) {
   }
 
   // Build the redirect URL with auth success indicator
-  const redirectUrl = new URL(next, requestUrl.origin);
+  let redirectUrl = new URL(next, requestUrl.origin);
+  
+  // Check if there's a pending checkout intent (stored as cookie)
+  const checkoutIntent = cookieStore.get('autorev_checkout_intent')?.value;
+  if (checkoutIntent) {
+    // Redirect to profile with intent to resume checkout
+    redirectUrl = new URL('/profile', requestUrl.origin);
+    redirectUrl.searchParams.set('resume_checkout', 'true');
+  }
   
   // Add a cache-busting timestamp to force client to check fresh session
   // This helps resolve client-side race conditions

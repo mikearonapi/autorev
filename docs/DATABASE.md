@@ -1,6 +1,6 @@
 # AutoRev Database Schema
 
-> Complete reference for all 71 database tables
+> Complete reference for all 75 database tables
 >
 > **Last Verified:** December 18, 2024 — MCP-verified live query (Row counts audited)
 
@@ -52,7 +52,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 |----------|--------|-----------|-------|
 | Core Car Data | 16 | 14 | 2 |
 | Parts & Upgrades | 8 | 7 | 1 |
-| User Data | 9 | 5 | 4 |
+| User Data | 13 | 7 | 6 |
 | Maintenance | 3 | 3 | 0 |
 | AL (AI) | 5 | 4 | 1 |
 | Knowledge Base | 2 | 2 | 0 |
@@ -64,7 +64,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Featured Content | 2 | 2 | 0 |
 | Image Library | 2 | 0 | 2 |
 | System | 6 | 4 | 2 |
-| **Total** | **71** | **55** | **16** |
+| **Total** | **75** | **58** | **17** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 > `car_known_issues` was documented but never created; use `car_issues` instead.
@@ -259,14 +259,37 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 ---
 
-## User Data (9 tables)
+## User Data (13 tables)
 
 ### `user_profiles` — User settings
 | Status | **2 rows** |
 |--------|----------|
-| **Purpose** | User preferences and subscription tier |
+| **Purpose** | User preferences, subscription tier, and onboarding data |
 | **Key Fields** | `id` (auth.users FK), `display_name`, `avatar_url`, `subscription_tier`, `preferred_units`, `email_notifications` |
-| **Used By** | Auth, tier gating |
+| **Onboarding Fields** | `referral_source`, `referral_source_other`, `user_intent`, `onboarding_completed_at`, `onboarding_step`, `email_opt_in_features`, `email_opt_in_events` |
+| **Email Fields** | `last_email_sent_at`, `email_bounce_count`, `email_unsubscribed_at`, `referral_code` |
+| **Used By** | Auth, tier gating, onboarding flow, email system |
+
+#### Onboarding Columns
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `referral_source` | text | How user found AutoRev. Enum: 'google', 'reddit', 'friend', 'forum', 'youtube', 'social', 'other' |
+| `referral_source_other` | text | Free text if referral_source is 'other' |
+| `user_intent` | text | User's primary intent. Enum: 'owner', 'shopping', 'learning' |
+| `onboarding_completed_at` | timestamptz | Timestamp when onboarding was completed. NULL if not completed. |
+| `onboarding_step` | integer | Current onboarding step (1-7). Used for resume functionality. |
+| `email_opt_in_features` | boolean | User opted in to receive feature update emails (default: false) |
+| `email_opt_in_events` | boolean | User opted in to receive event notification emails (default: false) |
+
+#### Email System Columns
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `last_email_sent_at` | timestamptz | Timestamp of last non-transactional email sent |
+| `email_bounce_count` | integer | Number of bounced emails (stops sending after 3) |
+| `email_unsubscribed_at` | timestamptz | If set, user has globally unsubscribed from all emails |
+| `referral_code` | text | Unique 8-character referral code (auto-generated) |
 
 ### `user_favorites` — Saved cars
 | Status | **10 rows** |
@@ -324,6 +347,39 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 |--------|---------------|
 | **Purpose** | User engagement analytics |
 | **Future Use** | Usage insights |
+
+### `email_templates` — Email template storage
+| Status | **8 rows** |
+|--------|-----------|
+| **Purpose** | Admin-managed email template content |
+| **Key Fields** | `slug` (unique), `name`, `subject`, `preview_text`, `html_content`, `category`, `requires_opt_in`, `is_active`, `available_variables` |
+| **Categories** | transactional, feature, event, engagement, referral |
+| **Used By** | Email service, Admin dashboard |
+
+### `email_logs` — Email delivery log
+| Status | **0+ rows** |
+|--------|-------------|
+| **Purpose** | Track all sent emails for debugging, analytics, compliance |
+| **Key Fields** | `user_id`, `recipient_email`, `template_slug`, `subject`, `resend_id`, `status`, `error_message`, `sent_at`, `delivered_at`, `opened_at`, `clicked_at` |
+| **Statuses** | queued, sent, delivered, bounced, complained, failed, skipped, unsubscribed |
+| **Used By** | Email service, Admin email dashboard, Webhook handler |
+
+### `email_queue` — Scheduled email queue
+| Status | **0+ rows** |
+|--------|-------------|
+| **Purpose** | Queue for scheduled and batched email sending |
+| **Key Fields** | `user_id`, `recipient_email`, `template_slug`, `template_variables`, `scheduled_for`, `priority`, `status`, `attempts`, `max_attempts` |
+| **Statuses** | pending, processing, sent, cancelled, failed |
+| **Used By** | Cron job `/api/cron/process-email-queue` (every 5 mins) |
+
+### `referrals` — Referral program tracking
+| Status | **0+ rows** |
+|--------|-------------|
+| **Purpose** | Track who referred whom and award credits |
+| **Key Fields** | `referrer_id`, `referee_id`, `referee_email`, `referral_code`, `status`, `referrer_reward_credits`, `referee_reward_credits`, `rewarded_at`, `expires_at` |
+| **Statuses** | pending, signed_up, rewarded, expired |
+| **Reward** | 500 AL credits on successful signup |
+| **Used By** | Referral API, Auth callback (for credit awards) |
 
 ---
 
