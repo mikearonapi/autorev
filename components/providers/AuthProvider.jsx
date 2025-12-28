@@ -140,6 +140,12 @@ export function AuthProvider({ children }) {
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
+  const isAuthenticatedRef = useRef(false);
+  
+  // Keep the ref in sync with state
+  useEffect(() => {
+    isAuthenticatedRef.current = state.isAuthenticated;
+  }, [state.isAuthenticated]);
 
   // Fetch user profile when authenticated
   const fetchProfile = useCallback(async (userId) => {
@@ -352,12 +358,36 @@ export function AuthProvider({ children }) {
         });
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         console.log('[AuthProvider] Token refreshed via Supabase');
-        setState(prev => ({
-          ...prev,
-          session,
-          authError: null,
-        }));
+        // IMPORTANT: Also update user and isAuthenticated in case initial auth failed
+        // but token refresh succeeded (auth recovery scenario)
+        const needsProfileLoad = !state.isAuthenticated || !state.profile;
+        
+        setState(prev => {
+          if (!prev.isAuthenticated) {
+            console.log('[AuthProvider] Auth recovered via token refresh');
+          }
+          return {
+            ...prev,
+            user: session.user,
+            session,
+            isAuthenticated: true,
+            isLoading: false,
+            authError: null,
+          };
+        });
         scheduleSessionRefresh(session);
+        
+        // If we just recovered auth or don't have a profile, load it
+        if (needsProfileLoad) {
+          fetchProfile(session.user.id).then(profile => {
+            if (profile) {
+              setState(prev => ({ ...prev, profile }));
+              console.log('[AuthProvider] Profile loaded after token refresh:', { tier: profile?.subscription_tier });
+            }
+          }).catch(err => {
+            console.error('[AuthProvider] Error loading profile after token refresh:', err);
+          });
+        }
       } else if (event === 'USER_UPDATED' && session?.user) {
         const profile = await fetchProfile(session.user.id);
         setState(prev => ({
@@ -365,6 +395,55 @@ export function AuthProvider({ children }) {
           user: session.user,
           profile,
         }));
+      } else if (event === 'INITIAL_SESSION' && session?.user) {
+        // Handle initial session detection (page load with existing session)
+        // This can fire if Supabase detects a session before our initializeAuth completes
+        console.log('[AuthProvider] Initial session detected via event');
+        setState(prev => {
+          // Only update if we're not already authenticated
+          if (prev.isAuthenticated) {
+            return prev;
+          }
+          return {
+            ...prev,
+            user: session.user,
+            session,
+            isAuthenticated: true,
+            isLoading: false,
+            authError: null,
+          };
+        });
+        scheduleSessionRefresh(session);
+        
+        // Load profile if needed
+        fetchProfile(session.user.id).then(profile => {
+          if (profile) {
+            setState(prev => ({ ...prev, profile }));
+          }
+        }).catch(err => {
+          console.error('[AuthProvider] Error loading profile after initial session:', err);
+        });
+      } else if (session?.user && !isAuthenticatedRef.current) {
+        // Catch-all: If we have a valid session but aren't authenticated,
+        // this is an auth recovery scenario
+        console.log('[AuthProvider] Auth recovery detected via event:', event);
+        setState(prev => ({
+          ...prev,
+          user: session.user,
+          session,
+          isAuthenticated: true,
+          isLoading: false,
+          authError: null,
+        }));
+        scheduleSessionRefresh(session);
+        
+        fetchProfile(session.user.id).then(profile => {
+          if (profile) {
+            setState(prev => ({ ...prev, profile }));
+          }
+        }).catch(err => {
+          console.error('[AuthProvider] Error loading profile after auth recovery:', err);
+        });
       }
     });
 

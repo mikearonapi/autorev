@@ -569,10 +569,6 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [prefetchedContext, setPrefetchedContext] = useState(null);
   const [isPrefetching, setIsPrefetching] = useState(false);
   
-  // Cost preview state
-  const [showCostPreview, setShowCostPreview] = useState(false);
-  const [estimatedCost, setEstimatedCost] = useState(null);
-  
   // User preferences and bookmarks state
   const [alPreferences, setAlPreferences] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
@@ -1035,36 +1031,6 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       const newHeight = Math.min(inputRef.current.scrollHeight, 120);
       inputRef.current.style.height = `${newHeight}px`;
     }
-  }, []);
-  
-  // Estimate query cost based on complexity
-  const estimateQueryCost = useCallback((query) => {
-    if (!query) return null;
-    
-    const queryLower = query.toLowerCase();
-    const wordCount = query.split(/\s+/).length;
-    
-    // Check for expensive query patterns
-    const isComparison = queryLower.includes('compare') || queryLower.includes(' vs ') || queryLower.includes('versus');
-    const isComprehensive = queryLower.includes('everything') || queryLower.includes('tell me all') || queryLower.includes('in detail');
-    const isBuildPlan = queryLower.includes('build plan') || queryLower.includes('mod plan') || queryLower.includes('upgrade path');
-    const isResearch = queryLower.includes('should i buy') || queryLower.includes('worth it') || queryLower.includes('reliable');
-    
-    let costLevel = 'low'; // Default: 1-2 credits
-    let estimate = '~1-2';
-    let showPreview = false;
-    
-    if (isComparison || isComprehensive || isBuildPlan) {
-      costLevel = 'high';
-      estimate = '~3-5';
-      showPreview = true;
-    } else if (isResearch || wordCount > 25) {
-      costLevel = 'medium';
-      estimate = '~2-3';
-      showPreview = false; // Only show preview for high-cost queries
-    }
-    
-    return { costLevel, estimate, showPreview };
   }, []);
   
   // Handle "Get Started" button
@@ -1851,34 +1817,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
               
               {/* Quick Reply Chips - Hidden to save space; suggestions appear in messages */}
 
-              {/* Cost Preview */}
-              {showCostPreview && estimatedCost && (
-                <div className={styles.costPreview}>
-                  <div className={styles.costPreviewContent}>
-                    <span className={styles.costPreviewIcon}>💡</span>
-                    <span className={styles.costPreviewText}>
-                      This detailed query may use <strong>{estimatedCost.estimate} credits</strong>
-                    </span>
-                  </div>
-                  <div className={styles.costPreviewActions}>
-                    <button 
-                      className={styles.costPreviewSend}
-                      onClick={() => {
-                        setShowCostPreview(false);
-                        sendMessage();
-                      }}
-                    >
-                      Send anyway
-                    </button>
-                    <button 
-                      className={styles.costPreviewCancel}
-                      onClick={() => setShowCostPreview(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Cost Preview - Removed per user request. Credit limits are handled when credits run out. */}
 
               {/* Input Area */}
               <div className={styles.inputArea}>
@@ -1886,27 +1825,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                   <textarea
                     ref={inputRef}
                     value={input}
-                    onChange={(e) => {
-                      setInput(e.target.value);
-                      // Check if query might be expensive
-                      const cost = estimateQueryCost(e.target.value);
-                      if (cost?.showPreview) {
-                        setEstimatedCost(cost);
-                      } else {
-                        setEstimatedCost(null);
-                        setShowCostPreview(false);
-                      }
-                    }}
+                    onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        // Check for cost preview before sending
-                        if (estimatedCost?.showPreview && !showCostPreview) {
-                          setShowCostPreview(true);
-                        } else {
-                          setShowCostPreview(false);
-                          sendMessage();
-                        }
+                        sendMessage();
                       }
                     }}
                     placeholder={focusedCar ? `Ask about ${focusedCar.name}...` : contextConfig.placeholder}
@@ -1915,14 +1838,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                     disabled={isLoading}
                   />
                   <button
-                    onClick={() => {
-                      if (estimatedCost?.showPreview && !showCostPreview) {
-                        setShowCostPreview(true);
-                      } else {
-                        setShowCostPreview(false);
-                        sendMessage();
-                      }
-                    }}
+                    onClick={() => sendMessage()}
                     disabled={!input.trim() || isLoading}
                     className={styles.sendBtn}
                     aria-label="Send"

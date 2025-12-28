@@ -96,6 +96,7 @@ export function SavedBuildsProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const syncedRef = useRef(false);
+  const lastUserIdRef = useRef(null);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {
@@ -106,16 +107,26 @@ export function SavedBuildsProvider({ children }) {
 
   /**
    * Fetch builds from Supabase
+   * @param {Object} cancelledRef - Ref to track if effect was cancelled
+   * @param {boolean} forceRefetch - Force refetch even if already synced
    */
-const fetchBuilds = useCallback(async (cancelledRef = { current: false }) => {
+const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false) => {
   if (!isAuthenticated || !user?.id) {
     // Not authenticated - load from localStorage
+    console.log('[SavedBuildsProvider] Not authenticated, loading from localStorage');
     const localBuilds = loadLocalBuilds();
     if (!cancelledRef.current) setBuilds(localBuilds);
     return;
   }
 
+  // Skip if already synced unless forced
+  if (syncedRef.current && !forceRefetch) {
+    console.log('[SavedBuildsProvider] Already synced, skipping fetch');
+    return;
+  }
+
   setIsLoading(true);
+  console.log('[SavedBuildsProvider] Fetching builds for user:', user.id?.slice(0, 8) + '...');
   
   try {
     const { data, error } = await fetchUserProjects(user.id);
@@ -166,6 +177,8 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }) => {
         updatedAt: build.updated_at,
       }));
       
+      console.log('[SavedBuildsProvider] Fetched', transformedBuilds.length, 'builds');
+      
       if (!cancelledRef.current) {
         setBuilds(transformedBuilds);
         syncedRef.current = true;
@@ -182,14 +195,37 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }) => {
 }, [isAuthenticated, user?.id]);
 
   // Fetch builds when auth state changes
+  // IMPORTANT: Track user ID to detect auth recovery scenarios
 useEffect(() => {
-  if (authLoading || !isHydrated) return;
+  // Skip if not hydrated yet
+  if (!isHydrated) return;
+  
+  // Skip if auth is still loading
+  if (authLoading) return;
+  
   const cancelledRef = { current: false };
-  fetchBuilds(cancelledRef);
+  const currentUserId = user?.id || null;
+  const wasAuthenticated = lastUserIdRef.current !== null;
+  const isNowAuthenticated = isAuthenticated && currentUserId;
+  
+  // Detect auth recovery: was not authenticated, now is
+  const isAuthRecovery = !wasAuthenticated && isNowAuthenticated;
+  
+  // Update tracking ref
+  lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
+  
+  // Reset sync flag on logout
+  if (!isNowAuthenticated) {
+    syncedRef.current = false;
+  }
+  
+  // Force refetch on auth recovery
+  fetchBuilds(cancelledRef, isAuthRecovery);
+  
   return () => {
     cancelledRef.current = true;
   };
-}, [fetchBuilds, authLoading, isHydrated]);
+}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id]);
 
   // Save to localStorage when builds change (for guests)
   useEffect(() => {

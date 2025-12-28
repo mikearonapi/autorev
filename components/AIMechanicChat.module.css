@@ -440,11 +440,26 @@
   }
   
   .chatPanelExpanded {
-    left: 40px;
-    right: 40px;
+    left: 24px;
+    right: 24px;
     top: calc(env(safe-area-inset-top, 0px) + 80px);
     bottom: 30px;
     border-radius: 16px;
+  }
+}
+
+/* Smaller tablets / narrow windows (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .chatPanel {
+    max-width: 340px;
+    max-height: 480px;
+  }
+  
+  .chatPanelExpanded {
+    left: 16px;
+    right: 16px;
+    top: calc(env(safe-area-inset-top, 0px) + 70px);
+    bottom: 20px;
   }
 }
 
@@ -723,6 +738,22 @@
   background: #f9fafb;
   border-color: #1a4d6e;
   color: #1a4d6e;
+}
+
+/* Tablet/iPad suggestions - ensure full width display */
+@media (max-width: 900px) {
+  .welcomeSimple {
+    padding: 16px;
+  }
+  
+  .suggestions {
+    max-width: 100%;
+  }
+  
+  .suggestionBtn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
 }
 
 /* Mobile suggestions */
@@ -2427,14 +2458,9 @@
 }
 
 /* Responsive adjustments for sidebar */
-@media (max-width: 768px) {
-  .historySidebar {
-    width: 220px;
-    min-width: 220px;
-  }
-}
 
-@media (max-width: 600px) {
+/* iPad and medium screens (768px - 900px) - stack vertically */
+@media (max-width: 900px) {
   .chatContentExpanded {
     flex-direction: column;
   }
@@ -2442,20 +2468,20 @@
   .historySidebar {
     width: 100%;
     min-width: 100%;
-    max-height: 180px;
+    max-height: 200px;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
     flex-shrink: 0;
   }
   
   .historySidebarHeader {
-    padding: 12px 16px 8px;
+    padding: 12px 16px 10px;
     font-size: 12px;
   }
   
   .newConversationBtn {
-    margin: 0 12px 8px;
-    padding: 8px 12px;
+    margin: 0 12px 10px;
+    padding: 10px 14px;
     font-size: 13px;
   }
   
@@ -2465,15 +2491,15 @@
     overflow-x: auto;
     overflow-y: hidden;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 8px 12px 12px;
     -webkit-overflow-scrolling: touch;
   }
   
   .conversationItem {
     flex-shrink: 0;
     width: auto;
-    min-width: 140px;
-    max-width: 180px;
+    min-width: 160px;
+    max-width: 200px;
     margin-bottom: 0;
     padding: 10px 12px;
   }
@@ -2499,6 +2525,55 @@
   
   .noConversations p {
     font-size: 13px;
+  }
+}
+
+/* Smaller tablets (600px - 768px) - more compact */
+@media (max-width: 768px) {
+  .historySidebar {
+    max-height: 180px;
+  }
+  
+  .conversationItem {
+    min-width: 140px;
+    max-width: 180px;
+  }
+}
+
+/* Small screens (max 600px) - most compact horizontal list */
+@media (max-width: 600px) {
+  .historySidebar {
+    max-height: 160px;
+  }
+  
+  .historySidebarHeader {
+    padding: 10px 14px 8px;
+    font-size: 11px;
+  }
+  
+  .newConversationBtn {
+    margin: 0 10px 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .conversationsList {
+    gap: 6px;
+    padding: 6px 10px 10px;
+  }
+  
+  .conversationItem {
+    min-width: 130px;
+    max-width: 160px;
+    padding: 8px 10px;
+  }
+  
+  .conversationTitle {
+    font-size: 12px;
+  }
+  
+  .conversationMeta {
+    font-size: 10px;
   }
 }
 

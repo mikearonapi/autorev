@@ -607,12 +607,35 @@
     gap: 12px;
   }
   
+  .title {
+    font-size: 1.1rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
   .shareLinkBox {
     flex-direction: column;
   }
   
+  .shareLinkInput {
+    font-size: 0.8rem;
+    padding: 10px 12px;
+  }
+  
   .copyButton {
     justify-content: center;
+    padding: 10px 16px;
+  }
+  
+  .shareButtons {
+    flex-direction: column;
+  }
+  
+  .shareButton {
+    flex: none;
+    width: 100%;
   }
   
   .statsGrid {
@@ -625,7 +648,15 @@
   }
   
   .statValue {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .statLabel {
+    font-size: 0.6rem;
+  }
+  
+  .milestonesSection {
+    padding: 16px;
   }
   
   .milestoneItem {
@@ -634,6 +665,48 @@
   
   .milestoneIcon {
     font-size: 20px;
+  }
+  
+  .progressHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .referralItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .referralActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .panel {
+    padding: 16px;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  
+  .statCard {
+    padding: 10px 6px;
+  }
+  
+  .statValue {
+    font-size: 1.1rem;
+  }
+  
+  .statLabel {
+    font-size: 0.55rem;
+    letter-spacing: 0;
   }
 }
 

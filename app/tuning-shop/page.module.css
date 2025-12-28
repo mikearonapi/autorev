@@ -991,10 +991,11 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1126,8 +1127,15 @@
 /* Grid View */
 .projectsFullGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .projectsFullGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 /* List View */
@@ -1237,6 +1245,76 @@
   cursor: pointer;
   transition: all 0.25s ease;
   text-align: left;
+}
+
+/* Mobile: Horizontal compact card layout */
+@media (max-width: 640px) {
+  .projectFullCard {
+    flex-direction: row;
+    border-radius: 12px;
+  }
+  
+  .projectFullImage {
+    width: 100px;
+    min-width: 100px;
+    height: auto;
+    aspect-ratio: 3/2;
+    border-radius: 12px 0 0 12px;
+  }
+  
+  .projectFullContent {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+  
+  .projectFullContent h4 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .projectFullCar {
+    font-size: 12px;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .projectFullStats {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .statBadge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  
+  .deleteBtn {
+    top: 6px;
+    right: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    opacity: 1; /* Always visible on mobile */
+  }
+  
+  .projectDate {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+  
+  .cardSelectOverlay {
+    top: 8px;
+    left: 8px;
+  }
 }
 
 .projectFullCardSelected {
@@ -1764,7 +1842,9 @@
   border: none;
   outline: none;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .searchBox input::placeholder {

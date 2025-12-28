@@ -442,8 +442,10 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.25);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 12px;
+  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .partsInput::placeholder {
@@ -469,8 +471,10 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.25);
   color: rgba(255, 255, 255, 0.85);
-  font-size: 12px;
+  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .partsCheckbox {
@@ -1147,8 +1151,10 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #fff;
-  font-size: 13px;
+  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
   margin-bottom: 12px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .saveInput:focus {
@@ -1207,29 +1213,189 @@
     gap: 12px;
   }
   
+  .header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .headerLeft {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .carThumb {
+    width: 56px;
+    height: 38px;
+  }
+  
+  .carName {
+    font-size: 14px;
+  }
+  
+  .carSpecs {
+    font-size: 10px;
+  }
+  
+  .headerRight {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
   .mainGrid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
   
   .leftPanel {
-    max-height: 240px;
+    max-height: none; /* Allow full height on mobile */
   }
   
+  .packageGrid {
+    gap: 4px;
+  }
+  
+  .pkgBtn {
+    padding: 8px 4px;
+    font-size: 10px;
+  }
+  
+  /* Horizontal scrolling category buttons - prevents cutoff */
   .categoryList {
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap; /* Prevent wrapping - use horizontal scroll */
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    padding-right: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+  
+  .categoryList::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .categoryList::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+  }
+  
+  .categoryList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
   }
   
   .catBtn {
     width: auto;
     flex: 0 0 auto;
-    padding: 10px 12px;
+    padding: 10px 14px;
+    min-width: max-content; /* Ensure text doesn't get cut off */
+    white-space: nowrap;
+  }
+  
+  .catBtn span:first-of-type {
+    font-size: 12px;
+  }
+  
+  .catArrow {
+    display: none; /* Hide arrows on mobile to save space */
   }
   
   .section {
     padding: 14px;
+  }
+  
+  .recommendationBanner {
+    padding: 14px 16px;
+  }
+  
+  .recommendationText {
+    font-size: 12px;
+  }
+  
+  .partsFilters {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .upgradeCenter {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  
+  .backBtn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .carThumb {
+    width: 48px;
+    height: 32px;
+  }
+  
+  .carName {
+    font-size: 13px;
+  }
+  
+  .tunability {
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+  
+  .buildStats {
+    gap: 4px;
+  }
+  
+  .hpBadge, .costBadge {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+  
+  .saveBtn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .pkgBtn {
+    padding: 6px 3px;
+    font-size: 9px;
+  }
+  
+  .catBtn {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  .catBadge {
+    min-width: 14px;
+    height: 14px;
+    font-size: 8px;
+  }
+  
+  .section {
+    padding: 12px;
+    border-radius: 10px;
+  }
+  
+  .sectionTitle {
+    font-size: 9px;
+    margin-bottom: 12px;
+  }
+  
+  .metricRow, .scoreRow {
+    padding: 10px 12px;
+    margin-bottom: 8px;
   }
 }
 

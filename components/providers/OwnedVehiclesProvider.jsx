@@ -183,6 +183,7 @@ export function OwnedVehiclesProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(vehiclesReducer, defaultState);
   const syncedRef = useRef(false);
+  const lastUserIdRef = useRef(null);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {
@@ -192,22 +193,42 @@ export function OwnedVehiclesProvider({ children }) {
   }, []);
 
   // When auth state changes, handle sync
+  // IMPORTANT: We track the user ID to detect auth recovery scenarios
+  // where isAuthenticated goes false -> true with the same user
   useEffect(() => {
-    if (authLoading || !isHydrated) return;
+    // Skip if not hydrated yet
+    if (!isHydrated) return;
+    
+    // Skip if auth is still loading
+    if (authLoading) return;
 
     const handleAuthChange = async () => {
-      if (isAuthenticated && user?.id) {
+      const currentUserId = user?.id || null;
+      const wasAuthenticated = lastUserIdRef.current !== null;
+      const isNowAuthenticated = isAuthenticated && currentUserId;
+      
+      // Track the current user ID for next comparison
+      lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
+      
+      if (isNowAuthenticated) {
+        // Only skip if we've already synced for THIS user
+        // This ensures we refetch if auth recovered after failure
+        if (syncedRef.current && wasAuthenticated) {
+          console.log('[OwnedVehiclesProvider] Already synced for user, skipping fetch');
+          return;
+        }
+        
         setIsLoading(true);
+        console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', currentUserId?.slice(0, 8) + '...');
         
         try {
-          // If we have local vehicles and haven't synced yet, we could sync them
-          // For now, just fetch from Supabase
-          const { data, error } = await fetchUserVehicles(user.id);
+          const { data, error } = await fetchUserVehicles(currentUserId);
           
           if (error) {
             console.error('[OwnedVehiclesProvider] Error fetching vehicles:', error);
           } else if (data) {
             const vehicles = data.map(transformVehicle);
+            console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles');
             dispatch({ type: ActionTypes.SET, payload: vehicles });
             syncedRef.current = true;
           }
@@ -218,6 +239,7 @@ export function OwnedVehiclesProvider({ children }) {
         }
       } else {
         // User signed out or not authenticated - reload from localStorage
+        console.log('[OwnedVehiclesProvider] Not authenticated, loading from localStorage');
         syncedRef.current = false;
         const localVehicles = loadLocalVehicles();
         dispatch({ type: ActionTypes.SET, payload: localVehicles });

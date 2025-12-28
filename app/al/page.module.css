@@ -8,7 +8,14 @@
   flex-direction: column;
   gap: var(--section-pad-y);
   background: var(--color-gray-50);
-  padding: var(--section-pad-y) var(--space-md) calc(var(--section-pad-y) + max(64px, env(safe-area-inset-bottom, 24px)));
+  /* Add extra top padding to account for header + safe area */
+  padding: calc(var(--section-pad-y) + var(--header-height-mobile, 60px)) var(--space-md) calc(var(--section-pad-y) + max(64px, env(safe-area-inset-bottom, 24px)));
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: calc(var(--section-pad-y) + var(--header-height, 72px));
+  }
 }
 
 .sectionHeader {
@@ -819,7 +826,7 @@
 @media (min-width: 1024px) {
   .page {
     --section-pad-y: 80px;
-    padding: var(--section-pad-y) var(--space-xl) calc(var(--section-pad-y) + 40px);
+    padding: calc(var(--section-pad-y) + var(--header-height, 72px)) var(--space-xl) calc(var(--section-pad-y) + 40px);
   }
 
   .sectionHeader h2 {
