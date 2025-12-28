@@ -2142,9 +2142,12 @@
 /* Mobile and tablet - prevent quickActionBar overlap */
 @media (max-width: 767px) {
   .expandedActionsRow {
-    /* Prevent overlap with quickActionBar on right side */
-    padding-right: 80px;
+    /* Constrain width to prevent overlap with quickActionBar on right side */
+    /* quickActionBar is ~72px wide + 24px from right = ~96px from right edge */
+    width: 100%;
+    max-width: calc(100% - 100px);
     gap: 8px;
+    flex-wrap: wrap;
   }
 }
 
@@ -2162,8 +2165,10 @@
     gap: 6px;
     margin-top: 12px;
     padding-top: 12px;
-    /* Prevent overlap with quickActionBar on right side */
-    padding-right: 70px;
+    /* Constrain width - quickActionBar is ~56px wide + 12px from right = ~68px */
+    /* Use larger value for My Collection which has 4 buttons */
+    width: 100%;
+    max-width: calc(100% - 80px);
   }
 }
 
@@ -2173,8 +2178,9 @@
     gap: 4px;
     margin-top: 10px;
     padding-top: 10px;
-    /* Prevent overlap with quickActionBar on right side */
-    padding-right: 65px;
+    /* Smaller screens need tighter constraints */
+    width: 100%;
+    max-width: calc(100% - 75px);
   }
   
   .seeDetailsBtn {
