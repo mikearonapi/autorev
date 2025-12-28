@@ -18,6 +18,7 @@ import {
   updateUserProject,
   deleteUserProject,
 } from '@/lib/userDataService';
+import { getPrefetchedData } from '@/lib/prefetch';
 import { hasAccess, IS_BETA } from '@/lib/tierAccess';
 
 // LocalStorage key for guest builds
@@ -110,7 +111,7 @@ export function SavedBuildsProvider({ children }) {
    * @param {Object} cancelledRef - Ref to track if effect was cancelled
    * @param {boolean} forceRefetch - Force refetch even if already synced
    */
-const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false) => {
+const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0) => {
   if (!isAuthenticated || !user?.id) {
     // Not authenticated - load from localStorage
     console.log('[SavedBuildsProvider] Not authenticated, loading from localStorage');
@@ -125,11 +126,27 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     return;
   }
 
-  setIsLoading(true);
+  // OPTIMIZATION: Show loading only if we don't have cached data
+  // This implements stale-while-revalidate pattern
+  if (currentBuildsCount === 0) {
+    setIsLoading(true);
+  }
   console.log('[SavedBuildsProvider] Fetching builds for user:', user.id?.slice(0, 8) + '...');
   
   try {
-    const { data, error } = await fetchUserProjects(user.id);
+    // OPTIMIZATION: Check for prefetched data first
+    const prefetchedBuilds = getPrefetchedData('builds', user.id);
+    let data, error;
+    
+    if (prefetchedBuilds) {
+      console.log('[SavedBuildsProvider] Using prefetched data');
+      data = prefetchedBuilds;
+      error = null;
+    } else {
+      const result = await fetchUserProjects(user.id);
+      data = result.data;
+      error = result.error;
+    }
     
     if (error) {
       console.error('[SavedBuildsProvider] Error fetching builds:', error);
@@ -194,14 +211,12 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   }
 }, [isAuthenticated, user?.id]);
 
-  // Fetch builds when auth state changes
-  // IMPORTANT: Track user ID to detect auth recovery scenarios
+  // Fetch builds when user ID becomes available
+  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
+  // This enables parallel loading with other providers
 useEffect(() => {
   // Skip if not hydrated yet
   if (!isHydrated) return;
-  
-  // Skip if auth is still loading
-  if (authLoading) return;
   
   const cancelledRef = { current: false };
   const currentUserId = user?.id || null;
@@ -214,18 +229,25 @@ useEffect(() => {
   // Update tracking ref
   lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
   
-  // Reset sync flag on logout
-  if (!isNowAuthenticated) {
+  // Reset sync flag on logout (only when auth loading is complete)
+  if (!isNowAuthenticated && !authLoading) {
     syncedRef.current = false;
   }
   
   // Force refetch on auth recovery
-  fetchBuilds(cancelledRef, isAuthRecovery);
+  // OPTIMIZATION: Start fetch immediately when user.id is available
+  // Pass current builds count for stale-while-revalidate pattern
+  if (isNowAuthenticated) {
+    fetchBuilds(cancelledRef, isAuthRecovery, builds.length);
+  } else if (!authLoading) {
+    // Only load local on explicit logout
+    fetchBuilds(cancelledRef, false, builds.length);
+  }
   
   return () => {
     cancelledRef.current = true;
   };
-}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id]);
+}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id, builds.length]);
 
   // Save to localStorage when builds change (for guests)
   useEffect(() => {
@@ -389,6 +411,11 @@ useEffect(() => {
     return builds.filter(build => build.carSlug === carSlug);
   }, [builds]);
 
+  // Wrapper for refreshBuilds that doesn't require parameters
+  const refreshBuilds = useCallback(() => {
+    fetchBuilds({ current: false }, true, builds.length);
+  }, [fetchBuilds, builds.length]);
+
   const value = {
     builds,
     isLoading,
@@ -398,7 +425,7 @@ useEffect(() => {
     deleteBuild: deleteBuildHandler,
     getBuildById,
     getBuildsByCarSlug,
-    refreshBuilds: fetchBuilds,
+    refreshBuilds,
     userTier,
     isBeta: IS_BETA,
   };

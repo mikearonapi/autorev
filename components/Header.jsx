@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import AuthModal, { useAuthModal } from './AuthModal';
 import { useAIChat } from './AIMechanicChat';
 import { useAuth } from './providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { prefetchForRoute } from '@/lib/prefetch';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -228,6 +229,16 @@ export default function Header() {
     return pathname.startsWith(href);
   };
 
+  // OPTIMIZATION: Prefetch user data on hover over navigation links
+  // This makes page loads feel instant
+  const handleNavHover = useCallback((href) => {
+    // Only prefetch for authenticated users
+    if (!isAuthenticated || !user?.id) return;
+    
+    // Prefetch data for the route
+    prefetchForRoute(href, user.id);
+  }, [isAuthenticated, user?.id]);
+
   return (
     <>
       <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
@@ -260,6 +271,7 @@ export default function Header() {
                     <Link
                       href={link.href}
                       className={`${styles.navLink} ${isActive(link.href) || link.subLinks.some(sub => isActive(sub.href)) ? styles.navLinkActive : ''}`}
+                      onMouseEnter={() => handleNavHover(link.href)}
                     >
                       {link.label}
                       <ChevronIcon />
@@ -279,6 +291,7 @@ export default function Header() {
                         key={subLink.href}
                         href={subLink.href}
                         className={`${styles.dropdownItem} ${isActive(subLink.href) ? styles.dropdownItemActive : ''}`}
+                        onMouseEnter={() => handleNavHover(subLink.href)}
                       >
                         {subLink.label}
                       </Link>
@@ -288,6 +301,7 @@ export default function Header() {
               ) : (
                 <Link
                   key={link.href}
+                  onMouseEnter={() => handleNavHover(link.href)}
                   href={link.href}
                   className={`${styles.navLink} ${isActive(link.href) ? styles.navLinkActive : ''}`}
                 >
@@ -305,7 +319,7 @@ export default function Header() {
                 onMouseEnter={() => setShowProfileDropdown(true)}
                 onMouseLeave={() => setShowProfileDropdown(false)}
               >
-                <Link href="/profile" className={styles.profileLink}>
+                <Link href="/profile" className={styles.profileLink} onMouseEnter={() => handleNavHover('/profile')}>
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}

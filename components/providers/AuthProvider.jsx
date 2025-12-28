@@ -11,6 +11,7 @@ import {
   getUserProfile,
   updateUserProfile,
 } from '@/lib/auth';
+import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
 import dynamic from 'next/dynamic';
 
 // Dynamically import OnboardingFlow to avoid SSR issues
@@ -459,7 +460,14 @@ export function AuthProvider({ children }) {
         scheduleSessionRefresh(session);
         
         // Now fetch profile in background (don't block UI)
+        // Also start prefetching user data in parallel for faster page loads
         try {
+          // Start prefetching user data immediately (fire and forget)
+          // This runs in parallel with profile loading
+          prefetchAllUserData(session.user.id).catch(err => 
+            console.warn('[AuthProvider] Background prefetch error:', err)
+          );
+          
           const profile = await fetchProfile(session.user.id);
           
           // Check if there's a pending tier selection from the join page
@@ -499,6 +507,8 @@ export function AuthProvider({ children }) {
         }
         // Reset refs
         isAuthenticatedRef.current = false;
+        // Clear prefetch cache to ensure fresh data on next login
+        clearPrefetchCache();
         setState({
           ...defaultAuthState,
           isLoading: false,

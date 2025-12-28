@@ -25,6 +25,7 @@ import {
   clearVehicleModifications,
   applyBuildToVehicle,
 } from '@/lib/userDataService';
+import { getPrefetchedData } from '@/lib/prefetch';
 
 // LocalStorage key for guest vehicles
 const STORAGE_KEY = 'autorev_owned_vehicles';
@@ -192,20 +193,20 @@ export function OwnedVehiclesProvider({ children }) {
     setIsHydrated(true);
   }, []);
 
-  // When auth state changes, handle sync
-  // IMPORTANT: We track the user ID to detect auth recovery scenarios
-  // where isAuthenticated goes false -> true with the same user
+  // When user ID becomes available, fetch data immediately
+  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
+  // This enables parallel loading with other providers
   useEffect(() => {
     // Skip if not hydrated yet
     if (!isHydrated) return;
-    
-    // Skip if auth is still loading
-    if (authLoading) return;
 
     const handleAuthChange = async () => {
       const currentUserId = user?.id || null;
       const wasAuthenticated = lastUserIdRef.current !== null;
       const isNowAuthenticated = isAuthenticated && currentUserId;
+      
+      // Detect auth recovery scenario
+      const isAuthRecovery = !wasAuthenticated && isNowAuthenticated;
       
       // Track the current user ID for next comparison
       lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
@@ -213,16 +214,32 @@ export function OwnedVehiclesProvider({ children }) {
       if (isNowAuthenticated) {
         // Only skip if we've already synced for THIS user
         // This ensures we refetch if auth recovered after failure
-        if (syncedRef.current && wasAuthenticated) {
+        if (syncedRef.current && wasAuthenticated && !isAuthRecovery) {
           console.log('[OwnedVehiclesProvider] Already synced for user, skipping fetch');
           return;
         }
         
-        setIsLoading(true);
+        // OPTIMIZATION: Show loading only if we don't have cached data
+        // This implements stale-while-revalidate pattern
+        if (state.vehicles.length === 0) {
+          setIsLoading(true);
+        }
         console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', currentUserId?.slice(0, 8) + '...');
         
         try {
-          const { data, error } = await fetchUserVehicles(currentUserId);
+          // OPTIMIZATION: Check for prefetched data first
+          const prefetchedVehicles = getPrefetchedData('vehicles', currentUserId);
+          let data, error;
+          
+          if (prefetchedVehicles) {
+            console.log('[OwnedVehiclesProvider] Using prefetched data');
+            data = prefetchedVehicles;
+            error = null;
+          } else {
+            const result = await fetchUserVehicles(currentUserId);
+            data = result.data;
+            error = result.error;
+          }
           
           if (error) {
             console.error('[OwnedVehiclesProvider] Error fetching vehicles:', error);
@@ -237,8 +254,9 @@ export function OwnedVehiclesProvider({ children }) {
         } finally {
           setIsLoading(false);
         }
-      } else {
-        // User signed out or not authenticated - reload from localStorage
+      } else if (!authLoading) {
+        // Only reset on explicit logout (authLoading false + no user)
+        // This prevents flickering during auth recovery
         console.log('[OwnedVehiclesProvider] Not authenticated, loading from localStorage');
         syncedRef.current = false;
         const localVehicles = loadLocalVehicles();
@@ -247,7 +265,7 @@ export function OwnedVehiclesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

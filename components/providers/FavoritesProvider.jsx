@@ -25,6 +25,7 @@ import {
   removeUserFavorite,
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
+import { getPrefetchedData } from '@/lib/prefetch';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 
 /**
@@ -115,14 +116,12 @@ export function FavoritesProvider({ children }) {
     setIsHydrated(true);
   }, []);
 
-  // When auth state changes, handle sync
-  // IMPORTANT: Track user ID to detect auth recovery scenarios
+  // When user ID becomes available, fetch data immediately
+  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
+  // This enables parallel loading with other providers
   useEffect(() => {
     // Skip if not hydrated yet
     if (!isHydrated) return;
-    
-    // Skip if auth is still loading
-    if (authLoading) return;
 
     const handleAuthChange = async () => {
       const currentUserId = user?.id || null;
@@ -142,7 +141,11 @@ export function FavoritesProvider({ children }) {
           return;
         }
         
-        setIsLoading(true);
+        // OPTIMIZATION: Show loading only if we don't have cached data
+        // This implements stale-while-revalidate pattern
+        if (state.favorites.length === 0) {
+          setIsLoading(true);
+        }
         console.log('[FavoritesProvider] Fetching favorites for user:', currentUserId?.slice(0, 8) + '...');
         
         try {
@@ -150,11 +153,26 @@ export function FavoritesProvider({ children }) {
           const localFavorites = loadFavorites().favorites;
           
           if (localFavorites.length > 0 && !syncedRef.current) {
-            await syncFavoritesToSupabase(currentUserId, localFavorites);
+            // Fire-and-forget sync - don't block on this
+            syncFavoritesToSupabase(currentUserId, localFavorites).catch(err => 
+              console.warn('[FavoritesProvider] Background sync error:', err)
+            );
           }
 
-          // Fetch favorites from Supabase
-          const { data, error } = await fetchUserFavorites(currentUserId);
+          // OPTIMIZATION: Check for prefetched data first
+          const prefetchedFavorites = getPrefetchedData('favorites', currentUserId);
+          let data, error;
+          
+          if (prefetchedFavorites) {
+            console.log('[FavoritesProvider] Using prefetched data');
+            data = prefetchedFavorites;
+            error = null;
+          } else {
+            // Fetch favorites from Supabase
+            const result = await fetchUserFavorites(currentUserId);
+            data = result.data;
+            error = result.error;
+          }
           
           if (error) {
             console.error('[FavoritesProvider] Error fetching favorites:', error);
@@ -178,8 +196,9 @@ export function FavoritesProvider({ children }) {
         } finally {
           setIsLoading(false);
         }
-      } else {
-        // User signed out - reload from localStorage
+      } else if (!authLoading) {
+        // Only reset on explicit logout (authLoading false + no user)
+        // This prevents flickering during auth recovery
         console.log('[FavoritesProvider] Not authenticated, loading from localStorage');
         syncedRef.current = false;
         const storedState = loadFavorites();
@@ -188,7 +207,7 @@ export function FavoritesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {
