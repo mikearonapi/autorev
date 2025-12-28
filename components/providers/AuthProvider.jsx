@@ -57,123 +57,94 @@ const MAX_ONBOARDING_DISMISSALS = 3;
  * Session initialization with retry logic
  * Handles race conditions after OAuth callback and stale sessions
  * 
- * Recovery strategy (in order):
- * 1. Validate session with getUser() (server-side validation)
- * 2. If session invalid, try refreshSession() (uses refresh token)
- * 3. If refresh fails, try getSession() (local session check)
- * 4. If all fail, clear stale session and return not authenticated
+ * Strategy:
+ * 1. Try refreshSession() first - this works with refresh token even if access token expired
+ * 2. If refresh works, validate with getUser()
+ * 3. If refresh fails, try getUser() directly (maybe access token is fine)
+ * 4. If all fail and it's a stale session error, clear local storage
  */
 async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
   let lastError = null;
-  let sessionCleared = false;
   
+  // FIRST: Try to refresh session - this is the most reliable recovery method
+  // It uses the refresh token which often survives when access tokens expire
+  try {
+    console.log(`[AuthProvider] Attempting session refresh...`);
+    const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+    
+    if (!refreshError && refreshData?.session && refreshData?.user) {
+      console.log(`[AuthProvider] Session refreshed successfully`);
+      return { session: refreshData.session, user: refreshData.user, error: null };
+    }
+    
+    if (refreshError) {
+      console.log(`[AuthProvider] Refresh returned error:`, refreshError.message);
+      lastError = refreshError;
+    }
+  } catch (refreshErr) {
+    console.log(`[AuthProvider] Refresh threw:`, refreshErr.message);
+    lastError = refreshErr;
+  }
+  
+  // SECOND: Refresh didn't work, try getUser() with retries
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // Use getUser() for server-validated session (most secure)
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError) {
-        // Check if this is a session/auth error that might be recoverable
-        const isSessionError = userError.message?.includes('session') || 
-                               userError.message?.includes('Session not found') ||
-                               userError.message?.includes('JWT') ||
-                               userError.message?.includes('token') ||
-                               userError.status === 403 ||
-                               userError.status === 401;
+        lastError = userError;
+        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message);
         
-        if (isSessionError && attempt === 1) {
-          // FIRST: Try to refresh the session using the refresh token
-          // This often works even when the access token is invalid
-          console.log(`[AuthProvider] Session validation failed, attempting refresh...`);
-          
-          try {
-            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-            
-            if (!refreshError && refreshData?.session && refreshData?.user) {
-              console.log(`[AuthProvider] Session refreshed successfully`);
-              return { session: refreshData.session, user: refreshData.user, error: null };
-            }
-            
-            // Refresh failed, log the reason
-            if (refreshError) {
-              console.warn(`[AuthProvider] Refresh failed:`, refreshError.message);
-            }
-          } catch (refreshErr) {
-            console.warn(`[AuthProvider] Refresh threw error:`, refreshErr.message);
-          }
-          
-          // SECOND: Try getSession() which reads from local storage
-          // Sometimes the local session is valid even if server validation failed
-          try {
-            const { data: { session: localSession }, error: localError } = await supabase.auth.getSession();
-            
-            if (!localError && localSession?.user) {
-              // Verify this local session is actually valid
-              const { data: { user: verifiedUser } } = await supabase.auth.getUser();
-              if (verifiedUser) {
-                console.log(`[AuthProvider] Local session verified`);
-                return { session: localSession, user: verifiedUser, error: null };
-              }
-            }
-          } catch (localErr) {
-            console.warn(`[AuthProvider] Local session check failed:`, localErr.message);
-          }
-        }
+        // Check if this is a definitive "session not found" - no point retrying
+        const isSessionGone = userError.message?.includes('Session not found') ||
+                              userError.message?.includes('session') ||
+                              userError.status === 403;
         
-        // If we've exhausted recovery options on the last attempt, clear stale session
-        if (isSessionError && attempt === maxRetries && !sessionCleared) {
-          console.warn(`[AuthProvider] All recovery attempts failed, clearing stale session`);
-          sessionCleared = true;
+        if (isSessionGone) {
+          console.warn(`[AuthProvider] Session is definitely invalid, clearing...`);
           try {
-            // Use scope: 'local' to only clear client-side (server already knows session is invalid)
             await supabase.auth.signOut({ scope: 'local' });
-          } catch (signOutErr) {
-            console.warn(`[AuthProvider] Error clearing session:`, signOutErr.message);
+          } catch (e) {
+            // Ignore
           }
-          // Return clean state - user needs to re-login
           return { session: null, user: null, error: null, sessionExpired: true };
         }
         
-        lastError = userError;
+        // For other errors, retry with backoff
+        if (attempt < maxRetries) {
+          const delay = initialDelay * Math.pow(2, attempt - 1);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        
         throw userError;
       }
       
       if (user) {
-        // User validated, now get full session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          lastError = sessionError;
-          throw sessionError;
-        }
-        
+        // User validated, get the session
+        const { data: { session } } = await supabase.auth.getSession();
         console.log(`[AuthProvider] Session initialized on attempt ${attempt}`);
         return { session, user, error: null };
       }
       
-      // No user found - this is valid (not logged in)
+      // No user - not logged in
       return { session: null, user: null, error: null };
       
     } catch (err) {
       lastError = err;
-      console.warn(`[AuthProvider] Init attempt ${attempt}/${maxRetries} failed:`, err.message);
-      
       if (attempt < maxRetries) {
-        // Exponential backoff: 100ms, 200ms, 400ms
         const delay = initialDelay * Math.pow(2, attempt - 1);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
   
-  // Final fallback: clear any stale session data
-  if (!sessionCleared) {
-    console.error('[AuthProvider] Session init failed after all retries, clearing session');
-    try {
-      await supabase.auth.signOut({ scope: 'local' });
-    } catch (e) {
-      // Ignore signout errors
-    }
+  // All attempts failed
+  console.error('[AuthProvider] All auth attempts failed');
+  try {
+    await supabase.auth.signOut({ scope: 'local' });
+  } catch (e) {
+    // Ignore
   }
   
   return { session: null, user: null, error: lastError, sessionExpired: !!lastError };
