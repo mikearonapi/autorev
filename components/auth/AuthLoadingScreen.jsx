@@ -18,7 +18,6 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
 import styles from './AuthLoadingScreen.module.css';
 
 // Loading step configuration
@@ -381,12 +380,10 @@ export default function AuthLoadingScreen({
             const isPending = status === StepStatus.PENDING;
             
             return (
-              <motion.div 
+              <div 
                 key={step.key}
                 className={`${styles.step} ${isComplete ? styles.stepComplete : ''} ${isLoading ? styles.stepLoading : ''} ${isFailed ? styles.stepFailed : ''} ${isPending ? styles.stepPending : ''}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.3 }}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className={styles.stepIcon}>
                   {isComplete && <CheckIcon />}
@@ -410,7 +407,7 @@ export default function AuthLoadingScreen({
                     <span>Retry</span>
                   </button>
                 )}
-              </motion.div>
+              </div>
             );
           })}
         </div>

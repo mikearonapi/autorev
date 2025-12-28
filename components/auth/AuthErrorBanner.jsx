@@ -1,8 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, ExclamationTriangleIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+
+/**
+ * Warning/Error icon component
+ */
+function ExclamationIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+/**
+ * Close X icon component
+ */
+function XIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+/**
+ * Sign in arrow icon component
+ */
+function SignInIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <polyline points="10 17 15 12 10 7" />
+      <line x1="15" y1="12" x2="3" y2="12" />
+    </svg>
+  );
+}
 
 /**
  * AuthErrorBanner Component
@@ -90,46 +126,55 @@ export default function AuthErrorBanner({
   if (!isVisible) return null;
   
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -50 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        className={`fixed top-0 left-0 right-0 z-[100] ${colors.bg} ${colors.border} border-b backdrop-blur-sm`}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center flex-1 min-w-0">
-              <span className={`flex p-2 rounded-lg ${colors.bg}`}>
-                <ExclamationTriangleIcon className={`h-5 w-5 ${colors.icon}`} aria-hidden="true" />
-              </span>
-              <div className="ml-3 flex-1 min-w-0">
-                <p className={`text-sm font-medium ${colors.text} truncate`}>
-                  <span className="font-semibold">{title}:</span> {message}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={handleSignIn}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-white ${colors.button} transition-colors`}
-              >
-                <ArrowRightStartOnRectangleIcon className="h-4 w-4" />
-                Sign In
-              </button>
-              <button
-                onClick={handleDismiss}
-                className={`p-1.5 rounded-md ${colors.dismiss} transition-colors`}
-                aria-label="Dismiss"
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </button>
+    <div
+      className={`fixed top-0 left-0 right-0 z-[100] ${colors.bg} ${colors.border} border-b backdrop-blur-sm`}
+      style={{
+        animation: 'slideDown 0.3s ease-out',
+      }}
+    >
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+      <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center flex-1 min-w-0">
+            <span className={`flex p-2 rounded-lg ${colors.bg}`}>
+              <ExclamationIcon className={`h-5 w-5 ${colors.icon}`} aria-hidden="true" />
+            </span>
+            <div className="ml-3 flex-1 min-w-0">
+              <p className={`text-sm font-medium ${colors.text} truncate`}>
+                <span className="font-semibold">{title}:</span> {message}
+              </p>
             </div>
           </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={handleSignIn}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-white ${colors.button} transition-colors`}
+            >
+              <SignInIcon className="h-4 w-4" />
+              Sign In
+            </button>
+            <button
+              onClick={handleDismiss}
+              className={`p-1.5 rounded-md ${colors.dismiss} transition-colors`}
+              aria-label="Dismiss"
+            >
+              <XIcon className="h-5 w-5" />
+            </button>
+          </div>
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }
 
