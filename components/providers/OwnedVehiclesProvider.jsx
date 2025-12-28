@@ -198,9 +198,18 @@ export function OwnedVehiclesProvider({ children }) {
   /**
    * Fetch vehicles from server
    * Extracted so it can be used as a retry callback
+   * @param {string} userId - User ID to fetch vehicles for
+   * @param {number} timeout - Timeout in ms (default 8000)
    */
-  const fetchVehicles = useCallback(async (userId) => {
+  const fetchVehicles = useCallback(async (userId, timeout = 8000) => {
     console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', userId?.slice(0, 8) + '...');
+    
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.warn('[OwnedVehiclesProvider] Fetch timeout after', timeout, 'ms');
+      controller.abort();
+    }, timeout);
     
     try {
       // OPTIMIZATION: Check for prefetched data first
@@ -212,10 +221,21 @@ export function OwnedVehiclesProvider({ children }) {
         data = prefetchedVehicles;
         error = null;
       } else {
-        const result = await fetchUserVehicles(userId);
+        // Fetch with timeout
+        const fetchPromise = fetchUserVehicles(userId);
+        const timeoutPromise = new Promise((_, reject) => {
+          controller.signal.addEventListener('abort', () => {
+            reject(new Error('Request timed out'));
+          });
+        });
+        
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
         data = result.data;
         error = result.error;
       }
+      
+      // Clear timeout since fetch completed
+      clearTimeout(timeoutId);
       
       if (error) {
         console.error('[OwnedVehiclesProvider] Error fetching vehicles:', error);
@@ -245,8 +265,12 @@ export function OwnedVehiclesProvider({ children }) {
       // Mark as complete on success
       markComplete('vehicles');
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('[OwnedVehiclesProvider] Error:', err);
-      markFailed('vehicles', err.message || 'Unexpected error loading vehicles');
+      const errorMessage = err.message === 'Request timed out' 
+        ? 'Request timed out - please try again' 
+        : err.message || 'Unexpected error loading vehicles';
+      markFailed('vehicles', errorMessage);
     } finally {
       setIsLoading(false);
     }

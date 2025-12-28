@@ -326,11 +326,28 @@ export function AuthProvider({ children }) {
   // Fetch user profile when authenticated
   // Returns profile data on success, or a minimal profile object on failure
   // This ensures the app can continue functioning even if profile fetch fails
-  const fetchProfile = useCallback(async (userId) => {
+  const fetchProfile = useCallback(async (userId, timeout = 5000) => {
     if (!userId) return null;
     
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.warn('[AuthProvider] Profile fetch timeout after', timeout, 'ms');
+      controller.abort();
+    }, timeout);
+    
     try {
-      const { data, error } = await getUserProfile();
+      // Fetch with timeout
+      const fetchPromise = getUserProfile();
+      const timeoutPromise = new Promise((_, reject) => {
+        controller.signal.addEventListener('abort', () => {
+          reject(new Error('Profile fetch timed out'));
+        });
+      });
+      
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+      clearTimeout(timeoutId);
+      
       if (error) {
         console.error('[AuthProvider] Error fetching profile:', error.message);
         // Return a minimal profile to prevent loading states from hanging
@@ -343,6 +360,7 @@ export function AuthProvider({ children }) {
       }
       return data;
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('[AuthProvider] Unexpected error fetching profile:', err);
       // Return minimal profile on exception too
       return {

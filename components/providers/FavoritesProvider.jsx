@@ -121,9 +121,18 @@ export function FavoritesProvider({ children }) {
   /**
    * Fetch favorites from server
    * Extracted so it can be used as a retry callback
+   * @param {string} userId - User ID to fetch favorites for
+   * @param {number} timeout - Timeout in ms (default 8000)
    */
-  const fetchFavorites = useCallback(async (userId) => {
+  const fetchFavorites = useCallback(async (userId, timeout = 8000) => {
     console.log('[FavoritesProvider] Fetching favorites for user:', userId?.slice(0, 8) + '...');
+    
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.warn('[FavoritesProvider] Fetch timeout after', timeout, 'ms');
+      controller.abort();
+    }, timeout);
     
     try {
       // If we have local favorites and haven't synced yet, sync them
@@ -145,11 +154,21 @@ export function FavoritesProvider({ children }) {
         data = prefetchedFavorites;
         error = null;
       } else {
-        // Fetch favorites from Supabase
-        const result = await fetchUserFavorites(userId);
+        // Fetch favorites from Supabase with timeout
+        const fetchPromise = fetchUserFavorites(userId);
+        const timeoutPromise = new Promise((_, reject) => {
+          controller.signal.addEventListener('abort', () => {
+            reject(new Error('Request timed out'));
+          });
+        });
+        
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
         data = result.data;
         error = result.error;
       }
+      
+      // Clear timeout since fetch completed
+      clearTimeout(timeoutId);
       
       if (error) {
         console.error('[FavoritesProvider] Error fetching favorites:', error);
@@ -188,8 +207,12 @@ export function FavoritesProvider({ children }) {
       // Mark as complete on success
       markComplete('favorites');
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('[FavoritesProvider] Sync error:', err);
-      markFailed('favorites', err.message || 'Unexpected error loading favorites');
+      const errorMessage = err.message === 'Request timed out' 
+        ? 'Request timed out - please try again' 
+        : err.message || 'Unexpected error loading favorites';
+      markFailed('favorites', errorMessage);
     } finally {
       setIsLoading(false);
     }

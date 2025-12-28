@@ -112,8 +112,10 @@ export function SavedBuildsProvider({ children }) {
    * Fetch builds from Supabase
    * @param {Object} cancelledRef - Ref to track if effect was cancelled
    * @param {boolean} forceRefetch - Force refetch even if already synced
+   * @param {number} currentBuildsCount - Current builds count for stale-while-revalidate
+   * @param {number} timeout - Timeout in ms (default 10000)
    */
-const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0) => {
+const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0, timeout = 10000) => {
   if (!isAuthenticated || !user?.id) {
     // Not authenticated - load from localStorage
     console.log('[SavedBuildsProvider] Not authenticated, loading from localStorage');
@@ -139,6 +141,13 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   }
   console.log('[SavedBuildsProvider] Fetching builds for user:', user.id?.slice(0, 8) + '...');
   
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    console.warn('[SavedBuildsProvider] Fetch timeout after', timeout, 'ms');
+    controller.abort();
+  }, timeout);
+  
   try {
     // OPTIMIZATION: Check for prefetched data first
     const prefetchedBuilds = getPrefetchedData('builds', user.id);
@@ -149,10 +158,21 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
       data = prefetchedBuilds;
       error = null;
     } else {
-      const result = await fetchUserProjects(user.id);
+      // Fetch with timeout
+      const fetchPromise = fetchUserProjects(user.id);
+      const timeoutPromise = new Promise((_, reject) => {
+        controller.signal.addEventListener('abort', () => {
+          reject(new Error('Request timed out'));
+        });
+      });
+      
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
       data = result.data;
       error = result.error;
     }
+    
+    // Clear timeout since fetch completed
+    clearTimeout(timeoutId);
     
     if (error) {
       console.error('[SavedBuildsProvider] Error fetching builds:', error);
@@ -228,12 +248,16 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
       }
     }
   } catch (err) {
+    clearTimeout(timeoutId);
     console.error('[SavedBuildsProvider] Unexpected error:', err);
     // Fall back to localStorage
     const localBuilds = loadLocalBuilds();
     if (!cancelledRef.current) {
       setBuilds(localBuilds);
-      markFailed('builds', err.message || 'Unexpected error loading builds');
+      const errorMessage = err.message === 'Request timed out' 
+        ? 'Request timed out - please try again' 
+        : err.message || 'Unexpected error loading builds';
+      markFailed('builds', errorMessage);
     }
   } finally {
     if (!cancelledRef.current) {

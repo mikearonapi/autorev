@@ -169,6 +169,9 @@ export function LoadingProgressProvider({ children }) {
    * @param {string} key - The data type key (profile, favorites, vehicles, builds)
    */
   const markComplete = useCallback((key) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c93efea7-ca70-49fe-9e35-50ecc40e8b38',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'LoadingProgressProvider.jsx:markComplete',message:`markComplete called for ${key}`,data:{key},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     // Clear timeout for this step
     if (stepTimeoutsRef.current[key]) {
       clearTimeout(stepTimeoutsRef.current[key]);
