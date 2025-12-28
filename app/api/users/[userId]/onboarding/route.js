@@ -74,7 +74,9 @@ export async function GET(request, { params }) {
         referral_source_other,
         user_intent,
         email_opt_in_features,
-        email_opt_in_events
+        email_opt_in_events,
+        onboarding_dismissed_count,
+        onboarding_opted_out
       `)
       .eq('id', userId)
       .single();
@@ -88,12 +90,15 @@ export async function GET(request, { params }) {
     }
 
     const completed = !!profile?.onboarding_completed_at;
+    const optedOut = !!profile?.onboarding_opted_out;
     
     return NextResponse.json({
       completed,
       completedAt: profile?.onboarding_completed_at || null,
       currentStep: profile?.onboarding_step || 1,
-      partialData: completed ? null : {
+      dismissedCount: profile?.onboarding_dismissed_count || 0,
+      optedOut,
+      partialData: (completed || optedOut) ? null : {
         referral_source: profile?.referral_source,
         referral_source_other: profile?.referral_source_other,
         user_intent: profile?.user_intent,

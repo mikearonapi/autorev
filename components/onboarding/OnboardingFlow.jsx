@@ -52,17 +52,17 @@ export default function OnboardingFlow({
   // Get user's display name
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
 
-  // Handle escape key
+  // Handle escape key (disabled on Step 2 - Referral)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape' && isOpen && step !== 2) {
         handleDismiss();
       }
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
+  }, [isOpen, step, handleDismiss]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -160,9 +160,9 @@ export default function OnboardingFlow({
     onClose?.();
   }, [formData, saveProgress, onClose]);
 
-  // Handle backdrop click
+  // Handle backdrop click (disabled on Step 2 - Referral)
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && step !== 2) {
       handleDismiss();
     }
   };
@@ -294,17 +294,19 @@ export default function OnboardingFlow({
   return (
     <div className={styles.overlay} onClick={handleBackdropClick}>
       <div className={styles.modal} role="dialog" aria-modal="true" aria-label="Welcome to AutoRev">
-        {/* Close Button */}
-        <button 
-          className={styles.closeBtn} 
-          onClick={handleDismiss} 
-          aria-label="Close and continue later"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
+        {/* Close Button - hidden on Step 2 (Referral) to ensure we capture this key data */}
+        {step !== 2 && (
+          <button 
+            className={styles.closeBtn} 
+            onClick={handleDismiss} 
+            aria-label="Close and continue later"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        )}
 
         {/* Progress Dots */}
         <div className={styles.progressDots}>
@@ -348,9 +350,12 @@ export default function OnboardingFlow({
               )}
             </button>
           </div>
-          <button className={styles.skipLink} onClick={handleDismiss}>
-            I'll do this later
-          </button>
+          {/* Hide skip link on Step 2 (Referral) - this is our most valuable data */}
+          {step !== 2 && (
+            <button className={styles.skipLink} onClick={handleDismiss}>
+              I'll do this later
+            </button>
+          )}
         </div>
       </div>
     </div>

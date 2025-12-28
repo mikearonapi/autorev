@@ -44,7 +44,13 @@ const defaultOnboardingState = {
   onboardingStep: 1,
   onboardingData: {},
   onboardingDismissed: false,
+  dismissedCount: 0,
 };
+
+/**
+ * Maximum dismissals before opting out permanently
+ */
+const MAX_ONBOARDING_DISMISSALS = 3;
 
 /**
  * Session initialization with retry logic
@@ -555,14 +561,30 @@ export function AuthProvider({ children }) {
       return;
     }
     
-    // If user has dismissed for this session, don't show
-    const dismissed = sessionStorage.getItem('onboarding_dismissed');
-    if (dismissed) {
+    // If user has permanently opted out (too many dismissals), don't show
+    if (profile?.onboarding_opted_out) {
+      console.log('[AuthProvider] User has opted out of onboarding');
       setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
       return;
     }
+    
+    // Check localStorage for session-based dismissal (persists across browser sessions)
+    const dismissedUntil = localStorage.getItem('onboarding_dismissed_until');
+    if (dismissedUntil) {
+      const dismissedTime = parseInt(dismissedUntil, 10);
+      // Only honor dismissal for 24 hours
+      if (Date.now() < dismissedTime) {
+        console.log('[AuthProvider] Onboarding dismissed temporarily');
+        setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
+        return;
+      } else {
+        // Dismissal expired, clear it
+        localStorage.removeItem('onboarding_dismissed_until');
+      }
+    }
 
     // Show onboarding for users who haven't completed it
+    const dismissedCount = profile?.onboarding_dismissed_count || 0;
     setOnboardingState({
       showOnboarding: true,
       onboardingStep: profile?.onboarding_step || 1,
@@ -574,18 +596,57 @@ export function AuthProvider({ children }) {
         email_opt_in_events: profile?.email_opt_in_events || false,
       },
       onboardingDismissed: false,
+      dismissedCount,
     });
   }, []);
 
-  // Handle onboarding close (dismiss for session)
-  const dismissOnboarding = useCallback(() => {
-    sessionStorage.setItem('onboarding_dismissed', 'true');
+  // Handle onboarding close (dismiss with tracking)
+  const dismissOnboarding = useCallback(async () => {
+    const newDismissedCount = (onboardingState.dismissedCount || 0) + 1;
+    const shouldOptOut = newDismissedCount >= MAX_ONBOARDING_DISMISSALS;
+    
+    // Set localStorage to dismiss for 24 hours
+    const dismissUntil = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+    localStorage.setItem('onboarding_dismissed_until', dismissUntil.toString());
+    
+    // Update local state immediately
     setOnboardingState(prev => ({ 
       ...prev, 
       showOnboarding: false, 
-      onboardingDismissed: true 
+      onboardingDismissed: true,
+      dismissedCount: newDismissedCount,
     }));
-  }, []);
+    
+    // Track dismissal in database
+    if (state.user?.id) {
+      try {
+        const response = await fetch(`/api/users/${state.user.id}/onboarding/dismiss`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ optOut: shouldOptOut }),
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('[AuthProvider] Onboarding dismissed:', { 
+            count: result.dismissedCount, 
+            optedOut: result.optedOut 
+          });
+          
+          // Update profile state if opted out
+          if (result.optedOut) {
+            setState(prev => ({
+              ...prev,
+              profile: { ...prev.profile, onboarding_opted_out: true },
+            }));
+          }
+        }
+      } catch (err) {
+        console.error('[AuthProvider] Failed to track dismissal:', err);
+        // Continue anyway - localStorage dismissal still works
+      }
+    }
+  }, [state.user?.id, onboardingState.dismissedCount]);
 
   // Handle onboarding complete
   const completeOnboarding = useCallback((data) => {
@@ -598,7 +659,8 @@ export function AuthProvider({ children }) {
       },
     }));
     setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
-    sessionStorage.removeItem('onboarding_dismissed');
+    // Clear any dismissal tracking since onboarding is now complete
+    localStorage.removeItem('onboarding_dismissed_until');
   }, []);
 
   // Check onboarding status when profile loads
