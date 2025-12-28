@@ -34,6 +34,7 @@ const defaultAuthState = {
   isLoading: true,
   isAuthenticated: false,
   authError: null,
+  sessionExpired: false, // True when session was invalidated (e.g., multi-device login)
 };
 
 /**
@@ -54,40 +55,85 @@ const MAX_ONBOARDING_DISMISSALS = 3;
 
 /**
  * Session initialization with retry logic
- * Handles race conditions after OAuth callback
+ * Handles race conditions after OAuth callback and stale sessions
+ * 
+ * Recovery strategy (in order):
+ * 1. Validate session with getUser() (server-side validation)
+ * 2. If session invalid, try refreshSession() (uses refresh token)
+ * 3. If refresh fails, try getSession() (local session check)
+ * 4. If all fail, clear stale session and return not authenticated
  */
 async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
   let lastError = null;
+  let sessionCleared = false;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // Use getUser() for server-validated session (more secure than getSession)
+      // Use getUser() for server-validated session (most secure)
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError) {
-        // Check if this is a "session not found" error - meaning the session is stale
-        // This happens when logged in on multiple devices and one session gets invalidated
-        const isSessionNotFound = userError.message?.includes('session') || 
-                                   userError.message?.includes('Session not found') ||
-                                   userError.status === 403;
+        // Check if this is a session/auth error that might be recoverable
+        const isSessionError = userError.message?.includes('session') || 
+                               userError.message?.includes('Session not found') ||
+                               userError.message?.includes('JWT') ||
+                               userError.message?.includes('token') ||
+                               userError.status === 403 ||
+                               userError.status === 401;
         
-        if (isSessionNotFound) {
-          console.warn(`[AuthProvider] Session not found/invalid, clearing stale session`);
-          // Clear the stale session from local storage/cookies
-          await supabase.auth.signOut({ scope: 'local' });
-          // Return as not authenticated (user can re-login)
-          return { session: null, user: null, error: null };
-        }
-        
-        // If it's a refresh error, try to get a new session
-        if (userError.message?.includes('refresh') || userError.message?.includes('token')) {
-          console.log(`[AuthProvider] Token refresh needed on attempt ${attempt}`);
-          // Trigger a session refresh
-          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-          if (!sessionError && session) {
-            return { session, user: session.user, error: null };
+        if (isSessionError && attempt === 1) {
+          // FIRST: Try to refresh the session using the refresh token
+          // This often works even when the access token is invalid
+          console.log(`[AuthProvider] Session validation failed, attempting refresh...`);
+          
+          try {
+            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+            
+            if (!refreshError && refreshData?.session && refreshData?.user) {
+              console.log(`[AuthProvider] Session refreshed successfully`);
+              return { session: refreshData.session, user: refreshData.user, error: null };
+            }
+            
+            // Refresh failed, log the reason
+            if (refreshError) {
+              console.warn(`[AuthProvider] Refresh failed:`, refreshError.message);
+            }
+          } catch (refreshErr) {
+            console.warn(`[AuthProvider] Refresh threw error:`, refreshErr.message);
+          }
+          
+          // SECOND: Try getSession() which reads from local storage
+          // Sometimes the local session is valid even if server validation failed
+          try {
+            const { data: { session: localSession }, error: localError } = await supabase.auth.getSession();
+            
+            if (!localError && localSession?.user) {
+              // Verify this local session is actually valid
+              const { data: { user: verifiedUser } } = await supabase.auth.getUser();
+              if (verifiedUser) {
+                console.log(`[AuthProvider] Local session verified`);
+                return { session: localSession, user: verifiedUser, error: null };
+              }
+            }
+          } catch (localErr) {
+            console.warn(`[AuthProvider] Local session check failed:`, localErr.message);
           }
         }
+        
+        // If we've exhausted recovery options on the last attempt, clear stale session
+        if (isSessionError && attempt === maxRetries && !sessionCleared) {
+          console.warn(`[AuthProvider] All recovery attempts failed, clearing stale session`);
+          sessionCleared = true;
+          try {
+            // Use scope: 'local' to only clear client-side (server already knows session is invalid)
+            await supabase.auth.signOut({ scope: 'local' });
+          } catch (signOutErr) {
+            console.warn(`[AuthProvider] Error clearing session:`, signOutErr.message);
+          }
+          // Return clean state - user needs to re-login
+          return { session: null, user: null, error: null, sessionExpired: true };
+        }
+        
         lastError = userError;
         throw userError;
       }
@@ -120,8 +166,17 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
     }
   }
   
-  console.error('[AuthProvider] Session init failed after all retries');
-  return { session: null, user: null, error: lastError };
+  // Final fallback: clear any stale session data
+  if (!sessionCleared) {
+    console.error('[AuthProvider] Session init failed after all retries, clearing session');
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (e) {
+      // Ignore signout errors
+    }
+  }
+  
+  return { session: null, user: null, error: lastError, sessionExpired: !!lastError };
 }
 
 /**
@@ -243,7 +298,7 @@ export function AuthProvider({ children }) {
         
         // If coming from OAuth callback, use retry logic to handle race conditions
         const maxRetries = (fromCallback || hasAuthTimestamp) ? 5 : 3;
-        const { session, user, error: initError } = await initializeSessionWithRetry(maxRetries);
+        const { session, user, error: initError, sessionExpired } = await initializeSessionWithRetry(maxRetries);
         
         if (initError) {
           console.error('[AuthProvider] Session init error:', initError);
@@ -251,6 +306,18 @@ export function AuthProvider({ children }) {
             ...defaultAuthState,
             isLoading: false,
             authError: initError.message,
+            sessionExpired: !!sessionExpired,
+          });
+          return;
+        }
+        
+        // Handle case where session was cleared due to being stale
+        if (sessionExpired && !user) {
+          console.log('[AuthProvider] Session expired, user needs to re-login');
+          setState({
+            ...defaultAuthState,
+            isLoading: false,
+            sessionExpired: true,
           });
           return;
         }
@@ -646,7 +713,7 @@ export function AuthProvider({ children }) {
 
   // Clear auth error
   const clearAuthError = useCallback(() => {
-    setState(prev => ({ ...prev, authError: null }));
+    setState(prev => ({ ...prev, authError: null, sessionExpired: false }));
   }, []);
 
   // Check if user needs onboarding
@@ -798,6 +865,7 @@ export function AuthProvider({ children }) {
     isLoading: state.isLoading,
     isAuthenticated: state.isAuthenticated,
     authError: state.authError,
+    sessionExpired: state.sessionExpired, // True when session was invalidated (multi-device)
     
     // Onboarding State
     showOnboarding: onboardingState.showOnboarding,
