@@ -8,9 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * GET /api/users/[userId]/garage
@@ -34,7 +32,7 @@ export async function GET(request, { params }) {
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken 
       ? createAuthenticatedClient(bearerToken) 
-      : createRouteHandlerClient({ cookies });
+      : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json(

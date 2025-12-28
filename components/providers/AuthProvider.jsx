@@ -346,6 +346,44 @@ export function AuthProvider({ children }) {
       });
       
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+      
+      // If profile is missing but user exists, create a fallback user_profiles row
+      if (!error && !data && supabase && userId) {
+        try {
+          const { data: authUserResult } = await supabase.auth.getUser();
+          const authUser = authUserResult?.user;
+          
+          if (authUser) {
+            console.log('[AuthProvider] Creating missing user_profiles row for:', authUser.id);
+            const { data: newProfile, error: createError } = await supabase
+              .from('user_profiles')
+              .insert({
+                id: authUser.id,
+                email: authUser.email,
+                display_name: authUser.user_metadata?.full_name
+                  || authUser.email?.split('@')[0]
+                  || 'User',
+                avatar_url: authUser.user_metadata?.avatar_url || null,
+                subscription_tier: 'free',
+                preferred_units: 'imperial',
+                email_notifications: true,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              })
+              .select()
+              .single();
+            
+            if (createError) {
+              console.error('[AuthProvider] Failed to create profile:', createError);
+            } else if (newProfile) {
+              return newProfile;
+            }
+          }
+        } catch (createErr) {
+          console.error('[AuthProvider] Unexpected error creating profile:', createErr);
+        }
+      }
+      
       clearTimeout(timeoutId);
       
       if (error) {

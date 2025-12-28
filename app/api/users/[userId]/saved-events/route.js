@@ -9,9 +9,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 async function handleGet(request, { params }) {
@@ -28,7 +26,7 @@ async function handleGet(request, { params }) {
     
     // Get authenticated user (support both cookie-based SSR sessions and Bearer token auth)
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken ? createAuthenticatedClient(bearerToken) : createRouteHandlerClient({ cookies });
+    const supabase = bearerToken ? createAuthenticatedClient(bearerToken) : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json(

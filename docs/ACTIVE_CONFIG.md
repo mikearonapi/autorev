@@ -247,8 +247,7 @@ const hasFeature = hasAccess(userTier, 'featureName', isAuthenticated);
 ### Database & Auth
 - **Supabase:** Multiple packages for different use cases
   - `@supabase/supabase-js`: `^2.86.2` (main client)
-  - `@supabase/auth-helpers-nextjs`: `^0.15.0` (auth integration)
-  - `@supabase/ssr`: `^0.8.0` (server-side rendering)
+  - `@supabase/ssr`: `^0.8.0` (server-side rendering, auth integration)
 
 ### AI & External APIs
 - **Anthropic:** `@anthropic-ai/sdk: ^0.39.0`

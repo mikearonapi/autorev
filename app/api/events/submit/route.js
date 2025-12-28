@@ -8,10 +8,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { notifyEventSubmission } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 /**
  * Validate URL format
@@ -37,8 +36,7 @@ function isFutureOrToday(dateString) {
 
 async function handlePost(request) {
   // Get authenticated user
-  const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createServerSupabaseClient();
     
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
