@@ -1,0 +1,639 @@
+/* =============================================================================
+ * ReferralPanel Styles
+ * Beautiful, compelling referral UI with milestone progress
+ * ============================================================================= */
+
+.panel {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fcd34d;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #92400e;
+}
+
+.loadingSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fcd34d;
+  border-top-color: #d97706;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error {
+  color: #dc2626;
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.retryButton {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: #d97706;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.retryButton:hover {
+  background: #b45309;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.headerIcon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.headerText {
+  flex: 1;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.subtitle strong {
+  color: #d97706;
+  font-weight: 600;
+}
+
+/* Share Section */
+.shareSection {
+  margin-bottom: 24px;
+}
+
+.shareLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #92400e;
+  margin-bottom: 8px;
+}
+
+.shareLinkBox {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.shareLinkInput {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: white;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  color: #1f2937;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.shareLinkInput:focus {
+  border-color: #d97706;
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: #d97706;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.copyButton:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.copyButton.copied {
+  background: #059669;
+}
+
+/* Share Buttons */
+.shareButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.shareButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: white;
+  color: #78350f;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shareButton:hover {
+  background: #fffbeb;
+  border-color: #d97706;
+}
+
+.emailButton {
+  background: #1f2937;
+  color: white;
+  border-color: #1f2937;
+}
+
+.emailButton:hover {
+  background: #111827;
+  border-color: #111827;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  background: white;
+  border-radius: 10px;
+  padding: 16px 12px;
+  text-align: center;
+  border: 1px solid rgba(252, 211, 77, 0.5);
+}
+
+.statValue {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #d97706;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 0.7rem;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Milestones Section */
+.milestonesSection {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(252, 211, 77, 0.5);
+}
+
+.milestonesTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #78350f;
+}
+
+/* Progress Bar */
+.progressContainer {
+  margin-bottom: 20px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.progressReward {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d97706;
+}
+
+.progressBar {
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.progressNeeded {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.allAchieved {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fef3c7, #fcd34d);
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.achievedIcon {
+  font-size: 24px;
+}
+
+/* Milestone List */
+.milestonesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.milestoneItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.milestoneItem.achieved {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border-color: #34d399;
+  opacity: 1;
+}
+
+.milestoneItem.current {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-color: #fcd34d;
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+}
+
+.milestoneIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.milestoneInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.milestoneFriends {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.milestoneReward {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.achievedBadge {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Referrals List Section */
+.referralsListSection {
+  margin-top: 24px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(252, 211, 77, 0.5);
+}
+
+.referralsListTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #78350f;
+}
+
+.referralsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.referralItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.referralInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.referralEmail {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.referralDate {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.referralActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statusPending {
+  font-size: 0.8rem;
+  color: #d97706;
+  font-weight: 500;
+}
+
+.statusJoined {
+  font-size: 0.8rem;
+  color: #059669;
+  font-weight: 500;
+}
+
+.creditsEarned {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #D4AF37;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.resendButton {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.resendButton:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.resendButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Email Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.modalClose:hover {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.modalDescription {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.inviteForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.emailInput {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.emailInput:focus {
+  border-color: #d97706;
+}
+
+.sendButton {
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #d97706;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: #b45309;
+}
+
+.sendButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .panel {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .shareLinkBox {
+    flex-direction: column;
+  }
+  
+  .copyButton {
+    justify-content: center;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .statCard {
+    padding: 12px 8px;
+  }
+  
+  .statValue {
+    font-size: 1.5rem;
+  }
+  
+  .milestoneItem {
+    padding: 10px;
+  }
+  
+  .milestoneIcon {
+    font-size: 20px;
+  }
+}
+

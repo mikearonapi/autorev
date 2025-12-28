@@ -10,8 +10,9 @@ import styles from './TabNav.module.css';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'grid' },
-  { id: 'revenue', label: 'Revenue', icon: 'stripe' },
-  { id: 'financials', label: 'Financials', icon: 'dollar' },
+  { id: 'financials', label: 'Financials', icon: 'dollar', subtitle: 'Summary' },
+  { id: 'revenue', label: 'Revenue', icon: 'stripe', subtitle: 'Stripe' },
+  { id: 'costs', label: 'Costs', icon: 'wallet', subtitle: 'Analysis' },
   { id: 'growth', label: 'Growth', icon: 'trending' },
   { id: 'operations', label: 'Operations', icon: 'settings' },
   { id: 'emails', label: 'Emails', icon: 'mail' },
@@ -63,6 +64,14 @@ function TabIcon({ type }) {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
           <polyline points="22,6 12,13 2,6" />
+        </svg>
+      );
+    case 'wallet':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+          <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+          <path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z" />
         </svg>
       );
     default:

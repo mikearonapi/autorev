@@ -179,8 +179,61 @@ export function StripeDashboard({ token, range = 'month', loading: parentLoading
   }, [fetchStripeData]);
 
   const isLoading = loading || parentLoading;
+  
+  // Check if error is a configuration issue
+  const isConfigError = error?.includes('503') || error?.includes('not configured');
 
   if (error) {
+    // Show a helpful configuration setup message
+    if (isConfigError) {
+      return (
+        <div className={styles.configNeeded}>
+          <div className={styles.configIcon}>
+            <svg viewBox="0 0 60 25" className={styles.stripeLogoLarge}>
+              <path fill="#635BFF" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a10.34 10.34 0 0 1-4.56.95c-4.01 0-6.83-2.5-6.83-7.28 0-4.19 2.39-7.32 6.3-7.32 3.87 0 5.93 3.13 5.93 7.28 0 .4-.02 1.06-.03 1.45zm-6-4.84c-1.07 0-2 .8-2.2 2.52h4.33c-.11-1.65-.88-2.52-2.13-2.52zM39.88 17.9c-1.52 0-2.57-.38-3.48-1.01l-.05 4.34-4.14.88V5.87h3.67l.21 1.09c.93-.88 2.18-1.35 3.48-1.35 3.39 0 5.58 2.92 5.58 6.11 0 3.81-2.4 6.18-5.27 6.18zm-.72-8.46c-.92 0-1.61.32-2.12.85l.06 4.45c.49.5 1.16.81 2.06.81 1.55 0 2.58-1.32 2.58-3.08 0-1.74-1.03-3.03-2.58-3.03zM29.59 5.87v12.17h-4.15V5.87zm0-5.07v3.06h-4.15V.8zM24.13 5.87l-3.4 12.17H16.4l-1.54-6.01c-.07-.28-.11-.53-.15-.74l-.15.74-1.54 6.01H8.68L5.28 5.87h4.25l1.39 6.3.19.98.2-.98 1.7-6.3h3.57l1.7 6.3.2.98.19-.98 1.39-6.3zM0 10.96c0-3.02 2.42-4.9 6.62-4.9 1.58 0 3.09.27 4.46.81V9.8a8.7 8.7 0 0 0-3.48-.75c-1.54 0-2.4.42-2.4 1.13 0 2.23 6.53.76 6.53 5.56 0 2.92-2.31 4.9-6.62 4.9-1.97 0-4.02-.46-5.11-1.15v-3.03c1.27.74 3.12 1.27 4.59 1.27 1.58 0 2.42-.4 2.42-1.15C6.51 14.24 0 16.04 0 10.96z"/>
+            </svg>
+          </div>
+          <h3 className={styles.configTitle}>Stripe Integration Required</h3>
+          <p className={styles.configDesc}>
+            To view revenue data, you need to connect your Stripe account.
+          </p>
+          
+          <div className={styles.configSteps}>
+            <h4>Setup Steps:</h4>
+            <ol>
+              <li>
+                Go to your{' '}
+                <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer">
+                  Stripe Dashboard → Developers → API keys
+                </a>
+              </li>
+              <li>Copy your <strong>Secret key</strong> (starts with <code>sk_</code>)</li>
+              <li>
+                Add to your <code>.env.local</code> file:
+                <pre className={styles.configCode}>STRIPE_SECRET_KEY=sk_live_xxxxx</pre>
+              </li>
+              <li>Restart your development server</li>
+            </ol>
+          </div>
+          
+          <div className={styles.configActions}>
+            <a 
+              href="https://dashboard.stripe.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={styles.stripeButton}
+            >
+              Open Stripe Dashboard <ExternalLinkIcon />
+            </a>
+            <button onClick={fetchStripeData} className={styles.retryButton}>
+              <RefreshIcon /> Retry Connection
+            </button>
+          </div>
+        </div>
+      );
+    }
+    
+    // General error state
     return (
       <div className={styles.errorState}>
         <p>Failed to load Stripe data: {error}</p>

@@ -12,6 +12,7 @@ import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
 import { useCheckout } from '@/hooks/useCheckout';
 import { IS_BETA } from '@/lib/tierAccess';
 import { AL_CREDIT_PACKS, SUBSCRIPTION_TIERS } from '@/lib/stripe';
+import ReferralPanel from '@/components/ReferralPanel';
 // Car count now comes from usePlatformStats hook or default
 
 // Format fuel units for display (1 cent = 1 fuel)
@@ -152,6 +153,15 @@ const Icons = {
   zap: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
+  gift: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 12 20 22 4 22 4 12"/>
+      <rect x="2" y="7" width="20" height="5"/>
+      <line x1="12" y1="22" x2="12" y2="7"/>
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
     </svg>
   ),
 };
@@ -474,6 +484,7 @@ export default function ProfilePage() {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: Icons.user },
+    { id: 'referrals', label: 'Refer & Earn', icon: Icons.gift },
     { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
     { id: 'subscription', label: 'Subscription', icon: Icons.crown },
     { id: 'billing', label: 'Billing', icon: Icons.creditCard },
@@ -642,6 +653,13 @@ export default function ProfilePage() {
                   'Save Changes'
                 )}
               </button>
+            </section>
+          )}
+
+          {/* Referrals Tab */}
+          {activeTab === 'referrals' && (
+            <section className={styles.section}>
+              <ReferralPanel userId={user?.id} />
             </section>
           )}
 

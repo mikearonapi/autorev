@@ -5,38 +5,51 @@
  * - GET: Get email logs, analytics, and queue status
  * - POST: Send test emails, trigger campaigns
  * 
- * Auth: Admin only
+ * Auth: Admin only (Bearer token)
  */
 
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/email';
 import { createClient } from '@supabase/supabase-js';
+import { isAdminEmail } from '@/lib/adminAccess';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Admin client for querying
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  supabaseUrl,
+  supabaseServiceKey,
   { auth: { persistSession: false } }
 );
 
 /**
- * Check if user is admin
+ * Verify admin access via Bearer token
  */
-async function isAdmin(request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
-  if (error || !user) return false;
-  
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('subscription_tier')
-    .eq('id', user.id)
-    .single();
-  
-  return profile?.subscription_tier === 'admin';
+async function verifyAdmin(request) {
+  try {
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return { error: 'Missing authorization header', status: 401 };
+    }
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return { error: 'Database not configured', status: 500 };
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user || !isAdminEmail(user.email)) {
+      return { error: 'Admin access required', status: 403 };
+    }
+
+    return { user };
+  } catch (err) {
+    console.error('[Admin/Emails] Auth check error:', err);
+    return { error: 'Authentication failed', status: 500 };
+  }
 }
 
 /**
@@ -50,9 +63,10 @@ async function isAdmin(request) {
  */
 export async function GET(request) {
   try {
-    // Check admin auth
-    if (!await isAdmin(request)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    // Verify admin access
+    const auth = await verifyAdmin(request);
+    if (auth.error) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const { searchParams } = new URL(request.url);
@@ -141,6 +155,43 @@ export async function GET(request) {
         return NextResponse.json({ templates });
       }
 
+      case 'automations': {
+        // Automations are defined in the frontend component
+        // This endpoint just confirms the API is accessible
+        // In the future, this could fetch automation configs from the database
+        const automations = [
+          {
+            id: 'welcome',
+            name: 'Welcome Email',
+            trigger: 'user_signup',
+            timing: 'instant',
+            template: 'welcome',
+            status: 'active',
+            description: 'Sent immediately when a new user creates an account'
+          },
+          {
+            id: 'inactivity-7d',
+            name: 'Inactivity Reminder (7 Day)',
+            trigger: 'inactivity',
+            timing: '7_days',
+            template: 'inactivity-7d',
+            status: 'active',
+            description: 'Sent when a user hasn\'t logged in for 7 days'
+          },
+          {
+            id: 'referral-reward',
+            name: 'Referral Reward',
+            trigger: 'referral_completed',
+            timing: 'instant',
+            template: 'referral-reward',
+            status: 'active',
+            description: 'Sent when a referred friend completes signup'
+          }
+        ];
+        
+        return NextResponse.json({ automations });
+      }
+
       default:
         return NextResponse.json({ error: 'Invalid view parameter' }, { status: 400 });
     }
@@ -160,9 +211,10 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    // Check admin auth
-    if (!await isAdmin(request)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    // Verify admin access
+    const auth = await verifyAdmin(request);
+    if (auth.error) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const body = await request.json();

@@ -392,8 +392,30 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Purpose** | Track who referred whom and award credits |
 | **Key Fields** | `referrer_id`, `referee_id`, `referee_email`, `referral_code`, `status`, `referrer_reward_credits`, `referee_reward_credits`, `rewarded_at`, `expires_at` |
 | **Statuses** | pending, signed_up, rewarded, expired |
-| **Reward** | 500 AL credits on successful signup |
+| **Reward** | 100 AL credits per referrer + 100 bonus credits for referee |
 | **Used By** | Referral API, Auth callback (for credit awards) |
+
+### `referral_rewards` — Referral reward history
+| Status | **0+ rows** |
+|--------|-------------|
+| **Purpose** | Track all rewards earned through referral program |
+| **Key Fields** | `user_id`, `reward_type`, `credits_awarded`, `tier_granted`, `tier_duration_months`, `tier_expires_at`, `referral_id`, `milestone_key` |
+| **Reward Types** | per_signup_credits, referee_bonus_credits, milestone_credits, milestone_tier_grant |
+| **Used By** | Referral service, Profile page |
+
+### `referral_milestones` — Milestone configuration
+| Status | **4 rows** |
+|--------|------------|
+| **Purpose** | Define tiered reward milestones for referrers |
+| **Milestones** | 3 friends → +100 credits, 5 friends → +200 credits, 10 friends → 1 month Collector tier, 25 friends → 1 month Tuner tier |
+| **Used By** | Referral service, ReferralPanel component |
+
+### `referral_config` — Referral system configuration
+| Status | **2 rows** |
+|--------|------------|
+| **Purpose** | Store configurable reward amounts |
+| **Key Fields** | `per_signup_credits_referrer` (100), `signup_bonus_credits_referee` (100) |
+| **Used By** | Referral service, process_referral_signup RPC |
 
 ---
 

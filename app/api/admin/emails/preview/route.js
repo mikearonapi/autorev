@@ -2,218 +2,452 @@
  * Email Preview API
  * 
  * Returns rendered HTML preview of email templates for admin review.
+ * Uses the canonical templates from lib/email.js (single source of truth).
  * 
  * GET /api/admin/emails/preview?template=welcome
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
 import { createClient } from '@supabase/supabase-js';
+import { isAdminEmail } from '@/lib/adminAccess';
+import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/email';
 
 // For local dev, use localhost; for production, use the production URL
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app';
-// Image URL - in dev, this will be dynamically set based on the request
-const getImageUrl = (requestUrl, imagePath) => {
-  // Extract host from request for local preview to work
+
+/**
+ * Extract bearer token from request Authorization header
+ */
+function getBearerToken(request) {
+  const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return null;
+  }
+  return authHeader.slice(7);
+}
+
+/**
+ * Get image base URL from request (for local dev support)
+ */
+function getImageBaseUrl(requestUrl) {
   try {
     const url = new URL(requestUrl);
     if (url.hostname === 'localhost') {
-      return `${url.protocol}//${url.host}${imagePath}`;
+      return `${url.protocol}//${url.host}`;
     }
   } catch {}
-  return `${SITE_URL}${imagePath}`;
-};
+  return SITE_URL;
+}
 
 /**
- * Email templates defined inline for preview (avoid circular dependency issues)
+ * Generate inactivity 7-day email HTML - Strategic re-engagement focused on AL
  */
-function getWelcomeEmailHtml(vars, imageBaseUrl) {
+function generateInactivity7dHtml(vars, baseUrl) {
+  // Extract first name only (handles "Cory Hughes" → "Cory")
+  const rawName = vars.user_name || 'there';
+  const userName = rawName.split(' ')[0];
+  const alUrl = `${baseUrl}/al`;
+  const year = new Date().getFullYear();
+  const carCount = vars.car_count || 98;
+  
   return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>Welcome to AutoRev</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Quick question</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+    /* Reset & Base */
+    body, table, td, p, a, li { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f3f4f6; }
+    
+    /* Mobile Optimizations */
+    @media screen and (max-width: 600px) {
+      .wrapper { padding: 12px !important; }
+      .container { width: 100% !important; max-width: 100% !important; }
+      .content { padding: 24px 20px !important; }
+    }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
   
+  <!-- Preheader -->
   <div style="display: none; max-height: 0; overflow: hidden;">
-    Your sports car journey starts here. Research 98+ cars, track your rides, plan builds, and join a community that lifts up every enthusiast.
+    Still deciding? Ask AL anything—no judgment, just real answers.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
-
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a;">
+  
+  <!-- Outer Background -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
     <tr>
-      <td align="center" style="padding: 40px 16px;">
+      <td align="center" class="wrapper" style="padding: 40px 20px;">
         
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; background: #171717; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4);">
+        <!-- Main Card Container -->
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
           
-          <!-- Header with Gradient -->
+          <!-- Logo Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #1a4d6e 0%, #0f3347 50%, #171717 100%); padding: 48px 40px 56px; text-align: center;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center">
-                    <!-- Logo - White version for dark backgrounds (like social share) -->
-                    <img src="${imageBaseUrl}/images/autorev-logo-white.png" alt="AutoRev" width="100" style="display: block; margin: 0 auto 16px; width: 100px; height: auto;" />
-                    <h1 style="margin: 0; font-family: 'Oswald', Impact, Arial, sans-serif; font-size: 48px; font-weight: 700; letter-spacing: 3px; color: #D4AF37; text-transform: uppercase;">
-                      AutoRev
-                    </h1>
-                    <p style="margin: 10px 0 0; font-size: 14px; color: rgba(255,255,255,0.6); letter-spacing: 4px; text-transform: uppercase;">
-                      Find What Drives You
-                    </p>
-                  </td>
-                </tr>
-              </table>
+            <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
+              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block;">
             </td>
           </tr>
-
-          <!-- Welcome Hero - Darker background -->
+          
+          <!-- Content Body -->
           <tr>
-            <td style="padding: 0 40px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top: -32px; background: linear-gradient(180deg, rgba(30,30,30,0.95) 0%, rgba(23,23,23,0.98) 100%); border-radius: 12px; border: 1px solid rgba(212,175,55,0.3);">
-                <tr>
-                  <td style="padding: 28px 24px; text-align: center;">
-                    <p style="margin: 0 0 4px; font-size: 14px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;">
-                      Welcome${vars.user_name ? ' aboard' : ''}
-                    </p>
-                    <h2 style="margin: 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 26px; font-weight: 600; color: #ffffff;">
-                      ${vars.user_name ? vars.user_name : "You're In"} 🏁
-                    </h2>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Main Content -->
-          <tr>
-            <td style="padding: 32px 40px;">
-              <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.85);">
-                You've just joined a community that celebrates every enthusiast—from the weekend warrior with a $3K Miata to the collector with a GT3RS.
+            <td class="content" style="padding: 32px 40px 40px 40px;">
+              
+              <!-- Greeting -->
+              <p style="margin: 0 0 20px 0; font-size: 24px; font-weight: 700; color: #1f2937; text-align: left;">
+                Hey ${userName},
               </p>
               
-              <p style="margin: 0 0 32px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.7);">
-                <strong style="color: #D4AF37;">No flex culture. No gatekeeping.</strong> Just honest guidance and genuine community.
+              <!-- The Hook -->
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                Still thinking about your next car? Or maybe you're stuck on a mod decision?
               </p>
-
-              <!-- Feature Cards -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              
+              <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                Here's the thing—most car forums will roast you for asking "dumb" questions. We built AutoRev specifically so you don't have to deal with that.
+              </p>
+              
+              <!-- AL Feature Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc; border-radius: 12px; margin-bottom: 24px;">
                 <tr>
-                  <td style="padding: 16px 20px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid #D4AF37;">
-                    <table role="presentation" cellpadding="0" cellspacing="0">
+                  <td style="padding: 24px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
-                        <td width="44" valign="top">
-                          <div style="width: 36px; height: 36px; background: rgba(212,175,55,0.15); border-radius: 8px; text-align: center; line-height: 36px; font-size: 18px;">🔍</div>
+                        <td width="60" valign="top">
+                          <img src="${baseUrl}/images/al-mascot.png" alt="AL" width="48" height="48" style="display: block; width: 48px; height: 48px; border-radius: 12px;">
                         </td>
-                        <td style="padding-left: 12px;">
-                          <p style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #ffffff;">Research</p>
-                          <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5;">Deep-dive into 98 sports cars with real specs, owner insights, and honest reviews.</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr><td height="12"></td></tr>
-                <tr>
-                  <td style="padding: 16px 20px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid #1a4d6e;">
-                    <table role="presentation" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="44" valign="top">
-                          <div style="width: 36px; height: 36px; background: rgba(26,77,110,0.2); border-radius: 8px; text-align: center; line-height: 36px; font-size: 18px;">🚗</div>
-                        </td>
-                        <td style="padding-left: 12px;">
-                          <p style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #ffffff;">My Garage</p>
-                          <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5;">Track your rides, decode VINs, get recall alerts, and log service history.</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr><td height="12"></td></tr>
-                <tr>
-                  <td style="padding: 16px 20px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid #22c55e;">
-                    <table role="presentation" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="44" valign="top">
-                          <div style="width: 36px; height: 36px; background: rgba(34,197,94,0.15); border-radius: 8px; text-align: center; line-height: 36px; font-size: 18px;">🔧</div>
-                        </td>
-                        <td style="padding-left: 12px;">
-                          <p style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #ffffff;">Plan Builds</p>
-                          <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5;">Visualize power gains, explore parts, and see real dyno data before you wrench.</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr><td height="12"></td></tr>
-                <!-- Feature 4: AL (Special highlight with mascot) -->
-                <tr>
-                  <td style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(139,92,246,0.04) 100%); border-radius: 10px; border-left: 3px solid #8b5cf6;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td width="52" valign="top">
-                          <img src="${imageBaseUrl}/images/al-mascot.png" alt="AL" width="44" height="44" style="display: block; width: 44px; height: 44px; border-radius: 22px; object-fit: cover; border: 2px solid rgba(139,92,246,0.3);" />
-                        </td>
-                        <td style="padding-left: 12px;">
-                          <p style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #ffffff;">Meet AL ✨</p>
-                          <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5;">Your AI car expert. Get instant answers about specs, common issues, and the best mods.</p>
+                        <td style="padding-left: 16px;">
+                          <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #111827;">Ask AL anything</h3>
+                          <p style="margin: 0 0 12px 0; font-size: 15px; line-height: 24px; color: #4b5563;">
+                            "What's the most reliable sports car under $40K?"<br>
+                            "Is the 987 Cayman's IMS bearing really that bad?"<br>
+                            "Best first mods for an ND Miata?"
+                          </p>
+                          <p style="margin: 0; font-size: 14px; color: #6b7280; font-style: italic;">
+                            Real data. Honest answers. Zero judgment.
+                          </p>
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
               </table>
-            </td>
-          </tr>
-
-          <!-- CTA Section -->
-          <tr>
-            <td style="padding: 8px 40px 40px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="${vars.login_url || SITE_URL}" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #D4AF37 0%, #B8973A 100%); color: #171717; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; box-shadow: 0 4px 16px rgba(212,175,55,0.3);">
-                      Start Exploring →
+                    <a href="${alUrl}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
+                      Ask AL a Question →
                     </a>
                   </td>
                 </tr>
               </table>
+              
+              <!-- Soft secondary options -->
+              <p style="margin: 24px 0 0 0; font-size: 14px; line-height: 22px; color: #9ca3af; text-align: center;">
+                Or <a href="${baseUrl}/events" style="color: #4b5563; text-decoration: underline;">find a Cars & Coffee near you</a> · <a href="${baseUrl}/browse-cars" style="color: #4b5563; text-decoration: underline;">explore ${carCount} sports cars</a>
+              </p>
+              
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="background-color: #f9fafb; padding: 24px 24px; border-top: 1px solid #f3f4f6; border-radius: 0 0 16px 16px;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; color: #9ca3af;">
+                © ${year} AutoRev · <a href="${baseUrl}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${baseUrl}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
+              </p>
+              <a href="${baseUrl}/unsubscribe?email=${encodeURIComponent(vars.email || '')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
+                Unsubscribe from these emails
+              </a>
+            </td>
+          </tr>
+          
+        </table>
+        
+        <!-- Bottom Spacer -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td height="40" style="line-height: 40px; font-size: 1px;">&nbsp;</td>
+          </tr>
+        </table>
+        
+      </td>
+    </tr>
+  </table>
+  
+</body>
+</html>`;
+}
+
+/**
+ * Generate inactivity 21-day email HTML - Events focused win-back
+ */
+function generateInactivity21dHtml(vars, baseUrl) {
+  const rawName = vars.user_name || 'there';
+  const userName = rawName.split(' ')[0];
+  const eventsUrl = `${baseUrl}/events`;
+  const year = new Date().getFullYear();
+  const eventCount = vars.event_count || 940;
+  
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Events near you</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    body, table, td, p, a, li { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f3f4f6; }
+    @media screen and (max-width: 600px) {
+      .wrapper { padding: 12px !important; }
+      .container { width: 100% !important; max-width: 100% !important; }
+      .content { padding: 24px 20px !important; }
+      .hero-image { width: 100% !important; max-width: 100% !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  
+  <div style="display: none; max-height: 0; overflow: hidden;">
+    ${eventCount}+ car events. Cars & Coffee, track days, meetups—find one near you.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
+  
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
+    <tr>
+      <td align="center" class="wrapper" style="padding: 40px 20px;">
+        
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+          
+          <tr>
+            <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
+              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block;">
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="content" style="padding: 24px 40px 40px 40px;">
+              
+              <p style="margin: 0 0 20px 0; font-size: 24px; font-weight: 700; color: #1f2937; text-align: left;">
+                Hey ${userName},
+              </p>
+              
+              <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                Quick thought: when's the last time you went to a car meet?
+              </p>
+              
+              <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                We've got <strong>${eventCount}+ events</strong> in our database—Cars & Coffee, track days, car shows, rallies. There's probably something happening near you this weekend.
+              </p>
+              
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #9ca3af; text-transform: uppercase;">
+                      Find your scene
+                    </p>
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <span style="font-size: 20px; margin-right: 12px;">☕</span>
+                          <span style="font-size: 15px; color: #4b5563;"><strong>Cars & Coffee</strong> — Casual weekend mornings</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <span style="font-size: 20px; margin-right: 12px;">🏁</span>
+                          <span style="font-size: 15px; color: #4b5563;"><strong>Track Days</strong> — Push your limits (safely)</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <span style="font-size: 20px; margin-right: 12px;">🏆</span>
+                          <span style="font-size: 15px; color: #4b5563;"><strong>Car Shows</strong> — See incredible builds up close</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span style="font-size: 20px; margin-right: 12px;">🤝</span>
+                          <span style="font-size: 15px; color: #4b5563;"><strong>Meetups</strong> — Connect with local enthusiasts</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="${eventsUrl}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
+                      Find Events Near Me →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 24px 0 0 0; font-size: 14px; line-height: 22px; color: #9ca3af; text-align: center;">
+                Or <a href="${baseUrl}/al" style="color: #4b5563; text-decoration: underline;">ask AL for recommendations</a>
+              </p>
+              
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center" style="background-color: #f9fafb; padding: 24px 24px; border-top: 1px solid #f3f4f6; border-radius: 0 0 16px 16px;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; color: #9ca3af;">
+                © ${year} AutoRev · <a href="${baseUrl}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${baseUrl}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
+              </p>
+              <a href="${baseUrl}/unsubscribe?email=${encodeURIComponent(vars.email || '')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
+                Unsubscribe from these emails
+              </a>
+            </td>
+          </tr>
+          
+        </table>
+        
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td height="40" style="line-height: 40px; font-size: 1px;">&nbsp;</td>
+          </tr>
+        </table>
+        
+      </td>
+    </tr>
+  </table>
+  
+</body>
+</html>`;
+}
+
+/**
+ * Generate referral reward email HTML
+ */
+function generateReferralRewardHtml(vars, baseUrl) {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>You earned AL credits!</title>
+  <style>
+    body, table, td, p, a, li { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    @media screen and (max-width: 600px) {
+      .container { width: 100% !important; max-width: 100% !important; }
+      .content { padding: 24px 20px !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  
+  <div style="display: none; max-height: 0; overflow: hidden;">
+    ${vars.friend_name || 'Your friend'} joined AutoRev! ${vars.credits_earned || 200} credits have been added to your account.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6;">
+    <tr>
+      <td align="center" style="padding: 40px 16px;">
+        
+        <table role="presentation" class="container" width="480" cellpadding="0" cellspacing="0" style="max-width: 480px; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #D4AF37 0%, #B8973A 100%); padding: 32px 40px; text-align: center;">
+              <p style="margin: 0 0 8px; font-size: 48px;">🎁</p>
+              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #1f2937; text-transform: uppercase;">
+                Referral Reward!
+              </h1>
             </td>
           </tr>
 
-          <!-- Divider -->
+          <!-- Content -->
           <tr>
-            <td style="padding: 0 40px;">
-              <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);"></div>
+            <td class="content" style="padding: 40px; text-align: center;">
+              <h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 600; color: #1f2937;">
+                ${vars.friend_name || 'Your friend'} joined AutoRev!
+              </h2>
+              
+              <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.6; color: #4b5563;">
+                Thanks for spreading the word. Brotherhood over gatekeeping, right?
+              </p>
+
+              <!-- Credits Badge -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px;">
+                <tr>
+                  <td style="padding: 24px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 12px; border: 1px solid #fcd34d;">
+                    <p style="margin: 0 0 4px; font-size: 12px; color: #92400e; text-transform: uppercase; letter-spacing: 1px;">
+                      Credits Earned
+                    </p>
+                    <p style="margin: 0 0 16px; font-size: 42px; font-weight: 700; color: #D4AF37; line-height: 1;">
+                      +${vars.credits_earned || 200}
+                    </p>
+                    <div style="height: 1px; background: #fcd34d; margin: 0 0 16px;"></div>
+                    <p style="margin: 0; font-size: 13px; color: #92400e;">
+                      Total Balance: <strong style="color: #D4AF37;">${vars.total_credits || 200} credits</strong>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 24px; font-size: 14px; color: #6b7280;">
+                Use your credits to chat with AL, your AI car expert.
+              </p>
+
+              <a href="${baseUrl}/al" style="display: inline-block; padding: 14px 36px; background-color: #111827; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                Chat with AL →
+              </a>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 32px 40px; text-align: center;">
-              <p style="margin: 0 0 8px; font-size: 13px; color: rgba(255,255,255,0.4);">
-                Questions? Just reply to this email—we read every one.
+            <td style="padding: 24px 40px; background: #f9fafb; text-align: center; border-top: 1px solid #f3f4f6;">
+              <p style="margin: 0 0 8px; font-size: 12px; color: #6b7280;">
+                Keep sharing—earn 200 credits for each friend who joins.
               </p>
-              <p style="margin: 0 0 16px; font-size: 12px; color: rgba(255,255,255,0.25);">
-                © ${new Date().getFullYear()} AutoRev · Built for enthusiasts, by enthusiasts
+              <p style="margin: 0; font-size: 11px; color: #9ca3af;">
+                © ${new Date().getFullYear()} AutoRev · Built for enthusiasts
               </p>
-              
-              <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
-                <tr>
-                  <td style="padding: 0 8px;">
-                    <a href="${SITE_URL}" style="color: rgba(255,255,255,0.35); font-size: 12px; text-decoration: none;">Web</a>
-                  </td>
-                  <td style="color: rgba(255,255,255,0.15);">·</td>
-                  <td style="padding: 0 8px;">
-                    <a href="${SITE_URL}/contact" style="color: rgba(255,255,255,0.35); font-size: 12px; text-decoration: none;">Contact</a>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
@@ -222,192 +456,311 @@ function getWelcomeEmailHtml(vars, imageBaseUrl) {
       </td>
     </tr>
   </table>
-
 </body>
 </html>`;
 }
 
-function getInactivity7dHtml(vars, imageBaseUrl) {
-  return `
-<!DOCTYPE html>
+/**
+ * Generate referral invite email HTML (matches Welcome email style)
+ */
+function generateReferralInviteHtml(vars, baseUrl) {
+  const referrerName = vars.referrer_name || 'Your friend';
+  const bonusCredits = vars.bonus_credits || 200;
+  const referralLink = vars.referral_link || baseUrl;
+  const carCount = vars.car_count || 188;
+  const year = new Date().getFullYear();
+  
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>Your garage is waiting</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>You're invited to AutoRev</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    /* Reset & Base */
+    body, table, td, p, a, li { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f3f4f6; }
+    
+    /* Mobile Optimizations */
+    @media screen and (max-width: 600px) {
+      .wrapper { padding: 12px !important; }
+      .container { width: 100% !important; max-width: 100% !important; }
+      .content { padding: 24px 20px !important; }
+      .mobile-stack { display: block !important; width: 100% !important; padding-left: 0 !important; padding-top: 12px !important; }
+      .mobile-icon { padding-bottom: 0 !important; }
+      .hero-image { width: 100% !important; max-width: 100% !important; }
+    }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a;">
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  
+  <!-- Preheader -->
+  <div style="display: none; max-height: 0; overflow: hidden;">
+    ${referrerName} invited you to join AutoRev! Get ${bonusCredits} bonus AL credits when you sign up.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
+  
+  <!-- Outer Background -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
     <tr>
-      <td align="center" style="padding: 40px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 520px; background: #171717; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4);">
+      <td align="center" class="wrapper" style="padding: 40px 20px;">
+        
+        <!-- Main Card Container -->
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+          
+          <!-- Logo Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #1a4d6e 0%, #0f3347 100%); padding: 40px 40px; text-align: center;">
-              <img src="${imageBaseUrl}/images/autorev-logo-white.png" alt="AutoRev" width="100" style="display: block; margin: 0 auto 16px; width: 100px; height: auto;" />
-              <h1 style="margin: 0; font-family: 'Oswald', Impact, Arial, sans-serif; font-size: 36px; font-weight: 700; letter-spacing: 3px; color: #D4AF37; text-transform: uppercase;">AutoRev</h1>
+            <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
+              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">You're Invited</p>
             </td>
           </tr>
+          
+          <!-- Hero Section -->
           <tr>
-            <td style="padding: 40px;">
-              <h2 style="margin: 0 0 16px; font-size: 22px; font-weight: 600; color: #ffffff;">
-                Hey${vars.user_name ? ` ${vars.user_name}` : ''},
-              </h2>
-              <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.7);">
-                It's been a week since your last visit. Your garage is still here, ready when you are.
+            <td align="center" style="padding: 32px 32px 0 32px;">
+              <img src="${baseUrl}/images/pages/home-hero.jpg" alt="Sports Car" class="hero-image" width="536" style="display: block; width: 100%; max-width: 536px; height: auto; border-radius: 12px;">
+            </td>
+          </tr>
+          
+          <!-- Content Body -->
+          <tr>
+            <td class="content" style="padding: 24px 40px 40px 40px;">
+              
+              <!-- Greeting -->
+              <p style="margin: 0 0 16px 0; font-size: 24px; font-weight: 700; color: #1f2937; text-align: left;">
+                ${referrerName} thinks you'd love this 🏎️
               </p>
-              <p style="margin: 0 0 20px; font-size: 14px; font-weight: 600; color: #D4AF37; text-transform: uppercase; letter-spacing: 1px;">
-                While you were away:
+              
+              <!-- Intro Text -->
+              <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                AutoRev is where sports car enthusiasts research, compare, and plan their builds—whether you're driving a $3K Miata or a $300K GT3RS.
               </p>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px;">
+              
+              <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
+                Real data, honest guidance, and a community that celebrates the passion—not the price tag.
+              </p>
+              
+              <!-- Welcome Bonus Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fffbeb; border-radius: 8px; border: 1px solid #fcd34d; margin-bottom: 24px;">
                 <tr>
-                  <td style="padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 8px; border-left: 2px solid #D4AF37;">
-                    <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.7);">✨ New insights from enthusiast discussions</p>
-                  </td>
-                </tr>
-                <tr><td height="8"></td></tr>
-                <tr>
-                  <td style="padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 8px; border-left: 2px solid #1a4d6e;">
-                    <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.7);">📊 Updated market data and pricing trends</p>
-                  </td>
-                </tr>
-                <tr><td height="8"></td></tr>
-                <tr>
-                  <td style="padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 8px; border-left: 2px solid #22c55e;">
-                    <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.7);">🏎️ Car events happening near you</p>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #92400e; text-transform: uppercase;">
+                      🎁 Your Welcome Bonus
+                    </p>
+                    <p style="margin: 0 0 8px 0; font-size: 36px; font-weight: 700; color: #D4AF37; line-height: 1;">
+                      +${bonusCredits} AL Credits
+                    </p>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #92400e;">
+                      Use them to chat with AL, your AI car expert who actually knows cars.
+                    </p>
                   </td>
                 </tr>
               </table>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              
+              <!-- Divider -->
+              <div style="height: 1px; background-color: #e5e7eb; margin: 32px 0;"></div>
+              
+              <!-- Features Intro -->
+              <p style="margin: 0 0 24px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #9ca3af; text-transform: uppercase;">
+                Here's what you'll get
+              </p>
+              
+              <!-- Feature List -->
+              
+              <!-- 1. Browse & Discover -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                <tr>
+                  <td width="50" valign="top" class="mobile-icon">
+                    <div style="width: 40px; height: 40px; background-color: #eff6ff; border-radius: 10px; text-align: center; line-height: 40px; font-size: 20px;">🔍</div>
+                  </td>
+                  <td class="mobile-stack" style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Browse ${carCount} Sports Cars</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #6b7280;">Use our Car Selector to find your perfect match based on 7 priorities you actually care about.</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- 2. Meet AL -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                <tr>
+                  <td width="50" valign="top" class="mobile-icon">
+                     <img src="${baseUrl}/images/al-mascot.png" alt="AL" width="40" height="40" style="display: block; width: 40px; height: 40px; border-radius: 10px; background-color: #f3f4f6;">
+                  </td>
+                  <td class="mobile-stack" style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Meet AL — Your AI Car Expert</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #6b7280;">Ask anything—specs, reliability issues, best mods. Real answers, no gatekeeping.</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- 3. My Garage -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                <tr>
+                  <td width="50" valign="top" class="mobile-icon">
+                    <div style="width: 40px; height: 40px; background-color: #fef2f2; border-radius: 10px; text-align: center; line-height: 40px; font-size: 20px;">🚗</div>
+                  </td>
+                  <td class="mobile-stack" style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">My Garage</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #6b7280;">Save favorites, add your rides with VIN decode, track service history, and monitor market value.</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- 4. Tuning Shop -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                <tr>
+                  <td width="50" valign="top" class="mobile-icon">
+                    <div style="width: 40px; height: 40px; background-color: #f0fdf4; border-radius: 10px; text-align: center; line-height: 40px; font-size: 20px;">🔧</div>
+                  </td>
+                  <td class="mobile-stack" style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Tuning Shop</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #6b7280;">Plan your build with real dyno data, lap times, and parts that actually fit.</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- 5. Community & Events -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 32px;">
+                <tr>
+                  <td width="50" valign="top" class="mobile-icon">
+                    <div style="width: 40px; height: 40px; background-color: #fef3c7; border-radius: 10px; text-align: center; line-height: 40px; font-size: 20px;">📍</div>
+                  </td>
+                  <td class="mobile-stack" style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Community & Events</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #6b7280;">Find Cars & Coffee, track days, car shows, and meetups near you.</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="${vars.login_url || SITE_URL}" style="display: inline-block; padding: 14px 36px; background: linear-gradient(135deg, #D4AF37 0%, #B8973A 100%); color: #171717; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 16px rgba(212,175,55,0.3);">
-                      Come Back & Explore
+                    <a href="${referralLink}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
+                      Join AutoRev Free →
                     </a>
                   </td>
                 </tr>
               </table>
+              
+              <p style="margin: 24px 0 0 0; font-size: 13px; color: #9ca3af; text-align: center;">
+                Takes less than 30 seconds to sign up
+              </p>
+              
             </td>
           </tr>
+          
+          <!-- Footer -->
           <tr>
-            <td style="padding: 24px 40px; background: rgba(0,0,0,0.2); text-align: center;">
-              <p style="margin: 0 0 8px; font-size: 12px; color: rgba(255,255,255,0.35);">
-                © ${new Date().getFullYear()} AutoRev · Built for enthusiasts
+            <td align="center" style="background-color: #f9fafb; padding: 24px 24px; border-top: 1px solid #f3f4f6; border-radius: 0 0 16px 16px;">
+              <p style="margin: 0 0 8px 0; font-size: 13px; color: #4b5563;">
+                <strong>${referrerName}</strong> thought you'd dig this. No pressure—just an invite to check it out.
               </p>
-              <a href="${SITE_URL}/unsubscribe?email=${encodeURIComponent(vars.email || '')}" style="font-size: 11px; color: rgba(255,255,255,0.25); text-decoration: none;">
-                Unsubscribe from these emails
-              </a>
+              <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                © ${year} AutoRev · <a href="${baseUrl}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${baseUrl}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
+              </p>
             </td>
+          </tr>
+          
+        </table>
+        
+        <!-- Bottom Spacer -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td height="40" style="line-height: 40px; font-size: 1px;">&nbsp;</td>
           </tr>
         </table>
+        
       </td>
     </tr>
   </table>
+  
 </body>
 </html>`;
 }
 
-function getReferralRewardHtml(vars, imageBaseUrl) {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>You earned AL credits!</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a;">
-    <tr>
-      <td align="center" style="padding: 40px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 480px; background: #171717; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4);">
-          <tr>
-            <td style="background: linear-gradient(135deg, #D4AF37 0%, #B8973A 100%); padding: 32px 40px; text-align: center;">
-              <p style="margin: 0 0 8px; font-size: 48px;">🎁</p>
-              <h1 style="margin: 0; font-family: 'Oswald', Impact, Arial, sans-serif; font-size: 28px; font-weight: 700; color: #171717; text-transform: uppercase;">
-                Referral Reward!
-              </h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 40px; text-align: center;">
-              <h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 600; color: #ffffff;">
-                ${vars.friend_name || 'Your friend'} joined AutoRev!
-              </h2>
-              <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.7);">
-                Thanks for spreading the word. Brotherhood over gatekeeping, right?
-              </p>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px;">
-                <tr>
-                  <td style="padding: 24px; background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%); border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
-                    <p style="margin: 0 0 4px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px;">
-                      Credits Earned
-                    </p>
-                    <p style="margin: 0 0 16px; font-size: 42px; font-weight: 700; color: #D4AF37; line-height: 1;">
-                      +${vars.credits_earned || 500}
-                    </p>
-                    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 0 0 16px;"></div>
-                    <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.4);">
-                      Total Balance: <strong style="color: #D4AF37;">${vars.total_credits || 500} credits</strong>
-                    </p>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin: 0 0 24px; font-size: 14px; color: rgba(255,255,255,0.5);">
-                Use your credits to chat with AL, your AI car expert.
-              </p>
-              <a href="${SITE_URL}/al" style="display: inline-block; padding: 14px 36px; background: linear-gradient(135deg, #D4AF37 0%, #B8973A 100%); color: #171717; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 16px rgba(212,175,55,0.3);">
-                Chat with AL →
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 24px 40px; background: rgba(0,0,0,0.2); text-align: center;">
-              <p style="margin: 0 0 8px; font-size: 12px; color: rgba(255,255,255,0.35);">
-                Keep sharing—earn ${vars.credits_earned || 500} credits for each friend who joins.
-              </p>
-              <p style="margin: 0; font-size: 11px; color: rgba(255,255,255,0.25);">
-                © ${new Date().getFullYear()} AutoRev · Built for enthusiasts
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-}
-
+/**
+ * Preview templates - uses canonical templates from lib/email.js where available
+ */
 const PREVIEW_TEMPLATES = {
-  welcome: { render: (vars, imageBaseUrl) => getWelcomeEmailHtml(vars, imageBaseUrl), subject: 'Welcome to AutoRev — Find What Drives You' },
-  'inactivity-7d': { render: (vars, imageBaseUrl) => getInactivity7dHtml(vars, imageBaseUrl), subject: 'Your garage is waiting 🏁' },
-  'referral-reward': { render: (vars, imageBaseUrl) => getReferralRewardHtml(vars, imageBaseUrl), subject: 'You earned 500 AL credits! 🎁' },
+  welcome: { 
+    render: (vars, imageBaseUrl) => generateWelcomeEmailHtml(vars, imageBaseUrl), 
+    subject: 'Welcome to AutoRev — Find What Drives You' 
+  },
+  'inactivity-7d': { 
+    render: (vars, imageBaseUrl) => generateInactivity7dHtml(vars, imageBaseUrl), 
+    subject: 'Quick question for you' 
+  },
+  'inactivity-21d': { 
+    render: (vars, imageBaseUrl) => generateInactivity21dHtml(vars, imageBaseUrl), 
+    subject: 'Events near you this weekend' 
+  },
+  'referral-reward': { 
+    render: (vars, imageBaseUrl) => generateReferralRewardHtml(vars, imageBaseUrl), 
+    subject: 'You earned 200 AL credits! 🎁' 
+  },
+  'referral-invite': { 
+    render: (vars, imageBaseUrl) => generateReferralInviteHtml(vars, imageBaseUrl), 
+    subject: 'Your friend thinks you\'d love AutoRev 🏎️' 
+  },
 };
 
 /**
- * Check if user is admin
+ * Check if user is admin via Bearer token (header or query param)
+ * Uses isAdminEmail to check email against admin whitelist
  */
-async function isAdmin(request) {
+async function isAdmin(request, searchParams) {
   try {
-    const bearerToken = getBearerToken(request);
-    if (!bearerToken) return false;
+    // Check Bearer token from header first
+    let bearerToken = getBearerToken(request);
     
-    const supabase = createAuthenticatedClient(bearerToken);
-    if (!supabase) return false;
+    // If not in header, check query param (for new tab/window opens)
+    if (!bearerToken && searchParams) {
+      bearerToken = searchParams.get('token');
+    }
     
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) return false;
+    if (!bearerToken) {
+      console.log('[Email Preview] No token provided');
+      return false;
+    }
     
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('subscription_tier')
-      .eq('id', user.id)
-      .single();
+    // Use service role client to validate the JWT token
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { persistSession: false } }
+    );
     
-    return profile?.subscription_tier === 'admin';
-  } catch {
+    // Validate the JWT and get user
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(bearerToken);
+    
+    if (error || !user) {
+      console.log('[Email Preview] Token validation failed:', error?.message);
+      return false;
+    }
+    
+    // Check admin status via email whitelist (consistent with other admin APIs)
+    const isAdminUser = isAdminEmail(user.email);
+    console.log('[Email Preview] Admin check:', { userId: user.id, email: user.email, isAdmin: isAdminUser });
+    
+    return isAdminUser;
+  } catch (err) {
+    console.error('[Email Preview] Auth error:', err);
     return false;
   }
 }
@@ -417,12 +770,9 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const templateSlug = searchParams.get('template') || 'welcome';
     
-    // Allow preview without auth for development convenience
-    // In production, you might want to add IP restrictions or similar
-    const skipAuth = searchParams.get('dev') === 'preview';
-    
-    if (!skipAuth && !await isAdmin(request)) {
-      return NextResponse.json({ error: 'Admin access required. Add ?dev=preview for development.' }, { status: 403 });
+    // Check admin auth (supports token in header or query param)
+    if (!await isAdmin(request, searchParams)) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     const template = PREVIEW_TEMPLATES[templateSlug];
@@ -435,20 +785,35 @@ export async function GET(request) {
     }
 
     // Calculate image base URL from request (for local dev support)
-    const url = new URL(request.url);
-    const imageBaseUrl = url.hostname === 'localhost' 
-      ? `${url.protocol}//${url.host}` 
-      : SITE_URL;
+    const imageBaseUrl = getImageBaseUrl(request.url);
 
-    // Sample variables for preview
+    // Fetch actual car count from database
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { persistSession: false } }
+    );
+    
+    // Fetch actual counts from database
+    const [{ count: carCount }, { count: eventCount }] = await Promise.all([
+      supabaseAdmin.from('cars').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('events').select('*', { count: 'exact', head: true })
+    ]);
+
+    // Sample variables for preview (first name only, matching real behavior)
     const sampleVars = {
-      user_name: 'Alex',
+      user_name: 'Mike',  // Template will extract first name automatically
       login_url: imageBaseUrl,
-      email: 'alex@example.com',
+      email: 'mike@example.com',
       friend_name: 'Jordan',
-      credits_earned: 500,
-      total_credits: 1500,
-      car_count: 3,
+      credits_earned: 200,
+      total_credits: 400,
+      car_count: carCount || 98,
+      event_count: eventCount || 940,
+      // For referral-invite template
+      referrer_name: 'Sarah',
+      bonus_credits: 200,
+      referral_link: `${imageBaseUrl}/?ref=SAMPLE123`,
     };
 
     const html = template.render(sampleVars, imageBaseUrl);
@@ -472,4 +837,3 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error', message: err.message }, { status: 500 });
   }
 }
-

@@ -555,6 +555,29 @@ export function AuthProvider({ children }) {
 
   // Check if user needs onboarding
   const checkOnboardingStatus = useCallback(async (profile) => {
+    // DEV: Allow forcing onboarding with ?showOnboarding=1 query param
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('showOnboarding') === '1') {
+        console.log('[AuthProvider] Forcing onboarding via query param');
+        localStorage.removeItem('onboarding_dismissed_until');
+        setOnboardingState({
+          showOnboarding: true,
+          onboardingStep: 1,
+          onboardingData: {
+            referral_source: null,
+            referral_source_other: '',
+            user_intent: null,
+            email_opt_in_features: false,
+            email_opt_in_events: false,
+          },
+          onboardingDismissed: false,
+          dismissedCount: 0,
+        });
+        return;
+      }
+    }
+    
     // If onboarding is already completed, don't show
     if (profile?.onboarding_completed_at) {
       setOnboardingState(prev => ({ ...prev, showOnboarding: false }));

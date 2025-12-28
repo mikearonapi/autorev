@@ -52,6 +52,26 @@ export async function middleware(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // =========================================================================
+  // REFERRAL CODE CAPTURE
+  // Store referral code in a cookie when user visits with ?ref=CODE
+  // Cookie persists for 30 days so signup can credit the referrer
+  // =========================================================================
+  const refCode = request.nextUrl.searchParams.get('ref');
+  if (refCode && refCode.length === 8 && !user) {
+    // Only store if:
+    // 1. ref param exists and is valid length (8 chars)
+    // 2. User is not already logged in (no need for logged-in users)
+    supabaseResponse.cookies.set('referral_code', refCode.toUpperCase(), {
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+    console.log(`[Middleware] Stored referral code: ${refCode.toUpperCase()}`);
+  }
+
   // Optional: Protect routes that require authentication
   // Uncomment if you want to redirect unauthenticated users from certain paths
   // const protectedPaths = ['/my-garage', '/tuning-shop', '/settings'];

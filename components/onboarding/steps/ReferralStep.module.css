@@ -1,11 +1,11 @@
-/* ReferralStep.module.css - Clean 2x3 grid referral selector */
+/* ReferralStep.module.css - Compact 4-column grid referral selector */
 
 .optionGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 24px;
-  max-width: 420px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+  max-width: 480px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -15,38 +15,39 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 16px 8px;
-  border-radius: 12px;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition: all 0.15s ease;
-  min-height: 88px;
+  min-height: 64px;
 }
 
 .optionCard:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .optionCard.selected {
-  background: rgba(220, 38, 38, 0.1);
-  border-color: rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.5);
 }
 
 .optionIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .optionIcon svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .optionCard.selected .optionIcon {
@@ -54,28 +55,73 @@
 }
 
 .optionLabel {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
   text-align: center;
+  line-height: 1.2;
 }
 
-.optionSublabel {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.4);
-  text-align: center;
-  margin-top: -2px;
-}
-
-/* Mobile: 2 columns */
-@media (max-width: 400px) {
+/* Tablet: 3 columns */
+@media (max-width: 500px) {
   .optionGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Mobile: 3 columns, tighter */
+@media (max-width: 380px) {
+  .optionGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
   }
   
   .optionCard {
-    padding: 14px 8px;
-    min-height: 80px;
+    padding: 8px 4px;
+    min-height: 56px;
   }
+  
+  .optionIcon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .optionIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .optionLabel {
+    font-size: 9px;
+  }
+}
+
+/* "Other" text input */
+.otherInputWrapper {
+  margin-top: 16px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.otherInput {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.otherInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.otherInput:focus {
+  border-color: rgba(220, 38, 38, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }

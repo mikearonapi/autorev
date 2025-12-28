@@ -497,6 +497,21 @@ export default function AdminDashboardPage() {
         {/* REVENUE TAB - Stripe Dashboard */}
         {activeTab === 'revenue' && (
           <section className={styles.section}>
+            <div className={styles.tabHeader}>
+              <h2 className={styles.sectionTitle}>
+                <CreditCardIcon size={18} className={styles.sectionIcon} />
+                Revenue Analysis
+              </h2>
+              <p className={styles.tabDescription}>
+                Real-time revenue data from Stripe. For complete financial overview, see{' '}
+                <button 
+                  onClick={() => setActiveTab('financials')} 
+                  className={styles.inlineLink}
+                >
+                  Financials
+                </button>.
+              </p>
+            </div>
             <StripeDashboard 
               token={session?.access_token}
               range={timeRange}
@@ -505,101 +520,93 @@ export default function AdminDashboardPage() {
           </section>
         )}
         
-        {/* FINANCIALS TAB */}
-        {/* Layout follows Visual Hierarchy: Level 1 KPIs → Level 2 Charts → Level 3 Tables */}
-        {activeTab === 'financials' && (
+        {/* COSTS TAB - Detailed Cost Analysis */}
+        {activeTab === 'costs' && (
           <>
-            {/* LEVEL 1: Hero KPIs (The Pulse) */}
+            {/* Cost KPIs */}
             <section className={styles.section}>
-              <div className={styles.financialHeader}>
+              <div className={styles.tabHeader}>
                 <h2 className={styles.sectionTitle}>
                   <DollarSignIcon size={18} className={styles.sectionIcon} />
-                  Financial Management
+                  Cost Analysis
                 </h2>
-                <div className={styles.financialActions}>
-                  <ExportButtons 
-                    token={session?.access_token}
-                    year={new Date().getFullYear()}
-                    month={new Date().getMonth() + 1}
-                    compact
-                  />
+                <p className={styles.tabDescription}>
+                  Detailed breakdown of all operational costs. View{' '}
                   <button 
-                    onClick={() => setShowCostForm(!showCostForm)}
-                    className={styles.addButton}
+                    onClick={() => setActiveTab('financials')} 
+                    className={styles.inlineLink}
                   >
-                    {showCostForm ? <XIcon size={14} /> : <PlusIcon size={14} />}
-                    {showCostForm ? 'Close' : 'Add Cost'}
-                  </button>
-                </div>
+                    Financials
+                  </button>{' '}
+                  for executive summary or{' '}
+                  <button 
+                    onClick={() => setActiveTab('revenue')} 
+                    className={styles.inlineLink}
+                  >
+                    Revenue
+                  </button>{' '}
+                  for income details.
+                </p>
               </div>
               
-              {/* Financial KPI Tiles */}
               <div className={styles.kpiGrid}>
                 <KPICard
-                  label="Revenue"
-                  value={`$${actualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                  interpretation={actualRevenue === 0 ? 'Pre-revenue phase' : 'Total collected revenue'}
-                  sparklineColor="#22c55e"
-                  icon={<TrendingUpIcon size={18} />}
+                  label="Total Costs"
+                  value={`$${totalLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation="Operating + R&D this period"
+                  sparklineColor="#ef4444"
+                  icon={<DollarSignIcon size={18} />}
                   loading={loading}
-                  compact
                 />
                 
                 <KPICard
                   label="Operating Costs"
                   value={`$${monthlyBurn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                  interpretation="Monthly fixed + variable"
+                  interpretation="Infrastructure + services"
                   sparklineColor="#f59e0b"
-                  icon={<DollarSignIcon size={18} />}
+                  icon={<SettingsIcon size={18} />}
                   loading={loading}
-                  compact
                 />
                 
                 <KPICard
                   label="R&D Investment"
                   value={`$${productDevTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                  interpretation="Product development"
+                  interpretation="Product development costs"
                   sparklineColor="#8b5cf6"
                   icon={<FlaskIcon size={18} />}
                   loading={loading}
-                  compact
                 />
                 
                 <KPICard
-                  label="Net Position"
-                  value={`${(actualRevenue - totalLoss) < 0 ? '-' : ''}$${Math.abs(actualRevenue - totalLoss).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                  interpretation={(actualRevenue - totalLoss) < 0 ? 'Investment phase' : 'Profitable'}
-                  sparklineColor={(actualRevenue - totalLoss) < 0 ? '#ef4444' : '#22c55e'}
-                  icon={<TargetIcon size={18} />}
+                  label="Cost per User"
+                  value={data?.users?.total > 0 
+                    ? `$${(totalLoss / data.users.total).toFixed(2)}`
+                    : '$0.00'
+                  }
+                  interpretation={data?.users?.total > 0 
+                    ? `Across ${data.users.total} total users`
+                    : 'No users yet'
+                  }
+                  sparklineColor="#3b82f6"
+                  icon={<UsersIcon size={18} />}
                   loading={loading}
-                  compact
                 />
               </div>
-              
-              {/* Cost Entry Form (collapsible) */}
-              {showCostForm && (
-                <div className={styles.formWrapper}>
-                  <CostInputForm 
-                    onSubmit={handleCostSubmit}
-                    onCancel={() => setShowCostForm(false)}
-                    glAccounts={financials?.glAccounts || []}
-                  />
-                </div>
-              )}
             </section>
             
-            {/* LEVEL 2: Cost Visualizations (The Context) - MOVED ABOVE P&L */}
+            {/* Cost Breakdown Charts */}
             <section className={styles.section}>
+              <h3 className={styles.subsectionTitle}>Cost Breakdown</h3>
               <div className={styles.costAnalysisGrid}>
                 <CostBreakdown 
                   costs={financials?.costs || data?.costs}
-                  title="Cost Breakdown"
+                  title="Cost Categories"
                 />
                 
                 <div className={styles.financialSidebarCompact}>
                   <BreakEvenProgress 
                     breakEven={data?.breakEven}
-                    title="Break-Even"
+                    title="Break-Even Analysis"
                     compact
                   />
                   
@@ -612,10 +619,163 @@ export default function AdminDashboardPage() {
               </div>
             </section>
             
-            {/* LEVEL 3: Detailed Tables (The Grain) */}
+            {/* External Cost Integrations */}
+            <section className={styles.section}>
+              <CostIntegrations 
+                token={session?.access_token}
+                range={timeRange}
+                loading={loading}
+              />
+            </section>
+            
+            {/* Cost Entry Form */}
+            <section className={styles.section}>
+              <div className={styles.costEntrySection}>
+                <div className={styles.costEntryHeader}>
+                  <h3 className={styles.subsectionTitle}>Add Cost Entry</h3>
+                  <button 
+                    onClick={() => setShowCostForm(!showCostForm)}
+                    className={styles.addButton}
+                  >
+                    {showCostForm ? <XIcon size={14} /> : <PlusIcon size={14} />}
+                    {showCostForm ? 'Close' : 'Add Cost'}
+                  </button>
+                </div>
+                
+                {showCostForm && (
+                  <CostInputForm 
+                    onSubmit={handleCostSubmit}
+                    onCancel={() => setShowCostForm(false)}
+                    glAccounts={financials?.glAccounts || []}
+                  />
+                )}
+              </div>
+            </section>
+            
+            {/* Monthly Cost Trend */}
+            <section className={styles.section}>
+              <MonthlyTrend 
+                data={financials?.monthlyTrend}
+                title="Monthly Cost History"
+                compact={false}
+              />
+            </section>
+          </>
+        )}
+        
+        {/* FINANCIALS TAB - Executive Summary */}
+        {/* Links to Revenue and Costs for detailed analysis */}
+        {activeTab === 'financials' && (
+          <>
+            {/* Executive Summary Header */}
+            <section className={styles.section}>
+              <div className={styles.financialHeader}>
+                <div className={styles.tabHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    <DollarSignIcon size={18} className={styles.sectionIcon} />
+                    Financial Summary
+                  </h2>
+                  <p className={styles.tabDescription}>
+                    Executive overview of your financial position. Drill down into{' '}
+                    <button onClick={() => setActiveTab('revenue')} className={styles.inlineLink}>
+                      Revenue
+                    </button>{' '}
+                    or{' '}
+                    <button onClick={() => setActiveTab('costs')} className={styles.inlineLink}>
+                      Costs
+                    </button>{' '}
+                    for detailed analysis.
+                  </p>
+                </div>
+                <div className={styles.financialActions}>
+                  <ExportButtons 
+                    token={session?.access_token}
+                    year={new Date().getFullYear()}
+                    month={new Date().getMonth() + 1}
+                    compact
+                  />
+                </div>
+              </div>
+              
+              {/* Financial KPI Tiles */}
+              <div className={styles.kpiGrid}>
+                <KPICard
+                  label="Revenue"
+                  value={`$${actualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={actualRevenue === 0 ? 'Pre-revenue phase' : 'Total collected revenue'}
+                  sparklineColor="#22c55e"
+                  icon={<TrendingUpIcon size={18} />}
+                  loading={loading}
+                  onClick={() => setActiveTab('revenue')}
+                />
+                
+                <KPICard
+                  label="Total Costs"
+                  value={`$${totalLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={`$${monthlyBurn.toFixed(2)} operating + $${productDevTotal.toFixed(2)} R&D`}
+                  sparklineColor="#f59e0b"
+                  icon={<DollarSignIcon size={18} />}
+                  loading={loading}
+                  onClick={() => setActiveTab('costs')}
+                />
+                
+                <KPICard
+                  label="Net Position"
+                  value={`${(actualRevenue - totalLoss) < 0 ? '-' : ''}$${Math.abs(actualRevenue - totalLoss).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  interpretation={(actualRevenue - totalLoss) < 0 ? 'Investment phase' : 'Profitable'}
+                  sparklineColor={(actualRevenue - totalLoss) < 0 ? '#ef4444' : '#22c55e'}
+                  icon={<TargetIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Break-Even Progress"
+                  value={data?.breakEven?.progressPercent || 0}
+                  valueSuffix="%"
+                  interpretation={`${data?.breakEven?.currentUsers || 0} of ${breakEvenUsers} paying users needed`}
+                  sparklineColor="#3b82f6"
+                  icon={<BarChartIcon size={18} />}
+                  loading={loading}
+                />
+              </div>
+            </section>
+            
+            {/* Quick Navigation Cards */}
+            <section className={styles.section}>
+              <div className={styles.financialQuickLinks}>
+                <button 
+                  onClick={() => setActiveTab('revenue')} 
+                  className={`${styles.financialQuickLink} ${styles.revenueLink}`}
+                >
+                  <div className={styles.quickLinkHeader}>
+                    <CreditCardIcon size={24} />
+                    <span className={styles.quickLinkTitle}>Revenue Details</span>
+                  </div>
+                  <p className={styles.quickLinkDesc}>
+                    Stripe dashboard, MRR, subscriptions, and payment history
+                  </p>
+                  <span className={styles.quickLinkArrow}>→</span>
+                </button>
+                
+                <button 
+                  onClick={() => setActiveTab('costs')} 
+                  className={`${styles.financialQuickLink} ${styles.costsLink}`}
+                >
+                  <div className={styles.quickLinkHeader}>
+                    <DollarSignIcon size={24} />
+                    <span className={styles.quickLinkTitle}>Cost Breakdown</span>
+                  </div>
+                  <p className={styles.quickLinkDesc}>
+                    Operating costs, R&D, integrations, and monthly trends
+                  </p>
+                  <span className={styles.quickLinkArrow}>→</span>
+                </button>
+              </div>
+            </section>
+            
+            {/* P&L Statement */}
             <section className={styles.section}>
               <div className={styles.financialMainGrid}>
-                {/* Left: P&L Statement (detailed table) */}
                 <PLStatement 
                   pnl={financials?.pnl}
                   revenue={financials?.revenue}
@@ -624,7 +784,6 @@ export default function AdminDashboardPage() {
                   title="Income Statement (P&L)"
                 />
                 
-                {/* Right: Monthly trend table */}
                 <div className={styles.financialSidebar}>
                   <MonthlyTrend 
                     data={financials?.monthlyTrend}
@@ -633,15 +792,6 @@ export default function AdminDashboardPage() {
                   />
                 </div>
               </div>
-            </section>
-            
-            {/* Cost Tracking Integrations - External Service Costs */}
-            <section className={styles.section}>
-              <CostIntegrations 
-                token={session?.access_token}
-                range={timeRange}
-                loading={loading}
-              />
             </section>
           </>
         )}
@@ -900,7 +1050,7 @@ export default function AdminDashboardPage() {
         {/* EMAILS TAB */}
         {activeTab === 'emails' && (
           <section className={styles.section}>
-            <EmailDashboard />
+            <EmailDashboard token={session?.access_token} />
           </section>
         )}
         

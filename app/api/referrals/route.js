@@ -2,14 +2,25 @@
  * Referrals API
  * 
  * Handles referral program operations:
- * - GET: Get user's referral code and stats
- * - POST: Create a new referral (share with friend)
+ * - GET: Get user's referral code, stats, milestone progress, and referral list
+ * - POST: Create a new referral (share with friend) and send invite email
+ * - PATCH: Resend invite to a pending referral
+ * 
+ * Reward Structure (balanced incentives):
+ *   REFEREE (Friend): +200 bonus credits on signup
+ *   REFERRER: +200 credits per successful signup
+ *   MILESTONES:
+ *     3 friends  → +200 bonus credits
+ *     5 friends  → +300 bonus credits
+ *     10 friends → 1 month free Collector tier
+ *     25 friends → 1 month free Tuner tier
  */
 
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
+import { sendReferralInviteEmail } from '@/lib/email';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -17,48 +28,105 @@ const supabaseAdmin = createClient(
   { auth: { persistSession: false } }
 );
 
-const REFERRAL_REWARD_CREDITS = 500; // Credits awarded to referrer when friend signs up
+// Reward configuration (balanced - both parties equally incentivized)
+const REFERRAL_CONFIG = {
+  REFERRER_CREDITS_PER_SIGNUP: 200,
+  REFEREE_BONUS_CREDITS: 200,
+};
+
+// Milestone definitions
+const MILESTONES = [
+  { key: 'milestone_3', friends: 3, reward: '+200 bonus credits' },
+  { key: 'milestone_5', friends: 5, reward: '+300 bonus credits' },
+  { key: 'milestone_10', friends: 10, reward: '1 month free Collector tier' },
+  { key: 'milestone_25', friends: 25, reward: '1 month free Tuner tier' },
+];
+
+/**
+ * Create Supabase client for route handlers
+ */
+async function createSupabaseClient() {
+  const cookieStore = await cookies();
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch (error) {
+            // Ignore errors when called from server component
+          }
+        },
+      },
+    }
+  );
+}
 
 /**
  * GET /api/referrals
  * 
- * Get user's referral code and stats
+ * Get user's referral code, stats, milestone progress, and list of referrals
  */
 export async function GET(request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Get user's referral code
+    // Get user's referral code and referral tier info
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
-      .select('referral_code')
+      .select('referral_code, referral_tier_granted, referral_tier_expires_at, referral_tier_lifetime')
       .eq('id', user.id)
       .single();
 
     if (profileError) {
+      console.error('[Referrals] Profile error:', profileError);
       return NextResponse.json({ error: 'Failed to get profile' }, { status: 500 });
     }
 
-    // Get referral stats
-    const { data: referrals, error: refError } = await supabase
+    // Get all referrals for this user (for the list)
+    const { data: referralsList, error: referralsError } = await supabase
       .from('referrals')
-      .select('status, referrer_reward_credits')
-      .eq('referrer_id', user.id);
+      .select('id, referee_email, status, created_at, signed_up_at, referrer_reward_credits')
+      .eq('referrer_id', user.id)
+      .order('created_at', { ascending: false });
 
-    if (refError) {
-      console.error('[Referrals] Error fetching referrals:', refError);
+    if (referralsError) {
+      console.error('[Referrals] Error fetching referrals list:', referralsError);
     }
 
+    // Calculate stats from the list
+    const referrals = referralsList || [];
+    const signedUp = referrals.filter(r => r.status === 'signed_up' || r.status === 'rewarded').length;
+    const pending = referrals.filter(r => r.status === 'pending').length;
+
+    // Get rewards for milestone tracking
+    const { data: rewards } = await supabase
+      .from('referral_rewards')
+      .select('credits_awarded, milestone_key')
+      .eq('user_id', user.id);
+
+    const achievedMilestones = rewards?.filter(r => r.milestone_key).map(r => r.milestone_key) || [];
+    const totalCreditsEarned = rewards?.reduce((sum, r) => sum + (r.credits_awarded || 0), 0) || 0;
+
     const stats = {
-      total_referrals: referrals?.length || 0,
-      pending: referrals?.filter(r => r.status === 'pending').length || 0,
-      signed_up: referrals?.filter(r => r.status === 'signed_up' || r.status === 'rewarded').length || 0,
-      credits_earned: referrals?.reduce((sum, r) => sum + (r.referrer_reward_credits || 0), 0) || 0,
+      total_referrals: referrals.length,
+      pending,
+      signed_up: signedUp,
+      credits_earned: totalCreditsEarned,
+      milestones_achieved: achievedMilestones,
+      next_milestone: MILESTONES.find(m => !achievedMilestones.includes(m.key) && m.friends > signedUp),
     };
 
     const referralLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'}/?ref=${profile.referral_code}`;
@@ -67,7 +135,21 @@ export async function GET(request) {
       referral_code: profile.referral_code,
       referral_link: referralLink,
       stats,
-      reward_amount: REFERRAL_REWARD_CREDITS,
+      referrals: referrals.map(r => ({
+        id: r.id,
+        email: r.referee_email,
+        status: r.status,
+        created_at: r.created_at,
+        signed_up_at: r.signed_up_at,
+        credits_earned: r.referrer_reward_credits || 0,
+      })),
+      reward_config: REFERRAL_CONFIG,
+      milestones: MILESTONES,
+      referral_tier: profile.referral_tier_granted ? {
+        tier: profile.referral_tier_granted,
+        expires_at: profile.referral_tier_expires_at,
+        is_lifetime: profile.referral_tier_lifetime,
+      } : null,
     });
 
   } catch (err) {
@@ -79,14 +161,14 @@ export async function GET(request) {
 /**
  * POST /api/referrals
  * 
- * Create a new referral (share with friend's email)
+ * Create a new referral (share with friend's email) and send invite
  * 
  * Body:
  * - email: Friend's email address
  */
 export async function POST(request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -99,6 +181,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Friend email is required' }, { status: 400 });
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
+
     // Don't allow self-referrals
     if (email.toLowerCase() === user.email.toLowerCase()) {
       return NextResponse.json({ error: 'Cannot refer yourself' }, { status: 400 });
@@ -107,13 +195,17 @@ export async function POST(request) {
     // Check if already referred this email
     const { data: existingRef } = await supabase
       .from('referrals')
-      .select('id')
+      .select('id, status')
       .eq('referrer_id', user.id)
-      .eq('referee_email', email.toLowerCase())
+      .ilike('referee_email', email)
       .single();
 
     if (existingRef) {
-      return NextResponse.json({ error: 'Already referred this email' }, { status: 409 });
+      if (existingRef.status === 'pending') {
+        return NextResponse.json({ error: 'Already sent invite to this email' }, { status: 409 });
+      } else {
+        return NextResponse.json({ error: 'This person has already signed up via your referral' }, { status: 409 });
+      }
     }
 
     // Check if this email is already a user
@@ -126,12 +218,14 @@ export async function POST(request) {
       return NextResponse.json({ error: 'This person is already an AutoRev member' }, { status: 409 });
     }
 
-    // Get referrer's referral code
+    // Get referrer's profile info
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('referral_code')
+      .select('referral_code, display_name')
       .eq('id', user.id)
       .single();
+
+    const referralLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'}/?ref=${profile.referral_code}`;
 
     // Create referral record
     const { data: referral, error: createError } = await supabase
@@ -150,16 +244,23 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Failed to create referral' }, { status: 500 });
     }
 
-    // TODO: Send referral email to friend
-    // This would use sendTemplateEmail with a 'referral-invite' template
-    
-    console.log(`[Referrals] Created referral from ${user.email} to ${email}`);
+    // Send invite email to friend (fire-and-forget)
+    const referrerName = profile.display_name || 
+                         user.user_metadata?.full_name?.split(' ')[0] || 
+                         'Your friend';
 
-    const referralLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'}/?ref=${profile.referral_code}`;
+    sendReferralInviteEmail(
+      email.toLowerCase(),
+      referrerName,
+      referralLink,
+      REFERRAL_CONFIG.REFEREE_BONUS_CREDITS
+    ).catch(err => console.error('[Referrals] Failed to send invite email:', err));
+
+    console.log(`[Referrals] Created referral from ${user.email} to ${email}`);
 
     return NextResponse.json({
       success: true,
-      message: 'Referral created',
+      message: 'Referral invite sent!',
       referral_link: referralLink,
       referral_id: referral.id,
     });
@@ -170,3 +271,75 @@ export async function POST(request) {
   }
 }
 
+/**
+ * PATCH /api/referrals
+ * 
+ * Resend invite email to a pending referral
+ * 
+ * Body:
+ * - referral_id: ID of the referral to resend
+ */
+export async function PATCH(request) {
+  try {
+    const supabase = await createSupabaseClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { referral_id } = await request.json();
+
+    if (!referral_id) {
+      return NextResponse.json({ error: 'Referral ID is required' }, { status: 400 });
+    }
+
+    // Get the referral (must belong to this user and be pending)
+    const { data: referral, error: refError } = await supabase
+      .from('referrals')
+      .select('id, referee_email, status, referral_code')
+      .eq('id', referral_id)
+      .eq('referrer_id', user.id)
+      .single();
+
+    if (refError || !referral) {
+      return NextResponse.json({ error: 'Referral not found' }, { status: 404 });
+    }
+
+    if (referral.status !== 'pending') {
+      return NextResponse.json({ error: 'Can only resend to pending referrals' }, { status: 400 });
+    }
+
+    // Get referrer's profile info
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single();
+
+    const referralLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'}/?ref=${referral.referral_code}`;
+
+    // Resend invite email
+    const referrerName = profile?.display_name || 
+                         user.user_metadata?.full_name?.split(' ')[0] || 
+                         'Your friend';
+
+    await sendReferralInviteEmail(
+      referral.referee_email,
+      referrerName,
+      referralLink,
+      REFERRAL_CONFIG.REFEREE_BONUS_CREDITS
+    );
+
+    console.log(`[Referrals] Resent invite from ${user.email} to ${referral.referee_email}`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Invite resent!',
+    });
+
+  } catch (err) {
+    console.error('[Referrals] Error resending:', err);
+    return NextResponse.json({ error: 'Failed to resend invite' }, { status: 500 });
+  }
+}

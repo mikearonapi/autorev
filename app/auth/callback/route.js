@@ -6,12 +6,17 @@
  * 
  * FIX 2024-12-27: Explicitly transfer cookies to redirect response
  * The cookieStore.set() calls don't automatically transfer to NextResponse.redirect()
+ * 
+ * UPDATE 2024-12-28: Added welcome email trigger for new signups
+ * UPDATE 2024-12-28: Added referral processing for users who signed up via referral link
  */
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
+import { sendWelcomeEmail } from '@/lib/email';
+import { processReferralSignup } from '@/lib/referralService';
 
 export async function GET(request) {
   const requestUrl = new URL(request.url);
@@ -129,6 +134,26 @@ export async function GET(request) {
             email: user.email,
             provider: user.app_metadata?.provider || 'email',
           }, signupContext).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
+          
+          // Send welcome email (fire-and-forget)
+          sendWelcomeEmail(user).catch(err => 
+            console.error('[Auth Callback] Welcome email failed:', err)
+          );
+
+          // Process referral if user signed up with a referral code
+          const refCode = cookieStore.get('referral_code')?.value;
+          if (refCode) {
+            console.log(`[Auth Callback] Processing referral signup with code: ${refCode}`);
+            processReferralSignup(user.id, refCode)
+              .then(result => {
+                if (result.success) {
+                  console.log(`[Auth Callback] Referral processed: +${result.refereeCredits} credits for new user`);
+                } else {
+                  console.log(`[Auth Callback] Referral not processed: ${result.error}`);
+                }
+              })
+              .catch(err => console.error('[Auth Callback] Referral processing failed:', err));
+          }
         }
       }
     } catch (err) {

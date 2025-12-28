@@ -22,7 +22,10 @@ import {
   getCreditPackFromPriceId,
 } from '@/lib/stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Stripe client - only initialize if key exists
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
+  : null;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -156,6 +159,15 @@ export async function GET(request) {
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+  }
+
+  // Check if Stripe is configured
+  if (!stripe) {
+    return NextResponse.json({ 
+      error: 'Stripe not configured',
+      message: 'STRIPE_SECRET_KEY is not set. Please configure Stripe to view revenue data.',
+      isConfigError: true
+    }, { status: 503 });
   }
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey);

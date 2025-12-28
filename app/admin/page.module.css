@@ -374,6 +374,160 @@
   opacity: 0.7;
 }
 
+/* Tab Header with Description */
+.tabHeader {
+  margin-bottom: 16px;
+}
+
+.tabHeader .sectionTitle {
+  margin-bottom: 6px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.tabDescription {
+  font-size: 13px;
+  color: var(--admin-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Inline Link Button */
+.inlineLink {
+  background: none;
+  border: none;
+  color: var(--admin-accent-blue);
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 500;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.inlineLink:hover {
+  color: var(--admin-accent-cyan);
+}
+
+/* Subsection Title */
+.subsectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-secondary);
+  margin: 0 0 12px 0;
+}
+
+/* Cost Entry Section */
+.costEntrySection {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.costEntryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.costEntryHeader .subsectionTitle {
+  margin: 0;
+}
+
+/* Financial Quick Links - Large Navigation Cards */
+.financialQuickLinks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.financialQuickLink {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.financialQuickLink:hover {
+  background: var(--admin-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.financialQuickLink.revenueLink {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.financialQuickLink.revenueLink:hover {
+  border-color: var(--admin-positive);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+}
+
+.financialQuickLink.revenueLink .quickLinkHeader svg {
+  color: var(--admin-positive);
+}
+
+.financialQuickLink.costsLink {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.financialQuickLink.costsLink:hover {
+  border-color: var(--admin-warning);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+}
+
+.financialQuickLink.costsLink .quickLinkHeader svg {
+  color: var(--admin-warning);
+}
+
+.quickLinkHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quickLinkTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+}
+
+.quickLinkDesc {
+  font-size: 13px;
+  color: var(--admin-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.quickLinkArrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--admin-text-muted);
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.financialQuickLink:hover .quickLinkArrow {
+  opacity: 1;
+  transform: translateY(-50%) translateX(4px);
+}
+
 /* KPI Grid - Compact */
 .kpiGrid {
   display: grid;
@@ -631,6 +785,10 @@
   
   .financialSidebar > * {
     flex: 1;
+  }
+  
+  .financialQuickLinks {
+    grid-template-columns: 1fr;
   }
 }
 
