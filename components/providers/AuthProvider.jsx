@@ -326,7 +326,7 @@ export function AuthProvider({ children }) {
   // Fetch user profile when authenticated
   // Returns profile data on success, or a minimal profile object on failure
   // This ensures the app can continue functioning even if profile fetch fails
-  const fetchProfile = useCallback(async (userId, timeout = 5000) => {
+  const fetchProfile = useCallback(async (userId, timeout = 12000) => {
     if (!userId) return null;
 
     console.log('[AuthProvider] fetchProfile called for user:', userId);
@@ -710,11 +710,6 @@ export function AuthProvider({ children }) {
           
           // Fetch profile with progress tracking
           try {
-            // Start prefetching user data in parallel
-            prefetchAllUserData(session.user.id).catch(err => 
-              console.warn('[AuthProvider] Background prefetch error:', err)
-            );
-            
             const profile = await fetchProfile(session.user.id);
             
             // Check for fetch error flag
@@ -724,6 +719,12 @@ export function AuthProvider({ children }) {
             } else {
               markComplete('profile');
             }
+
+            // Start prefetching user data AFTER profile to avoid starving profile fetch
+            // (we've seen profile fetch timeouts in production when prefetch runs concurrently)
+            prefetchAllUserData(session.user.id).catch(err =>
+              console.warn('[AuthProvider] Background prefetch error:', err)
+            );
             
             // Check if there's a pending tier selection from the join page
             const pendingTier = localStorage.getItem('autorev_selected_tier');

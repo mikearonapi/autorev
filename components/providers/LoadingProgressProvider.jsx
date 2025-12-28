@@ -34,7 +34,10 @@ const StepStatus = {
  * Different steps may need different timeouts based on typical load times
  */
 const STEP_TIMEOUTS = {
-  profile: 5000,    // 5s - usually fast
+  // NOTE: profile can be slower right after OAuth redirect due to concurrent
+  // fetches and browser connection limits; keep this aligned with
+  // AuthLoadingScreen's MAX_DISPLAY_TIME to avoid false failures.
+  profile: 12000,   // 12s
   favorites: 8000,  // 8s - can be large lists
   vehicles: 8000,   // 8s - can be large lists
   builds: 10000,    // 10s - most complex data
