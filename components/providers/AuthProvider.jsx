@@ -735,42 +735,46 @@ export function AuthProvider({ children }) {
     return { data, error: null };
   }, []);
 
-  // Sign out - Enhanced to ensure complete state cleanup
+  // Sign out - Instant UI update, background cleanup
   const logout = useCallback(async () => {
     console.log('[AuthProvider] Starting logout...');
-    setState(prev => ({ ...prev, isLoading: true }));
     
-    // Clear refresh timer
+    // Clear refresh timer immediately
     if (refreshIntervalRef.current) {
       clearTimeout(refreshIntervalRef.current);
       refreshIntervalRef.current = null;
     }
     
-    // Reset refs to allow fresh sync on next login
+    // Reset refs immediately
     isAuthenticatedRef.current = false;
     initAttemptRef.current = 0;
     
-    // Reset loading progress so it shows fresh on next login
+    // Reset loading progress immediately
     resetProgress();
     
-    // Use 'global' scope to invalidate the session on the server
-    const { error } = await authSignOut({ scope: 'global' });
-    
-    if (error) {
-      console.error('[AuthProvider] Sign out error:', error);
-    }
-    
-    // Always clear state regardless of error - we want user logged out locally
+    // INSTANT: Clear state immediately so UI updates right away
     setState({
       ...defaultAuthState,
       isLoading: false,
     });
-    
-    // Reset onboarding state too
     setOnboardingState(defaultOnboardingState);
     
-    console.log('[AuthProvider] Logout complete - state cleared');
-    return { error: null }; // Return success - local logout always succeeds
+    console.log('[AuthProvider] UI cleared - starting background cleanup...');
+    
+    // BACKGROUND: Do server signout and cookie cleanup async (don't await)
+    authSignOut({ scope: 'global' })
+      .then(({ error }) => {
+        if (error) {
+          console.warn('[AuthProvider] Background signout error (ignored):', error.message);
+        } else {
+          console.log('[AuthProvider] Background signout complete');
+        }
+      })
+      .catch(err => {
+        console.warn('[AuthProvider] Background signout exception (ignored):', err.message);
+      });
+    
+    return { error: null }; // Return success immediately
   }, [resetProgress]);
 
   // Update profile
