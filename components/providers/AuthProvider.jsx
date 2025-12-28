@@ -25,6 +25,11 @@ const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingF
   ssr: false,
 });
 
+// Dynamically import AuthErrorBanner for session error notifications
+const AuthErrorBanner = dynamic(() => import('@/components/auth/AuthErrorBanner'), {
+  ssr: false,
+});
+
 /**
  * Auth Context
  * Provides authentication state and methods throughout the app
@@ -41,7 +46,8 @@ const defaultAuthState = {
   isLoading: true,
   isAuthenticated: false,
   authError: null,
-  sessionExpired: false, // True when session was invalidated (e.g., multi-device login)
+  sessionExpired: false, // True when session was invalidated (token expired)
+  sessionRevoked: false, // True when session was revoked (e.g., logout from another device)
 };
 
 /**
@@ -69,9 +75,14 @@ const MAX_ONBOARDING_DISMISSALS = 3;
  * 2. If refresh works, validate with getUser()
  * 3. If refresh fails, try getUser() directly (maybe access token is fine)
  * 4. If all fail and it's a stale session error, clear local storage
+ * 
+ * @param {number} maxRetries - Maximum retry attempts
+ * @param {number} initialDelay - Initial delay in ms (doubles with each retry)
+ * @param {string|null} expectedUserId - If provided from callback, verify user matches
  */
-async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
+async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, expectedUserId = null) {
   let lastError = null;
+  let errorCategory = null;
   
   // FIRST: Try to refresh session - this is the most reliable recovery method
   // It uses the refresh token which often survives when access tokens expire
@@ -80,17 +91,46 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
     const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
     
     if (!refreshError && refreshData?.session && refreshData?.user) {
-      console.log(`[AuthProvider] Session refreshed successfully`);
-      return { session: refreshData.session, user: refreshData.user, error: null };
+      // Verify user matches expected if provided
+      if (expectedUserId && refreshData.user.id !== expectedUserId) {
+        console.warn(`[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${refreshData.user.id.slice(0, 8)}...`);
+        // This might happen if cookies got mixed - clear and re-auth
+      } else {
+        console.log(`[AuthProvider] Session refreshed successfully`);
+        return { session: refreshData.session, user: refreshData.user, error: null, errorCategory: null };
+      }
     }
     
     if (refreshError) {
       console.log(`[AuthProvider] Refresh returned error:`, refreshError.message);
       lastError = refreshError;
+      errorCategory = categorizeAuthError(refreshError);
+      
+      // If session was revoked (logged out elsewhere), don't retry - provide clear feedback
+      if (errorCategory === ErrorCategory.SESSION_REVOKED) {
+        console.warn(`[AuthProvider] Session was revoked - likely logged out on another device`);
+        await clearAuthState();
+        return { 
+          session: null, 
+          user: null, 
+          error: refreshError, 
+          sessionExpired: true,
+          sessionRevoked: true,
+          errorCategory 
+        };
+      }
     }
   } catch (refreshErr) {
     console.log(`[AuthProvider] Refresh threw:`, refreshErr.message);
     lastError = refreshErr;
+    errorCategory = categorizeAuthError(refreshErr);
+  }
+  
+  // If we know the error is non-recoverable, don't waste time retrying
+  if (errorCategory === ErrorCategory.INVALID_TOKEN || errorCategory === ErrorCategory.SESSION_EXPIRED) {
+    console.warn(`[AuthProvider] Non-recoverable error (${errorCategory}), clearing session...`);
+    await clearAuthState();
+    return { session: null, user: null, error: lastError, sessionExpired: true, errorCategory };
   }
   
   // SECOND: Refresh didn't work, try getUser() with retries
@@ -100,43 +140,27 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
       
       if (userError) {
         lastError = userError;
-        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message, userError.status);
+        errorCategory = categorizeAuthError(userError);
+        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message, `(${errorCategory})`);
         
-        // Check if this is a definitive "session not found" - no point retrying
-        // Be SPECIFIC: only clear session for explicit session-not-found errors
-        // NOT for general network errors or rate limits that mention "session"
-        const errorMsg = userError.message?.toLowerCase() || '';
-        const isSessionGone = 
-          (errorMsg.includes('session not found')) ||
-          (errorMsg.includes('session from session_id claim') && errorMsg.includes('not found')) ||
-          (errorMsg.includes('refresh_token') && errorMsg.includes('not found')) ||
-          (errorMsg.includes('invalid refresh token')) ||
-          (userError.status === 403 && errorMsg.includes('session'));
-        
-        if (isSessionGone) {
-          console.warn(`[AuthProvider] Session is definitely invalid (${errorMsg.slice(0, 50)}...), clearing...`);
-          try {
-            // Clear both local storage AND sign out to ensure clean state
-            await supabase.auth.signOut({ scope: 'local' });
-            // Also clear any stale tokens from localStorage directly
-            if (typeof window !== 'undefined') {
-              const keys = Object.keys(localStorage);
-              keys.forEach(key => {
-                if (key.startsWith('sb-') && key.includes('auth')) {
-                  console.log(`[AuthProvider] Clearing stale auth key: ${key}`);
-                  localStorage.removeItem(key);
-                }
-              });
-            }
-          } catch (e) {
-            console.warn('[AuthProvider] Error clearing session:', e.message);
-          }
-          return { session: null, user: null, error: null, sessionExpired: true };
+        // Don't retry for non-recoverable errors
+        if (errorCategory !== ErrorCategory.NETWORK && errorCategory !== ErrorCategory.UNKNOWN) {
+          console.warn(`[AuthProvider] Non-retryable error category: ${errorCategory}`);
+          await clearAuthState();
+          return { 
+            session: null, 
+            user: null, 
+            error: userError, 
+            sessionExpired: true,
+            sessionRevoked: errorCategory === ErrorCategory.SESSION_REVOKED,
+            errorCategory 
+          };
         }
         
-        // For other errors, retry with backoff
+        // For network errors, retry with backoff
         if (attempt < maxRetries) {
           const delay = initialDelay * Math.pow(2, attempt - 1);
+          console.log(`[AuthProvider] Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
@@ -145,18 +169,24 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
       }
       
       if (user) {
+        // Verify user matches expected if provided
+        if (expectedUserId && user.id !== expectedUserId) {
+          console.warn(`[AuthProvider] User mismatch on getUser: expected ${expectedUserId.slice(0, 8)}..., got ${user.id.slice(0, 8)}...`);
+        }
+        
         // User validated, get the session
         const { data: { session } } = await supabase.auth.getSession();
         console.log(`[AuthProvider] Session initialized on attempt ${attempt}`);
-        return { session, user, error: null };
+        return { session, user, error: null, errorCategory: null };
       }
       
       // No user - not logged in
-      return { session: null, user: null, error: null };
+      return { session: null, user: null, error: null, errorCategory: null };
       
     } catch (err) {
       lastError = err;
-      if (attempt < maxRetries) {
+      errorCategory = categorizeAuthError(err);
+      if (attempt < maxRetries && (errorCategory === ErrorCategory.NETWORK || errorCategory === ErrorCategory.UNKNOWN)) {
         const delay = initialDelay * Math.pow(2, attempt - 1);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
@@ -164,32 +194,113 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
   }
   
   // All attempts failed
-  console.error('[AuthProvider] All auth attempts failed');
+  console.error('[AuthProvider] All auth attempts failed:', errorCategory);
+  await clearAuthState();
+  
+  return { session: null, user: null, error: lastError, sessionExpired: !!lastError, errorCategory };
+}
+
+/**
+ * Clear all local auth state (localStorage and cookies)
+ */
+async function clearAuthState() {
   try {
     await supabase.auth.signOut({ scope: 'local' });
   } catch (e) {
-    // Ignore
+    console.warn('[AuthProvider] signOut during clearAuthState failed:', e.message);
   }
   
-  return { session: null, user: null, error: lastError, sessionExpired: !!lastError };
+  // Clear any stale tokens from localStorage directly
+  if (typeof window !== 'undefined') {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('sb-') && key.includes('auth')) {
+        console.log(`[AuthProvider] Clearing stale auth key: ${key}`);
+        localStorage.removeItem(key);
+      }
+    });
+  }
+}
+
+/**
+ * Error categories for better handling
+ */
+const ErrorCategory = {
+  NETWORK: 'network',        // Network/connectivity issues - retry makes sense
+  SESSION_EXPIRED: 'session_expired',  // Session legitimately expired - re-login needed
+  SESSION_REVOKED: 'session_revoked',  // Session was revoked (e.g., logout from another device)
+  INVALID_TOKEN: 'invalid_token',      // Token is malformed or invalid
+  UNKNOWN: 'unknown',        // Unexpected error
+};
+
+/**
+ * Categorize auth errors for appropriate handling
+ */
+function categorizeAuthError(error) {
+  if (!error) return null;
+  
+  const message = error.message?.toLowerCase() || '';
+  const status = error.status;
+  
+  // Network errors
+  if (message.includes('network') || message.includes('fetch') || message.includes('timeout') || status === 0) {
+    return ErrorCategory.NETWORK;
+  }
+  
+  // Session was revoked/logged out on another device
+  if (message.includes('session has been revoked') || 
+      message.includes('logged out') ||
+      message.includes('user session not found') ||
+      (status === 401 && message.includes('session'))) {
+    return ErrorCategory.SESSION_REVOKED;
+  }
+  
+  // Session legitimately expired
+  if (message.includes('session not found') ||
+      message.includes('session from session_id claim') ||
+      message.includes('jwt expired') ||
+      message.includes('token expired')) {
+    return ErrorCategory.SESSION_EXPIRED;
+  }
+  
+  // Invalid/malformed token
+  if (message.includes('invalid refresh token') ||
+      message.includes('refresh_token') ||
+      message.includes('malformed') ||
+      message.includes('invalid jwt') ||
+      status === 403) {
+    return ErrorCategory.INVALID_TOKEN;
+  }
+  
+  return ErrorCategory.UNKNOWN;
 }
 
 /**
  * Check for auth callback completion cookie
  * Set by the OAuth callback route to signal successful auth
+ * Returns { fromCallback: boolean, verifiedUserId: string|null }
  */
 function checkAuthCallbackCookie() {
-  if (typeof document === 'undefined') return false;
+  if (typeof document === 'undefined') return { fromCallback: false, verifiedUserId: null };
   
   const cookies = document.cookie.split(';');
   const authCookie = cookies.find(c => c.trim().startsWith('auth_callback_complete='));
+  const verifiedCookie = cookies.find(c => c.trim().startsWith('auth_verified_user='));
+  
+  let verifiedUserId = null;
+  if (verifiedCookie) {
+    verifiedUserId = verifiedCookie.split('=')[1]?.trim() || null;
+    // Clear the verified user cookie
+    document.cookie = 'auth_verified_user=; max-age=0; path=/';
+  }
   
   if (authCookie) {
-    // Clear the cookie after reading
+    // Clear the callback cookie after reading
     document.cookie = 'auth_callback_complete=; max-age=0; path=/';
-    return true;
+    return { fromCallback: true, verifiedUserId };
   }
-  return false;
+  
+  return { fromCallback: false, verifiedUserId };
 }
 
 /**
@@ -201,7 +312,7 @@ function checkAuthCallbackCookie() {
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
-  const { loadingStates, isShowingProgress, markComplete, startProgress, endProgress, dismissProgress, resetProgress } = useLoadingProgress();
+  const { loadingStates, isShowingProgress, markComplete, markStarted, markFailed, retryStep, startProgress, endProgress, dismissProgress, resetProgress } = useLoadingProgress();
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
@@ -290,7 +401,7 @@ export function AuthProvider({ children }) {
     }
 
     // Check if we just came from OAuth callback
-    const fromCallback = checkAuthCallbackCookie();
+    const { fromCallback, verifiedUserId } = checkAuthCallbackCookie();
     const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     const hasAuthTimestamp = urlParams?.has('auth_ts');
 
@@ -303,6 +414,7 @@ export function AuthProvider({ children }) {
         console.log(`[AuthProvider] Initializing auth (attempt ${attemptNum})...`, {
           fromCallback,
           hasAuthTimestamp,
+          verifiedUserId: verifiedUserId?.slice(0, 8) + '...',
         });
         
         // If coming from OAuth callback, use retry logic to handle race conditions
@@ -319,7 +431,7 @@ export function AuthProvider({ children }) {
         let result;
         try {
           result = await Promise.race([
-            initializeSessionWithRetry(maxRetries),
+            initializeSessionWithRetry(maxRetries, 100, verifiedUserId),
             timeoutPromise
           ]);
         } catch (timeoutErr) {
@@ -365,26 +477,42 @@ export function AuthProvider({ children }) {
           return;
         }
         
-        const { session, user, error: initError, sessionExpired } = result;
+        const { session, user, error: initError, sessionExpired, sessionRevoked, errorCategory } = result;
         
         if (initError) {
-          console.error('[AuthProvider] Session init error:', initError);
+          console.error('[AuthProvider] Session init error:', initError, `(category: ${errorCategory})`);
+          
+          // Provide user-friendly error messages based on error category
+          let userMessage = initError.message;
+          if (sessionRevoked) {
+            userMessage = 'You were signed out because you logged in on another device. Please sign in again.';
+          } else if (errorCategory === ErrorCategory.NETWORK) {
+            userMessage = 'Network error. Please check your connection and try again.';
+          } else if (sessionExpired) {
+            userMessage = 'Your session has expired. Please sign in again.';
+          }
+          
           setState({
             ...defaultAuthState,
             isLoading: false,
-            authError: initError.message,
+            authError: userMessage,
             sessionExpired: !!sessionExpired,
+            sessionRevoked: !!sessionRevoked,
           });
           return;
         }
         
         // Handle case where session was cleared due to being stale
         if (sessionExpired && !user) {
-          console.log('[AuthProvider] Session expired, user needs to re-login');
+          const message = sessionRevoked 
+            ? 'You were signed out from another device.'
+            : 'Your session has expired.';
+          console.log(`[AuthProvider] ${message} User needs to re-login`);
           setState({
             ...defaultAuthState,
             isLoading: false,
             sessionExpired: true,
+            sessionRevoked: !!sessionRevoked,
           });
           return;
         }
@@ -488,6 +616,9 @@ export function AuthProvider({ children }) {
           console.log('[AuthProvider] Fresh login - showing progress screen');
           startProgress();
           
+          // Mark profile loading as started
+          markStarted('profile');
+          
           // Fetch profile with progress tracking
           try {
             // Start prefetching user data in parallel
@@ -496,6 +627,14 @@ export function AuthProvider({ children }) {
             );
             
             const profile = await fetchProfile(session.user.id);
+            
+            // Check for fetch error flag
+            if (profile?._fetchError) {
+              console.warn('[AuthProvider] Profile fetch had errors, using fallback');
+              markFailed('profile', 'Failed to load profile, using defaults');
+            } else {
+              markComplete('profile');
+            }
             
             // Check if there's a pending tier selection from the join page
             const pendingTier = localStorage.getItem('autorev_selected_tier');
@@ -522,9 +661,7 @@ export function AuthProvider({ children }) {
             }
           } catch (err) {
             console.error('[AuthProvider] Error loading profile:', err);
-          } finally {
-            // Mark profile as complete (even on error)
-            markComplete('profile');
+            markFailed('profile', err.message || 'Failed to load profile');
           }
         } else {
           console.log('[AuthProvider] Page refresh - skipping progress screen');
@@ -752,8 +889,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Sign out - Instant UI update, background cleanup
-  const logout = useCallback(async () => {
-    console.log('[AuthProvider] Starting logout...');
+  /**
+   * Sign out the current user
+   * 
+   * @param {Object} options - Logout options
+   * @param {'global'|'local'|'others'} options.scope - Scope of sign out:
+   *   - 'global': (default) Sign out from ALL devices
+   *   - 'local': Sign out only from this device
+   *   - 'others': Sign out from all OTHER devices (keep this session)
+   * @param {Function} options.onComplete - Optional callback when server signout completes
+   */
+  const logout = useCallback(async ({ scope = 'global', onComplete } = {}) => {
+    console.log('[AuthProvider] Starting logout with scope:', scope);
     
     // Clear refresh timer immediately
     if (refreshIntervalRef.current) {
@@ -768,6 +915,9 @@ export function AuthProvider({ children }) {
     // Reset loading progress immediately
     resetProgress();
     
+    // Clear prefetch cache
+    clearPrefetchCache();
+    
     // INSTANT: Clear state immediately so UI updates right away
     setState({
       ...defaultAuthState,
@@ -778,19 +928,27 @@ export function AuthProvider({ children }) {
     console.log('[AuthProvider] UI cleared - starting background cleanup...');
     
     // BACKGROUND: Do server signout and cookie cleanup async (don't await)
-    authSignOut({ scope: 'global' })
-      .then(({ error }) => {
-        if (error) {
-          console.warn('[AuthProvider] Background signout error (ignored):', error.message);
+    authSignOut({ 
+      scope, 
+      onComplete: (result) => {
+        if (result.serverSignOutFailed) {
+          console.warn('[AuthProvider] Server signout had issues (local cleanup succeeded)');
         } else {
-          console.log('[AuthProvider] Background signout complete');
+          console.log('[AuthProvider] Server signout complete');
         }
-      })
-      .catch(err => {
-        console.warn('[AuthProvider] Background signout exception (ignored):', err.message);
-      });
+        // Call user's callback if provided
+        if (onComplete) {
+          onComplete(result);
+        }
+      }
+    }).catch(err => {
+      console.warn('[AuthProvider] Background signout exception (ignored):', err.message);
+      if (onComplete) {
+        onComplete({ error: err, serverSignOutFailed: true });
+      }
+    });
     
-    return { error: null }; // Return success immediately
+    return { error: null }; // Return success immediately - UI is already cleared
   }, [resetProgress]);
 
   // Update profile
@@ -1003,7 +1161,8 @@ export function AuthProvider({ children }) {
     isLoading: state.isLoading,
     isAuthenticated: state.isAuthenticated,
     authError: state.authError,
-    sessionExpired: state.sessionExpired, // True when session was invalidated (multi-device)
+    sessionExpired: state.sessionExpired, // True when session token expired
+    sessionRevoked: state.sessionRevoked, // True when session was revoked (e.g., logout from another device)
     
     // Onboarding State
     showOnboarding: onboardingState.showOnboarding,
@@ -1040,9 +1199,27 @@ export function AuthProvider({ children }) {
     completeOnboarding,
   ]);
 
+  // Handler for sign-in button in error banner
+  const handleErrorBannerSignIn = useCallback(() => {
+    // Clear the error and redirect to trigger login
+    clearAuthError();
+    loginWithGoogle();
+  }, [clearAuthError, loginWithGoogle]);
+
   return (
     <AuthContext.Provider value={value}>
       {children}
+      
+      {/* Auth Error Banner - shown when session is revoked/expired */}
+      {!state.isLoading && !state.isAuthenticated && (state.sessionExpired || state.sessionRevoked || state.authError) && (
+        <AuthErrorBanner
+          sessionExpired={state.sessionExpired}
+          sessionRevoked={state.sessionRevoked}
+          authError={state.authError}
+          onSignIn={handleErrorBannerSignIn}
+          onDismiss={clearAuthError}
+        />
+      )}
       
       {/* Auth Loading Screen - shown after sign-in while data loads */}
       <AuthLoadingScreen
@@ -1050,6 +1227,7 @@ export function AuthProvider({ children }) {
         loadingStates={loadingStates}
         onComplete={endProgress}
         onDismiss={dismissProgress}
+        onRetry={retryStep}
         userName={state.profile?.display_name || state.user?.user_metadata?.name}
         userAvatar={state.profile?.avatar_url || state.user?.user_metadata?.avatar_url}
       />

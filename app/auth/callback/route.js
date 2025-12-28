@@ -9,6 +9,7 @@
  * 
  * UPDATE 2024-12-28: Added welcome email trigger for new signups
  * UPDATE 2024-12-28: Added referral processing for users who signed up via referral link
+ * UPDATE 2024-12-28: Added session verification and auth timestamp for reliability
  */
 
 import { createServerClient } from '@supabase/ssr';
@@ -17,6 +18,51 @@ import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
 import { sendWelcomeEmail } from '@/lib/email';
 import { processReferralSignup } from '@/lib/referralService';
+
+/**
+ * Maximum retry attempts for session verification
+ */
+const MAX_VERIFICATION_RETRIES = 3;
+const VERIFICATION_RETRY_DELAY = 200; // ms
+
+/**
+ * Verify session is valid after code exchange
+ * Retries with exponential backoff to handle race conditions
+ */
+async function verifySessionWithRetry(supabase) {
+  let lastError = null;
+  
+  for (let attempt = 1; attempt <= MAX_VERIFICATION_RETRIES; attempt++) {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error) {
+        lastError = error;
+        console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES} failed:`, error.message);
+      } else if (user) {
+        console.log(`[Auth Callback] Session verified on attempt ${attempt}`);
+        return { user, error: null };
+      } else {
+        console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES}: no user returned`);
+      }
+      
+      if (attempt < MAX_VERIFICATION_RETRIES) {
+        const delay = VERIFICATION_RETRY_DELAY * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    } catch (err) {
+      lastError = err;
+      console.error(`[Auth Callback] Session verification attempt ${attempt} threw:`, err);
+      
+      if (attempt < MAX_VERIFICATION_RETRIES) {
+        const delay = VERIFICATION_RETRY_DELAY * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  return { user: null, error: lastError || new Error('Session verification failed after retries') };
+}
 
 export async function GET(request) {
   const requestUrl = new URL(request.url);
@@ -35,6 +81,7 @@ export async function GET(request) {
 
   // Track cookies that need to be set on the redirect response
   const cookiesToSet = [];
+  let verifiedUser = null;
 
   // Exchange code for session
   if (code) {
@@ -79,8 +126,22 @@ export async function GET(request) {
 
       console.log('[Auth Callback] Code exchanged successfully, cookies to set:', cookiesToSet.length);
 
+      // CRITICAL: Verify session is actually valid before redirecting
+      // This prevents race conditions where cookies haven't propagated yet
+      const { user: verified, error: verifyError } = await verifySessionWithRetry(supabase);
+      
+      if (verifyError || !verified) {
+        console.error('[Auth Callback] Session verification failed after exchange:', verifyError?.message);
+        // Don't fail hard - the client will retry via initializeSessionWithRetry
+        // But log it for debugging
+      } else {
+        verifiedUser = verified;
+        console.log('[Auth Callback] Session verified for user:', verified.id?.slice(0, 8) + '...');
+      }
+
       // Fire-and-forget Discord notification for new signups (within 60s of creation)
-      const { data: { user } } = await supabase.auth.getUser();
+      // Use already-verified user to avoid redundant API call
+      const user = verifiedUser;
       if (user) {
         const createdAt = new Date(user.created_at);
         const now = new Date();
@@ -164,8 +225,12 @@ export async function GET(request) {
     }
   }
 
+  // Build redirect URL with auth timestamp to help client detect fresh auth
+  const redirectUrl = new URL(next, requestUrl.origin);
+  redirectUrl.searchParams.set('auth_ts', Date.now().toString());
+  
   // Create redirect response
-  const response = NextResponse.redirect(new URL(next, requestUrl.origin));
+  const response = NextResponse.redirect(redirectUrl);
 
   // CRITICAL: Explicitly set all auth cookies on the redirect response
   // This ensures the browser receives the session cookies
@@ -173,7 +238,28 @@ export async function GET(request) {
     response.cookies.set(name, value, options);
   });
 
-  console.log(`[Auth Callback] Redirecting to ${next} with ${cookiesToSet.length} cookies`);
+  // Set auth callback completion cookie - used by client to detect fresh OAuth login
+  // This cookie is checked and cleared by AuthProvider.checkAuthCallbackCookie()
+  response.cookies.set('auth_callback_complete', '1', {
+    path: '/',
+    maxAge: 60, // 1 minute - just long enough for client to pick up
+    httpOnly: false, // Client needs to read this
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+
+  // Also set verified user ID cookie for client-side validation
+  if (verifiedUser?.id) {
+    response.cookies.set('auth_verified_user', verifiedUser.id, {
+      path: '/',
+      maxAge: 60, // 1 minute
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+  }
+
+  console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies`);
   
   return response;
 }

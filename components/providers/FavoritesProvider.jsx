@@ -103,8 +103,8 @@ function favoritesReducer(state, action) {
  * Favorites Provider Component
  */
 export function FavoritesProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { markComplete } = useLoadingProgress();
+  const { user, isAuthenticated, isLoading: authLoading, refreshSession } = useAuth();
+  const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(favoritesReducer, defaultState);
@@ -117,6 +117,83 @@ export function FavoritesProvider({ children }) {
     dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
     setIsHydrated(true);
   }, []);
+
+  /**
+   * Fetch favorites from server
+   * Extracted so it can be used as a retry callback
+   */
+  const fetchFavorites = useCallback(async (userId) => {
+    console.log('[FavoritesProvider] Fetching favorites for user:', userId?.slice(0, 8) + '...');
+    
+    try {
+      // If we have local favorites and haven't synced yet, sync them
+      const localFavorites = loadFavorites().favorites;
+      
+      if (localFavorites.length > 0 && !syncedRef.current) {
+        // Fire-and-forget sync - don't block on this
+        syncFavoritesToSupabase(userId, localFavorites).catch(err => 
+          console.warn('[FavoritesProvider] Background sync error:', err)
+        );
+      }
+
+      // OPTIMIZATION: Check for prefetched data first
+      const prefetchedFavorites = getPrefetchedData('favorites', userId);
+      let data, error;
+      
+      if (prefetchedFavorites) {
+        console.log('[FavoritesProvider] Using prefetched data');
+        data = prefetchedFavorites;
+        error = null;
+      } else {
+        // Fetch favorites from Supabase
+        const result = await fetchUserFavorites(userId);
+        data = result.data;
+        error = result.error;
+      }
+      
+      if (error) {
+        console.error('[FavoritesProvider] Error fetching favorites:', error);
+        
+        // Handle 401 errors by triggering session refresh
+        if (error.status === 401 || error.message?.includes('JWT') || error.message?.includes('session')) {
+          console.warn('[FavoritesProvider] Auth error, attempting session refresh...');
+          try {
+            await refreshSession?.();
+          } catch (refreshErr) {
+            console.error('[FavoritesProvider] Session refresh failed:', refreshErr);
+          }
+        }
+        
+        // Mark as failed with error message
+        markFailed('favorites', error.message || 'Failed to load favorites');
+        return;
+      }
+      
+      if (data) {
+        // Transform Supabase data to our format
+        const favorites = data.map(f => ({
+          slug: f.car_slug,
+          name: f.car_name,
+          years: f.car_years,
+          hp: f.car_hp,
+          priceRange: f.car_price_range,
+          addedAt: new Date(f.created_at).getTime(),
+        }));
+        
+        console.log('[FavoritesProvider] Fetched', favorites.length, 'favorites');
+        dispatch({ type: FavoriteActionTypes.SET, payload: favorites });
+        syncedRef.current = true;
+      }
+      
+      // Mark as complete on success
+      markComplete('favorites');
+    } catch (err) {
+      console.error('[FavoritesProvider] Sync error:', err);
+      markFailed('favorites', err.message || 'Unexpected error loading favorites');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [markComplete, markFailed, refreshSession]);
 
   // When user ID becomes available, fetch data immediately
   // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
@@ -148,58 +225,12 @@ export function FavoritesProvider({ children }) {
         if (state.favorites.length === 0) {
           setIsLoading(true);
         }
-        console.log('[FavoritesProvider] Fetching favorites for user:', currentUserId?.slice(0, 8) + '...');
         
-        try {
-          // If we have local favorites and haven't synced yet, sync them
-          const localFavorites = loadFavorites().favorites;
-          
-          if (localFavorites.length > 0 && !syncedRef.current) {
-            // Fire-and-forget sync - don't block on this
-            syncFavoritesToSupabase(currentUserId, localFavorites).catch(err => 
-              console.warn('[FavoritesProvider] Background sync error:', err)
-            );
-          }
-
-          // OPTIMIZATION: Check for prefetched data first
-          const prefetchedFavorites = getPrefetchedData('favorites', currentUserId);
-          let data, error;
-          
-          if (prefetchedFavorites) {
-            console.log('[FavoritesProvider] Using prefetched data');
-            data = prefetchedFavorites;
-            error = null;
-          } else {
-            // Fetch favorites from Supabase
-            const result = await fetchUserFavorites(currentUserId);
-            data = result.data;
-            error = result.error;
-          }
-          
-          if (error) {
-            console.error('[FavoritesProvider] Error fetching favorites:', error);
-          } else if (data) {
-            // Transform Supabase data to our format
-            const favorites = data.map(f => ({
-              slug: f.car_slug,
-              name: f.car_name,
-              years: f.car_years,
-              hp: f.car_hp,
-              priceRange: f.car_price_range,
-              addedAt: new Date(f.created_at).getTime(),
-            }));
-            
-            console.log('[FavoritesProvider] Fetched', favorites.length, 'favorites');
-            dispatch({ type: FavoriteActionTypes.SET, payload: favorites });
-            syncedRef.current = true;
-          }
-        } catch (err) {
-          console.error('[FavoritesProvider] Sync error:', err);
-        } finally {
-          setIsLoading(false);
-          // Always mark as complete - LoadingProgressProvider handles if not showing
-          markComplete('favorites');
-        }
+        // Mark step as started with retry callback
+        markStarted('favorites', () => fetchFavorites(currentUserId));
+        
+        // Fetch favorites
+        await fetchFavorites(currentUserId);
       } else if (!authLoading) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
@@ -213,7 +244,7 @@ export function FavoritesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, markComplete]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, markComplete, markStarted, fetchFavorites]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

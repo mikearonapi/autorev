@@ -7,11 +7,18 @@
  * while user data is being loaded. Shows progress for each
  * data type being fetched.
  * 
+ * Features:
+ * - Shows loading status per step (pending, loading, completed, failed, timeout)
+ * - Retry button for failed/timed out steps
+ * - Animated progress indicators
+ * - Auto-dismiss after completion or max timeout
+ * 
  * @module components/auth/AuthLoadingScreen
  */
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './AuthLoadingScreen.module.css';
 
 // Loading step configuration
@@ -26,7 +33,16 @@ const LOADING_STEPS = [
 const MIN_DISPLAY_TIME = 800;
 
 // Maximum display time before auto-dismiss (ms)
-const MAX_DISPLAY_TIME = 8000;
+const MAX_DISPLAY_TIME = 12000; // Increased to allow for retries
+
+// Status types (matching LoadingProgressProvider)
+const StepStatus = {
+  PENDING: 'pending',
+  LOADING: 'loading',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  TIMEOUT: 'timeout',
+};
 
 // Friendly Robot/Wrench Icon for loading
 function LoadingIcon({ size = 64 }) {
@@ -98,17 +114,84 @@ function SpinnerIcon() {
 }
 
 /**
+ * Error icon component
+ */
+function ErrorIcon() {
+  return (
+    <svg 
+      className={styles.errorIcon} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2"
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+      <line x1="9" y1="9" x2="15" y2="15" />
+    </svg>
+  );
+}
+
+/**
+ * Retry icon component
+ */
+function RetryIcon() {
+  return (
+    <svg 
+      className={styles.retryIcon} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2"
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M3 21v-5h5" />
+    </svg>
+  );
+}
+
+/**
+ * Helper to get status from step state
+ * Handles both new object format and legacy boolean format
+ */
+function getStepStatus(stepState) {
+  if (stepState === true) return StepStatus.COMPLETED;
+  if (stepState === false || stepState === undefined) return StepStatus.PENDING;
+  return stepState?.status || StepStatus.PENDING;
+}
+
+/**
+ * Helper to check if step is done (completed, failed, or timeout)
+ */
+function isStepDone(stepState) {
+  const status = getStepStatus(stepState);
+  return status === StepStatus.COMPLETED || 
+         status === StepStatus.FAILED || 
+         status === StepStatus.TIMEOUT;
+}
+
+/**
+ * Helper to check if step completed successfully
+ */
+function isStepCompleted(stepState) {
+  return getStepStatus(stepState) === StepStatus.COMPLETED;
+}
+
+/**
  * AuthLoadingScreen Component
  * 
  * @param {Object} props
  * @param {boolean} props.isVisible - Whether to show the loading screen
- * @param {Object} props.loadingStates - Object with completion states for each data type
- * @param {boolean} props.loadingStates.profile - Profile completed (true = done loading)
- * @param {boolean} props.loadingStates.favorites - Favorites completed
- * @param {boolean} props.loadingStates.vehicles - Vehicles completed
- * @param {boolean} props.loadingStates.builds - Builds completed
+ * @param {Object} props.loadingStates - Object with status states for each data type
  * @param {function} props.onComplete - Callback when all loading is complete
  * @param {function} props.onDismiss - Callback when user dismisses the screen
+ * @param {function} props.onRetry - Optional callback to retry a specific step
  * @param {string} props.userName - Optional user name to display
  * @param {string} props.userAvatar - Optional user avatar URL
  */
@@ -117,6 +200,7 @@ export default function AuthLoadingScreen({
   loadingStates = {}, 
   onComplete,
   onDismiss,
+  onRetry,
   userName,
   userAvatar,
 }) {
@@ -125,27 +209,45 @@ export default function AuthLoadingScreen({
   const [hasMetMinTime, setHasMetMinTime] = useState(false);
   const [showTime, setShowTime] = useState(null);
 
-  // Calculate progress
-  // loadingStates uses "completed" model: true = done, false/undefined = still loading
-  const { completedSteps, totalSteps, allComplete } = useMemo(() => {
+  // Calculate progress with new status model
+  const { completedSteps, totalSteps, failedSteps, allDone, allCompleted, currentStep } = useMemo(() => {
     const total = LOADING_STEPS.length;
     let completed = 0;
+    let failed = 0;
+    let current = null;
     
     LOADING_STEPS.forEach(step => {
-      // A step is complete when its state is true (completed)
-      if (loadingStates[step.key] === true) {
+      const status = getStepStatus(loadingStates[step.key]);
+      if (status === StepStatus.COMPLETED) {
         completed++;
+      } else if (status === StepStatus.FAILED || status === StepStatus.TIMEOUT) {
+        failed++;
+      } else if (status === StepStatus.LOADING && !current) {
+        current = step.key;
       }
     });
+    
+    // All done = every step is either completed, failed, or timed out
+    const done = LOADING_STEPS.every(step => isStepDone(loadingStates[step.key]));
+    // All completed = every step is successfully completed
+    const allSuccess = LOADING_STEPS.every(step => isStepCompleted(loadingStates[step.key]));
     
     return {
       completedSteps: completed,
       totalSteps: total,
-      allComplete: completed >= total,
+      failedSteps: failed,
+      allDone: done,
+      allCompleted: allSuccess,
+      currentStep: current,
     };
   }, [loadingStates]);
 
   const progressPercent = Math.round((completedSteps / totalSteps) * 100);
+
+  // Handle retry for a specific step
+  const handleRetry = useCallback((stepKey) => {
+    onRetry?.(stepKey);
+  }, [onRetry]);
 
   // Track when screen becomes visible
   useEffect(() => {
@@ -174,9 +276,11 @@ export default function AuthLoadingScreen({
     }
   }, [showTime]);
 
-  // Handle completion
+  // Handle completion (all steps done - either completed or failed)
   useEffect(() => {
-    if (allComplete && hasMetMinTime && shouldShow && !isExiting) {
+    // Only auto-dismiss if all steps completed successfully
+    // If there are failures, let user retry or dismiss manually
+    if (allCompleted && hasMetMinTime && shouldShow && !isExiting) {
       // Start exit animation
       setIsExiting(true);
       
@@ -190,7 +294,7 @@ export default function AuthLoadingScreen({
       
       return () => clearTimeout(timer);
     }
-  }, [allComplete, hasMetMinTime, shouldShow, isExiting, onComplete]);
+  }, [allCompleted, hasMetMinTime, shouldShow, isExiting, onComplete]);
 
   // Auto-dismiss after max time to prevent hanging forever
   useEffect(() => {
@@ -269,32 +373,61 @@ export default function AuthLoadingScreen({
         {/* Loading steps */}
         <div className={styles.steps}>
           {LOADING_STEPS.map((step, index) => {
-            // true = completed, false/undefined = still loading
-            const isComplete = loadingStates[step.key] === true;
-            const isLoading = !isComplete;
+            const status = getStepStatus(loadingStates[step.key]);
+            const error = loadingStates[step.key]?.error;
+            const isFailed = status === StepStatus.FAILED || status === StepStatus.TIMEOUT;
+            const isComplete = status === StepStatus.COMPLETED;
+            const isLoading = status === StepStatus.LOADING;
+            const isPending = status === StepStatus.PENDING;
             
             return (
-              <div 
+              <motion.div 
                 key={step.key}
-                className={`${styles.step} ${isComplete ? styles.stepComplete : ''} ${isLoading ? styles.stepLoading : ''}`}
-                style={{ animationDelay: `${index * 100}ms` }}
+                className={`${styles.step} ${isComplete ? styles.stepComplete : ''} ${isLoading ? styles.stepLoading : ''} ${isFailed ? styles.stepFailed : ''} ${isPending ? styles.stepPending : ''}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.3 }}
               >
                 <div className={styles.stepIcon}>
-                  {isComplete ? (
-                    <CheckIcon />
-                  ) : (
-                    <SpinnerIcon />
+                  {isComplete && <CheckIcon />}
+                  {isLoading && <SpinnerIcon />}
+                  {isFailed && <ErrorIcon />}
+                  {isPending && <div className={styles.pendingDot} />}
+                </div>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepLabel}>{step.label}</span>
+                  {isFailed && error && (
+                    <span className={styles.stepError}>{error}</span>
                   )}
                 </div>
-                <span className={styles.stepLabel}>{step.label}</span>
-              </div>
+                {isFailed && onRetry && (
+                  <button
+                    className={styles.retryButton}
+                    onClick={() => handleRetry(step.key)}
+                    aria-label={`Retry ${step.label}`}
+                  >
+                    <RetryIcon />
+                    <span>Retry</span>
+                  </button>
+                )}
+              </motion.div>
             );
           })}
         </div>
 
-        {/* Progress percentage */}
+        {/* Status message */}
         <div className={styles.progressText}>
-          {progressPercent}% complete
+          {failedSteps > 0 ? (
+            <span className={styles.failedText}>
+              {failedSteps} {failedSteps === 1 ? 'step' : 'steps'} failed · {progressPercent}% complete
+            </span>
+          ) : currentStep ? (
+            <span>Loading... {progressPercent}% complete</span>
+          ) : allCompleted ? (
+            <span className={styles.successText}>All done!</span>
+          ) : (
+            <span>{progressPercent}% complete</span>
+          )}
         </div>
       </div>
     </div>

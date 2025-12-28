@@ -92,8 +92,8 @@ const SavedBuildsContext = createContext(null);
  * Saved Builds Provider Component
  */
 export function SavedBuildsProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading, profile } = useAuth();
-  const { markComplete } = useLoadingProgress();
+  const { user, isAuthenticated, isLoading: authLoading, profile, refreshSession } = useAuth();
+  const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const userTier = profile?.subscription_tier || 'free';
   const [builds, setBuilds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,10 +156,28 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     
     if (error) {
       console.error('[SavedBuildsProvider] Error fetching builds:', error);
+      
+      // Handle 401 errors by triggering session refresh
+      if (error.status === 401 || error.message?.includes('JWT') || error.message?.includes('session')) {
+        console.warn('[SavedBuildsProvider] Auth error, attempting session refresh...');
+        try {
+          await refreshSession?.();
+        } catch (refreshErr) {
+          console.error('[SavedBuildsProvider] Session refresh failed:', refreshErr);
+        }
+      }
+      
       // Fall back to localStorage
       const localBuilds = loadLocalBuilds();
-      if (!cancelledRef.current) setBuilds(localBuilds);
-    } else if (data) {
+      if (!cancelledRef.current) {
+        setBuilds(localBuilds);
+        // Mark as failed but still provide fallback data
+        markFailed('builds', error.message || 'Failed to load builds');
+      }
+      return;
+    }
+    
+    if (data) {
       const transformedBuilds = data.map(build => ({
         id: build.id,
         carSlug: build.car_slug,
@@ -205,21 +223,24 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
       if (!cancelledRef.current) {
         setBuilds(transformedBuilds);
         syncedRef.current = true;
+        // Mark as complete on success
+        markComplete('builds');
       }
     }
   } catch (err) {
     console.error('[SavedBuildsProvider] Unexpected error:', err);
     // Fall back to localStorage
     const localBuilds = loadLocalBuilds();
-    if (!cancelledRef.current) setBuilds(localBuilds);
+    if (!cancelledRef.current) {
+      setBuilds(localBuilds);
+      markFailed('builds', err.message || 'Unexpected error loading builds');
+    }
   } finally {
     if (!cancelledRef.current) {
       setIsLoading(false);
-      // Always mark as complete
-      markComplete('builds');
     }
   }
-}, [isAuthenticated, user?.id, markComplete]);
+}, [isAuthenticated, user?.id, markComplete, markFailed, refreshSession]);
 
   // Fetch builds when user ID becomes available
   // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
@@ -248,6 +269,8 @@ useEffect(() => {
   // OPTIMIZATION: Start fetch immediately when user.id is available
   // Pass current builds count for stale-while-revalidate pattern
   if (isNowAuthenticated) {
+    // Mark step as started with retry callback
+    markStarted('builds', () => fetchBuilds(cancelledRef, true, builds.length));
     fetchBuilds(cancelledRef, isAuthRecovery, builds.length);
   } else if (!authLoading) {
     // Only load local on explicit logout
@@ -257,7 +280,7 @@ useEffect(() => {
   return () => {
     cancelledRef.current = true;
   };
-}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id, builds.length]);
+}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id, builds.length, markStarted]);
 
   // Save to localStorage when builds change (for guests)
   useEffect(() => {

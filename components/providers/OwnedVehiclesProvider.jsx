@@ -180,8 +180,8 @@ function vehiclesReducer(state, action) {
  * Owned Vehicles Provider Component
  */
 export function OwnedVehiclesProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { markComplete } = useLoadingProgress();
+  const { user, isAuthenticated, isLoading: authLoading, refreshSession } = useAuth();
+  const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(vehiclesReducer, defaultState);
@@ -194,6 +194,63 @@ export function OwnedVehiclesProvider({ children }) {
     dispatch({ type: ActionTypes.SET, payload: localVehicles });
     setIsHydrated(true);
   }, []);
+
+  /**
+   * Fetch vehicles from server
+   * Extracted so it can be used as a retry callback
+   */
+  const fetchVehicles = useCallback(async (userId) => {
+    console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', userId?.slice(0, 8) + '...');
+    
+    try {
+      // OPTIMIZATION: Check for prefetched data first
+      const prefetchedVehicles = getPrefetchedData('vehicles', userId);
+      let data, error;
+      
+      if (prefetchedVehicles) {
+        console.log('[OwnedVehiclesProvider] Using prefetched data');
+        data = prefetchedVehicles;
+        error = null;
+      } else {
+        const result = await fetchUserVehicles(userId);
+        data = result.data;
+        error = result.error;
+      }
+      
+      if (error) {
+        console.error('[OwnedVehiclesProvider] Error fetching vehicles:', error);
+        
+        // Handle 401 errors by triggering session refresh
+        if (error.status === 401 || error.message?.includes('JWT') || error.message?.includes('session')) {
+          console.warn('[OwnedVehiclesProvider] Auth error, attempting session refresh...');
+          try {
+            await refreshSession?.();
+          } catch (refreshErr) {
+            console.error('[OwnedVehiclesProvider] Session refresh failed:', refreshErr);
+          }
+        }
+        
+        // Mark as failed with error message
+        markFailed('vehicles', error.message || 'Failed to load vehicles');
+        return;
+      }
+      
+      if (data) {
+        const vehicles = data.map(transformVehicle);
+        console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles');
+        dispatch({ type: ActionTypes.SET, payload: vehicles });
+        syncedRef.current = true;
+      }
+      
+      // Mark as complete on success
+      markComplete('vehicles');
+    } catch (err) {
+      console.error('[OwnedVehiclesProvider] Error:', err);
+      markFailed('vehicles', err.message || 'Unexpected error loading vehicles');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [markComplete, markFailed, refreshSession]);
 
   // When user ID becomes available, fetch data immediately
   // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
@@ -226,38 +283,12 @@ export function OwnedVehiclesProvider({ children }) {
         if (state.vehicles.length === 0) {
           setIsLoading(true);
         }
-        console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', currentUserId?.slice(0, 8) + '...');
         
-        try {
-          // OPTIMIZATION: Check for prefetched data first
-          const prefetchedVehicles = getPrefetchedData('vehicles', currentUserId);
-          let data, error;
-          
-          if (prefetchedVehicles) {
-            console.log('[OwnedVehiclesProvider] Using prefetched data');
-            data = prefetchedVehicles;
-            error = null;
-          } else {
-            const result = await fetchUserVehicles(currentUserId);
-            data = result.data;
-            error = result.error;
-          }
-          
-          if (error) {
-            console.error('[OwnedVehiclesProvider] Error fetching vehicles:', error);
-          } else if (data) {
-            const vehicles = data.map(transformVehicle);
-            console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles');
-            dispatch({ type: ActionTypes.SET, payload: vehicles });
-            syncedRef.current = true;
-          }
-        } catch (err) {
-          console.error('[OwnedVehiclesProvider] Error:', err);
-        } finally {
-          setIsLoading(false);
-          // Always mark as complete
-          markComplete('vehicles');
-        }
+        // Mark step as started with retry callback
+        markStarted('vehicles', () => fetchVehicles(currentUserId));
+        
+        // Fetch vehicles
+        await fetchVehicles(currentUserId);
       } else if (!authLoading) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
@@ -271,7 +302,7 @@ export function OwnedVehiclesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length, markComplete]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length, markComplete, markStarted, fetchVehicles]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

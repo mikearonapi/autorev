@@ -186,6 +186,15 @@
   background: rgba(239, 68, 68, 0.05);
 }
 
+.step.stepFailed {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.step.stepPending {
+  opacity: 0.6;
+}
+
 /* Step icon container */
 .stepIcon {
   width: 24px;
@@ -194,6 +203,24 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+/* Step content (label + error) */
+.stepContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+/* Pending dot */
+.pendingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary, #666666);
 }
 
 .stepEmoji {
@@ -259,11 +286,80 @@
   color: var(--text-primary, #ffffff);
 }
 
+.stepFailed .stepLabel {
+  color: var(--accent-primary, #ef4444);
+}
+
+/* Step error message */
+.stepError {
+  font-size: 0.75rem;
+  color: rgba(239, 68, 68, 0.8);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Error icon */
+.errorIcon {
+  width: 18px;
+  height: 18px;
+  color: #ef4444;
+  animation: errorShake 0.5s ease-out;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+/* Retry button */
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  color: var(--accent-primary, #ef4444);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.retryButton:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.retryButton:active {
+  transform: scale(0.95);
+}
+
+.retryIcon {
+  width: 14px;
+  height: 14px;
+}
+
 /* Progress text */
 .progressText {
   font-size: 0.75rem;
   color: var(--text-tertiary, #666666);
   font-variant-numeric: tabular-nums;
+}
+
+.failedText {
+  color: var(--accent-primary, #ef4444);
+}
+
+.successText {
+  color: #22c55e;
 }
 
 /* Responsive adjustments */
