@@ -26,6 +26,7 @@ import {
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
+import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 
 /**
@@ -103,11 +104,17 @@ function favoritesReducer(state, action) {
  */
 export function FavoritesProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { setLoadingState } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(favoritesReducer, defaultState);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
+
+  // Report loading state changes to central tracker
+  useEffect(() => {
+    setLoadingState('favorites', isLoading);
+  }, [isLoading, setLoadingState]);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {

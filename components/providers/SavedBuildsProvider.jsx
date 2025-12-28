@@ -19,6 +19,7 @@ import {
   deleteUserProject,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
+import { useLoadingProgress } from './LoadingProgressProvider';
 import { hasAccess, IS_BETA } from '@/lib/tierAccess';
 
 // LocalStorage key for guest builds
@@ -92,12 +93,18 @@ const SavedBuildsContext = createContext(null);
  */
 export function SavedBuildsProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading, profile } = useAuth();
+  const { setLoadingState } = useLoadingProgress();
   const userTier = profile?.subscription_tier || 'free';
   const [builds, setBuilds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
+
+  // Report loading state changes to central tracker
+  useEffect(() => {
+    setLoadingState('builds', isLoading);
+  }, [isLoading, setLoadingState]);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {

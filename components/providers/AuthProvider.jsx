@@ -12,7 +12,13 @@ import {
   updateUserProfile,
 } from '@/lib/auth';
 import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
+import { useLoadingProgress } from './LoadingProgressProvider';
 import dynamic from 'next/dynamic';
+
+// Dynamically import AuthLoadingScreen to avoid SSR issues
+const AuthLoadingScreen = dynamic(() => import('@/components/auth/AuthLoadingScreen'), {
+  ssr: false,
+});
 
 // Dynamically import OnboardingFlow to avoid SSR issues
 const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {
@@ -195,10 +201,17 @@ function checkAuthCallbackCookie() {
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
+  const { loadingStates, isShowingProgress, setLoadingState, startProgress, endProgress, resetProgress } = useLoadingProgress();
+  const [profileLoading, setProfileLoading] = useState(false);
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
   const isAuthenticatedRef = useRef(false);
+  
+  // Report profile loading state to central tracker
+  useEffect(() => {
+    setLoadingState('profile', profileLoading);
+  }, [profileLoading, setLoadingState]);
   
   // Keep the ref in sync with state
   useEffect(() => {
@@ -448,6 +461,10 @@ export function AuthProvider({ children }) {
         // IMMEDIATELY set authenticated state so UI updates right away
         // Profile will be loaded in background
         console.log('[AuthProvider] Handling SIGNED_IN event');
+        
+        // Start the loading progress screen to show users we're loading their data
+        startProgress();
+        
         setState(prev => ({
           ...prev,
           user: session.user,
@@ -461,6 +478,7 @@ export function AuthProvider({ children }) {
         
         // Now fetch profile in background (don't block UI)
         // Also start prefetching user data in parallel for faster page loads
+        setProfileLoading(true);
         try {
           // Start prefetching user data immediately (fire and forget)
           // This runs in parallel with profile loading
@@ -482,6 +500,7 @@ export function AuthProvider({ children }) {
                 ...prev,
                 profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
               }));
+              setProfileLoading(false);
               return;
             } catch (err) {
               console.error('[AuthProvider] Failed to apply selected tier:', err);
@@ -497,6 +516,8 @@ export function AuthProvider({ children }) {
         } catch (err) {
           console.error('[AuthProvider] Error loading profile:', err);
           // User is still authenticated even if profile fails to load
+        } finally {
+          setProfileLoading(false);
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
@@ -509,6 +530,8 @@ export function AuthProvider({ children }) {
         isAuthenticatedRef.current = false;
         // Clear prefetch cache to ensure fresh data on next login
         clearPrefetchCache();
+        // Reset loading progress screen state
+        resetProgress();
         setState({
           ...defaultAuthState,
           isLoading: false,
@@ -1000,6 +1023,14 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+      
+      {/* Auth Loading Screen - shown after sign-in while data loads */}
+      <AuthLoadingScreen
+        isVisible={isShowingProgress}
+        loadingStates={loadingStates}
+        onComplete={endProgress}
+        userName={state.profile?.display_name || state.user?.user_metadata?.name}
+      />
       
       {/* Onboarding Modal - shown for new users who haven't completed it */}
       {onboardingState.showOnboarding && state.isAuthenticated && (

@@ -13,6 +13,7 @@ import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { CompareProvider } from '@/components/providers/CompareProvider';
 import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
 import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
+import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
 import SelectedCarBanner from '@/components/SelectedCarBanner';
 import SelectedCarFloatingWidget from '@/components/SelectedCarFloatingWidget';
 import CompareBar from '@/components/CompareBar';
@@ -212,6 +213,7 @@ export default function RootLayout({ children }) {
             <ConsoleErrorInterceptor>
             <ErrorBoundary name="RootLayout" featureContext="app">
               <QueryProvider>
+              <LoadingProgressProvider>
               <AuthProvider>
             <AppConfigProvider>
             <FeedbackProvider>
@@ -251,6 +253,7 @@ export default function RootLayout({ children }) {
             </FeedbackProvider>
             </AppConfigProvider>
             </AuthProvider>
+            </LoadingProgressProvider>
             </QueryProvider>
             </ErrorBoundary>
             </ConsoleErrorInterceptor>

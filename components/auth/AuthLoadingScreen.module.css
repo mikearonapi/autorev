@@ -1,0 +1,251 @@
+/**
+ * Auth Loading Screen Styles
+ * 
+ * Full-screen overlay with progress indicators
+ * for post-authentication data loading.
+ */
+
+/* Overlay - covers entire screen */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--background-primary, #0a0a0a) 0%,
+    var(--background-secondary, #1a1a1a) 50%,
+    var(--background-primary, #0a0a0a) 100%
+  );
+  animation: fadeIn 0.3s ease-out;
+}
+
+.overlay.exiting {
+  animation: fadeOut 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Container for content */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Logo */
+.logoWrapper {
+  margin-bottom: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.4));
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Title */
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #a0a0a0);
+  margin: 0 0 2rem;
+}
+
+/* Progress bar */
+.progressBarContainer {
+  width: 100%;
+  height: 4px;
+  background: var(--border-subtle, #2a2a2a);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary, #ef4444) 0%,
+    var(--accent-secondary, #f97316) 100%
+  );
+  border-radius: 2px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* Loading steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-secondary, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: stepIn 0.3s ease-out forwards;
+}
+
+@keyframes stepIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step.stepComplete {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.step.stepLoading {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Step icon container */
+.stepIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepEmoji {
+  font-size: 1rem;
+  opacity: 0.5;
+}
+
+.checkIcon {
+  width: 18px;
+  height: 18px;
+  color: #22c55e;
+  animation: checkIn 0.3s ease-out;
+}
+
+@keyframes checkIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+}
+
+.spinner svg {
+  width: 100%;
+  height: 100%;
+  color: var(--accent-primary, #ef4444);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Step label */
+.stepLabel {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #a0a0a0);
+  transition: color 0.2s ease;
+}
+
+.stepComplete .stepLabel {
+  color: var(--text-primary, #ffffff);
+}
+
+.stepLoading .stepLabel {
+  color: var(--text-primary, #ffffff);
+}
+
+/* Progress text */
+.progressText {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666666);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .step {
+    padding: 0.625rem 0.875rem;
+  }
+}
+
