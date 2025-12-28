@@ -65,6 +65,20 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError) {
+        // Check if this is a "session not found" error - meaning the session is stale
+        // This happens when logged in on multiple devices and one session gets invalidated
+        const isSessionNotFound = userError.message?.includes('session') || 
+                                   userError.message?.includes('Session not found') ||
+                                   userError.status === 403;
+        
+        if (isSessionNotFound) {
+          console.warn(`[AuthProvider] Session not found/invalid, clearing stale session`);
+          // Clear the stale session from local storage/cookies
+          await supabase.auth.signOut({ scope: 'local' });
+          // Return as not authenticated (user can re-login)
+          return { session: null, user: null, error: null };
+        }
+        
         // If it's a refresh error, try to get a new session
         if (userError.message?.includes('refresh') || userError.message?.includes('token')) {
           console.log(`[AuthProvider] Token refresh needed on attempt ${attempt}`);
