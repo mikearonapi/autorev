@@ -118,7 +118,25 @@ export async function GET(request) {
   };
 
   try {
-    // 0. Preload event types once to avoid N+1 queries during ingestion
+    // 0a. Cleanup stale running jobs (older than 30 minutes)
+    const staleThreshold = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const { data: staleJobs, error: staleErr } = await supabaseServiceRole
+      .from('scrape_jobs')
+      .update({
+        status: 'failed',
+        error_message: 'Job marked stale by cleanup - exceeded 30 minute runtime',
+        completed_at: new Date().toISOString(),
+      })
+      .eq('job_type', 'events_refresh')
+      .eq('status', 'running')
+      .lt('started_at', staleThreshold)
+      .select('id');
+    
+    if (staleJobs?.length > 0) {
+      console.log(`[refresh-events] Cleaned up ${staleJobs.length} stale running jobs`);
+    }
+    
+    // 0b. Preload event types once to avoid N+1 queries during ingestion
     const { data: eventTypes, error: eventTypesErr } = await supabaseServiceRole
       .from('event_types')
       .select('id, slug');

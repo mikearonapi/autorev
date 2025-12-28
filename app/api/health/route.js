@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
@@ -9,7 +9,7 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
  * Returns basic health status and optional database connectivity.
  * 
  * Query params:
- *   - deep: If "true", includes database connectivity check
+ *   - deep: If "true", includes actual database connectivity check
  * 
  * Response:
  *   {
@@ -28,12 +28,31 @@ async function handleGet(request) {
     timestamp: new Date().toISOString(),
   };
 
-  // Deep health check includes database connectivity
+  // Deep health check includes actual database connectivity test
   if (deep) {
-    response.database = isSupabaseConfigured ? 'connected' : 'disconnected';
-    
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
+      response.database = 'disconnected';
       response.status = 'degraded';
+    } else {
+      // Actually test database connectivity with a simple query
+      try {
+        const start = Date.now();
+        const { error } = await supabase.from('cars').select('id').limit(1);
+        const latency = Date.now() - start;
+        
+        if (error) {
+          response.database = 'disconnected';
+          response.status = 'degraded';
+          response.error = error.message;
+        } else {
+          response.database = 'connected';
+          response.latency_ms = latency;
+        }
+      } catch (err) {
+        response.database = 'disconnected';
+        response.status = 'degraded';
+        response.error = err.message;
+      }
     }
   }
 

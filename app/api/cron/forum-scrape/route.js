@@ -76,28 +76,57 @@ export async function GET(request) {
             ...scrapeResult.results
           };
         } else {
-          // Scrape all active forums
+          // Scrape all active forums, prioritizing those not scraped recently
           const forumSources = await scraperService.getStats();
           const activeForums = forumSources.forums.filter(f => f.is_active);
+          
+          // Sort forums: never scraped first (NULL last_scraped_at), then by oldest scraped
+          activeForums.sort((a, b) => {
+            // Never scraped forums come first
+            if (!a.last_scraped_at && !b.last_scraped_at) return b.priority - a.priority;
+            if (!a.last_scraped_at) return -1;
+            if (!b.last_scraped_at) return 1;
+            // Then by oldest scraped
+            return new Date(a.last_scraped_at) - new Date(b.last_scraped_at);
+          });
+          
+          console.log(`[ForumCron] Processing ${activeForums.length} active forums in order:`, 
+            activeForums.map(f => `${f.slug}${f.last_scraped_at ? '' : ' (never scraped)'}`).join(', '));
           
           const scrapeResults = {
             forums: [],
             threadsFound: 0,
             threadsScraped: 0,
-            postsScraped: 0
+            postsScraped: 0,
+            skipped: []
           };
 
-          for (const forum of activeForums) {
+          // Limit to 4 forums per run to avoid timeout (5 min max)
+          const maxForumsPerRun = 4;
+          const forumsToProcess = activeForums.slice(0, maxForumsPerRun);
+          
+          if (activeForums.length > maxForumsPerRun) {
+            scrapeResults.skipped = activeForums.slice(maxForumsPerRun).map(f => f.slug);
+            console.log(`[ForumCron] Will process ${maxForumsPerRun} forums this run, ${scrapeResults.skipped.length} will be processed next run`);
+          }
+
+          for (const forum of forumsToProcess) {
+            const forumStartTime = Date.now();
             try {
+              console.log(`[ForumCron] Scraping ${forum.slug}...`);
               const scrapeResult = await scraperService.scrape(forum.slug, { 
-                maxThreads: Math.ceil(maxThreads / activeForums.length) 
+                maxThreads: Math.ceil(maxThreads / forumsToProcess.length) 
               });
               scrapeResults.forums.push(forum.slug);
               scrapeResults.threadsFound += scrapeResult.results.threadsFound || 0;
               scrapeResults.threadsScraped += scrapeResult.results.threadsScraped || 0;
               scrapeResults.postsScraped += scrapeResult.results.postsScraped || 0;
+              
+              const duration = ((Date.now() - forumStartTime) / 1000).toFixed(1);
+              console.log(`[ForumCron] ✓ ${forum.slug}: ${scrapeResult.results.threadsScraped || 0} threads in ${duration}s`);
             } catch (forumError) {
-              console.error(`[ForumCron] Error scraping ${forum.slug}:`, forumError.message);
+              const duration = ((Date.now() - forumStartTime) / 1000).toFixed(1);
+              console.error(`[ForumCron] ✗ Error scraping ${forum.slug} after ${duration}s:`, forumError.message);
               results.errors.push({
                 phase: 'scrape',
                 forum: forum.slug,

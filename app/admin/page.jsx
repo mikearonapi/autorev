@@ -49,6 +49,7 @@ import { VercelStatus } from './components/VercelStatus';
 import { WebVitalsPanel } from './components/WebVitalsPanel';
 import EmailDashboard from './components/EmailDashboard';
 import { StripeDashboard } from './components/StripeDashboard';
+import { CostIntegrations } from './components/CostIntegrations';
 
 // Icons
 import {
@@ -632,6 +633,15 @@ export default function AdminDashboardPage() {
                   />
                 </div>
               </div>
+            </section>
+            
+            {/* Cost Tracking Integrations - External Service Costs */}
+            <section className={styles.section}>
+              <CostIntegrations 
+                token={session?.access_token}
+                range={timeRange}
+                loading={loading}
+              />
             </section>
           </>
         )}

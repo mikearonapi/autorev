@@ -1,8 +1,8 @@
 # AutoRev Scripts Reference
 
-> Complete reference for 100+ operational scripts
+> Complete reference for 170+ operational scripts
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** December 28, 2024
 
 ---
 
@@ -10,16 +10,22 @@
 
 The `scripts/` directory contains operational scripts for data enrichment, migrations, testing, and maintenance. These are **not** part of the production app but are essential for data operations.
 
+**Total Scripts:** 170+ files (.js + .mjs)
+
 | Category | Count | Purpose |
 |----------|-------|---------|
-| Data Enrichment | 25+ | Populate and update database records |
-| YouTube Pipeline | 8 | Video discovery and AI processing |
-| Image Generation | 12+ | AI-generated car images |
-| Data Seeding | 15+ | Initial data population |
-| Migrations | 6 | Database schema migrations |
-| Audits/QA | 12+ | Data quality and validation |
-| Forum Scraping | 5 | Community insight extraction |
-| Testing | 8+ | Regression and smoke tests |
+| Data Enrichment | 30+ | Populate and update database records |
+| YouTube Pipeline | 10+ | Video discovery and AI processing |
+| Image Generation | 15+ | AI-generated car images |
+| Data Seeding | 20+ | Initial data population |
+| Event Management | 15+ | Event ingestion and validation |
+| Migrations | 8+ | Database schema migrations |
+| Audits/QA | 20+ | Data quality and validation |
+| Forum Scraping | 8+ | Community insight extraction |
+| Testing | 12+ | Regression and smoke tests |
+| Car Pipeline | 10+ | AI-automated car addition |
+| Admin Tools | 15+ | Internal operations |
+| Utilities | 10+ | Helper scripts |
 
 ---
 

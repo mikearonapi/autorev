@@ -1,8 +1,8 @@
 # AutoRev Components
 
-> Reference for all 64 React components
+> Reference for all 70+ React components
 >
-> **Last Verified:** December 24, 2024 — MCP-verified file listing (updated counts)
+> **Last Verified:** December 28, 2024 — Updated with admin components
 
 ---
 
@@ -13,11 +13,13 @@
 | Providers | 6 |
 | Feature Components | 15 |
 | Events Components | 7 |
+| Admin Components | 25 |
 | UI Components | 12 |
 | Gate Components | 3 |
 | Modals | 5 |
 | Action Components | 4 |
 | Utility | 1 |
+| **Total** | **70+** |
 
 ---
 
@@ -406,6 +408,60 @@ User action handlers.
 ### `FeedbackCorner`
 **File:** `components/FeedbackCorner.jsx`
 **Purpose:** Corner feedback trigger
+
+---
+
+## Admin Components (25)
+
+Located in `app/admin/components/` - used exclusively for admin dashboard.
+
+### Financial & Business Metrics
+
+- **`StripeDashboard`** - Stripe payment metrics & recent transactions
+- **`PLStatement`** - Profit & Loss statement with revenue/expense breakdown  
+- **`CostBreakdown`** - Detailed cost analysis by category
+- **`CostInputForm`** - Manual cost entry and tracking
+- **`BreakEvenProgress`** - Break-even analysis and projections
+- **`UnitEconomics`** - Per-user economics and LTV calculations
+
+### User Analytics
+
+- **`ALUserUsage`** - AL assistant usage statistics per user
+- **`UsageEstimate`** - Usage forecasting and cost projections
+- **`RetentionMetrics`** - User retention and churn analysis
+- **`FunnelChart`** - Conversion funnel visualization
+- **`GrowthChart`** - User growth over time
+- **`MonthlyTrend`** - Month-over-month metrics
+
+### Content & Data
+
+- **`ContentInventory`** - Data coverage and content gaps
+- **`ContentStats`** - Content metrics (cars, parts, events, etc.)
+
+### System Health
+
+- **`SystemHealth`** - Overall system status dashboard
+- **`SystemHealthPanel`** - Detailed health metrics
+- **`VercelStatus`** - Vercel deployment and function status  
+- **`WebVitalsPanel`** - Web performance vitals
+
+### Email & Communication
+
+- **`EmailDashboard`** - Email delivery and engagement metrics
+
+### Operations
+
+- **`AlertsList`** - System alerts and notifications
+- **`QuickActions`** - Common admin actions
+- **`ExportButtons`** - Data export utilities
+- **`ExecutiveInsights`** - High-level executive summary
+
+### UI Utilities
+
+- **`TabNav`** - Admin dashboard tab navigation
+- **`TimeRangeToggle`** - Date range selector
+- **`KPICard`** - Key performance indicator card component
+- **`Icons`** - Admin-specific icon components
 
 ---
 

@@ -2,7 +2,7 @@
 
 > How the system works
 >
-> **Last Verified:** December 24, 2024 — MCP-verified audit + counts updated
+> **Last Verified:** December 28, 2024 — Updated with Stripe integration + accurate counts
 
 ---
 
@@ -24,7 +24,7 @@
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │            COMPONENTS (64 files)                         │    │
+│  │            COMPONENTS (70+ files)                        │    │
 │  │  • Providers (Auth, Favorites, Compare, etc.)           │    │
 │  │  • UI Components (Header, Footer, CarImage, etc.)       │    │
 │  │  • Feature Components (PerformanceHub, ExpertReviews)   │    │
@@ -34,20 +34,24 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     API LAYER (85 routes)                        │
+│                     API LAYER (99 routes)                        │
 │                                                                  │
 │  /api/cars/*          Car data (specs, safety, pricing)         │
 │  /api/parts/*         Parts catalog and search                  │
 │  /api/ai-mechanic     AL assistant                              │
 │  /api/users/*         User data and AL credits                  │
 │  /api/vin/*           VIN decode                                │
-│  /api/internal/*      Admin operations                          │
-│  /api/cron/*          Scheduled jobs                            │
+│  /api/checkout        Stripe checkout sessions                  │
+│  /api/billing/*       Stripe customer portal                    │
+│  /api/webhooks/*      Stripe & other webhooks                   │
+│  /api/admin/*         Admin operations & dashboards             │
+│  /api/internal/*      Internal tools                            │
+│  /api/cron/*          Scheduled jobs (12 jobs)                  │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   SERVICE LAYER (122 files)                      │
+│                   SERVICE LAYER (114 files)                      │
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
 │  │ tierAccess  │  │ carsClient  │  │ alTools     │             │
@@ -57,6 +61,10 @@
 │  │ scoring     │  │ maintenance │  │ youtube     │             │
 │  │ (algorithm) │  │ Service     │  │ Client      │             │
 │  └─────────────┘  └─────────────┘  └─────────────┘             │
+│  ┌─────────────┐  ┌─────────────┐                               │
+│  │ stripe      │  │ discord     │                               │
+│  │ (payments)  │  │ (notify)    │                               │
+│  └─────────────┘  └─────────────┘                               │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -66,10 +74,11 @@
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
 │  │   SUPABASE      │  │   CLAUDE AI     │  │  EXTERNAL APIs  │ │
 │  │   (PostgreSQL)  │  │   (Anthropic)   │  │                 │ │
-│  │                 │  │                 │  │  • YouTube API  │ │
-│  │   65 tables     │  │   AL Assistant  │  │  • NHTSA        │ │
-│  │   pgvector      │  │   17 tools      │  │  • EPA          │ │
-│  │   RLS enabled   │  │   token billing │  │  • BaT scraping │ │
+│  │                 │  │                 │  │  • Stripe       │ │
+│  │   75 tables     │  │   AL Assistant  │  │  • YouTube API  │ │
+│  │   pgvector      │  │   17 tools      │  │  • NHTSA        │ │
+│  │   RLS enabled   │  │   token billing │  │  • EPA          │ │
+│  │                 │  │                 │  │  • Resend       │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -83,11 +92,13 @@
 | **Framework** | Next.js 14 (App Router) | React SSR/SSG |
 | **Database** | Supabase (PostgreSQL) | Primary data store |
 | **Vector Search** | pgvector | Knowledge base embeddings |
-| **AI** | Anthropic Claude | AL assistant |
+| **AI** | Anthropic Claude Sonnet 4 | AL assistant |
 | **Embeddings** | OpenAI text-embedding-3-small | Document embeddings |
 | **Auth** | Supabase Auth | Authentication |
-| **Images** | Vercel Blob | Car images |
-| **Hosting** | Vercel | Deployment |
+| **Payments** | Stripe | Subscription billing & one-time purchases |
+| **Email** | Resend | Transactional email delivery |
+| **Images** | Vercel Blob | Car images & assets |
+| **Hosting** | Vercel | Deployment & edge functions |
 | **Styling** | CSS Modules | Component styles |
 
 ---
@@ -301,6 +312,37 @@ AutoRev integrates with multiple external APIs for data enrichment. See [GOOGLE_
 | **Anthropic Claude** | AL assistant | Claude Sonnet 4 |
 | **OpenAI** | Embeddings | text-embedding-3-small |
 
+### Payment Processing
+
+| Service | Purpose | Status |
+|---------|---------|--------|
+| **Stripe** | Subscription billing, AL credit packs, donations | ✅ Integrated |
+
+**Features:**
+- Subscription management (Collector $4.99/mo, Tuner $9.99/mo)
+- One-time AL credit purchases
+- Customer portal for billing management
+- Webhook integration for real-time updates
+
+**See:** [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md) for complete reference
+
+### Communication Services
+
+| Service | Purpose | Status |
+|---------|---------|--------|
+| **Resend** | Transactional email | ✅ Integrated |
+| **Discord Webhooks** | Operations notifications | ✅ Integrated |
+
+**See:** [DISCORD_CHANNEL_REFERENCE.md](DISCORD_CHANNEL_REFERENCE.md) for Discord setup
+
+### YouTube Enhancement
+
+| Service | Purpose | Status |
+|---------|---------|--------|
+| **YouTube Data API v3** | Video metadata | ✅ Integrated |
+| **Exa API** | YouTube video discovery | ✅ Integrated |
+| **Supadata API** | Transcript fallback | 🔲 Optional |
+
 ---
 
 ## Database Design
@@ -391,13 +433,43 @@ try {
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role (server-side) |
 | `ANTHROPIC_API_KEY` | Claude AI for AL assistant |
 
-### Recommended
+### Payments (Required for Production)
 
 | Variable | Purpose |
 |----------|---------|
+| `STRIPE_SECRET_KEY` | Stripe API secret key (server-side) |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (client-side) |
+| `STRIPE_WEBHOOK_SECRET` | Webhook signature verification |
+
+See [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md) for complete Stripe setup.
+
+### Communication
+
+| Variable | Purpose |
+|----------|---------|
+| `RESEND_API_KEY` | Transactional email delivery |
+| `DISCORD_WEBHOOK_DEPLOYMENTS` | Deployment notifications |
+| `DISCORD_WEBHOOK_ERRORS` | Error notifications |
+| `DISCORD_WEBHOOK_CRON` | Cron job summaries |
+| `DISCORD_WEBHOOK_FEEDBACK` | User feedback |
+| `DISCORD_WEBHOOK_SIGNUPS` | New user signups |
+| `DISCORD_WEBHOOK_CONTACTS` | Contact form submissions |
+| `DISCORD_WEBHOOK_EVENTS` | Event submissions |
+| `DISCORD_WEBHOOK_AL` | AL conversation notifications |
+| `DISCORD_WEBHOOK_DIGEST` | Daily digest |
+| `DISCORD_WEBHOOK_FINANCIALS` | Payment notifications (Stripe) |
+
+See [DISCORD_CHANNEL_REFERENCE.md](DISCORD_CHANNEL_REFERENCE.md) for Discord setup.
+
+### Data Enrichment
+
+| Variable | Purpose |
+|----------|---------|
+| `YOUTUBE_API_KEY` | YouTube Data API for video metadata |
+| `EXA_API_KEY` | Exa search for YouTube video discovery |
+| `SUPADATA_API_KEY` | Optional: Transcript fallback service |
 | `OPENAI_API_KEY` | Embeddings for knowledge base search |
 | `CRON_SECRET` | Auth token for cron job endpoints |
-| `YOUTUBE_API_KEY` | YouTube Data API for video discovery |
 
 ### Optional / Google Cloud
 
@@ -407,6 +479,7 @@ try {
 | `NEXT_PUBLIC_GOOGLE_MAPS_KEY` | Client-side Maps JavaScript API |
 | `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` | Custom Search for forum search |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob for image storage |
+| `NEXT_PUBLIC_APP_URL` | Application base URL (for Stripe redirects) |
 
 See [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) for complete Google API setup.
 

@@ -264,11 +264,12 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ### `user_profiles` — User settings
 | Status | **2 rows** |
 |--------|----------|
-| **Purpose** | User preferences, subscription tier, and onboarding data |
+| **Purpose** | User preferences, subscription tier, Stripe billing, and onboarding data |
 | **Key Fields** | `id` (auth.users FK), `display_name`, `avatar_url`, `subscription_tier`, `preferred_units`, `email_notifications` |
+| **Stripe Fields** | `stripe_customer_id`, `stripe_subscription_id`, `stripe_subscription_status`, `subscription_started_at`, `subscription_ends_at`, `al_credits_purchased` |
 | **Onboarding Fields** | `referral_source`, `referral_source_other`, `user_intent`, `onboarding_completed_at`, `onboarding_step`, `email_opt_in_features`, `email_opt_in_events` |
 | **Email Fields** | `last_email_sent_at`, `email_bounce_count`, `email_unsubscribed_at`, `referral_code` |
-| **Used By** | Auth, tier gating, onboarding flow, email system |
+| **Used By** | Auth, tier gating, Stripe billing, onboarding flow, email system |
 
 #### Onboarding Columns
 
@@ -281,6 +282,19 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | `onboarding_step` | integer | Current onboarding step (1-7). Used for resume functionality. |
 | `email_opt_in_features` | boolean | User opted in to receive feature update emails (default: false) |
 | `email_opt_in_events` | boolean | User opted in to receive event notification emails (default: false) |
+
+#### Stripe Billing Columns
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `stripe_customer_id` | text | Stripe customer ID (`cus_...`) |
+| `stripe_subscription_id` | text | Current active subscription ID (`sub_...`) |
+| `stripe_subscription_status` | text | `active`, `trialing`, `past_due`, `canceled`, `none` |
+| `subscription_started_at` | timestamptz | When subscription began |
+| `subscription_ends_at` | timestamptz | Current period end (or cancellation date) |
+| `al_credits_purchased` | integer | Total AL credits purchased (one-time packs, separate from monthly allotment) |
+
+**See:** [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md) for complete Stripe reference
 
 #### Email System Columns
 

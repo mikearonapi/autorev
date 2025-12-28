@@ -1,8 +1,8 @@
 # AutoRev API Reference
 
-> Complete reference for all 85 API routes
+> Complete reference for all 99 API routes
 >
-> **Last Verified:** December 24, 2024 — MCP-verified file listing (updated counts)
+> **Last Verified:** December 28, 2024 — Updated with Stripe routes + admin dashboard routes
 
 ---
 
@@ -13,11 +13,15 @@
 | Car Data | 18 | No |
 | Parts | 3 | No |
 | Events | 6 | Mixed |
-| Users/AL | 4 | Yes |
+| Users/AL | 9 | Yes |
 | VIN | 3 | Yes |
-| Internal | 10 | Admin |
-| Cron | 7 | API Key |
-| Other | 4 | Varies |
+| Payments (Stripe) | 4 | Yes |
+| Webhooks | 4 | Varies |
+| Admin Dashboard | 14 | Admin |
+| Internal Tools | 12 | Admin |
+| Cron Jobs | 12 | API Key |
+| Other | 14 | Varies |
+| **Total** | **99** | |
 
 ---
 
@@ -1359,7 +1363,101 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 
 ---
 
-## Other Routes (4)
+## Payments (Stripe) Routes (4)
+
+### `POST /api/checkout`
+**Purpose:** Create Stripe checkout session for subscriptions, credit packs, or donations
+
+**Authentication:** Required (authenticated users only)
+
+**Request:**
+```json
+{
+  "type": "subscription",  // or "credits" or "donation"
+  "tier": "collector",     // for subscriptions: "collector" or "tuner"
+  "pack": "medium",        // for credits: "small", "medium", or "large"
+  "amount": 10,            // for donations: 5, 10, 25, or 50
+  "donationAmount": 1500   // for custom donations (cents, min $1.00)
+}
+```
+
+**Response:**
+```json
+{
+  "url": "https://checkout.stripe.com/c/pay/cs_test_...",
+  "sessionId": "cs_test_..."
+}
+```
+
+**Actions:**
+1. Gets or creates Stripe customer for user
+2. Creates checkout session based on type
+3. Returns checkout URL for redirect
+
+**See:** [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md)
+
+---
+
+### `POST /api/billing/portal`
+**Purpose:** Create Stripe Customer Portal session for billing management
+
+**Authentication:** Required (must have `stripe_customer_id`)
+
+**Request:** Empty body
+
+**Response:**
+```json
+{
+  "url": "https://billing.stripe.com/p/session/..."
+}
+```
+
+**Actions:**
+- User can cancel/upgrade subscription
+- Update payment method
+- View billing history
+
+---
+
+### `POST /api/webhooks/stripe`
+**Purpose:** Process Stripe webhook events
+
+**Authentication:** Verified via `STRIPE_WEBHOOK_SECRET` signature
+
+**Events Handled:**
+- `checkout.session.completed` - New subscription or credit pack purchase
+- `customer.subscription.created` - Subscription started
+- `customer.subscription.updated` - Subscription changed
+- `customer.subscription.deleted` - Subscription canceled
+- `invoice.paid` - Subscription renewed
+- `invoice.payment_failed` - Payment issue
+
+**Table:** `user_profiles` (updates tier, subscription status, AL credits)
+
+---
+
+### `GET /api/admin/stripe`
+**Purpose:** Get Stripe metrics for admin dashboard
+
+**Authentication:** Admin only
+
+**Response:**
+```json
+{
+  "metrics": {
+    "totalRevenue": 12345,
+    "activeSubscriptions": 10,
+    "mrr": 99,
+    "recentPayments": [...]
+  }
+}
+```
+
+**Used By:** Admin dashboard StripeDashboard component
+
+---
+
+## Other Routes (14)
 
 ### `POST /api/contact`
 **Purpose:** Submit contact form
