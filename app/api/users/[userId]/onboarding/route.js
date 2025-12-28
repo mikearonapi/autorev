@@ -10,9 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
 
 // Valid enum values
 const VALID_REFERRAL_SOURCES = ['google', 'reddit', 'friend', 'forum', 'youtube', 'social', 'other'];
@@ -33,11 +31,11 @@ export async function GET(request, { params }) {
       );
     }
     
-    // Get authenticated user
+    // Get authenticated user - try bearer token first, then cookie-based session
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken 
       ? createAuthenticatedClient(bearerToken) 
-      : createRouteHandlerClient({ cookies });
+      : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json(
@@ -51,6 +49,7 @@ export async function GET(request, { params }) {
       : await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.log('[API/users/onboarding] Auth failed:', authError?.message || 'No user');
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -127,11 +126,11 @@ export async function PATCH(request, { params }) {
       );
     }
     
-    // Get authenticated user
+    // Get authenticated user - try bearer token first, then cookie-based session
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken 
       ? createAuthenticatedClient(bearerToken) 
-      : createRouteHandlerClient({ cookies });
+      : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json(
@@ -145,6 +144,7 @@ export async function PATCH(request, { params }) {
       : await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.log('[API/users/onboarding] PATCH auth failed:', authError?.message || 'No user');
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -248,11 +248,11 @@ export async function POST(request, { params }) {
       );
     }
     
-    // Get authenticated user
+    // Get authenticated user - try bearer token first, then cookie-based session
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken 
       ? createAuthenticatedClient(bearerToken) 
-      : createRouteHandlerClient({ cookies });
+      : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json(
@@ -266,6 +266,7 @@ export async function POST(request, { params }) {
       : await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.log('[API/users/onboarding] POST auth failed:', authError?.message || 'No user');
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

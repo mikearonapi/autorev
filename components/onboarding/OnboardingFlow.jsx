@@ -78,8 +78,12 @@ export default function OnboardingFlow({
   }, [isOpen]);
 
   // Save progress to database
+  // Returns { success: boolean, error?: string } for completion calls
   const saveProgress = useCallback(async (data, completed = false) => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.warn('[Onboarding] No user ID, skipping save');
+      return { success: false, error: 'No user ID' };
+    }
     
     try {
       const endpoint = `/api/users/${user.id}/onboarding`;
@@ -89,6 +93,8 @@ export default function OnboardingFlow({
         ? { ...data }
         : { step, ...data };
       
+      console.log(`[Onboarding] Saving progress via ${method}:`, { completed, userId: user.id.slice(0, 8) });
+      
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -96,12 +102,17 @@ export default function OnboardingFlow({
       });
       
       if (!response.ok) {
-        console.error('[Onboarding] Failed to save progress:', await response.text());
-      } else {
-        console.log('[Onboarding] Progress saved:', completed ? 'completed' : `step ${step}`);
+        const errorText = await response.text();
+        console.error('[Onboarding] Failed to save progress:', response.status, errorText);
+        return { success: false, error: errorText };
       }
+      
+      const result = await response.json();
+      console.log('[Onboarding] Progress saved:', completed ? 'completed' : `step ${step}`, result);
+      return { success: true, data: result };
     } catch (err) {
       console.error('[Onboarding] Error saving progress:', err);
+      return { success: false, error: err.message };
     }
   }, [user?.id, step]);
 
@@ -162,7 +173,13 @@ export default function OnboardingFlow({
     
     try {
       // Save completion to database
-      await saveProgress(formData, true);
+      const result = await saveProgress(formData, true);
+      
+      if (!result.success) {
+        console.error('[Onboarding] Failed to complete onboarding:', result.error);
+        // Still proceed with navigation - data may save on next login
+        // TODO: Consider showing an error toast here
+      }
       
       // Determine destination based on user intent
       let destination = '/browse-cars';
@@ -174,7 +191,7 @@ export default function OnboardingFlow({
         destination = '/browse-cars';
       }
       
-      console.log('[Onboarding] Completed. Routing to:', destination);
+      console.log('[Onboarding] Completed. Routing to:', destination, 'saveSuccess:', result.success);
       
       // Call completion callback
       onComplete?.(formData);

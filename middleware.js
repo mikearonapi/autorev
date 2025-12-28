@@ -4,7 +4,12 @@
  * This middleware refreshes the user's session on every request.
  * Without this, auth cookies expire and users get logged out unexpectedly.
  * 
- * ENHANCED: Includes better error handling and session refresh logic
+ * CRITICAL FOR GOOGLE OAUTH:
+ * - Must process /auth/callback route to receive session cookies
+ * - Must NOT skip the callback or session won't persist
+ * - Must use consistent cookie options (sameSite: 'lax', secure in prod)
+ * 
+ * FIX 2024-12-27: Ensured callback route is processed, enhanced cookie options
  * 
  * @see https://supabase.com/docs/guides/auth/server-side/nextjs
  */
@@ -12,10 +17,20 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-// Session refresh result cache to reduce auth calls
-// Key: cookie signature, Value: { timestamp, user }
-const sessionCache = new Map();
-const CACHE_TTL_MS = 60000; // 1 minute cache
+/**
+ * Get enhanced cookie options for cross-browser compatibility
+ * Must match options used in /auth/callback/route.js
+ */
+function getEnhancedCookieOptions(originalOptions = {}) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  return {
+    ...originalOptions,
+    path: '/', // Ensure cookie is available on all routes
+    sameSite: 'lax', // Required for OAuth redirects
+    secure: isProduction, // Only secure in production (HTTPS)
+  };
+}
 
 export async function middleware(request) {
   let supabaseResponse = NextResponse.next({
@@ -30,15 +45,22 @@ export async function middleware(request) {
     return supabaseResponse;
   }
 
-  // Skip auth check for static assets and non-page routes
   const pathname = request.nextUrl.pathname;
+
+  // Skip for static assets only - NOT for /auth/callback!
+  // The callback route handler manages its own cookies, but middleware
+  // still needs to run for session validation on subsequent requests
   if (
     pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') ||
-    pathname.includes('.') // Static files
+    pathname.includes('.') // Static files (images, fonts, etc.)
   ) {
     return supabaseResponse;
   }
+
+  // Skip session refresh for API routes - they handle auth via Bearer token
+  // or createServerSupabaseClient in the route handler
+  // BUT still allow the middleware to pass through (don't return early for all API routes)
+  const skipSessionRefresh = pathname.startsWith('/api/');
 
   try {
     const supabase = createServerClient(
@@ -50,19 +72,15 @@ export async function middleware(request) {
             return request.cookies.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
+            cookiesToSet.forEach(({ name, value }) =>
               request.cookies.set(name, value)
             );
             supabaseResponse = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) => {
-              // Ensure consistent cookie settings
-              const enhancedOptions = {
-                ...options,
-                sameSite: 'lax',
-                secure: process.env.NODE_ENV === 'production',
-              };
+              // Apply enhanced cookie options for consistency
+              const enhancedOptions = getEnhancedCookieOptions(options);
               supabaseResponse.cookies.set(name, value, enhancedOptions);
             });
           },
@@ -70,21 +88,29 @@ export async function middleware(request) {
       }
     );
 
-    // IMPORTANT: Do NOT use getSession() here - it doesn't validate the token
-    // Using getUser() ensures the session is verified and refreshed
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    // Skip getUser() call for API routes to reduce latency
+    // API routes should validate auth themselves
+    if (!skipSessionRefresh) {
+      // IMPORTANT: Do NOT use getSession() here - it doesn't validate the token
+      // Using getUser() ensures the session is verified and refreshed
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
 
-    // Log auth errors for debugging (but don't fail the request)
-    if (error && process.env.NODE_ENV === 'development') {
-      console.log(`[Middleware] Auth check for ${pathname}:`, error.message);
-    }
+      // Log auth state for debugging (dev only)
+      if (process.env.NODE_ENV === 'development') {
+        if (error) {
+          console.log(`[Middleware] ${pathname}: auth error -`, error.message);
+        } else if (user) {
+          console.log(`[Middleware] ${pathname}: authenticated as`, user.id.slice(0, 8));
+        }
+      }
 
-    // Add user info to response headers for debugging (dev only)
-    if (process.env.NODE_ENV === 'development' && user) {
-      supabaseResponse.headers.set('x-auth-user', user.id.slice(0, 8));
+      // Add user info to response headers for debugging (dev only)
+      if (process.env.NODE_ENV === 'development' && user) {
+        supabaseResponse.headers.set('x-auth-user', user.id.slice(0, 8));
+      }
     }
 
   } catch (err) {
@@ -103,7 +129,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder files (images, etc.)
-     * - API routes that don't need auth refresh
+     * 
+     * IMPORTANT: /auth/callback IS matched - the route handler needs
+     * middleware to run for proper cookie handling on subsequent requests
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],

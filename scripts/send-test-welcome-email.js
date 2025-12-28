@@ -65,199 +65,207 @@ function getWelcomeEmailHtml(vars) {
   const loginUrl = vars.login_url || SITE_URL;
   const year = new Date().getFullYear();
   
-  // 1x1 pixel dark background images (data URIs that Gmail respects)
-  const darkBg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wnwEAAQkBA+hUvK4AAAAASUVORK5CYII='; // #171717
-  const darkerBg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwF/dyqxhwAAAABJRU5ErkJggg=='; // #0f0f0f
-  const cardBg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P//PwAGBAL/ZoLIHwAAAABJRU5ErkJggg=='; // #1f1f1f
-  const headerBg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkSGb4HwADJAF/YWPgewAAAABJRU5ErkJggg='; // #163d52
-  
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+  return `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="x-apple-disable-message-reformatting">
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
   <title>Welcome to AutoRev</title>
-  <!--[if gte mso 9]>
-  <xml>
-    <o:OfficeDocumentSettings>
-      <o:AllowPNG/>
-      <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentSettings>
-  </xml>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
   <![endif]-->
-  <style type="text/css">
-    body{margin:0!important;padding:0!important;background:#0f0f0f!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
-    table{border-spacing:0;border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}
-    td{padding:0}
-    img{border:0;height:auto;line-height:100%;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}
-    a{text-decoration:none}
-    @media only screen and (max-width:600px){
-      .mobile-full{width:100%!important}
-      .mobile-pad{padding-left:16px!important;padding-right:16px!important}
+  <style>
+    body, table, td, p, a, li { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    
+    @media screen and (max-width: 600px) {
+      .wrapper { padding: 24px 16px !important; }
+      .content { padding: 0 !important; }
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0f0f0f;">
-<!--[if mso]>
-<style type="text/css">
-body,table,td{font-family:Arial,sans-serif!important}
-</style>
-<![endif]-->
-
-<!-- Preheader -->
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:#0f0f0f;">
-Your sports car journey starts here. Research 98+ cars, track your rides, plan builds, and join a community of enthusiasts.
-</div>
-
-<!-- WRAPPER -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0f0f0f;" bgcolor="#0f0f0f">
-<tr>
-<td align="center" style="padding:30px 10px;background:#0f0f0f;" bgcolor="#0f0f0f">
-
-<!-- MAIN CONTAINER -->
-<table role="presentation" class="mobile-full" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#171717;border:1px solid #2a2a2a;" bgcolor="#171717">
-
-  <!-- ===== HEADER ===== -->
-  <tr>
-    <td align="center" class="mobile-pad" style="padding:45px 30px 50px;background:#1a4d6e;" bgcolor="#1a4d6e">
-      <img src="${SITE_URL}/images/autorev-logo-white.png" alt="AutoRev" width="100" height="100" style="display:block;width:100px;height:100px;margin-bottom:18px;">
-      <div style="font-family:Impact,'Arial Black',Arial,sans-serif;font-size:42px;font-weight:bold;color:#D4AF37;letter-spacing:3px;">AUTOREV</div>
-      <div style="margin-top:10px;font-family:Arial,sans-serif;font-size:11px;color:#8899aa;letter-spacing:4px;">FIND WHAT DRIVES YOU</div>
-    </td>
-  </tr>
-
-  <!-- ===== WELCOME BANNER ===== -->
-  <tr>
-    <td class="mobile-pad" style="padding:0 30px;background:#171717;" bgcolor="#171717">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:-25px;background:#1f1f1f;border:2px solid #D4AF37;" bgcolor="#1f1f1f">
-        <tr>
-          <td align="center" style="padding:22px 20px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <div style="font-family:Arial,sans-serif;font-size:11px;color:#a3a3a3;letter-spacing:2px;margin-bottom:6px;">WELCOME ABOARD</div>
-            <div style="font-family:Arial,sans-serif;font-size:26px;font-weight:bold;color:#ffffff;">${userName}</div>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-
-  <!-- ===== BODY CONTENT ===== -->
-  <tr>
-    <td class="mobile-pad" style="padding:30px 30px 24px;background:#171717;" bgcolor="#171717">
-      <p style="margin:0 0 18px;font-family:Arial,sans-serif;font-size:16px;line-height:26px;color:#e5e5e5;">
-        You've just joined a community that celebrates every enthusiast—from the weekend warrior with a $3K Miata to the collector with a GT3RS.
-      </p>
-      <p style="margin:0 0 26px;font-family:Arial,sans-serif;font-size:16px;line-height:26px;color:#a3a3a3;">
-        <strong style="color:#D4AF37;">No flex culture. No gatekeeping.</strong> Just honest guidance and genuine community.
-      </p>
-
-      <!-- FEATURE CARDS -->
-      
-      <!-- Research -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;background:#1f1f1f;border-left:4px solid #D4AF37;" bgcolor="#1f1f1f">
-        <tr>
-          <td width="52" valign="top" style="padding:16px 0 16px 16px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <table role="presentation" width="40" height="40" cellpadding="0" cellspacing="0" style="background:#3d3520;" bgcolor="#3d3520">
-              <tr><td align="center" valign="middle" style="font-size:20px;line-height:40px;">&#128269;</td></tr>
-            </table>
-          </td>
-          <td valign="top" style="padding:16px 16px 16px 12px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <div style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;margin-bottom:4px;">Research</div>
-            <div style="font-family:Arial,sans-serif;font-size:13px;line-height:19px;color:#a3a3a3;">Deep-dive into 98 sports cars with real specs, owner insights, and honest reviews.</div>
-          </td>
-        </tr>
-      </table>
-
-      <!-- Garage -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;background:#1f1f1f;border-left:4px solid #1a4d6e;" bgcolor="#1f1f1f">
-        <tr>
-          <td width="52" valign="top" style="padding:16px 0 16px 16px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <table role="presentation" width="40" height="40" cellpadding="0" cellspacing="0" style="background:#1e3a4d;" bgcolor="#1e3a4d">
-              <tr><td align="center" valign="middle" style="font-size:20px;line-height:40px;">&#128663;</td></tr>
-            </table>
-          </td>
-          <td valign="top" style="padding:16px 16px 16px 12px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <div style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;margin-bottom:4px;">My Garage</div>
-            <div style="font-family:Arial,sans-serif;font-size:13px;line-height:19px;color:#a3a3a3;">Track your rides, decode VINs, get recall alerts, and log service history.</div>
-          </td>
-        </tr>
-      </table>
-
-      <!-- Build -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;background:#1f1f1f;border-left:4px solid #22c55e;" bgcolor="#1f1f1f">
-        <tr>
-          <td width="52" valign="top" style="padding:16px 0 16px 16px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <table role="presentation" width="40" height="40" cellpadding="0" cellspacing="0" style="background:#1a3d2a;" bgcolor="#1a3d2a">
-              <tr><td align="center" valign="middle" style="font-size:20px;line-height:40px;">&#128295;</td></tr>
-            </table>
-          </td>
-          <td valign="top" style="padding:16px 16px 16px 12px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <div style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;margin-bottom:4px;">Plan Builds</div>
-            <div style="font-family:Arial,sans-serif;font-size:13px;line-height:19px;color:#a3a3a3;">Visualize power gains, explore parts, and see real dyno data before you wrench.</div>
-          </td>
-        </tr>
-      </table>
-
-      <!-- Meet AL -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#1f1f1f;border-left:4px solid #8b5cf6;" bgcolor="#1f1f1f">
-        <tr>
-          <td width="52" valign="top" style="padding:16px 0 16px 16px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <img src="${SITE_URL}/images/al-mascot.png" alt="AL" width="40" height="40" style="display:block;width:40px;height:40px;">
-          </td>
-          <td valign="top" style="padding:16px 16px 16px 12px;background:#1f1f1f;" bgcolor="#1f1f1f">
-            <div style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;margin-bottom:4px;">Meet AL &#10024;</div>
-            <div style="font-family:Arial,sans-serif;font-size:13px;line-height:19px;color:#a3a3a3;">Your AI car expert. Get instant answers about specs, common issues, and the best mods.</div>
-          </td>
-        </tr>
-      </table>
-
-    </td>
-  </tr>
-
-  <!-- ===== CTA BUTTON ===== -->
-  <tr>
-    <td align="center" class="mobile-pad" style="padding:10px 30px 40px;background:#171717;" bgcolor="#171717">
-      <table role="presentation" cellpadding="0" cellspacing="0">
-        <tr>
-          <td align="center" style="background:#D4AF37;border-radius:6px;" bgcolor="#D4AF37">
-            <a href="${loginUrl}" target="_blank" style="display:inline-block;padding:16px 44px;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#171717;text-decoration:none;">Start Exploring &rarr;</a>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-
-  <!-- ===== DIVIDER ===== -->
-  <tr>
-    <td class="mobile-pad" style="padding:0 30px;background:#171717;" bgcolor="#171717">
-      <div style="height:1px;background:#2a2a2a;"></div>
-    </td>
-  </tr>
-
-  <!-- ===== FOOTER ===== -->
-  <tr>
-    <td align="center" class="mobile-pad" style="padding:26px 30px;background:#171717;" bgcolor="#171717">
-      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#737373;">Questions? Just reply—we read every one.</p>
-      <p style="margin:0 0 12px;font-family:Arial,sans-serif;font-size:12px;color:#525252;">&copy; ${year} AutoRev &middot; Built for enthusiasts, by enthusiasts</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;">
-        <a href="${SITE_URL}" style="color:#737373;">Web</a>
-        <span style="color:#525252;"> &middot; </span>
-        <a href="${SITE_URL}/contact" style="color:#737373;">Contact</a>
-      </p>
-    </td>
-  </tr>
-
-</table>
-<!-- END MAIN CONTAINER -->
-
-</td>
-</tr>
-</table>
-<!-- END WRAPPER -->
-
+<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  
+  <!-- Preheader -->
+  <div style="display: none; max-height: 0; overflow: hidden;">
+    You've just joined a community that celebrates every enthusiast. No flex culture. No gatekeeping.
+  </div>
+  
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ffffff;">
+    <tr>
+      <td align="center" class="wrapper" style="padding: 48px 24px;">
+        
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 480px;">
+          
+          <!-- Logo -->
+          <tr>
+            <td align="center" style="padding-bottom: 32px;">
+              <img src="${SITE_URL}/images/autorev-logo-colored.png" alt="AutoRev" width="72" height="72" style="display: block;">
+            </td>
+          </tr>
+          
+          <!-- Welcome Header -->
+          <tr>
+            <td align="center" style="padding-bottom: 8px;">
+              <p style="margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 1.5px; color: #6b7280; text-transform: uppercase;">Welcome to AutoRev</p>
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center" style="padding-bottom: 32px;">
+              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #111827;">Hey ${userName} 👋</h1>
+            </td>
+          </tr>
+          
+          <!-- Intro -->
+          <tr>
+            <td style="padding-bottom: 24px;">
+              <p style="margin: 0; font-size: 16px; line-height: 26px; color: #374151;">
+                You've just joined a community that celebrates every enthusiast—from the weekend warrior with a $3K Miata to the collector with a GT3RS.
+              </p>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="padding-bottom: 40px;">
+              <p style="margin: 0; font-size: 16px; line-height: 26px; color: #374151;">
+                <strong style="color: #b8860b;">No flex culture. No gatekeeping.</strong><br>
+                Just honest guidance and genuine community.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Divider -->
+          <tr>
+            <td style="padding-bottom: 40px;">
+              <div style="height: 1px; background-color: #e5e7eb;"></div>
+            </td>
+          </tr>
+          
+          <!-- Section Header -->
+          <tr>
+            <td style="padding-bottom: 24px;">
+              <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; color: #6b7280; text-transform: uppercase;">Here's what you can do</p>
+            </td>
+          </tr>
+          
+          <!-- Feature 1: Research -->
+          <tr>
+            <td style="padding-bottom: 24px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top">
+                    <div style="width: 40px; height: 40px; background-color: #fef3c7; border-radius: 10px; text-align: center; line-height: 40px; font-size: 18px;">🔍</div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Research</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 21px; color: #6b7280;">Deep-dive into 98 sports cars with real specs, owner insights, and honest reviews.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Feature 2: My Garage -->
+          <tr>
+            <td style="padding-bottom: 24px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top">
+                    <div style="width: 40px; height: 40px; background-color: #fee2e2; border-radius: 10px; text-align: center; line-height: 40px; font-size: 18px;">🚗</div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">My Garage</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 21px; color: #6b7280;">Track your rides, decode VINs, get recall alerts, and log service history.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Feature 3: Plan Builds -->
+          <tr>
+            <td style="padding-bottom: 24px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top">
+                    <div style="width: 40px; height: 40px; background-color: #dbeafe; border-radius: 10px; text-align: center; line-height: 40px; font-size: 18px;">🔧</div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Plan Builds</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 21px; color: #6b7280;">Visualize power gains, explore parts, and see real dyno data before you wrench.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Feature 4: Meet AL -->
+          <tr>
+            <td style="padding-bottom: 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top">
+                    <div style="width: 40px; height: 40px; background-color: #ede9fe; border-radius: 10px; text-align: center; line-height: 40px; font-size: 18px;">✨</div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #111827;">Meet AL</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 21px; color: #6b7280;">Your AI car expert. Get instant answers about specs, common issues, and the best mods.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- CTA Button -->
+          <tr>
+            <td align="center" style="padding-bottom: 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="border-radius: 8px; background-color: #111827;">
+                    <a href="${loginUrl}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 15px; font-weight: 600; color: #ffffff; text-decoration: none;">
+                      Start Exploring →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Divider -->
+          <tr>
+            <td style="padding-bottom: 32px;">
+              <div style="height: 1px; background-color: #e5e7eb;"></div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td align="center">
+              <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
+                Questions? Just reply to this email.
+              </p>
+              <p style="margin: 0; font-size: 13px; color: #9ca3af;">
+                © ${year} AutoRev · <a href="${SITE_URL}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${SITE_URL}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+        
+      </td>
+    </tr>
+  </table>
+  
 </body>
 </html>`;
 }

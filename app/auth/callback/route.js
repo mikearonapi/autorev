@@ -7,6 +7,12 @@
  * CRITICAL: Cookies set during exchangeCodeForSession MUST be explicitly
  * copied to the NextResponse.redirect() response for the browser to receive them.
  * 
+ * FIX 2024-12-27: Enhanced cookie options for cross-browser compatibility
+ * - Added explicit path: '/' to ensure cookies are available on all routes
+ * - Added sameSite: 'lax' for OAuth redirects
+ * - Added secure: true in production only
+ * - Added auth_ts param to help AuthProvider detect fresh auth
+ * 
  * @see https://supabase.com/docs/guides/auth/server-side/nextjs
  */
 
@@ -16,12 +22,35 @@ import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
 import { sendWelcomeEmail } from '@/lib/email';
 
+/**
+ * Enhance cookie options for cross-browser compatibility
+ * Ensures cookies work across all routes and environments
+ */
+function getEnhancedCookieOptions(originalOptions = {}) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  return {
+    ...originalOptions,
+    path: '/', // Ensure cookie is available on all routes
+    sameSite: 'lax', // Required for OAuth redirects to work
+    secure: isProduction, // Only secure in production (HTTPS)
+    httpOnly: originalOptions.httpOnly ?? true, // Keep httpOnly if set
+  };
+}
+
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/';
   const error = searchParams.get('error');
   const errorDescription = searchParams.get('error_description');
+
+  console.log('[Auth Callback] Received request:', {
+    hasCode: !!code,
+    next,
+    error: error || 'none',
+    origin,
+  });
 
   // Handle OAuth errors
   if (error) {
@@ -46,14 +75,17 @@ export async function GET(request) {
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            // Store cookies to set on the final response
+            // Store cookies with ENHANCED options for the final response
             cookiesToSet.forEach(({ name, value, options }) => {
-              responseCookies.push({ name, value, options });
-              // Also set on cookieStore for subsequent reads within this request
+              const enhancedOptions = getEnhancedCookieOptions(options);
+              responseCookies.push({ name, value, options: enhancedOptions });
+              
+              // Also try to set on cookieStore for subsequent reads within this request
               try {
-                cookieStore.set(name, value, options);
+                cookieStore.set(name, value, enhancedOptions);
               } catch (e) {
-                // Ignore errors from Server Component context
+                // Expected in Route Handler context - cookies will be set on redirect response
+                console.log('[Auth Callback] Cookie will be set on redirect response:', name);
               }
             });
           },
@@ -64,17 +96,19 @@ export async function GET(request) {
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
-      console.error('[Auth Callback] Code exchange error:', exchangeError);
+      console.error('[Auth Callback] Code exchange error:', exchangeError.message, exchangeError);
       return NextResponse.redirect(
         new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, origin)
       );
     }
 
-    console.log('[Auth Callback] Code exchanged successfully, setting', responseCookies.length, 'cookies');
+    console.log('[Auth Callback] Code exchanged successfully, preparing', responseCookies.length, 'cookies');
 
     // Handle new user notifications (non-blocking)
+    let userId = null;
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      userId = user?.id;
       
       if (user) {
         const createdAt = new Date(user.created_at);
@@ -111,39 +145,56 @@ export async function GET(request) {
     }
 
     // Build redirect URL
-    let redirectUrl = next;
+    let redirectPath = next;
     
     // Check for pending checkout intent
     const checkoutIntent = cookieStore.get('autorev_checkout_intent')?.value;
     if (checkoutIntent) {
-      redirectUrl = '/profile?resume_checkout=true';
+      redirectPath = '/profile?resume_checkout=true';
     }
 
     // Handle forwarded host for load balancers (Vercel)
     const forwardedHost = request.headers.get('x-forwarded-host');
     const isLocalEnv = process.env.NODE_ENV === 'development';
     
-    let finalUrl;
+    let baseUrl;
     if (isLocalEnv) {
-      finalUrl = `${origin}${redirectUrl}`;
+      baseUrl = origin;
     } else if (forwardedHost) {
-      finalUrl = `https://${forwardedHost}${redirectUrl}`;
+      baseUrl = `https://${forwardedHost}`;
     } else {
-      finalUrl = `${origin}${redirectUrl}`;
+      baseUrl = origin;
     }
+
+    // Add auth timestamp to help AuthProvider detect fresh auth
+    // This triggers additional retry logic for race condition handling
+    const redirectUrl = new URL(redirectPath, baseUrl);
+    redirectUrl.searchParams.set('auth_ts', Date.now().toString());
+    
+    const finalUrl = redirectUrl.toString();
 
     // Create response and EXPLICITLY set all auth cookies on it
     const response = NextResponse.redirect(finalUrl);
     
-    // CRITICAL: Transfer all cookies from the exchange to the response
+    // CRITICAL: Transfer all cookies from the exchange to the response with enhanced options
     for (const { name, value, options } of responseCookies) {
       response.cookies.set(name, value, options);
+      console.log('[Auth Callback] Setting cookie:', name, 'path:', options.path, 'secure:', options.secure);
     }
 
-    console.log('[Auth Callback] Redirecting to', finalUrl, 'with', responseCookies.length, 'auth cookies');
+    // Also set a marker cookie to help AuthProvider detect fresh auth
+    response.cookies.set('auth_callback_complete', '1', {
+      path: '/',
+      sameSite: 'lax',
+      secure: !isLocalEnv,
+      maxAge: 60, // Short-lived - just for the redirect
+    });
+
+    console.log('[Auth Callback] Redirecting to', finalUrl, 'with', responseCookies.length + 1, 'cookies, userId:', userId?.slice(0, 8));
     return response;
   }
 
   // No code provided - redirect to error
+  console.error('[Auth Callback] No authorization code provided');
   return NextResponse.redirect(`${origin}/auth/error?error=No%20authorization%20code%20provided`);
 }
