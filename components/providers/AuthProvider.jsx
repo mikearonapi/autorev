@@ -301,9 +301,11 @@ export function AuthProvider({ children }) {
         const maxRetries = (fromCallback || hasAuthTimestamp) ? 5 : 3;
         
         // Add timeout to prevent infinite loading
-        // Auth init should complete within 15 seconds max
+        // OAuth callbacks need more time due to cookie propagation delays
+        // Regular auth init: 15 seconds, OAuth callback: 30 seconds
+        const timeoutMs = (fromCallback || hasAuthTimestamp) ? 30000 : 15000;
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Auth initialization timeout')), 15000)
+          setTimeout(() => reject(new Error('Auth initialization timeout')), timeoutMs)
         );
         
         let result;
@@ -314,6 +316,38 @@ export function AuthProvider({ children }) {
           ]);
         } catch (timeoutErr) {
           console.error('[AuthProvider] Auth init timed out:', timeoutErr.message);
+          
+          // For OAuth callbacks, a timeout likely means cookies haven't propagated yet
+          // Don't show error immediately - try one more time after a short delay
+          if (fromCallback || hasAuthTimestamp) {
+            console.log('[AuthProvider] OAuth callback timeout - attempting one more refresh...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // One final attempt with refreshSession
+            try {
+              const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+              if (!refreshError && refreshData?.session && refreshData?.user) {
+                console.log('[AuthProvider] Final refresh succeeded after timeout');
+                setState({
+                  user: refreshData.user,
+                  profile: null,
+                  session: refreshData.session,
+                  isLoading: false,
+                  isAuthenticated: true,
+                  authError: null,
+                });
+                scheduleSessionRefresh(refreshData.session);
+                const profile = await fetchProfile(refreshData.user.id);
+                if (profile) {
+                  setState(prev => ({ ...prev, profile }));
+                }
+                return;
+              }
+            } catch (finalErr) {
+              console.error('[AuthProvider] Final refresh attempt failed:', finalErr);
+            }
+          }
+          
           // On timeout, assume not authenticated and let user retry
           setState({
             ...defaultAuthState,

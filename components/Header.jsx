@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 import AuthModal, { useAuthModal } from './AuthModal';
 import { useAIChat } from './AIMechanicChat';
@@ -116,6 +116,7 @@ export default function Header() {
   const [suffixVisible, setSuffixVisible] = useState(true);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const mobileNavRef = useRef(null);
   
   // Auth
@@ -135,13 +136,17 @@ export default function Header() {
     return user?.email && isAdminEmail(user.email);
   }, [user?.email]);
   
-  // Handle sign out
+  // Handle sign out - redirects to home page after logout
   const handleSignOut = async () => {
     try {
       setShowProfileDropdown(false);
       await logout();
+      // Redirect to home page after logout
+      router.push('/');
     } catch (error) {
       console.error('[Header] Sign out error:', error);
+      // Still redirect to home even on error - user expects to be logged out
+      router.push('/');
     }
   };
 
