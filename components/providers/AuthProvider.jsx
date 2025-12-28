@@ -93,19 +93,36 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100) {
       
       if (userError) {
         lastError = userError;
-        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message);
+        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message, userError.status);
         
         // Check if this is a definitive "session not found" - no point retrying
-        const isSessionGone = userError.message?.includes('Session not found') ||
-                              userError.message?.includes('session') ||
-                              userError.status === 403;
+        // Be SPECIFIC: only clear session for explicit session-not-found errors
+        // NOT for general network errors or rate limits that mention "session"
+        const errorMsg = userError.message?.toLowerCase() || '';
+        const isSessionGone = 
+          (errorMsg.includes('session not found')) ||
+          (errorMsg.includes('session from session_id claim') && errorMsg.includes('not found')) ||
+          (errorMsg.includes('refresh_token') && errorMsg.includes('not found')) ||
+          (errorMsg.includes('invalid refresh token')) ||
+          (userError.status === 403 && errorMsg.includes('session'));
         
         if (isSessionGone) {
-          console.warn(`[AuthProvider] Session is definitely invalid, clearing...`);
+          console.warn(`[AuthProvider] Session is definitely invalid (${errorMsg.slice(0, 50)}...), clearing...`);
           try {
+            // Clear both local storage AND sign out to ensure clean state
             await supabase.auth.signOut({ scope: 'local' });
+            // Also clear any stale tokens from localStorage directly
+            if (typeof window !== 'undefined') {
+              const keys = Object.keys(localStorage);
+              keys.forEach(key => {
+                if (key.startsWith('sb-') && key.includes('auth')) {
+                  console.log(`[AuthProvider] Clearing stale auth key: ${key}`);
+                  localStorage.removeItem(key);
+                }
+              });
+            }
           } catch (e) {
-            // Ignore
+            console.warn('[AuthProvider] Error clearing session:', e.message);
           }
           return { session: null, user: null, error: null, sessionExpired: true };
         }
@@ -188,19 +205,32 @@ export function AuthProvider({ children }) {
   }, [state.isAuthenticated]);
 
   // Fetch user profile when authenticated
+  // Returns profile data on success, or a minimal profile object on failure
+  // This ensures the app can continue functioning even if profile fetch fails
   const fetchProfile = useCallback(async (userId) => {
     if (!userId) return null;
     
     try {
       const { data, error } = await getUserProfile();
       if (error) {
-        console.error('[AuthProvider] Error fetching profile:', error);
-        return null;
+        console.error('[AuthProvider] Error fetching profile:', error.message);
+        // Return a minimal profile to prevent loading states from hanging
+        // The profile will be refetched on next page load
+        return {
+          id: userId,
+          subscription_tier: 'free',
+          _fetchError: true, // Flag to indicate this is a fallback profile
+        };
       }
       return data;
     } catch (err) {
       console.error('[AuthProvider] Unexpected error fetching profile:', err);
-      return null;
+      // Return minimal profile on exception too
+      return {
+        id: userId,
+        subscription_tier: 'free',
+        _fetchError: true,
+      };
     }
   }, []);
 
@@ -269,7 +299,31 @@ export function AuthProvider({ children }) {
         
         // If coming from OAuth callback, use retry logic to handle race conditions
         const maxRetries = (fromCallback || hasAuthTimestamp) ? 5 : 3;
-        const { session, user, error: initError, sessionExpired } = await initializeSessionWithRetry(maxRetries);
+        
+        // Add timeout to prevent infinite loading
+        // Auth init should complete within 15 seconds max
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth initialization timeout')), 15000)
+        );
+        
+        let result;
+        try {
+          result = await Promise.race([
+            initializeSessionWithRetry(maxRetries),
+            timeoutPromise
+          ]);
+        } catch (timeoutErr) {
+          console.error('[AuthProvider] Auth init timed out:', timeoutErr.message);
+          // On timeout, assume not authenticated and let user retry
+          setState({
+            ...defaultAuthState,
+            isLoading: false,
+            authError: 'Authentication timed out. Please refresh or sign in again.',
+          });
+          return;
+        }
+        
+        const { session, user, error: initError, sessionExpired } = result;
         
         if (initError) {
           console.error('[AuthProvider] Session init error:', initError);
@@ -404,13 +458,19 @@ export function AuthProvider({ children }) {
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
+        console.log('[AuthProvider] Handling SIGNED_OUT event');
         if (refreshIntervalRef.current) {
           clearTimeout(refreshIntervalRef.current);
+          refreshIntervalRef.current = null;
         }
+        // Reset refs
+        isAuthenticatedRef.current = false;
         setState({
           ...defaultAuthState,
           isLoading: false,
         });
+        // Also reset onboarding state
+        setOnboardingState(defaultOnboardingState);
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         console.log('[AuthProvider] Token refreshed via Supabase');
         // IMPORTANT: Also update user and isAuthenticated in case initial auth failed
@@ -613,17 +673,37 @@ export function AuthProvider({ children }) {
     return { data, error: null };
   }, []);
 
-  // Sign out
+  // Sign out - Enhanced to ensure complete state cleanup
   const logout = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true }));
-    const { error } = await authSignOut();
+    
+    // Clear refresh timer
+    if (refreshIntervalRef.current) {
+      clearTimeout(refreshIntervalRef.current);
+      refreshIntervalRef.current = null;
+    }
+    
+    // Reset refs to allow fresh sync on next login
+    isAuthenticatedRef.current = false;
+    initAttemptRef.current = 0;
+    
+    const { error } = await authSignOut({ scope: 'local' });
+    
     if (error) {
       console.error('[AuthProvider] Sign out error:', error);
-      setState(prev => ({ ...prev, isLoading: false }));
-      return { error };
     }
-    // Auth state change will update the state
-    return { error: null };
+    
+    // Always clear state regardless of error - we want user logged out locally
+    setState({
+      ...defaultAuthState,
+      isLoading: false,
+    });
+    
+    // Reset onboarding state too
+    setOnboardingState(defaultOnboardingState);
+    
+    console.log('[AuthProvider] Logout complete');
+    return { error: null }; // Return success - local logout always succeeds
   }, []);
 
   // Update profile

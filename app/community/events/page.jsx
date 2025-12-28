@@ -40,7 +40,7 @@ const Icons = {
 function EventsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, user, profile, session } = useAuth();
+  const { isAuthenticated, user, profile, session, isLoading: authLoading } = useAuth();
   const userTier = profile?.subscription_tier || 'free';
 
   // State
@@ -82,8 +82,12 @@ function EventsContent() {
   });
 
   // Fetch event types, garage brands, and saved events on mount
+  // Wait for auth loading to complete before making authenticated requests
   useEffect(() => {
     async function fetchMetadata() {
+      // Wait for auth to load before fetching user-specific data
+      if (authLoading) return;
+      
       try {
         const authHeaders = {};
         // Saved events is an authenticated endpoint; our client auth may be localStorage-based,
@@ -119,7 +123,7 @@ function EventsContent() {
       }
     }
     fetchMetadata();
-  }, [isAuthenticated, user?.id, session?.access_token]);
+  }, [isAuthenticated, authLoading, user?.id, session?.access_token]);
 
   // Handle save toggle - called by SaveEventButton after API call
   const handleSaveToggle = useCallback((eventSlug, isSaved) => {

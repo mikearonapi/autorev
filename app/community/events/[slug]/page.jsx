@@ -127,7 +127,7 @@ export default function CommunityEventDetailPage() {
   const [imageError, setImageError] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading, session } = useAuth();
 
   // Fetch event data
   useEffect(() => {
@@ -185,13 +185,19 @@ export default function CommunityEventDetailPage() {
     fetchEvent();
   }, [slug]);
 
-  // Check saved status
+  // Check saved status - only after auth is loaded
   useEffect(() => {
     async function checkSaved() {
-      if (!isAuthenticated || !user?.id || !slug) return;
+      // Wait for auth to finish loading before checking saved status
+      if (authLoading || !isAuthenticated || !user?.id || !slug) return;
       
       try {
-        const res = await fetch(`/api/users/${user.id}/saved-events`);
+        const headers = {};
+        if (session?.access_token) {
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
+        
+        const res = await fetch(`/api/users/${user.id}/saved-events`, { headers });
         if (res.ok) {
           const data = await res.json();
           const slugs = new Set(data.savedEvents?.map(se => se.event.slug) || []);
@@ -202,7 +208,7 @@ export default function CommunityEventDetailPage() {
       }
     }
     checkSaved();
-  }, [isAuthenticated, user?.id, slug]);
+  }, [isAuthenticated, authLoading, user?.id, slug, session?.access_token]);
 
   // Handle save change - called by SaveEventButton after it makes the API call
   // SaveEventButton passes (eventSlug, isSaved)

@@ -2096,11 +2096,14 @@ function GarageContent() {
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const { builds, deleteBuild, getBuildById } = useSavedBuilds();
-  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications } = useOwnedVehicles();
+  const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
+  const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
+  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, isLoading: vehiclesLoading } = useOwnedVehicles();
+  
+  // Combined loading state - show loading while auth or provider data is being fetched
+  const isDataLoading = authLoading || (isAuthenticated && (favoritesLoading || buildsLoading || vehiclesLoading));
 
   // Fetch car data from database on mount
   useEffect(() => {
@@ -2404,6 +2407,38 @@ function GarageContent() {
                 <span>{currentItems.length}</span>
               </div>
             </>
+          ) : isDataLoading ? (
+            // Show loading indicator while fetching data
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>
+                <LoadingSpinner />
+              </div>
+              <h3 className={styles.emptyTitle}>Loading your garage...</h3>
+              <p className={styles.emptyDescription}>
+                {authLoading ? 'Checking authentication...' : 'Fetching your data...'}
+              </p>
+            </div>
+          ) : sessionExpired || authError ? (
+            // Show auth error state with retry option
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>
+                <Icons.alert size={48} />
+              </div>
+              <h3 className={styles.emptyTitle}>
+                {sessionExpired ? 'Session Expired' : 'Connection Issue'}
+              </h3>
+              <p className={styles.emptyDescription}>
+                {sessionExpired 
+                  ? 'Your session has expired. Please sign in again to access your garage.'
+                  : 'There was an issue loading your data. Please try again.'}
+              </p>
+              <button 
+                onClick={() => sessionExpired ? authModal.openSignIn() : window.location.reload()} 
+                className={styles.emptyAction}
+              >
+                {sessionExpired ? 'Sign In' : 'Retry'}
+              </button>
+            </div>
           ) : (
             <EmptyState
               icon={tabs.find(t => t.id === activeTab)?.icon || Icons.car}

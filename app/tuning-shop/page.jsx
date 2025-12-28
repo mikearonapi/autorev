@@ -625,11 +625,19 @@ function TuningShopContent() {
   
   // Extract values with safe defaults
   const isAuthenticated = authState.isAuthenticated || false;
+  const authLoading = authState.isLoading || false;
+  const sessionExpired = authState.sessionExpired || false;
   const favorites = favoritesState.favorites || [];
+  const favoritesLoading = favoritesState.isLoading || false;
   const builds = buildsState.builds || [];
+  const buildsLoading = buildsState.isLoading || false;
   const deleteBuild = buildsState.deleteBuild || (() => {});
   const getBuildById = buildsState.getBuildById || (() => null);
   const vehicles = vehiclesState.vehicles || [];
+  const vehiclesLoading = vehiclesState.isLoading || false;
+  
+  // Combined loading state for initial data fetch
+  const isDataLoading = authLoading || (isAuthenticated && (favoritesLoading || buildsLoading || vehiclesLoading));
   
   // Fetch car data from database on mount
   // Enhanced error handling to prevent undefined states

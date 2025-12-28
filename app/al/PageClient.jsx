@@ -231,7 +231,7 @@ function interpolateTemplate(template, stats) {
 }
 
 export default function PageClient() {
-  const { isAuthenticated, profile } = useAuth();
+  const { isAuthenticated, profile, isLoading: authLoading, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
   const { openChat } = useAIChat();
   const [accordionOpen, setAccordionOpen] = useState(() => toolGroups.map(() => false));
@@ -259,12 +259,15 @@ export default function PageClient() {
   }, []);
 
   const handleOpenChat = useCallback(() => {
+    // Don't try to open chat while auth is still loading
+    if (authLoading) return;
+    
     if (!isAuthenticated) {
       authModal.openSignIn();
       return;
     }
     openChat();
-  }, [isAuthenticated, authModal, openChat]);
+  }, [isAuthenticated, authLoading, authModal, openChat]);
 
   const attemptPrefill = useCallback((prompt) => {
     if (!prompt || typeof window === 'undefined') return;
@@ -284,6 +287,9 @@ export default function PageClient() {
   }, []);
 
   const handlePrompt = useCallback((prompt) => {
+    // Don't process prompts while auth is loading
+    if (authLoading) return;
+    
     if (!isAuthenticated) {
       setPendingPrompt(prompt);
       authModal.openSignIn();
@@ -291,7 +297,7 @@ export default function PageClient() {
     }
     openChat();
     setTimeout(() => attemptPrefill(prompt), 150);
-  }, [isAuthenticated, authModal, openChat, attemptPrefill]);
+  }, [isAuthenticated, authLoading, authModal, openChat, attemptPrefill]);
 
   useEffect(() => {
     if (isAuthenticated && pendingPrompt) {

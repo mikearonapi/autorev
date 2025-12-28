@@ -216,7 +216,7 @@ const PLANS = {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, profile, isAuthenticated, isLoading, logout, updateProfile } = useAuth();
+  const { user, profile, isAuthenticated, isLoading, logout, updateProfile, authError, sessionExpired, clearAuthError } = useAuth();
   const { count: favoritesCount } = useFavorites();
   const { builds } = useSavedBuilds();
   const { checkoutSubscription, checkoutCredits, resumeCheckout, isLoading: checkoutLoading, error: checkoutError } = useCheckout();
@@ -466,6 +466,41 @@ export default function ProfilePage() {
       <div className={styles.loading}>
         <div className={styles.loadingSpinner}></div>
         <p>Loading profile...</p>
+      </div>
+    );
+  }
+
+  // Session expired or auth error - show message with retry option
+  if (sessionExpired || authError) {
+    return (
+      <div className={styles.loading}>
+        <div style={{ textAlign: 'center', maxWidth: '400px', padding: '2rem' }}>
+          <h2 style={{ marginBottom: '1rem', color: 'var(--color-warning, #f59e0b)' }}>
+            {sessionExpired ? 'Session Expired' : 'Authentication Error'}
+          </h2>
+          <p style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
+            {sessionExpired 
+              ? 'Your session has expired. Please sign in again to continue.'
+              : authError || 'There was an error loading your profile.'}
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              onClick={() => {
+                clearAuthError?.();
+                router.push('/garage');
+              }}
+              className={styles.saveButton}
+            >
+              Sign In Again
+            </button>
+            <button 
+              onClick={() => window.location.reload()}
+              className={styles.secondaryButton}
+            >
+              Retry
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

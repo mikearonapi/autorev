@@ -127,7 +127,7 @@ function calculateSimilarity(str1, str2) {
 
 export default function SubmitEventPage() {
   const router = useRouter();
-  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
   
   // Form state
@@ -347,6 +347,29 @@ export default function SubmitEventPage() {
     await submitEvent();
   };
   
+  // Auth loading state
+  if (authLoading) {
+    return (
+      <div className={styles.page}>
+        <header className={styles.hero}>
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
+            <span className={styles.badge}>Submit</span>
+            <h1 className={styles.heroTitle}>
+              Share an <span className={styles.titleAccent}>Event</span>
+            </h1>
+          </div>
+        </header>
+        <div className={styles.formWrapper}>
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <div className={styles.loadingSpinner} style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Success state
   if (submitSuccess) {
     return (

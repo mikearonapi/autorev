@@ -150,7 +150,7 @@ function CarCatalogContent() {
   
   // My Collection functionality
   const { vehicles, addVehicle } = useOwnedVehicles();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const [addingCar, setAddingCar] = useState(null);
   
@@ -162,11 +162,14 @@ function CarCatalogContent() {
   
   // Handle adding car to My Collection
   const handleAddToMyCars = async (car) => {
-    // Auth check removed for testing - will be re-enabled for production
-    // if (!isAuthenticated) {
-    //   authModal.openSignIn();
-    //   return;
-    // }
+    // Don't proceed while auth is still loading
+    if (authLoading) return;
+    
+    // Auth check for adding to my cars
+    if (!isAuthenticated) {
+      authModal.openSignIn();
+      return;
+    }
     
     if (isInMyCars(car.slug)) return;
     

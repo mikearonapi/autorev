@@ -99,7 +99,7 @@ function PerformanceContent() {
   const { selectedCar: globalSelectedCar, selectCar, isHydrated: carSelectionHydrated } = useCarSelection();
   const { favorites, isHydrated: favoritesHydrated } = useFavorites();
   const { vehicles, isHydrated: vehiclesHydrated } = useOwnedVehicles();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, sessionExpired, authError } = useAuth();
 
   // Load cars from database via carsClient (has fallback built-in)
   useEffect(() => {
@@ -234,7 +234,8 @@ function PerformanceContent() {
     );
   }
 
-  const isHydrated = carSelectionHydrated && favoritesHydrated && vehiclesHydrated;
+  // Consider auth loading state along with provider hydration
+  const isHydrated = carSelectionHydrated && favoritesHydrated && vehiclesHydrated && !authLoading;
   const hasOwnedCars = ownedCarsWithData.length > 0;
   const hasFavorites = favoriteCarsWithData.length > 0;
   const hasPersonalCars = hasOwnedCars || hasFavorites;
