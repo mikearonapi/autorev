@@ -328,7 +328,9 @@ export function AuthProvider({ children }) {
   // This ensures the app can continue functioning even if profile fetch fails
   const fetchProfile = useCallback(async (userId, timeout = 5000) => {
     if (!userId) return null;
-    
+
+    console.log('[AuthProvider] fetchProfile called for user:', userId);
+      
     // Create abort controller for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
@@ -345,60 +347,89 @@ export function AuthProvider({ children }) {
         });
       });
       
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-      
-      // If profile is missing but user exists, create a fallback user_profiles row
-      if (!error && !data && supabase && userId) {
+      const { data: profile, error: profileError } = await Promise.race([fetchPromise, timeoutPromise]);
+
+      console.log('[AuthProvider] Profile fetch result:', {
+        hasProfile: !!profile,
+        profileError: profileError?.message,
+      });
+
+      // If profile doesn't exist but user is authenticated, create it
+      if (!profile && supabase && userId && !profileError) {
         try {
           const { data: authUserResult } = await supabase.auth.getUser();
           const authUser = authUserResult?.user;
-          
+
           if (authUser) {
-            console.log('[AuthProvider] Creating missing user_profiles row for:', authUser.id);
-            const { data: newProfile, error: createError } = await supabase
+            const newProfileData = {
+              id: authUser.id,
+              email: authUser.email,
+              display_name: authUser.user_metadata?.full_name
+                || authUser.user_metadata?.name
+                || authUser.email?.split('@')[0]
+                || 'User',
+              avatar_url: authUser.user_metadata?.avatar_url
+                || authUser.user_metadata?.picture
+                || null,
+              subscription_tier: 'free',
+              al_credits: 10,
+              preferred_units: 'imperial',
+              email_notifications: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            };
+
+            console.log('[AuthProvider] No profile found, creating one for:', authUser.id, 'with data:', newProfileData);
+
+            const { data: createdProfile, error: createError } = await supabase
               .from('user_profiles')
-              .insert({
-                id: authUser.id,
-                email: authUser.email,
-                display_name: authUser.user_metadata?.full_name
-                  || authUser.email?.split('@')[0]
-                  || 'User',
-                avatar_url: authUser.user_metadata?.avatar_url || null,
-                subscription_tier: 'free',
-                preferred_units: 'imperial',
-                email_notifications: true,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              })
+              .insert(newProfileData)
               .select()
               .single();
-            
+
             if (createError) {
-              console.error('[AuthProvider] Failed to create profile:', createError);
-            } else if (newProfile) {
-              return newProfile;
+              console.error('[AuthProvider] Failed to create profile:', {
+                message: createError.message,
+                code: createError.code,
+                details: createError.details,
+                hint: createError.hint,
+              });
+              // Return default profile shape so the app can continue
+              return {
+                ...newProfileData,
+                _isDefault: true,
+                _createError: createError.message,
+              };
             }
+
+            console.log('[AuthProvider] Profile created successfully:', createdProfile);
+            return createdProfile;
           }
         } catch (createErr) {
           console.error('[AuthProvider] Unexpected error creating profile:', createErr);
+          return {
+            id: userId,
+            subscription_tier: 'free',
+            _createError: createErr.message,
+          };
         }
       }
-      
-      clearTimeout(timeoutId);
-      
-      if (error) {
-        console.error('[AuthProvider] Error fetching profile:', error.message);
-        // Return a minimal profile to prevent loading states from hanging
-        // The profile will be refetched on next page load
+
+      if (profileError) {
+        console.error('[AuthProvider] Profile fetch error:', {
+          message: profileError.message,
+          code: profileError?.code,
+          details: profileError?.details,
+        });
         return {
           id: userId,
           subscription_tier: 'free',
-          _fetchError: true, // Flag to indicate this is a fallback profile
+          _fetchError: true,
         };
       }
-      return data;
+
+      return profile;
     } catch (err) {
-      clearTimeout(timeoutId);
       console.error('[AuthProvider] Unexpected error fetching profile:', err);
       // Return minimal profile on exception too
       return {
@@ -406,6 +437,8 @@ export function AuthProvider({ children }) {
         subscription_tier: 'free',
         _fetchError: true,
       };
+    } finally {
+      clearTimeout(timeoutId);
     }
   }, []);
 
