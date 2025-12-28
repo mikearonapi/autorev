@@ -32,6 +32,24 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
+  // ============================================================
+  // IMPORTANT: Define handleClose BEFORE any useEffect that
+  // references it to avoid TDZ (Temporal Dead Zone) errors.
+  // ============================================================
+  const handleClose = useCallback(() => {
+    // CF-004: Always save dismissed state on any close action (not just "don't show again")
+    // This prevents the modal from persisting across navigation
+    if (storageKey && typeof localStorage !== 'undefined') {
+      localStorage.setItem(storageKey, 'true');
+    }
+    
+    if (isControlled && controlledOnClose) {
+      controlledOnClose();
+    } else {
+      setInternalIsOpen(false);
+    }
+  }, [storageKey, isControlled, controlledOnClose]);
+
   // Check localStorage on mount (only for uncontrolled mode)
   useEffect(() => {
     if (isControlled) return;
@@ -54,7 +72,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
   // Handle escape key
   useEffect(() => {
-  if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
         handleClose();
@@ -62,11 +80,11 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   // Prevent body scroll when open
   useEffect(() => {
-  if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') return;
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -76,20 +94,6 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  const handleClose = useCallback(() => {
-    // CF-004: Always save dismissed state on any close action (not just "don't show again")
-    // This prevents the modal from persisting across navigation
-  if (storageKey && typeof localStorage !== 'undefined') {
-      localStorage.setItem(storageKey, 'true');
-    }
-    
-    if (isControlled && controlledOnClose) {
-      controlledOnClose();
-    } else {
-      setInternalIsOpen(false);
-    }
-  }, [storageKey, isControlled, controlledOnClose]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {

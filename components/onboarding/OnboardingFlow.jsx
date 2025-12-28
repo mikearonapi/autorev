@@ -52,30 +52,11 @@ export default function OnboardingFlow({
   // Get user's display name
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
 
-  // Handle escape key (disabled on Step 2 - Referral)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen && step !== 2) {
-        handleDismiss();
-      }
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, step, handleDismiss]);
-
-  // Prevent body scroll when open
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  // ============================================================
+  // IMPORTANT: Define saveProgress and handleDismiss BEFORE any
+  // useEffect that references them to avoid TDZ (Temporal Dead Zone)
+  // errors. Do not reorder these declarations.
+  // ============================================================
 
   // Save progress to database
   // Returns { success: boolean, error?: string } for completion calls
@@ -116,6 +97,38 @@ export default function OnboardingFlow({
     }
   }, [user?.id, step]);
 
+  // Handle dismissal (save progress for resume)
+  // Must be defined before useEffect that references it
+  const handleDismiss = useCallback(() => {
+    saveProgress(formData);
+    onClose?.();
+  }, [formData, saveProgress, onClose]);
+
+  // Handle escape key (disabled on Step 2 - Referral)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isOpen && step !== 2) {
+        handleDismiss();
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen, step, handleDismiss]);
+
+  // Prevent body scroll when open
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Handle form data updates
   const updateFormData = useCallback((updates) => {
     setFormData(prev => {
@@ -153,12 +166,6 @@ export default function OnboardingFlow({
       }, 200);
     }
   }, [step]);
-
-  // Handle dismissal (save progress for resume)
-  const handleDismiss = useCallback(() => {
-    saveProgress(formData);
-    onClose?.();
-  }, [formData, saveProgress, onClose]);
 
   // Handle backdrop click (disabled on Step 2 - Referral)
   const handleBackdropClick = (e) => {
