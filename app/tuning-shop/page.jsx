@@ -615,42 +615,21 @@ function TuningShopContent() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
-  // Hooks with defensive fallbacks - wrapped in try/catch for safety
-  let authState = { isAuthenticated: false };
-  let favoritesState = { favorites: [] };
-  let buildsState = { builds: [], deleteBuild: () => {}, getBuildById: () => null };
-  let vehiclesState = { vehicles: [] };
-  
-  try {
-    authState = useAuth() || { isAuthenticated: false };
-  } catch (err) {
-    console.warn('[TuningShop] Auth provider not available:', err.message);
-  }
-  
+  // Hooks with defensive fallbacks using optional chaining
+  // Hooks must be called unconditionally (Rules of Hooks)
+  const authState = useAuth() || {};
   const authModal = useAuthModal();
+  const favoritesState = useFavorites() || {};
+  const buildsState = useSavedBuilds() || {};
+  const vehiclesState = useOwnedVehicles() || {};
   
-  try {
-    favoritesState = useFavorites() || { favorites: [] };
-  } catch (err) {
-    console.warn('[TuningShop] Favorites provider not available:', err.message);
-  }
-  
-  try {
-    buildsState = useSavedBuilds() || { builds: [], deleteBuild: () => {}, getBuildById: () => null };
-  } catch (err) {
-    console.warn('[TuningShop] SavedBuilds provider not available:', err.message);
-  }
-  
-  try {
-    vehiclesState = useOwnedVehicles() || { vehicles: [] };
-  } catch (err) {
-    console.warn('[TuningShop] OwnedVehicles provider not available:', err.message);
-  }
-  
-  const { isAuthenticated } = authState;
-  const { favorites = [] } = favoritesState;
-  const { builds = [], deleteBuild, getBuildById } = buildsState;
-  const { vehicles = [] } = vehiclesState;
+  // Extract values with safe defaults
+  const isAuthenticated = authState.isAuthenticated || false;
+  const favorites = favoritesState.favorites || [];
+  const builds = buildsState.builds || [];
+  const deleteBuild = buildsState.deleteBuild || (() => {});
+  const getBuildById = buildsState.getBuildById || (() => null);
+  const vehicles = vehiclesState.vehicles || [];
   
   // Fetch car data from database on mount
   // Enhanced error handling to prevent undefined states
