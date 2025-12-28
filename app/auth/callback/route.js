@@ -34,7 +34,10 @@ function getEnhancedCookieOptions(originalOptions = {}) {
     path: '/', // Ensure cookie is available on all routes
     sameSite: 'lax', // Required for OAuth redirects to work
     secure: isProduction, // Only secure in production (HTTPS)
-    httpOnly: originalOptions.httpOnly ?? true, // Keep httpOnly if set
+    // IMPORTANT: Do NOT force httpOnly here.
+    // Supabase SSR cookie-based auth for apps with client-side JS requires the browser
+    // to be able to read session cookies. Forcing httpOnly can break client auth.
+    // If Supabase sets httpOnly explicitly, we'll preserve it via ...originalOptions.
   };
 }
 
