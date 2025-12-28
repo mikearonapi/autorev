@@ -396,6 +396,9 @@ export function AuthProvider({ children }) {
         });
         
         if (user && session) {
+          // Mark as authenticated BEFORE any async work
+          isAuthenticatedRef.current = true;
+          
           // IMMEDIATELY set authenticated state so UI updates right away
           setState({
             user,
@@ -405,7 +408,7 @@ export function AuthProvider({ children }) {
             isAuthenticated: true,
             authError: null,
           });
-          console.log('[AuthProvider] User authenticated, loading profile...');
+          console.log('[AuthProvider] User authenticated via initializeAuth');
           
           // Clean up the auth_ts query param if present
           if (hasAuthTimestamp && typeof window !== 'undefined') {
@@ -417,15 +420,24 @@ export function AuthProvider({ children }) {
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
           
-          // Load profile in background
-          const profile = await fetchProfile(user.id);
-          if (profile) {
-            setState(prev => ({ ...prev, profile }));
-            console.log('[AuthProvider] Profile loaded:', {
-              userId: user.id.slice(0, 8) + '...',
-              tier: profile?.subscription_tier,
-            });
-          }
+          // For page refresh, load profile quickly in background (no progress screen)
+          // The SIGNED_IN event will handle fresh logins with progress screen
+          fetchProfile(user.id).then(profile => {
+            if (profile) {
+              setState(prev => ({ ...prev, profile }));
+              console.log('[AuthProvider] Profile loaded via initializeAuth:', {
+                userId: user.id.slice(0, 8) + '...',
+                tier: profile?.subscription_tier,
+              });
+            }
+          }).catch(err => {
+            console.warn('[AuthProvider] Profile fetch error in initializeAuth:', err);
+          });
+          
+          // Prefetch user data in background for snappy navigation
+          prefetchAllUserData(user.id).catch(err => 
+            console.warn('[AuthProvider] Background prefetch error:', err)
+          );
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
@@ -452,13 +464,14 @@ export function AuthProvider({ children }) {
       }));
       
       if (event === 'SIGNED_IN' && session?.user) {
-        // IMMEDIATELY set authenticated state so UI updates right away
-        // Profile will be loaded in background
-        console.log('[AuthProvider] Handling SIGNED_IN event');
+        // Check if this is a fresh login or just a page refresh with existing session
+        const isFreshLogin = !isAuthenticatedRef.current;
+        console.log('[AuthProvider] Handling SIGNED_IN event:', { isFreshLogin });
         
-        // Start the loading progress screen to show users we're loading their data
-        startProgress();
+        // Mark as authenticated
+        isAuthenticatedRef.current = true;
         
+        // Update state
         setState(prev => ({
           ...prev,
           user: session.user,
@@ -467,52 +480,55 @@ export function AuthProvider({ children }) {
           isAuthenticated: true,
           authError: null,
         }));
-        console.log('[AuthProvider] Set authenticated=true, fetching profile...');
         scheduleSessionRefresh(session);
         
-        // Now fetch profile in background (don't block UI)
-        // Also start prefetching user data in parallel for faster page loads
-        try {
-          // Start prefetching user data immediately (fire and forget)
-          // This runs in parallel with profile loading
-          prefetchAllUserData(session.user.id).catch(err => 
-            console.warn('[AuthProvider] Background prefetch error:', err)
-          );
+        // Only show progress screen for FRESH logins (OAuth redirect, password login)
+        // Skip for page refresh - data loads silently in background
+        if (isFreshLogin) {
+          console.log('[AuthProvider] Fresh login - showing progress screen');
+          startProgress();
           
-          const profile = await fetchProfile(session.user.id);
-          
-          // Check if there's a pending tier selection from the join page
-          const pendingTier = localStorage.getItem('autorev_selected_tier');
-          if (pendingTier && pendingTier !== profile?.subscription_tier) {
-            try {
-              const { data: updatedProfile } = await updateUserProfile({ 
-                subscription_tier: pendingTier 
-              });
-              localStorage.removeItem('autorev_selected_tier');
-              setState(prev => ({
-                ...prev,
-                profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
-              }));
-              // Mark profile as complete
-              markComplete('profile');
-              return;
-            } catch (err) {
-              console.error('[AuthProvider] Failed to apply selected tier:', err);
-              localStorage.removeItem('autorev_selected_tier');
+          // Fetch profile with progress tracking
+          try {
+            // Start prefetching user data in parallel
+            prefetchAllUserData(session.user.id).catch(err => 
+              console.warn('[AuthProvider] Background prefetch error:', err)
+            );
+            
+            const profile = await fetchProfile(session.user.id);
+            
+            // Check if there's a pending tier selection from the join page
+            const pendingTier = localStorage.getItem('autorev_selected_tier');
+            if (pendingTier && pendingTier !== profile?.subscription_tier) {
+              try {
+                const { data: updatedProfile } = await updateUserProfile({ 
+                  subscription_tier: pendingTier 
+                });
+                localStorage.removeItem('autorev_selected_tier');
+                setState(prev => ({
+                  ...prev,
+                  profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
+                }));
+              } catch (err) {
+                console.error('[AuthProvider] Failed to apply selected tier:', err);
+                localStorage.removeItem('autorev_selected_tier');
+              }
             }
+            
+            // Update profile in state
+            if (profile) {
+              setState(prev => ({ ...prev, profile }));
+              console.log('[AuthProvider] Profile loaded:', { tier: profile?.subscription_tier });
+            }
+          } catch (err) {
+            console.error('[AuthProvider] Error loading profile:', err);
+          } finally {
+            // Mark profile as complete (even on error)
+            markComplete('profile');
           }
-          
-          // Update profile in state
-          if (profile) {
-            setState(prev => ({ ...prev, profile }));
-            console.log('[AuthProvider] Profile loaded:', { tier: profile?.subscription_tier });
-          }
-        } catch (err) {
-          console.error('[AuthProvider] Error loading profile:', err);
-          // User is still authenticated even if profile fails to load
-        } finally {
-          // Mark profile as complete (even on error - we don't want to block)
-          markComplete('profile');
+        } else {
+          console.log('[AuthProvider] Page refresh - skipping progress screen');
+          // initializeAuth already handled profile loading
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout

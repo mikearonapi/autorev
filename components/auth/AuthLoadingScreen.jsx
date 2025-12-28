@@ -25,18 +25,31 @@ const LOADING_STEPS = [
 // Minimum display time to prevent flash (ms)
 const MIN_DISPLAY_TIME = 800;
 
-// AL Mascot SVG component
-function ALMascotIcon({ size = 64 }) {
+// Maximum display time before auto-dismiss (ms)
+const MAX_DISPLAY_TIME = 8000;
+
+// Friendly Robot/Wrench Icon for loading
+function LoadingIcon({ size = 64 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
-      <circle cx="35" cy="40" r="8" fill="#ef4444"/>
-      <circle cx="65" cy="40" r="8" fill="#ef4444"/>
-      <circle cx="35" cy="40" r="3" fill="#fff"/>
-      <circle cx="65" cy="40" r="3" fill="#fff"/>
-      <path d="M30 60 Q50 75 70 60" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" fill="none"/>
-      <path d="M20 25 L35 35" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M80 25 L65 35" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+      {/* Gear/cog background */}
+      <circle cx="50" cy="50" r="40" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      {/* Wrench icon */}
+      <path 
+        d="M35 65 L45 55 L55 55 L65 65 L60 70 L55 65 L45 65 L40 70 Z" 
+        fill="#ef4444" 
+        opacity="0.3"
+      />
+      {/* Car silhouette */}
+      <path 
+        d="M30 50 L35 40 L65 40 L70 50 L75 50 L75 60 L70 60 L70 55 L30 55 L30 60 L25 60 L25 50 Z" 
+        fill="#ef4444"
+      />
+      {/* Wheels */}
+      <circle cx="38" cy="55" r="5" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      <circle cx="62" cy="55" r="5" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      {/* Shine effect */}
+      <path d="M40 45 L60 45" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
     </svg>
   );
 }
@@ -179,6 +192,24 @@ export default function AuthLoadingScreen({
     }
   }, [allComplete, hasMetMinTime, shouldShow, isExiting, onComplete]);
 
+  // Auto-dismiss after max time to prevent hanging forever
+  useEffect(() => {
+    if (!showTime || !shouldShow || isExiting) return;
+    
+    const timer = setTimeout(() => {
+      console.log('[AuthLoadingScreen] Auto-dismissing after max time');
+      setIsExiting(true);
+      setTimeout(() => {
+        setShouldShow(false);
+        setIsExiting(false);
+        setShowTime(null);
+        onComplete?.();
+      }, 400);
+    }, MAX_DISPLAY_TIME);
+    
+    return () => clearTimeout(timer);
+  }, [showTime, shouldShow, isExiting, onComplete]);
+
   // Don't render if not showing
   if (!shouldShow) return null;
 
@@ -217,7 +248,7 @@ export default function AuthLoadingScreen({
               priority
             />
           ) : (
-            <ALMascotIcon size={80} />
+            <LoadingIcon size={80} />
           )}
         </div>
 

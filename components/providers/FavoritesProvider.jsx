@@ -104,7 +104,7 @@ function favoritesReducer(state, action) {
  */
 export function FavoritesProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { markComplete, isShowingProgress } = useLoadingProgress();
+  const { markComplete } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(favoritesReducer, defaultState);
@@ -197,10 +197,8 @@ export function FavoritesProvider({ children }) {
           console.error('[FavoritesProvider] Sync error:', err);
         } finally {
           setIsLoading(false);
-          // Mark as complete for loading progress screen
-          if (isShowingProgress) {
-            markComplete('favorites');
-          }
+          // Always mark as complete - LoadingProgressProvider handles if not showing
+          markComplete('favorites');
         }
       } else if (!authLoading) {
         // Only reset on explicit logout (authLoading false + no user)
@@ -209,15 +207,13 @@ export function FavoritesProvider({ children }) {
         syncedRef.current = false;
         const storedState = loadFavorites();
         dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
-        // Mark as complete (no server fetch needed for guests)
-        if (isShowingProgress) {
-          markComplete('favorites');
-        }
+        // Always mark as complete
+        markComplete('favorites');
       }
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, isShowingProgress, markComplete]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, markComplete]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {
