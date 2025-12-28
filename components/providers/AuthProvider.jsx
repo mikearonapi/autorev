@@ -236,11 +236,16 @@ export function AuthProvider({ children }) {
         });
         
         if (user && session) {
-          const profile = await fetchProfile(user.id);
-          console.log('[AuthProvider] User authenticated, profile loaded:', {
-            userId: user.id.slice(0, 8) + '...',
-            tier: profile?.subscription_tier,
+          // IMMEDIATELY set authenticated state so UI updates right away
+          setState({
+            user,
+            profile: null, // Will be loaded below
+            session,
+            isLoading: false,
+            isAuthenticated: true,
+            authError: null,
           });
+          console.log('[AuthProvider] User authenticated, loading profile...');
           
           // Clean up the auth_ts query param if present
           if (hasAuthTimestamp && typeof window !== 'undefined') {
@@ -249,17 +254,18 @@ export function AuthProvider({ children }) {
             window.history.replaceState({}, '', url.pathname + url.search);
           }
           
-          setState({
-            user,
-            profile,
-            session,
-            isLoading: false,
-            isAuthenticated: true,
-            authError: null,
-          });
-          
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
+          
+          // Load profile in background
+          const profile = await fetchProfile(user.id);
+          if (profile) {
+            setState(prev => ({ ...prev, profile }));
+            console.log('[AuthProvider] Profile loaded:', {
+              userId: user.id.slice(0, 8) + '...',
+              tier: profile?.subscription_tier,
+            });
+          }
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
@@ -284,43 +290,51 @@ export function AuthProvider({ children }) {
       });
       
       if (event === 'SIGNED_IN' && session?.user) {
-        const profile = await fetchProfile(session.user.id);
-        
-        // Check if there's a pending tier selection from the join page
-        const pendingTier = localStorage.getItem('autorev_selected_tier');
-        if (pendingTier && pendingTier !== profile?.subscription_tier) {
-          try {
-            // Update the profile with the selected tier
-            const { data: updatedProfile } = await updateUserProfile({ 
-              subscription_tier: pendingTier 
-            });
-            localStorage.removeItem('autorev_selected_tier');
-            
-            setState({
-              user: session.user,
-              profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
-              session,
-              isLoading: false,
-              isAuthenticated: true,
-              authError: null,
-            });
-            scheduleSessionRefresh(session);
-            return;
-          } catch (err) {
-            console.error('[AuthProvider] Failed to apply selected tier:', err);
-            localStorage.removeItem('autorev_selected_tier');
-          }
-        }
-        
-        setState({
+        // IMMEDIATELY set authenticated state so UI updates right away
+        // Profile will be loaded in background
+        setState(prev => ({
+          ...prev,
           user: session.user,
-          profile,
           session,
           isLoading: false,
           isAuthenticated: true,
           authError: null,
-        });
+        }));
+        console.log('[AuthProvider] Set authenticated=true, fetching profile...');
         scheduleSessionRefresh(session);
+        
+        // Now fetch profile in background (don't block UI)
+        try {
+          const profile = await fetchProfile(session.user.id);
+          
+          // Check if there's a pending tier selection from the join page
+          const pendingTier = localStorage.getItem('autorev_selected_tier');
+          if (pendingTier && pendingTier !== profile?.subscription_tier) {
+            try {
+              const { data: updatedProfile } = await updateUserProfile({ 
+                subscription_tier: pendingTier 
+              });
+              localStorage.removeItem('autorev_selected_tier');
+              setState(prev => ({
+                ...prev,
+                profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
+              }));
+              return;
+            } catch (err) {
+              console.error('[AuthProvider] Failed to apply selected tier:', err);
+              localStorage.removeItem('autorev_selected_tier');
+            }
+          }
+          
+          // Update profile in state
+          if (profile) {
+            setState(prev => ({ ...prev, profile }));
+            console.log('[AuthProvider] Profile loaded:', { tier: profile?.subscription_tier });
+          }
+        } catch (err) {
+          console.error('[AuthProvider] Error loading profile:', err);
+          // User is still authenticated even if profile fails to load
+        }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
         if (refreshIntervalRef.current) {
