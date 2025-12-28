@@ -605,6 +605,7 @@ function TuningShopContent() {
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [showCarPicker, setShowCarPicker] = useState(false);
   const [allCars, setAllCars] = useState([]);
+  const [carsError, setCarsError] = useState(null);
   
   // Projects tab state
   const [projectsSort, setProjectsSort] = useState('date-desc');
@@ -614,28 +615,66 @@ function TuningShopContent() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
-  // Hooks with defensive fallbacks
-  const { isAuthenticated } = useAuth() || {};
+  // Hooks with defensive fallbacks - wrapped in try/catch for safety
+  let authState = { isAuthenticated: false };
+  let favoritesState = { favorites: [] };
+  let buildsState = { builds: [], deleteBuild: () => {}, getBuildById: () => null };
+  let vehiclesState = { vehicles: [] };
+  
+  try {
+    authState = useAuth() || { isAuthenticated: false };
+  } catch (err) {
+    console.warn('[TuningShop] Auth provider not available:', err.message);
+  }
+  
   const authModal = useAuthModal();
-  const { favorites = [] } = useFavorites() || {};
-  const { builds = [], deleteBuild, getBuildById } = useSavedBuilds() || {};
-  const { vehicles = [] } = useOwnedVehicles() || {};
+  
+  try {
+    favoritesState = useFavorites() || { favorites: [] };
+  } catch (err) {
+    console.warn('[TuningShop] Favorites provider not available:', err.message);
+  }
+  
+  try {
+    buildsState = useSavedBuilds() || { builds: [], deleteBuild: () => {}, getBuildById: () => null };
+  } catch (err) {
+    console.warn('[TuningShop] SavedBuilds provider not available:', err.message);
+  }
+  
+  try {
+    vehiclesState = useOwnedVehicles() || { vehicles: [] };
+  } catch (err) {
+    console.warn('[TuningShop] OwnedVehicles provider not available:', err.message);
+  }
+  
+  const { isAuthenticated } = authState;
+  const { favorites = [] } = favoritesState;
+  const { builds = [], deleteBuild, getBuildById } = buildsState;
+  const { vehicles = [] } = vehiclesState;
   
   // Fetch car data from database on mount
   // Enhanced error handling to prevent undefined states
   useEffect(() => {
     let cancelled = false;
     
-    fetchCars()
-      .then(cars => {
+    const loadCars = async () => {
+      try {
+        const cars = await fetchCars();
         if (!cancelled && Array.isArray(cars)) {
           setAllCars(cars);
+          setCarsError(null);
+        } else if (!cancelled) {
+          setCarsError('Failed to load car data. Please refresh the page.');
         }
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('[TuningShop] Failed to fetch cars:', err);
-        // Keep allCars as empty array - don't set to undefined/null
-      });
+        if (!cancelled) {
+          setCarsError('Failed to load car data. Please refresh the page.');
+        }
+      }
+    };
+    
+    loadCars();
     
     return () => {
       cancelled = true;

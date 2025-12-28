@@ -1793,6 +1793,31 @@
   text-align: right;
 }
 
+.detailBlockEmpty {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detailBlockEmpty p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.detailBlockEmpty p:first-child {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4px;
+}
+
+.detailBlockHint {
+  font-size: 10px !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-style: italic;
+}
+
 .ratingValue {
   color: var(--sn-gold) !important;
 }

@@ -118,6 +118,12 @@
 }
 .type-auction .typeIcon { color: #5D4037; }
 
+.type-professional-race {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+  color: #000;
+}
+.type-professional-race .typeIcon { color: #FFD700; }
+
 .type-industry {
   background: linear-gradient(135deg, #455A64 0%, #37474F 100%);
   color: #FFF;

@@ -684,9 +684,19 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const brand = getBrand();
 
   // Get sub-info text (year only, category in details)
+  // For owned vehicles: prefer VIN-decoded year if available, otherwise use stored year
   const getSubInfo = () => {
     if (isOwnedVehicle) {
-      return item.vehicle?.year || '';
+      // Use VIN-decoded year if available (most accurate)
+      const vinYear = vinData?.modelYear;
+      const storedYear = item.vehicle?.year;
+      
+      // Show VIN year with "updated" indicator if it differs from stored
+      if (vinYear && vinYear !== storedYear) {
+        return vinYear;
+      }
+      
+      return storedYear || '';
     }
     if (car?.years) return car.years;
     return '';
@@ -1188,17 +1198,55 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   {/* Tires & Wheels */}
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>Tires & Wheels</h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Lug Pattern</span><span>{maintenanceData.specs?.wheel_bolt_pattern || '5x120'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Center Bore</span><span>{maintenanceData.specs?.wheel_center_bore_mm ? `${maintenanceData.specs.wheel_center_bore_mm} mm` : '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Front Wheel</span><span>{maintenanceData.specs?.wheel_size_front || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear Wheel</span><span>{maintenanceData.specs?.wheel_size_rear || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Front Tire</span><span>{maintenanceData.specs?.tire_size_front || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear Tire</span><span>{maintenanceData.specs?.tire_size_rear || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Front PSI</span><span>{maintenanceData.specs?.tire_pressure_front_psi ? `${maintenanceData.specs.tire_pressure_front_psi} PSI` : '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear PSI</span><span>{maintenanceData.specs?.tire_pressure_rear_psi ? `${maintenanceData.specs.tire_pressure_rear_psi} PSI` : '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Lug Torque</span><span>{maintenanceData.specs?.wheel_lug_torque_ft_lbs ? `${maintenanceData.specs.wheel_lug_torque_ft_lbs} ft-lbs` : '—'}</span></div>
-                    </div>
+                    {/* Check if we have any wheel/tire data */}
+                    {(() => {
+                      const hasWheelData = maintenanceData.specs?.wheel_bolt_pattern || 
+                                          maintenanceData.specs?.wheel_center_bore_mm ||
+                                          maintenanceData.specs?.wheel_size_front ||
+                                          maintenanceData.specs?.tire_size_front ||
+                                          maintenanceData.specs?.tire_pressure_front_psi;
+                      
+                      if (!hasWheelData) {
+                        return (
+                          <div className={styles.detailBlockEmpty}>
+                            <p>Wheel and tire specs not yet available for this vehicle.</p>
+                            <p className={styles.detailBlockHint}>Check your owner's manual or door jamb sticker for OEM specifications.</p>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className={styles.detailBlockItems}>
+                          {maintenanceData.specs?.wheel_bolt_pattern && (
+                            <div className={styles.detailBlockItem}><span>Lug Pattern</span><span>{maintenanceData.specs.wheel_bolt_pattern}</span></div>
+                          )}
+                          {maintenanceData.specs?.wheel_center_bore_mm && (
+                            <div className={styles.detailBlockItem}><span>Center Bore</span><span>{maintenanceData.specs.wheel_center_bore_mm} mm</span></div>
+                          )}
+                          {maintenanceData.specs?.wheel_size_front && (
+                            <div className={styles.detailBlockItem}><span>Front Wheel</span><span>{maintenanceData.specs.wheel_size_front}</span></div>
+                          )}
+                          {maintenanceData.specs?.wheel_size_rear && (
+                            <div className={styles.detailBlockItem}><span>Rear Wheel</span><span>{maintenanceData.specs.wheel_size_rear}</span></div>
+                          )}
+                          {maintenanceData.specs?.tire_size_front && (
+                            <div className={styles.detailBlockItem}><span>Front Tire</span><span>{maintenanceData.specs.tire_size_front}</span></div>
+                          )}
+                          {maintenanceData.specs?.tire_size_rear && (
+                            <div className={styles.detailBlockItem}><span>Rear Tire</span><span>{maintenanceData.specs.tire_size_rear}</span></div>
+                          )}
+                          {maintenanceData.specs?.tire_pressure_front_psi && (
+                            <div className={styles.detailBlockItem}><span>Front PSI</span><span>{maintenanceData.specs.tire_pressure_front_psi} PSI</span></div>
+                          )}
+                          {maintenanceData.specs?.tire_pressure_rear_psi && (
+                            <div className={styles.detailBlockItem}><span>Rear PSI</span><span>{maintenanceData.specs.tire_pressure_rear_psi} PSI</span></div>
+                          )}
+                          {maintenanceData.specs?.wheel_lug_torque_ft_lbs && (
+                            <div className={styles.detailBlockItem}><span>Lug Torque</span><span>{maintenanceData.specs.wheel_lug_torque_ft_lbs} ft-lbs</span></div>
+                          )}
+                        </div>
+                      );
+                    })()}
                     
                     {/* Compatible Fitments Toggle */}
                     {fitmentOptions.length > 1 && (

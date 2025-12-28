@@ -1081,7 +1081,17 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
             {partsLoading && <div className={styles.partsHint}>Searching…</div>}
             {!partsLoading && !partsError && partsResults.length === 0 && (
               <div className={styles.partsHint}>
-                Type 2+ characters or pick a category to see fitment-aware parts for this car.
+                {(partsQuery.length >= 2 || partsCategory) ? (
+                  <>
+                    <strong>No parts found</strong> for "{partsQuery || partsCategory}" on this vehicle.
+                    <br />
+                    <span style={{ fontSize: '11px', opacity: 0.7 }}>
+                      Try a different search term or category. Parts data is limited for some vehicles.
+                    </span>
+                  </>
+                ) : (
+                  'Type 2+ characters or pick a category to see fitment-aware parts for this car.'
+                )}
               </div>
             )}
 
