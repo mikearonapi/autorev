@@ -764,21 +764,20 @@
   flex: 1;
   min-width: 0;
   padding: 1rem;
-  /* Adjusted for mobile header (44px) + quick nav tabs (~48px) - minimal extra spacing */
-  padding-top: calc(44px + 48px + 0.5rem);
+  /* Minimal padding-top - sticky headers handle their own positioning */
+  padding-top: 0.75rem;
 }
 
 @media (min-width: 768px) {
   .main {
     padding: 1.25rem;
-    padding-top: calc(48px + 48px + 0.75rem);
+    padding-top: 1rem;
   }
 }
 
 @media (min-width: 1024px) {
   .main {
     padding: 2rem 3rem;
-    /* No quick nav tabs on desktop */
     padding-top: 2rem;
   }
 }
@@ -1508,16 +1507,23 @@
 
 .homeView {
   max-width: 1000px;
+  /* No extra top margin needed - padding handled by .main */
 }
 
 /* Sections */
 .homeSections {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* Match spacing between sections */
+  gap: 0.75rem;
 }
 
 @media (min-width: 768px) {
+  .homeSections {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
   .homeSections {
     gap: 1.25rem;
   }

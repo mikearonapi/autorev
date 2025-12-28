@@ -295,15 +295,18 @@ export function AuthProvider({ children }) {
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (event, session) => {
-      console.log('[AuthProvider] Auth state change:', {
+      console.log('[AuthProvider] Auth state change:', JSON.stringify({
         event,
         hasSession: !!session,
-        userId: session?.user?.id?.slice(0, 8) + '...',
-      });
+        hasUser: !!session?.user,
+        userId: session?.user?.id?.slice(0, 8),
+        currentIsAuthenticated: isAuthenticatedRef.current,
+      }));
       
       if (event === 'SIGNED_IN' && session?.user) {
         // IMMEDIATELY set authenticated state so UI updates right away
         // Profile will be loaded in background
+        console.log('[AuthProvider] Handling SIGNED_IN event');
         setState(prev => ({
           ...prev,
           user: session.user,
