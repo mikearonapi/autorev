@@ -25,6 +25,32 @@ const LOADING_STEPS = [
 // Minimum display time to prevent flash (ms)
 const MIN_DISPLAY_TIME = 800;
 
+// AL Mascot SVG component
+function ALMascotIcon({ size = 64 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      <circle cx="35" cy="40" r="8" fill="#ef4444"/>
+      <circle cx="65" cy="40" r="8" fill="#ef4444"/>
+      <circle cx="35" cy="40" r="3" fill="#fff"/>
+      <circle cx="65" cy="40" r="3" fill="#fff"/>
+      <path d="M30 60 Q50 75 70 60" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" fill="none"/>
+      <path d="M20 25 L35 35" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M80 25 L65 35" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// Close icon component
+function CloseIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
 /**
  * Check icon component
  */
@@ -63,19 +89,23 @@ function SpinnerIcon() {
  * 
  * @param {Object} props
  * @param {boolean} props.isVisible - Whether to show the loading screen
- * @param {Object} props.loadingStates - Object with loading states for each data type
- * @param {boolean} props.loadingStates.profile - Profile loading state
- * @param {boolean} props.loadingStates.favorites - Favorites loading state
- * @param {boolean} props.loadingStates.vehicles - Vehicles loading state
- * @param {boolean} props.loadingStates.builds - Builds loading state
+ * @param {Object} props.loadingStates - Object with completion states for each data type
+ * @param {boolean} props.loadingStates.profile - Profile completed (true = done loading)
+ * @param {boolean} props.loadingStates.favorites - Favorites completed
+ * @param {boolean} props.loadingStates.vehicles - Vehicles completed
+ * @param {boolean} props.loadingStates.builds - Builds completed
  * @param {function} props.onComplete - Callback when all loading is complete
+ * @param {function} props.onDismiss - Callback when user dismisses the screen
  * @param {string} props.userName - Optional user name to display
+ * @param {string} props.userAvatar - Optional user avatar URL
  */
 export default function AuthLoadingScreen({ 
   isVisible, 
   loadingStates = {}, 
   onComplete,
+  onDismiss,
   userName,
+  userAvatar,
 }) {
   const [shouldShow, setShouldShow] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -83,14 +113,14 @@ export default function AuthLoadingScreen({
   const [showTime, setShowTime] = useState(null);
 
   // Calculate progress
+  // loadingStates uses "completed" model: true = done, false/undefined = still loading
   const { completedSteps, totalSteps, allComplete } = useMemo(() => {
     const total = LOADING_STEPS.length;
     let completed = 0;
     
     LOADING_STEPS.forEach(step => {
-      // A step is complete when its loading state is false (not loading)
-      // or if it's explicitly marked as loaded
-      if (loadingStates[step.key] === false || loadingStates[`${step.key}Loaded`] === true) {
+      // A step is complete when its state is true (completed)
+      if (loadingStates[step.key] === true) {
         completed++;
       }
     });
@@ -152,19 +182,43 @@ export default function AuthLoadingScreen({
   // Don't render if not showing
   if (!shouldShow) return null;
 
+  // Handle dismiss
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setShouldShow(false);
+      setIsExiting(false);
+      setShowTime(null);
+      onDismiss?.();
+    }, 400);
+  };
+
   return (
     <div className={`${styles.overlay} ${isExiting ? styles.exiting : ''}`}>
+      {/* Close button */}
+      <button 
+        className={styles.closeButton} 
+        onClick={handleDismiss}
+        aria-label="Close loading screen"
+      >
+        <CloseIcon />
+      </button>
+
       <div className={styles.container}>
-        {/* Logo */}
-        <div className={styles.logoWrapper}>
-          <Image
-            src="/images/autorev-icon.svg"
-            alt="AutoRev"
-            width={64}
-            height={64}
-            className={styles.logo}
-            priority
-          />
+        {/* User avatar or AL mascot */}
+        <div className={styles.avatarWrapper}>
+          {userAvatar ? (
+            <Image
+              src={userAvatar}
+              alt={userName || 'User'}
+              width={80}
+              height={80}
+              className={styles.avatar}
+              priority
+            />
+          ) : (
+            <ALMascotIcon size={80} />
+          )}
         </div>
 
         {/* Welcome message */}
@@ -184,9 +238,9 @@ export default function AuthLoadingScreen({
         {/* Loading steps */}
         <div className={styles.steps}>
           {LOADING_STEPS.map((step, index) => {
-            const isLoading = loadingStates[step.key] === true;
-            const isComplete = loadingStates[step.key] === false || loadingStates[`${step.key}Loaded`] === true;
-            const isPending = !isLoading && !isComplete;
+            // true = completed, false/undefined = still loading
+            const isComplete = loadingStates[step.key] === true;
+            const isLoading = !isComplete;
             
             return (
               <div 
@@ -197,10 +251,8 @@ export default function AuthLoadingScreen({
                 <div className={styles.stepIcon}>
                   {isComplete ? (
                     <CheckIcon />
-                  ) : isLoading ? (
-                    <SpinnerIcon />
                   ) : (
-                    <span className={styles.stepEmoji}>{step.icon}</span>
+                    <SpinnerIcon />
                   )}
                 </div>
                 <span className={styles.stepLabel}>{step.label}</span>

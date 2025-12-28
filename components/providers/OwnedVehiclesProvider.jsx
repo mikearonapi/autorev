@@ -181,17 +181,12 @@ function vehiclesReducer(state, action) {
  */
 export function OwnedVehiclesProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { setLoadingState } = useLoadingProgress();
+  const { markComplete, isShowingProgress } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(vehiclesReducer, defaultState);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
-
-  // Report loading state changes to central tracker
-  useEffect(() => {
-    setLoadingState('vehicles', isLoading);
-  }, [isLoading, setLoadingState]);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {
@@ -260,6 +255,10 @@ export function OwnedVehiclesProvider({ children }) {
           console.error('[OwnedVehiclesProvider] Error:', err);
         } finally {
           setIsLoading(false);
+          // Mark as complete for loading progress screen
+          if (isShowingProgress) {
+            markComplete('vehicles');
+          }
         }
       } else if (!authLoading) {
         // Only reset on explicit logout (authLoading false + no user)
@@ -268,11 +267,15 @@ export function OwnedVehiclesProvider({ children }) {
         syncedRef.current = false;
         const localVehicles = loadLocalVehicles();
         dispatch({ type: ActionTypes.SET, payload: localVehicles });
+        // Mark as complete (no server fetch needed for guests)
+        if (isShowingProgress) {
+          markComplete('vehicles');
+        }
       }
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length, isShowingProgress, markComplete]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

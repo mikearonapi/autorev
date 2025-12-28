@@ -201,17 +201,11 @@ function checkAuthCallbackCookie() {
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
-  const { loadingStates, isShowingProgress, setLoadingState, startProgress, endProgress, resetProgress } = useLoadingProgress();
-  const [profileLoading, setProfileLoading] = useState(false);
+  const { loadingStates, isShowingProgress, markComplete, startProgress, endProgress, dismissProgress, resetProgress } = useLoadingProgress();
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
   const isAuthenticatedRef = useRef(false);
-  
-  // Report profile loading state to central tracker
-  useEffect(() => {
-    setLoadingState('profile', profileLoading);
-  }, [profileLoading, setLoadingState]);
   
   // Keep the ref in sync with state
   useEffect(() => {
@@ -478,7 +472,6 @@ export function AuthProvider({ children }) {
         
         // Now fetch profile in background (don't block UI)
         // Also start prefetching user data in parallel for faster page loads
-        setProfileLoading(true);
         try {
           // Start prefetching user data immediately (fire and forget)
           // This runs in parallel with profile loading
@@ -500,7 +493,8 @@ export function AuthProvider({ children }) {
                 ...prev,
                 profile: updatedProfile || { ...profile, subscription_tier: pendingTier },
               }));
-              setProfileLoading(false);
+              // Mark profile as complete
+              markComplete('profile');
               return;
             } catch (err) {
               console.error('[AuthProvider] Failed to apply selected tier:', err);
@@ -517,7 +511,8 @@ export function AuthProvider({ children }) {
           console.error('[AuthProvider] Error loading profile:', err);
           // User is still authenticated even if profile fails to load
         } finally {
-          setProfileLoading(false);
+          // Mark profile as complete (even on error - we don't want to block)
+          markComplete('profile');
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
@@ -1029,7 +1024,9 @@ export function AuthProvider({ children }) {
         isVisible={isShowingProgress}
         loadingStates={loadingStates}
         onComplete={endProgress}
+        onDismiss={dismissProgress}
         userName={state.profile?.display_name || state.user?.user_metadata?.name}
+        userAvatar={state.profile?.avatar_url || state.user?.user_metadata?.avatar_url}
       />
       
       {/* Onboarding Modal - shown for new users who haven't completed it */}

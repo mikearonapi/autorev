@@ -104,17 +104,12 @@ function favoritesReducer(state, action) {
  */
 export function FavoritesProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { setLoadingState } = useLoadingProgress();
+  const { markComplete, isShowingProgress } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(favoritesReducer, defaultState);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
-
-  // Report loading state changes to central tracker
-  useEffect(() => {
-    setLoadingState('favorites', isLoading);
-  }, [isLoading, setLoadingState]);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {
@@ -202,6 +197,10 @@ export function FavoritesProvider({ children }) {
           console.error('[FavoritesProvider] Sync error:', err);
         } finally {
           setIsLoading(false);
+          // Mark as complete for loading progress screen
+          if (isShowingProgress) {
+            markComplete('favorites');
+          }
         }
       } else if (!authLoading) {
         // Only reset on explicit logout (authLoading false + no user)
@@ -210,11 +209,15 @@ export function FavoritesProvider({ children }) {
         syncedRef.current = false;
         const storedState = loadFavorites();
         dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
+        // Mark as complete (no server fetch needed for guests)
+        if (isShowingProgress) {
+          markComplete('favorites');
+        }
       }
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, isShowingProgress, markComplete]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

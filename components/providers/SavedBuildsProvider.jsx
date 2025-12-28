@@ -93,18 +93,13 @@ const SavedBuildsContext = createContext(null);
  */
 export function SavedBuildsProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading, profile } = useAuth();
-  const { setLoadingState } = useLoadingProgress();
+  const { markComplete, isShowingProgress } = useLoadingProgress();
   const userTier = profile?.subscription_tier || 'free';
   const [builds, setBuilds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
-
-  // Report loading state changes to central tracker
-  useEffect(() => {
-    setLoadingState('builds', isLoading);
-  }, [isLoading, setLoadingState]);
 
   // Hydrate from localStorage initially (for SSR/guest users)
   useEffect(() => {
@@ -123,7 +118,13 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     // Not authenticated - load from localStorage
     console.log('[SavedBuildsProvider] Not authenticated, loading from localStorage');
     const localBuilds = loadLocalBuilds();
-    if (!cancelledRef.current) setBuilds(localBuilds);
+    if (!cancelledRef.current) {
+      setBuilds(localBuilds);
+      // Mark as complete (no server fetch needed for guests)
+      if (isShowingProgress) {
+        markComplete('builds');
+      }
+    }
     return;
   }
 
@@ -214,9 +215,15 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     const localBuilds = loadLocalBuilds();
     if (!cancelledRef.current) setBuilds(localBuilds);
   } finally {
-    if (!cancelledRef.current) setIsLoading(false);
+    if (!cancelledRef.current) {
+      setIsLoading(false);
+      // Mark as complete for loading progress screen
+      if (isShowingProgress) {
+        markComplete('builds');
+      }
+    }
   }
-}, [isAuthenticated, user?.id]);
+}, [isAuthenticated, user?.id, isShowingProgress, markComplete]);
 
   // Fetch builds when user ID becomes available
   // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
