@@ -737,6 +737,7 @@ export function AuthProvider({ children }) {
 
   // Sign out - Enhanced to ensure complete state cleanup
   const logout = useCallback(async () => {
+    console.log('[AuthProvider] Starting logout...');
     setState(prev => ({ ...prev, isLoading: true }));
     
     // Clear refresh timer
@@ -749,7 +750,11 @@ export function AuthProvider({ children }) {
     isAuthenticatedRef.current = false;
     initAttemptRef.current = 0;
     
-    const { error } = await authSignOut({ scope: 'local' });
+    // Reset loading progress so it shows fresh on next login
+    resetProgress();
+    
+    // Use 'global' scope to invalidate the session on the server
+    const { error } = await authSignOut({ scope: 'global' });
     
     if (error) {
       console.error('[AuthProvider] Sign out error:', error);
@@ -764,9 +769,9 @@ export function AuthProvider({ children }) {
     // Reset onboarding state too
     setOnboardingState(defaultOnboardingState);
     
-    console.log('[AuthProvider] Logout complete');
+    console.log('[AuthProvider] Logout complete - state cleared');
     return { error: null }; // Return success - local logout always succeeds
-  }, []);
+  }, [resetProgress]);
 
   // Update profile
   const updateProfile = useCallback(async (updates) => {
