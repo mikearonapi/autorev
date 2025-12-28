@@ -3,6 +3,9 @@
  * 
  * Handles the redirect from OAuth providers (Google, etc.)
  * Exchanges the code for a session and redirects to the intended page
+ * 
+ * FIX 2024-12-27: Explicitly transfer cookies to redirect response
+ * The cookieStore.set() calls don't automatically transfer to NextResponse.redirect()
  */
 
 import { createServerClient } from '@supabase/ssr';
@@ -25,6 +28,9 @@ export async function GET(request) {
     );
   }
 
+  // Track cookies that need to be set on the redirect response
+  const cookiesToSet = [];
+
   // Exchange code for session
   if (code) {
     const cookieStore = await cookies();
@@ -37,9 +43,14 @@ export async function GET(request) {
           getAll() {
             return cookieStore.getAll();
           },
-          setAll(cookiesToSet) {
+          setAll(cookiesFromSupabase) {
+            // Store cookies to transfer to redirect response
+            cookiesFromSupabase.forEach(({ name, value, options }) => {
+              cookiesToSet.push({ name, value, options });
+            });
+            // Also set via cookieStore for good measure
             try {
-              cookiesToSet.forEach(({ name, value, options }) =>
+              cookiesFromSupabase.forEach(({ name, value, options }) =>
                 cookieStore.set(name, value, options)
               );
             } catch {
@@ -61,6 +72,8 @@ export async function GET(request) {
         );
       }
 
+      console.log('[Auth Callback] Code exchanged successfully, cookies to set:', cookiesToSet.length);
+
       // Fire-and-forget Discord notification for new signups (within 60s of creation)
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -70,7 +83,6 @@ export async function GET(request) {
 
         if (isNewUser) {
           // Gather acquisition context from cookies/headers
-          const cookieStore = await cookies();
           const sourcePage = cookieStore.get('signup_source_page')?.value;
           const carContext = cookieStore.get('signup_car_context')?.value;
           const referrer = cookieStore.get('signup_referrer')?.value;
@@ -127,6 +139,16 @@ export async function GET(request) {
     }
   }
 
-  // Redirect to the intended destination
-  return NextResponse.redirect(new URL(next, requestUrl.origin));
+  // Create redirect response
+  const response = NextResponse.redirect(new URL(next, requestUrl.origin));
+
+  // CRITICAL: Explicitly set all auth cookies on the redirect response
+  // This ensures the browser receives the session cookies
+  cookiesToSet.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, options);
+  });
+
+  console.log(`[Auth Callback] Redirecting to ${next} with ${cookiesToSet.length} cookies`);
+  
+  return response;
 }
