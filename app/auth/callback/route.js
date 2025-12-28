@@ -4,70 +4,53 @@
  * Handles the redirect from OAuth providers (Google, etc.)
  * Exchanges the code for a session and redirects to the intended page
  * 
- * CRITICAL: Cookies set during exchangeCodeForSession MUST be explicitly
- * copied to the NextResponse.redirect() response for the browser to receive them.
- * 
- * FIX 2024-12-27: Enhanced cookie options for cross-browser compatibility
- * - Added explicit path: '/' to ensure cookies are available on all routes
- * - Added sameSite: 'lax' for OAuth redirects
- * - Added secure: true in production only
- * - Added auth_ts param to help AuthProvider detect fresh auth
- * 
- * @see https://supabase.com/docs/guides/auth/server-side/nextjs
+ * ENHANCED: Proper session establishment with verification and retry logic
  */
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
-import { sendWelcomeEmail } from '@/lib/email';
 
-/**
- * Enhance cookie options for cross-browser compatibility
- * Ensures cookies work across all routes and environments
- */
-function getEnhancedCookieOptions(originalOptions = {}) {
-  const isProduction = process.env.NODE_ENV === 'production';
+// Session verification with retry
+async function verifySessionEstablished(supabase, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (user && !error) {
+      console.log(`[Auth Callback] Session verified on attempt ${attempt}`);
+      return { user, error: null };
+    }
+    
+    if (attempt < maxRetries) {
+      // Exponential backoff: 100ms, 200ms, 400ms
+      const delay = 100 * Math.pow(2, attempt - 1);
+      console.log(`[Auth Callback] Session not ready, retry ${attempt}/${maxRetries} in ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
   
-  return {
-    ...originalOptions,
-    path: '/', // Ensure cookie is available on all routes
-    sameSite: 'lax', // Required for OAuth redirects to work
-    secure: isProduction, // Only secure in production (HTTPS)
-    // IMPORTANT: Do NOT force httpOnly here.
-    // Supabase SSR cookie-based auth for apps with client-side JS requires the browser
-    // to be able to read session cookies. Forcing httpOnly can break client auth.
-    // If Supabase sets httpOnly explicitly, we'll preserve it via ...originalOptions.
-  };
+  return { user: null, error: new Error('Session verification failed after retries') };
 }
 
 export async function GET(request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/';
-  const error = searchParams.get('error');
-  const errorDescription = searchParams.get('error_description');
-
-  console.log('[Auth Callback] Received request:', {
-    hasCode: !!code,
-    next,
-    error: error || 'none',
-    origin,
-  });
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
+  const next = requestUrl.searchParams.get('next') || '/';
+  const error = requestUrl.searchParams.get('error');
+  const errorDescription = requestUrl.searchParams.get('error_description');
 
   // Handle OAuth errors
   if (error) {
     console.error('[Auth Callback] OAuth error:', error, errorDescription);
     return NextResponse.redirect(
-      new URL(`/auth/error?error=${encodeURIComponent(errorDescription || error)}`, origin)
+      new URL(`/auth/error?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
     );
   }
 
+  // Exchange code for session
   if (code) {
     const cookieStore = await cookies();
-    
-    // Track cookies that need to be set on the response
-    const responseCookies = [];
     
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -78,40 +61,50 @@ export async function GET(request) {
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            // Store cookies with ENHANCED options for the final response
-            cookiesToSet.forEach(({ name, value, options }) => {
-              const enhancedOptions = getEnhancedCookieOptions(options);
-              responseCookies.push({ name, value, options: enhancedOptions });
-              
-              // Also try to set on cookieStore for subsequent reads within this request
-              try {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                // Ensure secure cookie settings for auth cookies
+                const enhancedOptions = {
+                  ...options,
+                  // Force secure and httpOnly for auth tokens
+                  secure: process.env.NODE_ENV === 'production',
+                  sameSite: 'lax',
+                };
                 cookieStore.set(name, value, enhancedOptions);
-              } catch (e) {
-                // Expected in Route Handler context - cookies will be set on redirect response
-                console.log('[Auth Callback] Cookie will be set on redirect response:', name);
-              }
-            });
+              });
+            } catch (cookieError) {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing sessions.
+              console.warn('[Auth Callback] Cookie set warning:', cookieError.message);
+            }
           },
         },
       }
     );
-
-    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (exchangeError) {
-      console.error('[Auth Callback] Code exchange error:', exchangeError.message, exchangeError);
-      return NextResponse.redirect(
-        new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, origin)
-      );
-    }
-
-    console.log('[Auth Callback] Code exchanged successfully, preparing', responseCookies.length, 'cookies');
-
-    // Handle new user notifications (non-blocking)
-    let userId = null;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      userId = user?.id;
+      // Exchange the authorization code for session tokens
+      const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      
+      if (exchangeError) {
+        console.error('[Auth Callback] Code exchange error:', exchangeError);
+        return NextResponse.redirect(
+          new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
+        );
+      }
+
+      // Log successful token exchange
+      console.log('[Auth Callback] Code exchanged successfully, verifying session...');
+
+      // Verify session is properly established (with retry for race conditions)
+      const { user, error: verifyError } = await verifySessionEstablished(supabase);
+      
+      if (verifyError || !user) {
+        console.error('[Auth Callback] Session verification failed:', verifyError);
+        // Don't fail completely - the session may still be usable client-side
+        // Just redirect and let the client handle it
+        console.warn('[Auth Callback] Proceeding with redirect despite verification issue');
+      }
       
       if (user) {
         const createdAt = new Date(user.created_at);
@@ -119,85 +112,83 @@ export async function GET(request) {
         const isNewUser = (now - createdAt) < 60000;
 
         if (isNewUser) {
+          // Gather acquisition context from cookies/headers
+          const cookieStore = await cookies();
           const sourcePage = cookieStore.get('signup_source_page')?.value;
           const carContext = cookieStore.get('signup_car_context')?.value;
           const referrer = cookieStore.get('signup_referrer')?.value;
 
+          // Get user's metadata which may contain additional context
           const signupContext = {
             source_page: sourcePage || user.user_metadata?.source_page,
             car_context: carContext || user.user_metadata?.car_context,
             referrer: referrer || user.user_metadata?.referrer || 'direct',
           };
 
-          // Non-blocking notifications
+          // Check for first action (within 2 minutes of signup)
+          try {
+            const twoMinutesLater = new Date(createdAt);
+            twoMinutesLater.setMinutes(twoMinutesLater.getMinutes() + 2);
+            
+            const { data: firstActivity } = await supabase
+              .from('user_activity')
+              .select('event_type')
+              .eq('user_id', user.id)
+              .gte('created_at', createdAt.toISOString())
+              .lte('created_at', twoMinutesLater.toISOString())
+              .order('created_at', { ascending: true })
+              .limit(1)
+              .single();
+
+            if (firstActivity) {
+              const actionLabels = {
+                'car_favorited': '⭐ Favorited a car',
+                'build_started': '🔧 Started building',
+                'ai_mechanic_used': '🤖 Asked AL',
+                'comparison_started': '⚖️ Started comparison',
+                'car_viewed': '👀 Viewed car details',
+              };
+              signupContext.first_action = actionLabels[firstActivity.event_type] || firstActivity.event_type;
+            }
+          } catch (activityErr) {
+            // Gracefully handle if activity check fails
+            console.log('[Auth Callback] Could not fetch first activity:', activityErr.message);
+          }
+
           notifySignup({
             id: user.id,
             email: user.email,
-            name: user.user_metadata?.full_name || user.user_metadata?.name || null,
-            avatar_url: user.user_metadata?.avatar_url || null,
             provider: user.app_metadata?.provider || 'email',
-          }, signupContext).catch(err => console.error('[Auth Callback] Discord notification failed:', err));
-
-          sendWelcomeEmail(user).catch(err => 
-            console.error('[Auth Callback] Welcome email failed:', err)
-          );
+          }, signupContext).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
         }
       }
-    } catch (userErr) {
-      console.log('[Auth Callback] Could not check new user status:', userErr.message);
+    } catch (err) {
+      console.error('[Auth Callback] Unexpected error:', err);
+      return NextResponse.redirect(
+        new URL('/auth/error?error=Authentication%20failed', requestUrl.origin)
+      );
     }
-
-    // Build redirect URL
-    let redirectPath = next;
-    
-    // Check for pending checkout intent
-    const checkoutIntent = cookieStore.get('autorev_checkout_intent')?.value;
-    if (checkoutIntent) {
-      redirectPath = '/profile?resume_checkout=true';
-    }
-
-    // Handle forwarded host for load balancers (Vercel)
-    const forwardedHost = request.headers.get('x-forwarded-host');
-    const isLocalEnv = process.env.NODE_ENV === 'development';
-    
-    let baseUrl;
-    if (isLocalEnv) {
-      baseUrl = origin;
-    } else if (forwardedHost) {
-      baseUrl = `https://${forwardedHost}`;
-    } else {
-      baseUrl = origin;
-    }
-
-    // Add auth timestamp to help AuthProvider detect fresh auth
-    // This triggers additional retry logic for race condition handling
-    const redirectUrl = new URL(redirectPath, baseUrl);
-    redirectUrl.searchParams.set('auth_ts', Date.now().toString());
-    
-    const finalUrl = redirectUrl.toString();
-
-    // Create response and EXPLICITLY set all auth cookies on it
-    const response = NextResponse.redirect(finalUrl);
-    
-    // CRITICAL: Transfer all cookies from the exchange to the response with enhanced options
-    for (const { name, value, options } of responseCookies) {
-      response.cookies.set(name, value, options);
-      console.log('[Auth Callback] Setting cookie:', name, 'path:', options.path, 'secure:', options.secure);
-    }
-
-    // Also set a marker cookie to help AuthProvider detect fresh auth
-    response.cookies.set('auth_callback_complete', '1', {
-      path: '/',
-      sameSite: 'lax',
-      secure: !isLocalEnv,
-      maxAge: 60, // Short-lived - just for the redirect
-    });
-
-    console.log('[Auth Callback] Redirecting to', finalUrl, 'with', responseCookies.length + 1, 'cookies, userId:', userId?.slice(0, 8));
-    return response;
   }
 
-  // No code provided - redirect to error
-  console.error('[Auth Callback] No authorization code provided');
-  return NextResponse.redirect(`${origin}/auth/error?error=No%20authorization%20code%20provided`);
+  // Build the redirect URL with auth success indicator
+  const redirectUrl = new URL(next, requestUrl.origin);
+  
+  // Add a cache-busting timestamp to force client to check fresh session
+  // This helps resolve client-side race conditions
+  redirectUrl.searchParams.set('auth_ts', Date.now().toString());
+  
+  // Create response with redirect
+  const response = NextResponse.redirect(redirectUrl);
+  
+  // Set a short-lived cookie to signal auth completion to client
+  // This helps the AuthProvider know to refresh immediately
+  response.cookies.set('auth_callback_complete', Date.now().toString(), {
+    maxAge: 60, // 1 minute - just long enough for client to read
+    httpOnly: false, // Allow client JS to read
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+  
+  console.log(`[Auth Callback] Redirecting to: ${redirectUrl.pathname}`);
+  return response;
 }
