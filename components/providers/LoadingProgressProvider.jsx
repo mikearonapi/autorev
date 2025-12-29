@@ -34,14 +34,18 @@ const StepStatus = {
  * Different steps may need different timeouts based on typical load times
  */
 const STEP_TIMEOUTS = {
-  // NOTE: profile can be slower right after OAuth redirect due to concurrent
-  // fetches and browser connection limits; keep this aligned with
-  // AuthLoadingScreen's MAX_DISPLAY_TIME to avoid false failures.
-  profile: 12000,   // 12s
+  profile: 12000,   // 12s - can be slower right after OAuth due to concurrent fetches
   favorites: 8000,  // 8s - can be large lists
   vehicles: 8000,   // 8s - can be large lists
   builds: 10000,    // 10s - most complex data
 };
+
+/**
+ * Global watchdog timeout in milliseconds
+ * After this time, any steps still pending/loading will be marked as timeout.
+ * This ensures allDone always becomes true, even if a provider never mounts.
+ */
+const GLOBAL_WATCHDOG_TIMEOUT = 15000; // 15s
 
 /**
  * @typedef {Object} StepState
@@ -103,13 +107,20 @@ export function LoadingProgressProvider({ children }) {
   const completionCallbackRef = useRef(null);
   const stepTimeoutsRef = useRef({}); // Track timeout timers per step
   const retryCallbacksRef = useRef({}); // Store retry callbacks per step
+  const globalWatchdogRef = useRef(null); // Global watchdog timer
 
-  // Clear all step timeouts
+  // Clear all step timeouts and global watchdog
   const clearAllStepTimeouts = useCallback(() => {
     Object.values(stepTimeoutsRef.current).forEach(timer => {
       if (timer) clearTimeout(timer);
     });
     stepTimeoutsRef.current = {};
+    
+    // Also clear global watchdog
+    if (globalWatchdogRef.current) {
+      clearTimeout(globalWatchdogRef.current);
+      globalWatchdogRef.current = null;
+    }
   }, []);
 
   /**
@@ -301,6 +312,34 @@ export function LoadingProgressProvider({ children }) {
     });
     
     setIsShowingProgress(true);
+    
+    // Start global watchdog: after GLOBAL_WATCHDOG_TIMEOUT, mark any
+    // non-terminal steps as timeout so allDone eventually becomes true
+    globalWatchdogRef.current = setTimeout(() => {
+      console.log('[LoadingProgress] Global watchdog fired - marking incomplete steps as timeout');
+      setLoadingStates(prev => {
+        const updated = { ...prev };
+        let changed = false;
+        
+        Object.keys(updated).forEach(key => {
+          const step = updated[key];
+          const status = step?.status || step;
+          
+          // Only mark pending or loading steps - don't overwrite completed/failed/timeout
+          if (status === StepStatus.PENDING || status === StepStatus.LOADING) {
+            console.warn(`[LoadingProgress] ${key}: watchdog timeout (was ${status})`);
+            updated[key] = {
+              ...step,
+              status: StepStatus.TIMEOUT,
+              error: 'Global timeout - step did not complete in time',
+            };
+            changed = true;
+          }
+        });
+        
+        return changed ? updated : prev;
+      });
+    }, GLOBAL_WATCHDOG_TIMEOUT);
   }, [clearAllStepTimeouts]);
 
   /**

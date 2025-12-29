@@ -11,7 +11,11 @@
  * - Shows loading status per step (pending, loading, completed, failed, timeout)
  * - Retry button for failed/timed out steps
  * - Animated progress indicators
- * - Auto-dismiss after completion or max timeout
+ * - Auto-dismiss when ALL steps reach a terminal state (completed/failed/timeout)
+ * - User can dismiss manually at any time via close button
+ * 
+ * Note: Step timeouts are enforced by LoadingProgressProvider's global watchdog,
+ * not by this component. This ensures deterministic completion.
  * 
  * @module components/auth/AuthLoadingScreen
  */
@@ -30,9 +34,6 @@ const LOADING_STEPS = [
 
 // Minimum display time to prevent flash (ms)
 const MIN_DISPLAY_TIME = 800;
-
-// Maximum display time before auto-dismiss (ms)
-const MAX_DISPLAY_TIME = 12000; // Increased to allow for retries
 
 // Status types (matching LoadingProgressProvider)
 const StepStatus = {
@@ -275,11 +276,12 @@ export default function AuthLoadingScreen({
     }
   }, [showTime]);
 
-  // Handle completion (all steps done - either completed or failed)
+  // Handle completion when all steps are done (completed, failed, or timeout)
+  // The global watchdog in LoadingProgressProvider ensures every step reaches
+  // a terminal state, so we can safely wait for allDone without a separate
+  // max-time auto-dismiss here.
   useEffect(() => {
-    // Only auto-dismiss if all steps completed successfully
-    // If there are failures, let user retry or dismiss manually
-    if (allCompleted && hasMetMinTime && shouldShow && !isExiting) {
+    if (allDone && hasMetMinTime && shouldShow && !isExiting) {
       // Start exit animation
       setIsExiting(true);
       
@@ -293,25 +295,7 @@ export default function AuthLoadingScreen({
       
       return () => clearTimeout(timer);
     }
-  }, [allCompleted, hasMetMinTime, shouldShow, isExiting, onComplete]);
-
-  // Auto-dismiss after max time to prevent hanging forever
-  useEffect(() => {
-    if (!showTime || !shouldShow || isExiting) return;
-    
-    const timer = setTimeout(() => {
-      console.log('[AuthLoadingScreen] Auto-dismissing after max time');
-      setIsExiting(true);
-      setTimeout(() => {
-        setShouldShow(false);
-        setIsExiting(false);
-        setShowTime(null);
-        onComplete?.();
-      }, 400);
-    }, MAX_DISPLAY_TIME);
-    
-    return () => clearTimeout(timer);
-  }, [showTime, shouldShow, isExiting, onComplete]);
+  }, [allDone, hasMetMinTime, shouldShow, isExiting, onComplete]);
 
   // Don't render if not showing
   if (!shouldShow) return null;

@@ -26,6 +26,55 @@ const MAX_VERIFICATION_RETRIES = 3;
 const VERIFICATION_RETRY_DELAY = 200; // ms
 
 /**
+ * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.
+ * 
+ * A valid `next` must be:
+ * - A relative path starting with `/`
+ * - NOT a protocol-relative URL (`//evil.com`)
+ * - NOT containing a protocol (`https://`, `http://`, `javascript:`, etc.)
+ * 
+ * @param {string|null} next - The raw `next` query parameter
+ * @returns {string} - A safe relative path, defaulting to `/` if invalid
+ */
+function validateRedirectPath(next) {
+  // Default to home if no next provided
+  if (!next || typeof next !== 'string') {
+    return '/';
+  }
+  
+  const trimmed = next.trim();
+  
+  // Empty string → default to home
+  if (trimmed === '') {
+    return '/';
+  }
+  
+  // SECURITY: Reject protocol-relative URLs (e.g., `//evil.com`)
+  // These would redirect to evil.com while appearing relative
+  if (trimmed.startsWith('//')) {
+    console.warn('[Auth Callback] Rejected protocol-relative redirect:', trimmed);
+    return '/';
+  }
+  
+  // SECURITY: Reject absolute URLs with any protocol
+  // Catches http://, https://, javascript:, data:, etc.
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    console.warn('[Auth Callback] Rejected absolute URL redirect:', trimmed);
+    return '/';
+  }
+  
+  // SECURITY: Must start with `/` to be a valid relative path
+  // This rejects things like `evil.com` (would resolve relative to current path)
+  if (!trimmed.startsWith('/')) {
+    console.warn('[Auth Callback] Rejected non-rooted redirect path:', trimmed);
+    return '/';
+  }
+  
+  // Valid relative path - return as-is
+  return trimmed;
+}
+
+/**
  * Verify session is valid after code exchange
  * Retries with exponential backoff to handle race conditions
  */
@@ -67,9 +116,12 @@ async function verifySessionWithRetry(supabase) {
 export async function GET(request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const next = requestUrl.searchParams.get('next') || '/';
+  const rawNext = requestUrl.searchParams.get('next');
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
+  
+  // SECURITY: Validate redirect path to prevent open redirect attacks
+  const next = validateRedirectPath(rawNext);
 
   // Handle OAuth errors
   if (error) {
@@ -225,9 +277,17 @@ export async function GET(request) {
     }
   }
 
-  // Build redirect URL with auth timestamp to help client detect fresh auth
+  // Build redirect URL
   const redirectUrl = new URL(next, requestUrl.origin);
-  redirectUrl.searchParams.set('auth_ts', Date.now().toString());
+  
+  // Only set fresh auth signals if code exchange was actually attempted
+  // This prevents false positives when someone navigates to /auth/callback without an OAuth flow
+  const codeExchangeAttempted = !!code;
+  
+  if (codeExchangeAttempted) {
+    // Add auth timestamp to help client detect fresh auth
+    redirectUrl.searchParams.set('auth_ts', Date.now().toString());
+  }
   
   // Create redirect response
   const response = NextResponse.redirect(redirectUrl);
@@ -238,28 +298,33 @@ export async function GET(request) {
     response.cookies.set(name, value, options);
   });
 
-  // Set auth callback completion cookie - used by client to detect fresh OAuth login
-  // This cookie is checked and cleared by AuthProvider.checkAuthCallbackCookie()
-  response.cookies.set('auth_callback_complete', '1', {
-    path: '/',
-    maxAge: 60, // 1 minute - just long enough for client to pick up
-    httpOnly: false, // Client needs to read this
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-  });
-
-  // Also set verified user ID cookie for client-side validation
-  if (verifiedUser?.id) {
-    response.cookies.set('auth_verified_user', verifiedUser.id, {
+  // Only set fresh auth cookies if code exchange was attempted
+  if (codeExchangeAttempted) {
+    // Set auth callback completion cookie - used by client to detect fresh OAuth login
+    // This cookie is checked and cleared by AuthProvider's fresh login detection
+    response.cookies.set('auth_callback_complete', '1', {
       path: '/',
-      maxAge: 60, // 1 minute
-      httpOnly: false,
+      maxAge: 60, // 1 minute - just long enough for client to pick up
+      httpOnly: false, // Client needs to read this
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
-  }
 
-  console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies`);
+    // Also set verified user ID cookie for client-side validation
+    if (verifiedUser?.id) {
+      response.cookies.set('auth_verified_user', verifiedUser.id, {
+        path: '/',
+        maxAge: 60, // 1 minute
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+    }
+    
+    console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies + fresh login signals`);
+  } else {
+    console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname} (no code - no fresh login signals)`);
+  }
   
   return response;
 }
