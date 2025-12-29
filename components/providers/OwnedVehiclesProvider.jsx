@@ -345,9 +345,23 @@ export function OwnedVehiclesProvider({ children }) {
     handleAuthChange();
   }, [isAuthenticated, user?.id, authLoading, isHydrated, isDataFetchReady, state.vehicles.length, markComplete, markStarted, fetchVehicles]);
 
-  // Save to localStorage when state changes (for guests)
+  // Save to localStorage when state changes (for guests only)
+  // IMPORTANT: We track the previous auth state to avoid saving user data to localStorage
+  // during the logout transition (race condition where save effect fires before clear effect)
+  const wasAuthenticatedRef = useRef(isAuthenticated);
   useEffect(() => {
     if (!isHydrated) return;
+    
+    // If user just logged out (was authenticated, now isn't), clear localStorage 
+    // instead of saving - this prevents the race condition where user data gets saved
+    if (wasAuthenticatedRef.current && !isAuthenticated) {
+      console.log('[OwnedVehiclesProvider] User logged out - clearing localStorage');
+      saveLocalVehicles([]); // Clear instead of saving stale user data
+      wasAuthenticatedRef.current = false;
+      return;
+    }
+    
+    wasAuthenticatedRef.current = isAuthenticated;
     
     // Only save to localStorage if not authenticated
     if (!isAuthenticated) {

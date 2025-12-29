@@ -312,9 +312,23 @@ useEffect(() => {
   };
 }, [fetchBuilds, authLoading, isHydrated, isAuthenticated, isDataFetchReady, user?.id, builds.length, markStarted]);
 
-  // Save to localStorage when builds change (for guests)
+  // Save to localStorage when builds change (for guests only)
+  // IMPORTANT: We track the previous auth state to avoid saving user data to localStorage
+  // during the logout transition (race condition where save effect fires before clear effect)
+  const wasAuthenticatedRef = useRef(isAuthenticated);
   useEffect(() => {
     if (!isHydrated) return;
+    
+    // If user just logged out (was authenticated, now isn't), clear localStorage 
+    // instead of saving - this prevents the race condition where user data gets saved
+    if (wasAuthenticatedRef.current && !isAuthenticated) {
+      console.log('[SavedBuildsProvider] User logged out - clearing localStorage');
+      saveLocalBuilds([]); // Clear instead of saving stale user data
+      wasAuthenticatedRef.current = false;
+      return;
+    }
+    
+    wasAuthenticatedRef.current = isAuthenticated;
     
     // Only save to localStorage if not authenticated
     if (!isAuthenticated) {
