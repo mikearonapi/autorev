@@ -538,19 +538,32 @@ export function AuthProvider({ children }) {
               const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
               if (!refreshError && refreshData?.session && refreshData?.user) {
                 console.log('[AuthProvider] Final refresh succeeded after timeout');
+                isAuthenticatedRef.current = true;
                 setState({
                   user: refreshData.user,
                   profile: null,
                   session: refreshData.session,
                   isLoading: false,
                   isAuthenticated: true,
+                  isDataFetchReady: false, // Will be set true after profile/prefetch
                   authError: null,
+                  sessionExpired: false,
+                  sessionRevoked: false,
                 });
                 scheduleSessionRefresh(refreshData.session);
-                const profile = await fetchProfile(refreshData.user.id);
-                if (profile) {
-                  setState(prev => ({ ...prev, profile }));
-                }
+                
+                // Load profile and prefetch in parallel, then signal ready
+                const [profile] = await Promise.all([
+                  fetchProfile(refreshData.user.id),
+                  prefetchAllUserData(refreshData.user.id).catch(err => {
+                    console.warn('[AuthProvider] Prefetch error in timeout recovery:', err);
+                  }),
+                ]);
+                setState(prev => ({ 
+                  ...prev, 
+                  profile: profile || prev.profile,
+                  isDataFetchReady: true,
+                }));
                 return;
               }
             } catch (finalErr) {
@@ -806,7 +819,11 @@ export function AuthProvider({ children }) {
         console.log('[AuthProvider] Token refreshed via Supabase');
         // IMPORTANT: Also update user and isAuthenticated in case initial auth failed
         // but token refresh succeeded (auth recovery scenario)
-        const needsProfileLoad = !state.isAuthenticated || !state.profile;
+        const wasAuthenticated = isAuthenticatedRef.current;
+        const needsProfileLoad = !wasAuthenticated || !state.profile;
+        
+        // Mark as authenticated
+        isAuthenticatedRef.current = true;
         
         setState(prev => {
           if (!prev.isAuthenticated) {
@@ -818,20 +835,34 @@ export function AuthProvider({ children }) {
             session,
             isAuthenticated: true,
             isLoading: false,
+            // If recovering auth, keep isDataFetchReady false until profile/prefetch done
+            isDataFetchReady: wasAuthenticated ? prev.isDataFetchReady : false,
             authError: null,
           };
         });
         scheduleSessionRefresh(session);
         
-        // If we just recovered auth or don't have a profile, load it
+        // If we just recovered auth or don't have a profile, load profile and prefetch
         if (needsProfileLoad) {
-          fetchProfile(session.user.id).then(profile => {
-            if (profile) {
-              setState(prev => ({ ...prev, profile }));
-              console.log('[AuthProvider] Profile loaded after token refresh:', { tier: profile?.subscription_tier });
-            }
+          Promise.all([
+            fetchProfile(session.user.id),
+            // Only prefetch if this is auth recovery (wasn't previously authenticated)
+            !wasAuthenticated 
+              ? prefetchAllUserData(session.user.id).catch(err => {
+                  console.warn('[AuthProvider] Prefetch error in TOKEN_REFRESHED:', err);
+                })
+              : Promise.resolve(),
+          ]).then(([profile]) => {
+            setState(prev => ({ 
+              ...prev, 
+              profile: profile || prev.profile,
+              isDataFetchReady: true, // Now safe for child providers
+            }));
+            console.log('[AuthProvider] Profile loaded after token refresh:', { tier: profile?.subscription_tier });
           }).catch(err => {
             console.error('[AuthProvider] Error loading profile after token refresh:', err);
+            // Still signal ready so child providers don't hang
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
           });
         }
       } else if (event === 'USER_UPDATED' && session?.user) {
@@ -845,50 +876,74 @@ export function AuthProvider({ children }) {
         // Handle initial session detection (page load with existing session)
         // This can fire if Supabase detects a session before our initializeAuth completes
         console.log('[AuthProvider] Initial session detected via event');
-        setState(prev => {
-          // Only update if we're not already authenticated
-          if (prev.isAuthenticated) {
-            return prev;
-          }
-          return {
-            ...prev,
-            user: session.user,
-            session,
-            isAuthenticated: true,
-            isLoading: false,
-            authError: null,
-          };
-        });
-        scheduleSessionRefresh(session);
         
-        // Load profile if needed
-        fetchProfile(session.user.id).then(profile => {
-          if (profile) {
-            setState(prev => ({ ...prev, profile }));
-          }
-        }).catch(err => {
-          console.error('[AuthProvider] Error loading profile after initial session:', err);
-        });
-      } else if (session?.user && !isAuthenticatedRef.current) {
-        // Catch-all: If we have a valid session but aren't authenticated,
-        // this is an auth recovery scenario
-        console.log('[AuthProvider] Auth recovery detected via event:', event);
+        // Only proceed if we're not already authenticated
+        if (isAuthenticatedRef.current) {
+          console.log('[AuthProvider] Already authenticated, skipping INITIAL_SESSION');
+          return;
+        }
+        
+        isAuthenticatedRef.current = true;
         setState(prev => ({
           ...prev,
           user: session.user,
           session,
           isAuthenticated: true,
           isLoading: false,
+          isDataFetchReady: false, // Will be set true after profile/prefetch
           authError: null,
         }));
         scheduleSessionRefresh(session);
         
-        fetchProfile(session.user.id).then(profile => {
-          if (profile) {
-            setState(prev => ({ ...prev, profile }));
-          }
+        // Load profile and prefetch, then signal ready for child providers
+        Promise.all([
+          fetchProfile(session.user.id),
+          prefetchAllUserData(session.user.id).catch(err => {
+            console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
+          }),
+        ]).then(([profile]) => {
+          setState(prev => ({ 
+            ...prev, 
+            profile: profile || prev.profile,
+            isDataFetchReady: true,
+          }));
         }).catch(err => {
-          console.error('[AuthProvider] Error loading profile after auth recovery:', err);
+          console.error('[AuthProvider] Error loading data after initial session:', err);
+          // Still signal ready so child providers don't hang
+          setState(prev => ({ ...prev, isDataFetchReady: true }));
+        });
+      } else if (session?.user && !isAuthenticatedRef.current) {
+        // Catch-all: If we have a valid session but aren't authenticated,
+        // this is an auth recovery scenario
+        console.log('[AuthProvider] Auth recovery detected via event:', event);
+        isAuthenticatedRef.current = true;
+        setState(prev => ({
+          ...prev,
+          user: session.user,
+          session,
+          isAuthenticated: true,
+          isLoading: false,
+          isDataFetchReady: false, // Will be set true after profile/prefetch
+          authError: null,
+        }));
+        scheduleSessionRefresh(session);
+        
+        // Load profile and prefetch, then signal ready for child providers
+        Promise.all([
+          fetchProfile(session.user.id),
+          prefetchAllUserData(session.user.id).catch(err => {
+            console.warn('[AuthProvider] Prefetch error in auth recovery:', err);
+          }),
+        ]).then(([profile]) => {
+          setState(prev => ({ 
+            ...prev, 
+            profile: profile || prev.profile,
+            isDataFetchReady: true,
+          }));
+        }).catch(err => {
+          console.error('[AuthProvider] Error loading data after auth recovery:', err);
+          // Still signal ready so child providers don't hang
+          setState(prev => ({ ...prev, isDataFetchReady: true }));
         });
       }
     });
