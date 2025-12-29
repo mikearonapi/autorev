@@ -58,7 +58,7 @@ export default function HeroSection({ carCount = 188 }) {
         </h1>
         <p className={styles.heroSubtitle}>
           The sports car research platform for buyers and builders.<br />
-          Research. Track. Build. — {carCount || 188} cars and counting.
+          Research. Track. Build. Learn. — {carCount || 188} cars and counting.
         </p>
         <button onClick={handleBrowseCarsClick} className={styles.heroJoinButton}>
           Browse Cars
