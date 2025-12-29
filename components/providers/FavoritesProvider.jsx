@@ -103,7 +103,7 @@ function favoritesReducer(state, action) {
  * Favorites Provider Component
  */
 export function FavoritesProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading, refreshSession } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, refreshSession } = useAuth();
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -218,9 +218,8 @@ export function FavoritesProvider({ children }) {
     }
   }, [markComplete, markFailed, refreshSession]);
 
-  // When user ID becomes available, fetch data immediately
-  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
-  // This enables parallel loading with other providers
+  // When user ID becomes available AND data fetch is ready, fetch data
+  // IMPORTANT: Wait for isDataFetchReady to avoid race conditions with prefetch
   useEffect(() => {
     // Skip if not hydrated yet
     if (!isHydrated) return;
@@ -237,6 +236,13 @@ export function FavoritesProvider({ children }) {
       lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
       
       if (isNowAuthenticated) {
+        // IMPORTANT: Wait for AuthProvider to signal that prefetch is complete
+        // This prevents race conditions where we start fetching before prefetch data is ready
+        if (!isDataFetchReady) {
+          console.log('[FavoritesProvider] Waiting for isDataFetchReady...');
+          return;
+        }
+        
         // Only skip if we've already synced for THIS user AND not recovering
         if (syncedRef.current && wasAuthenticated && !isAuthRecovery) {
           console.log('[FavoritesProvider] Already synced for user, skipping fetch');
@@ -252,9 +258,9 @@ export function FavoritesProvider({ children }) {
         // Mark step as started with retry callback
         markStarted('favorites', () => fetchFavorites(currentUserId));
         
-        // Fetch favorites
+        // Fetch favorites (will use prefetched data if available)
         await fetchFavorites(currentUserId);
-      } else if (!authLoading) {
+      } else if (!authLoading && isDataFetchReady) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
         console.log('[FavoritesProvider] Not authenticated, loading from localStorage');
@@ -267,7 +273,7 @@ export function FavoritesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.favorites.length, markComplete, markStarted, fetchFavorites]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, isDataFetchReady, state.favorites.length, markComplete, markStarted, fetchFavorites]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

@@ -180,7 +180,7 @@ function vehiclesReducer(state, action) {
  * Owned Vehicles Provider Component
  */
 export function OwnedVehiclesProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading, refreshSession } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, refreshSession } = useAuth();
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -276,9 +276,8 @@ export function OwnedVehiclesProvider({ children }) {
     }
   }, [markComplete, markFailed, refreshSession]);
 
-  // When user ID becomes available, fetch data immediately
-  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
-  // This enables parallel loading with other providers
+  // When user ID becomes available AND data fetch is ready, fetch data
+  // IMPORTANT: Wait for isDataFetchReady to avoid race conditions with prefetch
   useEffect(() => {
     // Skip if not hydrated yet
     if (!isHydrated) return;
@@ -295,6 +294,13 @@ export function OwnedVehiclesProvider({ children }) {
       lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
       
       if (isNowAuthenticated) {
+        // IMPORTANT: Wait for AuthProvider to signal that prefetch is complete
+        // This prevents race conditions where we start fetching before prefetch data is ready
+        if (!isDataFetchReady) {
+          console.log('[OwnedVehiclesProvider] Waiting for isDataFetchReady...');
+          return;
+        }
+        
         // Only skip if we've already synced for THIS user
         // This ensures we refetch if auth recovered after failure
         if (syncedRef.current && wasAuthenticated && !isAuthRecovery) {
@@ -311,9 +317,9 @@ export function OwnedVehiclesProvider({ children }) {
         // Mark step as started with retry callback
         markStarted('vehicles', () => fetchVehicles(currentUserId));
         
-        // Fetch vehicles
+        // Fetch vehicles (will use prefetched data if available)
         await fetchVehicles(currentUserId);
-      } else if (!authLoading) {
+      } else if (!authLoading && isDataFetchReady) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
         console.log('[OwnedVehiclesProvider] Not authenticated, loading from localStorage');
@@ -326,7 +332,7 @@ export function OwnedVehiclesProvider({ children }) {
     };
 
     handleAuthChange();
-  }, [isAuthenticated, user?.id, authLoading, isHydrated, state.vehicles.length, markComplete, markStarted, fetchVehicles]);
+  }, [isAuthenticated, user?.id, authLoading, isHydrated, isDataFetchReady, state.vehicles.length, markComplete, markStarted, fetchVehicles]);
 
   // Save to localStorage when state changes (for guests)
   useEffect(() => {

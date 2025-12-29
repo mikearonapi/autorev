@@ -45,6 +45,7 @@ const defaultAuthState = {
   session: null,
   isLoading: true,
   isAuthenticated: false,
+  isDataFetchReady: false, // True when child providers can safely start fetching user data
   authError: null,
   sessionExpired: false, // True when session was invalidated (token expired)
   sessionRevoked: false, // True when session was revoked (e.g., logout from another device)
@@ -617,12 +618,14 @@ export function AuthProvider({ children }) {
           isAuthenticatedRef.current = true;
           
           // IMMEDIATELY set authenticated state so UI updates right away
+          // NOTE: isDataFetchReady stays false until prefetch completes
           setState({
             user,
             profile: null, // Will be loaded below
             session,
             isLoading: false,
             isAuthenticated: true,
+            isDataFetchReady: false, // Will be set true after prefetch
             authError: null,
           });
           console.log('[AuthProvider] User authenticated via initializeAuth');
@@ -637,9 +640,9 @@ export function AuthProvider({ children }) {
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
           
-          // For page refresh, load profile quickly in background (no progress screen)
-          // The SIGNED_IN event will handle fresh logins with progress screen
-          fetchProfile(user.id).then(profile => {
+          // For page refresh, load profile and prefetch data, then signal ready
+          // This is a returning session - no progress screen shown
+          const profilePromise = fetchProfile(user.id).then(profile => {
             if (profile) {
               setState(prev => ({ ...prev, profile }));
               console.log('[AuthProvider] Profile loaded via initializeAuth:', {
@@ -647,19 +650,28 @@ export function AuthProvider({ children }) {
                 tier: profile?.subscription_tier,
               });
             }
+            return profile;
           }).catch(err => {
             console.warn('[AuthProvider] Profile fetch error in initializeAuth:', err);
+            return null;
           });
           
           // Prefetch user data in background for snappy navigation
-          prefetchAllUserData(user.id).catch(err => 
-            console.warn('[AuthProvider] Background prefetch error:', err)
-          );
+          const prefetchPromise = prefetchAllUserData(user.id).catch(err => {
+            console.warn('[AuthProvider] Background prefetch error:', err);
+          });
+          
+          // Signal ready for child providers AFTER both profile and prefetch complete
+          Promise.all([profilePromise, prefetchPromise]).then(() => {
+            console.log('[AuthProvider] Data prefetch complete, signaling ready for child providers');
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
+          });
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
             ...defaultAuthState,
             isLoading: false,
+            isDataFetchReady: true, // Guests can immediately use localStorage
           });
         }
       } catch (err) {
@@ -688,13 +700,14 @@ export function AuthProvider({ children }) {
         // Mark as authenticated
         isAuthenticatedRef.current = true;
         
-        // Update state
+        // Update state - keep isDataFetchReady false until prefetch completes
         setState(prev => ({
           ...prev,
           user: session.user,
           session,
           isLoading: false,
           isAuthenticated: true,
+          isDataFetchReady: false, // Will be set true after prefetch
           authError: null,
         }));
         scheduleSessionRefresh(session);
@@ -720,11 +733,18 @@ export function AuthProvider({ children }) {
               markComplete('profile');
             }
 
-            // Start prefetching user data AFTER profile to avoid starving profile fetch
-            // (we've seen profile fetch timeouts in production when prefetch runs concurrently)
-            prefetchAllUserData(session.user.id).catch(err =>
-              console.warn('[AuthProvider] Background prefetch error:', err)
-            );
+            // Prefetch user data AFTER profile, then signal ready for child providers
+            // Child providers (FavoritesProvider, etc.) wait for isDataFetchReady before fetching
+            // This prevents race conditions where they start fetching before prefetch is ready
+            try {
+              await prefetchAllUserData(session.user.id);
+              console.log('[AuthProvider] Prefetch complete, signaling ready for child providers');
+            } catch (err) {
+              console.warn('[AuthProvider] Prefetch error (non-fatal):', err);
+            }
+            
+            // NOW signal that child providers can safely fetch (they'll find prefetched data)
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
             
             // Check if there's a pending tier selection from the join page
             const pendingTier = localStorage.getItem('autorev_selected_tier');
@@ -752,10 +772,12 @@ export function AuthProvider({ children }) {
           } catch (err) {
             console.error('[AuthProvider] Error loading profile:', err);
             markFailed('profile', err.message || 'Failed to load profile');
+            // Still signal ready so child providers don't hang forever
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
           }
         } else {
           console.log('[AuthProvider] Page refresh - skipping progress screen');
-          // initializeAuth already handled profile loading
+          // initializeAuth already handled profile loading and will set isDataFetchReady
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
@@ -1250,6 +1272,7 @@ export function AuthProvider({ children }) {
     session: state.session,
     isLoading: state.isLoading,
     isAuthenticated: state.isAuthenticated,
+    isDataFetchReady: state.isDataFetchReady, // True when child providers can safely fetch user data
     authError: state.authError,
     sessionExpired: state.sessionExpired, // True when session token expired
     sessionRevoked: state.sessionRevoked, // True when session was revoked (e.g., logout from another device)

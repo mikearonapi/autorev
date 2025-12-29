@@ -92,7 +92,7 @@ const SavedBuildsContext = createContext(null);
  * Saved Builds Provider Component
  */
 export function SavedBuildsProvider({ children }) {
-  const { user, isAuthenticated, isLoading: authLoading, profile, refreshSession } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, profile, refreshSession } = useAuth();
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const userTier = profile?.subscription_tier || 'free';
   const [builds, setBuilds] = useState([]);
@@ -266,9 +266,8 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   }
 }, [isAuthenticated, user?.id, markComplete, markFailed, refreshSession]);
 
-  // Fetch builds when user ID becomes available
-  // OPTIMIZATION: Don't wait for authLoading - start fetching as soon as we have user.id
-  // This enables parallel loading with other providers
+  // Fetch builds when user ID becomes available AND data fetch is ready
+  // IMPORTANT: Wait for isDataFetchReady to avoid race conditions with prefetch
 useEffect(() => {
   // Skip if not hydrated yet
   if (!isHydrated) return;
@@ -285,18 +284,23 @@ useEffect(() => {
   lastUserIdRef.current = isNowAuthenticated ? currentUserId : null;
   
   // Reset sync flag on logout (only when auth loading is complete)
-  if (!isNowAuthenticated && !authLoading) {
+  if (!isNowAuthenticated && !authLoading && isDataFetchReady) {
     syncedRef.current = false;
   }
   
-  // Force refetch on auth recovery
-  // OPTIMIZATION: Start fetch immediately when user.id is available
-  // Pass current builds count for stale-while-revalidate pattern
+  // IMPORTANT: Wait for AuthProvider to signal that prefetch is complete
+  // This prevents race conditions where we start fetching before prefetch data is ready
   if (isNowAuthenticated) {
+    if (!isDataFetchReady) {
+      console.log('[SavedBuildsProvider] Waiting for isDataFetchReady...');
+      return;
+    }
+    
     // Mark step as started with retry callback
     markStarted('builds', () => fetchBuilds(cancelledRef, true, builds.length));
+    // Fetch builds (will use prefetched data if available)
     fetchBuilds(cancelledRef, isAuthRecovery, builds.length);
-  } else if (!authLoading) {
+  } else if (!authLoading && isDataFetchReady) {
     // Only load local on explicit logout
     fetchBuilds(cancelledRef, false, builds.length);
   }
@@ -304,7 +308,7 @@ useEffect(() => {
   return () => {
     cancelledRef.current = true;
   };
-}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, user?.id, builds.length, markStarted]);
+}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, isDataFetchReady, user?.id, builds.length, markStarted]);
 
   // Save to localStorage when builds change (for guests)
   useEffect(() => {
