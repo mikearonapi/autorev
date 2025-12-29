@@ -984,9 +984,10 @@ export function AuthProvider({ children }) {
                 }));
                 scheduleSessionRefresh(newSession);
               }
-            } else if (!user && state.isAuthenticated) {
+            } else if (!user && isAuthenticatedRef.current) {
               // User was authenticated but now no user - logged out in another tab
               console.log('[AuthProvider] User logged out in another tab');
+              isAuthenticatedRef.current = false;
               setState({
                 ...defaultAuthState,
                 isLoading: false,
@@ -1004,8 +1005,10 @@ export function AuthProvider({ children }) {
     // Storage event listener for cross-tab logout sync
     const handleStorageChange = (e) => {
       // Supabase stores auth in localStorage with this key pattern
-      if (e.key?.includes('supabase.auth') && e.newValue === null && state.isAuthenticated) {
+      // Use ref instead of state to avoid stale closure issues
+      if (e.key?.includes('supabase.auth') && e.newValue === null && isAuthenticatedRef.current) {
         console.log('[AuthProvider] Auth storage cleared in another tab, logging out');
+        isAuthenticatedRef.current = false;
         setState({
           ...defaultAuthState,
           isLoading: false,
@@ -1023,7 +1026,7 @@ export function AuthProvider({ children }) {
         clearTimeout(refreshIntervalRef.current);
       }
     };
-  }, [fetchProfile, scheduleSessionRefresh, state.isAuthenticated]);
+  }, [fetchProfile, scheduleSessionRefresh]);
 
   // Sign in with Google
   const loginWithGoogle = useCallback(async (redirectTo) => {
