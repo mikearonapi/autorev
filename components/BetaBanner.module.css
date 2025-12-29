@@ -22,13 +22,12 @@
 }
 
 .badge {
-  background: var(--accent-gold);
-  color: #0a1628;
+  background: transparent;
+  color: var(--sn-gold);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  padding: 0.25rem 0.625rem;
-  border-radius: 4px;
+  padding: 0.25rem 0;
   text-transform: uppercase;
 }
 
@@ -51,7 +50,7 @@
   
   .badge {
     font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0;
   }
   
   .message {
