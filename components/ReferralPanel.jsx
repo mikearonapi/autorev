@@ -240,6 +240,9 @@ export default function ReferralPanel({ userId }) {
           <p className={styles.subtitle}>
             You <strong>BOTH</strong> get <strong>200 credits</strong> when they join
           </p>
+          <p className={styles.creditExplainer}>
+            That's enough for <strong>100+ AI conversations</strong> with AL about cars, builds, and buying advice
+          </p>
         </div>
       </div>
 
@@ -270,18 +273,27 @@ export default function ReferralPanel({ userId }) {
           </button>
         </div>
 
-        {/* Share Buttons */}
-        <div className={styles.shareButtons}>
-          {canShare && (
-            <button onClick={handleNativeShare} className={styles.shareButton}>
-              <ShareIcon /> Share
-            </button>
-          )}
+        {/* Share Actions - Clear, focused buttons */}
+        <div className={styles.shareActions}>
           <button 
             onClick={() => setShowEmailModal(true)} 
-            className={`${styles.shareButton} ${styles.emailButton}`}
+            className={styles.emailActionButton}
           >
-            <EmailIcon /> Email a Friend
+            <EmailIcon /> 
+            <span className={styles.actionText}>
+              <strong>Email Invite</strong>
+              <small>We'll send a beautiful invite</small>
+            </span>
+          </button>
+          <button 
+            onClick={canShare ? handleNativeShare : handleCopyLink} 
+            className={styles.textActionButton}
+          >
+            {canShare ? <ShareIcon /> : <MessageIcon />}
+            <span className={styles.actionText}>
+              <strong>{canShare ? 'Text or Share' : 'Copy for Text'}</strong>
+              <small>{canShare ? 'iMessage, WhatsApp, etc.' : 'Paste anywhere'}</small>
+            </span>
           </button>
         </div>
       </div>
@@ -459,6 +471,12 @@ const EmailIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="4" width="20" height="16" rx="2"/>
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+  </svg>
+);
+
+const MessageIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
 );
 
