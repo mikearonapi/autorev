@@ -1099,9 +1099,6 @@ function TuningShopContent() {
         {activeTab === 'projects' && (
           buildsWithCars.length > 0 ? (
             <div className={styles.projectsView}>
-              {/* Analytics Summary Bar */}
-              <ProjectsAnalytics builds={filteredAndSortedBuilds} />
-              
               {/* Header with Controls */}
               <div className={styles.projectsHeader}>
                 <div className={styles.projectsHeaderTitle}>

@@ -41,6 +41,7 @@ import CarImage from './CarImage';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
+import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
@@ -543,6 +544,7 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
 export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar = null }) {
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
+  const { vehicles, applyModifications } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
   
   // All useState hooks must be called unconditionally (before any early returns)
@@ -555,6 +557,8 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const [buildName, setBuildName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [saveToGarage, setSaveToGarage] = useState(false);
+  const [selectedGarageVehicle, setSelectedGarageVehicle] = useState(null);
   const [conflictNotification, setConflictNotification] = useState(null);
 
   // Parts Finder state (beta)
@@ -850,6 +854,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const handleSaveBuild = async () => {
     if (!canSave) { setSaveError('Please sign in'); return; }
     if (!buildName.trim()) { setSaveError('Enter a name'); return; }
+    if (saveToGarage && !selectedGarageVehicle) { setSaveError('Select a vehicle from your garage'); return; }
     
     setIsSaving(true);
     setSaveError(null);
@@ -875,9 +880,26 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
       if (result.error) {
         setSaveError(result.error.message || 'Failed to save');
       } else {
-        if (result.data && !currentBuildId) setCurrentBuildId(result.data.id);
+        const savedBuildId = result.data?.id || currentBuildId;
+        
+        // If saving to garage, apply the modifications to the selected vehicle
+        if (saveToGarage && selectedGarageVehicle && savedBuildId) {
+          const modResult = await applyModifications(selectedGarageVehicle, {
+            upgrades: effectiveModules,
+            totalHpGain: hpGain,
+            buildId: savedBuildId,
+          });
+          
+          if (modResult.error) {
+            setSaveError('Project saved but failed to apply to garage vehicle');
+          }
+        }
+        
+        if (result.data && !currentBuildId) setCurrentBuildId(savedBuildId);
         setShowSaveModal(false);
         setBuildName('');
+        setSaveToGarage(false);
+        setSelectedGarageVehicle(null);
       }
     } catch {
       setSaveError('Error saving build');
@@ -1261,7 +1283,7 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
         <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
           <div className={styles.saveModal} onClick={e => e.stopPropagation()}>
             <div className={styles.saveModalHeader}>
-              <span>Save Build</span>
+              <span>Save Project</span>
               <button onClick={() => setShowSaveModal(false)}><Icons.x size={14} /></button>
             </div>
             <input
@@ -1269,13 +1291,55 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
               className={styles.saveInput}
               value={buildName}
               onChange={e => setBuildName(e.target.value)}
-              placeholder="Build name"
+              placeholder="Project name (e.g., Street Build, Track Setup)"
               autoFocus
             />
+            
+            {/* Save to Garage Option */}
+            {vehicles && vehicles.length > 0 && (
+              <div className={styles.garageOption}>
+                <label className={styles.garageCheckbox}>
+                  <input
+                    type="checkbox"
+                    checked={saveToGarage}
+                    onChange={(e) => {
+                      setSaveToGarage(e.target.checked);
+                      if (!e.target.checked) setSelectedGarageVehicle(null);
+                    }}
+                  />
+                  <span>Apply this build to a vehicle in my garage</span>
+                </label>
+                
+                {saveToGarage && (
+                  <select
+                    className={styles.garageVehicleSelect}
+                    value={selectedGarageVehicle || ''}
+                    onChange={(e) => setSelectedGarageVehicle(e.target.value)}
+                  >
+                    <option value="">Select vehicle...</option>
+                    {vehicles
+                      .filter(v => v.matchedCarSlug === car.slug)
+                      .map(v => (
+                        <option key={v.id} value={v.id}>
+                          {v.nickname || `${v.year} ${v.make} ${v.model}`}
+                          {v.trim ? ` ${v.trim}` : ''}
+                        </option>
+                      ))}
+                  </select>
+                )}
+                
+                {saveToGarage && vehicles.filter(v => v.matchedCarSlug === car.slug).length === 0 && (
+                  <div className={styles.garageNote}>
+                    No matching vehicles in your garage. Add a {car.name} to your garage first.
+                  </div>
+                )}
+              </div>
+            )}
+            
             {saveError && <div className={styles.saveError}>{saveError}</div>}
             <div className={styles.saveActions}>
               <button onClick={() => setShowSaveModal(false)}>Cancel</button>
-              <button onClick={handleSaveBuild} disabled={isSaving}>{isSaving ? 'Saving...' : 'Save'}</button>
+              <button onClick={handleSaveBuild} disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Project'}</button>
             </div>
           </div>
         </div>

@@ -18,6 +18,7 @@
 
 import IPhoneFrame from './IPhoneFrame';
 import ImageCarousel from './ImageCarousel';
+import AdvancedImageCarousel from './AdvancedImageCarousel';
 import styles from './FeaturePhoneShowcase.module.css';
 
 // Image paths for each feature
@@ -86,14 +87,15 @@ export default function FeaturePhoneShowcase() {
             </p>
           </div>
           
-          {/* Phone 3: AL Chat */}
+          {/* Phone 3: AL Chat - Faster pace for first 3 images, slower for last */}
           <div className={styles.phoneCard}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="small">
-                <ImageCarousel 
+                <AdvancedImageCarousel 
                   images={AL_IMAGES}
                   alt="AL AI assistant"
-                  interval={6000}
+                  intervals={[1500, 1500, 1500, 6000]}
+                  transitionDuration={3000}
                 />
               </IPhoneFrame>
             </div>
