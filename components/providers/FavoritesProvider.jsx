@@ -263,12 +263,22 @@ export function FavoritesProvider({ children }) {
       } else if (!authLoading && isDataFetchReady) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
-        console.log('[FavoritesProvider] Not authenticated, clearing user data and loading from localStorage');
+        console.log('[FavoritesProvider] Not authenticated, clearing user data');
         console.log('[FavoritesProvider] Auth state:', { isAuthenticated, authLoading, isDataFetchReady, userId: user?.id });
         syncedRef.current = false;
-        const storedState = loadFavorites();
-        console.log('[FavoritesProvider] Local favorites count:', storedState?.favorites?.length || 0);
-        dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
+        
+        // CRITICAL: If user WAS authenticated (had data loaded), we must clear state
+        // and localStorage to prevent showing stale user data
+        if (wasAuthenticated) {
+          console.log('[FavoritesProvider] User just logged out - clearing all data');
+          saveFavorites({ favorites: [] }); // Clear localStorage first
+          dispatch({ type: FavoriteActionTypes.SET, payload: [] }); // Clear state
+        } else {
+          // User was never logged in this session, load from localStorage
+          const storedState = loadFavorites();
+          console.log('[FavoritesProvider] Loading guest data, count:', storedState?.favorites?.length || 0);
+          dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
+        }
         // Always mark as complete
         markComplete('favorites');
       } else {

@@ -2133,12 +2133,30 @@ function GarageContent() {
   }, [builds, allCars]);
 
   // Get matched car data for owned vehicles (from database)
+  // When allCars hasn't loaded yet, create a temporary car-like object from vehicle data
+  // so the UI shows the vehicle info immediately instead of "Loading..."
   const vehiclesWithCars = useMemo(() => {
-    return vehicles.map(vehicle => ({
-      vehicle,
-      matchedCar: vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null,
-      id: vehicle.id,
-    }));
+    return vehicles.map(vehicle => {
+      const matchedCar = vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null;
+      
+      // Create a temporary car object from vehicle data when matchedCar isn't available yet
+      // This allows the UI to show vehicle info while full car data loads
+      const tempCarFromVehicle = !matchedCar && vehicle.matchedCarSlug ? {
+        name: `${vehicle.make} ${vehicle.model}`,
+        slug: vehicle.matchedCarSlug,
+        years: vehicle.year?.toString(),
+        brand: vehicle.make,
+        // Placeholder flags so components know this is partial data
+        _isTemporary: true,
+      } : null;
+      
+      return {
+        vehicle,
+        matchedCar: matchedCar || tempCarFromVehicle,
+        id: vehicle.id,
+        _isCarDataLoading: !matchedCar && vehicle.matchedCarSlug && allCars.length === 0,
+      };
+    });
   }, [vehicles, allCars]);
 
   // Check if a car is already in My Collection

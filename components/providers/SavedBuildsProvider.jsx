@@ -303,14 +303,24 @@ useEffect(() => {
     // Fetch builds (will use prefetched data if available)
     fetchBuilds(cancelledRef, isAuthRecovery, builds.length);
   } else if (!authLoading && isDataFetchReady) {
-    // Only load local on explicit logout
-    fetchBuilds(cancelledRef, false, builds.length);
+    // User is not authenticated
+    // CRITICAL: If user WAS authenticated (had data loaded), we must clear state
+    // and localStorage to prevent showing stale user data
+    if (wasAuthenticated) {
+      console.log('[SavedBuildsProvider] User just logged out - clearing all data');
+      saveLocalBuilds([]); // Clear localStorage first
+      setBuilds([]); // Clear state directly
+      markComplete('builds');
+    } else {
+      // User was never logged in this session, load from localStorage
+      fetchBuilds(cancelledRef, false, builds.length);
+    }
   }
   
   return () => {
     cancelledRef.current = true;
   };
-}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, isDataFetchReady, user?.id, builds.length, markStarted]);
+}, [fetchBuilds, authLoading, isHydrated, isAuthenticated, isDataFetchReady, user?.id, builds.length, markStarted, markComplete]);
 
   // Save to localStorage when builds change (for guests only)
   // IMPORTANT: We track the previous auth state to avoid saving user data to localStorage
