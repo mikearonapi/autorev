@@ -2,9 +2,11 @@
  * FeaturePhoneShowcase Component
  * 
  * Displays 3 iPhone frames showcasing core features:
- * - My Garage (car tracking)
- * - Tuning Shop (build planning)
- * - AL (AI assistant)
+ * - My Garage (car tracking) - 2 images cycling
+ * - Tuning Shop (build planning) - 4 images cycling
+ * - AL (AI assistant) - 4 images cycling
+ * 
+ * Each feature auto-rotates through screenshots with smooth dissolve transitions.
  * 
  * Responsive design:
  * - Desktop (≥1024px): 3 phones in a row, full size
@@ -15,7 +17,28 @@
 'use client';
 
 import IPhoneFrame from './IPhoneFrame';
+import ImageCarousel from './ImageCarousel';
 import styles from './FeaturePhoneShowcase.module.css';
+
+// Image paths for each feature
+const GARAGE_IMAGES = [
+  '/images/iphone-Garage-01-Favorites.png',
+  '/images/iphone-Garage-02-Details.png'
+];
+
+const TUNING_IMAGES = [
+  '/images/iphone-Tuning-Shop-01-Shop.png',
+  '/images/iphone-Tuning-Shop-02-Performance.png',
+  '/images/iphone-Tuning-Shop-03- Power.png',
+  '/images/iphone-Tuning-Shop-04-Learn-More.png'
+];
+
+const AL_IMAGES = [
+  '/images/iphone-AI-AL-01.png',
+  '/images/iphone-AI-Al-02-Chat.png',
+  '/images/iphone-AI-AL-03-Search.png',
+  '/images/iphone-AI-AL-04-Response.png'
+];
 
 export default function FeaturePhoneShowcase() {
   return (
@@ -33,15 +56,11 @@ export default function FeaturePhoneShowcase() {
           <div className={styles.phoneCard}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="small">
-                <div className={styles.placeholderScreen}>
-                  <div className={styles.placeholderContent}>
-                    <svg className={styles.placeholderIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                    <span className={styles.placeholderText}>My Garage</span>
-                    <span className={styles.placeholderSubtext}>Screenshot Coming Soon</span>
-                  </div>
-                </div>
+                <ImageCarousel 
+                  images={GARAGE_IMAGES}
+                  alt="My Garage feature"
+                  interval={3000}
+                />
               </IPhoneFrame>
             </div>
             <h3 className={styles.featureTitle}>Your Personal Garage</h3>
@@ -54,15 +73,11 @@ export default function FeaturePhoneShowcase() {
           <div className={styles.phoneCard}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="small">
-                <div className={styles.placeholderScreen}>
-                  <div className={styles.placeholderContent}>
-                    <svg className={styles.placeholderIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                    </svg>
-                    <span className={styles.placeholderText}>Tuning Shop</span>
-                    <span className={styles.placeholderSubtext}>Screenshot Coming Soon</span>
-                  </div>
-                </div>
+                <ImageCarousel 
+                  images={TUNING_IMAGES}
+                  alt="Tuning Shop feature"
+                  interval={3000}
+                />
               </IPhoneFrame>
             </div>
             <h3 className={styles.featureTitle}>Plan Your Build</h3>
@@ -75,16 +90,11 @@ export default function FeaturePhoneShowcase() {
           <div className={styles.phoneCard}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="small">
-                <div className={styles.placeholderScreen}>
-                  <div className={styles.placeholderContent}>
-                    <svg className={styles.placeholderIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                      <path d="M8 10h.01M12 10h.01M16 10h.01"/>
-                    </svg>
-                    <span className={styles.placeholderText}>AL</span>
-                    <span className={styles.placeholderSubtext}>Screenshot Coming Soon</span>
-                  </div>
-                </div>
+                <ImageCarousel 
+                  images={AL_IMAGES}
+                  alt="AL AI assistant"
+                  interval={3000}
+                />
               </IPhoneFrame>
             </div>
             <h3 className={styles.featureTitle}>Ask AL Anything</h3>
