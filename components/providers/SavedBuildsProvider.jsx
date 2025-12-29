@@ -117,9 +117,11 @@ export function SavedBuildsProvider({ children }) {
    */
 const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0, timeout = 10000) => {
   if (!isAuthenticated || !user?.id) {
-    // Not authenticated - load from localStorage
-    console.log('[SavedBuildsProvider] Not authenticated, loading from localStorage');
+    // Not authenticated - load from localStorage (clearing user data)
+    console.log('[SavedBuildsProvider] Not authenticated, clearing user data and loading from localStorage');
+    console.log('[SavedBuildsProvider] Auth state:', { isAuthenticated, userId: user?.id });
     const localBuilds = loadLocalBuilds();
+    console.log('[SavedBuildsProvider] Local builds count:', localBuilds.length);
     if (!cancelledRef.current) {
       setBuilds(localBuilds);
       // Always mark as complete

@@ -322,12 +322,23 @@ export function OwnedVehiclesProvider({ children }) {
       } else if (!authLoading && isDataFetchReady) {
         // Only reset on explicit logout (authLoading false + no user)
         // This prevents flickering during auth recovery
-        console.log('[OwnedVehiclesProvider] Not authenticated, loading from localStorage');
+        console.log('[OwnedVehiclesProvider] Not authenticated, clearing user data and loading from localStorage');
+        console.log('[OwnedVehiclesProvider] Auth state:', { isAuthenticated, authLoading, isDataFetchReady, userId: user?.id });
         syncedRef.current = false;
         const localVehicles = loadLocalVehicles();
+        console.log('[OwnedVehiclesProvider] Local vehicles count:', localVehicles.length);
         dispatch({ type: ActionTypes.SET, payload: localVehicles });
         // Always mark as complete
         markComplete('vehicles');
+      } else {
+        // Debug: Log why we didn't clear
+        console.log('[OwnedVehiclesProvider] Auth change - no action taken:', { 
+          isAuthenticated, 
+          authLoading, 
+          isDataFetchReady,
+          isNowAuthenticated,
+          userId: user?.id 
+        });
       }
     };
 
