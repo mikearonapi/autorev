@@ -54,8 +54,8 @@
     padding: 0;
     background: var(--surface-elevated, #1a1a2e);
     align-items: flex-start; /* Start from top on mobile */
-    /* Account for fixed header at top of page */
-    padding-top: calc(var(--header-height-mobile, 48px) + env(safe-area-inset-top, 0px));
+    /* Account for fixed header + beta banner at top of page */
+    padding-top: calc(var(--header-plus-banner-mobile, 88px) + env(safe-area-inset-top, 0px));
   }
   
   .panel {

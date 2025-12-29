@@ -12,7 +12,8 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xl) var(--space-md);
-  padding-top: calc(var(--space-lg) + var(--header-height-mobile));
+  /* Account for fixed header + beta banner */
+  padding-top: calc(var(--space-lg) + var(--header-plus-banner-mobile));
   text-align: center;
   background: var(--color-gray-900);
   overflow: hidden;
@@ -21,7 +22,7 @@
 @media (min-width: 768px) {
   .hero {
     padding: var(--space-xl) var(--space-lg);
-    padding-top: calc(var(--space-xl) + var(--header-height));
+    padding-top: calc(var(--space-xl) + var(--header-plus-banner));
   }
 }
 

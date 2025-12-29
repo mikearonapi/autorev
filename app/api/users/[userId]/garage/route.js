@@ -85,7 +85,8 @@ export async function GET(request, { params }) {
         installed_modifications,
         active_build_id,
         total_hp_gain,
-        modified_at
+        modified_at,
+        custom_specs
       `)
       .eq('user_id', userId)
       .eq('ownership_status', 'owned')
@@ -101,31 +102,37 @@ export async function GET(request, { params }) {
     }
 
     // Transform to client-friendly format
-    const transformedVehicles = (vehicles || []).map(v => ({
-      id: v.id,
-      vin: v.vin,
-      year: v.year,
-      make: v.make,
-      model: v.model,
-      trim: v.trim,
-      matchedCarSlug: v.matched_car_slug,
-      nickname: v.nickname,
-      color: v.color,
-      mileage: v.mileage,
-      purchaseDate: v.purchase_date,
-      purchasePrice: v.purchase_price,
-      isPrimary: v.is_primary,
-      ownershipStatus: v.ownership_status,
-      notes: v.notes,
-      vinDecodeData: v.vin_decode_data,
-      createdAt: v.created_at,
-      updatedAt: v.updated_at,
-      installedModifications: v.installed_modifications || [],
-      activeBuildId: v.active_build_id,
-      totalHpGain: v.total_hp_gain || 0,
-      modifiedAt: v.modified_at,
-      isModified: Array.isArray(v.installed_modifications) && v.installed_modifications.length > 0,
-    }));
+    const transformedVehicles = (vehicles || []).map(v => {
+      const customSpecs = v.custom_specs || {};
+      return {
+        id: v.id,
+        vin: v.vin,
+        year: v.year,
+        make: v.make,
+        model: v.model,
+        trim: v.trim,
+        matchedCarSlug: v.matched_car_slug,
+        nickname: v.nickname,
+        color: v.color,
+        mileage: v.mileage,
+        purchaseDate: v.purchase_date,
+        purchasePrice: v.purchase_price,
+        isPrimary: v.is_primary,
+        ownershipStatus: v.ownership_status,
+        notes: v.notes,
+        vinDecodeData: v.vin_decode_data,
+        createdAt: v.created_at,
+        updatedAt: v.updated_at,
+        installedModifications: v.installed_modifications || [],
+        activeBuildId: v.active_build_id,
+        totalHpGain: v.total_hp_gain || 0,
+        modifiedAt: v.modified_at,
+        isModified: Array.isArray(v.installed_modifications) && v.installed_modifications.length > 0,
+        // Custom specs (user-specific modification details)
+        customSpecs: customSpecs,
+        hasCustomSpecs: Object.keys(customSpecs).length > 0,
+      };
+    });
 
     return NextResponse.json({
       vehicles: transformedVehicles,

@@ -1,16 +1,5 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
-import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient';
-
-// Check icon for success state
-const CheckIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
 
 // Navigation sections
 const footerSections = [
@@ -59,49 +48,13 @@ const popularBrands = [
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const [status, setStatus] = useState('idle'); // idle | loading | success | error
-  const [errorMsg, setErrorMsg] = useState('');
-
-  const handleNewsletterSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!email.trim()) return;
-    
-    setStatus('loading');
-    setErrorMsg('');
-
-    const result = await submitLead({
-      email: email.trim(),
-      source: LEAD_SOURCES.NEWSLETTER,
-      metadata: {
-        signup_location: 'footer',
-      },
-    });
-
-    if (result.success) {
-      setStatus('success');
-      setEmail('');
-      // Reset after 3 seconds
-      setTimeout(() => setStatus('idle'), 3000);
-    } else {
-      setStatus('error');
-      setErrorMsg(result.error || 'Something went wrong');
-      // Reset after 4 seconds
-      setTimeout(() => {
-        setStatus('idle');
-        setErrorMsg('');
-      }, 4000);
-    }
-  };
 
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
         {/* Top Section: Brand + Nav Columns */}
         <div className={styles.topSection}>
-          {/* Brand & Newsletter */}
+          {/* Brand */}
           <div className={styles.brandColumn}>
             <Link href="/" className={styles.logo}>
               <span className={styles.logoText}>
@@ -111,36 +64,6 @@ export default function Footer() {
             <p className={styles.tagline}>
               The sports car encyclopedia for enthusiasts.
             </p>
-
-            {/* Compact Newsletter */}
-            {status === 'success' ? (
-              <p className={styles.newsletterSuccess}><CheckIcon size={14} /> You're subscribed!</p>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  placeholder={isFocused ? "Enter email" : "Get updates"}
-                  className={styles.newsletterInput}
-                  required
-                  disabled={status === 'loading'}
-                  aria-label="Email for newsletter"
-                />
-                <button 
-                  type="submit" 
-                  className={styles.newsletterBtn}
-                  disabled={status === 'loading'}
-                >
-                  {status === 'loading' ? '...' : '→'}
-                </button>
-              </form>
-            )}
-            {status === 'error' && errorMsg && (
-              <p className={styles.newsletterError}>{errorMsg}</p>
-            )}
           </div>
 
           {/* Navigation Columns */}

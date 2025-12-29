@@ -276,6 +276,9 @@ const contextualHints = {
   },
 };
 
+// Beta welcome message
+const BETA_MESSAGE = "While in beta, we really appreciate all feedback so we can create the best possible experience for you and our enthusiast car community. Please take the time to share as much with us so we can create the best possible experience.";
+
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
@@ -464,30 +467,26 @@ export default function FeedbackWidget({
         </button>
       )}
 
-      {/* Overlay */}
+      {/* Full-Screen Overlay */}
       {isOpen && (
         <div className={styles.overlay} onClick={handleClose}>
           <div className={styles.widget} onClick={(e) => e.stopPropagation()}>
-            {/* Header */}
-            <div className={styles.header}>
-              <h3 className={styles.title}>
-                {isSuccess ? 'Thank You!' : contextConfig.title}
-              </h3>
-              <button
-                className={styles.closeButton}
-                onClick={handleClose}
-                aria-label="Close"
-              >
-                <Icons.x size={20} />
-              </button>
-            </div>
+            {/* Close Button - Floating */}
+            <button
+              className={styles.closeButton}
+              onClick={handleClose}
+              aria-label="Close"
+            >
+              <Icons.x size={24} />
+            </button>
 
             {/* Content */}
             {isSuccess ? (
               <div className={styles.success}>
                 <div className={styles.successIcon}>
-                  <Icons.check size={32} />
+                  <Icons.check size={40} />
                 </div>
+                <h2 className={styles.successTitle}>Thank You!</h2>
                 <p>Thanks for sharing your feedback!</p>
                 <p className={styles.successSubtext}>
                   {category === 'bug' && severity === 'blocking' 
@@ -496,13 +495,28 @@ export default function FeedbackWidget({
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className={styles.form}>
-                {/* Contextual Hint */}
-                {(customHint || contextConfig.hint) && (
-                  <p className={styles.contextHint}>
-                    {customHint || contextConfig.hint}
+              <div className={styles.content}>
+                {/* Header Section */}
+                <div className={styles.header}>
+                  <div className={styles.headerIcon}>
+                    <Icons.messageSquare size={28} />
+                  </div>
+                  <h2 className={styles.title}>
+                    {contextConfig.title}
+                  </h2>
+                  <p className={styles.betaMessage}>
+                    {BETA_MESSAGE}
                   </p>
-                )}
+                </div>
+
+                {/* Form Section */}
+                <form onSubmit={handleSubmit} className={styles.form}>
+                  {/* Contextual Hint */}
+                  {(customHint || contextConfig.hint) && (
+                    <p className={styles.contextHint}>
+                      {customHint || contextConfig.hint}
+                    </p>
+                  )}
 
                 {/* Category Selection */}
                 <div className={styles.field}>
@@ -653,12 +667,13 @@ export default function FeedbackWidget({
                     <span>Sending...</span>
                   ) : (
                     <>
-                      <Icons.send size={16} />
+                      <Icons.send size={18} />
                       <span>Submit Feedback</span>
                     </>
                   )}
                 </button>
-              </form>
+                </form>
+              </div>
             )}
           </div>
         </div>

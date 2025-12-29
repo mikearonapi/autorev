@@ -13,7 +13,8 @@
   justify-content: center;
   /* Mobile: minimal padding for compact hero */
   padding: var(--space-sm) var(--space-md);
-  padding-top: calc(var(--space-sm) + var(--header-height-mobile));
+  /* Account for fixed header + beta banner */
+  padding-top: calc(var(--space-sm) + var(--header-plus-banner-mobile));
   text-align: center;
   background: var(--color-gray-900);
   overflow: hidden;
@@ -22,7 +23,7 @@
 @media (min-width: 768px) {
   .hero {
     padding: var(--space-xl) var(--space-lg);
-    padding-top: calc(var(--space-xl) + var(--header-height));
+    padding-top: calc(var(--space-xl) + var(--header-plus-banner));
   }
 }
 
@@ -147,13 +148,14 @@
   border-bottom: 1px solid var(--color-gray-200);
   padding: var(--space-xs) var(--space-sm);
   position: sticky;
-  top: var(--header-height-mobile);
+  /* Account for fixed header + beta banner */
+  top: var(--header-plus-banner-mobile);
   z-index: 100;
 }
 
 @media (min-width: 768px) {
   .filtersSection {
-    top: var(--header-height);
+    top: var(--header-plus-banner);
     padding: var(--space-md) var(--space-xl);
   }
 }

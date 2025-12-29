@@ -130,15 +130,15 @@
 .heroSection {
   background: linear-gradient(135deg, var(--sn-primary-dark) 0%, var(--sn-primary) 100%);
   color: var(--color-white);
-  /* Add header height offset to prevent content from being hidden behind fixed nav */
-  padding: calc(var(--header-height-mobile) + 1.5rem) 1.5rem 3rem;
+  /* Add header + beta banner height offset to prevent content from being hidden behind fixed nav */
+  padding: calc(var(--header-plus-banner-mobile) + 1.5rem) 1.5rem 3rem;
   position: relative;
   overflow: hidden;
 }
 
 @media (min-width: 768px) {
   .heroSection {
-    padding-top: calc(var(--header-height) + 2rem);
+    padding-top: calc(var(--header-plus-banner) + 2rem);
   }
 }
 
@@ -2169,7 +2169,8 @@
    -------------------------------------------------------------------------- */
 @media (max-width: 600px) {
   .heroSection {
-    padding: calc(var(--header-height-mobile) + 1rem) 1rem 1.25rem;
+    /* Account for fixed header + beta banner */
+    padding: calc(var(--header-plus-banner-mobile) + 1rem) 1rem 1.25rem;
   }
 
   .heroMain {

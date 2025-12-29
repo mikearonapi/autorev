@@ -33,11 +33,6 @@ describe('Footer', () => {
     expect(screen.getByText('Ferrari')).toBeInTheDocument();
   });
 
-  it('renders newsletter form', () => {
-    render(<Footer />);
-    expect(screen.getByPlaceholderText('Get updates')).toBeInTheDocument();
-  });
-
   it('renders copyright', () => {
     render(<Footer />);
     const currentYear = new Date().getFullYear();

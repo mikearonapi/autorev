@@ -20,11 +20,6 @@ const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingF
   ssr: false,
 });
 
-// Dynamically import AuthErrorBanner for session error notifications
-const AuthErrorBanner = dynamic(() => import('@/components/auth/AuthErrorBanner'), {
-  ssr: false,
-});
-
 // Dynamically import WelcomeToast for fresh login greeting
 const WelcomeToast = dynamic(() => import('@/components/WelcomeToast'), {
   ssr: false,
@@ -1575,27 +1570,10 @@ export function AuthProvider({ children }) {
     completeOnboarding,
   ]);
 
-  // Handler for sign-in button in error banner
-  const handleErrorBannerSignIn = useCallback(() => {
-    // Clear the error and redirect to trigger login
-    clearAuthError();
-    loginWithGoogle();
-  }, [clearAuthError, loginWithGoogle]);
-
   return (
     <AuthContext.Provider value={value}>
       {children}
       
-      {/* Auth Error Banner - shown when session is revoked/expired */}
-      {!state.isLoading && !state.isAuthenticated && (state.sessionExpired || state.sessionRevoked || state.authError) && (
-        <AuthErrorBanner
-          sessionExpired={state.sessionExpired}
-          sessionRevoked={state.sessionRevoked}
-          authError={state.authError}
-          onSignIn={handleErrorBannerSignIn}
-          onDismiss={clearAuthError}
-        />
-      )}
       
       {/* Welcome Toast - shown briefly after fresh login */}
       {state.showWelcomeToast && (

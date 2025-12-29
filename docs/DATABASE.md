@@ -334,6 +334,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Purpose** | User's owned vehicles with VIN and installed modifications |
 | **Key Fields** | `user_id`, `matched_car_slug`, `matched_car_id`, `matched_car_variant_id`, `vin`, `year`, `make`, `model`, `trim`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
 | **Modification Fields** | `installed_modifications` (JSONB array of upgrade keys), `active_build_id` (FK to user_projects), `total_hp_gain`, `modified_at` |
+| **Car Concierge Tracking** | `last_started_at`, `battery_status` (enum: `good`/`fair`/`weak`/`dead`/`unknown`, default `unknown`), `battery_installed_date`, `storage_mode`, `tire_installed_date`, `tire_brand_model`, `tire_tread_32nds`, `registration_due_date`, `inspection_due_date`, `last_inspection_date`, `last_oil_change_date`, `last_oil_change_mileage`, `next_oil_due_mileage`, `owner_notes`, `health_last_analyzed_at` |
 | **Used By** | Enthusiast tier ownership features, My Garage, Tuning Shop "Apply to Vehicle" |
 
 ### `user_service_logs` — Service records

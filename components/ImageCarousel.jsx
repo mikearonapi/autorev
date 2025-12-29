@@ -2,7 +2,7 @@
  * ImageCarousel Component
  * 
  * Auto-rotating image carousel with smooth dissolve transitions.
- * Cycles through images every 3 seconds with fade effect.
+ * Default: 2s display + 0.8s fade transition.
  */
 
 'use client';
@@ -15,7 +15,7 @@ import styles from './ImageCarousel.module.css';
  * @typedef {Object} ImageCarouselProps
  * @property {string[]} images - Array of image paths to cycle through
  * @property {string} alt - Alt text for images
- * @property {number} [interval=3000] - Time in ms between transitions (default 3 seconds)
+ * @property {number} [interval=2800] - Time in ms between transitions (default 2.8 seconds)
  */
 
 /**
@@ -24,7 +24,7 @@ import styles from './ImageCarousel.module.css';
 export default function ImageCarousel({ 
   images, 
   alt,
-  interval = 6000 // 6 seconds total: 3s visible + 3s transition
+  interval = 2800 // 2.8 seconds total: 2s visible + 0.8s transition
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 

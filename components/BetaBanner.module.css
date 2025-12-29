@@ -3,9 +3,13 @@
   border-bottom: 1px solid rgba(218, 165, 32, 0.3);
   padding: 0.75rem 1rem;
   text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 999;
+  /* Fixed position directly below the header */
+  position: fixed;
+  top: var(--header-height-mobile);
+  left: 0;
+  right: 0;
+  /* Just below header (1050) but above page content */
+  z-index: 1049;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -52,6 +56,13 @@
   
   .message {
     font-size: 0.8125rem;
+  }
+}
+
+/* Tablet+ adjustments - header height changes */
+@media (min-width: 768px) {
+  .banner {
+    top: var(--header-height);
   }
 }
 

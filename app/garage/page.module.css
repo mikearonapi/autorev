@@ -13,11 +13,11 @@
    =========================================== */
 
 .page {
-  /* Viewport height minus the header */
-  /* Mobile: 48px header, Desktop: 64px header */
-  height: calc(100vh - var(--header-height-mobile));
-  height: calc(100dvh - var(--header-height-mobile));
-  margin-top: var(--header-height-mobile);
+  /* Viewport height minus the header + beta banner */
+  height: calc(100vh - var(--header-plus-banner-mobile));
+  height: calc(100dvh - var(--header-plus-banner-mobile));
+  /* Account for fixed header + beta banner */
+  margin-top: var(--header-plus-banner-mobile);
   background: #0a0b0d;
   color: var(--color-white);
   position: relative;
@@ -28,9 +28,9 @@
 
 @media (min-width: 768px) {
   .page {
-    height: calc(100vh - var(--header-height));
-    height: calc(100dvh - var(--header-height));
-    margin-top: var(--header-height);
+    height: calc(100vh - var(--header-plus-banner));
+    height: calc(100dvh - var(--header-plus-banner));
+    margin-top: var(--header-plus-banner);
   }
 }
 
@@ -1758,12 +1758,20 @@
 }
 
 .detailBlockTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 9px;
   font-weight: 700;
   color: var(--sn-gold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0 0 8px;
+}
+
+.detailBlockTitleText {
+  flex: 1;
 }
 
 .detailBlockItems {
@@ -3984,4 +3992,291 @@
 .modsEmptyAction:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Custom Specs Link (in Mods tab) */
+.customSpecsLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.customSpecsLink strong {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* ===========================================
+   QUICK ACTIONS - Header Right Section
+   =========================================== */
+
+.quickActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickActionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickActionBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.quickActionBtnActive {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.quickActionLabel {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .quickActionLabel {
+    display: inline;
+  }
+}
+
+.analyzeAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(196, 165, 100, 0.15) 0%, rgba(196, 165, 100, 0.05) 100%);
+  border: 1px solid rgba(196, 165, 100, 0.3);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sn-gold, #c4a564);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analyzeAllBtn:hover {
+  background: linear-gradient(135deg, rgba(196, 165, 100, 0.25) 0%, rgba(196, 165, 100, 0.1) 100%);
+  border-color: rgba(196, 165, 100, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196, 165, 100, 0.2);
+}
+
+/* ===========================================
+   QUICK UPDATE MODE OVERLAY
+   =========================================== */
+
+.quickUpdateOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.quickUpdatePanel {
+  background: linear-gradient(135deg, #1a1b1f 0%, #0f1014 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.quickUpdateHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quickUpdateHeader h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.quickUpdateHeader p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.quickUpdateList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quickUpdateItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.quickUpdateItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.quickUpdateVehicleInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quickUpdateVehicleName {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quickUpdateCurrentMileage {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.quickUpdateInput {
+  width: 140px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  transition: all 0.2s ease;
+}
+
+.quickUpdateInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.quickUpdateInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.quickUpdateActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quickUpdateCancel {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickUpdateCancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.quickUpdateCancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quickUpdateSave {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickUpdateSave:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.quickUpdateSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }

@@ -1,0 +1,385 @@
+/**
+ * WheelTireSpecsCard Styles
+ * 
+ * Inline editing card for wheel/tire specs
+ */
+
+.card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  width: 100%;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.customBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.editToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editToggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.editToggle.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #3b82f6;
+}
+
+.editHint {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Specs Grid */
+.specsGrid {
+  padding: 12px 16px;
+}
+
+.section {
+  margin-bottom: 12px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+/* Spec Row */
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+  position: relative;
+  transition: background 0.15s ease;
+  border-radius: 4px;
+  margin: 0 -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.specRow.editable {
+  cursor: pointer;
+}
+
+.specRow.editable:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.specRow.hasCustom {
+  padding-left: 12px;
+}
+
+.specRow.hasCustom::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: #10b981;
+  border-radius: 2px;
+}
+
+.specLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.specValue {
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.specValue.customValue {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.stockHint {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: line-through;
+}
+
+.rowEditBtn {
+  position: absolute;
+  right: 4px;
+  opacity: 0;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.specRow.editable:hover .rowEditBtn {
+  opacity: 1;
+}
+
+.rowEditBtn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+/* Edit Container */
+.editContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 200px;
+}
+
+.editInput {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--text-primary, #fff);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+  outline: none;
+}
+
+.editInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.editInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.editActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.editActionBtn:first-of-type {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.editActionBtn:first-of-type:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.3);
+}
+
+.editActionBtn:last-child:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.editActionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.emptyState {
+  padding: 24px 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.emptyState p {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+}
+
+.emptyHint {
+  font-size: 11px !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.addSpecsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addSpecsBtn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Fitment Options */
+.fitmentToggle {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.fitmentToggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.fitmentList {
+  padding: 0 16px 16px;
+}
+
+.fitmentOption {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.fitmentOption:last-child {
+  margin-bottom: 0;
+}
+
+.fitmentHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fitmentType {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #3b82f6;
+}
+
+.fitmentVerified {
+  font-size: 10px;
+  color: #10b981;
+}
+
+.fitmentSpecs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.fitmentNotes {
+  margin-top: 6px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .editContainer {
+    max-width: 160px;
+  }
+}
+

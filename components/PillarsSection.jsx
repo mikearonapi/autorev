@@ -8,7 +8,7 @@
  */
 
 import { useMemo } from 'react';
-import Button from '@/components/Button';
+import Link from 'next/link';
 import styles from '@/app/page.module.css';
 
 // Icons
@@ -99,14 +99,6 @@ export default function PillarsSection({ carCount = 100 }) {
     }
   ], [carCount]);
 
-  const handleOpenOnboarding = (key) => {
-    setActiveOnboarding(key);
-  };
-
-  const handleCloseOnboarding = () => {
-    setActiveOnboarding(null);
-  };
-
   return (
     <section className={styles.pillars}>
       <div className={styles.container}>
@@ -118,54 +110,22 @@ export default function PillarsSection({ carCount = 100 }) {
         </div>
         <div className={styles.pillarsGrid}>
           {pillars.map((pillar, index) => (
-            <div key={index} className={`${styles.pillarCard} ${styles[pillar.accent]}`}>
+            <Link 
+              key={index} 
+              href={pillar.href}
+              className={`${styles.pillarCard} ${styles[pillar.accent]}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <div className={styles.pillarIcon}>{pillar.icon}</div>
               <h3 className={styles.pillarTitle}>{pillar.title}</h3>
               <p className={styles.pillarDescription}>{pillar.description}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
-                <Button href={pillar.href} variant="ghost" size="sm" icon={<ArrowRightIcon />}>
-                  {pillar.cta}
-                </Button>
-                {pillar.onboardingKey && (
-                  <button 
-                    onClick={() => handleOpenOnboarding(pillar.onboardingKey)}
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      padding: '0 12px', 
-                      color: 'var(--color-gray-500)', 
-                      fontSize: '0.875rem', 
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      marginTop: '-4px'
-                    }}
-                  >
-                    See how it works
-                  </button>
-                )}
-              </div>
-            </div>
+              <span className={styles.pillarCta}>
+                <ArrowRightIcon /> {pillar.cta}
+              </span>
+            </Link>
           ))}
         </div>
       </div>
-
-      <OnboardingPopup 
-        isOpen={activeOnboarding === 'garage'}
-        onClose={handleCloseOnboarding}
-        steps={garageOnboardingSteps}
-        storageKey="garage_onboarding_dismissed" // We might want to use a different key or ignore it for this preview mode, but the component handles it.
-        // Actually, if we use the same key, it might not open if user already dismissed it.
-        // But since we are forcing isOpen=true, the component logic I updated should respect that.
-        accentColor="#e74c3c"
-      />
-
-      <OnboardingPopup 
-        isOpen={activeOnboarding === 'tuning'}
-        onClose={handleCloseOnboarding}
-        steps={tuningShopOnboardingSteps}
-        storageKey="tuningshop_onboarding_dismissed"
-        accentColor="var(--sn-accent)"
-      />
     </section>
   );
 }

@@ -160,7 +160,13 @@
   --header-height: 56px;
   --header-height-mobile: 48px;
   --header-height-desktop: 64px;
+  --beta-banner-height: 44px;
+  --beta-banner-height-mobile: 40px;
   --selected-car-banner-height: 52px;
+  
+  /* Combined heights for layout calculations */
+  --header-plus-banner-mobile: calc(var(--header-height-mobile) + var(--beta-banner-height-mobile));
+  --header-plus-banner: calc(var(--header-height) + var(--beta-banner-height));
   
   /* Mobile-first content widths */
   --content-width-narrow: 480px;
@@ -205,13 +211,13 @@ html {
   /* Prevent font size adjustment on orientation change (iOS) */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Improve scroll performance */
-  scroll-padding-top: var(--header-height-mobile);
+  /* Improve scroll performance - account for fixed header + beta banner */
+  scroll-padding-top: var(--header-plus-banner-mobile);
 }
 
 @media (min-width: 768px) {
   html {
-    scroll-padding-top: var(--header-height);
+    scroll-padding-top: var(--header-plus-banner);
   }
 }
 

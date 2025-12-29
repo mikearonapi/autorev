@@ -60,7 +60,7 @@ export default function FeaturePhoneShowcase() {
                 <ImageCarousel 
                   images={GARAGE_IMAGES}
                   alt="My Garage feature"
-                  interval={6000}
+                  interval={2800}
                 />
               </IPhoneFrame>
             </div>
@@ -77,7 +77,7 @@ export default function FeaturePhoneShowcase() {
                 <ImageCarousel 
                   images={TUNING_IMAGES}
                   alt="Tuning Shop feature"
-                  interval={6000}
+                  interval={2800}
                 />
               </IPhoneFrame>
             </div>
@@ -95,7 +95,7 @@ export default function FeaturePhoneShowcase() {
                   images={AL_IMAGES}
                   alt="AL AI assistant"
                   displayDurations={[1500, 1500, 1500, 3000]}
-                  transitionDuration={3000}
+                  transitionDuration={800}
                 />
               </IPhoneFrame>
             </div>

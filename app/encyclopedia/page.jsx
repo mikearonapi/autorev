@@ -504,6 +504,34 @@ function ArticleSection({ section, onNavigate }) {
         </div>
       );
 
+    // NEW: System list (for automotive section overview)
+    case 'systemList':
+      return (
+        <div className={styles.sectionComponentList}>
+          {section.content.map((system) => (
+            <button
+              key={system.id}
+              className={styles.componentCard}
+              onClick={() => onNavigate(system.id)}
+            >
+              {system.color && (
+                <div 
+                  className={styles.systemColorIndicator}
+                  style={{ backgroundColor: system.color }}
+                />
+              )}
+              <h4 className={styles.componentName}>{system.name}</h4>
+              <p className={styles.componentDesc}>{system.description}</p>
+              {system.componentCount > 0 && (
+                <span className={styles.componentUnit}>
+                  {system.componentCount} {system.componentCount === 1 ? 'component' : 'components'}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      );
+
     // NEW: Automotive component list (for system pages)
     case 'automotiveComponentList':
       return (

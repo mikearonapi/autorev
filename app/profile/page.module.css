@@ -12,7 +12,8 @@
 .heroHeader {
   position: relative;
   background: linear-gradient(135deg, #1a4d6e 0%, #0f3451 50%, #0a1628 100%);
-  padding-top: calc(var(--header-height-mobile) + var(--space-lg));
+  /* Account for fixed header + beta banner */
+  padding-top: calc(var(--header-plus-banner-mobile) + var(--space-lg));
   padding-bottom: var(--space-2xl);
   overflow: hidden;
 }
@@ -161,7 +162,8 @@
 
 @media (min-width: 768px) {
   .heroHeader {
-    padding-top: calc(var(--header-height) + var(--space-xl));
+    /* Account for fixed header + beta banner */
+    padding-top: calc(var(--header-plus-banner) + var(--space-xl));
     padding-bottom: 80px;
   }
 }

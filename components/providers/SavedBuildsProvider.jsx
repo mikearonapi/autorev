@@ -205,7 +205,13 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
         carSlug: build.car_slug,
         carName: build.car_name,
         name: build.project_name,
-        upgrades: build.selected_upgrades || [],
+        // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
+        upgrades: Array.isArray(build.selected_upgrades) 
+          ? build.selected_upgrades 
+          : (build.selected_upgrades?.upgrades || []),
+        factoryConfig: build.selected_upgrades?.factoryConfig || null,
+        wheelFitment: build.selected_upgrades?.wheelFitment || null,
+        sizeSelections: build.selected_upgrades?.sizeSelections || null,
         parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
           id: p.id,
           partId: p.part_id,
@@ -376,7 +382,13 @@ useEffect(() => {
           carSlug: data.car_slug,
           carName: data.car_name,
           name: data.project_name,
-          upgrades: data.selected_upgrades || [],
+          // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
+          upgrades: Array.isArray(data.selected_upgrades) 
+            ? data.selected_upgrades 
+            : (data.selected_upgrades?.upgrades || []),
+          factoryConfig: data.selected_upgrades?.factoryConfig || buildData?.factoryConfig || null,
+          wheelFitment: data.selected_upgrades?.wheelFitment || buildData?.wheelFitment || null,
+          sizeSelections: data.selected_upgrades?.sizeSelections || buildData?.sizeSelections || null,
           parts: Array.isArray(buildData?.selectedParts) ? buildData.selectedParts : [],
           totalHpGain: data.total_hp_gain || 0,
           totalCostLow: data.total_cost_low || 0,
@@ -402,6 +414,9 @@ useEffect(() => {
       carName: buildData.carName,
       name: buildData.name || 'Untitled Build',
       upgrades: buildData.selectedUpgrades || buildData.upgrades || [],
+      factoryConfig: buildData.factoryConfig || null,
+      wheelFitment: buildData.wheelFitment || null,
+      sizeSelections: buildData.sizeSelections || null,
       parts: buildData.selectedParts || buildData.parts || [],
       totalHpGain: buildData.totalHpGain || 0,
       totalCostLow: buildData.totalCostLow || 0,
@@ -431,7 +446,13 @@ useEffect(() => {
             return {
               ...build,
               name: data.project_name,
-              upgrades: data.selected_upgrades || [],
+              // Handle both old format (array) and new format (object)
+              upgrades: Array.isArray(data.selected_upgrades) 
+                ? data.selected_upgrades 
+                : (data.selected_upgrades?.upgrades || []),
+              factoryConfig: data.selected_upgrades?.factoryConfig || updates?.factoryConfig || build.factoryConfig,
+              wheelFitment: data.selected_upgrades?.wheelFitment || updates?.wheelFitment || build.wheelFitment,
+              sizeSelections: data.selected_upgrades?.sizeSelections || updates?.sizeSelections || build.sizeSelections,
               parts: updates?.selectedParts ? updates.selectedParts : build.parts,
               totalHpGain: data.total_hp_gain || 0,
               totalCostLow: data.total_cost_low || 0,

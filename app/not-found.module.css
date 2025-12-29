@@ -1,9 +1,17 @@
 .page {
-  min-height: calc(100vh - var(--header-height));
+  /* Account for fixed header + beta banner */
+  min-height: calc(100vh - var(--header-plus-banner));
+  margin-top: var(--header-plus-banner-mobile);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-xl);
+}
+
+@media (min-width: 768px) {
+  .page {
+    margin-top: var(--header-plus-banner);
+  }
 }
 
 .content {

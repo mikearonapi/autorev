@@ -45,6 +45,9 @@ import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
+// Mobile-first tuning shop components
+import { CategoryNav } from './tuning-shop';
+
 // Compact Icons
 const Icons = {
   bolt: ({ size = 16 }) => (
@@ -181,25 +184,6 @@ const UPGRADE_CATEGORIES = [
   { key: 'drivetrain', label: 'Drivetrain', icon: Icons.settings, color: '#f97316' },
 ];
 
-const PART_CATEGORIES = [
-  { value: '', label: 'All Categories' },
-  { value: 'intake', label: 'Intake' },
-  { value: 'exhaust', label: 'Exhaust' },
-  { value: 'tune', label: 'Tune' },
-  { value: 'forced_induction', label: 'Forced Induction' },
-  { value: 'cooling', label: 'Cooling' },
-  { value: 'suspension', label: 'Suspension' },
-  { value: 'brakes', label: 'Brakes' },
-  { value: 'wheels_tires', label: 'Wheels & Tires' },
-  { value: 'aero', label: 'Aero' },
-  { value: 'drivetrain', label: 'Drivetrain' },
-  { value: 'fuel_system', label: 'Fuel System' },
-  { value: 'engine_internal', label: 'Engine Internal' },
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'fluids_filters', label: 'Fluids & Filters' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'other', label: 'Other' },
-];
 
 /**
  * Generate detailed AI recommendation based on car characteristics and database data
@@ -541,7 +525,14 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
 /**
  * Main Upgrade Center Component
  */
-export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar = null }) {
+export default function UpgradeCenter({ 
+  car, 
+  initialBuildId = null, 
+  onChangeCar = null,
+  onBuildSummaryUpdate = null,
+  factoryConfig = null,
+  selectedWheelFitment = null,
+}) {
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
   const { vehicles, applyModifications } = useOwnedVehicles();
@@ -561,156 +552,12 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
   const [selectedGarageVehicle, setSelectedGarageVehicle] = useState(null);
   const [conflictNotification, setConflictNotification] = useState(null);
 
-  // Parts Finder state (beta)
-  const [partsQuery, setPartsQuery] = useState('');
-  const [partsCategory, setPartsCategory] = useState('');
-  // Default to false since only ~1% of fitments are currently verified
-  // Users can opt-in to verified-only filtering
-  const [partsVerifiedOnly, setPartsVerifiedOnly] = useState(false);
-  const [partsLoading, setPartsLoading] = useState(false);
-  const [partsError, setPartsError] = useState(null);
-  const [partsResults, setPartsResults] = useState([]);
+  // Selected parts for builds (loaded from saved builds, UI removed)
   const [selectedParts, setSelectedParts] = useState([]);
-  const [graphLoading, setGraphLoading] = useState(false);
-  const [graphError, setGraphError] = useState(null);
-  const [graphEdges, setGraphEdges] = useState([]);
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
 
-  // -----------------------------------------------------------------------------
-  // Parts Finder (beta) - uses RLS-safe /api/parts/search
-  // Reset parts state when car changes
-  // -----------------------------------------------------------------------------
-
-  useEffect(() => {
-    setPartsQuery('');
-    setPartsCategory('');
-    setPartsVerifiedOnly(false); // Match initial default
-    setPartsError(null);
-    setPartsResults([]);
-    setSelectedParts([]);
-    setGraphError(null);
-    setGraphEdges([]);
-  }, [safeCarSlug]);
-
-  useEffect(() => {
-    let isCancelled = false;
-    const q = partsQuery.trim();
-    // Guard: skip fetch if no car
-  const hasWindow = typeof window !== 'undefined';
-  const shouldFetch = hasWindow && safeCarSlug && (q.length >= 2 || Boolean(partsCategory));
-
-    if (!shouldFetch) {
-      setPartsResults([]);
-      setPartsError(null);
-      return () => { isCancelled = true; };
-    }
-
-    const timer = setTimeout(async () => {
-      setPartsLoading(true);
-      setPartsError(null);
-      try {
-        const url = new URL('/api/parts/search', window.location.origin);
-        if (q) url.searchParams.set('q', q);
-        url.searchParams.set('carSlug', safeCarSlug);
-        if (partsCategory) url.searchParams.set('category', partsCategory);
-        if (partsVerifiedOnly) url.searchParams.set('verified', 'true');
-        url.searchParams.set('limit', '10');
-
-        const res = await fetch(url.toString());
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(json?.error || 'Failed to search parts');
-
-        const results = Array.isArray(json?.results) ? json.results : [];
-        if (!isCancelled) setPartsResults(results);
-      } catch (err) {
-        if (!isCancelled) setPartsError(err.message || 'Failed to search parts');
-      } finally {
-        if (!isCancelled) setPartsLoading(false);
-      }
-    }, 250);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timer);
-    };
-  }, [safeCarSlug, partsQuery, partsCategory, partsVerifiedOnly]);
-
-  const addPartToSelection = useCallback((part) => {
-    if (!part?.id) return;
-    setSelectedParts((prev) => {
-      if (prev.some((p) => p.id === part.id)) return prev;
-      return [...prev, part];
-    });
-  }, []);
-
-  const removeSelectedPart = useCallback((partId) => {
-    setSelectedParts((prev) => prev.filter((p) => p.id !== partId));
-  }, []);
-
-  // Fetch relationship edges for selected parts and compute warnings.
-  useEffect(() => {
-    let isCancelled = false;
-    const ids = selectedParts.map((p) => p.id).filter(Boolean);
-    if (ids.length === 0) {
-      setGraphEdges([]);
-      setGraphError(null);
-      return () => { isCancelled = true; };
-    }
-
-    const timer = setTimeout(async () => {
-      setGraphLoading(true);
-      setGraphError(null);
-      try {
-        const res = await fetch('/api/parts/relationships', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ partIds: ids }),
-        });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(json?.error || 'Failed to load part relationships');
-        if (!isCancelled) setGraphEdges(Array.isArray(json?.edges) ? json.edges : []);
-      } catch (err) {
-        if (!isCancelled) setGraphError(err.message || 'Failed to load part relationships');
-      } finally {
-        if (!isCancelled) setGraphLoading(false);
-      }
-    }, 200);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timer);
-    };
-  }, [selectedParts]);
-
-  const buildChecks = useMemo(() => {
-    const selectedIds = new Set(selectedParts.map((p) => p.id));
-    const conflicts = [];
-    const missing = [];
-    const recommended = [];
-
-    const seen = new Set();
-    for (const e of graphEdges || []) {
-      const a = e?.part?.id;
-      const b = e?.related_part?.id;
-      if (!a || !b) continue;
-      const key = `${e.relation_type}:${a}:${b}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      if (e.relation_type === 'conflicts_with') {
-        if (selectedIds.has(a) && selectedIds.has(b)) conflicts.push(e);
-      } else if (e.relation_type === 'requires') {
-        if (selectedIds.has(a) && !selectedIds.has(b)) missing.push(e);
-      } else if (e.relation_type === 'recommended_with') {
-        if (selectedIds.has(a) && !selectedIds.has(b)) recommended.push(e);
-      }
-    }
-
-    return { conflicts, missing, recommended };
-  }, [graphEdges, selectedParts]);
-  
   // Reset upgrade state when car changes
   useEffect(() => {
     setSelectedModules([]);
@@ -802,6 +649,52 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
     return result;
   }, [upgradesByCategory, effectiveModules]);
   
+  // Notify parent of build summary changes
+  useEffect(() => {
+    if (onBuildSummaryUpdate) {
+      const upgradesArray = profile.selectedUpgrades.map(key => {
+        const upgrade = getUpgradeByKey(key);
+        return {
+          key,
+          name: upgrade?.name || key,
+          hpGain: upgrade?.hp || 0,
+          cost: upgrade?.costLow || 0,
+          category: upgrade?.category || 'other',
+        };
+      });
+      
+      onBuildSummaryUpdate({
+        totalHpGain: hpGain,
+        totalTqGain: 0, // Could be calculated if available
+        totalCost: totalCost.low || 0,
+        upgradeCount: profile.selectedUpgrades.length,
+        selectedUpgrades: upgradesArray,
+      });
+    }
+  }, [onBuildSummaryUpdate, hpGain, totalCost.low, profile.selectedUpgrades]);
+  
+  // Listen for save/clear events from BuildSummaryBar
+  useEffect(() => {
+    const handleSaveEvent = () => {
+      if (profile.selectedUpgrades.length > 0) {
+        setShowSaveModal(true);
+      }
+    };
+    
+    const handleClearEvent = () => {
+      setSelectedPackage('stock');
+      setSelectedModules([]);
+    };
+    
+    document.addEventListener('tuning-shop:save-build', handleSaveEvent);
+    document.addEventListener('tuning-shop:clear-build', handleClearEvent);
+    
+    return () => {
+      document.removeEventListener('tuning-shop:save-build', handleSaveEvent);
+      document.removeEventListener('tuning-shop:clear-build', handleClearEvent);
+    };
+  }, [profile.selectedUpgrades.length]);
+  
   // Flatten all upgrades for name lookups
   const allUpgradesFlat = useMemo(() => {
     return Object.values(upgradesByCategory).flat();
@@ -871,6 +764,9 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
         totalCostHigh: totalCost.high,
         finalHp: profile.upgradedMetrics.hp,
         selectedPackage,
+        // Include factory configuration and wheel fitment from props
+        factoryConfig: factoryConfig || null,
+        wheelFitment: selectedWheelFitment || null,
       };
       
       const result = currentBuildId 
@@ -1031,27 +927,16 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
               </button>
             ))}
           </div>
-          <div className={styles.categoryList}>
-            {UPGRADE_CATEGORIES.map(cat => {
-              const Icon = cat.icon;
-              const count = upgradesByCategory[cat.key]?.length || 0;
-              const selected = selectedByCategory[cat.key] || 0;
-              return (
-                <button
-                  key={cat.key}
-                  className={`${styles.catBtn} ${selected > 0 ? styles.catBtnActive : ''}`}
-                  onClick={() => setActiveCategory(cat.key)}
-                  disabled={count === 0}
-                  style={{ '--cat-color': cat.color }}
-                >
-                  <Icon size={14} />
-                  <span>{cat.label}</span>
-                  {selected > 0 && <span className={styles.catBadge}>{selected}</span>}
-                  <Icons.chevronRight size={12} className={styles.catArrow} />
-                </button>
-              );
-            })}
-          </div>
+          {/* Mobile-first Category Navigation */}
+          <CategoryNav
+            categories={UPGRADE_CATEGORIES.filter(cat => 
+              (upgradesByCategory[cat.key]?.length || 0) > 0
+            ).map(cat => cat.key)}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            selectedCounts={selectedByCategory}
+            showAll={false}
+          />
         </div>
         
         {/* Right: Analytics */}
@@ -1068,176 +953,6 @@ export default function UpgradeCenter({ car, initialBuildId = null, onChangeCar 
             <ScoreBar label="Comfort" stockScore={profile.stockScores.drivability || 7} upgradedScore={profile.upgradedScores.drivability || 7} />
             <ScoreBar label="Reliability" stockScore={profile.stockScores.reliabilityHeat || 7.5} upgradedScore={profile.upgradedScores.reliabilityHeat || 7.5} />
             <ScoreBar label="Sound" stockScore={profile.stockScores.soundEmotion || 8} upgradedScore={profile.upgradedScores.soundEmotion || 8} />
-          </div>
-
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Parts Finder (Beta)</h4>
-
-            <div className={styles.partsControls}>
-              <div className={styles.partsSearch}>
-                <input
-                  className={styles.partsInput}
-                  value={partsQuery}
-                  onChange={(e) => setPartsQuery(e.target.value)}
-                  placeholder="Search parts (brand, name, part #)…"
-                />
-              </div>
-              <div className={styles.partsFilters}>
-                <select className={styles.partsSelect} value={partsCategory} onChange={(e) => setPartsCategory(e.target.value)}>
-                  {PART_CATEGORIES.map((c) => (
-                    <option key={c.value || 'all'} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
-                <label className={styles.partsCheckbox}>
-                  <input
-                    type="checkbox"
-                    checked={partsVerifiedOnly}
-                    onChange={(e) => setPartsVerifiedOnly(e.target.checked)}
-                  />
-                  <span>Verified only</span>
-                </label>
-              </div>
-            </div>
-
-            {partsError && <div className={styles.partsError}>{partsError}</div>}
-            {partsLoading && <div className={styles.partsHint}>Searching…</div>}
-            {!partsLoading && !partsError && partsResults.length === 0 && (
-              <div className={styles.partsHint}>
-                {(partsQuery.length >= 2 || partsCategory) ? (
-                  <>
-                    <strong>No parts found</strong> for "{partsQuery || partsCategory}" on this vehicle.
-                    <br />
-                    <span style={{ fontSize: '11px', opacity: 0.7 }}>
-                      Try a different search term or category. Parts data is limited for some vehicles.
-                    </span>
-                  </>
-                ) : (
-                  'Type 2+ characters or pick a category to see fitment-aware parts for this car.'
-                )}
-              </div>
-            )}
-
-            {partsResults.length > 0 && (
-              <div className={styles.partsList}>
-                {partsResults.map((p) => {
-                  const price = p?.latest_price?.price_cents ? `$${(p.latest_price.price_cents / 100).toFixed(0)}` : null;
-                  const fit = p?.fitment || null;
-                  const conf = typeof fit?.confidence === 'number' ? Math.round(fit.confidence * 100) : null;
-                  const isSelected = selectedParts.some((sp) => sp?.id === p?.id);
-
-                  return (
-                    <div key={p?.id || Math.random()} className={styles.partsItem}>
-                      <div className={styles.partsMain}>
-                        <div className={styles.partsName}>{p?.name || 'Unknown part'}</div>
-                        <div className={styles.partsMeta}>
-                          <span>{p?.brand_name || '—'}</span>
-                          {p?.part_number && <span className={styles.partsDot}>•</span>}
-                          {p?.part_number && <span>PN {p.part_number}</span>}
-                          {p?.category && <span className={styles.partsDot}>•</span>}
-                          {p?.category && <span>{p.category}</span>}
-                        </div>
-                        <div className={styles.partsBadges}>
-                          {fit?.verified && <span className={styles.partsBadgeVerified}>Verified</span>}
-                          {conf !== null && <span className={styles.partsBadge}>Conf {conf}%</span>}
-                          {fit?.requires_tune && <span className={styles.partsBadgeWarn}>Requires tune</span>}
-                          {fit?.install_difficulty && <span className={styles.partsBadge}>{fit.install_difficulty}</span>}
-                          {price && <span className={styles.partsBadgePrice}>{price}</span>}
-                        </div>
-                      </div>
-                      <div className={styles.partsActions}>
-                        {p?.latest_price?.product_url && (
-                          <a className={styles.partsLink} href={p.latest_price.product_url} target="_blank" rel="noopener noreferrer">
-                            View
-                          </a>
-                        )}
-                        <button
-                          className={styles.partsAddBtn}
-                          onClick={() => addPartToSelection(p)}
-                          disabled={isSelected}
-                          title={isSelected ? 'Already added' : 'Add to selection'}
-                        >
-                          {isSelected ? 'Added' : 'Add'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {selectedParts.length > 0 && (
-              <div className={styles.partsSelected}>
-                <div className={styles.partsSelectedHeader}>
-                  <span>Selected parts ({selectedParts.length})</span>
-                  <span className={styles.partsSelectedNote}>Saving to builds is next.</span>
-                </div>
-                <div className={styles.partsSelectedList}>
-                  {selectedParts.map((p) => (
-                    <div key={p.id} className={styles.partsSelectedItem}>
-                      <span className={styles.partsSelectedName}>{p.name}</span>
-                      <button className={styles.partsRemoveBtn} onClick={() => removeSelectedPart(p.id)} title="Remove">
-                        <Icons.x size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={styles.partsChecks}>
-                  <div className={styles.partsChecksHeader}>
-                    <span>Build checks</span>
-                    {graphLoading && <span className={styles.partsSelectedNote}>Checking…</span>}
-                  </div>
-
-                  {graphError && <div className={styles.partsError}>{graphError}</div>}
-
-                  {!graphLoading && !graphError && buildChecks.conflicts.length === 0 && buildChecks.missing.length === 0 && (
-                    <div className={styles.partsCheckOk}>No known conflicts/requirements detected (for selected parts).</div>
-                  )}
-
-                  {buildChecks.conflicts.length > 0 && (
-                    <div className={styles.partsCheckBlock}>
-                      <div className={styles.partsCheckTitleBad}>Conflicts</div>
-                      {buildChecks.conflicts.slice(0, 6).map((e) => (
-                        <div key={e.id} className={styles.partsCheckItem}>
-                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part A'}</span>
-                          <span className={styles.partsCheckArrow}>×</span>
-                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Part B'}</span>
-                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {buildChecks.missing.length > 0 && (
-                    <div className={styles.partsCheckBlock}>
-                      <div className={styles.partsCheckTitleWarn}>Requirements</div>
-                      {buildChecks.missing.slice(0, 8).map((e) => (
-                        <div key={e.id} className={styles.partsCheckItem}>
-                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part'}</span>
-                          <span className={styles.partsCheckArrow}>→</span>
-                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Required part'}</span>
-                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {buildChecks.recommended.length > 0 && (
-                    <div className={styles.partsCheckBlock}>
-                      <div className={styles.partsCheckTitle}>Recommended</div>
-                      {buildChecks.recommended.slice(0, 6).map((e) => (
-                        <div key={e.id} className={styles.partsCheckItem}>
-                          <span className={styles.partsCheckPart}>{e.part?.name || 'Part'}</span>
-                          <span className={styles.partsCheckArrow}>+</span>
-                          <span className={styles.partsCheckPart}>{e.related_part?.name || 'Recommended part'}</span>
-                          {e.reason && <span className={styles.partsCheckReason}>— {e.reason}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Performance Intelligence - Dyno & Lap Times (Tuner tier)

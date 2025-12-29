@@ -9,7 +9,6 @@
 
 import { useState, useEffect, useRef, useCallback, createContext, useContext, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import styles from './AIMechanicChat.module.css';
 import { useAuth } from './providers/AuthProvider';
 import { useCarSelection } from './providers/CarSelectionProvider';
@@ -69,6 +68,9 @@ const AIChatContext = createContext({
   openChat: () => {},
   closeChat: () => {},
   toggleChat: () => {},
+  openChatWithPrompt: () => {},
+  pendingPrompt: null,
+  clearPendingPrompt: () => {},
 });
 
 export function useAIChat() {
@@ -526,7 +528,7 @@ function ResponseActions({ content, focusedCar, onCarClick, onCompare }) {
 /**
  * Main AIMechanicChat Component
  */
-export default function AIMechanicChat({ showFloatingButton = false, externalOpen, onOpenChange }) {
+export default function AIMechanicChat({ showFloatingButton = false, externalOpen, onOpenChange, pendingPrompt, onClearPendingPrompt }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -564,6 +566,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   // Context indicator state - which car AL is focused on
   const [focusedCar, setFocusedCar] = useState(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [dismissedCarSlug, setDismissedCarSlug] = useState(null); // Track manually dismissed car
   
   // Quick reply chips state
   const [quickReplies, setQuickReplies] = useState([]);
@@ -593,6 +596,10 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const setIsOpen = (value) => {
     if (onOpenChange) onOpenChange(value);
     setInternalOpen(value);
+    // Reset dismissed car state when reopening chat (fresh start)
+    if (value === true) {
+      setDismissedCarSlug(null);
+    }
   };
   
   const messagesEndRef = useRef(null);
@@ -797,7 +804,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   
   // Update focused car from selectedCar (page context)
   useEffect(() => {
-    if (selectedCar?.slug && selectedCar?.name) {
+    // Don't auto-populate if user manually dismissed this specific car
+    if (selectedCar?.slug && selectedCar?.name && selectedCar.slug !== dismissedCarSlug) {
       setFocusedCar({
         slug: selectedCar.slug,
         name: selectedCar.name,
@@ -807,7 +815,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       // Track car in preferences
       addKnownCar(selectedCar.slug);
     }
-  }, [selectedCar?.slug, selectedCar?.name, selectedCar?.years]);
+  }, [selectedCar?.slug, selectedCar?.name, selectedCar?.years, dismissedCarSlug]);
   
   // Load preferences and bookmarks on mount
   useEffect(() => {
@@ -815,6 +823,31 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       setAlPreferences(loadALPreferences());
       setBookmarks(loadALBookmarks());
     }
+  }, []);
+  
+  // Handle pending prompt from quick action buttons
+  const [quickActionPrompt, setQuickActionPrompt] = useState(null);
+  
+  useEffect(() => {
+    if (pendingPrompt && isOpen && !showIntro && isAuthenticated) {
+      setQuickActionPrompt(pendingPrompt);
+      // Clear the pending prompt from the provider
+      if (onClearPendingPrompt) {
+        onClearPendingPrompt();
+      }
+    }
+  }, [pendingPrompt, isOpen, showIntro, isAuthenticated, onClearPendingPrompt]);
+  
+  // Handle quick action confirmation
+  const handleQuickActionConfirm = useCallback(() => {
+    if (quickActionPrompt?.prompt) {
+      sendMessage(quickActionPrompt.prompt);
+      setQuickActionPrompt(null);
+    }
+  }, [quickActionPrompt]);
+  
+  const handleQuickActionDismiss = useCallback(() => {
+    setQuickActionPrompt(null);
   }, []);
   
   // Generate quick reply chips based on domains and response
@@ -953,6 +986,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setSuggestions(contextConfig.suggestions || []);
     setError(null);
     setQuickReplies([]);
+    // Reset dismissed car state when starting fresh
+    setDismissedCarSlug(null);
     // Close mobile history panel if open
     if (isMobile) {
       setShowHistoryMobile(false);
@@ -961,10 +996,14 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   
   // Clear focused car context
   const clearFocusedCar = useCallback(() => {
+    // Remember which car was dismissed so it doesn't come back
+    if (focusedCar?.slug) {
+      setDismissedCarSlug(focusedCar.slug);
+    }
     setFocusedCar(null);
     setShowContextMenu(false);
     setPrefetchedContext(null);
-  }, []);
+  }, [focusedCar]);
   
   // Change focused car (from search or manual input)
   const changeFocusedCar = useCallback((car) => {
@@ -974,6 +1013,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       years: car.years,
       source: 'manual'
     });
+    // Clear dismissed state when manually selecting a different car
+    setDismissedCarSlug(null);
     setShowContextMenu(false);
     setPrefetchedContext(null);
   }, []);
@@ -1443,14 +1484,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                   onClick={() => authModal.openSignIn()}
                 >
                   <Icons.user size={18} />
-                  Sign In
+                  Sign In / Sign Up
                 </button>
-                
-                <p className={styles.signInDivider}>or</p>
-                
-                <Link href="/join" className={styles.joinLink}>
-                  Create a Free Account
-                </Link>
                 
                 <p className={styles.signInNote}>
                   Free members get ~15-25 AL conversations/month
@@ -1648,7 +1683,39 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 
                 {/* Messages Area */}
                 <div className={styles.messagesArea}>
-                {messages.length === 0 ? (
+                {/* Quick Action Prompt - shows when user clicks Ask AL button */}
+                {quickActionPrompt && (
+                  <div className={styles.quickActionPrompt}>
+                    <div className={styles.quickActionCard}>
+                      <div className={styles.quickActionIcon}>
+                        <ALMascot size={32} />
+                      </div>
+                      <div className={styles.quickActionContent}>
+                        <p className={styles.quickActionLabel}>
+                          {quickActionPrompt.context?.category ? `Ask about ${quickActionPrompt.context.category}` : 'Quick Question'}
+                        </p>
+                        <p className={styles.quickActionText}>{quickActionPrompt.prompt}</p>
+                      </div>
+                      <div className={styles.quickActionButtons}>
+                        <button 
+                          className={styles.quickActionConfirm}
+                          onClick={handleQuickActionConfirm}
+                        >
+                          <Icons.arrowUp size={16} />
+                          Ask AL
+                        </button>
+                        <button 
+                          className={styles.quickActionDismiss}
+                          onClick={handleQuickActionDismiss}
+                        >
+                          <Icons.x size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {messages.length === 0 && !quickActionPrompt ? (
                   <div className={styles.welcomeSimple}>
                     {suggestions.length > 0 && (
                       <div className={styles.suggestionsTop}>
@@ -1665,7 +1732,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       </div>
                     )}
                   </div>
-                ) : (
+                ) : messages.length === 0 ? null : (
                   <div className={styles.messages}>
                     {messages.map((msg, i) => (
                       <div 
@@ -1898,12 +1965,25 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
  */
 export function AIMechanicProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingPrompt, setPendingPrompt] = useState(null);
+  
+  const openChatWithPrompt = useCallback((prompt, context = {}) => {
+    setPendingPrompt({ prompt, context });
+    setIsOpen(true);
+  }, []);
+  
+  const clearPendingPrompt = useCallback(() => {
+    setPendingPrompt(null);
+  }, []);
   
   const value = {
     isOpen,
     openChat: () => setIsOpen(true),
     closeChat: () => setIsOpen(false),
     toggleChat: () => setIsOpen(prev => !prev),
+    openChatWithPrompt,
+    pendingPrompt,
+    clearPendingPrompt,
   };
   
   return (
@@ -1913,6 +1993,8 @@ export function AIMechanicProvider({ children }) {
         externalOpen={isOpen} 
         onOpenChange={setIsOpen}
         showFloatingButton={true}
+        pendingPrompt={pendingPrompt}
+        onClearPendingPrompt={clearPendingPrompt}
       />
     </AIChatContext.Provider>
   );

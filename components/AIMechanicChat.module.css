@@ -3276,3 +3276,133 @@
   }
 }
 
+/* ===========================================
+   Quick Action Prompt - from Ask AL buttons
+   =========================================== */
+.quickActionPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 20px;
+}
+
+.quickActionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(212, 160, 74, 0.1), rgba(212, 160, 74, 0.02));
+  border: 1px solid rgba(212, 160, 74, 0.25);
+  border-radius: 16px;
+  max-width: 320px;
+  width: 100%;
+  animation: quickActionFadeIn 0.25s ease-out;
+}
+
+@keyframes quickActionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quickActionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quickActionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.quickActionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sn-gold, #d4a04a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.quickActionText {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.quickActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.quickActionConfirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #d4a04a, #c49a3a);
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickActionConfirm:hover {
+  background: linear-gradient(135deg, #c49a3a, #b48a2a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 160, 74, 0.3);
+}
+
+.quickActionDismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(156, 163, 175, 0.1);
+  border: 1px solid rgba(156, 163, 175, 0.2);
+  border-radius: 10px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickActionDismiss:hover {
+  background: rgba(156, 163, 175, 0.2);
+  color: #374151;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .quickActionPrompt {
+    padding: 16px;
+  }
+  
+  .quickActionCard {
+    padding: 20px;
+    max-width: 100%;
+  }
+  
+  .quickActionText {
+    font-size: 13px;
+  }
+}
+

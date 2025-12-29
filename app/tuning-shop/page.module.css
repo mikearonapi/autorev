@@ -5,9 +5,11 @@
    =========================================== */
 
 .page {
-  height: calc(100vh - var(--header-height-mobile));
-  height: calc(100dvh - var(--header-height-mobile));
-  margin-top: var(--header-height-mobile);
+  /* Viewport height minus the header + beta banner */
+  height: calc(100vh - var(--header-plus-banner-mobile));
+  height: calc(100dvh - var(--header-plus-banner-mobile));
+  /* Account for fixed header + beta banner */
+  margin-top: var(--header-plus-banner-mobile);
   background: #0a0b0d;
   color: var(--color-white);
   position: relative;
@@ -18,9 +20,9 @@
 
 @media (min-width: 768px) {
   .page {
-    height: calc(100vh - var(--header-height));
-    height: calc(100dvh - var(--header-height));
-    margin-top: var(--header-height);
+    height: calc(100vh - var(--header-plus-banner));
+    height: calc(100dvh - var(--header-plus-banner));
+    margin-top: var(--header-plus-banner);
   }
 }
 
@@ -326,6 +328,30 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  /* Add padding at bottom for sticky BuildSummaryBar */
+  padding-bottom: 80px;
+}
+
+/* Config Sections - Factory Config, Wheel Configurator */
+.configSection {
+  padding: 0 16px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 768px) {
+  .configSection {
+    padding: 0 24px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .configSection {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
 }
 
 /* Loading */
@@ -2143,8 +2169,9 @@
   /* CF-007: Fix mobile layout - allow content to scroll and be visible */
   .page {
     height: auto;
-    min-height: calc(100vh - var(--header-height-mobile));
-    min-height: calc(100dvh - var(--header-height-mobile));
+    /* Account for fixed header + beta banner */
+    min-height: calc(100vh - var(--header-plus-banner-mobile));
+    min-height: calc(100dvh - var(--header-plus-banner-mobile));
     overflow-y: auto;
   }
   

@@ -28,6 +28,15 @@ import UpgradeCenter from '@/components/UpgradeCenter';
 import OnboardingPopup, { tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
 import { fetchCars } from '@/lib/carsClient';
 
+// New mobile-first tuning shop components
+import {
+  FactoryConfig,
+  WheelTireConfigurator,
+  StickyCarHeader,
+  BuildSummaryBar,
+  useWheelTireSelection,
+} from '@/components/tuning-shop';
+
 // Sort options for projects
 const SORT_OPTIONS = [
   { value: 'date-desc', label: 'Newest First' },
@@ -615,6 +624,19 @@ function TuningShopContent() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
+  // New tuning shop state for factory config and wheel selection
+  const [factoryConfig, setFactoryConfig] = useState(null);
+  const { selectedFitment, selectFitment, clearSelection: clearFitmentSelection } = useWheelTireSelection();
+  
+  // Track build summary data from UpgradeCenter (passed via ref/callback)
+  const [buildSummary, setBuildSummary] = useState({
+    totalHpGain: 0,
+    totalTqGain: 0,
+    totalCost: 0,
+    upgradeCount: 0,
+    selectedUpgrades: [],
+  });
+  
   // Hooks with defensive fallbacks using optional chaining
   // Hooks must be called unconditionally (Rules of Hooks)
   const authState = useAuth() || {};
@@ -708,6 +730,13 @@ function TuningShopContent() {
         if (car && isMountedRef.current) {
           setSelectedCar(car);
           setCurrentBuildId(buildId);
+          // Restore factory config and wheel fitment from saved build
+          if (build.factoryConfig) {
+            setFactoryConfig(build.factoryConfig);
+          }
+          if (build.wheelFitment) {
+            selectFitment(build.wheelFitment);
+          }
           setActiveTab('upgrades');
         }
       }
@@ -719,7 +748,7 @@ function TuningShopContent() {
         setActiveTab('upgrades');
       }
     }
-  }, [searchParams, builds, getBuildById, allCars]);
+  }, [searchParams, builds, getBuildById, allCars, selectFitment]);
 
   // Handle tab changes
   const handleTabChange = (tabId) => {
@@ -862,6 +891,13 @@ function TuningShopContent() {
     if (car) {
       setSelectedCar(car);
       setCurrentBuildId(build.id);
+      // Restore factory config and wheel fitment from saved build
+      if (build.factoryConfig) {
+        setFactoryConfig(build.factoryConfig);
+      }
+      if (build.wheelFitment) {
+        selectFitment(build.wheelFitment);
+      }
       setActiveTab('upgrades');
       window.history.pushState({}, '', `/tuning-shop?build=${build.id}`);
     }
@@ -871,9 +907,17 @@ function TuningShopContent() {
   const handleBackToSelect = () => {
     setSelectedCar(null);
     setCurrentBuildId(null);
+    setFactoryConfig(null);
+    clearFitmentSelection();
+    setBuildSummary({ totalHpGain: 0, totalTqGain: 0, totalCost: 0, upgradeCount: 0, selectedUpgrades: [] });
     setActiveTab('select');
     window.history.pushState({}, '', '/tuning-shop');
   };
+  
+  // Callback for UpgradeCenter to update build summary
+  const handleBuildSummaryUpdate = useCallback((summary) => {
+    setBuildSummary(summary);
+  }, []);
 
   const tabs = [
     { id: 'select', label: 'Select a Car', icon: Icons.car },
@@ -1056,6 +1100,35 @@ function TuningShopContent() {
         {activeTab === 'upgrades' && (
           selectedCar ? (
             <div className={styles.hubContainer}>
+              {/* Sticky Car Header - Collapses when scrolling */}
+              <StickyCarHeader
+                car={selectedCar}
+                totalHpGain={buildSummary.totalHpGain}
+                totalCost={buildSummary.totalCost}
+                onChangeCar={handleBackToSelect}
+              />
+              
+              {/* Factory Configuration - Collapsible section */}
+              <div className={styles.configSection}>
+                <FactoryConfig
+                  car={selectedCar}
+                  initialConfig={factoryConfig}
+                  onChange={setFactoryConfig}
+                  defaultExpanded={false}
+                />
+              </div>
+              
+              {/* Wheel & Tire Configurator - Shows fitment options */}
+              <div className={styles.configSection}>
+                <WheelTireConfigurator
+                  car={selectedCar}
+                  selectedFitment={selectedFitment}
+                  onSelect={selectFitment}
+                  showCostEstimates={true}
+                  defaultExpanded={false}
+                />
+              </div>
+              
               <ErrorBoundary 
                 name="UpgradeCenter"
                 featureContext="tuning-shop"
@@ -1077,8 +1150,29 @@ function TuningShopContent() {
                   car={selectedCar} 
                   initialBuildId={currentBuildId}
                   onChangeCar={handleBackToSelect}
+                  onBuildSummaryUpdate={handleBuildSummaryUpdate}
+                  factoryConfig={factoryConfig}
+                  selectedWheelFitment={selectedFitment}
                 />
               </ErrorBoundary>
+              
+              {/* Build Summary Bar - Sticky bottom bar */}
+              <BuildSummaryBar
+                selectedUpgrades={buildSummary.selectedUpgrades}
+                totalHpGain={buildSummary.totalHpGain}
+                totalTqGain={buildSummary.totalTqGain}
+                totalCost={buildSummary.totalCost}
+                upgradeCount={buildSummary.upgradeCount}
+                onSaveBuild={() => {
+                  // Trigger save in UpgradeCenter via ref or event
+                  document.dispatchEvent(new CustomEvent('tuning-shop:save-build'));
+                }}
+                onClearBuild={() => {
+                  document.dispatchEvent(new CustomEvent('tuning-shop:clear-build'));
+                }}
+                canSave={isAuthenticated && buildSummary.upgradeCount > 0}
+                disabled={!isAuthenticated}
+              />
             </div>
           ) : (
             <div className={styles.selectPrompt}>

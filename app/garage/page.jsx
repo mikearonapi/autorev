@@ -35,7 +35,10 @@ import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateSer
 import { decodeVIN } from '@/lib/vinDecoder';
 import { getSafetySummary } from '@/lib/nhtsaSafetyService';
 import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
-import MarketValueSection from '@/components/MarketValueSection';
+import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
+import AskALButton from '@/components/AskALButton';
+import VehicleHealthCard from '@/components/garage/VehicleHealthCard';
+import { useAIChat } from '@/components/AIMechanicChat';
 
 // Icons
 const Icons = {
@@ -238,7 +241,7 @@ function BrandLogo({ brand }) {
 
 // Hero Vehicle Display Component
 // Progressive disclosure: Collapsed → Expanded (key info) → Full Details/Owner Dashboard
-function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, onClearModifications, userId }) {
+function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, onClearModifications, onUpdateCustomSpecs, onClearCustomSpecs, userId }) {
   // Panel states: 'collapsed', 'expanded', 'details'
   const [panelState, setPanelState] = useState('collapsed');
   const [showPerformance, setShowPerformance] = useState(false);
@@ -261,9 +264,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   // Wheel/tire fitment options
   const [fitmentOptions, setFitmentOptions] = useState([]);
   const [showFitmentOptions, setShowFitmentOptions] = useState(false);
-
-  // Variant match display (resolve display_name from car_variants when available)
-  const [variantMeta, setVariantMeta] = useState(null);
   
   // Safety data (recalls, complaints, ratings)
   const [safetyData, setSafetyData] = useState({ recalls: [], complaints: [], investigations: [], safetyRatings: null });
@@ -343,36 +343,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     
     loadFitmentOptions();
   }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
-
-  // Resolve matched variant display_name for UI (best-effort)
-  useEffect(() => {
-    const loadVariantMeta = async () => {
-      if (type !== 'mycars') return;
-      const variantKey = item?.vehicle?.matchedCarVariantKey || null;
-      if (!variantKey) {
-        setVariantMeta(null);
-        return;
-      }
-      if (!isSupabaseConfigured || !supabase) {
-        setVariantMeta({ variant_key: variantKey, display_name: null });
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('car_variants')
-          .select('variant_key,display_name,model_year_start,model_year_end,trim,drivetrain,transmission,engine')
-          .eq('variant_key', variantKey)
-          .maybeSingle();
-        if (error) throw error;
-        setVariantMeta(data || { variant_key: variantKey, display_name: null });
-      } catch (err) {
-        setVariantMeta({ variant_key: variantKey, display_name: null });
-      }
-    };
-
-    loadVariantMeta();
-  }, [type, item?.vehicle?.matchedCarVariantKey]);
   
   // Fetch safety data when vehicle info is available
   useEffect(() => {
@@ -526,9 +496,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
           const json = await res.json();
           const match = json?.match || null;
 
-          await onUpdateVehicle(item.vehicle.id, {
+          // Save VIN data to database - year/make/model/trim from VIN decode for accuracy
+          const updateResult = await onUpdateVehicle(item.vehicle.id, {
             vin: decoded.vin,
-            // Update year/make/model/trim from VIN decode for accuracy
             year: decoded.year,
             make: decoded.make,
             model: decoded.model,
@@ -542,9 +512,21 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
             vinMatchNotes: Array.isArray(match?.reasons) ? match.reasons.join(', ') : null,
             vinMatchedAt: new Date().toISOString(),
           });
-          setVinSaveStatus('saved');
-          // Clear saved status after 3 seconds
-          setTimeout(() => setVinSaveStatus(null), 3000);
+          
+          if (updateResult?.error) {
+            console.error('[VIN Lookup] Database update failed:', updateResult.error);
+            setVinSaveStatus('error');
+          } else {
+            console.log('[VIN Lookup] VIN data saved successfully:', { 
+              vin: decoded.vin, 
+              year: decoded.year, 
+              make: decoded.make, 
+              model: decoded.model 
+            });
+            setVinSaveStatus('saved');
+            // Clear saved status after 3 seconds
+            setTimeout(() => setVinSaveStatus(null), 3000);
+          }
         } catch (err) {
           console.warn('[VIN Lookup] Failed to persist VIN/variant match:', err);
           setVinSaveStatus('error');
@@ -779,14 +761,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   <span>Safety</span>
                 </button>
                 <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'value' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('value')}
-                  title="Market Value"
-                >
-                  <Icons.dollar size={12} />
-                  <span>Value</span>
-                </button>
-                <button 
                   className={`${styles.headerToggleBtn} ${detailsView === 'service' ? styles.headerToggleActive : ''}`}
                   onClick={() => setDetailsView('service')}
                   title="Service Log"
@@ -872,23 +846,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               )}
             </div>
 
-            {/* Variant match summary + quick link to reference */}
+            {/* Quick link to reference */}
             {isOwnedVehicle && (
               <div className={styles.variantMatchRow}>
-                <div className={styles.variantMatchPill} title={item?.vehicle?.matchedCarVariantKey || 'Not matched'}>
-                  <span className={styles.variantMatchLabel}>Variant</span>
-                  <span className={styles.variantMatchValue}>
-                    {variantMeta?.display_name || item?.vehicle?.matchedCarVariantKey || 'Not matched'}
-                  </span>
-                </div>
-                <div className={styles.variantMatchPill}>
-                  <span className={styles.variantMatchLabel}>Match</span>
-                  <span className={styles.variantMatchValue}>
-                    {typeof item?.vehicle?.vinMatchConfidence === 'number'
-                      ? `${Math.round(item.vehicle.vinMatchConfidence * 100)}%`
-                      : '—'}
-                  </span>
-                </div>
                 <button
                   className={styles.variantMatchLink}
                   onClick={() => {
@@ -931,6 +891,21 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         {/* Full Details - Consistent view for all, with Owner's Reference toggle for My Collection */}
         {panelState === 'details' && car && (
           <div className={styles.specPanelBody}>
+            {isOwnedVehicle && item?.vehicle?.id && (
+              <div style={{ marginBottom: 12 }}>
+                <VehicleHealthCard
+                  userId={userId}
+                  vehicleId={item.vehicle.id}
+                  vehicleName={
+                    car.name ||
+                    item.vehicle.nickname ||
+                    `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim()
+                  }
+                  initialMileage={item.vehicle.mileage}
+                />
+              </div>
+            )}
+
             {/* Vehicle Details View - Same for both My Collection and Favorites */}
             {(!isOwnedVehicle || detailsView === 'specs') && (
               <>
@@ -1142,43 +1117,20 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   </div>
                 )}
 
-                {/* Variant Match Info */}
-                <div className={styles.detailBlock}>
-                  <h4 className={styles.detailBlockTitle}>Vehicle Match</h4>
-                  <div className={styles.detailBlockItems}>
-                    <div className={styles.detailBlockItem}>
-                      <span>Matched Car</span>
-                      <span>{item?.vehicle?.matchedCarSlug || item?.matchedCar?.slug || 'N/A'}</span>
-                    </div>
-                    <div className={styles.detailBlockItem}>
-                      <span>Variant</span>
-                      <span>{variantMeta?.display_name || item?.vehicle?.matchedCarVariantKey || 'Not matched'}</span>
-                    </div>
-                    <div className={styles.detailBlockItem}>
-                      <span>Confidence</span>
-                      <span>
-                        {typeof item?.vehicle?.vinMatchConfidence === 'number'
-                          ? `${Math.round(item.vehicle.vinMatchConfidence * 100)}%`
-                          : '—'}
-                      </span>
-                    </div>
-                    {item?.vehicle?.vinMatchNotes && (
-                      <div className={styles.detailBlockItem}>
-                        <span>Notes</span>
-                        <span>{item.vehicle.vinMatchNotes}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
                 {/* Main Reference Grid - Same layout as Details */}
                 <div className={styles.fullDetailsInPanel}>
                   {/* Engine Oil */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Engine Oil</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Engine Oil</span>
+                      <AskALButton 
+                        category="Engine Oil"
+                        prompt={`What's the best engine oil for my ${car?.name || 'car'}? Include recommended brands, viscosity, and change intervals.`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Type</span><span>{maintenanceData.specs?.oil_type || 'Full Synthetic'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Viscosity</span><span>{maintenanceData.specs?.oil_viscosity || '5W-30 or 5W-50'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Viscosity</span><span>{maintenanceData.specs?.oil_viscosity || '5W-30 or 5W-40'}</span></div>
                       <div className={styles.detailBlockItem}><span>Capacity</span><span>{maintenanceData.specs?.oil_capacity_quarts ? `${maintenanceData.specs.oil_capacity_quarts} qt` : '~8-10 qt'}</span></div>
                       <div className={styles.detailBlockItem}><span>Change Interval</span><span>{maintenanceData.specs?.oil_change_interval_miles ? `${maintenanceData.specs.oil_change_interval_miles.toLocaleString()} mi` : '5,000-7,500 mi'}</span></div>
                     </div>
@@ -1186,7 +1138,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Fuel */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Fuel</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Fuel</span>
+                      <AskALButton 
+                        category="Fuel"
+                        prompt={`What fuel should I use in my ${car?.name || 'car'}? Is premium worth it, and what about E85 compatibility?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       <div className={styles.detailBlockItem}><span>Fuel Type</span><span>{maintenanceData.specs?.fuel_type || 'Premium Unleaded'}</span></div>
                       <div className={styles.detailBlockItem}><span>Min Octane</span><span>{maintenanceData.specs?.fuel_octane_minimum || '91'}</span></div>
@@ -1195,109 +1154,30 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     </div>
                   </div>
 
-                  {/* Tires & Wheels */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Tires & Wheels</h4>
-                    {/* Check if we have any wheel/tire data */}
-                    {(() => {
-                      const hasWheelData = maintenanceData.specs?.wheel_bolt_pattern || 
-                                          maintenanceData.specs?.wheel_center_bore_mm ||
-                                          maintenanceData.specs?.wheel_size_front ||
-                                          maintenanceData.specs?.tire_size_front ||
-                                          maintenanceData.specs?.tire_pressure_front_psi;
-                      
-                      if (!hasWheelData) {
-                        return (
-                          <div className={styles.detailBlockEmpty}>
-                            <p>Wheel and tire specs not yet available for this vehicle.</p>
-                            <p className={styles.detailBlockHint}>Check your owner's manual or door jamb sticker for OEM specifications.</p>
-                          </div>
-                        );
+                  {/* Tires & Wheels - Inline Editable Card */}
+                  <WheelTireSpecsCard
+                    stockSpecs={maintenanceData.specs}
+                    customSpecs={item.vehicle?.customSpecs}
+                    onUpdateCustomSpecs={onUpdateCustomSpecs ? async (specs) => {
+                      if (item.vehicle?.id) {
+                        await onUpdateCustomSpecs(item.vehicle.id, specs);
                       }
-                      
-                      return (
-                        <div className={styles.detailBlockItems}>
-                          {maintenanceData.specs?.wheel_bolt_pattern && (
-                            <div className={styles.detailBlockItem}><span>Lug Pattern</span><span>{maintenanceData.specs.wheel_bolt_pattern}</span></div>
-                          )}
-                          {maintenanceData.specs?.wheel_center_bore_mm && (
-                            <div className={styles.detailBlockItem}><span>Center Bore</span><span>{maintenanceData.specs.wheel_center_bore_mm} mm</span></div>
-                          )}
-                          {maintenanceData.specs?.wheel_size_front && (
-                            <div className={styles.detailBlockItem}><span>Front Wheel</span><span>{maintenanceData.specs.wheel_size_front}</span></div>
-                          )}
-                          {maintenanceData.specs?.wheel_size_rear && (
-                            <div className={styles.detailBlockItem}><span>Rear Wheel</span><span>{maintenanceData.specs.wheel_size_rear}</span></div>
-                          )}
-                          {maintenanceData.specs?.tire_size_front && (
-                            <div className={styles.detailBlockItem}><span>Front Tire</span><span>{maintenanceData.specs.tire_size_front}</span></div>
-                          )}
-                          {maintenanceData.specs?.tire_size_rear && (
-                            <div className={styles.detailBlockItem}><span>Rear Tire</span><span>{maintenanceData.specs.tire_size_rear}</span></div>
-                          )}
-                          {maintenanceData.specs?.tire_pressure_front_psi && (
-                            <div className={styles.detailBlockItem}><span>Front PSI</span><span>{maintenanceData.specs.tire_pressure_front_psi} PSI</span></div>
-                          )}
-                          {maintenanceData.specs?.tire_pressure_rear_psi && (
-                            <div className={styles.detailBlockItem}><span>Rear PSI</span><span>{maintenanceData.specs.tire_pressure_rear_psi} PSI</span></div>
-                          )}
-                          {maintenanceData.specs?.wheel_lug_torque_ft_lbs && (
-                            <div className={styles.detailBlockItem}><span>Lug Torque</span><span>{maintenanceData.specs.wheel_lug_torque_ft_lbs} ft-lbs</span></div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                    
-                    {/* Compatible Fitments Toggle */}
-                    {fitmentOptions.length > 1 && (
-                      <button 
-                        className={styles.fitmentToggle}
-                        onClick={() => setShowFitmentOptions(!showFitmentOptions)}
-                      >
-                        {showFitmentOptions ? '▾' : '▸'} Compatible Sizes ({fitmentOptions.length - 1} upgrade options)
-                      </button>
-                    )}
-                    
-                    {/* Compatible Fitments List */}
-                    {showFitmentOptions && fitmentOptions.length > 1 && (
-                      <div className={styles.fitmentOptionsList}>
-                        {fitmentOptions.filter(f => f.fitment_type !== 'oem').map((fit, idx) => (
-                          <div key={fit.id || idx} className={styles.fitmentOption}>
-                            <div className={styles.fitmentHeader}>
-                              <span className={styles.fitmentType}>
-                                {fit.fitment_type === 'oem_optional' ? 'OEM Option' :
-                                 fit.fitment_type === 'plus_one' ? '+1 Size' :
-                                 fit.fitment_type === 'plus_two' ? '+2 Size' :
-                                 fit.fitment_type === 'aggressive' ? 'Aggressive' :
-                                 fit.fitment_type === 'square' ? 'Square' :
-                                 fit.fitment_type === 'conservative' ? 'Conservative' :
-                                 fit.fitment_type}
-                              </span>
-                              {fit.verified && <span className={styles.fitmentVerified}>✓</span>}
-                            </div>
-                            <div className={styles.fitmentSpecs}>
-                              <span>Wheels: {fit.wheel_diameter_inches}×{fit.wheel_width_front}F / {fit.wheel_diameter_inches}×{fit.wheel_width_rear}R</span>
-                              <span>Tires: {fit.tire_size_front} / {fit.tire_size_rear}</span>
-                            </div>
-                            {fit.clearance_notes && (
-                              <div className={styles.fitmentNotes}>{fit.clearance_notes}</div>
-                            )}
-                            {fit.recommended_for?.length > 0 && (
-                              <div className={styles.fitmentTags}>
-                                {fit.recommended_for.map(tag => (
-                                  <span key={tag} className={styles.fitmentTag}>{tag}</span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    } : undefined}
+                    fitmentOptions={fitmentOptions}
+                    showFitmentToggle={true}
+                    carName={car?.name}
+                  />
 
                   {/* Fluids */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Fluids</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Fluids</span>
+                      <AskALButton 
+                        category="Fluids"
+                        prompt={`What fluids does my ${car?.name || 'car'} need? Include coolant, brake fluid, transmission fluid, and differential fluid specifications.`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       <div className={styles.detailBlockItem}><span>Coolant</span><span>{maintenanceData.specs?.coolant_type || 'OEM Coolant'}</span></div>
                       <div className={styles.detailBlockItem}><span>Brake Fluid</span><span>{maintenanceData.specs?.brake_fluid_type || 'DOT 4'}</span></div>
@@ -1308,7 +1188,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Brakes */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Brakes</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Brakes</span>
+                      <AskALButton 
+                        category="Brakes"
+                        prompt={`Tell me about the brake system on my ${car?.name || 'car'}. What are good upgrade options and when should I replace pads/rotors?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       <div className={styles.detailBlockItem}><span>Front Caliper</span><span>{maintenanceData.specs?.brake_front_caliper_type || 'Brembo 6-piston'}</span></div>
                       <div className={styles.detailBlockItem}><span>Rear Caliper</span><span>{maintenanceData.specs?.brake_rear_caliper_type || 'Brembo 4-piston'}</span></div>
@@ -1318,7 +1205,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Battery */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Battery</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Battery</span>
+                      <AskALButton 
+                        category="Battery"
+                        prompt={`What battery should I get for my ${car?.name || 'car'}? Include recommended brands and any special considerations.`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       <div className={styles.detailBlockItem}><span>Group Size</span><span>{maintenanceData.specs?.battery_group_size || 'H6/48'}</span></div>
                       <div className={styles.detailBlockItem}><span>CCA</span><span>{maintenanceData.specs?.battery_cca || '750+'}</span></div>
@@ -1328,7 +1222,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Wipers & Lights */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Wipers & Lights</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Wipers & Lights</span>
+                      <AskALButton 
+                        category="Wipers & Lights"
+                        prompt={`What are the wiper blade sizes and bulb types for my ${car?.name || 'car'}? Any recommended upgrades?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       <div className={styles.detailBlockItem}><span>Driver Wiper</span><span>{maintenanceData.specs?.wiper_driver_size_inches ? `${maintenanceData.specs.wiper_driver_size_inches}"` : '22"'}</span></div>
                       <div className={styles.detailBlockItem}><span>Passenger Wiper</span><span>{maintenanceData.specs?.wiper_passenger_size_inches ? `${maintenanceData.specs.wiper_passenger_size_inches}"` : '20"'}</span></div>
@@ -1340,7 +1241,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   {/* VIN Decoded Info - if available */}
                   {vinData && (
                     <div className={styles.detailBlock}>
-                      <h4 className={styles.detailBlockTitle}>VIN Details</h4>
+                      <h4 className={styles.detailBlockTitle}>
+                        <span>VIN Details</span>
+                      </h4>
                       <div className={styles.detailBlockItems}>
                         <div className={styles.detailBlockItem}><span>VIN</span><span className={styles.vinValueSmall}>{vinData.vin}</span></div>
                         <div className={styles.detailBlockItem}><span>Plant</span><span>{vinData.plantCity}, {vinData.plantCountry}</span></div>
@@ -1607,14 +1510,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Market Value View - Only for My Collection (Enthusiast+ tier) */}
-            {isOwnedVehicle && detailsView === 'value' && (
-              <MarketValueSection 
-                carSlug={item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug}
-                carName={item?.matchedCar?.name || car?.name}
-              />
-            )}
-
             {/* Modifications View - Shows installed upgrades */}
             {isOwnedVehicle && detailsView === 'mods' && (
               <div className={styles.modsView}>
@@ -1698,6 +1593,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                         Plan Modifications
                       </Link>
                     )}
+                  </div>
+                )}
+
+                {/* Link to Reference tab for custom specs */}
+                {item.vehicle?.hasCustomSpecs && (
+                  <div className={styles.customSpecsLink}>
+                    <Icons.info size={14} />
+                    <span>Your wheel & tire specs are shown in the <strong>Reference</strong> tab</span>
                   </div>
                 )}
 
@@ -2093,6 +1996,11 @@ function GarageContent() {
   const [selectedBuild, setSelectedBuild] = useState(null);
   const [allCars, setAllCars] = useState([]);
   
+  // Quick mileage update mode state
+  const [quickUpdateMode, setQuickUpdateMode] = useState(false);
+  const [quickUpdateValues, setQuickUpdateValues] = useState({});
+  const [savingQuickUpdates, setSavingQuickUpdates] = useState(false);
+  
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
@@ -2100,7 +2008,9 @@ function GarageContent() {
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
   const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, isLoading: vehiclesLoading } = useOwnedVehicles();
+  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, updateCustomSpecs, clearCustomSpecs, isLoading: vehiclesLoading } = useOwnedVehicles();
+  const { hasAccess } = usePremiumAccess();
+  const { openChatWithPrompt } = useAIChat();
   
   // Combined loading state - show loading while auth or provider data is being fetched
   // CRITICAL: Also check isDataFetchReady to prevent race condition on page refresh where
@@ -2338,6 +2248,68 @@ function GarageContent() {
     await addFavorite(car);
   };
 
+  // Handle "Analyze All Vehicles" button - opens AL with fleet context
+  const handleAnalyzeAllVehicles = useCallback(() => {
+    // Build comprehensive fleet summary
+    const vehicleSummary = vehiclesWithCars.map((v, idx) => {
+      const name = v.matchedCar?.name || `${v.vehicle.year} ${v.vehicle.make} ${v.vehicle.model}`;
+      const mileage = v.vehicle.mileage ? `${v.vehicle.mileage.toLocaleString()} mi` : 'Unknown mileage';
+      const year = v.vehicle.year || 'Unknown year';
+      return `${idx + 1}. ${name} (${year}) - ${mileage}`;
+    }).join('\n');
+    
+    const prompt = `Analyze my entire vehicle collection and provide insights:\n\n${vehicleSummary}\n\nWhat should I prioritize for maintenance, what are the strengths of my fleet, and what gaps might I consider filling?`;
+    
+    openChatWithPrompt(prompt, {
+      category: 'Fleet Analysis',
+      vehicleCount: vehiclesWithCars.length,
+    });
+  }, [vehiclesWithCars, openChatWithPrompt]);
+
+  // Toggle quick update mode
+  const handleToggleQuickUpdate = () => {
+    if (!quickUpdateMode) {
+      // Entering quick update mode - initialize values from current vehicles
+      const initialValues = {};
+      vehicles.forEach(v => {
+        initialValues[v.id] = v.mileage || '';
+      });
+      setQuickUpdateValues(initialValues);
+    }
+    setQuickUpdateMode(!quickUpdateMode);
+  };
+
+  // Update mileage in quick update mode
+  const handleQuickMileageChange = (vehicleId, value) => {
+    setQuickUpdateValues(prev => ({
+      ...prev,
+      [vehicleId]: value
+    }));
+  };
+
+  // Save all quick updates
+  const handleSaveQuickUpdates = async () => {
+    setSavingQuickUpdates(true);
+    
+    try {
+      // Update each vehicle that has changed
+      const updates = Object.entries(quickUpdateValues).map(async ([vehicleId, mileage]) => {
+        const vehicle = vehicles.find(v => v.id === vehicleId);
+        if (vehicle && mileage !== vehicle.mileage) {
+          await updateVehicle(vehicleId, { mileage: Number(mileage) || null });
+        }
+      });
+      
+      await Promise.all(updates);
+      setQuickUpdateMode(false);
+      setQuickUpdateValues({});
+    } catch (err) {
+      console.error('[QuickUpdate] Error saving mileage updates:', err);
+    } finally {
+      setSavingQuickUpdates(false);
+    }
+  };
+
   // If viewing a build detail, show that instead
   if (selectedBuild) {
     return (
@@ -2394,12 +2366,111 @@ function GarageContent() {
         </div>
 
         <div className={styles.headerRight}>
-          {/* Settings moved to global header */}
+          {/* Quick Actions for My Collection tab */}
+          {activeTab === 'mycars' && vehicles.length > 0 && (
+            <div className={styles.quickActions}>
+              {/* Quick Update Mode Toggle */}
+              <button
+                className={`${styles.quickActionBtn} ${quickUpdateMode ? styles.quickActionBtnActive : ''}`}
+                onClick={handleToggleQuickUpdate}
+                title={quickUpdateMode ? 'Cancel Quick Update' : 'Quick Update All Mileage'}
+              >
+                <Icons.edit size={16} />
+                <span className={styles.quickActionLabel}>
+                  {quickUpdateMode ? 'Cancel' : 'Quick Update'}
+                </span>
+              </button>
+
+              {/* Analyze All Vehicles - Enthusiast+ */}
+              <PremiumGate feature="alCollector" fallback={null}>
+                <button
+                  className={styles.analyzeAllBtn}
+                  onClick={handleAnalyzeAllVehicles}
+                  title="Analyze All Vehicles with AL"
+                >
+                  <img 
+                    src="/images/al-mascot.png" 
+                    alt=""
+                    width={16}
+                    height={16}
+                    style={{ marginRight: 6 }}
+                  />
+                  <span>Analyze All</span>
+                </button>
+              </PremiumGate>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className={styles.mainContent}>
+        {/* Quick Update Mode Overlay */}
+        {quickUpdateMode && activeTab === 'mycars' && (
+          <div className={styles.quickUpdateOverlay}>
+            <div className={styles.quickUpdatePanel}>
+              <div className={styles.quickUpdateHeader}>
+                <h3>Quick Update Mileage</h3>
+                <p>Update mileage for all vehicles at once</p>
+              </div>
+              
+              <div className={styles.quickUpdateList}>
+                {vehiclesWithCars.map((item) => {
+                  const vehicleName = item.matchedCar?.name || 
+                    `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim();
+                  
+                  return (
+                    <div key={item.vehicle.id} className={styles.quickUpdateItem}>
+                      <div className={styles.quickUpdateVehicleInfo}>
+                        <span className={styles.quickUpdateVehicleName}>{vehicleName}</span>
+                        <span className={styles.quickUpdateCurrentMileage}>
+                          Current: {item.vehicle.mileage ? item.vehicle.mileage.toLocaleString() : 'Not set'}
+                        </span>
+                      </div>
+                      <input
+                        type="number"
+                        className={styles.quickUpdateInput}
+                        value={quickUpdateValues[item.vehicle.id] || ''}
+                        onChange={(e) => handleQuickMileageChange(item.vehicle.id, e.target.value)}
+                        placeholder="Enter mileage"
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className={styles.quickUpdateActions}>
+                <button
+                  className={styles.quickUpdateCancel}
+                  onClick={handleToggleQuickUpdate}
+                  disabled={savingQuickUpdates}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={styles.quickUpdateSave}
+                  onClick={handleSaveQuickUpdates}
+                  disabled={savingQuickUpdates}
+                >
+                  {savingQuickUpdates ? (
+                    <>
+                      <LoadingSpinner size="small" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icons.check size={16} />
+                      <span>Save All Updates</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* My Collection & Favorites - Hero display layout */}
         {(activeTab === 'mycars' || activeTab === 'favorites') && (
           currentItems.length > 0 ? (
@@ -2413,6 +2484,8 @@ function GarageContent() {
                 isInMyCars={activeTab === 'favorites' && currentItem ? isInMyCars(currentItem.slug) : false}
                 onUpdateVehicle={updateVehicle}
                 onClearModifications={clearModifications}
+                onUpdateCustomSpecs={updateCustomSpecs}
+                onClearCustomSpecs={clearCustomSpecs}
                 userId={user?.id}
               />
 

@@ -43,12 +43,13 @@
 
 .layout {
   display: flex;
-  min-height: calc(100vh - var(--header-height-mobile, 60px));
+  /* Account for fixed header + beta banner */
+  min-height: calc(100vh - var(--header-plus-banner-mobile, 88px));
 }
 
 @media (min-width: 768px) {
   .layout {
-    min-height: calc(100vh - var(--header-height, 72px));
+    min-height: calc(100vh - var(--header-plus-banner, 100px));
   }
 }
 
@@ -58,7 +59,8 @@
 
 .pageBanner {
   background: linear-gradient(135deg, #1a4d6e 0%, #0d2d42 100%);
-  padding-top: calc(var(--header-height-mobile, 60px) + 0.75rem);
+  /* Account for fixed header + beta banner */
+  padding-top: calc(var(--header-plus-banner-mobile, 88px) + 0.75rem);
   padding-bottom: 0.75rem;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -67,7 +69,7 @@
 
 /* Collapsed state on scroll (controlled by JS) */
 .pageBannerCollapsed {
-  padding-top: calc(var(--header-height-mobile, 60px) + 0.5rem);
+  padding-top: calc(var(--header-plus-banner-mobile, 88px) + 0.5rem);
   padding-bottom: 0.5rem;
 }
 
@@ -100,21 +102,22 @@
 
 @media (min-width: 768px) {
   .pageBanner {
-    padding-top: calc(var(--header-height, 72px) + 1.5rem);
+    /* Account for fixed header + beta banner */
+    padding-top: calc(var(--header-plus-banner, 100px) + 1.5rem);
     padding-bottom: 1.5rem;
     padding-left: 2rem;
     padding-right: 2rem;
   }
   
   .pageBannerCollapsed {
-    padding-top: calc(var(--header-height, 72px) + 1rem);
+    padding-top: calc(var(--header-plus-banner, 100px) + 1rem);
     padding-bottom: 1rem;
   }
 }
 
 @media (min-width: 1024px) {
   .pageBanner {
-    padding-top: calc(var(--header-height, 72px) + 2rem);
+    padding-top: calc(var(--header-plus-banner, 100px) + 2rem);
     padding-bottom: 2rem;
   }
   
@@ -327,7 +330,8 @@
   background: var(--enc-surface);
   border-bottom: 1px solid var(--enc-border);
   position: sticky;
-  top: var(--header-height-mobile, 60px);
+  /* Account for fixed header + beta banner */
+  top: var(--header-plus-banner-mobile, 88px);
   left: 0;
   right: 0;
   z-index: 50;
@@ -336,7 +340,7 @@
 
 @media (min-width: 768px) {
   .mobileHeader {
-    top: var(--header-height, 72px);
+    top: var(--header-plus-banner, 100px);
     height: 48px;
     padding: 0 1rem;
   }
@@ -444,8 +448,9 @@
 @media (min-width: 1024px) {
   .sidebar {
     position: sticky;
-    top: var(--header-height, 72px);
-    height: calc(100vh - var(--header-height, 72px));
+    /* Account for fixed header + beta banner */
+    top: var(--header-plus-banner, 100px);
+    height: calc(100vh - var(--header-plus-banner, 100px));
     transform: none;
     z-index: 10;
     flex-shrink: 0;
@@ -1089,11 +1094,22 @@
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .componentCard:hover {
   border-color: var(--enc-primary);
   box-shadow: var(--enc-shadow);
+}
+
+.systemColorIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: var(--enc-radius) 0 0 var(--enc-radius);
 }
 
 .componentName {
@@ -2108,15 +2124,15 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  /* Sticky positioning below mobile header */
+  /* Sticky positioning below mobile header + beta banner + mobileHeader */
   position: sticky;
-  top: calc(var(--header-height-mobile, 60px) + 44px);
+  top: calc(var(--header-plus-banner-mobile, 88px) + 44px);
   z-index: 49;
 }
 
 @media (min-width: 768px) {
   .quickNavTabs {
-    top: calc(var(--header-height, 72px) + 48px);
+    top: calc(var(--header-plus-banner, 100px) + 48px);
   }
 }
 

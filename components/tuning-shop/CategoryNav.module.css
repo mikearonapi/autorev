@@ -1,0 +1,250 @@
+/**
+ * Category Navigation Styles
+ * 
+ * Horizontal scrollable tabs for mobile, full row for desktop.
+ */
+
+/* Horizontal Navigation */
+.container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.scroll {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fade indicators */
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(to right, rgba(26, 27, 30, 0.9) 0%, transparent 100%);
+  border-radius: 12px 0 0 12px;
+}
+
+.fadeRight {
+  right: 0;
+  background: linear-gradient(to left, rgba(26, 27, 30, 0.9) 0%, transparent 100%);
+  border-radius: 0 12px 12px 0;
+}
+
+/* Tab Button */
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.tab:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.tabActive {
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+}
+
+.tabActive:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+.tabHasSelection {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Tab Icon */
+.tabIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Tab Name */
+.tabName {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Tab Badge */
+.tabBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  background: #d4af37;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #1a1b1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Desktop: show more tabs, horizontal layout */
+@media (min-width: 768px) {
+  .container {
+    padding: 6px;
+  }
+  
+  .scroll {
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 16px;
+  }
+  
+  .tabName {
+    font-size: 12px;
+  }
+  
+  .tabBadge {
+    position: static;
+    min-width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+  
+  .fadeLeft,
+  .fadeRight {
+    display: none;
+  }
+}
+
+/* ========================================
+   Vertical Navigation (Sidebar)
+   ======================================== */
+
+.verticalContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.verticalTab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.verticalTab:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.verticalTab:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.verticalTabActive {
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+}
+
+.verticalTabActive:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+.verticalTabHasSelection {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.verticalIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.verticalIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.verticalName {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.verticalBadge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: #d4af37;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a1b1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+

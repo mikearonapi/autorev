@@ -24,6 +24,9 @@ import {
   applyVehicleModifications,
   clearVehicleModifications,
   applyBuildToVehicle,
+  updateVehicleCustomSpecs,
+  updateVehicleCustomSpecsSection,
+  clearVehicleCustomSpecs,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
@@ -112,6 +115,7 @@ const defaultState = {
  */
 function transformVehicle(row) {
   const installedMods = row.installed_modifications || [];
+  const customSpecs = row.custom_specs || {};
   return {
     id: row.id,
     vin: row.vin,
@@ -142,6 +146,9 @@ function transformVehicle(row) {
     totalHpGain: row.total_hp_gain || 0,
     modifiedAt: row.modified_at,
     isModified: Array.isArray(installedMods) && installedMods.length > 0,
+    // Custom specs (user-specific modification details)
+    customSpecs: customSpecs,
+    hasCustomSpecs: Object.keys(customSpecs).length > 0,
   };
 }
 
@@ -669,6 +676,134 @@ export function OwnedVehiclesProvider({ children }) {
     return { data: null, error };
   }, [isAuthenticated, user?.id]);
 
+  // ============================================================================
+  // CUSTOM SPECS (User-Specific Modification Details)
+  // ============================================================================
+
+  /**
+   * Update custom specs for a vehicle
+   * Custom specs allow users to record their actual wheel sizes, tire specs, etc.
+   * that override the stock values when displaying vehicle information.
+   * 
+   * @param {string} vehicleId 
+   * @param {Object} customSpecs - See updateVehicleCustomSpecs for structure
+   */
+  const updateCustomSpecs = useCallback(async (vehicleId, customSpecs) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, update locally
+      const vehicle = state.vehicles.find(v => v.id === vehicleId);
+      if (!vehicle) return { data: null, error: new Error('Vehicle not found') };
+
+      const updatedVehicle = {
+        ...vehicle,
+        customSpecs: customSpecs,
+        hasCustomSpecs: Object.keys(customSpecs).length > 0,
+        updatedAt: new Date().toISOString(),
+      };
+      dispatch({ type: ActionTypes.UPDATE, payload: updatedVehicle });
+      return { data: updatedVehicle, error: null };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await updateVehicleCustomSpecs(user.id, vehicleId, customSpecs);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id, state.vehicles]);
+
+  /**
+   * Update a specific section of custom specs (merge with existing)
+   * Useful for updating just wheels or just tires without affecting other sections.
+   * 
+   * @param {string} vehicleId 
+   * @param {string} section - 'wheels', 'tires', 'suspension', 'brakes', 'engine', 'other'
+   * @param {Object} sectionData - Data to merge into that section
+   */
+  const updateCustomSpecsSection = useCallback(async (vehicleId, section, sectionData) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, update locally
+      const vehicle = state.vehicles.find(v => v.id === vehicleId);
+      if (!vehicle) return { data: null, error: new Error('Vehicle not found') };
+
+      const currentSpecs = vehicle.customSpecs || {};
+      const updatedSpecs = {
+        ...currentSpecs,
+        [section]: {
+          ...(currentSpecs[section] || {}),
+          ...sectionData,
+        },
+      };
+
+      const updatedVehicle = {
+        ...vehicle,
+        customSpecs: updatedSpecs,
+        hasCustomSpecs: Object.keys(updatedSpecs).length > 0,
+        updatedAt: new Date().toISOString(),
+      };
+      dispatch({ type: ActionTypes.UPDATE, payload: updatedVehicle });
+      return { data: updatedVehicle, error: null };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await updateVehicleCustomSpecsSection(user.id, vehicleId, section, sectionData);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id, state.vehicles]);
+
+  /**
+   * Clear custom specs for a vehicle (reset to showing stock specs)
+   * 
+   * @param {string} vehicleId 
+   * @param {string} [section] - Optional: clear only a specific section
+   */
+  const clearCustomSpecs = useCallback(async (vehicleId, section = null) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, update locally
+      const vehicle = state.vehicles.find(v => v.id === vehicleId);
+      if (!vehicle) return { data: null, error: new Error('Vehicle not found') };
+
+      let newSpecs = {};
+      if (section) {
+        newSpecs = { ...(vehicle.customSpecs || {}) };
+        delete newSpecs[section];
+      }
+
+      const updatedVehicle = {
+        ...vehicle,
+        customSpecs: newSpecs,
+        hasCustomSpecs: Object.keys(newSpecs).length > 0,
+        updatedAt: new Date().toISOString(),
+      };
+      dispatch({ type: ActionTypes.UPDATE, payload: updatedVehicle });
+      return { data: updatedVehicle, error: null };
+    }
+
+    setIsLoading(true);
+    const { data, error } = await clearVehicleCustomSpecs(user.id, vehicleId, section);
+    setIsLoading(false);
+
+    if (!error && data) {
+      const transformed = transformVehicle(data);
+      dispatch({ type: ActionTypes.UPDATE, payload: transformed });
+      return { data: transformed, error: null };
+    }
+
+    return { data: null, error };
+  }, [isAuthenticated, user?.id, state.vehicles]);
+
   /**
    * Get a vehicle by ID
    * @param {string} vehicleId 
@@ -698,10 +833,14 @@ export function OwnedVehiclesProvider({ children }) {
     // Primary vehicle
     getPrimaryVehicle,
     setPrimaryVehicle,
-    // Modification operations
+    // Modification operations (upgrade keys)
     applyModifications,
     clearModifications,
     applyBuild,
+    // Custom specs operations (user-specific details)
+    updateCustomSpecs,
+    updateCustomSpecsSection,
+    clearCustomSpecs,
     // Helpers
     getVehicleById,
     getVehiclesByCarSlug,
