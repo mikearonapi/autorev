@@ -12,6 +12,7 @@ import {
   updateUserProfile,
 } from '@/lib/auth';
 import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
+import { getSessionEarly, clearSessionCache } from '@/lib/sessionCache';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import dynamic from 'next/dynamic';
 
@@ -236,10 +237,11 @@ const MAX_ONBOARDING_DISMISSALS = 3;
  * Handles race conditions after OAuth callback and stale sessions
  * 
  * Strategy:
- * 1. Try refreshSession() first - this works with refresh token even if access token expired
- * 2. If refresh works, validate with getUser()
- * 3. If refresh fails, try getUser() directly (maybe access token is fine)
- * 4. If all fail and it's a stale session error, clear local storage
+ * 1. Use cached session promise from getSessionEarly() for fast initial check
+ * 2. If that fails, try refreshSession() - works with refresh token even if access token expired
+ * 3. If refresh works, validate with getUser()
+ * 4. If refresh fails, try getUser() directly (maybe access token is fine)
+ * 5. If all fail and it's a stale session error, clear local storage
  * 
  * @param {number} maxRetries - Maximum retry attempts
  * @param {number} initialDelay - Initial delay in ms (doubles with each retry)
@@ -249,7 +251,38 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
   let lastError = null;
   let errorCategory = null;
   
-  // FIRST: Try to refresh session - this is the most reliable recovery method
+  // FIRST: Try cached session from early check (saves 200-400ms)
+  try {
+    console.log(`[AuthProvider] Checking cached session from early load...`);
+    const sessionCheckStart = Date.now();
+    const { data, error } = await getSessionEarly();
+    const sessionCheckDuration = Date.now() - sessionCheckStart;
+    
+    console.log(`[AuthProvider] Cached session check completed in ${sessionCheckDuration}ms`);
+    
+    if (!error && data?.session && data?.session.user) {
+      // Verify user matches expected if provided
+      if (expectedUserId && data.session.user.id !== expectedUserId) {
+        console.warn(`[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${data.session.user.id.slice(0, 8)}...`);
+        // This might happen if cookies got mixed - fall through to refresh
+      } else {
+        console.log(`[AuthProvider] Session retrieved from cache successfully`);
+        return { session: data.session, user: data.session.user, error: null, errorCategory: null };
+      }
+    }
+    
+    if (error) {
+      console.log(`[AuthProvider] Cached session check returned error:`, error.message);
+      lastError = error;
+      errorCategory = categorizeAuthError(error);
+    }
+  } catch (cacheErr) {
+    console.log(`[AuthProvider] Cached session check threw:`, cacheErr.message);
+    lastError = cacheErr;
+    errorCategory = categorizeAuthError(cacheErr);
+  }
+  
+  // SECOND: Try to refresh session - this is the most reliable recovery method
   // It uses the refresh token which often survives when access tokens expire
   try {
     console.log(`[AuthProvider] Attempting session refresh...`);
@@ -298,7 +331,7 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
     return { session: null, user: null, error: lastError, sessionExpired: true, errorCategory };
   }
   
-  // SECOND: Refresh didn't work, try getUser() with retries
+  // THIRD: Refresh didn't work, try getUser() with retries
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -976,6 +1009,8 @@ export function AuthProvider({ children }) {
         isAuthenticatedRef.current = false;
         // Clear prefetch cache to ensure fresh data on next login
         clearPrefetchCache();
+        // Clear session cache to ensure fresh check on next login
+        clearSessionCache();
         // Reset loading progress screen state
         resetProgress();
         // NOTE: isDataFetchReady must be TRUE so child providers can clear their user data
@@ -1283,6 +1318,9 @@ export function AuthProvider({ children }) {
     
     // Clear prefetch cache
     clearPrefetchCache();
+    
+    // Clear session cache to ensure fresh check on next login
+    clearSessionCache();
     
     // INSTANT: Clear state immediately so UI updates right away
     // NOTE: isDataFetchReady must be TRUE on logout so child providers 

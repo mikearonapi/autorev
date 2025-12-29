@@ -26,6 +26,7 @@ import {
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
+import { getSSRData } from './SSRDataProvider';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 
@@ -107,14 +108,21 @@ export function FavoritesProvider({ children }) {
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [state, dispatch] = useReducer(favoritesReducer, defaultState);
+  
+  // OPTIMISTIC LOAD: Initialize reducer with localStorage data synchronously
+  // This makes guest favorites visible immediately on page load
+  const [state, dispatch] = useReducer(favoritesReducer, null, () => {
+    // Use lazy initializer to read localStorage once during mount
+    // This is SSR-safe because loadFavorites() checks typeof window
+    const storedState = loadFavorites();
+    return storedState;
+  });
+  
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
 
-  // Hydrate from localStorage initially (for SSR/guest users)
+  // Mark as hydrated immediately since we loaded synchronously
   useEffect(() => {
-    const storedState = loadFavorites();
-    dispatch({ type: FavoriteActionTypes.HYDRATE, payload: storedState });
     setIsHydrated(true);
   }, []);
 
@@ -145,12 +153,13 @@ export function FavoritesProvider({ children }) {
         );
       }
 
-      // OPTIMIZATION: Check for prefetched data first
-      const prefetchedFavorites = getPrefetchedData('favorites', userId);
+      // OPTIMIZATION: Check for SSR data first, then prefetched data
+      const ssrFavorites = getSSRData('favorites', userId);
+      const prefetchedFavorites = ssrFavorites || getPrefetchedData('favorites', userId);
       let data, error;
       
       if (prefetchedFavorites) {
-        console.log('[FavoritesProvider] Using prefetched data');
+        console.log('[FavoritesProvider] Using', ssrFavorites ? 'SSR' : 'prefetched', 'data');
         data = prefetchedFavorites;
         error = null;
       } else {

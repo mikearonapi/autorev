@@ -8,7 +8,7 @@ function loadMappings() {
   return JSON.parse(readFileSync(new URL('./platform-mappings.json', import.meta.url), 'utf8'));
 }
 
-test('platform-mappings.json covers all 98 car slugs uniquely', () => {
+test('platform-mappings.json covers all car slugs uniquely', () => {
   const mappings = loadMappings();
   assert.ok(Array.isArray(mappings.platforms), 'platforms must be an array');
 
@@ -16,7 +16,7 @@ test('platform-mappings.json covers all 98 car slugs uniquely', () => {
   assert.equal(new Set(carSlugs).size, carSlugs.length, 'carData slugs must be unique');
 
   const mapped = mappings.platforms.flatMap(p => p.cars);
-  assert.equal(mapped.length, carSlugs.length, 'mapped slugs count must equal car count');
+  assert.equal(mapped.length, carSlugs.length, `mapped slugs count must equal car count (expected ${carSlugs.length}, got ${mapped.length})`);
   assert.equal(new Set(mapped).size, mapped.length, 'mapped slugs must be unique');
 
   const carSet = new Set(carSlugs);

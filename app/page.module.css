@@ -180,6 +180,11 @@
   }
 }
 
+/* Hero Join Button - "rev" brand text */
+.heroRevText {
+  color: var(--accent-gold);
+}
+
 /* Hero Join Button Suffix Animation */
 .heroJoinSuffix {
   display: inline-block;

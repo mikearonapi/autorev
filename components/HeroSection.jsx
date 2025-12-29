@@ -61,7 +61,8 @@ export default function HeroSection({ carCount = 188 }) {
           Research. Track. Build. Learn. — {carCount || 188} cars and counting.
         </p>
         <button onClick={handleCtaClick} className={styles.heroJoinButton}>
-          Join the autorev
+          Join the auto
+          <span className={styles.heroRevText}>rev</span>
           <span className={`${styles.heroJoinSuffix} ${suffixVisible ? styles.heroJoinSuffixVisible : ''}`}>
             {brandSuffixes[suffixIndex]}
           </span>

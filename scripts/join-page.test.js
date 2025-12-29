@@ -4,31 +4,29 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const repoRoot = process.cwd();
-const joinPagePath = path.join(repoRoot, 'app', 'join', 'page.jsx');
-const joinCssPath = path.join(repoRoot, 'app', 'join', 'page.module.css');
+// FeatureBreakdown was extracted to its own component
+const featureBreakdownPath = path.join(repoRoot, 'components', 'FeatureBreakdown.jsx');
+const featureBreakdownCssPath = path.join(repoRoot, 'components', 'FeatureBreakdown.module.css');
 
 test('Join page: feature breakdown table uses AL image and avoids tierHeader CSS collision', async () => {
   const [pageJs, pageCss] = await Promise.all([
-    readFile(joinPagePath, 'utf8'),
-    readFile(joinCssPath, 'utf8'),
+    readFile(featureBreakdownPath, 'utf8'),
+    readFile(featureBreakdownCssPath, 'utf8'),
   ]);
 
-  // CSS: prevent accidental reintroduction of duplicate .tierHeader rules
-  const tierHeaderDefs = pageCss.match(/\.tierHeader\s*\{/g) ?? [];
+  // CSS: verify tableTierHeader exists (only one for table headers, avoiding duplicate tierHeader)
+  assert.match(pageCss, /\.tableTierHeader\s*\{/, 'Expected ".tableTierHeader" in CSS');
+  
+  // CSS: ensure no standalone .tierHeader class that could collide with tableTierHeader
+  const standaloneHeaderDefs = pageCss.match(/^\.tierHeader\s*\{/gm) ?? [];
   assert.equal(
-    tierHeaderDefs.length,
-    1,
-    `Expected exactly 1 ".tierHeader {" definition in join CSS, found ${tierHeaderDefs.length}`
+    standaloneHeaderDefs.length,
+    0,
+    'Expected no standalone ".tierHeader" class to avoid collision with .tableTierHeader'
   );
-  assert.match(pageCss, /\.tableTierHeader\s*\{/, 'Expected ".tableTierHeader" in join CSS');
 
-  // JSX: table header should use styles.tableTierHeader (not styles.tierHeader)
+  // JSX: table header should use styles.tableTierHeader
   assert.match(pageJs, /styles\.tableTierHeader/, 'Expected table header to use styles.tableTierHeader');
-  assert.doesNotMatch(
-    pageJs,
-    /\$\{styles\.tableHeaderCell\}\s*\$\{styles\.tierHeader\}/,
-    'Expected join table header to not use styles.tierHeader (CSS collision risk)'
-  );
 
   // AI category should use AL image (not robot icon)
   assert.match(pageJs, /const AlIcon\s*=\s*\(\{[^}]*size[^}]*\}\)\s*=>\s*\(/, 'Expected AlIcon component');

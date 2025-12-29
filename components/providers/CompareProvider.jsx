@@ -23,6 +23,7 @@ import {
   saveUserCompareList,
   deleteUserCompareList,
 } from '@/lib/userDataService';
+import { getPrefetchedData } from '@/lib/prefetch';
 
 const MAX_COMPARE = 4;
 
@@ -122,7 +123,20 @@ export function CompareProvider({ children }) {
         setIsLoading(true);
         
         try {
-          const { data, error } = await fetchUserCompareLists(user.id);
+          // OPTIMIZATION: Check for prefetched data first
+          const prefetchedCompareLists = getPrefetchedData('compareLists', user.id);
+          let data, error;
+          
+          if (prefetchedCompareLists) {
+            console.log('[CompareProvider] Using prefetched data');
+            data = prefetchedCompareLists;
+            error = null;
+          } else {
+            // Fetch compare lists from Supabase
+            const result = await fetchUserCompareLists(user.id);
+            data = result.data;
+            error = result.error;
+          }
           
           if (error) {
             console.error('[CompareProvider] Error fetching saved lists:', error);

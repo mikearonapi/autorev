@@ -233,21 +233,6 @@ export default function EventCard({
 
   return (
     <div className={`${styles.cardWrapper} ${featured ? styles.featuredWrapper : ''} ${compact ? styles.compactWrapper : ''}`}>
-      {/* Save Button */}
-      {showSaveButton && (
-        <div className={styles.cardActions}>
-          <SaveEventButton
-            eventId={id}
-            eventSlug={slug}
-            eventName={name}
-            isSaved={isSaved}
-            onSaveChange={onSaveToggle}
-            theme="light"
-            size="small"
-          />
-        </div>
-      )}
-
       <Link href={`/community/events/${slug}`} className={styles.card}>
         {/* Type Header - Color-coded by event type */}
         <div className={`${styles.typeHeader} ${styles[`type-${eventTypeSlug}`]}`}>
@@ -311,13 +296,29 @@ export default function EventCard({
                 <span className={styles.brandBadge}>{brandAffinity.brand}</span>
               )}
             </div>
-            <span className={styles.viewLink}>
-              View Details
-              <Icons.chevronRight size={14} />
-            </span>
+            <div className={styles.footerActions}>
+              <span className={styles.viewLink}>
+                View Details
+                <Icons.chevronRight size={14} />
+              </span>
+            </div>
           </div>
         </div>
       </Link>
+      
+      {/* Save Button - positioned in footer area outside the Link */}
+      {showSaveButton && (
+        <div className={styles.saveButtonWrapper}>
+          <SaveEventButton
+            eventId={id}
+            eventSlug={slug}
+            eventName={name}
+            isSaved={isSaved}
+            onSaveChange={onSaveToggle}
+            size="small"
+          />
+        </div>
+      )}
     </div>
   );
 }

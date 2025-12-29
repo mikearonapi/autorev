@@ -3,22 +3,81 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './LocationAutocomplete.module.css';
 
+// US State name to abbreviation mapping
+const STATE_ABBREVIATIONS = {
+  'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
+  'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+  'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
+  'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
+  'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+  'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS',
+  'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV',
+  'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+  'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH', 'oklahoma': 'OK',
+  'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+  'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT',
+  'vermont': 'VT', 'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV',
+  'wisconsin': 'WI', 'wyoming': 'WY', 'district of columbia': 'DC',
+};
+
+/**
+ * Convert full state name to abbreviation
+ */
+function getStateAbbrev(stateText) {
+  if (!stateText) return '';
+  
+  const normalized = stateText.trim().toLowerCase();
+  
+  // Already an abbreviation (2 chars)?
+  if (normalized.length === 2) {
+    return normalized.toUpperCase();
+  }
+  
+  // Look up full name
+  if (STATE_ABBREVIATIONS[normalized]) {
+    return STATE_ABBREVIATIONS[normalized];
+  }
+  
+  // Try partial match for cases like "Virginia, USA"
+  const firstPart = normalized.split(',')[0].trim();
+  if (STATE_ABBREVIATIONS[firstPart]) {
+    return STATE_ABBREVIATIONS[firstPart];
+  }
+  
+  return stateText; // Return original if no match
+}
+
+/**
+ * Parse Google Places secondary text to extract state abbreviation
+ * Google returns format like "Virginia, USA" or "CA, USA"
+ */
+function parseGoogleState(secondaryText) {
+  if (!secondaryText) return '';
+  
+  // Split by comma, state is typically the first part
+  const parts = secondaryText.split(',');
+  if (parts.length > 0) {
+    return getStateAbbrev(parts[0].trim());
+  }
+  return '';
+}
+
 /**
  * LocationAutocomplete Component
  * 
  * Provides a location input with Google Places Autocomplete API.
- * Falls back to manual input if Google Maps is not available.
+ * Falls back to OpenStreetMap Nominatim if Google Maps is not available.
  * 
  * @param {Object} props
  * @param {string} props.value - Current input value
- * @param {Function} props.onChange - Callback when value changes (receives { formatted: string, lat?: number, lng?: number })
+ * @param {Function} props.onChange - Callback when value changes (value, coords)
  * @param {string} [props.placeholder] - Placeholder text
  * @param {string} [props.className] - Additional CSS class
  */
 export default function LocationAutocomplete({
   value,
   onChange,
-  placeholder = "ZIP code or City, State",
+  placeholder = "City, State or ZIP code",
   className = '',
 }) {
   const [inputValue, setInputValue] = useState(value || '');
@@ -27,6 +86,7 @@ export default function LocationAutocomplete({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoaded, setGoogleLoaded] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
   
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
@@ -42,11 +102,11 @@ export default function LocationAutocomplete({
 
   // Load Google Maps script and initialize services
   useEffect(() => {
-    // Support both key names for flexibility
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
     
     if (!apiKey) {
-      console.warn('[LocationAutocomplete] Google Maps API key not set (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY), using fallback mode');
+      console.info('[LocationAutocomplete] Google Maps API key not set, using Nominatim fallback');
+      setUseFallback(true);
       return;
     }
 
@@ -65,10 +125,10 @@ export default function LocationAutocomplete({
       initGoogleServices();
     };
     script.onerror = () => {
-      console.error('[LocationAutocomplete] Failed to load Google Maps API');
+      console.warn('[LocationAutocomplete] Failed to load Google Maps API, using fallback');
+      setUseFallback(true);
     };
     
-    // Only append if not already in document
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       document.head.appendChild(script);
     }
@@ -82,28 +142,78 @@ export default function LocationAutocomplete({
 
   // Initialize Google services
   const initGoogleServices = useCallback(() => {
-    if (!window.google?.maps?.places) return;
+    if (!window.google?.maps?.places) {
+      setUseFallback(true);
+      return;
+    }
     
-    autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-    
-    // Create a dummy element for PlacesService (required by the API)
-    const dummyElement = document.createElement('div');
-    placesServiceRef.current = new window.google.maps.places.PlacesService(dummyElement);
-    
-    // Create a session token for billing optimization
-    sessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
-    
-    setGoogleLoaded(true);
+    try {
+      autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+      
+      const dummyElement = document.createElement('div');
+      placesServiceRef.current = new window.google.maps.places.PlacesService(dummyElement);
+      sessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
+      
+      setGoogleLoaded(true);
+    } catch (err) {
+      console.warn('[LocationAutocomplete] Error initializing Google services:', err);
+      setUseFallback(true);
+    }
+  }, []);
+
+  // Fetch suggestions from fallback API (Nominatim)
+  const fetchFallbackSuggestions = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    // Don't search for pure ZIP codes
+    if (/^\d{5}$/.test(query.trim())) {
+      setSuggestions([]);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`/api/locations/search?q=${encodeURIComponent(query)}&limit=6`);
+      
+      if (!res.ok) {
+        setSuggestions([]);
+        return;
+      }
+      
+      const data = await res.json();
+      
+      const formattedSuggestions = (data.suggestions || []).map(s => ({
+        placeId: s.placeId,
+        mainText: s.city,
+        secondaryText: s.state,
+        fullText: s.displayName,
+        county: s.county,
+        lat: s.lat,
+        lng: s.lng,
+        isFallback: true,
+      }));
+      
+      setSuggestions(formattedSuggestions);
+    } catch (err) {
+      console.error('[LocationAutocomplete] Fallback search error:', err);
+      setSuggestions([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   // Fetch suggestions from Google Places API
-  const fetchSuggestions = useCallback(async (query) => {
+  const fetchGoogleSuggestions = useCallback(async (query) => {
     if (!query || query.length < 2 || !autocompleteServiceRef.current) {
       setSuggestions([]);
       return;
     }
 
-    // If it looks like a ZIP code, don't use Google Places
+    // Don't use Google Places for ZIP codes
     if (/^\d{5}$/.test(query.trim())) {
       setSuggestions([]);
       return;
@@ -114,7 +224,7 @@ export default function LocationAutocomplete({
     try {
       const request = {
         input: query,
-        types: ['(cities)'], // Only return cities
+        types: ['(cities)'],
         componentRestrictions: { country: 'us' },
         sessionToken: sessionTokenRef.current,
       };
@@ -127,17 +237,22 @@ export default function LocationAutocomplete({
           return;
         }
 
-        const formattedSuggestions = predictions.map(prediction => ({
-          placeId: prediction.place_id,
-          mainText: prediction.structured_formatting.main_text,
-          secondaryText: prediction.structured_formatting.secondary_text,
-          fullText: prediction.description,
-        }));
+        const formattedSuggestions = predictions.map(prediction => {
+          const stateAbbrev = parseGoogleState(prediction.structured_formatting.secondary_text);
+          
+          return {
+            placeId: prediction.place_id,
+            mainText: prediction.structured_formatting.main_text,
+            secondaryText: stateAbbrev,
+            fullText: prediction.description,
+            isFallback: false,
+          };
+        });
 
         setSuggestions(formattedSuggestions);
       });
     } catch (err) {
-      console.error('[LocationAutocomplete] Error fetching suggestions:', err);
+      console.error('[LocationAutocomplete] Google search error:', err);
       setIsLoading(false);
       setSuggestions([]);
     }
@@ -145,14 +260,21 @@ export default function LocationAutocomplete({
 
   // Debounced suggestion fetch
   useEffect(() => {
-    if (!googleLoaded) return;
-    
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
+    if (!inputValue || inputValue.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
     debounceRef.current = setTimeout(() => {
-      fetchSuggestions(inputValue);
+      if (useFallback || !googleLoaded) {
+        fetchFallbackSuggestions(inputValue);
+      } else {
+        fetchGoogleSuggestions(inputValue);
+      }
     }, 300);
 
     return () => {
@@ -160,12 +282,11 @@ export default function LocationAutocomplete({
         clearTimeout(debounceRef.current);
       }
     };
-  }, [inputValue, googleLoaded, fetchSuggestions]);
+  }, [inputValue, googleLoaded, useFallback, fetchGoogleSuggestions, fetchFallbackSuggestions]);
 
-  // Get place details (coordinates) when a suggestion is selected
-  const getPlaceDetails = useCallback((placeId, displayText) => {
+  // Get place details (coordinates) when a Google suggestion is selected
+  const getGooglePlaceDetails = useCallback((placeId, displayText) => {
     if (!placesServiceRef.current) {
-      // Fallback: just return the text
       onChange(displayText);
       return;
     }
@@ -177,7 +298,6 @@ export default function LocationAutocomplete({
     };
 
     placesServiceRef.current.getDetails(request, (place, status) => {
-      // Create a new session token after place details request
       sessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
 
       if (status !== window.google.maps.places.PlacesServiceStatus.OK || !place) {
@@ -185,7 +305,6 @@ export default function LocationAutocomplete({
         return;
       }
 
-      // Return both the formatted text and coordinates
       onChange(displayText, {
         lat: place.geometry?.location?.lat(),
         lng: place.geometry?.location?.lng(),
@@ -203,13 +322,21 @@ export default function LocationAutocomplete({
 
   // Handle suggestion selection
   const handleSelectSuggestion = (suggestion) => {
-    const displayText = `${suggestion.mainText}, ${suggestion.secondaryText?.split(',')[0] || ''}`.trim();
+    const displayText = `${suggestion.mainText}, ${suggestion.secondaryText}`;
     setInputValue(displayText);
     setShowSuggestions(false);
     setSuggestions([]);
     
-    // Get coordinates for the selected place
-    getPlaceDetails(suggestion.placeId, displayText);
+    if (suggestion.isFallback) {
+      // Fallback already has coordinates
+      onChange(displayText, {
+        lat: suggestion.lat,
+        lng: suggestion.lng,
+      });
+    } else {
+      // Get coordinates from Google Places
+      getGooglePlaceDetails(suggestion.placeId, displayText);
+    }
   };
 
   // Handle keyboard navigation
@@ -254,7 +381,6 @@ export default function LocationAutocomplete({
 
   // Handle blur
   const handleBlur = () => {
-    // Delay to allow click on suggestions
     setTimeout(() => {
       setShowSuggestions(false);
       if (inputValue !== value) {
@@ -328,6 +454,7 @@ export default function LocationAutocomplete({
               key={suggestion.placeId}
               className={`${styles.suggestionItem} ${index === highlightedIndex ? styles.highlighted : ''}`}
               onClick={() => handleSelectSuggestion(suggestion)}
+              onMouseEnter={() => setHighlightedIndex(index)}
               role="option"
               aria-selected={index === highlightedIndex}
             >
@@ -336,23 +463,31 @@ export default function LocationAutocomplete({
                 <circle cx="12" cy="10" r="3"/>
               </svg>
               <span className={styles.suggestionText}>
-                <strong>{suggestion.mainText}</strong>
+                <strong className={styles.cityName}>{suggestion.mainText}</strong>
                 {suggestion.secondaryText && (
-                  <span style={{ color: 'var(--color-gray-500)', marginLeft: '4px' }}>
-                    {suggestion.secondaryText}
-                  </span>
+                  <span className={styles.stateText}>, {suggestion.secondaryText}</span>
+                )}
+                {suggestion.county && (
+                  <span className={styles.countyText}>({suggestion.county})</span>
                 )}
               </span>
             </li>
           ))}
-          {/* Google attribution (required by ToS) */}
-          <div className={styles.attribution}>
-            <img 
-              src="https://developers.google.com/static/maps/documentation/images/powered_by_google_on_white.png" 
-              alt="Powered by Google" 
-              height="14"
-            />
-          </div>
+          {/* Attribution based on source */}
+          {!useFallback && googleLoaded && (
+            <div className={styles.attribution}>
+              <img 
+                src="https://developers.google.com/static/maps/documentation/images/powered_by_google_on_white.png" 
+                alt="Powered by Google" 
+                height="14"
+              />
+            </div>
+          )}
+          {(useFallback || !googleLoaded) && (
+            <div className={styles.attribution}>
+              <span className={styles.osmAttribution}>Data © OpenStreetMap</span>
+            </div>
+          )}
         </ul>
       )}
     </div>

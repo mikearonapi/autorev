@@ -315,6 +315,8 @@
   justify-content: space-between;
   gap: 4px;
   min-width: 0;
+  /* Add right padding to prevent overlap with absolute positioned save button */
+  padding-right: 36px;
 }
 
 .footerInfo {
@@ -323,6 +325,14 @@
   gap: 6px;
   flex-wrap: wrap;
   min-width: 0;
+  flex: 1;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .cost {
@@ -333,6 +343,9 @@
 }
 
 .cost.free {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   color: var(--color-success);
 }
 
@@ -369,12 +382,12 @@
 }
 
 /* ============================================
-   Save Button Actions
+   Save Button - Positioned in footer area
    ============================================ */
-.cardActions {
+.saveButtonWrapper {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  bottom: 8px;
+  right: 8px;
   z-index: 20;
 }
 
@@ -438,6 +451,7 @@
 
 .compactWrapper .footer {
   padding-top: 4px;
+  padding-right: 30px;
 }
 
 .compactWrapper .cost {
@@ -446,6 +460,11 @@
 
 .compactWrapper .viewLink {
   font-size: 9px;
+}
+
+.compactWrapper .saveButtonWrapper {
+  bottom: 6px;
+  right: 6px;
 }
 
 /* ============================================
@@ -530,9 +549,13 @@
     font-size: 9px;
   }
   
-  .cardActions {
-    top: 3px;
-    right: 3px;
+  .saveButtonWrapper {
+    bottom: 6px;
+    right: 6px;
+  }
+  
+  .footer {
+    padding-right: 32px;
   }
 }
 
