@@ -31,21 +31,25 @@ const StepStatus = {
 
 /**
  * Per-step timeout in milliseconds
- * Different steps may need different timeouts based on typical load times
+ * 
+ * SIMPLIFIED: We only really wait for profile. The other data is prefetched
+ * in parallel and loads silently in background. No need to block the user.
  */
 const STEP_TIMEOUTS = {
-  profile: 12000,   // 12s - can be slower right after OAuth due to concurrent fetches
-  favorites: 8000,  // 8s - can be large lists
-  vehicles: 8000,   // 8s - can be large lists
-  builds: 10000,    // 10s - most complex data
+  profile: 5000,    // 5s max for profile - if it takes longer, something's wrong
+  favorites: 1000,  // 1s - we don't actually wait, just auto-complete
+  vehicles: 1000,   // 1s - we don't actually wait, just auto-complete  
+  builds: 1000,     // 1s - we don't actually wait, just auto-complete
 };
 
 /**
  * Global watchdog timeout in milliseconds
- * After this time, any steps still pending/loading will be marked as timeout.
- * This ensures allDone always becomes true, even if a provider never mounts.
+ * 
+ * SIMPLIFIED: 3 seconds max. Profile should complete quickly, and other data
+ * is prefetched. Don't keep the user waiting - the app works fine while
+ * background data loads.
  */
-const GLOBAL_WATCHDOG_TIMEOUT = 15000; // 15s
+const GLOBAL_WATCHDOG_TIMEOUT = 3000; // 3s - quick dismiss
 
 /**
  * @typedef {Object} StepState
@@ -196,6 +200,35 @@ export function LoadingProgressProvider({ children }) {
       
       const duration = step?.startTime ? Date.now() - step.startTime : 0;
       console.log(`[LoadingProgress] ${key}: complete ✓ (${duration}ms)`);
+      
+      // SIMPLIFIED LOADING: When profile completes, auto-complete all other steps.
+      // The other data is prefetched in parallel - no need to block the UI.
+      // This ensures quick dismiss after profile loads.
+      if (key === 'profile') {
+        console.log('[LoadingProgress] Profile complete - auto-completing other steps for quick dismiss');
+        return {
+          profile: {
+            status: StepStatus.COMPLETED,
+            error: null,
+            startTime: step?.startTime || Date.now(),
+          },
+          favorites: {
+            status: StepStatus.COMPLETED,
+            error: null,
+            startTime: Date.now(),
+          },
+          vehicles: {
+            status: StepStatus.COMPLETED,
+            error: null,
+            startTime: Date.now(),
+          },
+          builds: {
+            status: StepStatus.COMPLETED,
+            error: null,
+            startTime: Date.now(),
+          },
+        };
+      }
       
       return {
         ...prev,

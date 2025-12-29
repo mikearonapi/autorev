@@ -743,6 +743,7 @@ export function AuthProvider({ children }) {
           setState({
             ...defaultAuthState,
             isLoading: false,
+            isDataFetchReady: true, // Enable providers to clear any cached user data
             authError: 'Authentication timed out. Please refresh or sign in again.',
           });
           return;
@@ -766,6 +767,7 @@ export function AuthProvider({ children }) {
           setState({
             ...defaultAuthState,
             isLoading: false,
+            isDataFetchReady: true, // Enable providers to clear any cached user data
             authError: userMessage,
             sessionExpired: !!sessionExpired,
             sessionRevoked: !!sessionRevoked,
@@ -782,6 +784,7 @@ export function AuthProvider({ children }) {
           setState({
             ...defaultAuthState,
             isLoading: false,
+            isDataFetchReady: true, // Enable providers to clear any cached user data
             sessionExpired: true,
             sessionRevoked: !!sessionRevoked,
           });
@@ -1089,9 +1092,11 @@ export function AuthProvider({ children }) {
         clearPrefetchCache();
         // Reset loading progress screen state
         resetProgress();
+        // NOTE: isDataFetchReady must be TRUE so child providers can clear their user data
         setState({
           ...defaultAuthState,
           isLoading: false,
+          isDataFetchReady: true, // Critical: enables providers to clear user data on logout
         });
         // Also reset onboarding state
         setOnboardingState(defaultOnboardingState);
@@ -1320,6 +1325,7 @@ export function AuthProvider({ children }) {
                 setState({
                   ...defaultAuthState,
                   isLoading: false,
+                  isDataFetchReady: true, // Enable providers to clear cached user data
                   authError: 'Session expired. Please sign in again.',
                 });
               } else {
@@ -1339,6 +1345,7 @@ export function AuthProvider({ children }) {
               setState({
                 ...defaultAuthState,
                 isLoading: false,
+                isDataFetchReady: true, // Enable providers to clear cached user data
               });
             }
           } catch (err) {
@@ -1360,6 +1367,7 @@ export function AuthProvider({ children }) {
         setState({
           ...defaultAuthState,
           isLoading: false,
+          isDataFetchReady: true, // Enable providers to clear cached user data
         });
       }
     };
@@ -1445,9 +1453,13 @@ export function AuthProvider({ children }) {
     clearPrefetchCache();
     
     // INSTANT: Clear state immediately so UI updates right away
+    // NOTE: isDataFetchReady must be TRUE on logout so child providers 
+    // (FavoritesProvider, OwnedVehiclesProvider, SavedBuildsProvider) can 
+    // properly react to the auth change and clear their cached user data.
     setState({
       ...defaultAuthState,
       isLoading: false,
+      isDataFetchReady: true, // Critical: enables providers to clear user data on logout
     });
     setOnboardingState(defaultOnboardingState);
     
