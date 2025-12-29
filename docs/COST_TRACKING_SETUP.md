@@ -249,3 +249,4 @@ If you're using Vercel's AI Gateway for LLM routing, they have their own usage e
 - Review the recommendations panel for specific setup guides
 - Add cost entries manually for services without APIs
 
+

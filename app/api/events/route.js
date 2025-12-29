@@ -31,6 +31,7 @@ export const dynamic = 'force-dynamic';
  *   - limit: Max results (default 20, max 100)
  *   - offset: Pagination offset (default 0)
  *   - sort: Sort order - 'date', 'featured', or 'distance' (default 'date')
+ *   - group_recurring: Group recurring events into single entries (boolean, default false)
  * 
  * Response:
  *   {
@@ -38,10 +39,13 @@ export const dynamic = 'force-dynamic';
  *     total: number,
  *     limit: number,
  *     offset: number,
+ *     grouped: boolean,
+ *     ungrouped_total?: number, // Only when group_recurring=true
  *     searchCenter?: { latitude, longitude, radius, location } // Only when radius search used
  *   }
  * 
  * Note: When radius search is used, events include distance_miles field
+ * Note: When group_recurring=true, recurring events include is_recurring, upcoming_occurrences, series info
  */
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);
@@ -67,6 +71,7 @@ async function handleGet(request) {
     limit: searchParams.get('limit'),
     offset: searchParams.get('offset'),
     sort: searchParams.get('sort'),
+    group_recurring: searchParams.get('group_recurring'),
   };
   
   // Remove null/undefined values
@@ -82,6 +87,9 @@ async function handleGet(request) {
   }
   if (params.is_free !== undefined) {
     params.is_free = params.is_free === 'true';
+  }
+  if (params.group_recurring !== undefined) {
+    params.group_recurring = params.group_recurring === 'true';
   }
   
   const result = await searchEvents(params);

@@ -31,10 +31,10 @@ export default function HeroSection({ carCount = 188 }) {
     return () => clearInterval(suffixInterval);
   }, []);
 
-  // Handle browse cars button click
-  const handleBrowseCarsClick = (e) => {
+  // Handle CTA button click
+  const handleCtaClick = (e) => {
     e.preventDefault();
-    window.location.href = '/browse-cars';
+    window.location.href = '/join';
   };
 
   return (
@@ -60,8 +60,11 @@ export default function HeroSection({ carCount = 188 }) {
           The sports car research platform for buyers and builders.<br />
           Research. Track. Build. Learn. — {carCount || 188} cars and counting.
         </p>
-        <button onClick={handleBrowseCarsClick} className={styles.heroJoinButton}>
-          Browse Cars
+        <button onClick={handleCtaClick} className={styles.heroJoinButton}>
+          Join the autorev
+          <span className={`${styles.heroJoinSuffix} ${suffixVisible ? styles.heroJoinSuffixVisible : ''}`}>
+            {brandSuffixes[suffixIndex]}
+          </span>
         </button>
       </div>
       

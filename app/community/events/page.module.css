@@ -395,6 +395,20 @@
   color: var(--color-gray-700);
 }
 
+.resultsBarToggles {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+@media (max-width: 480px) {
+  .resultsBarToggles {
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
 .pastEventsToggle {
   display: flex;
   align-items: center;
@@ -402,6 +416,7 @@
   cursor: pointer;
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
+  white-space: nowrap;
 }
 
 .pastEventsToggle input {

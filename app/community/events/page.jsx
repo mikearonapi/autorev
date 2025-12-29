@@ -52,6 +52,7 @@ function EventsContent() {
   const [eventTypes, setEventTypes] = useState([]);
   const [garageBrands, setGarageBrands] = useState([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
+  const [groupRecurring, setGroupRecurring] = useState(true); // Group recurring events by default
   
   // Saved events tracking
   const [savedEventSlugs, setSavedEventSlugs] = useState(new Set());
@@ -182,6 +183,11 @@ function EventsContent() {
         // Pagination
         params.set('limit', ITEMS_PER_PAGE.toString());
         params.set('offset', ((page - 1) * ITEMS_PER_PAGE).toString());
+        
+        // Group recurring events
+        if (groupRecurring) {
+          params.set('group_recurring', 'true');
+        }
 
         const res = await fetch(`/api/events?${params.toString()}`);
         
@@ -211,7 +217,7 @@ function EventsContent() {
 
     const timer = setTimeout(fetchEvents, 300);
     return () => clearTimeout(timer);
-  }, [filters, page, garageBrands, showPastEvents]);
+  }, [filters, page, garageBrands, showPastEvents, groupRecurring]);
 
   // Handle filter changes
   const handleFilterChange = (newFilters) => {
@@ -285,17 +291,30 @@ function EventsContent() {
             <span className={styles.resultsCount}>
               {loading ? 'Loading...' : `${totalCount} event${totalCount !== 1 ? 's' : ''} found`}
             </span>
-            <label className={styles.pastEventsToggle}>
-              <input
-                type="checkbox"
-                checked={showPastEvents}
-                onChange={(e) => {
-                  setShowPastEvents(e.target.checked);
-                  setPage(1);
-                }}
-              />
-              <span>Include past events</span>
-            </label>
+            <div className={styles.resultsBarToggles}>
+              <label className={styles.pastEventsToggle}>
+                <input
+                  type="checkbox"
+                  checked={groupRecurring}
+                  onChange={(e) => {
+                    setGroupRecurring(e.target.checked);
+                    setPage(1);
+                  }}
+                />
+                <span>Group recurring</span>
+              </label>
+              <label className={styles.pastEventsToggle}>
+                <input
+                  type="checkbox"
+                  checked={showPastEvents}
+                  onChange={(e) => {
+                    setShowPastEvents(e.target.checked);
+                    setPage(1);
+                  }}
+                />
+                <span>Include past events</span>
+              </label>
+            </div>
           </div>
         </div>
       </section>

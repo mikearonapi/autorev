@@ -24,6 +24,7 @@ import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
 import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
+import BetaBanner from '@/components/BetaBanner';
 
 const siteUrl = 'https://autorev.app';
 
@@ -228,6 +229,9 @@ export default function RootLayout({ children }) {
                 <ScrollToTop />
               </Suspense>
               <Header />
+              
+              {/* Beta banner - shown during beta period */}
+              <BetaBanner />
               
               {/* Feedback corner - discreet top-right feedback icon */}
               <FeedbackCorner />

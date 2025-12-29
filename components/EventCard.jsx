@@ -104,6 +104,13 @@ const EVENT_TYPE_ICONS = {
       <path d="M12 6v3"/>
     </svg>
   ),
+  'club-racing': ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+      <line x1="4" y1="22" x2="4" y2="15"/>
+      <circle cx="17" cy="17" r="3"/>
+    </svg>
+  ),
   'default': ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -144,6 +151,14 @@ const Icons = {
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   ),
+  repeat: ({ size = 14 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m17 2 4 4-4 4"/>
+      <path d="M3 11v-1a4 4 0 0 1 4-4h14"/>
+      <path d="m7 22-4-4 4-4"/>
+      <path d="M21 13v1a4 4 0 0 1-4 4H3"/>
+    </svg>
+  ),
 };
 
 function formatEventTime(timeStr) {
@@ -153,6 +168,23 @@ function formatEventTime(timeStr) {
   const ampm = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 || 12;
   return `${h12}:${minutes} ${ampm}`;
+}
+
+// Format recurrence frequency for display
+function formatRecurrence(frequency, occurrences) {
+  const freqLabels = {
+    weekly: 'Weekly',
+    biweekly: 'Biweekly',
+    monthly: 'Monthly',
+    quarterly: 'Quarterly',
+    annual: 'Annual',
+    irregular: 'Recurring',
+  };
+  const label = freqLabels[frequency] || 'Recurring';
+  if (occurrences > 1) {
+    return `${label} · ${occurrences} upcoming`;
+  }
+  return label;
 }
 
 export default function EventCard({ 
@@ -175,7 +207,11 @@ export default function EventCard({
     event_type,
     cost_text,
     is_free,
-    car_affinities
+    car_affinities,
+    // Recurring event info
+    is_recurring,
+    upcoming_occurrences,
+    series,
   } = event;
 
   const timeDisplay = formatEventTime(start_time);
@@ -221,7 +257,17 @@ export default function EventCard({
             </span>
             <span className={styles.typeName}>{event_type?.name || 'Event'}</span>
           </div>
-          {featured && <span className={styles.featuredBadge}>Featured</span>}
+          <div className={styles.headerBadges}>
+            {is_recurring && series && (
+              <span className={styles.recurringBadge} title={`${formatRecurrence(series.recurrence_frequency, upcoming_occurrences)}`}>
+                <Icons.repeat size={12} />
+                {series.recurrence_frequency === 'weekly' ? 'Weekly' : 
+                 series.recurrence_frequency === 'biweekly' ? 'Biweekly' : 
+                 series.recurrence_frequency === 'monthly' ? 'Monthly' : 'Recurring'}
+              </span>
+            )}
+            {featured && <span className={styles.featuredBadge}>Featured</span>}
+          </div>
         </div>
 
         <div className={styles.content}>

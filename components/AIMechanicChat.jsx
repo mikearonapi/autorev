@@ -550,8 +550,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [hasSeenIntro, setHasSeenIntro] = useState(false);
   
-  // Expanded view state
+  // Expanded view state (desktop/iPad only)
   const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Mobile history panel state (mobile only)
+  const [showHistoryMobile, setShowHistoryMobile] = useState(false);
   
   // Conversation history state (for expanded mode)
   const [conversations, setConversations] = useState([]);
@@ -729,10 +732,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     }
   }, [isOpen]);
   
-  // Fetch conversation history when expanded and authenticated
+  // Fetch conversation history when expanded (desktop) or history shown (mobile) and authenticated
   useEffect(() => {
     const fetchConversations = async () => {
-      if (!isAuthenticated || !user?.id || !isExpanded) return;
+      if (!isAuthenticated || !user?.id) return;
+      if (!isExpanded && !showHistoryMobile) return;
       
       setConversationsLoading(true);
       try {
@@ -748,10 +752,10 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       }
     };
     
-    if (isExpanded && isAuthenticated) {
+    if ((isExpanded || showHistoryMobile) && isAuthenticated) {
       fetchConversations();
     }
-  }, [isExpanded, isAuthenticated, user?.id]);
+  }, [isExpanded, showHistoryMobile, isAuthenticated, user?.id]);
   
   // Prefetch context when chat opens
   useEffect(() => {
@@ -930,9 +934,9 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         })));
         setSuggestions([]);
         
-        // On mobile, auto-collapse expanded view after loading a conversation
+        // On mobile, close history panel after loading a conversation
         if (typeof window !== 'undefined' && window.innerWidth <= 480) {
-          setIsExpanded(false);
+          setShowHistoryMobile(false);
         }
       }
     } catch (err) {
@@ -949,7 +953,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setSuggestions(contextConfig.suggestions || []);
     setError(null);
     setQuickReplies([]);
-  }, [contextConfig.suggestions]);
+    // Close mobile history panel if open
+    if (isMobile) {
+      setShowHistoryMobile(false);
+    }
+  }, [contextConfig.suggestions, isMobile]);
   
   // Clear focused car context
   const clearFocusedCar = useCallback(() => {
@@ -1483,14 +1491,26 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       )}
                     </button>
                   )}
-                  <button 
-                    onClick={() => setIsExpanded(!isExpanded)} 
-                    className={styles.headerBtn}
-                    aria-label={isExpanded ? "Collapse" : "Expand"}
-                    title={isExpanded ? "Collapse" : "Expand"}
-                  >
-                    {isExpanded ? <Icons.collapse size={16} /> : <Icons.expand size={16} />}
-                  </button>
+                  {/* On mobile: show history icon; On desktop/tablet: show expand/collapse */}
+                  {isMobile ? (
+                    <button 
+                      onClick={() => setShowHistoryMobile(!showHistoryMobile)} 
+                      className={`${styles.headerBtn} ${showHistoryMobile ? styles.headerBtnActive : ''}`}
+                      aria-label={showHistoryMobile ? "Hide history" : "View history"}
+                      title={showHistoryMobile ? "Hide history" : "View history"}
+                    >
+                      <Icons.history size={16} />
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => setIsExpanded(!isExpanded)} 
+                      className={styles.headerBtn}
+                      aria-label={isExpanded ? "Collapse" : "Expand"}
+                      title={isExpanded ? "Collapse" : "Expand"}
+                    >
+                      {isExpanded ? <Icons.collapse size={16} /> : <Icons.expand size={16} />}
+                    </button>
+                  )}
                   <button 
                     onClick={() => setIsOpen(false)} 
                     className={styles.headerBtn}
@@ -1568,14 +1588,24 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 </div>
               )}
 
-              {/* Main Content - with sidebar in expanded mode */}
+              {/* Main Content - with sidebar in expanded mode (desktop) or history panel (mobile) */}
               <div className={`${styles.chatContent} ${isExpanded ? styles.chatContentExpanded : ''}`}>
-                {/* Conversation History Sidebar - only visible in expanded mode */}
-                {isExpanded && (
+                {/* Conversation History Sidebar - visible when expanded (desktop) OR showHistoryMobile (mobile) */}
+                {(isExpanded || (isMobile && showHistoryMobile)) && (
                   <div className={styles.historySidebar}>
                     <div className={styles.historySidebarHeader}>
                       <Icons.history size={16} />
                       <span>History</span>
+                      {/* Close button - only on mobile */}
+                      {isMobile && (
+                        <button 
+                          onClick={() => setShowHistoryMobile(false)}
+                          className={styles.historySidebarClose}
+                          aria-label="Close history"
+                        >
+                          <Icons.x size={18} />
+                        </button>
+                      )}
                     </div>
                     <button 
                       className={styles.newConversationBtn}

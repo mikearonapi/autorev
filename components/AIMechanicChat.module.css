@@ -342,35 +342,30 @@
   }
 }
 
-/* Expanded chat panel - almost full screen */
+/* Expanded chat panel - TRUE FULL SCREEN on all devices */
 .chatPanelExpanded {
-  bottom: 20px;
-  right: 20px;
-  left: 20px;
-  top: calc(env(safe-area-inset-top, 0px) + 80px);
-  width: auto;
+  /* Full screen positioning - no gaps */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  height: auto;
   max-height: none;
-  border-radius: 20px;
-  box-shadow: 0 25px 80px -12px rgba(0, 0, 0, 0.35);
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 1100;
+  animation: expandFadeIn 0.2s ease-out;
 }
 
-@media (min-width: 768px) {
-  .chatPanelExpanded {
-    left: 60px;
-    right: 60px;
-    top: calc(env(safe-area-inset-top, 0px) + 80px);
-    bottom: 40px;
+@keyframes expandFadeIn {
+  from {
+    opacity: 0;
   }
-}
-
-@media (min-width: 1200px) {
-  .chatPanelExpanded {
-    left: 120px;
-    right: 120px;
-    top: calc(env(safe-area-inset-top, 0px) + 80px);
-    bottom: 60px;
+  to {
+    opacity: 1;
   }
 }
 
@@ -391,16 +386,6 @@
     z-index: 1100;
     /* Slide up from bottom on mobile */
     animation: mobileSlideUp 0.3s ease;
-  }
-  
-  .chatPanelExpanded {
-    /* Already full screen, no change needed */
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 0;
-    z-index: 1100;
   }
 }
 
@@ -438,14 +423,6 @@
     max-height: 520px;
     height: calc(100vh - 180px);
   }
-  
-  .chatPanelExpanded {
-    left: 24px;
-    right: 24px;
-    top: calc(env(safe-area-inset-top, 0px) + 80px);
-    bottom: 30px;
-    border-radius: 16px;
-  }
 }
 
 /* Smaller tablets / narrow windows (481px - 768px) */
@@ -453,13 +430,6 @@
   .chatPanel {
     max-width: 340px;
     max-height: 480px;
-  }
-  
-  .chatPanelExpanded {
-    left: 16px;
-    right: 16px;
-    top: calc(env(safe-area-inset-top, 0px) + 70px);
-    bottom: 20px;
   }
 }
 
@@ -2327,8 +2297,10 @@
    Conversation History Sidebar
    ---------------------------------------- */
 .historySidebar {
-  width: 280px;
-  min-width: 280px;
+  width: 260px;
+  min-width: 220px;
+  max-width: 280px;
+  flex-shrink: 0;
   background: #f9fafb;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -2350,6 +2322,30 @@
 
 .historySidebarHeader svg {
   opacity: 0.7;
+}
+
+.historySidebarHeader span {
+  flex: 1;
+}
+
+.historySidebarClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.historySidebarClose:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #374151;
 }
 
 .newConversationBtn {
@@ -2459,8 +2455,28 @@
 
 /* Responsive adjustments for sidebar */
 
-/* iPad and medium screens (768px - 900px) - stack vertically */
-@media (max-width: 900px) {
+/* Desktop expanded - full screen with sidebar */
+@media (min-width: 901px) {
+  .chatPanelExpanded .header {
+    /* Add safe area padding for full-screen mode */
+    padding-top: max(14px, calc(env(safe-area-inset-top, 0px) + 10px));
+  }
+  
+  .chatPanelExpanded .historySidebar {
+    width: 280px;
+    min-width: 260px;
+    max-width: 320px;
+    border-right: 1px solid #e5e7eb;
+  }
+}
+
+/* Tablets and medium screens (481px - 900px) - stack vertically */
+@media (min-width: 481px) and (max-width: 900px) {
+  .chatPanelExpanded .header {
+    /* Add safe area padding for full-screen mode */
+    padding-top: max(14px, calc(env(safe-area-inset-top, 0px) + 10px));
+  }
+  
   .chatContentExpanded {
     flex-direction: column;
   }
@@ -2468,6 +2484,7 @@
   .historySidebar {
     width: 100%;
     min-width: 100%;
+    max-width: none;
     max-height: 200px;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
@@ -2528,8 +2545,8 @@
   }
 }
 
-/* Smaller tablets (600px - 768px) - more compact */
-@media (max-width: 768px) {
+/* Smaller tablets (481px - 768px) - more compact */
+@media (min-width: 481px) and (max-width: 768px) {
   .historySidebar {
     max-height: 180px;
   }
@@ -2540,8 +2557,8 @@
   }
 }
 
-/* Small screens (max 600px) - most compact horizontal list */
-@media (max-width: 600px) {
+/* Small tablets (481px - 600px) - most compact horizontal list */
+@media (min-width: 481px) and (max-width: 600px) {
   .historySidebar {
     max-height: 160px;
   }
@@ -3133,86 +3150,97 @@
   }
 }
 
-/* Mobile phones - Expand shows ONLY history (full screen panel) */
+/* Mobile phones - Show history panel when showHistory is true */
 @media (max-width: 480px) {
-  /* When expanded on mobile, history takes full height */
-  .chatPanelExpanded .historySidebar {
+  /* On mobile, history sidebar slides over the content */
+  .historySidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: none;
     max-height: none;
     height: 100%;
-    flex: 1;
-    border-bottom: none;
-    display: flex;
-    flex-direction: column;
+    z-index: 30;
+    border-right: none;
+    background: #ffffff;
+    animation: slideInHistory 0.25s ease-out;
+    /* Account for header height */
+    padding-top: calc(60px + env(safe-area-inset-top, 0px));
   }
   
-  .chatPanelExpanded .historySidebarHeader {
+  @keyframes slideInHistory {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .historySidebarHeader {
     padding: 16px 20px 12px;
     font-size: 14px;
     font-weight: 600;
     color: #374151;
   }
   
-  .chatPanelExpanded .newConversationBtn {
+  .newConversationBtn {
     margin: 0 16px 16px;
     padding: 14px 16px;
     font-size: 15px;
     border-radius: 12px;
   }
   
-  .chatPanelExpanded .conversationsList {
+  .conversationsList {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
     gap: 4px;
-    padding: 0 12px 16px;
+    padding: 0 12px calc(16px + env(safe-area-inset-bottom, 0px));
   }
   
-  .chatPanelExpanded .conversationItem {
+  .conversationItem {
     width: 100%;
     min-width: unset;
     max-width: none;
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
     flex-shrink: 0;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
-  .chatPanelExpanded .conversationTitle {
+  .conversationTitle {
     font-size: 15px;
     -webkit-line-clamp: 2;
+    white-space: normal;
   }
   
-  .chatPanelExpanded .conversationMeta {
-    font-size: 13px;
-    margin-top: 6px;
+  .conversationMeta {
+    font-size: 12px;
+    margin-top: 4px;
   }
   
-  .chatPanelExpanded .noConversations {
+  .noConversations {
     flex: 1;
     flex-direction: column;
     padding: 40px 20px;
     gap: 12px;
   }
   
-  .chatPanelExpanded .noConversations svg {
+  .noConversations svg {
     margin-bottom: 8px;
   }
   
-  .chatPanelExpanded .noConversations p {
+  .noConversations p {
     font-size: 15px;
-  }
-  
-  /* HIDE chat content and input when expanded on mobile - show only history */
-  .chatPanelExpanded .messagesArea,
-  .chatPanelExpanded .welcomeSimple {
-    display: none;
-  }
-}
-
-/* Hide input area when expanded on mobile - needs separate rule due to structure */
-@media (max-width: 480px) {
-  .chatPanelExpanded .inputArea {
-    display: none;
   }
 }

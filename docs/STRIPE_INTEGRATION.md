@@ -387,3 +387,4 @@ Returns Stripe metrics for admin dashboard.
 
 *See [ARCHITECTURE.md](ARCHITECTURE.md) for system overview and [TIER_ACCESS_MATRIX.md](TIER_ACCESS_MATRIX.md) for feature gating.*
 
+

@@ -97,9 +97,6 @@ export default async function Home() {
               <li><CheckIcon /> Community built on respect, not rivalry</li>
               <li><CheckIcon /> Mentorship from drivers who walk the walk</li>
             </ul>
-              <Button href="/car-selector" variant="primary" size="lg">
-                Your Sportscar Match
-              </Button>
             </div>
             <div className={styles.valueImage}>
               <div className={styles.valueImageWrapper}>

@@ -136,6 +136,12 @@
 }
 .type-time-attack .typeIcon { color: #D32F2F; }
 
+.type-club-racing {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: #FFF;
+}
+.type-club-racing .typeIcon { color: #2E7D32; }
+
 .type-other,
 .type-default {
   background: linear-gradient(135deg, #607D8B 0%, #546E7A 100%);
@@ -143,6 +149,13 @@
 }
 .type-other .typeIcon,
 .type-default .typeIcon { color: #607D8B; }
+
+/* Header Badges Container */
+.headerBadges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
 /* Featured Badge */
 .featuredBadge {
@@ -154,6 +167,28 @@
   color: var(--color-gray-900);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* Recurring Event Badge */
+.recurringBadge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 600;
+  color: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(4px);
+}
+
+.recurringBadge svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
 }
 
 /* ============================================
