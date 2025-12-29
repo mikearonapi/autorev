@@ -94,7 +94,7 @@ export default function FeaturePhoneShowcase() {
                 <AdvancedImageCarousel 
                   images={AL_IMAGES}
                   alt="AL AI assistant"
-                  intervals={[1500, 1500, 1500, 6000]}
+                  displayDurations={[1500, 1500, 1500, 3000]}
                   transitionDuration={3000}
                 />
               </IPhoneFrame>

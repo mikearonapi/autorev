@@ -1,8 +1,8 @@
 /**
  * AdvancedImageCarousel Component
  * 
- * Auto-rotating image carousel with per-image interval control.
- * Allows different display durations for each image in the sequence.
+ * Auto-rotating image carousel with per-image display control.
+ * Each image shows for its specified duration, THEN transitions.
  */
 
 'use client';
@@ -15,7 +15,7 @@ import styles from './ImageCarousel.module.css';
  * @typedef {Object} AdvancedImageCarouselProps
  * @property {string[]} images - Array of image paths to cycle through
  * @property {string} alt - Alt text for images
- * @property {number[]} intervals - Array of intervals (in ms) for each image. If shorter than images array, last interval is used for remaining images.
+ * @property {number[]} displayDurations - How long each image shows (in ms) BEFORE transition starts
  * @property {number} [transitionDuration=3000] - Duration of fade transition in ms
  */
 
@@ -25,7 +25,7 @@ import styles from './ImageCarousel.module.css';
 export default function AdvancedImageCarousel({ 
   images, 
   alt,
-  intervals,
+  displayDurations,
   transitionDuration = 3000
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,16 +33,19 @@ export default function AdvancedImageCarousel({
   useEffect(() => {
     if (images.length <= 1) return;
 
-    // Get the interval for the current image
-    // If intervals array is shorter than images, use the last interval
-    const currentInterval = intervals[currentIndex] || intervals[intervals.length - 1];
+    // Get the display duration for the current image
+    // If displayDurations array is shorter than images, use the last duration
+    const currentDuration = displayDurations[currentIndex] || displayDurations[displayDurations.length - 1];
+
+    // Total time = display duration + transition duration
+    const totalTime = currentDuration + transitionDuration;
 
     const timer = setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, currentInterval);
+    }, totalTime);
 
     return () => clearTimeout(timer);
-  }, [images.length, intervals, currentIndex]);
+  }, [images.length, displayDurations, transitionDuration, currentIndex]);
 
   if (!images || images.length === 0) {
     return null;
