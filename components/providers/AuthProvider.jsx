@@ -15,11 +15,6 @@ import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import dynamic from 'next/dynamic';
 
-// Dynamically import AuthLoadingScreen to avoid SSR issues
-const AuthLoadingScreen = dynamic(() => import('@/components/auth/AuthLoadingScreen'), {
-  ssr: false,
-});
-
 // Dynamically import OnboardingFlow to avoid SSR issues
 const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {
   ssr: false,
@@ -27,6 +22,11 @@ const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingF
 
 // Dynamically import AuthErrorBanner for session error notifications
 const AuthErrorBanner = dynamic(() => import('@/components/auth/AuthErrorBanner'), {
+  ssr: false,
+});
+
+// Dynamically import WelcomeToast for fresh login greeting
+const WelcomeToast = dynamic(() => import('@/components/WelcomeToast'), {
   ssr: false,
 });
 
@@ -217,6 +217,7 @@ const defaultAuthState = {
   authError: null,
   sessionExpired: false, // True when session was invalidated (token expired)
   sessionRevoked: false, // True when session was revoked (e.g., logout from another device)
+  showWelcomeToast: false, // True to show welcome toast after fresh login
 };
 
 /**
@@ -481,7 +482,8 @@ function checkAuthCallbackCookie() {
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
-  const { loadingStates, isShowingProgress, markComplete, markStarted, markFailed, retryStep, startProgress, endProgress, dismissProgress, resetProgress } = useLoadingProgress();
+  // We only need resetProgress now - the loading overlay has been replaced with a simple toast
+  const { resetProgress } = useLoadingProgress();
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
@@ -817,126 +819,54 @@ export function AuthProvider({ children }) {
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
           
-          // =====================================================================
-          // RACE CONDITION FIX: Check for fresh OAuth signals BEFORE consuming them.
-          // 
-          // Problem: initializeAuth() and onAuthStateChange(INITIAL_SESSION) can race.
-          // If initializeAuth wins and clears the signals, INITIAL_SESSION's
-          // detectFreshLogin() check would return false, skipping startProgress().
-          //
-          // Solution: If we're in initializeAuth AND we have fresh OAuth signals,
-          // we must call startProgress() here and run the fresh-login data loading
-          // path. This ensures the loading overlay shows regardless of which path wins.
-          // =====================================================================
+          // Check for fresh OAuth signals (for welcome toast)
           const { isFresh: isFreshOAuth, hasAuthTs } = checkFreshOAuthSignals();
           
+          // Fresh OAuth login - show welcome toast
           if (isFreshOAuth) {
-            console.log('[AuthProvider] initializeAuth detected fresh OAuth login - showing progress screen');
-            
-            // Consume signals IMMEDIATELY to prevent INITIAL_SESSION from double-triggering
+            console.log('[AuthProvider] Fresh OAuth login detected - will show welcome toast');
             consumeOAuthSignals();
-            
-            // Also consume login intent if present (belt and suspenders)
             consumeLoginIntent();
-            
-            // Start the loading progress screen
-            startProgress();
-            
-            // Create retry callback for profile (same pattern as INITIAL_SESSION/SIGNED_IN)
-            const retryProfileFetch = async () => {
-              console.log('[AuthProvider] Retrying profile fetch (initializeAuth fresh OAuth)...');
-              try {
-                const profile = await fetchProfile(user.id);
-                if (profile?._fetchError) {
-                  console.warn('[AuthProvider] Profile retry had errors, using fallback');
-                  markFailed('profile', 'Failed to load profile, using defaults');
-                } else {
-                  setState(prev => ({ ...prev, profile }));
-                  markComplete('profile');
-                  console.log('[AuthProvider] Profile retry succeeded:', { tier: profile?.subscription_tier });
-                }
-              } catch (err) {
-                console.error('[AuthProvider] Profile retry failed:', err);
-                markFailed('profile', err.message || 'Failed to load profile');
-              }
-            };
-            
-            markStarted('profile', retryProfileFetch);
-            
-            // Parallel load profile and prefetch data with progress tracking
-            try {
-              const [profileResult, prefetchResult] = await Promise.allSettled([
-                fetchProfile(user.id),
-                prefetchAllUserData(user.id),
-              ]);
-              
-              const profile = profileResult.status === 'fulfilled' ? profileResult.value : null;
-              
-              if (profileResult.status === 'rejected') {
-                console.error('[AuthProvider] Profile fetch rejected in initializeAuth fresh OAuth:', profileResult.reason);
-                markFailed('profile', profileResult.reason?.message || 'Failed to load profile');
-              } else if (profile?._fetchError) {
-                console.warn('[AuthProvider] Profile fetch had errors in initializeAuth fresh OAuth, using fallback');
-                markFailed('profile', 'Failed to load profile, using defaults');
-              } else {
-                markComplete('profile');
-              }
-              
-              if (prefetchResult.status === 'rejected') {
-                console.warn('[AuthProvider] Prefetch error in initializeAuth fresh OAuth (non-fatal):', prefetchResult.reason);
-              }
-              
-              setState(prev => ({ 
-                ...prev, 
-                profile: profile || prev.profile,
-                isDataFetchReady: true,
-              }));
-              console.log('[AuthProvider] Fresh OAuth load complete via initializeAuth:', {
+            // Defer toast to after profile loads so we have the user's name
+            setTimeout(() => {
+              setState(prev => ({ ...prev, showWelcomeToast: true }));
+            }, 500);
+          }
+          
+          // Clean up auth_ts from URL if present
+          if (hasAuthTs && typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('auth_ts');
+            window.history.replaceState({}, '', url.pathname + url.search);
+          }
+          
+          // Load profile and prefetch data silently in background
+          console.log('[AuthProvider] Loading user data in background');
+          
+          const profilePromise = fetchProfile(user.id).then(profile => {
+            if (profile) {
+              setState(prev => ({ ...prev, profile }));
+              console.log('[AuthProvider] Profile loaded:', {
                 userId: user.id.slice(0, 8) + '...',
                 tier: profile?.subscription_tier,
               });
-            } catch (err) {
-              console.error('[AuthProvider] Error during parallel load in initializeAuth fresh OAuth:', err);
-              markFailed('profile', err.message || 'Failed to load profile');
-              setState(prev => ({ ...prev, isDataFetchReady: true }));
             }
-          } else {
-            // Silent session recovery (page refresh or stale signals) - no loading overlay
-            // Clean up stale auth_ts if present (not fresh but exists)
-            if (hasAuthTs && typeof window !== 'undefined') {
-              const url = new URL(window.location.href);
-              url.searchParams.delete('auth_ts');
-              window.history.replaceState({}, '', url.pathname + url.search);
-              console.log('[AuthProvider] Cleared stale auth_ts from URL');
-            }
-            
-            console.log('[AuthProvider] Session recovery via initializeAuth - loading silently');
-            
-            const profilePromise = fetchProfile(user.id).then(profile => {
-              if (profile) {
-                setState(prev => ({ ...prev, profile }));
-                console.log('[AuthProvider] Profile loaded via initializeAuth:', {
-                  userId: user.id.slice(0, 8) + '...',
-                  tier: profile?.subscription_tier,
-                });
-              }
-              return profile;
-            }).catch(err => {
-              console.warn('[AuthProvider] Profile fetch error in initializeAuth:', err);
-              return null;
-            });
-            
-            // Prefetch user data in background for snappy navigation
-            const prefetchPromise = prefetchAllUserData(user.id).catch(err => {
-              console.warn('[AuthProvider] Background prefetch error:', err);
-            });
-            
-            // Signal ready for child providers AFTER both profile and prefetch complete
-            Promise.all([profilePromise, prefetchPromise]).then(() => {
-              console.log('[AuthProvider] Data prefetch complete, signaling ready for child providers');
-              setState(prev => ({ ...prev, isDataFetchReady: true }));
-            });
-          }
+            return profile;
+          }).catch(err => {
+            console.warn('[AuthProvider] Profile fetch error:', err);
+            return null;
+          });
+          
+          // Prefetch user data in background for snappy navigation
+          const prefetchPromise = prefetchAllUserData(user.id).catch(err => {
+            console.warn('[AuthProvider] Background prefetch error:', err);
+          });
+          
+          // Signal ready for child providers AFTER both profile and prefetch complete
+          Promise.all([profilePromise, prefetchPromise]).then(() => {
+            console.log('[AuthProvider] Data prefetch complete, signaling ready for child providers');
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
+          });
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
@@ -989,63 +919,28 @@ export function AuthProvider({ children }) {
         }));
         scheduleSessionRefresh(session);
         
-        // Only show progress screen for FRESH logins (OAuth redirect, password login)
-        // Skip for page refresh - data loads silently in background
+        // Fresh login - show welcome toast, load data silently in background
         if (isFreshLogin) {
-          console.log('[AuthProvider] Fresh login - showing progress screen');
-          startProgress();
+          console.log('[AuthProvider] Fresh login via SIGNED_IN - will show welcome toast');
+          // Defer toast slightly so profile loads first (for user's name)
+          setTimeout(() => {
+            setState(prev => ({ ...prev, showWelcomeToast: true }));
+          }, 500);
           
-          // Create retry callback for profile that can be called from LoadingProgressProvider
-          const retryProfileFetch = async () => {
-            console.log('[AuthProvider] Retrying profile fetch...');
-            try {
-              const profile = await fetchProfile(session.user.id);
-              if (profile?._fetchError) {
-                console.warn('[AuthProvider] Profile retry had errors, using fallback');
-                markFailed('profile', 'Failed to load profile, using defaults');
-              } else {
-                setState(prev => ({ ...prev, profile }));
-                markComplete('profile');
-                console.log('[AuthProvider] Profile retry succeeded:', { tier: profile?.subscription_tier });
-              }
-            } catch (err) {
-              console.error('[AuthProvider] Profile retry failed:', err);
-              markFailed('profile', err.message || 'Failed to load profile');
-            }
-          };
-          
-          // Mark profile loading as started with retry callback
-          markStarted('profile', retryProfileFetch);
-          
-          // OPTIMIZATION: Fetch profile AND prefetch user data IN PARALLEL
-          // This saves ~200-400ms compared to sequential loading
+          // Load profile and prefetch data in parallel, silently
           try {
             const [profileResult, prefetchResult] = await Promise.allSettled([
               fetchProfile(session.user.id),
               prefetchAllUserData(session.user.id),
             ]);
             
-            // Handle profile result
             const profile = profileResult.status === 'fulfilled' ? profileResult.value : null;
             
-            if (profileResult.status === 'rejected') {
-              console.error('[AuthProvider] Profile fetch rejected:', profileResult.reason);
-              markFailed('profile', profileResult.reason?.message || 'Failed to load profile');
-            } else if (profile?._fetchError) {
-              console.warn('[AuthProvider] Profile fetch had errors, using fallback');
-              markFailed('profile', 'Failed to load profile, using defaults');
-            } else {
-              markComplete('profile');
-            }
-
-            // Log prefetch result (non-fatal if it fails)
             if (prefetchResult.status === 'rejected') {
               console.warn('[AuthProvider] Prefetch error (non-fatal):', prefetchResult.reason);
-            } else {
-              console.log('[AuthProvider] Prefetch complete, signaling ready for child providers');
             }
             
-            // Signal that child providers can safely fetch (they'll find prefetched data)
+            // Signal ready for child providers
             setState(prev => ({ ...prev, isDataFetchReady: true }));
             
             // Check if there's a pending tier selection from the join page
@@ -1064,20 +959,16 @@ export function AuthProvider({ children }) {
               }
             }
             
-            // Update profile in state (use finalProfile to preserve any tier updates)
             if (finalProfile) {
               setState(prev => ({ ...prev, profile: finalProfile }));
               console.log('[AuthProvider] Profile loaded:', { tier: finalProfile?.subscription_tier });
             }
           } catch (err) {
-            console.error('[AuthProvider] Error during parallel load:', err);
-            markFailed('profile', err.message || 'Failed to load profile');
-            // Still signal ready so child providers don't hang forever
+            console.error('[AuthProvider] Error loading data:', err);
             setState(prev => ({ ...prev, isDataFetchReady: true }));
           }
         } else {
-          console.log('[AuthProvider] Page refresh - skipping progress screen');
-          // initializeAuth already handled profile loading and will set isDataFetchReady
+          console.log('[AuthProvider] Page refresh - initializeAuth handles loading');
         }
       } else if (event === 'SIGNED_OUT') {
         // Clear refresh timer on signout
@@ -1186,85 +1077,31 @@ export function AuthProvider({ children }) {
         }));
         scheduleSessionRefresh(session);
         
-        // If this is a fresh login, show the loading overlay
+        // Fresh login via INITIAL_SESSION - show welcome toast
         if (hasFreshSignals) {
-          console.log('[AuthProvider] INITIAL_SESSION is fresh login - showing progress screen');
-          startProgress();
-          
-          // Create retry callback for profile
-          const retryProfileFetch = async () => {
-            console.log('[AuthProvider] Retrying profile fetch (INITIAL_SESSION)...');
-            try {
-              const profile = await fetchProfile(session.user.id);
-              if (profile?._fetchError) {
-                console.warn('[AuthProvider] Profile retry had errors, using fallback');
-                markFailed('profile', 'Failed to load profile, using defaults');
-              } else {
-                setState(prev => ({ ...prev, profile }));
-                markComplete('profile');
-                console.log('[AuthProvider] Profile retry succeeded:', { tier: profile?.subscription_tier });
-              }
-            } catch (err) {
-              console.error('[AuthProvider] Profile retry failed:', err);
-              markFailed('profile', err.message || 'Failed to load profile');
-            }
-          };
-          
-          markStarted('profile', retryProfileFetch);
-          
-          // Use the same parallel loading pattern as SIGNED_IN
-          try {
-            const [profileResult, prefetchResult] = await Promise.allSettled([
-              fetchProfile(session.user.id),
-              prefetchAllUserData(session.user.id),
-            ]);
-            
-            const profile = profileResult.status === 'fulfilled' ? profileResult.value : null;
-            
-            if (profileResult.status === 'rejected') {
-              console.error('[AuthProvider] Profile fetch rejected in INITIAL_SESSION:', profileResult.reason);
-              markFailed('profile', profileResult.reason?.message || 'Failed to load profile');
-            } else if (profile?._fetchError) {
-              console.warn('[AuthProvider] Profile fetch had errors in INITIAL_SESSION, using fallback');
-              markFailed('profile', 'Failed to load profile, using defaults');
-            } else {
-              markComplete('profile');
-            }
-            
-            if (prefetchResult.status === 'rejected') {
-              console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION (non-fatal):', prefetchResult.reason);
-            }
-            
-            setState(prev => ({ 
-              ...prev, 
-              profile: profile || prev.profile,
-              isDataFetchReady: true,
-            }));
-          } catch (err) {
-            console.error('[AuthProvider] Error during parallel load in INITIAL_SESSION:', err);
-            markFailed('profile', err.message || 'Failed to load profile');
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-          }
-        } else {
-          // Silent session recovery (page refresh) - no loading overlay
-          console.log('[AuthProvider] INITIAL_SESSION is session recovery - loading silently');
-          Promise.all([
-            fetchProfile(session.user.id),
-            prefetchAllUserData(session.user.id).catch(err => {
-              console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
-            }),
-          ]).then(([profile]) => {
-            setState(prev => ({ 
-              ...prev, 
-              profile: profile || prev.profile,
-              isDataFetchReady: true,
-            }));
-          }).catch(err => {
-            console.error('[AuthProvider] Error loading data after initial session:', err);
-            // Still signal ready so child providers don't hang
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-          });
+          console.log('[AuthProvider] INITIAL_SESSION is fresh login - will show welcome toast');
+          setTimeout(() => {
+            setState(prev => ({ ...prev, showWelcomeToast: true }));
+          }, 500);
         }
+        
+        // Load data silently in background (same path for fresh and recovery)
+        console.log('[AuthProvider] INITIAL_SESSION - loading data silently');
+        Promise.all([
+          fetchProfile(session.user.id),
+          prefetchAllUserData(session.user.id).catch(err => {
+            console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
+          }),
+        ]).then(([profile]) => {
+          setState(prev => ({ 
+            ...prev, 
+            profile: profile || prev.profile,
+            isDataFetchReady: true,
+          }));
+        }).catch(err => {
+          console.error('[AuthProvider] Error loading data in INITIAL_SESSION:', err);
+          setState(prev => ({ ...prev, isDataFetchReady: true }));
+        });
       } else if (session?.user && !isAuthenticatedRef.current) {
         // Catch-all: If we have a valid session but aren't authenticated,
         // this is an auth recovery scenario
@@ -1760,16 +1597,13 @@ export function AuthProvider({ children }) {
         />
       )}
       
-      {/* Auth Loading Screen - shown after sign-in while data loads */}
-      <AuthLoadingScreen
-        isVisible={isShowingProgress}
-        loadingStates={loadingStates}
-        onComplete={endProgress}
-        onDismiss={dismissProgress}
-        onRetry={retryStep}
-        userName={state.profile?.display_name || state.user?.user_metadata?.name}
-        userAvatar={state.profile?.avatar_url || state.user?.user_metadata?.avatar_url}
-      />
+      {/* Welcome Toast - shown briefly after fresh login */}
+      {state.showWelcomeToast && (
+        <WelcomeToast
+          userName={state.profile?.display_name || state.user?.user_metadata?.name || state.user?.email?.split('@')[0]}
+          onDismiss={() => setState(prev => ({ ...prev, showWelcomeToast: false }))}
+        />
+      )}
       
       {/* Onboarding Modal - shown for new users who haven't completed it */}
       {onboardingState.showOnboarding && state.isAuthenticated && (
