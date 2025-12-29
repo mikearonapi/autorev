@@ -779,6 +779,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     <span className={styles.tabBadge}>{item.vehicle.installedModifications?.length || 0}</span>
                   )}
                 </button>
+                <button 
+                  className={`${styles.headerToggleBtn} ${detailsView === 'health' ? styles.headerToggleActive : ''}`}
+                  onClick={() => setDetailsView('health')}
+                  title="Vehicle Health"
+                >
+                  <Icons.gauge size={12} />
+                  <span>Health</span>
+                </button>
               </div>
             )}
             <button 
@@ -891,21 +899,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         {/* Full Details - Consistent view for all, with Owner's Reference toggle for My Collection */}
         {panelState === 'details' && car && (
           <div className={styles.specPanelBody}>
-            {isOwnedVehicle && item?.vehicle?.id && (
-              <div style={{ marginBottom: 12 }}>
-                <VehicleHealthCard
-                  userId={userId}
-                  vehicleId={item.vehicle.id}
-                  vehicleName={
-                    car.name ||
-                    item.vehicle.nickname ||
-                    `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim()
-                  }
-                  initialMileage={item.vehicle.mileage}
-                />
-              </div>
-            )}
-
             {/* Vehicle Details View - Same for both My Collection and Favorites */}
             {(!isOwnedVehicle || detailsView === 'specs') && (
               <>
@@ -918,7 +911,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 <div className={styles.fullDetailsInPanel}>
                   {/* Performance */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Performance</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Performance</span>
+                      <AskALButton 
+                        category="Performance"
+                        prompt={`Tell me about the performance capabilities of my ${car?.name || 'car'}. How does it compare to competitors, and what are its strengths on the street and track?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       {car.hp && <div className={styles.detailBlockItem}><span>Horsepower</span><span>{car.hp} HP</span></div>}
                       {car.torque && <div className={styles.detailBlockItem}><span>Torque</span><span>{car.torque} lb-ft</span></div>}
@@ -932,7 +932,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Engine & Drivetrain */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Engine & Drivetrain</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Engine & Drivetrain</span>
+                      <AskALButton 
+                        category="Engine & Drivetrain"
+                        prompt={`Tell me about the engine and drivetrain in my ${car?.name || 'car'}. What are common issues, maintenance tips, and potential upgrades?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       {car.engine && <div className={styles.detailBlockItem}><span>Engine</span><span>{car.engine}</span></div>}
                       {car.trans && <div className={styles.detailBlockItem}><span>Transmission</span><span>{car.trans}</span></div>}
@@ -944,7 +951,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Chassis & Body */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Chassis & Body</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Chassis & Body</span>
+                      <AskALButton 
+                        category="Chassis & Body"
+                        prompt={`Tell me about the chassis and body of my ${car?.name || 'car'}. What makes it unique, and what should I know about its construction and handling characteristics?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       {car.curbWeight && <div className={styles.detailBlockItem}><span>Curb Weight</span><span>{car.curbWeight.toLocaleString()} lbs</span></div>}
                       {car.seats && <div className={styles.detailBlockItem}><span>Seats</span><span>{car.seats}</span></div>}
@@ -954,7 +968,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* AutoRev Ratings */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>AutoRev Ratings</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>AutoRev Ratings</span>
+                      <AskALButton 
+                        category="AutoRev Ratings"
+                        prompt={`Explain the AutoRev ratings for my ${car?.name || 'car'}. Why did it receive these scores, and how does it compare to similar vehicles?`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       {car.driverFun && <div className={styles.detailBlockItem}><span>Driver Fun</span><span className={styles.ratingValue}>{car.driverFun}/10</span></div>}
                       {car.track && <div className={styles.detailBlockItem}><span>Track</span><span className={styles.ratingValue}>{car.track}/10</span></div>}
@@ -968,7 +989,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
                   {/* Ownership */}
                   <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>Ownership</h4>
+                    <h4 className={styles.detailBlockTitle}>
+                      <span>Ownership</span>
+                      <AskALButton 
+                        category="Ownership"
+                        prompt={`What should I know about owning a ${car?.name || 'car'}? Include typical costs, common issues to watch for, and what makes it special as a daily driver or weekend car.`}
+                        carName={car?.name}
+                      />
+                    </h4>
                     <div className={styles.detailBlockItems}>
                       {car.priceRange && <div className={styles.detailBlockItem}><span>Price Range</span><span>{car.priceRange}</span></div>}
                       {car.years && <div className={styles.detailBlockItem}><span>Model Years</span><span>{car.years}</span></div>}
@@ -982,7 +1010,14 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   {/* Ownership Extras - if available */}
                   {(car.partsAvailability || car.dealerVsIndependent || car.diyFriendliness || car.trackReadiness || car.communityStrength) && (
                     <div className={styles.detailBlock}>
-                      <h4 className={styles.detailBlockTitle}>Ownership Extras</h4>
+                      <h4 className={styles.detailBlockTitle}>
+                        <span>Ownership Extras</span>
+                        <AskALButton 
+                          category="Ownership Extras"
+                          prompt={`Tell me more about owning a ${car?.name || 'car'} - parts availability, DIY friendliness, track readiness, and the enthusiast community.`}
+                          carName={car?.name}
+                        />
+                      </h4>
                       <div className={styles.detailBlockItems}>
                         {car.partsAvailability && <div className={styles.detailBlockItem}><span>Parts</span><span style={{textTransform: 'capitalize'}}>{car.partsAvailability}</span></div>}
                         {car.dealerVsIndependent && <div className={styles.detailBlockItem}><span>Service</span><span style={{textTransform: 'capitalize'}}>{car.dealerVsIndependent.replace(/-/g, ' ')}</span></div>}
@@ -1611,6 +1646,22 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 )}
               </div>
             )}
+
+            {/* Vehicle Health View - Track maintenance status */}
+            {isOwnedVehicle && detailsView === 'health' && item?.vehicle?.id && (
+              <div className={styles.healthView}>
+                <VehicleHealthCard
+                  userId={userId}
+                  vehicleId={item.vehicle.id}
+                  vehicleName={
+                    car.name ||
+                    item.vehicle.nickname ||
+                    `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim()
+                  }
+                  initialMileage={item.vehicle.mileage}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -1662,6 +1713,16 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               >
                 <Icons.clipboard size={20} />
                 <span>Service</span>
+              </button>
+              <button 
+                className={styles.quickActionItem}
+                onClick={() => {
+                  setDetailsView('health');
+                  setPanelState('details');
+                }}
+              >
+                <Icons.gauge size={20} />
+                <span>Health</span>
               </button>
             </>
           )}

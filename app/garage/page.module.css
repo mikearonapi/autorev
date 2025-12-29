@@ -90,6 +90,13 @@
   /* Remove min-width on mobile/tablet to allow more space for tabs */
 }
 
+/* Hide title on very small screens to give tabs priority */
+@media (max-width: 479px) {
+  .headerLeft {
+    display: none;
+  }
+}
+
 @media (min-width: 1024px) {
   .headerLeft {
     min-width: 200px;
@@ -3824,6 +3831,13 @@
   gap: 16px;
 }
 
+/* Health View - Vehicle health tracking */
+.healthView {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .modsHeader {
   display: flex;
   align-items: center;
@@ -4018,9 +4032,16 @@
    =========================================== */
 
 .quickActions {
-  display: flex;
+  display: none; /* Hidden on mobile - available in content area instead */
   align-items: center;
   gap: 8px;
+}
+
+/* Show quick actions only on larger screens */
+@media (min-width: 768px) {
+  .quickActions {
+    display: flex;
+  }
 }
 
 .quickActionBtn {
