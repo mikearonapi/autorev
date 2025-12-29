@@ -519,10 +519,10 @@ export default function ProfilePage() {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: Icons.user },
-    { id: 'referrals', label: 'Refer & Earn', icon: Icons.gift },
-    { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
-    { id: 'subscription', label: 'Subscription', icon: Icons.crown },
     { id: 'data', label: 'Your Data', icon: Icons.shield },
+    { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
+    { id: 'referrals', label: 'Refer & Earn', icon: Icons.gift },
+    { id: 'subscription', label: 'Subscription & Billing', icon: Icons.crown },
   ];
 
   return (
@@ -979,6 +979,38 @@ export default function ProfilePage() {
                     }}
                   >
                     Manage Billing
+                  </button>
+                </div>
+              )}
+
+              {/* Billing Management Section */}
+              {profile?.stripe_customer_id && (
+                <div className={styles.billingManagement}>
+                  <div className={styles.billingManagementInfo}>
+                    <Icons.creditCard size={20} />
+                    <div>
+                      <h4>Payment & Billing</h4>
+                      <p>Update payment method, view invoices, or manage your subscription</p>
+                    </div>
+                  </div>
+                  <button 
+                    className={styles.manageBillingButton}
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/billing/portal', { method: 'POST' });
+                        const data = await res.json();
+                        if (data.url) {
+                          window.location.href = data.url;
+                        } else {
+                          alert(data.error || 'Failed to open billing portal');
+                        }
+                      } catch (err) {
+                        alert('Failed to open billing portal');
+                      }
+                    }}
+                  >
+                    <Icons.externalLink size={16} />
+                    Manage in Stripe
                   </button>
                 </div>
               )}
