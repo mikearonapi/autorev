@@ -662,6 +662,8 @@
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .suggestionsTop {
@@ -669,6 +671,7 @@
   flex-direction: column;
   gap: 6px;
   width: 100%;
+  max-width: 500px;
 }
 
 .suggestionsLabel {
@@ -692,16 +695,20 @@
 }
 
 .suggestionBtn {
-  padding: 8px 12px;
+  padding: 10px 14px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   color: #374151;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
   line-height: 1.4;
+  min-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .suggestionBtn:hover {
@@ -2293,14 +2300,22 @@
   flex-direction: row;
 }
 
+/* Ensure messages area fills remaining space in expanded view */
+.chatContentExpanded .messagesArea {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
 /* ----------------------------------------
    Conversation History Sidebar
    ---------------------------------------- */
 .historySidebar {
   width: 260px;
-  min-width: 220px;
-  max-width: 280px;
+  min-width: 200px;
+  max-width: 260px;
   flex-shrink: 0;
+  flex-grow: 0;
   background: #f9fafb;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -2463,10 +2478,26 @@
   }
   
   .chatPanelExpanded .historySidebar {
-    width: 280px;
-    min-width: 260px;
-    max-width: 320px;
+    width: 260px;
+    min-width: 220px;
+    max-width: 280px;
+    flex-shrink: 0;
+    flex-grow: 0;
     border-right: 1px solid #e5e7eb;
+  }
+  
+  .chatPanelExpanded .messagesArea {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Narrower desktop (901px - 1100px) - smaller sidebar */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .chatPanelExpanded .historySidebar {
+    width: 220px;
+    min-width: 200px;
+    max-width: 240px;
   }
 }
 
@@ -3244,3 +3275,4 @@
     font-size: 15px;
   }
 }
+

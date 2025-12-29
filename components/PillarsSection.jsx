@@ -7,9 +7,8 @@
  * Car count is passed from page.jsx to ensure consistency with headline.
  */
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import Button from '@/components/Button';
-import OnboardingPopup, { garageOnboardingSteps, tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
 import styles from '@/app/page.module.css';
 
 // Icons
@@ -57,8 +56,6 @@ const BookIcon = () => (
 );
 
 export default function PillarsSection({ carCount = 100 }) {
-  const [activeOnboarding, setActiveOnboarding] = useState(null);
-
   const pillars = useMemo(() => [
     {
       icon: <ExploreIcon />,
@@ -82,8 +79,7 @@ export default function PillarsSection({ carCount = 100 }) {
       description: 'Save your favorites, compare cars side-by-side, and track your build configurations. Your personal space to plan your automotive journey.',
       cta: 'View Garage',
       href: '/garage',
-      accent: 'quaternary',
-      onboardingKey: 'garage'
+      accent: 'quaternary'
     },
     {
       icon: <ToolIcon />,
@@ -91,8 +87,7 @@ export default function PillarsSection({ carCount = 100 }) {
       description: 'Plan your build with purpose. Select your car, explore upgrade recommendations, and see how mods work together as a system.',
       cta: 'Plan Your Build',
       href: '/tuning-shop',
-      accent: 'secondary',
-      onboardingKey: 'tuning'
+      accent: 'secondary'
     },
     {
       icon: <BookIcon />,
