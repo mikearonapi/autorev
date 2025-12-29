@@ -522,10 +522,7 @@ export default function ProfilePage() {
     { id: 'referrals', label: 'Refer & Earn', icon: Icons.gift },
     { id: 'al', label: 'AL Credits', icon: 'al-mascot' },
     { id: 'subscription', label: 'Subscription', icon: Icons.crown },
-    { id: 'billing', label: 'Billing', icon: Icons.creditCard },
     { id: 'data', label: 'Your Data', icon: Icons.shield },
-    { id: 'notifications', label: 'Notifications', icon: Icons.bell },
-    { id: 'security', label: 'Security', icon: Icons.shield },
   ];
 
   return (
@@ -688,6 +685,77 @@ export default function ProfilePage() {
                   'Save Changes'
                 )}
               </button>
+
+              {/* Notification Preferences */}
+              <div className={styles.profileSubsection}>
+                <h3 className={styles.subsectionTitle}>
+                  <Icons.bell size={18} />
+                  Notification Preferences
+                </h3>
+
+                <div className={styles.notificationSettings}>
+                  <div className={styles.notificationItem}>
+                    <div className={styles.notificationInfo}>
+                      <h4>Email Notifications</h4>
+                      <p>Receive updates about your garage activity</p>
+                    </div>
+                    <label className={styles.toggle}>
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.email}
+                        onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
+                      />
+                      <span className={styles.toggleSlider}></span>
+                    </label>
+                  </div>
+
+                  <div className={styles.notificationItem}>
+                    <div className={styles.notificationInfo}>
+                      <h4>Maintenance Reminders</h4>
+                      <p>Get notified about upcoming maintenance for your vehicles</p>
+                    </div>
+                    <label className={styles.toggle}>
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.maintenance}
+                        onChange={(e) => setNotifications({...notifications, maintenance: e.target.checked})}
+                      />
+                      <span className={styles.toggleSlider}></span>
+                    </label>
+                  </div>
+
+                  <div className={styles.notificationItem}>
+                    <div className={styles.notificationInfo}>
+                      <h4>Newsletter</h4>
+                      <p>Receive our monthly newsletter with car news and tips</p>
+                    </div>
+                    <label className={styles.toggle}>
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.newsletter}
+                        onChange={(e) => setNotifications({...notifications, newsletter: e.target.checked})}
+                      />
+                      <span className={styles.toggleSlider}></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Connected Accounts */}
+              <div className={styles.profileSubsection}>
+                <h3 className={styles.subsectionTitle}>
+                  <Icons.shield size={18} />
+                  Connected Accounts
+                </h3>
+                <div className={styles.connectedAccounts}>
+                  {user?.app_metadata?.provider === 'google' && (
+                    <div className={styles.connectedAccount}>
+                      <span>Google</span>
+                      <span className={styles.connectedBadge}>Connected</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </section>
           )}
 
@@ -706,23 +774,9 @@ export default function ProfilePage() {
                 AL Fuel
               </h2>
               
-              {alBalance.isUnlimited ? (
-                <div className={styles.founderBanner}>
-                  <div className={styles.founderBannerContent}>
-                    <span className={styles.founderIcon}><Icons.sparkle size={20} /></span>
-                    <div>
-                      <h3 className={styles.founderTitle}>Unlimited AI/AL Access</h3>
-                      <p className={styles.founderMessage}>
-                        AutoRev has granted you unlimited AI/AL usage. Thanks for being a founder!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className={styles.sectionDescription}>
-                  Fuel powers your conversations with AL. Simple questions use less, detailed research uses more.
-                </p>
-              )}
+              <p className={styles.sectionDescription}>
+                Fuel powers your conversations with AL. Simple questions use less, detailed research uses more.
+              </p>
 
               {/* Fuel Tank Visualization */}
               <div className={styles.gasTankContainer}>
@@ -873,6 +927,62 @@ export default function ProfilePage() {
                 Choose the plan that fits your automotive journey. Upgrade anytime to unlock more features.
               </p>
 
+              {/* Beta Banner / Billing Status */}
+              {IS_BETA ? (
+                <div className={styles.betaBanner}>
+                  <Icons.sparkle size={20} />
+                  <div>
+                    <h3>Beta Period - All Features Free!</h3>
+                    <p>During our beta, all subscription tiers are free. After beta ends, you&apos;ll be notified before any charges begin.</p>
+                    <p style={{ marginTop: '8px', opacity: 0.8 }}>
+                      Current tier: <strong>{PLANS[currentPlan]?.name || 'Free'}</strong>
+                      {PLANS[currentPlan]?.futurePrice && ` (Will be ${PLANS[currentPlan].futurePrice} after beta)`}
+                    </p>
+                  </div>
+                </div>
+              ) : profile?.stripe_customer_id && (
+                <div className={styles.billingStatusCard}>
+                  <div className={styles.billingInfo}>
+                    <h3>Subscription Status</h3>
+                    <p className={styles.subscriptionStatus}>
+                      <span className={styles.statusBadge} data-status={profile?.stripe_subscription_status || 'none'}>
+                        {profile?.stripe_subscription_status === 'active' ? '✓ Active' : 
+                         profile?.stripe_subscription_status === 'canceled' ? '✗ Canceled' :
+                         profile?.stripe_subscription_status || 'None'}
+                      </span>
+                    </p>
+                    {profile?.subscription_ends_at && (
+                      <p className={styles.billingDate}>
+                        {profile?.stripe_subscription_status === 'canceled' ? 'Access ends: ' : 'Renews: '}
+                        {new Date(profile.subscription_ends_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    )}
+                  </div>
+                  <button 
+                    className={styles.updateButton}
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/billing/portal', { method: 'POST' });
+                        const data = await res.json();
+                        if (data.url) {
+                          window.location.href = data.url;
+                        } else {
+                          alert(data.error || 'Failed to open billing portal');
+                        }
+                      } catch (err) {
+                        alert('Failed to open billing portal');
+                      }
+                    }}
+                  >
+                    Manage Billing
+                  </button>
+                </div>
+              )}
+
               <div className={styles.plansGrid}>
                 {Object.values(PLANS).map((plan, index) => (
                   <div 
@@ -931,101 +1041,6 @@ export default function ProfilePage() {
             </section>
           )}
 
-          {/* Billing Tab */}
-          {activeTab === 'billing' && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <Icons.creditCard size={20} />
-                Billing & Payment
-              </h2>
-
-              {IS_BETA ? (
-                <div className={styles.betaBanner}>
-                  <Icons.sparkle size={20} />
-                  <div>
-                    <h3>Beta Period - All Features Free!</h3>
-                    <p>During our beta, all subscription tiers are free. After beta ends, you&apos;ll be notified before any charges begin.</p>
-                    <p style={{ marginTop: '8px', opacity: 0.8 }}>
-                      Current tier: <strong>{PLANS[currentPlan]?.name || 'Free'}</strong>
-                      {PLANS[currentPlan]?.futurePrice && ` (Will be ${PLANS[currentPlan].futurePrice} after beta)`}
-                    </p>
-                  </div>
-                </div>
-              ) : !profile?.stripe_customer_id ? (
-                <div className={styles.emptyState}>
-                  <Icons.creditCard size={48} />
-                  <h3>No Payment Method</h3>
-                  <p>You&apos;re on the free plan. Upgrade to add a payment method and unlock premium features.</p>
-                  <button 
-                    className={styles.upgradeButton}
-                    onClick={() => setActiveTab('subscription')}
-                  >
-                    View Plans
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className={styles.billingCard}>
-                    <div className={styles.billingInfo}>
-                      <h3>Subscription Status</h3>
-                      <p className={styles.subscriptionStatus}>
-                        <span className={styles.statusBadge} data-status={profile?.stripe_subscription_status || 'none'}>
-                          {profile?.stripe_subscription_status === 'active' ? '✓ Active' : 
-                           profile?.stripe_subscription_status === 'canceled' ? '✗ Canceled' :
-                           profile?.stripe_subscription_status || 'None'}
-                        </span>
-                      </p>
-                      {profile?.subscription_ends_at && (
-                        <p className={styles.billingDate}>
-                          {profile?.stripe_subscription_status === 'canceled' ? 'Access ends: ' : 'Renews: '}
-                          {new Date(profile.subscription_ends_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className={styles.billingCard}>
-                    <div className={styles.billingInfo}>
-                      <h3>Manage Subscription</h3>
-                      <p>Update payment method, view invoices, or cancel subscription.</p>
-                    </div>
-                    <button 
-                      className={styles.updateButton}
-                      onClick={async () => {
-                        try {
-                          const res = await fetch('/api/billing/portal', { method: 'POST' });
-                          const data = await res.json();
-                          if (data.url) {
-                            window.location.href = data.url;
-                          } else {
-                            alert(data.error || 'Failed to open billing portal');
-                          }
-                        } catch (err) {
-                          alert('Failed to open billing portal');
-                        }
-                      }}
-                    >
-                      Manage Billing
-                    </button>
-                  </div>
-
-                  {profile?.al_credits_purchased > 0 && (
-                    <div className={styles.billingCard}>
-                      <div className={styles.billingInfo}>
-                        <h3>AL Credits Purchased</h3>
-                        <p className={styles.billingAmount}>{profile.al_credits_purchased} credits</p>
-                        <p style={{ opacity: 0.7, fontSize: '0.875rem' }}>Lifetime total (never expires)</p>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </section>
-          )}
 
           {/* Your Data Tab */}
           {activeTab === 'data' && (
@@ -1215,6 +1230,42 @@ export default function ProfilePage() {
                 </div>
               </div>
 
+              {/* Export & Account Actions */}
+              <div className={styles.dataActionsSection}>
+                <h3>Account Actions</h3>
+                <div className={styles.dataActionsGrid}>
+                  <div className={styles.dataActionCard}>
+                    <div className={styles.dataActionInfo}>
+                      <Icons.externalLink size={20} />
+                      <div>
+                        <h4>Export Data</h4>
+                        <p>Download all your data</p>
+                      </div>
+                    </div>
+                    <button className={styles.secondaryButton}>
+                      Export
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.dangerZone}>
+                  <h4>Danger Zone</h4>
+                  <div className={styles.dangerActions}>
+                    <button onClick={handleSignOut} className={styles.signOutButton}>
+                      <Icons.logout size={18} />
+                      Sign Out
+                    </button>
+                    <button className={styles.deleteButton}>
+                      <Icons.trash size={18} />
+                      Delete Account
+                    </button>
+                  </div>
+                  <p className={styles.dangerNote}>
+                    Account deletion is permanent and cannot be undone.
+                  </p>
+                </div>
+              </div>
+
               {/* Confirmation Modal */}
               {showClearConfirm && (
                 <div className={styles.modalOverlay} onClick={() => setShowClearConfirm(null)}>
@@ -1242,115 +1293,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
-            </section>
-          )}
-
-          {/* Notifications Tab */}
-          {activeTab === 'notifications' && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <Icons.bell size={20} />
-                Notification Preferences
-              </h2>
-
-              <div className={styles.notificationSettings}>
-                <div className={styles.notificationItem}>
-                  <div className={styles.notificationInfo}>
-                    <h4>Email Notifications</h4>
-                    <p>Receive updates about your garage activity</p>
-                  </div>
-                  <label className={styles.toggle}>
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.email}
-                      onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
-                    />
-                    <span className={styles.toggleSlider}></span>
-                  </label>
-                </div>
-
-                <div className={styles.notificationItem}>
-                  <div className={styles.notificationInfo}>
-                    <h4>Maintenance Reminders</h4>
-                    <p>Get notified about upcoming maintenance for your vehicles</p>
-                  </div>
-                  <label className={styles.toggle}>
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.maintenance}
-                      onChange={(e) => setNotifications({...notifications, maintenance: e.target.checked})}
-                    />
-                    <span className={styles.toggleSlider}></span>
-                  </label>
-                </div>
-
-                <div className={styles.notificationItem}>
-                  <div className={styles.notificationInfo}>
-                    <h4>Newsletter</h4>
-                    <p>Receive our monthly newsletter with car news and tips</p>
-                  </div>
-                  <label className={styles.toggle}>
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.newsletter}
-                      onChange={(e) => setNotifications({...notifications, newsletter: e.target.checked})}
-                    />
-                    <span className={styles.toggleSlider}></span>
-                  </label>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Security Tab */}
-          {activeTab === 'security' && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <Icons.shield size={20} />
-                Security & Privacy
-              </h2>
-
-              <div className={styles.securityItem}>
-                <div className={styles.securityInfo}>
-                  <h4>Connected Accounts</h4>
-                  <p>Manage your social login connections</p>
-                </div>
-                <div className={styles.connectedAccounts}>
-                  {user?.app_metadata?.provider === 'google' && (
-                    <div className={styles.connectedAccount}>
-                      <span>Google</span>
-                      <span className={styles.connectedBadge}>Connected</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.securityItem}>
-                <div className={styles.securityInfo}>
-                  <h4>Export Data</h4>
-                  <p>Download all your data including favorites, builds, and settings</p>
-                </div>
-                <button className={styles.secondaryButton}>
-                  Export Data
-                </button>
-              </div>
-
-              <div className={styles.dangerZone}>
-                <h3>Danger Zone</h3>
-                <div className={styles.dangerActions}>
-                  <button onClick={handleSignOut} className={styles.signOutButton}>
-                    <Icons.logout size={18} />
-                    Sign Out
-                  </button>
-                  <button className={styles.deleteButton}>
-                    <Icons.trash size={18} />
-                    Delete Account
-                  </button>
-                </div>
-                <p className={styles.dangerNote}>
-                  Account deletion is permanent and cannot be undone.
-                </p>
-              </div>
             </section>
           )}
         </div>
