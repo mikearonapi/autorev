@@ -626,6 +626,7 @@ function TuningShopContent() {
   // Extract values with safe defaults
   const isAuthenticated = authState.isAuthenticated || false;
   const authLoading = authState.isLoading || false;
+  const isDataFetchReady = authState.isDataFetchReady || false;
   const sessionExpired = authState.sessionExpired || false;
   const favorites = favoritesState.favorites || [];
   const favoritesLoading = favoritesState.isLoading || false;
@@ -637,7 +638,10 @@ function TuningShopContent() {
   const vehiclesLoading = vehiclesState.isLoading || false;
   
   // Combined loading state for initial data fetch
-  const isDataLoading = authLoading || (isAuthenticated && (favoritesLoading || buildsLoading || vehiclesLoading));
+  // CRITICAL: Also check isDataFetchReady to prevent race condition on page refresh where
+  // auth resolves (authLoading=false) but providers haven't started fetching yet (waiting for isDataFetchReady)
+  // Without this check, there's a brief moment where the page shows empty/wrong state instead of loading
+  const isDataLoading = authLoading || (isAuthenticated && (!isDataFetchReady || favoritesLoading || buildsLoading || vehiclesLoading));
   
   // Fetch car data from database on mount
   // Enhanced error handling to prevent undefined states

@@ -4,6 +4,7 @@ import Button from '@/components/Button';
 import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
 import PillarsSection from '@/components/PillarsSection';
+import FeatureBreakdown from '@/components/FeatureBreakdown';
 import styles from './page.module.css';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
@@ -62,6 +63,9 @@ export default async function Home() {
 
       {/* Pillars Section */}
       <PillarsSection carCount={carCount} />
+
+      {/* Full Feature Breakdown */}
+      <FeatureBreakdown />
 
       {/* Car Showcase Carousel */}
       <section className={styles.carShowcase}>

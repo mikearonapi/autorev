@@ -2096,14 +2096,17 @@ function GarageContent() {
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
-  const { isAuthenticated, user, isLoading: authLoading, sessionExpired, authError } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading, isDataFetchReady, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
   const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, isLoading: vehiclesLoading } = useOwnedVehicles();
   
   // Combined loading state - show loading while auth or provider data is being fetched
-  const isDataLoading = authLoading || (isAuthenticated && (favoritesLoading || buildsLoading || vehiclesLoading));
+  // CRITICAL: Also check isDataFetchReady to prevent race condition on page refresh where
+  // auth resolves (authLoading=false) but providers haven't started fetching yet (waiting for isDataFetchReady)
+  // Without this check, there's a brief moment where the page shows empty state instead of loading
+  const isDataLoading = authLoading || (isAuthenticated && (!isDataFetchReady || favoritesLoading || buildsLoading || vehiclesLoading));
 
   // Fetch car data from database on mount
   useEffect(() => {
@@ -2139,21 +2142,25 @@ function GarageContent() {
     return vehicles.map(vehicle => {
       const matchedCar = vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null;
       
-      // Create a temporary car object from vehicle data when matchedCar isn't available yet
-      // This allows the UI to show vehicle info while full car data loads
-      const tempCarFromVehicle = !matchedCar && vehicle.matchedCarSlug ? {
-        name: `${vehicle.make} ${vehicle.model}`,
-        slug: vehicle.matchedCarSlug,
+      // Create a temporary car object from vehicle data when:
+      // 1. matchedCar isn't available yet (allCars still loading), OR
+      // 2. Vehicle has no matchedCarSlug (manually added, not in our database)
+      // This allows the UI to show vehicle info immediately instead of "Loading..."
+      const tempCarFromVehicle = !matchedCar ? {
+        name: vehicle.nickname || `${vehicle.make} ${vehicle.model}`,
+        slug: vehicle.matchedCarSlug || `user-vehicle-${vehicle.id}`,
         years: vehicle.year?.toString(),
         brand: vehicle.make,
         // Placeholder flags so components know this is partial data
         _isTemporary: true,
+        _hasNoMatchedCar: !vehicle.matchedCarSlug,
       } : null;
       
       return {
         vehicle,
         matchedCar: matchedCar || tempCarFromVehicle,
         id: vehicle.id,
+        // Only show loading state if we expect to get real car data eventually
         _isCarDataLoading: !matchedCar && vehicle.matchedCarSlug && allCars.length === 0,
       };
     });
