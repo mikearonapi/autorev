@@ -9,8 +9,11 @@ const CheckIcon = () => (
   </svg>
 );
 
-// CTA configurations based on intent
-const CTA_CONFIG = {
+/**
+ * Get CTA configurations based on intent with dynamic car count
+ * @param {number} carCount - Dynamic car count from database
+ */
+const getCTAConfig = (carCount) => ({
   owner: {
     emoji: '🚗',
     title: 'Add Your First Car',
@@ -23,14 +26,22 @@ const CTA_CONFIG = {
   },
   learning: {
     emoji: '🔍',
-    title: 'Explore 98 Sports Cars',
+    title: `Explore ${carCount} Sports Cars`,
     description: 'Browse specs, reviews, and community insights',
   },
-};
+});
 
 /**
  * FinalStep Component
  * Step 5: Email preferences and contextual CTA
+ * 
+ * @param {Object} props
+ * @param {string} props.className - CSS class name for animation
+ * @param {Object} props.formData - Form data state
+ * @param {Function} props.updateFormData - Function to update form data
+ * @param {string} props.userIntent - User's selected intent
+ * @param {boolean} props.isSaving - Whether save is in progress
+ * @param {number} props.carCount - Dynamic car count from database
  */
 export default function FinalStep({ 
   className, 
@@ -38,8 +49,10 @@ export default function FinalStep({
   updateFormData, 
   userIntent,
   isSaving,
+  carCount = 188,
 }) {
-  const ctaConfig = CTA_CONFIG[userIntent] || CTA_CONFIG.learning;
+  const ctaConfigMap = getCTAConfig(carCount);
+  const ctaConfig = ctaConfigMap[userIntent] || ctaConfigMap.learning;
 
   const handleEmailToggle = (field) => {
     updateFormData({ [field]: !formData[field] });

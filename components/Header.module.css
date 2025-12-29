@@ -280,37 +280,56 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   text-decoration: none;
-}
-
-.profileAvatarImage {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid transparent;
+  padding: 4px 10px 4px 12px;
+  border-radius: 20px;
+  background: rgba(26, 77, 110, 0.05);
   transition: all 0.2s ease;
 }
 
+.profileLink:hover {
+  background: rgba(26, 77, 110, 0.1);
+}
+
+/* Profile greeting text - "Hi [Name]" */
+.profileGreeting {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.profileAvatarImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--sn-accent, #D4AF37);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
 .profileLink:hover .profileAvatarImage {
-  border-color: var(--sn-accent, #D4AF37);
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
   transform: scale(1.05);
 }
 
 .profileAvatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, var(--sn-primary, #1a4d6e) 0%, #2d6a8a 100%);
   color: #ffffff;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
+  border: 2px solid var(--sn-accent, #D4AF37);
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .profileLink:hover .profileAvatar {
@@ -605,6 +624,62 @@
   border-color: #f87171;
 }
 
+/* Mobile Right Group - Keeps greeting + hamburger tightly together */
+.mobileRightGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Mobile User Greeting - Shows logged-in state on mobile */
+.mobileUserGreeting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(26, 77, 110, 0.05);
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobileUserGreeting:active {
+  background: rgba(26, 77, 110, 0.1);
+}
+
+.mobileGreetingText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.mobileGreetingAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--sn-accent, #D4AF37);
+  flex-shrink: 0;
+}
+
+.mobileGreetingAvatarFallback {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--sn-primary, #1a4d6e) 0%, #2d6a8a 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 2px solid var(--sn-accent, #D4AF37);
+  flex-shrink: 0;
+}
+
 /* Mobile Menu Toggle - Touch-optimized */
 .menuToggle {
   display: flex;
@@ -816,6 +891,11 @@
   }
 
   .mobileNav {
+    display: none;
+  }
+
+  /* Hide mobile elements on desktop */
+  .mobileRightGroup {
     display: none;
   }
 }

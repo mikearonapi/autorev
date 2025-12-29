@@ -12,10 +12,10 @@ import {
 } from '@/lib/seoUtils';
 
 export async function generateMetadata() {
-  let carCount = 98; // Fallback
+  let carCount = 188; // Fallback
   try {
     const stats = await getPlatformStats();
-    carCount = stats.cars || 98;
+    carCount = stats.cars || 188;
   } catch (e) {
     console.warn('[car-selector/layout] Failed to fetch stats for metadata:', e.message);
   }

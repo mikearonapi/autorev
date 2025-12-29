@@ -130,7 +130,7 @@ export async function GET(request) {
           user_name: user.display_name || authUser.user.user_metadata?.full_name?.split(' ')[0],
           login_url: SITE_URL,
           email: authUser.user.email,
-          car_count: carCount || 98,
+          car_count: carCount || 188,
           event_count: eventCount || 940,
         },
         scheduledFor: new Date(now.getTime() + 60000).toISOString(), // 1 minute from now

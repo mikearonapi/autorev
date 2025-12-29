@@ -2,7 +2,7 @@ import PageClient from './PageClient';
 import { getPlatformStats } from '@/lib/statsService';
 
 export async function generateMetadata() {
-  let stats = { cars: 98, insights: 1226, fitments: 836 }; // Fallbacks
+  let stats = { cars: 188, insights: 1226, fitments: 836 }; // Fallbacks
   try {
     stats = await getPlatformStats();
   } catch (e) {

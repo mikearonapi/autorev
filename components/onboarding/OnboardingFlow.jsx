@@ -10,6 +10,7 @@ import FeatureTourStep from './steps/FeatureTourStep';
 import FinalStep from './steps/FinalStep';
 
 const TOTAL_STEPS = 5; // Welcome, Referral, Intent, FeatureTour, Final
+const DEFAULT_CAR_COUNT = 188; // Fallback if API fails
 
 /**
  * OnboardingFlow Component
@@ -40,6 +41,7 @@ export default function OnboardingFlow({
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState('next');
   const [isSaving, setIsSaving] = useState(false);
+  const [carCount, setCarCount] = useState(DEFAULT_CAR_COUNT);
   
   const [formData, setFormData] = useState({
     referral_source: initialData.referral_source || null,
@@ -127,6 +129,27 @@ export default function OnboardingFlow({
     return () => {
       document.body.style.overflow = '';
     };
+  }, [isOpen]);
+
+  // Fetch car count from database on mount
+  useEffect(() => {
+    const fetchCarCount = async () => {
+      try {
+        const response = await fetch('/api/stats');
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.cars) {
+            setCarCount(data.cars);
+          }
+        }
+      } catch (err) {
+        console.warn('[OnboardingFlow] Failed to fetch car count, using default:', err);
+      }
+    };
+    
+    if (isOpen) {
+      fetchCarCount();
+    }
   }, [isOpen]);
 
   // Handle form data updates
@@ -271,7 +294,7 @@ export default function OnboardingFlow({
       case 3:
         return <IntentStep {...stepProps} />;
       case 4:
-        return <FeatureTourStep {...stepProps} userIntent={formData.user_intent} />;
+        return <FeatureTourStep {...stepProps} userIntent={formData.user_intent} carCount={carCount} />;
       case 5:
         return (
           <FinalStep 
@@ -279,6 +302,7 @@ export default function OnboardingFlow({
             userIntent={formData.user_intent}
             isSaving={isSaving}
             onComplete={handleComplete}
+            carCount={carCount}
           />
         );
       default:

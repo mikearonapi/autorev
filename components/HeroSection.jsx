@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/app/page.module.css';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import ScrollIndicator from '@/components/ScrollIndicator';
 
 // Hero image - Dodge Viper overhead shot
 const heroImageUrl = '/images/pages/home-hero.jpg';
@@ -68,6 +69,9 @@ export default function HeroSection({ carCount = 188 }) {
           </span>
         </button>
       </div>
+      
+      {/* Scroll Indicator */}
+      <ScrollIndicator className="scrollIndicator" />
       
       {/* Auth Modal */}
       <AuthModal 

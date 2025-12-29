@@ -2077,7 +2077,32 @@ function GarageContent() {
   // CRITICAL: Also check isDataFetchReady to prevent race condition on page refresh where
   // auth resolves (authLoading=false) but providers haven't started fetching yet (waiting for isDataFetchReady)
   // Without this check, there's a brief moment where the page shows empty state instead of loading
-  const isDataLoading = authLoading || (isAuthenticated && (!isDataFetchReady || favoritesLoading || buildsLoading || vehiclesLoading));
+  //
+  // TAB-SPECIFIC: Only check loading for the current tab's data provider. This prevents
+  // one slow provider from blocking all tabs. If vehicles are loaded but builds is still 
+  // loading, My Collection shows vehicles while Builds would show loading.
+  const isDataLoading = useMemo(() => {
+    // Always show loading during auth check
+    if (authLoading) return true;
+    
+    // Not authenticated = no loading (show empty state or guest content)
+    if (!isAuthenticated) return false;
+    
+    // Wait for prefetch to complete before showing any data
+    if (!isDataFetchReady) return true;
+    
+    // Check loading state for current tab only
+    switch (activeTab) {
+      case 'mycars':
+        return vehiclesLoading;
+      case 'favorites':
+        return favoritesLoading;
+      case 'projects':
+        return buildsLoading;
+      default:
+        return false;
+    }
+  }, [authLoading, isAuthenticated, isDataFetchReady, activeTab, vehiclesLoading, favoritesLoading, buildsLoading]);
 
   // Fetch car data from database on mount
   useEffect(() => {

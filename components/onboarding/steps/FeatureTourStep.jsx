@@ -40,12 +40,16 @@ const SparklesIcon = () => (
   </svg>
 );
 
-const FEATURES = [
+/**
+ * Build features array with dynamic car count
+ * @param {number} carCount - Dynamic car count from database
+ */
+const getFeatures = (carCount) => [
   {
     id: 'research',
     icon: SearchIcon,
     title: 'Research',
-    description: 'Browse 98 sports cars with detailed specs, expert reviews, and community insights.',
+    description: `Browse ${carCount} sports cars with detailed specs, expert reviews, and community insights.`,
     highlights: ['Browse Cars', 'Car Selector', 'Compare'],
   },
   {
@@ -82,11 +86,21 @@ const FEATURES = [
 /**
  * FeatureTourStep Component
  * Step 4: Feature carousel showcasing key features
+ * 
+ * @param {Object} props
+ * @param {string} props.className - CSS class name for animation
+ * @param {string} props.userIntent - User's selected intent for highlighting
+ * @param {number} props.carCount - Dynamic car count from database
  */
-export default function FeatureTourStep({ className, userIntent }) {
+export default function FeatureTourStep({ className, userIntent, carCount = 188 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
   const autoAdvanceRef = useRef(null);
+  const isScrollingProgrammatically = useRef(false);
+  const scrollTimeoutRef = useRef(null);
+  
+  // Get features with dynamic car count
+  const features = getFeatures(carCount);
 
   // Auto-advance carousel
   const startAutoAdvance = useCallback(() => {
@@ -94,9 +108,9 @@ export default function FeatureTourStep({ className, userIntent }) {
       clearInterval(autoAdvanceRef.current);
     }
     autoAdvanceRef.current = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % FEATURES.length);
+      setActiveIndex(prev => (prev + 1) % features.length);
     }, 5000);
-  }, []);
+  }, [features.length]);
 
   // Stop auto-advance on interaction
   const stopAutoAdvance = useCallback(() => {
@@ -111,16 +125,25 @@ export default function FeatureTourStep({ className, userIntent }) {
     return () => stopAutoAdvance();
   }, [startAutoAdvance, stopAutoAdvance]);
 
-  // Scroll carousel when active index changes
+  // Scroll carousel when active index changes (programmatic navigation)
   useEffect(() => {
     if (carouselRef.current) {
       const cards = carouselRef.current.children;
       if (cards[activeIndex]) {
-        cards[activeIndex].scrollIntoView({
+        // Mark that we're scrolling programmatically to prevent scroll handler interference
+        isScrollingProgrammatically.current = true;
+        
+        // Use scrollTo with explicit position calculation for more reliable scrolling
+        const cardWidth = carouselRef.current.offsetWidth;
+        carouselRef.current.scrollTo({
+          left: activeIndex * cardWidth,
           behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center',
         });
+        
+        // Clear the programmatic scroll flag after animation completes
+        setTimeout(() => {
+          isScrollingProgrammatically.current = false;
+        }, 500);
       }
     }
   }, [activeIndex]);
@@ -140,24 +163,46 @@ export default function FeatureTourStep({ className, userIntent }) {
 
   const handleNext = () => {
     stopAutoAdvance();
-    setActiveIndex(prev => Math.min(FEATURES.length - 1, prev + 1));
+    setActiveIndex(prev => Math.min(features.length - 1, prev + 1));
     setTimeout(startAutoAdvance, 10000);
   };
 
-  // Handle touch/scroll interaction
+  // Handle touch/scroll interaction - debounced to prevent multiple updates
   const handleScroll = useCallback(() => {
-    stopAutoAdvance();
-    if (carouselRef.current) {
-      const scrollLeft = carouselRef.current.scrollLeft;
-      const cardWidth = carouselRef.current.offsetWidth;
-      const newIndex = Math.round(scrollLeft / cardWidth);
-      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < FEATURES.length) {
-        setActiveIndex(newIndex);
-      }
+    // Ignore scroll events triggered by programmatic scrolling
+    if (isScrollingProgrammatically.current) {
+      return;
     }
-    // Restart after scroll interaction
-    setTimeout(startAutoAdvance, 10000);
-  }, [activeIndex, startAutoAdvance, stopAutoAdvance]);
+    
+    stopAutoAdvance();
+    
+    // Debounce scroll detection to only update when scrolling settles
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (carouselRef.current) {
+        const scrollLeft = carouselRef.current.scrollLeft;
+        const cardWidth = carouselRef.current.offsetWidth;
+        const newIndex = Math.round(scrollLeft / cardWidth);
+        if (newIndex !== activeIndex && newIndex >= 0 && newIndex < features.length) {
+          setActiveIndex(newIndex);
+        }
+      }
+      // Restart after scroll interaction settles
+      setTimeout(startAutoAdvance, 10000);
+    }, 100);
+  }, [activeIndex, features.length, startAutoAdvance, stopAutoAdvance]);
+  
+  // Cleanup scroll timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className={className}>
@@ -173,7 +218,7 @@ export default function FeatureTourStep({ className, userIntent }) {
           onScroll={handleScroll}
           onTouchStart={stopAutoAdvance}
         >
-          {FEATURES.map((feature) => {
+          {features.map((feature) => {
             const Icon = feature.icon;
             const isHighlighted = feature.intentHighlight === userIntent;
             
@@ -211,7 +256,7 @@ export default function FeatureTourStep({ className, userIntent }) {
             </svg>
           </button>
           
-          {FEATURES.map((_, index) => (
+          {features.map((_, index) => (
             <button
               key={index}
               className={`${styles.carouselDot} ${index === activeIndex ? styles.active : ''}`}
@@ -223,7 +268,7 @@ export default function FeatureTourStep({ className, userIntent }) {
           <button 
             className={styles.carouselArrow}
             onClick={handleNext}
-            disabled={activeIndex === FEATURES.length - 1}
+            disabled={activeIndex === features.length - 1}
             aria-label="Next feature"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

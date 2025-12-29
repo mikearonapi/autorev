@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Using Node.js runtime to avoid Edge Function size limit (images exceed 2MB)
 export const alt = 'AutoRev - Find Your Perfect Sports Car';
@@ -9,6 +10,9 @@ export const size = {
   height: 630,
 };
 export const contentType = 'image/png';
+
+// Revalidate every 5 minutes to pick up new car counts
+export const revalidate = 300;
 
 // Brand Colors (from globals.css)
 const BRAND = {
@@ -20,12 +24,38 @@ const BRAND = {
   goldDark: '#B8973A',
 };
 
+// Fetch car count from database
+async function getCarCount(): Promise<number> {
+  try {
+    if (!isSupabaseConfigured || !supabase) {
+      return 188; // Fallback if Supabase not configured
+    }
+    
+    const { count, error } = await supabase
+      .from('cars')
+      .select('*', { count: 'exact', head: true });
+    
+    if (error) {
+      console.error('[OG Image] Error fetching car count:', error);
+      return 188;
+    }
+    
+    return count || 188;
+  } catch (err) {
+    console.error('[OG Image] Error in getCarCount:', err);
+    return 188;
+  }
+}
+
 /**
  * Open Graph Image for social sharing
  * Features the dramatic hero car image with branded overlay
  * Brand-aligned: teal primary + gold accent
  */
 export default async function Image() {
+  // Fetch car count dynamically
+  const carCount = await getCarCount();
+  
   // Read images from filesystem (Node.js runtime)
   const heroImageData = readFileSync(join(process.cwd(), 'public/images/pages/home-hero.jpg'));
   const heroImageBase64 = heroImageData.toString('base64');
@@ -172,7 +202,7 @@ export default async function Image() {
               gap: '14px',
             }}
           >
-            <span>98 Sports Cars</span>
+            <span>{carCount} Sports Cars</span>
             <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>
             <span>$25K – $300K</span>
             <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>

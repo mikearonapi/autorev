@@ -130,6 +130,7 @@ export default function Header() {
   // Get avatar URL from profile or user metadata
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0];
+  const firstName = displayName?.split(' ')[0] || 'there';
   const initials = (displayName || 'U').charAt(0).toUpperCase();
   
   // Check if user is admin
@@ -320,12 +321,13 @@ export default function Header() {
                 onMouseLeave={() => setShowProfileDropdown(false)}
               >
                 <Link href="/profile" className={styles.profileLink} onMouseEnter={() => handleNavHover('/profile')}>
+                  <span className={styles.profileGreeting}>Hi {firstName}</span>
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
                       alt={displayName || 'Profile'}
-                      width={28}
-                      height={28}
+                      width={32}
+                      height={32}
                       className={styles.profileAvatarImage}
                     />
                   ) : (
@@ -392,16 +394,39 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className={styles.menuToggle}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMenuOpen}
-            data-testid="mobile-menu-toggle"
-          >
-            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
+          {/* Mobile Right Group - Greeting + Hamburger tightly together */}
+          <div className={styles.mobileRightGroup}>
+            {/* Mobile User Greeting - Shows when logged in */}
+            {isAuthenticated && (
+              <Link href="/profile" className={styles.mobileUserGreeting}>
+                <span className={styles.mobileGreetingText}>Hi {firstName}</span>
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName || 'Profile'}
+                    width={32}
+                    height={32}
+                    className={styles.mobileGreetingAvatar}
+                  />
+                ) : (
+                  <span className={styles.mobileGreetingAvatarFallback}>
+                    {initials}
+                  </span>
+                )}
+              </Link>
+            )}
+
+            {/* Mobile Menu Toggle */}
+            <button
+              className={styles.menuToggle}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+              data-testid="mobile-menu-toggle"
+            >
+              {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+          </div>
         </div>
       </header>
 

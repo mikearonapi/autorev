@@ -182,7 +182,7 @@
 
 /* Hero Join Button - "rev" brand text */
 .heroRevText {
-  color: var(--accent-gold);
+  color: var(--sn-accent);
 }
 
 /* Hero Join Button Suffix Animation */
@@ -192,7 +192,7 @@
   text-align: left;
   transition: opacity 0.3s ease-in-out;
   opacity: 0;
-  color: var(--accent-gold);
+  color: var(--sn-accent);
 }
 
 .heroJoinSuffixVisible {
@@ -234,14 +234,14 @@
   max-width: 260px;
 }
 
-/* Scroll indicator positioning - positioned above quick stats bar on home page */
+/* Scroll indicator positioning - at bottom of hero image */
 .hero > :global(.scrollIndicator) {
-  bottom: 120px; /* Position above the quick stats bar */
+  bottom: 24px;
 }
 
 @media (min-width: 768px) {
   .hero > :global(.scrollIndicator) {
-    bottom: 130px; /* Adjust for larger stats bar on desktop */
+    bottom: 32px;
   }
 }
 

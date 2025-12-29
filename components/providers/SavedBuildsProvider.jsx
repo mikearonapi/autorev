@@ -95,16 +95,21 @@ export function SavedBuildsProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, profile, refreshSession } = useAuth();
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const userTier = profile?.subscription_tier || 'free';
-  const [builds, setBuilds] = useState([]);
+  
+  // OPTIMISTIC LOAD: Initialize state with localStorage data synchronously
+  // This makes guest builds visible immediately on page load
+  const [builds, setBuilds] = useState(() => {
+    // Use lazy initializer to read localStorage once during mount
+    // This is SSR-safe because loadLocalBuilds() checks typeof window
+    return loadLocalBuilds();
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
 
-  // Hydrate from localStorage initially (for SSR/guest users)
+  // Mark as hydrated immediately since we loaded synchronously
   useEffect(() => {
-    const localBuilds = loadLocalBuilds();
-    setBuilds(localBuilds);
     setIsHydrated(true);
   }, []);
 

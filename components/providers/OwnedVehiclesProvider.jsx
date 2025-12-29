@@ -191,14 +191,21 @@ export function OwnedVehiclesProvider({ children }) {
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [state, dispatch] = useReducer(vehiclesReducer, defaultState);
+  
+  // OPTIMISTIC LOAD: Initialize reducer with localStorage data synchronously
+  // This makes guest vehicles visible immediately on page load (like FavoritesProvider)
+  const [state, dispatch] = useReducer(vehiclesReducer, null, () => {
+    // Use lazy initializer to read localStorage once during mount
+    // This is SSR-safe because loadLocalVehicles() checks typeof window
+    const localVehicles = loadLocalVehicles();
+    return { vehicles: localVehicles };
+  });
+  
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
 
-  // Hydrate from localStorage initially (for SSR/guest users)
+  // Mark as hydrated immediately since we loaded synchronously
   useEffect(() => {
-    const localVehicles = loadLocalVehicles();
-    dispatch({ type: ActionTypes.SET, payload: localVehicles });
     setIsHydrated(true);
   }, []);
 

@@ -48,7 +48,7 @@ function generateInactivity7dHtml(vars, baseUrl) {
   const userName = rawName.split(' ')[0];
   const alUrl = `${baseUrl}/al`;
   const year = new Date().getFullYear();
-  const carCount = vars.car_count || 98;
+  const carCount = vars.car_count || 188;
   
   return `
 <!DOCTYPE html>
@@ -808,7 +808,7 @@ export async function GET(request) {
       friend_name: 'Jordan',
       credits_earned: 200,
       total_credits: 400,
-      car_count: carCount || 98,
+      car_count: carCount || 188,
       event_count: eventCount || 940,
       // For referral-invite template
       referrer_name: 'Sarah',
