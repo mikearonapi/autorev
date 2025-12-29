@@ -11,7 +11,7 @@ const heroImageUrl = '/images/pages/home-hero.jpg';
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
 
-export default function HeroSection() {
+export default function HeroSection({ carCount = 188 }) {
   const [suffixIndex, setSuffixIndex] = useState(0);
   const [suffixVisible, setSuffixVisible] = useState(true);
   
@@ -31,10 +31,10 @@ export default function HeroSection() {
     return () => clearInterval(suffixInterval);
   }, []);
 
-  // Handle join button click - always navigates to join page
-  const handleJoinClick = (e) => {
+  // Handle browse cars button click
+  const handleBrowseCarsClick = (e) => {
     e.preventDefault();
-    window.location.href = '/join';
+    window.location.href = '/browse-cars';
   };
 
   return (
@@ -57,11 +57,11 @@ export default function HeroSection() {
           <span className={styles.heroAccent}>Drives You</span>
         </h1>
         <p className={styles.heroSubtitle}>
-          Whether you&apos;re dreaming about your first sports car or planning your tenth build, 
-          AutoRev is your companion for the journey.
+          The sports car research platform for buyers and builders.<br />
+          Research. Track. Build. — {carCount || 188} cars and counting.
         </p>
-        <button onClick={handleJoinClick} className={styles.heroJoinButton}>
-          Join the auto <span className={styles.heroRevWord}><span className={styles.heroAccent}>rev</span><span className={`${styles.heroAccent} ${styles.heroBrandSuffix} ${suffixVisible ? styles.suffixVisible : styles.suffixHidden}`}>{brandSuffixes[suffixIndex]}</span></span>
+        <button onClick={handleBrowseCarsClick} className={styles.heroJoinButton}>
+          Browse Cars
         </button>
       </div>
       

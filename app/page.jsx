@@ -5,6 +5,7 @@ import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
 import PillarsSection from '@/components/PillarsSection';
 import FeatureBreakdown from '@/components/FeatureBreakdown';
+import FeaturePhoneShowcase from '@/components/FeaturePhoneShowcase';
 import styles from './page.module.css';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
@@ -59,13 +60,10 @@ export default async function Home() {
   return (
     <div className={styles.page}>
       {/* Hero Section with cycling text */}
-      <HeroSection />
+      <HeroSection carCount={carCount} />
 
-      {/* Pillars Section */}
-      <PillarsSection carCount={carCount} />
-
-      {/* Full Feature Breakdown */}
-      <FeatureBreakdown />
+      {/* Feature Phone Showcase - NEW */}
+      <FeaturePhoneShowcase />
 
       {/* Car Showcase Carousel */}
       <section className={styles.carShowcase}>
@@ -76,7 +74,10 @@ export default async function Home() {
         <CarCarousel />
       </section>
 
-      {/* Value Props Section */}
+      {/* Pillars Section - How We Help */}
+      <PillarsSection carCount={carCount} />
+
+      {/* Value Props Section - Brotherhood */}
       <section className={styles.valueProps}>
         <div className={styles.container}>
           <div className={styles.valueGrid}>
@@ -115,6 +116,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Full Feature Breakdown */}
+      <FeatureBreakdown />
 
     </div>
   );

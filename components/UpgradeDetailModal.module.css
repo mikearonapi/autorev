@@ -53,6 +53,7 @@
   .overlay {
     padding: 0;
     background: var(--surface-elevated, #1a1a2e);
+    align-items: flex-start; /* Start from top on mobile */
   }
   
   .panel {
@@ -62,6 +63,7 @@
     max-height: none;
     border-radius: 0;
     animation: mobileSlideUp 0.3s ease-out;
+    overflow-y: auto; /* Ensure panel itself can scroll */
   }
   
   @keyframes mobileSlideUp {

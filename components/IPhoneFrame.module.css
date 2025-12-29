@@ -1,0 +1,165 @@
+/**
+ * IPhoneFrame Component Styles
+ * 
+ * Realistic iPhone 17 Pro frame with:
+ * - Gradient bezel matching Apple's design
+ * - Dynamic Island
+ * - Side buttons (volume + power)
+ * - Content scaled to 70% for realistic presentation
+ * - Proper aspect ratio (19.5:9)
+ */
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 320px;
+}
+
+/* iPhone Frame - Realistic gradient bezel */
+.frame {
+  position: relative;
+  padding: 10px;
+  border-radius: 3rem;
+  background: linear-gradient(145deg, #3a3a3a 0%, #0f0f0f 35%, #1f1f1f 65%, #3a3a3a 100%);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.25),
+    0 5px 15px rgba(0, 0, 0, 0.15),
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.6),
+    inset 2px 0 1px rgba(255, 255, 255, 0.15),
+    inset -2px 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Size variants - matching iPhone 17 Pro aspect ratio (19.5:9) */
+.small {
+  width: 224px; /* ~14rem */
+}
+
+.medium {
+  width: 288px; /* ~18rem */
+}
+
+.large {
+  width: 384px; /* ~24rem */
+}
+
+/* Volume Buttons - Left side */
+.volumeButton {
+  position: absolute;
+  left: -3px;
+  width: 3px;
+  border-radius: 0 0 0 4px;
+  background: linear-gradient(to right, #4a4a4a, #2a2a2a);
+  box-shadow: -2px 0 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.volumeTop {
+  top: 100px;
+  height: 28px;
+}
+
+.volumeMiddle {
+  top: 140px;
+  height: 50px;
+}
+
+.volumeBottom {
+  top: 200px;
+  height: 50px;
+}
+
+/* Power Button - Right side */
+.powerButton {
+  position: absolute;
+  top: 170px;
+  right: -3px;
+  width: 3px;
+  height: 70px;
+  border-radius: 0 0 4px 0;
+  background: linear-gradient(to left, #4a4a4a, #2a2a2a);
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Screen Container */
+.screen {
+  position: relative;
+  background: #000;
+  border-radius: 2.5rem;
+  overflow: hidden;
+}
+
+/* Screen heights for each size (19.5:9 aspect ratio) */
+.screenSmall {
+  height: 455px;
+}
+
+.screenMedium {
+  height: 585px;
+}
+
+.screenLarge {
+  height: 780px;
+}
+
+/* Content wrapper with inset clipping */
+.contentWrapper {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 2.5rem;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  z-index: 1;
+}
+
+/* Content scaled to 70% for realistic presentation */
+.contentScaled {
+  width: 142.86%;
+  height: 142.86%;
+  transform: scale(0.7);
+  transform-origin: top left;
+  overflow: hidden;
+  border-radius: 2.3rem;
+}
+
+/* Dynamic Island wrapper */
+.dynamicIslandWrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 12px;
+  z-index: 10001;
+  pointer-events: none;
+}
+
+/* Dynamic Island - pill-shaped notch */
+.dynamicIsland {
+  background: #000000;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Dynamic Island sizes for each variant */
+.dynamicIslandSmall {
+  width: 66px;
+  height: 18px;
+}
+
+.dynamicIslandMedium {
+  width: 76px;
+  height: 20px;
+}
+
+.dynamicIslandLarge {
+  width: 86px;
+  height: 22px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .wrapper {
+    max-width: none;
+  }
+}
+
