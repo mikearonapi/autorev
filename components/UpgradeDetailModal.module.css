@@ -54,6 +54,8 @@
     padding: 0;
     background: var(--surface-elevated, #1a1a2e);
     align-items: flex-start; /* Start from top on mobile */
+    /* Account for fixed header at top of page */
+    padding-top: calc(var(--header-height-mobile, 48px) + env(safe-area-inset-top, 0px));
   }
   
   .panel {
@@ -107,7 +109,8 @@
 /* Mobile: Ensure close button is easily tappable and in safe area */
 @media (max-width: 480px) {
   .closeBtn {
-    top: max(1rem, calc(env(safe-area-inset-top, 0px) + 0.5rem));
+    /* Position relative to modal content (overlay already has header offset) */
+    top: 1rem;
     right: 1rem;
     width: 44px;
     height: 44px;
@@ -166,7 +169,7 @@
 @media (max-width: 480px) {
   .header {
     padding: 1rem;
-    padding-top: max(1rem, calc(env(safe-area-inset-top, 0px) + 0.75rem));
+    /* No extra top padding needed since overlay has padding-top for fixed header */
   }
   
   .title {
