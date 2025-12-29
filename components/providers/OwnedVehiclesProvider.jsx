@@ -29,7 +29,6 @@ import {
   clearVehicleCustomSpecs,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
-import { getSSRData } from './SSRDataProvider';
 import { useLoadingProgress } from './LoadingProgressProvider';
 
 // LocalStorage key for guest vehicles
@@ -220,13 +219,12 @@ export function OwnedVehiclesProvider({ children }) {
     }, timeout);
     
     try {
-      // OPTIMIZATION: Check for SSR data first, then prefetched data
-      const ssrVehicles = getSSRData('vehicles', userId);
-      const prefetchedVehicles = ssrVehicles || getPrefetchedData('vehicles', userId);
+      // Check for prefetched data first
+      const prefetchedVehicles = getPrefetchedData('vehicles', userId);
       let data, error;
       
       if (prefetchedVehicles) {
-        console.log('[OwnedVehiclesProvider] Using', ssrVehicles ? 'SSR' : 'prefetched', 'data');
+        console.log('[OwnedVehiclesProvider] Using prefetched data');
         data = prefetchedVehicles;
         error = null;
       } else {

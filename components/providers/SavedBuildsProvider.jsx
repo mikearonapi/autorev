@@ -19,7 +19,6 @@ import {
   deleteUserProject,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
-import { getSSRData } from './SSRDataProvider';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { hasAccess, IS_BETA } from '@/lib/tierAccess';
 
@@ -152,13 +151,12 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   }, timeout);
   
   try {
-    // OPTIMIZATION: Check for SSR data first, then prefetched data
-    const ssrBuilds = getSSRData('builds', user.id);
-    const prefetchedBuilds = ssrBuilds || getPrefetchedData('builds', user.id);
+    // Check for prefetched data first
+    const prefetchedBuilds = getPrefetchedData('builds', user.id);
     let data, error;
     
     if (prefetchedBuilds) {
-      console.log('[SavedBuildsProvider] Using', ssrBuilds ? 'SSR' : 'prefetched', 'data');
+      console.log('[SavedBuildsProvider] Using prefetched data');
       data = prefetchedBuilds;
       error = null;
     } else {

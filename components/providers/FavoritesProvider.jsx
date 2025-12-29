@@ -26,7 +26,6 @@ import {
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
 import { getPrefetchedData } from '@/lib/prefetch';
-import { getSSRData } from './SSRDataProvider';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 
@@ -153,13 +152,12 @@ export function FavoritesProvider({ children }) {
         );
       }
 
-      // OPTIMIZATION: Check for SSR data first, then prefetched data
-      const ssrFavorites = getSSRData('favorites', userId);
-      const prefetchedFavorites = ssrFavorites || getPrefetchedData('favorites', userId);
+      // Check for prefetched data first
+      const prefetchedFavorites = getPrefetchedData('favorites', userId);
       let data, error;
       
       if (prefetchedFavorites) {
-        console.log('[FavoritesProvider] Using', ssrFavorites ? 'SSR' : 'prefetched', 'data');
+        console.log('[FavoritesProvider] Using prefetched data');
         data = prefetchedFavorites;
         error = null;
       } else {
