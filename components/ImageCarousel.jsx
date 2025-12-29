@@ -24,22 +24,15 @@ import styles from './ImageCarousel.module.css';
 export default function ImageCarousel({ 
   images, 
   alt,
-  interval = 3000 
+  interval = 6000 // 6 seconds total: 3s visible + 3s transition
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     if (images.length <= 1) return;
 
     const timer = setInterval(() => {
-      setIsTransitioning(true);
-      
-      // After fade out, change image
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-        setIsTransitioning(false);
-      }, 500); // Half of transition duration for crossfade effect
+      setCurrentIndex((prev) => (prev + 1) % images.length);
     }, interval);
 
     return () => clearInterval(timer);
@@ -56,7 +49,7 @@ export default function ImageCarousel({
           key={image}
           className={`${styles.imageWrapper} ${
             index === currentIndex ? styles.active : styles.inactive
-          } ${isTransitioning && index === currentIndex ? styles.fadeOut : ''}`}
+          }`}
         >
           <Image
             src={image}
