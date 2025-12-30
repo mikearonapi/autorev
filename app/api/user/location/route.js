@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 // Simple ZIP code to city/state mapping for common US ZIPs
 // In production, could use a full database or external API
@@ -788,7 +788,7 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createServerSupabaseClient();
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -865,7 +865,7 @@ export async function POST(request) {
  */
 export async function DELETE(request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createServerSupabaseClient();
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
