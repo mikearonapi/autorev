@@ -1,15 +1,19 @@
-/**
- * Wheel & Tire Configurator Styles
- * 
- * Mobile-first responsive design.
- * Dark theme matching AutoRev aesthetic.
- */
+/* ============================================
+   WHEEL & TIRE CONFIGURATOR - Clean Design
+   ============================================ */
 
 .container {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   overflow: hidden;
+}
+
+/* Compact Mode */
+.compact {
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
 /* Header */
@@ -18,80 +22,127 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 16px;
+  padding: 0;
   background: transparent;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
   transition: background 0.2s ease;
-  text-align: left;
-  gap: 12px;
 }
 
 .header:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.headerToggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 16px 0 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
-  min-width: 0;
 }
 
 .headerLeft svg {
-  color: #22d3d8;
-  flex-shrink: 0;
+  color: rgba(34, 211, 238, 0.8);
 }
 
 .headerTitle {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.performanceBadge {
+  padding: 3px 8px;
+  background: rgba(34, 197, 94, 0.2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #22c55e;
+}
+
+.headerHint {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 12px;
   white-space: nowrap;
 }
 
-.selectedBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  background: rgba(74, 222, 128, 0.15);
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #4ade80;
-}
-
-.selectedBadge svg {
-  color: #4ade80;
+/* Hide on mobile - shown in badge already */
+@media (max-width: 640px) {
+  .headerHint {
+    display: none;
+  }
 }
 
 .headerRight {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding-right: 16px;
   flex-shrink: 0;
 }
 
-.summaryText {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+.headerEditBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
 }
 
-@media (max-width: 480px) {
-  .summaryText {
-    display: none;
-  }
+.headerEditBtn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.headerEditBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.headerEditBtnActive {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #22c55e;
+}
+
+.headerEditLabel {
+  display: inline;
+}
+
+.chevronBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .chevron {
+  color: rgba(255, 255, 255, 0.4);
   transition: transform 0.2s ease;
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .chevronOpen {
@@ -101,32 +152,24 @@
 /* Content */
 .content {
   padding: 0 16px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Loading / Error / No Data */
-.loading,
-.error,
-.noData {
+/* Loading & Error */
+.loading, .errorState {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   padding: 24px;
   color: rgba(255, 255, 255, 0.5);
   font-size: 13px;
-  text-align: center;
-}
-
-.error {
-  color: #ef4444;
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #22d3d8;
+  border-top-color: rgba(34, 211, 238, 0.8);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -135,385 +178,683 @@
   to { transform: rotate(360deg); }
 }
 
-/* Sections */
-.section {
-  padding-top: 16px;
+.errorState {
+  color: rgba(239, 68, 68, 0.8);
 }
 
-.section + .section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+/* Edit Toggle Row - only shows reset button when editing */
+.editToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.sectionTitle {
-  margin: 0 0 12px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Options Grid */
-.optionsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-}
-
-@media (max-width: 600px) {
-  .optionsGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Option Card */
-.optionCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 14px;
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.optionCard:hover {
+.editBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.editBtnActive {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #22c55e;
+}
+
+.resetBtn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.optionCardSelected {
-  background: rgba(34, 211, 216, 0.08);
-  border-color: rgba(34, 211, 216, 0.4);
+/* Specs Section */
+.specsSection {
+  margin-bottom: 14px;
 }
 
-.optionCardOEM {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.optionCardHasWarnings {
-  /* Subtle indicator for cards with warnings */
-}
-
-/* Card Header */
-.cardHeader {
+/* Staggered Toggle */
+.staggeredToggle {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
+  gap: 10px;
   margin-bottom: 12px;
 }
 
-.cardHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 0;
-}
-
-.fitmentType {
-  font-size: 14px;
+.toggleLabel {
+  font-size: 12px;
   font-weight: 600;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.verifiedBadge {
-  padding: 2px 6px;
-  background: rgba(74, 222, 128, 0.15);
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  color: #4ade80;
-}
-
-/* Key Specs */
-.keySpecs {
+.toggleButtons {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
 }
 
-.specRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.toggleBtn {
+  padding: 6px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.toggleBtnActive {
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Specs Grid */
+.specsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
 }
 
+.specGroup {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.specGroupTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 8px;
+}
+
+.specRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tireSpecRow {
+  margin-top: 6px;
+}
+
+/* Spec Field */
+.specField {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.specFieldFull {
+  grid-column: 1 / -1;
+}
+
 .specLabel {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .specValue {
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
-  font-family: var(--font-mono, monospace);
-  text-align: right;
-}
-
-/* Tags */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.tag {
-  padding: 3px 8px;
-  background: color-mix(in srgb, var(--tag-color, #6b7280) 15%, transparent);
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--tag-color, #6b7280);
-}
-
-/* Warnings */
-.warnings {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.warning {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.warningwarning {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-}
-
-.warninginfo {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-}
-
-.warningIcon {
-  flex-shrink: 0;
-  font-size: 13px;
-}
-
-.warningText {
-  color: inherit;
-  line-height: 1.4;
-}
-
-/* Expanded Details */
-.expandedDetails {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.detailsSubtitle {
-  margin: 0 0 8px 0;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 0;
 }
 
-/* Comparison */
-.comparison {
-  margin-bottom: 12px;
-}
-
-.comparisonGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px;
-}
-
-.comparisonItem {
+.specInputWrapper {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-}
-
-.comparisonItem span:first-child {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-}
-
-.comparisonItem span:last-child {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.positive {
-  color: #4ade80;
-}
-
-.negative {
-  color: #ef4444;
-}
-
-.neutral {
-  color: #f59e0b;
-}
-
-/* Additional Specs */
-.additionalSpecs {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-/* Notes */
-.notes {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-}
-
-.notes p {
-  margin: 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-}
-
-/* Cost Estimate */
-.costEstimate {
-  padding: 12px;
-  background: rgba(34, 211, 216, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(34, 211, 216, 0.1);
-}
-
-.costRange {
-  font-size: 18px;
-  font-weight: 700;
-  color: #22d3d8;
-  margin-bottom: 10px;
-}
-
-.costBreakdown {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
+  max-width: 100%;
 }
 
-.costItem {
-  display: flex;
-  justify-content: space-between;
+.specInput {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.specInput:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.specInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.specSuffix {
   font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Tire Compound Section */
+.compoundSection {
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+}
+
+.performanceTag {
+  padding: 2px 5px;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* Compound Icon Row */
+.compoundIconRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.compoundIconBtn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.compoundIconBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.compoundIconBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.compoundIconBtnActive {
+  background: rgba(34, 211, 238, 0.15);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.15);
+}
+
+.compoundIconEmoji {
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* Selected Compound Info */
+.compoundInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.compoundInfoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.compoundInfoDesc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  flex: 1;
+}
+
+.compoundInfoGrip {
+  padding: 2px 6px;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.compoundInfoStock {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Select Button */
-.selectBtn {
+/* Apply Button */
+.applyBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   width: 100%;
   padding: 10px;
-  margin-top: 12px;
-  background: rgba(34, 211, 216, 0.1);
-  border: 1px solid rgba(34, 211, 216, 0.3);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.4);
   border-radius: 8px;
-  color: #22d3d8;
+  color: #22d3ee;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
 }
 
-.selectBtn:hover:not(:disabled) {
-  background: rgba(34, 211, 216, 0.15);
-  border-color: rgba(34, 211, 216, 0.5);
+.applyBtn:hover {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(34, 197, 94, 0.25) 100%);
+  border-color: rgba(34, 211, 238, 0.6);
 }
 
-.selectBtn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+/* Responsive - Tablet */
+@media (max-width: 900px) {
+  .compoundIconEmoji {
+    font-size: 18px;
+  }
 }
 
-.selectBtnSelected {
-  background: rgba(74, 222, 128, 0.15);
-  border-color: rgba(74, 222, 128, 0.4);
-  color: #4ade80;
-}
-
-.selectBtnSelected:hover:not(:disabled) {
-  background: rgba(74, 222, 128, 0.2);
-  border-color: rgba(74, 222, 128, 0.5);
-}
-
-/* Info Footer */
-.infoFooter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  margin-top: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  text-align: center;
-}
-
-.infoFooter svg {
-  flex-shrink: 0;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .header {
-    padding: 12px 14px;
+/* Responsive - Mobile */
+@media (max-width: 640px) {
+  .headerToggle {
+    padding: 10px 0 10px 12px;
+  }
+  
+  .headerRight {
+    gap: 6px;
+    padding-right: 12px;
+  }
+  
+  .headerEditBtn {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  
+  .headerEditBtn svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .chevronBtn {
+    padding: 6px;
   }
   
   .headerTitle {
-    font-size: 13px;
+    font-size: 14px;
+  }
+  
+  .performanceBadge {
+    padding: 2px 6px;
+    font-size: 9px;
   }
   
   .content {
-    padding: 0 14px 14px;
+    padding: 0 12px 12px;
   }
   
-  .optionCard {
-    padding: 12px;
+  .editToggle {
+    gap: 8px;
+    margin-bottom: 8px;
   }
   
-  .fitmentType {
-    font-size: 13px;
-  }
-  
-  .specValue {
+  .resetBtn {
+    padding: 6px 10px;
     font-size: 12px;
   }
   
-  .costRange {
-    font-size: 16px;
+  .specsSection {
+    margin-bottom: 10px;
+  }
+  
+  .staggeredToggle {
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  
+  .toggleLabel {
+    font-size: 11px;
+  }
+  
+  .toggleBtn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  
+  .specsGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .specGroup {
+    padding: 8px 10px;
+  }
+  
+  .specGroupTitle {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  
+  .specRow {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  
+  .specLabel {
+    font-size: 9px;
+  }
+  
+  .specValue {
+    font-size: 13px;
+    padding: 4px 0;
+  }
+  
+  .specInput {
+    padding: 5px 6px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  .compoundSection {
+    margin-bottom: 10px;
+  }
+  
+  .sectionTitle {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .compoundIconRow {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .compoundIconBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+  
+  .compoundIconEmoji {
+    font-size: 22px;
+  }
+  
+  .compoundInfo {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  
+  .compoundInfoLabel {
+    font-size: 11px;
+  }
+  
+  .compoundInfoDesc {
+    font-size: 10px;
+  }
+  
+  .compoundInfoGrip {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+  
+  .applyBtn {
+    padding: 8px;
+    font-size: 12px;
+    margin-bottom: 0;
   }
 }
 
+/* Compact Mode Overrides */
+.compact .header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.compact .content {
+  padding: 16px;
+}
+
+.compact .compoundIconRow {
+  gap: 10px;
+}
+
+.compact .compoundIconBtn {
+  padding: 12px 10px;
+}
+
+.compact .compoundInfo {
+  padding: 10px 12px;
+}
+
+/* Lightweight Wheels Upgrade Toggle */
+.upgradeSection {
+  margin-top: 14px;
+}
+
+.upgradeSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+}
+
+.upgradeToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.upgradeToggle:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.upgradeToggleActive {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+.upgradeCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.upgradeCheckboxActive {
+  background: linear-gradient(135deg, #a855f7, #8b5cf6);
+  border-color: transparent;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+.upgradeCheckbox svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.15s ease;
+}
+
+.upgradeCheckboxActive svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.upgradeInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.upgradeName {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 3px;
+}
+
+.upgradeDesc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}
+
+.upgradeMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.upgradeCost {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(34, 197, 94, 0.9);
+}
+
+.upgradeGain {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(34, 211, 238, 0.8);
+  padding: 2px 6px;
+  background: rgba(34, 211, 238, 0.1);
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .upgradeSection {
+    margin-top: 12px;
+  }
+  
+  .upgradeSectionTitle {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .upgradeToggle {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  
+  .upgradeCheckbox {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .upgradeCheckbox svg {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .upgradeName {
+    font-size: 12px;
+  }
+  
+  .upgradeDesc {
+    font-size: 10px;
+  }
+  
+  .upgradeCost {
+    font-size: 10px;
+  }
+  
+  .upgradeGain {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+}

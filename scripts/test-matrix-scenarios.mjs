@@ -86,19 +86,6 @@ function checkPositiveSynergies(selectedUpgradeKeys) {
     });
   }
   
-  // Track tire + brake synergy
-  const hasTrackTires = selectedUpgradeKeys.some(k => k.includes('tires-track') || k.includes('tires-slicks'));
-  const hasTrackBrakes = selectedUpgradeKeys.includes('brake-pads-track') && 
-                         selectedUpgradeKeys.includes('brake-fluid-lines');
-  
-  if (hasTrackTires && hasTrackBrakes) {
-    synergies.push({
-      type: 'positive',
-      name: 'Track-Ready Tire & Brake Package',
-      message: 'Track tires paired with appropriate brake upgrades for safe track use',
-    });
-  }
-  
   // Suspension synergy
   const hasSuspension = selectedUpgradeKeys.some(k => 
     k.includes('coilovers') || k.includes('lowering-springs')
@@ -265,29 +252,7 @@ const scenarios = [
     expectedCritical: 1, // Missing fuel system
     description: 'Big power mods without fuel support',
   },
-  {
-    name: 'Track Tire Build - Complete',
-    car: naCar,
-    upgrades: ['tires-track', 'brake-pads-track', 'brake-fluid-lines', 'big-brake-kit'],
-    expectedWarnings: 0,
-    expectedSynergies: 1, // Track tire + brake synergy
-    description: 'Complete track tire and brake package',
-  },
-  {
-    name: 'Track Tires Without Brake Support',
-    car: naCar,
-    upgrades: ['tires-track'],
-    expectedCritical: 1, // Missing brake fluid
-    expectedWarnings: 1, // Missing pads
-    description: 'Track tires alone should flag brake requirements',
-  },
-  {
-    name: 'Slicks Without Safety Gear',
-    car: naCar,
-    upgrades: ['tires-slicks', 'brake-pads-track', 'brake-fluid-lines', 'big-brake-kit'],
-    expectedInfo: 1, // Roll bar recommendation
-    description: 'Slicks should suggest safety equipment',
-  },
+  // Note: Tire-related test scenarios removed - tire compound is now handled by WheelTireConfigurator
   {
     name: 'Complete Suspension Build',
     car: muscleCar,

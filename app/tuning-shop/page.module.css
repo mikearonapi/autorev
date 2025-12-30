@@ -92,6 +92,13 @@
   /* Remove fixed min-width to allow more space for tabs on mobile/tablet */
 }
 
+/* Hide title on mobile to give tabs priority - matches Garage behavior */
+@media (max-width: 479px) {
+  .headerLeft {
+    display: none;
+  }
+}
+
 @media (min-width: 1024px) {
   .headerLeft {
     min-width: 200px;

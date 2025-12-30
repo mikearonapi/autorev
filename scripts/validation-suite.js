@@ -259,15 +259,8 @@ function runAlgorithmTests() {
   // 2.4 Dependency rule tests
   console.log('\n2.4 Dependency Rule Tests');
   
-  // Test: Track tires should warn about brake fluid
-  const trackTireSelection = ['tires-track'];
-  const trackTireWarnings = checkDependencies(trackTireSelection);
-  const hasFluidWarning = trackTireWarnings.some(w => w.ruleId === 'grip-brakes-fluid');
-  if (hasFluidWarning) {
-    pass('Track tire → brake fluid', 'Warning correctly triggered');
-  } else {
-    fail('Track tire → brake fluid', 'Warning not triggered');
-  }
+  // Note: Tire compound selection is now handled by WheelTireConfigurator
+  // Removed track tire dependency test as tires-track module no longer exists
   
   // Test: Supercharger should warn about fuel system
   const scSelection = ['supercharger-roots'];

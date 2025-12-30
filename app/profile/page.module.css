@@ -1021,6 +1021,89 @@
 }
 
 /* ============================================
+   LOCATION SECTION
+   ============================================ */
+
+.locationDescription {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 var(--space-md);
+  line-height: 1.5;
+}
+
+.locationForm {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+}
+
+.locationRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+@media (max-width: 640px) {
+  .locationRow {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+.locationField {
+  flex: 1;
+  min-width: 0;
+}
+
+.locationField:first-child {
+  flex: 0 0 120px;
+}
+
+@media (max-width: 640px) {
+  .locationField,
+  .locationField:first-child {
+    flex: 1;
+    max-width: none !important;
+  }
+}
+
+.locationActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.clearLocationButton {
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clearLocationButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.clearLocationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.locationError {
+  font-size: var(--font-size-sm);
+  color: #f87171;
+  margin: 0 0 var(--space-sm);
+}
+
+/* ============================================
    BUTTONS
    ============================================ */
 

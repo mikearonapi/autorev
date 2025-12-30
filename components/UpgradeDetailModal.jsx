@@ -19,14 +19,7 @@ function getRelevantScenario(upgradeKey) {
     return 'boost_increase';
   }
   
-  // Tire upgrades -> sticky_tires scenario
-  if (
-    upgradeKey === 'tires-track' ||
-    upgradeKey === 'tires-slicks' ||
-    upgradeKey === 'tires-performance'
-  ) {
-    return 'sticky_tires';
-  }
+  // Note: Tire compound selection is handled by WheelTireConfigurator
   
   // Lowering upgrades -> lowering scenario
   if (

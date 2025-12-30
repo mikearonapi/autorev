@@ -27,6 +27,12 @@ const estimateConversations = (fuel) => {
 
 // Icons
 const Icons = {
+  mapPin: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+  ),
   user: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -259,6 +265,15 @@ export default function ProfilePage() {
     maintenance: true,
     newsletter: false,
   });
+  
+  // Location state
+  const [locationZip, setLocationZip] = useState('');
+  const [locationCity, setLocationCity] = useState('');
+  const [locationState, setLocationState] = useState('');
+  const [isLookingUpZip, setIsLookingUpZip] = useState(false);
+  const [isSavingLocation, setIsSavingLocation] = useState(false);
+  const [locationSaveSuccess, setLocationSaveSuccess] = useState(false);
+  const [locationError, setLocationError] = useState('');
 
   // AL Fuel state
   const [alBalance, setAlBalance] = useState({
@@ -295,6 +310,15 @@ export default function ProfilePage() {
       setDisplayName(user.user_metadata.full_name);
     }
   }, [profile, user]);
+
+  // Initialize location from profile
+  useEffect(() => {
+    if (profile?.location_zip) {
+      setLocationZip(profile.location_zip);
+      setLocationCity(profile.location_city || '');
+      setLocationState(profile.location_state || '');
+    }
+  }, [profile]);
 
   // Fetch AL Balance - live from API (fuel-based display)
   useEffect(() => {
@@ -425,6 +449,108 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     await logout();
     router.push('/');
+  };
+
+  // Handle ZIP code lookup
+  const handleZipLookup = async (zip) => {
+    setLocationZip(zip);
+    setLocationError('');
+    
+    // Only lookup if we have a valid 5-digit ZIP
+    if (!/^\d{5}$/.test(zip)) {
+      setLocationCity('');
+      setLocationState('');
+      return;
+    }
+    
+    setIsLookingUpZip(true);
+    try {
+      const response = await fetch(`/api/user/location?zip=${zip}`);
+      const data = await response.json();
+      
+      if (response.ok && data.city) {
+        setLocationCity(data.city);
+        setLocationState(data.state);
+      } else if (response.ok && data.state) {
+        // We know the state but not the city
+        setLocationCity('');
+        setLocationState(data.state);
+      } else {
+        setLocationCity('');
+        setLocationState('');
+        setLocationError('ZIP code not found');
+      }
+    } catch (err) {
+      console.error('Failed to lookup ZIP:', err);
+      setLocationCity('');
+      setLocationState('');
+    } finally {
+      setIsLookingUpZip(false);
+    }
+  };
+
+  // Handle location save
+  const handleSaveLocation = async () => {
+    if (!locationZip || !/^\d{5}$/.test(locationZip)) {
+      setLocationError('Please enter a valid 5-digit ZIP code');
+      return;
+    }
+    
+    setIsSavingLocation(true);
+    setLocationError('');
+    setLocationSaveSuccess(false);
+    
+    try {
+      const response = await fetch('/api/user/location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zip: locationZip }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setLocationCity(data.location.city || '');
+        setLocationState(data.location.state || '');
+        setLocationSaveSuccess(true);
+        setTimeout(() => setLocationSaveSuccess(false), 3000);
+      } else {
+        setLocationError(data.error || 'Failed to save location');
+      }
+    } catch (err) {
+      console.error('Failed to save location:', err);
+      setLocationError('Failed to save location');
+    } finally {
+      setIsSavingLocation(false);
+    }
+  };
+
+  // Handle clear location
+  const handleClearLocation = async () => {
+    setIsSavingLocation(true);
+    setLocationError('');
+    
+    try {
+      const response = await fetch('/api/user/location', {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setLocationZip('');
+        setLocationCity('');
+        setLocationState('');
+        setLocationSaveSuccess(true);
+        setTimeout(() => setLocationSaveSuccess(false), 3000);
+      } else {
+        const data = await response.json();
+        setLocationError(data.error || 'Failed to clear location');
+      }
+    } catch (err) {
+      console.error('Failed to clear location:', err);
+      setLocationError('Failed to clear location');
+    } finally {
+      setIsSavingLocation(false);
+    }
   };
 
   // Handle data clearing
@@ -738,6 +864,96 @@ export default function ProfilePage() {
                       <span className={styles.toggleSlider}></span>
                     </label>
                   </div>
+                </div>
+              </div>
+
+              {/* Your Location */}
+              <div className={styles.profileSubsection}>
+                <h3 className={styles.subsectionTitle}>
+                  <Icons.mapPin size={18} />
+                  Your Location
+                </h3>
+                <p className={styles.locationDescription}>
+                  Set your location to receive local event recommendations and personalized AL analysis.
+                </p>
+
+                <div className={styles.locationForm}>
+                  <div className={styles.locationRow}>
+                    <div className={styles.locationField}>
+                      <label htmlFor="zipCode" className={styles.label}>
+                        ZIP Code
+                      </label>
+                      <input
+                        id="zipCode"
+                        type="text"
+                        value={locationZip}
+                        onChange={(e) => handleZipLookup(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                        className={styles.input}
+                        placeholder="Enter ZIP"
+                        maxLength={5}
+                      />
+                    </div>
+                    
+                    <div className={styles.locationField}>
+                      <label className={styles.label}>City</label>
+                      <input
+                        type="text"
+                        value={isLookingUpZip ? 'Looking up...' : locationCity}
+                        className={styles.input}
+                        disabled
+                        placeholder="Auto-detected"
+                      />
+                    </div>
+                    
+                    <div className={styles.locationField} style={{ maxWidth: '80px' }}>
+                      <label className={styles.label}>State</label>
+                      <input
+                        type="text"
+                        value={locationState}
+                        className={styles.input}
+                        disabled
+                        placeholder="--"
+                      />
+                    </div>
+                  </div>
+                  
+                  {locationError && (
+                    <p className={styles.locationError}>{locationError}</p>
+                  )}
+                  
+                  <div className={styles.locationActions}>
+                    <button
+                      onClick={handleSaveLocation}
+                      disabled={isSavingLocation || !locationZip}
+                      className={styles.saveButton}
+                    >
+                      {locationSaveSuccess ? (
+                        <>
+                          <Icons.check size={18} />
+                          Saved!
+                        </>
+                      ) : isSavingLocation ? (
+                        'Saving...'
+                      ) : (
+                        'Save Location'
+                      )}
+                    </button>
+                    
+                    {(locationZip || profile?.location_zip) && (
+                      <button
+                        onClick={handleClearLocation}
+                        disabled={isSavingLocation}
+                        className={styles.clearLocationButton}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  
+                  <p className={styles.inputHint}>
+                    Your location is used to recommend local car events and for personalized garage analysis. 
+                    We never share your exact location.
+                  </p>
                 </div>
               </div>
 

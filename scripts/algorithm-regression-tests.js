@@ -128,12 +128,8 @@ const GOLDEN_ENGINE_TYPES = {
 };
 
 // Expected dependency warnings
+// Note: Tire compound selection is handled by WheelTireConfigurator, not upgrade modules
 const GOLDEN_DEPENDENCY_RULES = [
-  {
-    selection: ['tires-track'],
-    expectedRuleIds: ['grip-brakes-fluid'],
-    description: 'Track tires should trigger brake fluid warning',
-  },
   {
     selection: ['headers'],
     expectedRuleIds: ['headers-tune'],

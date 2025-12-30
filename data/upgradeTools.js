@@ -547,7 +547,7 @@ export const upgradeToolRequirements = {
     notes: 'Drain and refill coolant. Burp system properly to avoid air pockets.',
   },
 
-  // Wheels & Tires
+  // Wheels (Tire compound handled by WheelTireConfigurator)
   'wheels-lightweight': {
     essential: ['floor-jack', 'jack-stands', 'torque-wrench'],
     recommended: [],
@@ -555,22 +555,6 @@ export const upgradeToolRequirements = {
     timeEstimate: '1 hour',
     diyFriendly: true,
     notes: 'Simple swap. Check hub-centric ring fitment. Torque to spec in star pattern.',
-  },
-  'tires-performance': {
-    essential: [], // Tire mounting requires shop equipment
-    recommended: [],
-    difficulty: 'shop-only',
-    timeEstimate: '1 hour at shop',
-    diyFriendly: false,
-    notes: 'Requires professional tire mounting and balancing equipment.',
-  },
-  'tires-track': {
-    essential: [], // Tire mounting requires shop equipment
-    recommended: [],
-    difficulty: 'shop-only',
-    timeEstimate: '1 hour at shop',
-    diyFriendly: false,
-    notes: 'Requires professional tire mounting and balancing equipment.',
   },
 
   // Drivetrain

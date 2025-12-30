@@ -1,340 +1,490 @@
 /* ===========================================
-   UPGRADE CENTER - Ultra Compact Layout
-   Zero scrolling on standard displays
+   UPGRADE CENTER - Premium Redesign
+   Beautiful, cohesive vehicle modification interface
    =========================================== */
 
 .upgradeCenter {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  height: 100%;
-  overflow: hidden;
-  background: radial-gradient(circle at top center, #1a1b1e 0%, #0f1012 100%);
+  min-height: 100%;
+  background: linear-gradient(180deg, #0c0d0f 0%, #111214 50%, #0a0b0c 100%);
   color: #fff;
+  overflow-y: auto;
 }
 
 /* ===========================================
-   HEADER - Compact Single Row
+   VEHICLE HERO SECTION
+   Large, prominent vehicle display
    =========================================== */
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  flex-shrink: 0;
+.heroSection {
+  position: relative;
+  padding: 32px 32px 40px;
+  background: 
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(212, 175, 55, 0.02) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.headerLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
+.heroContent {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
 }
 
-.backBtn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.backBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.carThumb {
-  width: 72px;
-  height: 48px;
-  border-radius: 6px;
+/* Hero Image */
+.heroImageContainer {
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: 16px;
   overflow: hidden;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #18191c 0%, #0c0d0f 100%);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 }
 
-.carThumb img {
+.heroImageContainer img,
+.heroImageContainer > div {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.carInfo {
-  flex: 1;
-  min-width: 0;
+.heroImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
 }
 
-.carNameRow {
+/* Hero Info */
+.heroInfo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 4px;
 }
 
-.carName {
-  font-family: var(--font-display);
-  font-size: 16px;
+.heroHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.heroTitleGroup {
+  flex: 1;
+}
+
+.heroYear {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #d4af37;
+  margin-bottom: 4px;
+}
+
+.heroName {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 32px;
   font-weight: 700;
   color: #fff;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
 }
 
-.tunability {
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--score-color, #10b981);
-  border: 1px solid var(--score-color, rgba(255, 255, 255, 0.15));
-  white-space: nowrap;
-}
-
-.carSpecs {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 2px;
-}
-
-.headerRight {
+.heroSubtitle {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
 }
 
-.buildStats {
+.heroSubtitle span {
+  position: relative;
+}
+
+.heroSubtitle span:not(:last-child)::after {
+  content: '•';
+  position: absolute;
+  right: -10px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.changeCarBtn {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.hpBadge {
-  padding: 4px 8px;
-  background: rgba(16, 185, 129, 0.15);
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #10b981;
-}
-
-.costBadge {
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: help;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* Confidence-based cost styling */
-.costVerified {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+.changeCarBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
-.costHigh {
-  color: #d4af37;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-}
-
-.costEstimated {
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-}
-
-.saveBtn {
-  width: 36px;
-  height: 36px;
+/* Tunability Badge - Top Right Position */
+.tunabilityBadge {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #d4af37 0%, #b8973a 100%);
-  border: none;
-  border-radius: 8px;
-  color: #000;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 12px;
+  min-width: 90px;
+  flex-shrink: 0;
 }
 
-.saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c54a 0%, #d4af37 100%);
-  transform: scale(1.05);
+.tunabilityScore {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--score-color, #10b981);
+  line-height: 1;
 }
 
-.saveBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.tunabilityLabel {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* Hero Stats Grid */
+.heroStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px;
+}
+
+.heroStatValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.heroStatLabel {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
 }
 
 /* ===========================================
-   AUTOREV RECOMMENDATION BANNER
+   RECOMMENDATION BANNER
    =========================================== */
 
 .recommendationBanner {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 18px 20px;
+  padding: 16px;
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 12px;
-  flex-shrink: 0;
 }
 
 .recommendationHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
+  margin-bottom: 8px;
 }
 
 .recommendationTitle {
-  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 1px;
   color: #d4af37;
 }
 
 .focusTag {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   padding: 3px 8px;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.2);
   border-radius: 4px;
-  color: #d4af37;
-  white-space: nowrap;
+  color: #f5e6b8;
 }
 
 .recommendationText {
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.recommendationDetails {
+/* Platform Insights & Watch Outs - Side by Side Cards */
+.insightsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.insightsCard,
+.watchOutsCard {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.insightsCard {
+  background: rgba(59, 130, 246, 0.04);
+  border-color: rgba(59, 130, 246, 0.12);
+}
+
+.watchOutsCard {
+  background: rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.12);
+}
+
+.insightsCardHeader,
+.watchOutsCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.insightsCardHeader {
+  color: #60a5fa;
+}
+
+.watchOutsCardHeader {
+  color: #f59e0b;
+}
+
+.insightsCardList,
+.watchOutsCardList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.insightsList,
-.watchOutsList {
+.insightsCardList li,
+.watchOutsCardList li {
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  padding-left: 12px;
+  position: relative;
+}
+
+.insightsCardList li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #60a5fa;
+}
+
+.watchOutsCardList li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #f59e0b;
+}
+
+.watchOutsCardList li {
+  color: #fcd34d;
+}
+
+/* Legacy styles kept for compatibility */
+.recommendationDetails {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insightsList, .watchOutsList {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
   align-items: baseline;
-  gap: 4px 8px;
+}
+
+.insightsLabel, .watchOutsLabel {
   font-size: 11px;
-  line-height: 1.4;
-}
-
-.insightsLabel {
   font-weight: 600;
-  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
   margin-right: 4px;
-}
-
-.insightItem {
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .watchOutsLabel {
-  font-weight: 600;
   color: #f59e0b;
-  margin-right: 4px;
+}
+
+.insightItem, .watchOutItem {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .watchOutItem {
-  color: rgba(255, 255, 255, 0.65);
+  color: #fbbf24;
 }
 
 /* ===========================================
-   MAIN GRID - Tight 2-Column
+   VEHICLE CONFIGURATION SECTION
    =========================================== */
 
-.mainGrid {
+.configSection {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
+  padding: 0 32px 24px;
+  margin-top: 24px;
+}
+
+.configCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ===========================================
+   MAIN WORKSPACE - Split Layout
+   =========================================== */
+
+.workspace {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  padding: 24px 32px;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
 }
 
-/* LEFT PANEL */
-.leftPanel {
+/* ===========================================
+   SIDEBAR
+   =========================================== */
+
+.sidebar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.sidebarCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
   overflow: hidden;
 }
 
+.sidebarCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebarCardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebarCardContent {
+  padding: 12px;
+}
+
+/* Package Grid - Compact 3x2 layout */
 .packageGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  flex-shrink: 0;
 }
 
 .pkgBtn {
   padding: 10px 6px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.2s ease;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pkgBtn:hover {
   background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .pkgBtnActive {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+  border-color: rgba(212, 175, 55, 0.4);
   color: #d4af37;
 }
 
+/* Category List */
 .categoryList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
+  gap: 4px;
 }
 
 .catBtn {
@@ -345,30 +495,17 @@
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.12s ease;
-  width: 100%;
-  text-align: left;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 13px;
-}
-
-.catBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.catBtn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.catBtnActive {
-  background: rgba(var(--cat-color-rgb, 212, 175, 55), 0.1);
-  border-color: rgba(var(--cat-color-rgb, 212, 175, 55), 0.25);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
 }
 
 .catBtn svg:first-child {
-  color: var(--cat-color, #fff);
+  color: var(--cat-color, #888);
   flex-shrink: 0;
 }
 
@@ -376,494 +513,47 @@
   flex: 1;
 }
 
-.catBadge {
-  min-width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cat-color, #d4af37);
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  color: #000;
-  padding: 0 4px;
-}
-
-.catArrow {
-  color: rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-}
-
-/* RIGHT PANEL */
-.rightPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.section {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.sectionTitle {
-  font-size: 10px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.35);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 14px;
-}
-
-/* ===========================================
-   Parts Finder (Beta)
-   =========================================== */
-
-.partsControls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.partsSearch {
-  display: flex;
-}
-
-.partsInput {
-  width: 100%;
-  padding: 10px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.25);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.partsInput::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.partsInput:focus {
-  border-color: rgba(212, 175, 55, 0.35);
-}
-
-.partsFilters {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.partsSelect {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.25);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.partsCheckbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  user-select: none;
-}
-
-.partsCheckbox input {
-  width: 14px;
-  height: 14px;
-}
-
-.partsHint {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
-  padding: 6px 2px;
-}
-
-.partsError {
-  font-size: 11px;
-  color: #fca5a5;
-  background: rgba(239, 68, 68, 0.10);
-  border: 1px solid rgba(239, 68, 68, 0.18);
-  padding: 8px 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.partsList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.partsItem {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  padding: 10px 10px;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.partsMain {
-  min-width: 0;
-  flex: 1;
-}
-
-.partsName {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.92);
-  margin-bottom: 4px;
-  line-height: 1.2;
-}
-
-.partsMeta {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.partsDot {
-  opacity: 0.6;
-}
-
-.partsBadges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.partsBadge,
-.partsBadgeVerified,
-.partsBadgeWarn,
-.partsBadgePrice {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  padding: 3px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.partsBadgeVerified {
-  border-color: rgba(16, 185, 129, 0.25);
-  background: rgba(16, 185, 129, 0.12);
-  color: rgba(16, 185, 129, 0.95);
-}
-
-.partsBadgeWarn {
-  border-color: rgba(245, 158, 11, 0.25);
-  background: rgba(245, 158, 11, 0.12);
-  color: rgba(245, 158, 11, 0.95);
-}
-
-.partsBadgePrice {
-  border-color: rgba(212, 175, 55, 0.25);
-  background: rgba(212, 175, 55, 0.12);
-  color: rgba(212, 175, 55, 0.95);
-}
-
-.partsActions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
-  flex-shrink: 0;
-}
-
-.partsLink {
-  font-size: 11px;
-  color: rgba(212, 175, 55, 0.95);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.partsAddBtn {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.partsAddBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.partsSelected {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.partsSelectedHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.partsSelectedNote {
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.partsSelectedList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.partsChecks {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.partsChecksHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.partsCheckOk {
-  font-size: 11px;
-  color: rgba(16, 185, 129, 0.9);
-  background: rgba(16, 185, 129, 0.10);
-  border: 1px solid rgba(16, 185, 129, 0.18);
-  padding: 8px 10px;
-  border-radius: 8px;
-}
-
-.partsCheckBlock {
-  margin-top: 10px;
-}
-
-.partsCheckTitle,
-.partsCheckTitleWarn,
-.partsCheckTitleBad {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.partsCheckTitleWarn {
-  color: rgba(245, 158, 11, 0.95);
-}
-
-.partsCheckTitleBad {
-  color: rgba(239, 68, 68, 0.95);
-}
-
-.partsCheckItem {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  padding: 7px 9px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.20);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 6px;
-}
-
-.partsCheckItem:last-child {
-  margin-bottom: 0;
-}
-
-.partsCheckPart {
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.partsCheckArrow {
-  opacity: 0.75;
-}
-
-.partsCheckReason {
-  color: rgba(255, 255, 255, 0.45);
-  font-weight: 600;
-}
-
-.partsSelectedItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.20);
-}
-
-.partsSelectedName {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.partsRemoveBtn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.catBtn:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.partsRemoveBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* METRIC ROWS - Improved spacing */
-.metricRow, .scoreRow {
-  padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.metricRow:last-child, .scoreRow:last-child {
-  margin-bottom: 0;
-}
-
-.metricHeader, .scoreHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.metricLabel, .scoreLabel {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.metricLabel svg {
-  color: #d4af37;
-}
-
-.metricValues, .scoreValues {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.stockVal {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 10px;
-}
-
-.arrow {
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 9px;
-}
-
-.upgradedVal {
-  color: #10b981;
-}
-
-.currentVal {
+.catBtnActive {
+  background: rgba(var(--cat-color), 0.1);
+  border-color: rgba(var(--cat-color), 0.3);
   color: #fff;
 }
 
-.gain {
-  font-size: 9px;
-  padding: 1px 4px;
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border-radius: 3px;
+.catBtnActive svg:first-child {
+  color: var(--cat-color);
 }
 
-/* PROGRESS BARS */
-.track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-}
-
-.fillStock {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: #3b82f6;
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.fillUpgrade {
-  position: absolute;
-  top: 0;
-  height: 100%;
+.catBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   background: #10b981;
-  border-radius: 3px;
-  transition: all 0.3s ease;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.catArrow {
+  color: rgba(255, 255, 255, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.catBtnActive .catArrow {
+  color: var(--cat-color);
+  transform: translateX(2px);
 }
 
 /* ===========================================
-   POPUP MODAL
+   CATEGORY POPUP - Upgrade Selection Modal
    =========================================== */
 
 .popupOverlay {
@@ -898,7 +588,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 14px;
   background: rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -906,8 +596,8 @@
 .popupTitle {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 13px;
   font-weight: 600;
   color: #fff;
 }
@@ -925,14 +615,14 @@
 }
 
 .popupClose {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.05);
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -946,18 +636,18 @@
 .popupContent {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 12px;
 }
 
 .upgradeRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.12s ease;
 }
 
@@ -974,11 +664,15 @@
   border-color: var(--cat-color, rgba(212, 175, 55, 0.3));
 }
 
+.upgradeRowConflict {
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
 .upgradeToggle {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: none;
   border: none;
   cursor: pointer;
@@ -992,23 +686,14 @@
   pointer-events: none;
 }
 
-.upgradeToggle:disabled .checkbox {
-  opacity: 0.5;
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.upgradeToggle:disabled .upgradeName {
-  color: rgba(255, 255, 255, 0.5);
-}
-
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
   flex-shrink: 0;
   transition: all 0.15s ease;
 }
@@ -1021,51 +706,43 @@
 
 .upgradeName {
   flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: #ffffff;
+  line-height: 1.3;
 }
 
 .upgradeGain {
-  font-size: 10px;
-  padding: 2px 6px;
+  font-size: 9px;
+  padding: 2px 5px;
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
-  border-radius: 4px;
+  border-radius: 3px;
   font-weight: 600;
 }
 
-.infoBtn {
-  width: 24px;
-  height: 24px;
+.conflictBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: all 0.15s ease;
+  width: 18px;
+  height: 18px;
+  background: rgba(251, 191, 36, 0.15);
+  border-radius: 3px;
+  color: #fbbf24;
   flex-shrink: 0;
 }
 
-.infoBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-/* Learn More Button - More visible upgrade info trigger */
 .learnMoreBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: 4px 8px;
   background: rgba(0, 212, 255, 0.12);
   border: 1px solid rgba(0, 212, 255, 0.25);
-  border-radius: 6px;
+  border-radius: 4px;
   color: #00d4ff;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -1080,526 +757,1202 @@
   transform: translateY(-1px);
 }
 
-.learnMoreBtn:active {
-  transform: translateY(0);
+/* Save Button - Now rendered outside workspace for proper stacking */
+.saveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  margin: 0 32px 24px;
+  background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.popupFooter {
-  padding: 12px 16px;
-  font-size: 12px;
-  text-align: center;
-  background: rgba(212, 175, 55, 0.08);
-  color: #d4af37;
-  border-top: 1px solid rgba(212, 175, 55, 0.15);
-  font-weight: 500;
+.saveBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e6c04a 0%, #d4af37 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+}
+
+.saveBtn:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
 }
 
 /* ===========================================
-   SAVE MODAL
+   MAIN PANEL
+   =========================================== */
+
+.mainPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Performance Card */
+.performanceCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+
+.performanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.performanceTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.performanceTitle svg {
+  color: #d4af37;
+}
+
+.buildStats {
+  display: flex;
+  gap: 10px;
+}
+
+.hpBadge {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.costBadge {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.costVerified {
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.costHigh {
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #60a5fa;
+}
+
+.costEstimated {
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+}
+
+/* Performance Metrics - Compact Row Layout */
+.performanceMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.metricLabel svg {
+  color: #d4af37;
+}
+
+.metricValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stockVal {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+.arrow {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 10px;
+}
+
+.upgradedVal {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.gain {
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.currentVal {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+
+/* Metric Track - Progress Bar */
+.track {
+  position: relative;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fillStock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.fillUpgrade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 3px;
+  transition: all 0.4s ease;
+}
+
+/* Score Row - Experience Scores */
+.scoreRow {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.scoreRow:last-child {
+  margin-bottom: 0;
+}
+
+.scoreHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.scoreLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.scoreValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* ===========================================
+   SECTIONS
+   =========================================== */
+
+.section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 16px 0;
+}
+
+/* ===========================================
+   UPGRADE TABS - Now in main content area
+   =========================================== */
+
+.upgradeArea {
+  margin-top: 24px;
+}
+
+.tabsContainer {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tabsHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  overflow-x: auto;
+}
+
+.categoryTab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.categoryTab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.categoryTabActive {
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+}
+
+.tabBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #10b981;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.tabsContent {
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* ===========================================
+   UPGRADE CARDS GRID
+   =========================================== */
+
+.upgradeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.upgradeCard {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upgradeCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.upgradeCardSelected {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.upgradeCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.upgradeName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.upgradePrice {
+  font-size: 14px;
+  font-weight: 600;
+  color: #d4af37;
+}
+
+.upgradeDescription {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.upgradeStats {
+  display: flex;
+  gap: 16px;
+}
+
+.upgradeStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.upgradeStat svg {
+  color: #10b981;
+}
+
+.upgradeStatValue {
+  font-weight: 600;
+  color: #10b981;
+}
+
+.upgradeStatLabel {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.upgradeCheckmark {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+/* ===========================================
+   SAVE BUILD MODAL - Premium Design
    =========================================== */
 
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(6px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .saveModal {
   width: 100%;
-  max-width: 400px;
-  background: #18191c;
+  max-width: 420px;
+  background: linear-gradient(180deg, #1e1f23 0%, #141517 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: slideUp 0.3s ease;
 }
 
+/* Header */
 .saveModalHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+  align-items: center;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
 
-.saveModalHeader button {
-  width: 24px;
-  height: 24px;
+.saveModalTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.saveModalIcon {
+  color: #d4af37;
+}
+
+.saveModalTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.saveModalClose {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.saveInput {
-  width: 100%;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+.saveModalClose:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
   color: #fff;
-  font-size: 16px; /* Minimum 16px to prevent iOS Safari auto-zoom on focus */
-  margin-bottom: 12px;
-  -webkit-appearance: none;
-  appearance: none;
 }
 
-.saveInput:focus {
+/* Body */
+.saveModalBody {
+  padding: 20px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.formInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.formInput:focus {
   outline: none;
-  border-color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
-.saveError {
-  font-size: 11px;
-  color: #ef4444;
-  margin-bottom: 12px;
+/* Build Summary Card */
+.buildSummaryCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
 }
 
-.saveActions {
+.buildSummaryRow {
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
 }
 
-.saveActions button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
+.buildSummaryRow:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.buildSummaryLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.buildSummaryValue {
   font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.saveActions button:first-child {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
+.buildSummaryValueGain {
+  font-size: 13px;
+  font-weight: 600;
+  color: #22c55e;
 }
 
-.saveActions button:last-child {
-  background: linear-gradient(135deg, #d4af37 0%, #b8973a 100%);
-  color: #000;
+/* Garage Option Section */
+.garageOptionSection {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.saveActions button:last-child:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c54a 0%, #d4af37 100%);
-}
-
-.saveActions button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Garage Save Option */
-.garageOption {
-  margin: 16px 0;
-  padding: 14px;
-  background: rgba(212, 175, 55, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 10px;
-}
-
-.garageCheckbox {
+.garageCheckboxLabel {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  user-select: none;
-}
-
-.garageCheckbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: #d4af37;
-}
-
-.garageCheckbox span {
   font-size: 13px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 8px 0;
+}
+
+.customCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.customCheckboxChecked {
+  background: linear-gradient(135deg, #d4af37, #b8942e);
+  border-color: transparent;
+}
+
+.customCheckbox svg {
+  color: #000;
 }
 
 .garageVehicleSelect {
   width: 100%;
-  margin-top: 12px;
-  padding: 10px 12px;
+  padding: 12px 14px;
+  margin-top: 10px;
   background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  -webkit-appearance: none;
+  transition: all 0.2s ease;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 36px;
+  background-position: right 12px center;
 }
 
 .garageVehicleSelect:focus {
   outline: none;
-  border-color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.4);
 }
 
 .garageVehicleSelect option {
   background: #1a1b1e;
-  color: #ffffff;
+  color: #fff;
+  padding: 12px;
 }
 
 .garageNote {
   margin-top: 10px;
-  padding: 8px 10px;
+  padding: 10px 12px;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(234, 179, 8, 0.9);
+}
+
+/* Add to Garage Prompt */
+.addToGaragePrompt {
+  margin-top: 12px;
+  padding: 14px;
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px dashed rgba(34, 211, 238, 0.3);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.addToGarageText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 10px;
+}
+
+.addToGarageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(34, 211, 238, 0.15);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  border-radius: 8px;
+  color: #22d3ee;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addToGarageBtn:hover:not(:disabled) {
+  background: rgba(34, 211, 238, 0.25);
+  border-color: rgba(34, 211, 238, 0.6);
+}
+
+.addToGarageBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vehicleAddedSuccess {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #22c55e;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Error Message */
+.saveErrorMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-top: 12px;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
-  color: rgba(239, 68, 68, 0.9);
-  line-height: 1.4;
+  color: #ef4444;
+}
+
+/* Actions */
+.saveModalActions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.confirmBtn {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e6c04a 0%, #d4af37 100%);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.confirmBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.savingSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile adjustments for modal */
+@media (max-width: 640px) {
+  .modalOverlay {
+    padding: 16px;
+    padding-top: 80px; /* Push down slightly for better centering */
+    padding-bottom: 100px; /* Space for bottom bar */
+    align-items: center;
+  }
+  
+  .saveModal {
+    max-width: 100%;
+    border-radius: 16px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+  }
+  
+  .saveModalHeader {
+    padding: 16px;
+  }
+  
+  .saveModalTitle {
+    font-size: 16px;
+  }
+  
+  .saveModalBody {
+    padding: 16px;
+  }
+  
+  .formInput {
+    padding: 12px 14px;
+  }
+  
+  .saveModalActions {
+    padding: 14px 16px;
+  }
+  
+  .cancelBtn,
+  .confirmBtn {
+    padding: 12px 16px;
+  }
 }
 
 /* ===========================================
    RESPONSIVE
    =========================================== */
 
-@media (max-width: 800px) {
-  .upgradeCenter {
+@media (max-width: 1200px) {
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .heroImageContainer {
+    max-height: 300px;
+  }
+  
+  .workspace {
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 968px) {
+  .heroSection {
     padding: 16px;
-    gap: 12px;
   }
   
-  .header {
+  .heroImageContainer {
+    aspect-ratio: 16/9;
+    max-height: 240px;
+  }
+  
+  .heroStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+  
+  .configSection {
+    grid-template-columns: 1fr;
+    padding: 0 16px 16px;
+    margin-top: 16px;
+  }
+  
+  .workspace {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .sidebar {
+    position: static;
+    flex-direction: row;
     flex-wrap: wrap;
-    padding: 12px 16px;
-    gap: 12px;
+    gap: 10px;
+    max-height: none;
   }
   
-  .headerLeft {
+  .sidebarCard {
     flex: 1;
-    min-width: 0;
+    min-width: 160px;
   }
   
-  .carThumb {
-    width: 56px;
-    height: 38px;
-  }
-  
-  .carName {
-    font-size: 14px;
-  }
-  
-  .carSpecs {
-    font-size: 10px;
-  }
-  
-  .headerRight {
+  .categoryList {
+    flex-direction: row;
     flex-wrap: wrap;
     gap: 6px;
   }
   
-  .mainGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .leftPanel {
-    max-height: none; /* Allow full height on mobile */
-  }
-  
-  .packageGrid {
-    gap: 4px;
-  }
-  
-  .pkgBtn {
-    padding: 8px 4px;
-    font-size: 10px;
-  }
-  
-  /* Horizontal scrolling category buttons - prevents cutoff */
-  .categoryList {
-    flex-direction: row;
-    flex-wrap: nowrap; /* Prevent wrapping - use horizontal scroll */
-    gap: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px;
-    padding-right: 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-  }
-  
-  .categoryList::-webkit-scrollbar {
-    height: 4px;
-  }
-  
-  .categoryList::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-  }
-  
-  .categoryList::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 2px;
-  }
-  
   .catBtn {
-    width: auto;
-    flex: 0 0 auto;
-    padding: 10px 14px;
-    min-width: max-content; /* Ensure text doesn't get cut off */
-    white-space: nowrap;
-  }
-  
-  .catBtn span:first-of-type {
+    padding: 8px 12px;
     font-size: 12px;
   }
   
-  .catArrow {
-    display: none; /* Hide arrows on mobile to save space */
-  }
-  
-  .section {
-    padding: 14px;
-  }
-  
-  .recommendationBanner {
-    padding: 14px 16px;
-  }
-  
-  .recommendationText {
-    font-size: 12px;
-  }
-  
-  .partsFilters {
-    flex-wrap: wrap;
-    gap: 8px;
+  .insightsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
 
-/* Extra small screens */
-@media (max-width: 480px) {
-  .upgradeCenter {
+@media (max-width: 640px) {
+  /* Hero Section - More compact */
+  .heroSection {
     padding: 12px;
+  }
+  
+  .heroHeader {
     gap: 10px;
   }
   
-  .header {
-    padding: 10px 12px;
-    gap: 8px;
+  .heroYear {
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
   }
   
-  .backBtn {
-    width: 28px;
-    height: 28px;
+  .heroName {
+    font-size: 22px;
+    margin-bottom: 4px;
   }
   
-  .carThumb {
-    width: 48px;
-    height: 32px;
+  .heroSubtitle {
+    display: none; /* Hidden on mobile - info already in stats row */
   }
   
-  .carName {
-    font-size: 13px;
+  /* Tunability Badge - Smaller on mobile */
+  .tunabilityBadge {
+    padding: 6px 10px;
+    min-width: 55px;
+    border-radius: 8px;
   }
   
-  .tunability {
+  .tunabilityScore {
+    font-size: 16px;
+  }
+  
+  .tunabilityLabel {
+    font-size: 6px;
+    letter-spacing: 0.3px;
+  }
+  
+  /* Hero Stats - Single row on mobile */
+  .heroStats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 10px 8px;
+  }
+  
+  .heroStat {
+    padding: 6px 4px;
+  }
+  
+  .heroStatValue {
+    font-size: 17px;
+  }
+  
+  .heroStatLabel {
     font-size: 8px;
-    padding: 2px 4px;
+    margin-top: 2px;
+    letter-spacing: 0.4px;
   }
   
-  .buildStats {
-    gap: 4px;
+  /* Recommendation Banner - Tighter */
+  .recommendationBanner {
+    padding: 12px;
   }
   
-  .hpBadge, .costBadge {
-    padding: 3px 6px;
+  .recommendationHeader {
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .recommendationTitle {
     font-size: 10px;
   }
   
-  .saveBtn {
-    width: 32px;
-    height: 32px;
+  .focusTag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .recommendationText {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  .insightsGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  
+  .insightsCard,
+  .watchOutsCard {
+    padding: 10px;
+  }
+  
+  .insightsCardHeader,
+  .watchOutsCardHeader {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  
+  .insightsCardList li,
+  .watchOutsCardList li {
+    font-size: 11px;
+    padding-left: 10px;
+  }
+  
+  /* Config Section - Tighter */
+  .configSection {
+    padding: 0 12px 12px;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  /* Workspace - Compact padding */
+  .workspace {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .sidebar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .sidebarCard {
+    min-width: 100%;
+  }
+  
+  .sidebarCardHeader {
+    padding: 10px 12px;
+  }
+  
+  .sidebarCardTitle {
+    font-size: 11px;
+  }
+  
+  .sidebarCardContent {
+    padding: 10px;
+  }
+  
+  /* Package Grid - Compact */
+  .packageGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
   }
   
   .pkgBtn {
-    padding: 6px 3px;
-    font-size: 9px;
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+  
+  /* Category List - Compact */
+  .categoryList {
+    gap: 2px;
   }
   
   .catBtn {
-    padding: 8px 12px;
+    padding: 10px 12px;
+    font-size: 12px;
     gap: 8px;
   }
   
-  .catBadge {
-    min-width: 14px;
-    height: 14px;
-    font-size: 8px;
-  }
-  
-  .section {
-    padding: 12px;
-    border-radius: 10px;
-  }
-  
-  .sectionTitle {
+  .catCount {
+    padding: 2px 6px;
     font-size: 9px;
-    margin-bottom: 12px;
   }
   
-  .metricRow, .scoreRow {
-    padding: 10px 12px;
-    margin-bottom: 8px;
+  /* Performance Card - Compact */
+  .performanceCard {
+    padding: 12px;
+  }
+  
+  .cardTitle {
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+  
+  .performanceMetrics {
+    gap: 8px;
+  }
+  
+  .metric {
+    padding: 10px;
+  }
+  
+  .metricLabel {
+    font-size: 10px;
+  }
+  
+  .metricValue {
+    font-size: 13px;
+  }
+  
+  .metricGain {
+    font-size: 10px;
+  }
+  
+  /* Experience Scores - Compact */
+  .scoreRow {
+    padding: 8px 10px;
+  }
+  
+  .scoreName {
+    font-size: 12px;
+  }
+  
+  .scoreValue {
+    font-size: 12px;
+  }
+  
+  /* Save Button - Fixed at very bottom on mobile */
+  .saveBtn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0;
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    font-size: 14px;
+    border-radius: 0;
+    z-index: 2147483647; /* Maximum z-index value - above everything */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Add bottom padding to workspace to account for fixed save button */
+  .workspace {
+    padding-bottom: 80px;
   }
 }
 
 /* ===========================================
-   CONFLICT NOTIFICATION & INDICATORS
+   LEGACY SUPPORT (keeping old classes for compatibility)
    =========================================== */
 
-/* Upgrade row with potential conflict - subtle indicator */
-.upgradeRowConflict {
-  position: relative;
+.header {
+  display: none; /* Hidden - replaced by heroSection */
 }
 
-.upgradeRowConflict::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, #f59e0b 0%, #f97316 100%);
-  border-radius: 8px 0 0 8px;
-  opacity: 0.7;
+.mainGrid {
+  display: none; /* Hidden - replaced by workspace */
 }
 
-/* Conflict swap badge in upgrade row */
-.conflictBadge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: rgba(249, 115, 22, 0.15);
-  border: 1px solid rgba(249, 115, 22, 0.3);
-  border-radius: 4px;
-  color: #f97316;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-
-.conflictBadge:hover {
-  background: rgba(249, 115, 22, 0.25);
-  transform: scale(1.1);
-}
-
-/* Toast notification for conflict resolution */
-.conflictToast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #1a1b1e 0%, #25262a 100%);
-  border: 1px solid rgba(249, 115, 22, 0.4);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(249, 115, 22, 0.1);
-  z-index: 200;
-  animation: slideUpToast 0.3s ease-out;
-  max-width: 90vw;
-}
-
-@keyframes slideUpToast {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-.conflictToastIcon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(249, 115, 22, 0.15);
-  border-radius: 8px;
-  color: #f97316;
-  flex-shrink: 0;
-}
-
-.conflictToastContent {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.conflictToastTitle {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #f97316;
-}
-
-.conflictToastMessage {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.4;
-}
-
-.conflictToastClose {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 6px;
-  color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.conflictToastClose:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-/* Make the checkbox more prominent for items that will replace others */
-.upgradeRowConflict .checkbox {
-  border-color: rgba(249, 115, 22, 0.5);
-}
-
-.upgradeRowConflict:hover .checkbox {
-  border-color: #f97316;
-  background: rgba(249, 115, 22, 0.1);
+.leftPanel, .rightPanel {
+  display: none;
 }

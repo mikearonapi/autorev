@@ -358,7 +358,7 @@
   background: #f8fafc;
   border: 2px solid #e2e8f0;
   border-radius: 14px;
-  font-size: 15px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
   font-family: inherit;
   color: #1e293b;
   transition: all 0.2s ease;

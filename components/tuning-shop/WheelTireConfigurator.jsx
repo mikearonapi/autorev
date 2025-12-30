@@ -1,18 +1,58 @@
 'use client';
 
 /**
- * Wheel & Tire Configurator Component
+ * Wheel & Tire Configurator - Redesigned
  * 
- * Displays OEM baseline and upgrade wheel/tire fitment options.
- * Shows fitment warnings, recommended use cases, and estimated costs.
- * Allows selection to add to build.
+ * Clean, intuitive interface for wheel and tire selection
+ * with performance impact visualization.
  * 
  * @module components/tuning-shop/WheelTireConfigurator
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { fetchCarFitments, getFitmentWarnings, getRecommendedForTags, estimateFitmentCost, formatWheelSpecs, formatTireSpecs, compareFitments } from '@/lib/fitmentService';
+import { fetchCarFitments, formatWheelSpecs, formatTireSpecs } from '@/lib/fitmentService';
 import styles from './WheelTireConfigurator.module.css';
+
+/**
+ * Log wheel/tire configuration changes for analytics and gap detection
+ * Helps identify where database has missing or incorrect fitment data
+ */
+function logWheelTireChange(car, field, oldValue, newValue, oemValue) {
+  // Skip if no actual change
+  if (oldValue === newValue) return;
+  
+  const changeData = {
+    timestamp: new Date().toISOString(),
+    carSlug: car?.slug,
+    carName: car ? `${car.year || ''} ${car.make} ${car.model}`.trim() : 'Unknown',
+    field,
+    oldValue,
+    newValue,
+    oemValue,
+    isOverridingOEM: oemValue && newValue !== oemValue,
+    // Flag if user is providing data we don't have
+    isFillingGap: !oemValue && newValue,
+    // Special flag for compound changes (always important for performance)
+    affectsPerformance: field === 'compound',
+  };
+  
+  // Log to console for development
+  console.log('[WheelTireConfig] User change detected:', changeData);
+  
+  // TODO: Send to analytics endpoint when ready
+  // trackEvent('wheel_tire_config_change', changeData);
+  
+  // Store in sessionStorage for debugging
+  try {
+    const existingLogs = JSON.parse(sessionStorage.getItem('wheelTireChanges') || '[]');
+    existingLogs.push(changeData);
+    // Keep last 50 changes
+    if (existingLogs.length > 50) existingLogs.shift();
+    sessionStorage.setItem('wheelTireChanges', JSON.stringify(existingLogs));
+  } catch (e) {
+    // Ignore storage errors
+  }
+}
 
 // Icons
 const ChevronIcon = ({ isOpen }) => (
@@ -42,64 +82,101 @@ const WheelIcon = () => (
   </svg>
 );
 
-const WarningIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-    <line x1="12" y1="9" x2="12" y2="13"/>
-    <line x1="12" y1="17" x2="12.01" y2="17"/>
-  </svg>
-);
-
 const CheckIcon = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
 
-const InfoIcon = () => (
+const EditIcon = () => (
   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="12" y1="16" x2="12" y2="12"/>
-    <line x1="12" y1="8" x2="12.01" y2="8"/>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
   </svg>
 );
 
-const PlusIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19"/>
-    <line x1="5" y1="12" x2="19" y2="12"/>
-  </svg>
-);
+// Tire compound options with performance impact
+const TIRE_COMPOUNDS = [
+  { 
+    id: 'all-season', 
+    label: 'All-Season', 
+    desc: 'Year-round versatility',
+    grip: 0,
+    wear: '+',
+    icon: '🌤️'
+  },
+  { 
+    id: 'summer', 
+    label: 'Summer Performance', 
+    desc: 'Better dry & wet grip',
+    grip: 0.05,
+    wear: '',
+    icon: '☀️'
+  },
+  { 
+    id: 'max-performance', 
+    label: 'Max Performance Summer', 
+    desc: 'Track-ready street tire',
+    grip: 0.10,
+    wear: '-',
+    icon: '🔥'
+  },
+  { 
+    id: 'track', 
+    label: '200TW Track Tire', 
+    desc: 'Competition compound',
+    grip: 0.20,
+    wear: '--',
+    icon: '🏁'
+  },
+];
 
-/**
- * @typedef {Object} WheelTireConfiguratorProps
- * @property {Object} car - Selected car object with slug
- * @property {Object|null} selectedFitment - Currently selected fitment option
- * @property {function} onSelect - Callback when a fitment is selected
- * @property {boolean} [defaultExpanded] - Start expanded
- * @property {boolean} [showCostEstimates] - Show cost estimates
- * @property {boolean} [disabled] - Disable selection
- */
+// Lightweight wheels upgrade info
+const LIGHTWEIGHT_WHEELS = {
+  key: 'wheels-lightweight',
+  name: 'Lightweight Wheels',
+  description: 'Forged/flow-formed wheels reduce unsprung mass',
+  cost: '$2,000 - $4,000',
+};
 
 /**
  * Wheel & Tire Configurator
- * @param {WheelTireConfiguratorProps} props
  */
 export default function WheelTireConfigurator({
   car,
   selectedFitment,
   onSelect,
   defaultExpanded = true,
-  showCostEstimates = true,
   disabled = false,
+  compact = false,
+  // Upgrade integration
+  selectedUpgrades = [],
+  onUpgradeToggle,
 }) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fitmentData, setFitmentData] = useState(null);
-  const [expandedOption, setExpandedOption] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  
+  // Configuration state
+  // Default to 'all-season' as the baseline stock compound
+  const [wheelConfig, setWheelConfig] = useState({
+    // Wheel specs
+    diameterFront: '',
+    diameterRear: '',
+    widthFront: '',
+    widthRear: '',
+    // Tire specs
+    tireSizeFront: '',
+    tireSizeRear: '',
+    // Tire compound - all-season is stock baseline (0 grip bonus)
+    compound: 'all-season',
+    // Setup type
+    isStaggered: false,
+  });
 
-  // Fetch fitment data when car changes
+  // Fetch OEM fitment data when car changes
   useEffect(() => {
     if (!car?.slug) {
       setFitmentData(null);
@@ -119,6 +196,11 @@ export default function WheelTireConfigurator({
           setError(fetchError.message || 'Failed to load fitment data');
         } else {
           setFitmentData(data);
+          
+          // Initialize with OEM specs if available
+          if (data?.oem) {
+            initializeFromOEM(data.oem);
+          }
         }
         setIsLoading(false);
       }
@@ -126,75 +208,188 @@ export default function WheelTireConfigurator({
 
     loadData();
     
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [car?.slug]);
 
-  // Handle option selection
-  const handleSelect = useCallback((option) => {
-    if (disabled) return;
+  // Initialize wheel config from OEM data
+  const initializeFromOEM = useCallback((oem) => {
+    if (!oem) return;
     
-    // If clicking the same option, deselect it
-    if (selectedFitment?.id === option.id) {
-      onSelect?.(null);
-    } else {
-      onSelect?.(option);
-    }
-  }, [selectedFitment, onSelect, disabled]);
-
-  // Toggle option expansion for mobile
-  const toggleOptionExpanded = useCallback((optionId) => {
-    setExpandedOption(prev => prev === optionId ? null : optionId);
+    // Parse wheel specs like "20×9.5" and "20×10.5"
+    const parseFront = parseWheelSize(oem.wheelSizeFront);
+    const parseRear = parseWheelSize(oem.wheelSizeRear || oem.wheelSizeFront);
+    
+    setWheelConfig({
+      diameterFront: parseFront.diameter || '',
+      diameterRear: parseRear.diameter || '',
+      widthFront: parseFront.width || '',
+      widthRear: parseRear.width || '',
+      tireSizeFront: oem.tireSizeFront || '',
+      tireSizeRear: oem.tireSizeRear || oem.tireSizeFront || '',
+      compound: 'summer',
+      isStaggered: oem.wheelSizeFront !== oem.wheelSizeRear,
+    });
   }, []);
 
-  // Check if we have data to show
-  const hasData = fitmentData && (fitmentData.oem || fitmentData.options?.length > 0);
-  
-  // Group options by category for display
-  const groupedOptions = useMemo(() => {
-    if (!fitmentData?.options) return {};
-    
-    const groups = {};
-    fitmentData.options.forEach(opt => {
-      const type = opt.fitmentType || 'other';
-      if (!groups[type]) groups[type] = [];
-      groups[type].push(opt);
-    });
-    
-    return groups;
-  }, [fitmentData]);
+  // Initialize from selected fitment
+  useEffect(() => {
+    if (selectedFitment && !selectedFitment.isCustom) {
+      initializeFromOEM(selectedFitment);
+    }
+  }, [selectedFitment, initializeFromOEM]);
 
-  // Don't render if no car selected
+  // Handle config changes with logging
+  const handleConfigChange = useCallback((field, value) => {
+    setWheelConfig(prev => {
+      const oldValue = prev[field];
+      
+      // Get OEM value if available for comparison
+      const oemValue = fitmentData?.oem ? (
+        field === 'compound' ? 'all-season' :
+        field === 'diameterFront' ? parseWheelSize(fitmentData.oem.wheelSizeFront).diameter :
+        field === 'diameterRear' ? parseWheelSize(fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront).diameter :
+        field === 'widthFront' ? parseWheelSize(fitmentData.oem.wheelSizeFront).width :
+        field === 'widthRear' ? parseWheelSize(fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront).width :
+        field === 'tireSizeFront' ? fitmentData.oem.tireSizeFront :
+        field === 'tireSizeRear' ? fitmentData.oem.tireSizeRear || fitmentData.oem.tireSizeFront :
+        null
+      ) : null;
+      
+      // Log the change for analytics
+      logWheelTireChange(car, field, oldValue, value, oemValue);
+      
+      const updated = { ...prev, [field]: value };
+      
+      // Auto-sync rear to front if not staggered
+      if (!prev.isStaggered) {
+        if (field === 'diameterFront') updated.diameterRear = value;
+        if (field === 'widthFront') updated.widthRear = value;
+        if (field === 'tireSizeFront') updated.tireSizeRear = value;
+      }
+      
+      return updated;
+    });
+  }, [car, fitmentData]);
+
+  // Apply configuration and notify parent
+  const applyConfig = useCallback(() => {
+    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
+    
+    const fitment = {
+      id: 'custom',
+      fitmentType: 'custom',
+      displayName: 'Current Setup',
+      wheelSizeFront: `${wheelConfig.diameterFront}×${wheelConfig.widthFront}`,
+      wheelSizeRear: `${wheelConfig.diameterRear}×${wheelConfig.widthRear}`,
+      tireSizeFront: wheelConfig.tireSizeFront,
+      tireSizeRear: wheelConfig.tireSizeRear,
+      tireCompound: wheelConfig.compound,
+      isCustom: true,
+      // Performance impact from compound
+      gripBonus: compound?.grip || 0,
+      recommendedFor: compound?.id === 'track' ? ['track', 'competition'] : 
+                       compound?.id === 'max-performance' ? ['spirited', 'track'] :
+                       compound?.id === 'summer' ? ['street', 'spirited'] :
+                       ['daily', 'street'],
+    };
+    
+    onSelect?.(fitment);
+    setIsEditing(false);
+  }, [wheelConfig, onSelect]);
+
+  // Reset to OEM
+  const resetToOEM = useCallback(() => {
+    if (fitmentData?.oem) {
+      initializeFromOEM(fitmentData.oem);
+      onSelect?.(fitmentData.oem);
+    }
+    setIsEditing(false);
+  }, [fitmentData, initializeFromOEM, onSelect]);
+
+  // Calculate performance impact
+  const performanceImpact = useMemo(() => {
+    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
+    return {
+      gripGain: compound?.grip || 0,
+      label: compound?.grip > 0.15 ? 'Significant' : 
+             compound?.grip > 0.05 ? 'Moderate' : 
+             compound?.grip > 0 ? 'Slight' : 'Baseline',
+    };
+  }, [wheelConfig.compound]);
+
+  // Auto-apply compound changes immediately (affects performance metrics)
+  useEffect(() => {
+    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
+    
+    // Only auto-apply if we have valid fitment data
+    if (wheelConfig.diameterFront || fitmentData?.oem) {
+      const fitment = {
+        id: 'current',
+        fitmentType: 'current',
+        displayName: 'Current Setup',
+        wheelSizeFront: wheelConfig.diameterFront 
+          ? `${wheelConfig.diameterFront}×${wheelConfig.widthFront}`
+          : fitmentData?.oem?.wheelSizeFront || '',
+        wheelSizeRear: wheelConfig.diameterRear 
+          ? `${wheelConfig.diameterRear}×${wheelConfig.widthRear}`
+          : fitmentData?.oem?.wheelSizeRear || '',
+        tireSizeFront: wheelConfig.tireSizeFront || fitmentData?.oem?.tireSizeFront || '',
+        tireSizeRear: wheelConfig.tireSizeRear || fitmentData?.oem?.tireSizeRear || '',
+        tireCompound: wheelConfig.compound,
+        // Performance impact from compound - this is what affects metrics
+        gripBonus: compound?.grip || 0,
+        recommendedFor: compound?.id === 'track' ? ['track', 'competition'] : 
+                        compound?.id === 'max-performance' ? ['spirited', 'track'] :
+                        compound?.id === 'summer' ? ['street', 'spirited'] :
+                        ['daily', 'street'],
+      };
+      
+      onSelect?.(fitment);
+    }
+  }, [wheelConfig.compound, wheelConfig.diameterFront, wheelConfig.widthFront, 
+      wheelConfig.diameterRear, wheelConfig.widthRear, wheelConfig.tireSizeFront,
+      wheelConfig.tireSizeRear, fitmentData?.oem, onSelect]);
+
   if (!car) return null;
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
       {/* Header */}
-      <button 
-        className={styles.header}
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-      >
-        <div className={styles.headerLeft}>
-          <WheelIcon />
-          <span className={styles.headerTitle}>Wheels & Tires</span>
-          {selectedFitment && (
-            <span className={styles.selectedBadge}>
-              <CheckIcon />
-              Selected
-            </span>
-          )}
-        </div>
+      <div className={styles.header}>
+        <button 
+          className={styles.headerToggle}
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+        >
+          <div className={styles.headerLeft}>
+            <WheelIcon />
+            <span className={styles.headerTitle}>Wheels & Tires</span>
+            {performanceImpact.gripGain > 0 && (
+              <span className={styles.performanceBadge}>
+                +{(performanceImpact.gripGain * 100).toFixed(0)}% grip
+              </span>
+            )}
+            <span className={styles.headerHint}>Affects handling, grip & performance</span>
+          </div>
+        </button>
         <div className={styles.headerRight}>
-          {!isExpanded && selectedFitment && (
-            <span className={styles.summaryText}>
-              {selectedFitment.displayName}
-            </span>
+          {isExpanded && (
+            <button
+              className={`${styles.headerEditBtn} ${isEditing ? styles.headerEditBtnActive : ''}`}
+              onClick={(e) => { e.stopPropagation(); setIsEditing(!isEditing); }}
+            >
+              {isEditing ? <CheckIcon /> : <EditIcon />}
+              <span className={styles.headerEditLabel}>{isEditing ? 'Done' : 'Edit'}</span>
+            </button>
           )}
-          <ChevronIcon isOpen={isExpanded} />
+          <button 
+            className={styles.chevronBtn}
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <ChevronIcon isOpen={isExpanded} />
+          </button>
         </div>
-      </button>
+      </div>
 
       {/* Content */}
       {isExpanded && (
@@ -202,68 +397,198 @@ export default function WheelTireConfigurator({
           {isLoading ? (
             <div className={styles.loading}>
               <div className={styles.spinner} />
-              <span>Loading fitment options...</span>
+              <span>Loading fitment data...</span>
             </div>
           ) : error ? (
-            <div className={styles.error}>
-              <WarningIcon />
+            <div className={styles.errorState}>
               <span>{error}</span>
             </div>
-          ) : !hasData ? (
-            <div className={styles.noData}>
-              <InfoIcon />
-              <span>No wheel/tire fitment data available for this vehicle</span>
-            </div>
           ) : (
             <>
-              {/* OEM Baseline */}
-              {fitmentData.oem && (
-                <div className={styles.section}>
-                  <h4 className={styles.sectionTitle}>OEM Stock</h4>
-                  <FitmentOptionCard
-                    option={fitmentData.oem}
-                    isSelected={selectedFitment?.id === fitmentData.oem.id}
-                    isExpanded={expandedOption === fitmentData.oem.id}
-                    onSelect={() => handleSelect(fitmentData.oem)}
-                    onToggleExpand={() => toggleOptionExpanded(fitmentData.oem.id)}
-                    showCost={showCostEstimates}
-                    disabled={disabled}
-                    isOEM
-                  />
+              {/* Reset Button - only when editing and OEM data available */}
+              {isEditing && fitmentData?.oem && (
+                <div className={styles.editToggle}>
+                  <button className={styles.resetBtn} onClick={resetToOEM}>
+                    Reset to OEM
+                  </button>
                 </div>
               )}
 
-              {/* Upgrade Options */}
-              {Object.keys(groupedOptions).length > 0 && (
-                <div className={styles.section}>
-                  <h4 className={styles.sectionTitle}>Upgrade Options</h4>
-                  <div className={styles.optionsGrid}>
-                    {Object.entries(groupedOptions).map(([type, options]) => (
-                      options.map(option => (
-                        <FitmentOptionCard
-                          key={option.id}
-                          option={option}
-                          oemBaseline={fitmentData.oem}
-                          isSelected={selectedFitment?.id === option.id}
-                          isExpanded={expandedOption === option.id}
-                          onSelect={() => handleSelect(option)}
-                          onToggleExpand={() => toggleOptionExpanded(option.id)}
-                          showCost={showCostEstimates}
+              {/* Wheel & Tire Specs Section */}
+              <div className={styles.specsSection}>
+                {/* Staggered Toggle */}
+                <div className={styles.staggeredToggle}>
+                  <span className={styles.toggleLabel}>Setup Type:</span>
+                  <div className={styles.toggleButtons}>
+                    <button
+                      className={`${styles.toggleBtn} ${!wheelConfig.isStaggered ? styles.toggleBtnActive : ''}`}
+                      onClick={() => handleConfigChange('isStaggered', false)}
+                      disabled={!isEditing}
+                    >
+                      Square
+                    </button>
+                    <button
+                      className={`${styles.toggleBtn} ${wheelConfig.isStaggered ? styles.toggleBtnActive : ''}`}
+                      onClick={() => handleConfigChange('isStaggered', true)}
+                      disabled={!isEditing}
+                    >
+                      Staggered
+                    </button>
+                  </div>
+                </div>
+
+                {/* Wheel Specs Grid */}
+                <div className={styles.specsGrid}>
+                  {/* Front Wheels */}
+                  <div className={styles.specGroup}>
+                    <h4 className={styles.specGroupTitle}>
+                      {wheelConfig.isStaggered ? 'Front' : 'All Corners'}
+                    </h4>
+                    <div className={styles.specRow}>
+                      <SpecField
+                        label="Diameter"
+                        value={wheelConfig.diameterFront}
+                        onChange={(v) => handleConfigChange('diameterFront', v)}
+                        suffix='"'
+                        placeholder="20"
+                        isEditing={isEditing}
+                        disabled={disabled}
+                      />
+                      <SpecField
+                        label="Width"
+                        value={wheelConfig.widthFront}
+                        onChange={(v) => handleConfigChange('widthFront', v)}
+                        suffix='"'
+                        placeholder="9.5"
+                        isEditing={isEditing}
+                        disabled={disabled}
+                      />
+                    </div>
+                    <div className={styles.tireSpecRow}>
+                      <SpecField
+                        label="Tire Size"
+                        value={wheelConfig.tireSizeFront}
+                        onChange={(v) => handleConfigChange('tireSizeFront', v)}
+                        placeholder="255/40ZR20"
+                        isEditing={isEditing}
+                        disabled={disabled}
+                        fullWidth
+                      />
+                    </div>
+                  </div>
+
+                  {/* Rear Wheels (if staggered) */}
+                  {wheelConfig.isStaggered && (
+                    <div className={styles.specGroup}>
+                      <h4 className={styles.specGroupTitle}>Rear</h4>
+                      <div className={styles.specRow}>
+                        <SpecField
+                          label="Diameter"
+                          value={wheelConfig.diameterRear}
+                          onChange={(v) => handleConfigChange('diameterRear', v)}
+                          suffix='"'
+                          placeholder="20"
+                          isEditing={isEditing}
                           disabled={disabled}
                         />
-                      ))
-                    ))}
-                  </div>
+                        <SpecField
+                          label="Width"
+                          value={wheelConfig.widthRear}
+                          onChange={(v) => handleConfigChange('widthRear', v)}
+                          suffix='"'
+                          placeholder="10.5"
+                          isEditing={isEditing}
+                          disabled={disabled}
+                        />
+                      </div>
+                      <div className={styles.tireSpecRow}>
+                        <SpecField
+                          label="Tire Size"
+                          value={wheelConfig.tireSizeRear}
+                          onChange={(v) => handleConfigChange('tireSizeRear', v)}
+                          placeholder="285/35ZR20"
+                          isEditing={isEditing}
+                          disabled={disabled}
+                          fullWidth
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Tire Compound Selection */}
+              <div className={styles.compoundSection}>
+                <h4 className={styles.sectionTitle}>
+                  Tire Compound
+                  <span className={styles.performanceTag}>
+                    Affects Grip
+                  </span>
+                </h4>
+                {/* Icon Row - always interactive for compound selection */}
+                <div className={styles.compoundIconRow}>
+                  {TIRE_COMPOUNDS.map(compound => (
+                    <button
+                      key={compound.id}
+                      className={`${styles.compoundIconBtn} ${wheelConfig.compound === compound.id ? styles.compoundIconBtnActive : ''}`}
+                      onClick={() => handleConfigChange('compound', compound.id)}
+                      disabled={disabled}
+                      title={`${compound.label}${compound.grip > 0 ? ` (+${(compound.grip * 100).toFixed(0)}% grip)` : ' (stock)'}`}
+                    >
+                      <span className={styles.compoundIconEmoji}>{compound.icon}</span>
+                    </button>
+                  ))}
+                </div>
+                {/* Selected Compound Info */}
+                {(() => {
+                  const selected = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
+                  return selected && (
+                    <div className={styles.compoundInfo}>
+                      <span className={styles.compoundInfoLabel}>{selected.label}</span>
+                      <span className={styles.compoundInfoDesc}>{selected.desc}</span>
+                      {selected.grip > 0 ? (
+                        <span className={styles.compoundInfoGrip}>
+                          +{(selected.grip * 100).toFixed(0)}% grip
+                        </span>
+                      ) : (
+                        <span className={styles.compoundInfoStock}>Stock</span>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Lightweight Wheels Upgrade */}
+              {onUpgradeToggle && (
+                <div className={styles.upgradeSection}>
+                  <h4 className={styles.upgradeSectionTitle}>Wheel Upgrade</h4>
+                  <button
+                    className={`${styles.upgradeToggle} ${selectedUpgrades.includes(LIGHTWEIGHT_WHEELS.key) ? styles.upgradeToggleActive : ''}`}
+                    onClick={() => onUpgradeToggle(LIGHTWEIGHT_WHEELS.key)}
+                    disabled={disabled}
+                  >
+                    <div className={`${styles.upgradeCheckbox} ${selectedUpgrades.includes(LIGHTWEIGHT_WHEELS.key) ? styles.upgradeCheckboxActive : ''}`}>
+                      <CheckIcon />
+                    </div>
+                    <div className={styles.upgradeInfo}>
+                      <div className={styles.upgradeName}>{LIGHTWEIGHT_WHEELS.name}</div>
+                      <div className={styles.upgradeDesc}>{LIGHTWEIGHT_WHEELS.description}</div>
+                    </div>
+                    <div className={styles.upgradeMeta}>
+                      <span className={styles.upgradeCost}>{LIGHTWEIGHT_WHEELS.cost}</span>
+                      <span className={styles.upgradeGain}>+0.5 grip</span>
+                    </div>
+                  </button>
                 </div>
               )}
 
-              {/* Info Footer */}
-              <div className={styles.infoFooter}>
-                <InfoIcon />
-                <span>
-                  Fitment data is community-sourced. Always verify with your wheel/tire shop.
-                </span>
-              </div>
+              {/* Apply Button (when editing) */}
+              {isEditing && (
+                <button className={styles.applyBtn} onClick={applyConfig}>
+                  <CheckIcon />
+                  Apply Configuration
+                </button>
+              )}
             </>
           )}
         </div>
@@ -273,230 +598,61 @@ export default function WheelTireConfigurator({
 }
 
 /**
- * Individual Fitment Option Card
+ * Individual Spec Field Component
  */
-function FitmentOptionCard({
-  option,
-  oemBaseline,
-  isSelected,
-  isExpanded,
-  onSelect,
-  onToggleExpand,
-  showCost,
-  disabled,
-  isOEM = false,
+function SpecField({ 
+  label, 
+  value, 
+  onChange, 
+  suffix = '', 
+  placeholder = '',
+  isEditing = false,
+  disabled = false,
+  fullWidth = false,
 }) {
-  // Get warnings for this option
-  const warnings = useMemo(() => getFitmentWarnings(option), [option]);
-  
-  // Get recommended-for tags
-  const tags = useMemo(() => getRecommendedForTags(option.recommendedFor), [option.recommendedFor]);
-  
-  // Get comparison to OEM (for upgrade options)
-  const comparison = useMemo(() => {
-    if (isOEM || !oemBaseline) return null;
-    return compareFitments(oemBaseline, option);
-  }, [isOEM, oemBaseline, option]);
-  
-  // Get cost estimate
-  const costEstimate = useMemo(() => {
-    if (isOEM || !showCost) return null;
-    return estimateFitmentCost(option);
-  }, [isOEM, showCost, option]);
+  if (!isEditing) {
+    return (
+      <div className={`${styles.specField} ${fullWidth ? styles.specFieldFull : ''}`}>
+        <span className={styles.specLabel}>{label}</span>
+        <span className={styles.specValue}>
+          {value || placeholder}
+          {suffix && value && suffix}
+        </span>
+      </div>
+    );
+  }
 
   return (
-    <div 
-      className={`
-        ${styles.optionCard} 
-        ${isSelected ? styles.optionCardSelected : ''} 
-        ${isOEM ? styles.optionCardOEM : ''}
-        ${warnings.length > 0 ? styles.optionCardHasWarnings : ''}
-      `}
-    >
-      {/* Card Header */}
-      <div className={styles.cardHeader} onClick={onToggleExpand}>
-        <div className={styles.cardHeaderLeft}>
-          <span className={styles.fitmentType}>{option.displayName}</span>
-          {option.verified && (
-            <span className={styles.verifiedBadge}>✓ Verified</span>
-          )}
-        </div>
-        <ChevronIcon isOpen={isExpanded} />
-      </div>
-
-      {/* Key Specs (Always Visible) */}
-      <div className={styles.keySpecs}>
-        <div className={styles.specRow}>
-          <span className={styles.specLabel}>Wheels</span>
-          <span className={styles.specValue}>{formatWheelSpecs(option)}</span>
-        </div>
-        <div className={styles.specRow}>
-          <span className={styles.specLabel}>Tires</span>
-          <span className={styles.specValue}>{formatTireSpecs(option)}</span>
-        </div>
-      </div>
-
-      {/* Tags */}
-      {tags.length > 0 && (
-        <div className={styles.tags}>
-          {tags.map(tag => (
-            <span 
-              key={tag.key} 
-              className={styles.tag}
-              style={{ '--tag-color': tag.color }}
-            >
-              {tag.label}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Warnings (If Any) */}
-      {warnings.length > 0 && (
-        <div className={styles.warnings}>
-          {warnings.map((warning, idx) => (
-            <div key={idx} className={`${styles.warning} ${styles[`warning${warning.severity}`]}`}>
-              <span className={styles.warningIcon}>{warning.icon}</span>
-              <span className={styles.warningText}>{warning.message}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Expanded Details */}
-      {isExpanded && (
-        <div className={styles.expandedDetails}>
-          {/* Comparison to OEM */}
-          {comparison && (
-            <div className={styles.comparison}>
-              <h5 className={styles.detailsSubtitle}>vs. OEM Stock</h5>
-              <div className={styles.comparisonGrid}>
-                {comparison.wheelDiameterDiff !== 0 && (
-                  <div className={styles.comparisonItem}>
-                    <span>Diameter</span>
-                    <span className={comparison.wheelDiameterDiff > 0 ? styles.positive : styles.negative}>
-                      {comparison.wheelDiameterDiff > 0 ? '+' : ''}{comparison.wheelDiameterDiff}"
-                    </span>
-                  </div>
-                )}
-                {comparison.wheelWidthFrontDiff !== 0 && (
-                  <div className={styles.comparisonItem}>
-                    <span>Width (F)</span>
-                    <span className={comparison.wheelWidthFrontDiff > 0 ? styles.positive : styles.neutral}>
-                      {comparison.wheelWidthFrontDiff > 0 ? '+' : ''}{comparison.wheelWidthFrontDiff}"
-                    </span>
-                  </div>
-                )}
-                {comparison.wheelWidthRearDiff !== 0 && (
-                  <div className={styles.comparisonItem}>
-                    <span>Width (R)</span>
-                    <span className={comparison.wheelWidthRearDiff > 0 ? styles.positive : styles.neutral}>
-                      {comparison.wheelWidthRearDiff > 0 ? '+' : ''}{comparison.wheelWidthRearDiff}"
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Additional Specs */}
-          <div className={styles.additionalSpecs}>
-            {option.wheelBoltPattern && (
-              <div className={styles.specRow}>
-                <span className={styles.specLabel}>Bolt Pattern</span>
-                <span className={styles.specValue}>{option.wheelBoltPattern}</span>
-              </div>
-            )}
-            {option.wheelOffsetFront && (
-              <div className={styles.specRow}>
-                <span className={styles.specLabel}>Offset (F/R)</span>
-                <span className={styles.specValue}>
-                  +{option.wheelOffsetFront}mm / +{option.wheelOffsetRear || option.wheelOffsetFront}mm
-                </span>
-              </div>
-            )}
-            {option.speedometerErrorPercent && (
-              <div className={styles.specRow}>
-                <span className={styles.specLabel}>Speedo Error</span>
-                <span className={styles.specValue}>{option.speedometerErrorPercent}%</span>
-              </div>
-            )}
-            {option.popularityScore > 0 && (
-              <div className={styles.specRow}>
-                <span className={styles.specLabel}>Popularity</span>
-                <span className={styles.specValue}>{option.popularityScore}/100</span>
-              </div>
-            )}
-          </div>
-
-          {/* Clearance Notes */}
-          {option.clearanceNotes && (
-            <div className={styles.notes}>
-              <p>{option.clearanceNotes}</p>
-            </div>
-          )}
-
-          {/* Cost Estimate */}
-          {costEstimate && (
-            <div className={styles.costEstimate}>
-              <h5 className={styles.detailsSubtitle}>Estimated Cost</h5>
-              <div className={styles.costRange}>
-                ${costEstimate.low.toLocaleString()} – ${costEstimate.high.toLocaleString()}
-              </div>
-              <div className={styles.costBreakdown}>
-                {Object.entries(costEstimate.breakdown).map(([key, range]) => (
-                  <div key={key} className={styles.costItem}>
-                    <span>{formatCostKey(key)}</span>
-                    <span>${range.low} – ${range.high}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Select Button */}
-      {!isOEM && (
-        <button
-          className={`${styles.selectBtn} ${isSelected ? styles.selectBtnSelected : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}
+    <div className={`${styles.specField} ${fullWidth ? styles.specFieldFull : ''}`}>
+      <label className={styles.specLabel}>{label}</label>
+      <div className={styles.specInputWrapper}>
+        <input
+          type="text"
+          className={styles.specInput}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
           disabled={disabled}
-        >
-          {isSelected ? (
-            <>
-              <CheckIcon />
-              Selected
-            </>
-          ) : (
-            <>
-              <PlusIcon />
-              Add to Build
-            </>
-          )}
-        </button>
-      )}
+        />
+        {suffix && <span className={styles.specSuffix}>{suffix}</span>}
+      </div>
     </div>
   );
 }
 
 /**
- * Format cost breakdown keys for display
+ * Parse wheel size string like "20×9.5" into diameter and width
  */
-function formatCostKey(key) {
-  const labels = {
-    wheels: 'Wheels',
-    tires: 'Tires',
-    wheelsTires: 'Wheels + Tires',
-    spacers: 'Spacers',
-    camberKit: 'Camber Kit',
-    fenderWork: 'Fender Work',
-    install: 'Installation',
-  };
-  return labels[key] || key;
+function parseWheelSize(sizeStr) {
+  if (!sizeStr) return { diameter: '', width: '' };
+  
+  // Try to match patterns like "20×9.5", "20x9.5", "20 x 9.5"
+  const match = sizeStr.match(/(\d+\.?\d*)\s*[×x]\s*(\d+\.?\d*)/i);
+  if (match) {
+    return { diameter: match[1], width: match[2] };
+  }
+  
+  return { diameter: '', width: '' };
 }
 
 /**
@@ -513,27 +669,9 @@ export function useWheelTireSelection(initialFitment = null) {
     setSelectedFitment(null);
   }, []);
   
-  // Convert to build upgrade format
-  const toBuildUpgrade = useCallback(() => {
-    if (!selectedFitment) return null;
-    
-    return {
-      type: 'wheel_tire',
-      id: selectedFitment.id,
-      displayName: selectedFitment.displayName,
-      fitmentType: selectedFitment.fitmentType,
-      wheelSpecs: formatWheelSpecs(selectedFitment),
-      tireSpecs: formatTireSpecs(selectedFitment),
-      warnings: getFitmentWarnings(selectedFitment),
-      estimatedCost: estimateFitmentCost(selectedFitment),
-    };
-  }, [selectedFitment]);
-  
   return {
     selectedFitment,
     selectFitment,
     clearSelection,
-    toBuildUpgrade,
   };
 }
-

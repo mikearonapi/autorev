@@ -1459,34 +1459,9 @@ export const upgradeNodeMap = {
     improves: ['chassis.control_arm_angle'],
   },
 
-  // Wheels
+  // Wheels (tire compound handled by WheelTireConfigurator)
   'wheels-lightweight': {
     improves: ['tires.grip_coefficient'],
-  },
-  
-  // Tires
-  'tires-performance': {
-    improves: ['tires.grip_coefficient'],
-    modifies: ['tires.treadwear_rating'],
-    stresses: ['brakes.pad_temp_rating'],
-    recommends: ['brake-pads-street'],
-  },
-  'tires-track': {
-    improves: ['tires.grip_coefficient'],
-    modifies: ['tires.treadwear_rating', 'tires.wet_grip'],
-    stresses: ['brakes.pad_temp_rating', 'brakes.rotor_thermal_mass', 'brakes.fluid_boiling_point'],
-    compromises: ['tires.wet_grip'],
-    requires: ['brake-fluid-lines'],
-    recommends: ['brake-pads-track', 'big-brake-kit'],
-  },
-  'tires-slicks': {
-    improves: ['tires.grip_coefficient'],
-    modifies: ['tires.treadwear_rating', 'tires.wet_grip'],
-    stresses: ['brakes.pad_temp_rating', 'brakes.rotor_thermal_mass', 'brakes.fluid_boiling_point',
-               'brakes.abs_calibration'],
-    compromises: ['tires.wet_grip', 'electronics.abs_type'],
-    requires: ['brake-fluid-lines', 'brake-pads-track'],
-    recommends: ['big-brake-kit'],
   },
   
   // Brakes
@@ -1942,100 +1917,6 @@ export const dependencyRules = [
           severity: 'warning',
           message: 'High power builds generate significant heat - oil cooler recommended',
           recommendation: ['oil-cooler'],
-        };
-      }
-      return null;
-    },
-  },
-  
-  // ---------------------------------------------------------------------------
-  // TIRE GRIP → BRAKE RULES
-  // ---------------------------------------------------------------------------
-  {
-    id: 'grip-brakes-fluid',
-    name: 'Brake Fluid for Grip',
-    trigger: {
-      upgradeKeys: ['tires-track', 'tires-slicks'],
-    },
-    check: (selectedUpgrades) => {
-      const hasTrackTires = selectedUpgrades.some(u => 
-        ['tires-track', 'tires-slicks'].includes(u)
-      );
-      const hasFluidUpgrade = selectedUpgrades.includes('brake-fluid-lines');
-      
-      if (hasTrackTires && !hasFluidUpgrade) {
-        return {
-          severity: 'critical',
-          message: 'Track tires require high-temp brake fluid - stock fluid will boil',
-          recommendation: ['brake-fluid-lines'],
-        };
-      }
-      return null;
-    },
-  },
-  
-  {
-    id: 'grip-brakes-pads',
-    name: 'Brake Pads for Grip',
-    trigger: {
-      upgradeKeys: ['tires-track', 'tires-slicks'],
-    },
-    check: (selectedUpgrades) => {
-      const hasTrackTires = selectedUpgrades.some(u => 
-        ['tires-track', 'tires-slicks'].includes(u)
-      );
-      const hasTrackPads = selectedUpgrades.includes('brake-pads-track');
-      
-      if (hasTrackTires && !hasTrackPads) {
-        return {
-          severity: 'warning',
-          message: 'Track tires can overwhelm street brake pads - track pads recommended',
-          recommendation: ['brake-pads-track'],
-        };
-      }
-      return null;
-    },
-  },
-  
-  {
-    id: 'slicks-bbk',
-    name: 'BBK for Slicks',
-    trigger: {
-      upgradeKeys: ['tires-slicks'],
-    },
-    check: (selectedUpgrades) => {
-      const hasSlicks = selectedUpgrades.includes('tires-slicks');
-      const hasBBK = selectedUpgrades.includes('big-brake-kit');
-      
-      if (hasSlicks && !hasBBK) {
-        return {
-          severity: 'warning',
-          message: 'R-compound tires may exceed stock brake capacity - BBK recommended',
-          recommendation: ['big-brake-kit'],
-        };
-      }
-      return null;
-    },
-  },
-  
-  // ---------------------------------------------------------------------------
-  // SAFETY FOR SERIOUS TRACK USE
-  // ---------------------------------------------------------------------------
-  {
-    id: 'slicks-safety-rollbar',
-    name: 'Rollover Protection for Slicks',
-    trigger: {
-      upgradeKeys: ['tires-slicks'],
-    },
-    check: (selectedUpgrades) => {
-      const hasSlicks = selectedUpgrades.includes('tires-slicks');
-      const hasRollBar = selectedUpgrades.includes('roll-bar') || selectedUpgrades.includes('roll-cage');
-
-      if (hasSlicks && !hasRollBar) {
-        return {
-          severity: 'info',
-          message: 'Serious track use on slicks often pairs well with a roll bar for rollover protection',
-          recommendation: ['roll-bar'],
         };
       }
       return null;

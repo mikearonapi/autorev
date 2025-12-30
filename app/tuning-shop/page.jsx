@@ -1100,35 +1100,6 @@ function TuningShopContent() {
         {activeTab === 'upgrades' && (
           selectedCar ? (
             <div className={styles.hubContainer}>
-              {/* Sticky Car Header - Collapses when scrolling */}
-              <StickyCarHeader
-                car={selectedCar}
-                totalHpGain={buildSummary.totalHpGain}
-                totalCost={buildSummary.totalCost}
-                onChangeCar={handleBackToSelect}
-              />
-              
-              {/* Factory Configuration - Collapsible section */}
-              <div className={styles.configSection}>
-                <FactoryConfig
-                  car={selectedCar}
-                  initialConfig={factoryConfig}
-                  onChange={setFactoryConfig}
-                  defaultExpanded={false}
-                />
-              </div>
-              
-              {/* Wheel & Tire Configurator - Shows fitment options */}
-              <div className={styles.configSection}>
-                <WheelTireConfigurator
-                  car={selectedCar}
-                  selectedFitment={selectedFitment}
-                  onSelect={selectFitment}
-                  showCostEstimates={true}
-                  defaultExpanded={false}
-                />
-              </div>
-              
               <ErrorBoundary 
                 name="UpgradeCenter"
                 featureContext="tuning-shop"
@@ -1152,27 +1123,11 @@ function TuningShopContent() {
                   onChangeCar={handleBackToSelect}
                   onBuildSummaryUpdate={handleBuildSummaryUpdate}
                   factoryConfig={factoryConfig}
+                  onFactoryConfigChange={setFactoryConfig}
                   selectedWheelFitment={selectedFitment}
+                  onWheelFitmentChange={selectFitment}
                 />
               </ErrorBoundary>
-              
-              {/* Build Summary Bar - Sticky bottom bar */}
-              <BuildSummaryBar
-                selectedUpgrades={buildSummary.selectedUpgrades}
-                totalHpGain={buildSummary.totalHpGain}
-                totalTqGain={buildSummary.totalTqGain}
-                totalCost={buildSummary.totalCost}
-                upgradeCount={buildSummary.upgradeCount}
-                onSaveBuild={() => {
-                  // Trigger save in UpgradeCenter via ref or event
-                  document.dispatchEvent(new CustomEvent('tuning-shop:save-build'));
-                }}
-                onClearBuild={() => {
-                  document.dispatchEvent(new CustomEvent('tuning-shop:clear-build'));
-                }}
-                canSave={isAuthenticated && buildSummary.upgradeCount > 0}
-                disabled={!isAuthenticated}
-              />
             </div>
           ) : (
             <div className={styles.selectPrompt}>

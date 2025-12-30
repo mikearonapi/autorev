@@ -750,13 +750,13 @@ export function AuthProvider({ children }) {
                 });
                 scheduleSessionRefresh(refreshData.session);
                 
-                // Load profile and prefetch in parallel, then signal ready
-                const [profile] = await Promise.all([
-                  fetchProfile(refreshData.user.id),
-                  prefetchAllUserData(refreshData.user.id).catch(err => {
-                    console.warn('[AuthProvider] Prefetch error in timeout recovery:', err);
-                  }),
-                ]);
+                // Fire off prefetch in background (don't block on it)
+                prefetchAllUserData(refreshData.user.id).catch(err => {
+                  console.warn('[AuthProvider] Prefetch error in timeout recovery:', err);
+                });
+                
+                // Load profile, then signal ready
+                const profile = await fetchProfile(refreshData.user.id);
                 setState(prev => ({ 
                   ...prev, 
                   profile: profile || prev.profile,
@@ -868,10 +868,18 @@ export function AuthProvider({ children }) {
             window.history.replaceState({}, '', url.pathname + url.search);
           }
           
-          // Load profile and prefetch data silently in background
+          // Load profile in background, then signal ready for child providers
+          // NOTE: Prefetch runs in parallel but does NOT block isDataFetchReady
+          // Providers will use prefetched data if available, otherwise fetch themselves
           console.log('[AuthProvider] Loading user data in background');
           
-          const profilePromise = fetchProfile(user.id).then(profile => {
+          // Fire off prefetch in background (fire-and-forget)
+          prefetchAllUserData(user.id).catch(err => {
+            console.warn('[AuthProvider] Background prefetch error:', err);
+          });
+          
+          // Load profile - this is what we actually wait for
+          fetchProfile(user.id).then(profile => {
             if (profile) {
               setState(prev => ({ ...prev, profile }));
               console.log('[AuthProvider] Profile loaded:', {
@@ -879,20 +887,13 @@ export function AuthProvider({ children }) {
                 tier: profile?.subscription_tier,
               });
             }
-            return profile;
+            // Signal ready for child providers AFTER profile loads
+            // Don't wait for prefetch - it's best-effort optimization
+            console.log('[AuthProvider] Profile loaded, signaling ready for child providers');
+            setState(prev => ({ ...prev, isDataFetchReady: true }));
           }).catch(err => {
             console.warn('[AuthProvider] Profile fetch error:', err);
-            return null;
-          });
-          
-          // Prefetch user data in background for snappy navigation
-          const prefetchPromise = prefetchAllUserData(user.id).catch(err => {
-            console.warn('[AuthProvider] Background prefetch error:', err);
-          });
-          
-          // Signal ready for child providers AFTER both profile and prefetch complete
-          Promise.all([profilePromise, prefetchPromise]).then(() => {
-            console.log('[AuthProvider] Data prefetch complete, signaling ready for child providers');
+            // Still signal ready so app doesn't hang
             setState(prev => ({ ...prev, isDataFetchReady: true }));
           });
         } else {
@@ -955,20 +956,16 @@ export function AuthProvider({ children }) {
             setState(prev => ({ ...prev, showWelcomeToast: true }));
           }, 500);
           
-          // Load profile and prefetch data in parallel, silently
+          // Fire off prefetch in background (don't wait for it)
+          prefetchAllUserData(session.user.id).catch(err => {
+            console.warn('[AuthProvider] Prefetch error (non-fatal):', err);
+          });
+          
+          // Load profile - this we do wait for
           try {
-            const [profileResult, prefetchResult] = await Promise.allSettled([
-              fetchProfile(session.user.id),
-              prefetchAllUserData(session.user.id),
-            ]);
+            const profile = await fetchProfile(session.user.id);
             
-            const profile = profileResult.status === 'fulfilled' ? profileResult.value : null;
-            
-            if (prefetchResult.status === 'rejected') {
-              console.warn('[AuthProvider] Prefetch error (non-fatal):', prefetchResult.reason);
-            }
-            
-            // Signal ready for child providers
+            // Signal ready for child providers immediately after profile
             setState(prev => ({ ...prev, isDataFetchReady: true }));
             
             // Check if there's a pending tier selection from the join page
@@ -1048,17 +1045,18 @@ export function AuthProvider({ children }) {
         });
         scheduleSessionRefresh(session);
         
-        // If we just recovered auth or don't have a profile, load profile and prefetch
+        // If we just recovered auth or don't have a profile, load profile
+        // Prefetch runs in background but doesn't block isDataFetchReady
         if (needsProfileLoad) {
-          Promise.all([
-            fetchProfile(session.user.id),
-            // Only prefetch if this is auth recovery (wasn't previously authenticated)
-            !wasAuthenticated 
-              ? prefetchAllUserData(session.user.id).catch(err => {
-                  console.warn('[AuthProvider] Prefetch error in TOKEN_REFRESHED:', err);
-                })
-              : Promise.resolve(),
-          ]).then(([profile]) => {
+          // Only prefetch if this is auth recovery (wasn't previously authenticated)
+          if (!wasAuthenticated) {
+            prefetchAllUserData(session.user.id).catch(err => {
+              console.warn('[AuthProvider] Prefetch error in TOKEN_REFRESHED:', err);
+            });
+          }
+          
+          // Load profile - this is what we wait for
+          fetchProfile(session.user.id).then(profile => {
             setState(prev => ({ 
               ...prev, 
               profile: profile || prev.profile,
@@ -1116,13 +1114,16 @@ export function AuthProvider({ children }) {
         }
         
         // Load data silently in background (same path for fresh and recovery)
+        // Prefetch runs in parallel but doesn't block isDataFetchReady
         console.log('[AuthProvider] INITIAL_SESSION - loading data silently');
-        Promise.all([
-          fetchProfile(session.user.id),
-          prefetchAllUserData(session.user.id).catch(err => {
-            console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
-          }),
-        ]).then(([profile]) => {
+        
+        // Fire off prefetch (fire-and-forget)
+        prefetchAllUserData(session.user.id).catch(err => {
+          console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
+        });
+        
+        // Load profile - this is what we wait for
+        fetchProfile(session.user.id).then(profile => {
           setState(prev => ({ 
             ...prev, 
             profile: profile || prev.profile,
@@ -1148,13 +1149,16 @@ export function AuthProvider({ children }) {
         }));
         scheduleSessionRefresh(session);
         
-        // Load profile and prefetch, then signal ready for child providers
-        Promise.all([
-          fetchProfile(session.user.id),
-          prefetchAllUserData(session.user.id).catch(err => {
-            console.warn('[AuthProvider] Prefetch error in auth recovery:', err);
-          }),
-        ]).then(([profile]) => {
+        // Load profile, then signal ready for child providers
+        // Prefetch runs in parallel but doesn't block isDataFetchReady
+        
+        // Fire off prefetch (fire-and-forget)
+        prefetchAllUserData(session.user.id).catch(err => {
+          console.warn('[AuthProvider] Prefetch error in auth recovery:', err);
+        });
+        
+        // Load profile - this is what we wait for
+        fetchProfile(session.user.id).then(profile => {
           setState(prev => ({ 
             ...prev, 
             profile: profile || prev.profile,

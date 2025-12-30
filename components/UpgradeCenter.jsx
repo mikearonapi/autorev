@@ -46,7 +46,7 @@ import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
 // Mobile-first tuning shop components
-import { CategoryNav } from './tuning-shop';
+import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 
 // Compact Icons
 const Icons = {
@@ -151,6 +151,19 @@ const Icons = {
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
       <line x1="12" y1="9" x2="12" y2="13"/>
       <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  alertCircle: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  ),
+  plus: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
   ),
   swap: ({ size = 16 }) => (
@@ -310,10 +323,15 @@ function generateFallbackRecommendation(car, stockMetrics) {
  * Compact Metric Row
  */
 function MetricRow({ icon: Icon, label, stockValue, upgradedValue, unit, isLowerBetter = false }) {
-  const hasImproved = isLowerBetter ? upgradedValue < stockValue : upgradedValue > stockValue;
-  const improvement = Math.abs(upgradedValue - stockValue);
+  // Defensive: handle missing values
+  const stock = stockValue ?? 0;
+  const upgraded = upgradedValue ?? stock;
+  
+  const hasImproved = isLowerBetter ? upgraded < stock : upgraded > stock;
+  const improvement = Math.abs(upgraded - stock);
   
   const formatValue = (val) => {
+    if (val === undefined || val === null || isNaN(val)) return '—';
     if (unit === 'g') return val.toFixed(2);
     if (unit === 's') return val.toFixed(1);
     return Math.round(val);
@@ -323,26 +341,26 @@ function MetricRow({ icon: Icon, label, stockValue, upgradedValue, unit, isLower
   const maxValue = maxValues[unit === ' hp' ? 'hp' : unit] || 1200;
   
   const stockPercent = isLowerBetter 
-    ? ((maxValue - stockValue) / maxValue) * 100 
-    : (stockValue / maxValue) * 100;
+    ? ((maxValue - stock) / maxValue) * 100 
+    : (stock / maxValue) * 100;
   const upgradedPercent = isLowerBetter 
-    ? ((maxValue - upgradedValue) / maxValue) * 100 
-    : (upgradedValue / maxValue) * 100;
+    ? ((maxValue - upgraded) / maxValue) * 100 
+    : (upgraded / maxValue) * 100;
   
   return (
-    <div className={styles.metricRow}>
+    <div className={styles.metric}>
       <div className={styles.metricHeader}>
         <span className={styles.metricLabel}><Icon size={12} />{label}</span>
         <span className={styles.metricValues}>
           {hasImproved ? (
             <>
-              <span className={styles.stockVal}>{formatValue(stockValue)}</span>
+              <span className={styles.stockVal}>{formatValue(stock)}</span>
               <span className={styles.arrow}>→</span>
-              <span className={styles.upgradedVal}>{formatValue(upgradedValue)}{unit}</span>
+              <span className={styles.upgradedVal}>{formatValue(upgraded)}{unit}</span>
               <span className={styles.gain}>{isLowerBetter ? '-' : '+'}{formatValue(improvement)}</span>
             </>
           ) : (
-            <span className={styles.currentVal}>{formatValue(stockValue)}{unit}</span>
+            <span className={styles.currentVal}>{formatValue(stock)}{unit}</span>
           )}
         </span>
       </div>
@@ -467,11 +485,11 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
       <div className={styles.categoryPopup} ref={popupRef} style={{ '--cat-color': category.color }}>
         <div className={styles.popupHeader}>
           <div className={styles.popupTitle}>
-            <Icon size={18} />
+            <Icon size={16} />
             <span>{category.label}</span>
             <span className={styles.popupCount}>{upgrades.length}</span>
           </div>
-          <button className={styles.popupClose} onClick={onClose}><Icons.x size={16} /></button>
+          <button className={styles.popupClose} onClick={onClose}><Icons.x size={14} /></button>
         </div>
         <div className={styles.popupContent}>
           {upgrades.map(upgrade => {
@@ -531,11 +549,13 @@ export default function UpgradeCenter({
   onChangeCar = null,
   onBuildSummaryUpdate = null,
   factoryConfig = null,
+  onFactoryConfigChange = null,
   selectedWheelFitment = null,
+  onWheelFitmentChange = null,
 }) {
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
-  const { vehicles, applyModifications } = useOwnedVehicles();
+  const { vehicles, applyModifications, addVehicle } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
   
   // All useState hooks must be called unconditionally (before any early returns)
@@ -551,6 +571,8 @@ export default function UpgradeCenter({
   const [saveToGarage, setSaveToGarage] = useState(false);
   const [selectedGarageVehicle, setSelectedGarageVehicle] = useState(null);
   const [conflictNotification, setConflictNotification] = useState(null);
+  const [isAddingToGarage, setIsAddingToGarage] = useState(false);
+  const [vehicleAddedSuccess, setVehicleAddedSuccess] = useState(false);
 
   // Selected parts for builds (loaded from saved builds, UI removed)
   const [selectedParts, setSelectedParts] = useState([]);
@@ -609,8 +631,27 @@ export default function UpgradeCenter({
         selectedUpgrades: [],
       };
     }
-    return getPerformanceProfile(car, effectiveModules);
-  }, [car, effectiveModules]);
+    const baseProfile = getPerformanceProfile(car, effectiveModules);
+    
+    // Apply tire compound grip bonus to lateralG
+    const tireGripBonus = selectedWheelFitment?.gripBonus || 0;
+    if (tireGripBonus > 0 && baseProfile.upgradedMetrics.lateralG) {
+      baseProfile.upgradedMetrics = {
+        ...baseProfile.upgradedMetrics,
+        lateralG: Math.min(1.6, baseProfile.upgradedMetrics.lateralG + tireGripBonus),
+      };
+      // Also slightly improve braking with better grip
+      if (baseProfile.upgradedMetrics.braking60To0) {
+        const brakingImprovement = tireGripBonus * 5; // ~5ft improvement per 0.1g grip
+        baseProfile.upgradedMetrics.braking60To0 = Math.max(
+          85, // minimum realistic braking distance
+          baseProfile.upgradedMetrics.braking60To0 - brakingImprovement
+        );
+      }
+    }
+    
+    return baseProfile;
+  }, [car, effectiveModules, selectedWheelFitment]);
   
   const totalCost = useMemo(() => {
     if (!car) return { low: 0, high: 0, confidence: 'estimated', confidencePercent: 0 };
@@ -618,7 +659,10 @@ export default function UpgradeCenter({
   }, [profile.selectedUpgrades, car]);
   
   const hpGain = profile.upgradedMetrics.hp - profile.stockMetrics.hp;
-  const showUpgrade = selectedPackage !== 'stock';
+  // Show upgrades if any package selected OR if tire compound affects grip
+  const tireGripBonus = selectedWheelFitment?.gripBonus || 0;
+  const hasUpgradeEffects = selectedPackage !== 'stock' || tireGripBonus > 0;
+  const showUpgrade = hasUpgradeEffects;
   const isCustomMode = selectedPackage === 'custom';
   
   // Tunability & Recommendations (with guards for missing car)
@@ -796,6 +840,8 @@ export default function UpgradeCenter({
         setBuildName('');
         setSaveToGarage(false);
         setSelectedGarageVehicle(null);
+        setVehicleAddedSuccess(false);
+        setSelectedGarageVehicle(null);
       }
     } catch {
       setSaveError('Error saving build');
@@ -838,131 +884,267 @@ export default function UpgradeCenter({
   const tierInfo = tierConfig[car.tier] || {};
   const activeCategoryData = UPGRADE_CATEGORIES.find(c => c.key === activeCategory);
   
+  // Get image URL for hero
+  const heroImageUrl = car.hero_image_url || car.thumbnail_url || `/images/cars/${car.slug}.png`;
+  
   return (
     <div className={styles.upgradeCenter}>
-      {/* Compact Header */}
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          {onChangeCar && (
-            <button className={styles.backBtn} onClick={onChangeCar}><Icons.arrowLeft size={16} /></button>
-          )}
-          <div className={styles.carThumb}>
-            <CarImage car={car} variant="thumbnail" showName={false} />
+      {/* Vehicle Hero Section - Large, Prominent Display */}
+      <div className={styles.heroSection}>
+        <div className={styles.heroContent}>
+          {/* Hero Image */}
+          <div className={styles.heroImageContainer}>
+            <CarImage car={car} variant="hero" showName={false} priority />
+            <div className={styles.heroImageOverlay} />
           </div>
-          <div className={styles.carInfo}>
-            <div className={styles.carNameRow}>
-              <h2 className={styles.carName}>{car.name}</h2>
-              <span className={styles.tunability} style={{ '--score-color': getTunabilityColor(tunability.score) }}>
-                {tunability.score}/10
-              </span>
+          
+          {/* Hero Info */}
+          <div className={styles.heroInfo}>
+            <div className={styles.heroHeader}>
+              <div className={styles.heroTitleGroup}>
+                <div className={styles.heroYear}>{car.years || car.year || '2024'}</div>
+                <h1 className={styles.heroName}>{car.name}</h1>
+                <div className={styles.heroSubtitle}>
+                  <span>{car.hp} hp</span>
+                  <span>{car.drivetrain || 'RWD'}</span>
+                  <span>{car.engine || 'Gasoline'}</span>
+                </div>
+              </div>
+              {/* Tunability Score - Top Right */}
+              <div className={styles.tunabilityBadge} style={{ '--score-color': getTunabilityColor(tunability.score) }}>
+                <span className={styles.tunabilityScore}>{tunability.score}/10</span>
+                <span className={styles.tunabilityLabel}>Tunability Score</span>
+              </div>
             </div>
-            <div className={styles.carSpecs}>{car.hp} hp • {car.drivetrain || 'RWD'}</div>
+            
+            {/* Quick Stats Grid */}
+            <div className={styles.heroStats}>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue}>{car.hp || 'N/A'}</span>
+                <span className={styles.heroStatLabel}>Stock HP</span>
+              </div>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue} style={{ color: '#10b981' }}>+{hpGain}</span>
+                <span className={styles.heroStatLabel}>HP Gain</span>
+              </div>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue}>{profile.upgradedMetrics.hp}</span>
+                <span className={styles.heroStatLabel}>Final HP</span>
+              </div>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
+                <span className={styles.heroStatLabel}>Est. Cost</span>
+              </div>
+            </div>
+            
+            {/* AutoRev Recommendation - Integrated */}
+            <div className={styles.recommendationBanner}>
+              <div className={styles.recommendationHeader}>
+                <span className={styles.recommendationTitle}>AutoRev Recommendation</span>
+                {detailedRecommendation.focusArea && (
+                  <span className={styles.focusTag}>Focus: {detailedRecommendation.focusArea}</span>
+                )}
+              </div>
+              <p className={styles.recommendationText}>{detailedRecommendation.primaryText}</p>
+              
+              {/* Platform Insights & Watch Outs - Side by Side */}
+              {(detailedRecommendation.platformInsights.length > 0 || detailedRecommendation.watchOuts.length > 0) && (
+                <div className={styles.insightsGrid}>
+                  {detailedRecommendation.platformInsights.length > 0 && (
+                    <div className={styles.insightsCard}>
+                      <div className={styles.insightsCardHeader}>
+                        <Icons.info size={14} />
+                        <span>Platform Insights</span>
+                      </div>
+                      <ul className={styles.insightsCardList}>
+                        {detailedRecommendation.platformInsights.map((insight, idx) => (
+                          <li key={idx}>{insight}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {detailedRecommendation.watchOuts.length > 0 && (
+                    <div className={styles.watchOutsCard}>
+                      <div className={styles.watchOutsCardHeader}>
+                        <Icons.alertTriangle size={14} />
+                        <span>Watch Out</span>
+                      </div>
+                      <ul className={styles.watchOutsCardList}>
+                        {detailedRecommendation.watchOuts.map((watchOut, idx) => (
+                          <li key={idx}>{watchOut}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <div className={styles.headerRight}>
-          {showUpgrade && (
-            <div className={styles.buildStats}>
-              <span className={styles.hpBadge}>+{hpGain} HP</span>
-              <span 
-                className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
-                title={`${totalCost.confidence === 'verified' ? 'Verified pricing from market data' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'} (${totalCost.confidencePercent || 0}% verified)`}
-              >
-                ${(totalCost.low || 0).toLocaleString()}
-              </span>
-            </div>
-          )}
-          <button
-            className={styles.saveBtn}
-            onClick={() => { setBuildName(`${car.name} Build`); setShowSaveModal(true); }}
-            disabled={!showUpgrade}
-          >
-            <Icons.save size={14} />
-          </button>
         </div>
       </div>
       
-      {/* AutoRev Recommendation Banner */}
-      <div className={styles.recommendationBanner}>
-        <div className={styles.recommendationHeader}>
-          <span className={styles.recommendationTitle}>AutoRev Recommendation</span>
-          {detailedRecommendation.focusArea && (
-            <span className={styles.focusTag}>Focus: {detailedRecommendation.focusArea}</span>
-          )}
-        </div>
-        <p className={styles.recommendationText}>{detailedRecommendation.primaryText}</p>
-        {(detailedRecommendation.platformInsights.length > 0 || detailedRecommendation.watchOuts.length > 0) && (
-          <div className={styles.recommendationDetails}>
-            {detailedRecommendation.platformInsights.length > 0 && (
-              <div className={styles.insightsList}>
-                <span className={styles.insightsLabel}>Platform Insights:</span>
-                {detailedRecommendation.platformInsights.map((insight, idx) => (
-                  <span key={idx} className={styles.insightItem}>• {insight}</span>
-                ))}
-              </div>
-            )}
-            {detailedRecommendation.watchOuts.length > 0 && (
-              <div className={styles.watchOutsList}>
-                <span className={styles.watchOutsLabel}>Watch Out:</span>
-                {detailedRecommendation.watchOuts.map((watchOut, idx) => (
-                  <span key={idx} className={styles.watchOutItem}>• {watchOut}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      
-      {/* Main Content Grid */}
-      <div className={styles.mainGrid}>
-        {/* Left: Packages & Categories */}
-        <div className={styles.leftPanel}>
-          <div className={styles.packageGrid}>
-            {PACKAGES.map(pkg => (
-              <button
-                key={pkg.key}
-                className={`${styles.pkgBtn} ${selectedPackage === pkg.key ? styles.pkgBtnActive : ''}`}
-                onClick={() => handlePackageSelect(pkg.key)}
-              >
-                {pkg.label}
-              </button>
-            ))}
-          </div>
-          {/* Mobile-first Category Navigation */}
-          <CategoryNav
-            categories={UPGRADE_CATEGORIES.filter(cat => 
-              (upgradesByCategory[cat.key]?.length || 0) > 0
-            ).map(cat => cat.key)}
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-            selectedCounts={selectedByCategory}
-            showAll={false}
+      {/* Vehicle Configuration Section - Factory Config & Wheels */}
+      <div className={styles.configSection}>
+        <div className={styles.configCard}>
+          <FactoryConfig
+            car={car}
+            initialConfig={factoryConfig}
+            onChange={onFactoryConfigChange}
+            defaultExpanded={true}
+            compact={false}
           />
         </div>
-        
-        {/* Right: Analytics */}
-        <div className={styles.rightPanel}>
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Performance</h4>
-            <MetricRow icon={Icons.bolt} label="HP" stockValue={profile.stockMetrics.hp} upgradedValue={profile.upgradedMetrics.hp} unit=" hp" />
-            <MetricRow icon={Icons.stopwatch} label="0-60" stockValue={profile.stockMetrics.zeroToSixty} upgradedValue={profile.upgradedMetrics.zeroToSixty} unit="s" isLowerBetter />
-            <MetricRow icon={Icons.disc} label="Braking" stockValue={profile.stockMetrics.braking60To0} upgradedValue={profile.upgradedMetrics.braking60To0} unit="ft" isLowerBetter />
-            <MetricRow icon={Icons.target} label="Grip" stockValue={profile.stockMetrics.lateralG} upgradedValue={profile.upgradedMetrics.lateralG} unit="g" />
+        <div className={styles.configCard}>
+          <WheelTireConfigurator
+            car={car}
+            selectedFitment={selectedWheelFitment}
+            onSelect={onWheelFitmentChange}
+            showCostEstimates={true}
+            defaultExpanded={true}
+            compact={false}
+            selectedUpgrades={effectiveModules}
+            onUpgradeToggle={(key) => handleModuleToggle(key, 'Lightweight Wheels', null)}
+          />
+        </div>
+      </div>
+      
+      {/* Modification Workspace - Build Presets, Categories & Performance */}
+      <div className={styles.workspace}>
+        {/* Left Sidebar - Build Configuration */}
+        <div className={styles.sidebar}>
+          {/* Build Presets Card */}
+          <div className={styles.sidebarCard}>
+            <div className={styles.sidebarCardHeader}>
+              <Icons.settings size={16} />
+              <span className={styles.sidebarCardTitle}>Build Preset</span>
+            </div>
+            <div className={styles.sidebarCardContent}>
+              <div className={styles.packageGrid}>
+                {PACKAGES.map(pkg => (
+                  <button
+                    key={pkg.key}
+                    className={`${styles.pkgBtn} ${selectedPackage === pkg.key ? styles.pkgBtnActive : ''}`}
+                    onClick={() => handlePackageSelect(pkg.key)}
+                  >
+                    {pkg.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+          
+          {/* Upgrade Categories Card */}
+          <div className={styles.sidebarCard}>
+            <div className={styles.sidebarCardHeader}>
+              <Icons.bolt size={16} />
+              <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
+            </div>
+            <div className={styles.sidebarCardContent}>
+              <div className={styles.categoryList}>
+                {UPGRADE_CATEGORIES.filter(cat => 
+                  // Skip wheels category - its upgrade is in WheelTireConfigurator
+                  cat.key !== 'wheels' && 
+                  (upgradesByCategory[cat.key]?.length || 0) > 0
+                ).map(cat => {
+                  const Icon = cat.icon;
+                  const count = selectedByCategory[cat.key] || 0;
+                  const totalAvailable = upgradesByCategory[cat.key]?.length || 0;
+                  
+                  return (
+                    <button
+                      key={cat.key}
+                      className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                      onClick={() => setActiveCategory(cat.key)}
+                      style={{ '--cat-color': cat.color }}
+                    >
+                      <Icon size={16} />
+                      <span>{cat.label}</span>
+                      {count > 0 && (
+                        <span className={styles.catBadge}>{count}</span>
+                      )}
+                      <Icons.chevronRight size={14} className={styles.catArrow} />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        {/* Main Panel - Performance Metrics */}
+        <div className={styles.mainPanel}>
+          {/* Performance Card */}
+          <div className={styles.performanceCard}>
+            <div className={styles.performanceHeader}>
+              <h3 className={styles.performanceTitle}>
+                <Icons.bolt size={18} />
+                Performance Metrics
+              </h3>
+              {showUpgrade && (
+                <div className={styles.buildStats}>
+                  <span 
+                    className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
+                    title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
+                  >
+                    ${(totalCost.low || 0).toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className={styles.performanceMetrics}>
+              <MetricRow 
+                icon={Icons.bolt} 
+                label="HP" 
+                stockValue={profile.stockMetrics.hp} 
+                upgradedValue={profile.upgradedMetrics.hp} 
+                unit=" hp" 
+              />
+              <MetricRow 
+                icon={Icons.stopwatch} 
+                label="0-60" 
+                stockValue={profile.stockMetrics.zeroToSixty} 
+                upgradedValue={profile.upgradedMetrics.zeroToSixty} 
+                unit="s" 
+                isLowerBetter 
+              />
+              <MetricRow 
+                icon={Icons.disc} 
+                label="Braking" 
+                stockValue={profile.stockMetrics.braking60To0} 
+                upgradedValue={profile.upgradedMetrics.braking60To0} 
+                unit="ft" 
+                isLowerBetter 
+              />
+              <MetricRow 
+                icon={Icons.target} 
+                label="Grip" 
+                stockValue={profile.stockMetrics.lateralG} 
+                upgradedValue={profile.upgradedMetrics.lateralG} 
+                unit="g" 
+              />
+            </div>
+          </div>
+          
+          {/* Experience Scores */}
           <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Experience</h4>
+            <h4 className={styles.sectionTitle}>Experience Scores</h4>
             <ScoreBar label="Comfort" stockScore={profile.stockScores.drivability || 7} upgradedScore={profile.upgradedScores.drivability || 7} />
             <ScoreBar label="Reliability" stockScore={profile.stockScores.reliabilityHeat || 7.5} upgradedScore={profile.upgradedScores.reliabilityHeat || 7.5} />
             <ScoreBar label="Sound" stockScore={profile.stockScores.soundEmotion || 8} upgradedScore={profile.upgradedScores.soundEmotion || 8} />
           </div>
-
-          {/* Performance Intelligence - Dyno & Lap Times (Tuner tier)
-              TEMPORARILY HIDDEN: Keeping code intact for future re-enablement.
-              To restore, uncomment the following lines:
-          <DynoDataSection carSlug={car?.slug} carName={car?.name} />
-          <LapTimesSection carSlug={car?.slug} carName={car?.name} />
-          */}
         </div>
       </div>
+      
+      {/* Save Build Button - Outside workspace for proper fixed positioning on mobile */}
+      <button
+        className={styles.saveBtn}
+        onClick={() => { setBuildName(`${car.name} Build`); setShowSaveModal(true); }}
+        disabled={!showUpgrade}
+      >
+        <Icons.save size={16} />
+        <span>Save Build</span>
+      </button>
       
       {/* Popups */}
       {activeCategory && activeCategoryData && (
@@ -997,64 +1179,212 @@ export default function UpgradeCenter({
       {showSaveModal && (
         <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
           <div className={styles.saveModal} onClick={e => e.stopPropagation()}>
+            {/* Header */}
             <div className={styles.saveModalHeader}>
-              <span>Save Project</span>
-              <button onClick={() => setShowSaveModal(false)}><Icons.x size={14} /></button>
+              <div className={styles.saveModalTitleGroup}>
+                <Icons.save size={20} className={styles.saveModalIcon} />
+                <h3 className={styles.saveModalTitle}>Save Build</h3>
+              </div>
+              <button className={styles.saveModalClose} onClick={() => setShowSaveModal(false)}>
+                <Icons.x size={16} />
+              </button>
             </div>
-            <input
-              type="text"
-              className={styles.saveInput}
-              value={buildName}
-              onChange={e => setBuildName(e.target.value)}
-              placeholder="Project name (e.g., Street Build, Track Setup)"
-              autoFocus
-            />
             
-            {/* Save to Garage Option */}
-            {vehicles && vehicles.length > 0 && (
-              <div className={styles.garageOption}>
-                <label className={styles.garageCheckbox}>
-                  <input
-                    type="checkbox"
-                    checked={saveToGarage}
-                    onChange={(e) => {
-                      setSaveToGarage(e.target.checked);
-                      if (!e.target.checked) setSelectedGarageVehicle(null);
-                    }}
-                  />
-                  <span>Apply this build to a vehicle in my garage</span>
-                </label>
-                
-                {saveToGarage && (
-                  <select
-                    className={styles.garageVehicleSelect}
-                    value={selectedGarageVehicle || ''}
-                    onChange={(e) => setSelectedGarageVehicle(e.target.value)}
-                  >
-                    <option value="">Select vehicle...</option>
-                    {vehicles
-                      .filter(v => v.matchedCarSlug === car.slug)
-                      .map(v => (
-                        <option key={v.id} value={v.id}>
-                          {v.nickname || `${v.year} ${v.make} ${v.model}`}
-                          {v.trim ? ` ${v.trim}` : ''}
-                        </option>
-                      ))}
-                  </select>
-                )}
-                
-                {saveToGarage && vehicles.filter(v => v.matchedCarSlug === car.slug).length === 0 && (
-                  <div className={styles.garageNote}>
-                    No matching vehicles in your garage. Add a {car.name} to your garage first.
+            {/* Body */}
+            <div className={styles.saveModalBody}>
+              {/* Build Name Input */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Build Name</label>
+                <input
+                  type="text"
+                  className={styles.formInput}
+                  value={buildName}
+                  onChange={e => setBuildName(e.target.value)}
+                  placeholder="e.g., Street Build, Track Setup"
+                  autoFocus
+                />
+              </div>
+              
+              {/* Build Summary */}
+              <div className={styles.buildSummaryCard}>
+                <div className={styles.buildSummaryRow}>
+                  <span className={styles.buildSummaryLabel}>Vehicle</span>
+                  <span className={styles.buildSummaryValue}>{car?.name}</span>
+                </div>
+                <div className={styles.buildSummaryRow}>
+                  <span className={styles.buildSummaryLabel}>Upgrades</span>
+                  <span className={styles.buildSummaryValue}>{effectiveModules.length} selected</span>
+                </div>
+                {hpGain > 0 && (
+                  <div className={styles.buildSummaryRow}>
+                    <span className={styles.buildSummaryLabel}>HP Gain</span>
+                    <span className={styles.buildSummaryValueGain}>+{hpGain} hp</span>
                   </div>
                 )}
+                <div className={styles.buildSummaryRow}>
+                  <span className={styles.buildSummaryLabel}>Est. Cost</span>
+                  <span className={styles.buildSummaryValue}>${(totalCost.low || 0).toLocaleString()}</span>
+                </div>
               </div>
-            )}
+              
+              {/* Save to Garage Option - Always show */}
+              <div className={styles.garageOptionSection}>
+                <label className={styles.garageCheckboxLabel} onClick={() => setSaveToGarage(!saveToGarage)}>
+                  <div className={`${styles.customCheckbox} ${saveToGarage ? styles.customCheckboxChecked : ''}`}>
+                    {saveToGarage && <Icons.check size={12} />}
+                  </div>
+                  <span>Apply to a vehicle in my garage</span>
+                </label>
+                
+                {saveToGarage && (() => {
+                  const matchingVehicles = vehicles?.filter(v => v.matchedCarSlug === car.slug) || [];
+                  
+                  // Show select if we have matching vehicles OR if we already selected one (just added)
+                  if (matchingVehicles.length > 0 || selectedGarageVehicle) {
+                    return (
+                      <>
+                        <select
+                          className={styles.garageVehicleSelect}
+                          value={selectedGarageVehicle || ''}
+                          onChange={(e) => setSelectedGarageVehicle(e.target.value)}
+                        >
+                          <option value="">Select vehicle...</option>
+                          {matchingVehicles.map(v => (
+                            <option key={v.id} value={v.id}>
+                              {v.nickname || `${v.year} ${v.make} ${v.model}`}
+                              {v.trim ? ` ${v.trim}` : ''}
+                            </option>
+                          ))}
+                          {/* If selectedGarageVehicle is set but not in the list yet, show it */}
+                          {selectedGarageVehicle && !matchingVehicles.find(v => v.id === selectedGarageVehicle) && (
+                            <option value={selectedGarageVehicle}>
+                              {car.year} {car.make} {car.model} (just added)
+                            </option>
+                          )}
+                        </select>
+                        {vehicleAddedSuccess && (
+                          <div className={styles.vehicleAddedSuccess}>
+                            <Icons.check size={12} />
+                            Vehicle added to garage!
+                          </div>
+                        )}
+                      </>
+                    );
+                  }
+                  
+                  // No matching vehicles - show add button
+                  return (
+                    <div className={styles.addToGaragePrompt}>
+                      <p className={styles.addToGarageText}>
+                        No {car.name} in your garage yet
+                      </p>
+                      <button
+                        className={styles.addToGarageBtn}
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsAddingToGarage(true);
+                          setSaveError(null);
+                          try {
+                            // Parse year from car.years field (e.g., "2017-2024")
+                            const yearMatch = car.years?.match(/(\d{4})/);
+                            const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+                            
+                            // Extract make and model from car.name (e.g., "Nissan GT-R")
+                            let make = '';
+                            let model = car.name || '';
+                            
+                            // Handle Porsche models that start with numbers
+                            if (car.name?.startsWith('718') || car.name?.startsWith('911') || 
+                                car.name?.startsWith('981') || car.name?.startsWith('997') || 
+                                car.name?.startsWith('987') || car.name?.startsWith('991') || 
+                                car.name?.startsWith('992')) {
+                              make = 'Porsche';
+                            } else if (car.name) {
+                              const parts = car.name.split(' ');
+                              make = parts[0] || '';
+                              model = parts.slice(1).join(' ') || car.name;
+                            }
+                            
+                            const newVehicle = {
+                              year,
+                              make,
+                              model,
+                              matchedCarSlug: car.slug,
+                              nickname: '',
+                            };
+                            console.log('[SaveModal] Adding vehicle:', newVehicle);
+                            const result = await addVehicle(newVehicle);
+                            console.log('[SaveModal] Add vehicle result:', result);
+                            
+                            if (result?.error) {
+                              setSaveError(result.error.message || 'Failed to add vehicle');
+                            } else if (result?.data) {
+                              const vehicleId = result.data.id;
+                              console.log('[SaveModal] Setting selected vehicle:', vehicleId);
+                              setSelectedGarageVehicle(vehicleId);
+                              setVehicleAddedSuccess(true);
+                              // Clear success after 3 seconds
+                              setTimeout(() => setVehicleAddedSuccess(false), 3000);
+                            } else {
+                              setSaveError('Vehicle added but no ID returned');
+                            }
+                          } catch (err) {
+                            console.error('[SaveModal] Failed to add vehicle:', err);
+                            setSaveError('Failed to add vehicle to garage');
+                          }
+                          setIsAddingToGarage(false);
+                        }}
+                        disabled={isAddingToGarage}
+                        type="button"
+                      >
+                        {isAddingToGarage ? (
+                          <>
+                            <span className={styles.savingSpinner} />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <Icons.plus size={14} />
+                            Add {car.name} to Garage
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </div>
+              
+              {saveError && (
+                <div className={styles.saveErrorMessage}>
+                  <Icons.alertCircle size={14} />
+                  {saveError}
+                </div>
+              )}
+            </div>
             
-            {saveError && <div className={styles.saveError}>{saveError}</div>}
-            <div className={styles.saveActions}>
-              <button onClick={() => setShowSaveModal(false)}>Cancel</button>
-              <button onClick={handleSaveBuild} disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Project'}</button>
+            {/* Actions */}
+            <div className={styles.saveModalActions}>
+              <button className={styles.cancelBtn} onClick={() => setShowSaveModal(false)}>
+                Cancel
+              </button>
+              <button 
+                className={styles.confirmBtn} 
+                onClick={handleSaveBuild} 
+                disabled={isSaving || !buildName.trim()}
+              >
+                {isSaving ? (
+                  <>
+                    <span className={styles.savingSpinner} />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Icons.save size={14} />
+                    Save Build
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

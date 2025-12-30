@@ -173,9 +173,7 @@ export const brandUpgradeOverrides = {
     'big-brake-kit': { low: 4000, high: 7500 },          // AP Racing, Essex
     'brake-pads-street': { low: 300, high: 600 },
     'brake-pads-track': { low: 500, high: 900 },
-    'wheels-lightweight': { low: 3000, high: 5500 },     // Forged options limited
-    'tires-performance': { low: 1000, high: 1800 },      // Staggered fitment
-    'tires-track': { low: 1500, high: 2500 },
+    'wheels-lightweight': { low: 3000, high: 5500 },     // Forged options
     'oil-cooler': { low: 1000, high: 2000 },
     'radiator-upgrade': { low: 800, high: 1500 },
     'splitter': { low: 600, high: 1500 },

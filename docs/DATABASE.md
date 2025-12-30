@@ -269,7 +269,17 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Stripe Fields** | `stripe_customer_id`, `stripe_subscription_id`, `stripe_subscription_status`, `subscription_started_at`, `subscription_ends_at`, `al_credits_purchased` |
 | **Onboarding Fields** | `referral_source`, `referral_source_other`, `user_intent`, `onboarding_completed_at`, `onboarding_step`, `email_opt_in_features`, `email_opt_in_events` |
 | **Email Fields** | `last_email_sent_at`, `email_bounce_count`, `email_unsubscribed_at`, `referral_code` |
-| **Used By** | Auth, tier gating, Stripe billing, onboarding flow, email system |
+| **Location Fields** | `location_zip`, `location_city`, `location_state`, `location_updated_at` |
+| **Used By** | Auth, tier gating, Stripe billing, onboarding flow, email system, AL garage analysis |
+
+#### Location Columns
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `location_zip` | text | User's ZIP code (5 digits) for local event recommendations |
+| `location_city` | text | Auto-populated city name from ZIP lookup |
+| `location_state` | text | Auto-populated state abbreviation from ZIP lookup |
+| `location_updated_at` | timestamptz | When location was last updated |
 
 #### Onboarding Columns
 
@@ -334,8 +344,23 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Purpose** | User's owned vehicles with VIN and installed modifications |
 | **Key Fields** | `user_id`, `matched_car_slug`, `matched_car_id`, `matched_car_variant_id`, `vin`, `year`, `make`, `model`, `trim`, `nickname`, `mileage`, `purchase_date`, `purchase_price` |
 | **Modification Fields** | `installed_modifications` (JSONB array of upgrade keys), `active_build_id` (FK to user_projects), `total_hp_gain`, `modified_at` |
-| **Car Concierge Tracking** | `last_started_at`, `battery_status` (enum: `good`/`fair`/`weak`/`dead`/`unknown`, default `unknown`), `battery_installed_date`, `storage_mode`, `tire_installed_date`, `tire_brand_model`, `tire_tread_32nds`, `registration_due_date`, `inspection_due_date`, `last_inspection_date`, `last_oil_change_date`, `last_oil_change_mileage`, `next_oil_due_mileage`, `owner_notes`, `health_last_analyzed_at` |
-| **Used By** | Enthusiast tier ownership features, My Garage, Tuning Shop "Apply to Vehicle" |
+| **Mileage Tracking** | `current_mileage` (integer), `mileage_updated_at` (timestamptz), `usage_type` (enum: `daily`/`weekend`/`track`/`stored`, default `daily`) |
+| **Service Tracking** | `last_oil_change_miles` (integer), `last_oil_change_date` (date), `last_brake_fluid_date` (date) |
+| **Car Concierge Tracking** | `last_started_at`, `battery_status` (enum: `good`/`fair`/`weak`/`dead`/`unknown`, default `unknown`), `battery_installed_date`, `storage_mode`, `tire_installed_date`, `tire_brand_model`, `tire_tread_32nds`, `registration_due_date`, `inspection_due_date`, `last_inspection_date`, `next_oil_due_mileage`, `owner_notes`, `health_last_analyzed_at` |
+| **Used By** | Enthusiast tier ownership features, My Garage, Tuning Shop "Apply to Vehicle", AL garage analysis |
+
+#### Mileage & Service Tracking Columns
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `current_mileage` | integer | Current odometer reading for maintenance calculations |
+| `mileage_updated_at` | timestamptz | When mileage was last updated |
+| `usage_type` | text | How vehicle is used: `daily`, `weekend`, `track`, `stored` (default: `daily`) |
+| `last_oil_change_miles` | integer | Odometer reading at last oil change |
+| `last_oil_change_date` | date | Date of last oil change |
+| `last_brake_fluid_date` | date | Date of last brake fluid change |
+
+**Index:** `idx_user_vehicles_mileage` on `(user_id, current_mileage)` for efficient mileage queries
 
 ### `user_service_logs` — Service records
 | Status | **0 rows** ⬜ |

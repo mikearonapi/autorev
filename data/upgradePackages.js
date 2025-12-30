@@ -203,6 +203,7 @@ export const genericPackages = [
       'Data acquisition system (AiM Solo or similar)',
     ],
     // Module keys that match upgradeModules for grid selection
+    // Note: Tire compound selection handled by WheelTireConfigurator
     includedUpgradeKeys: [
       'camshafts',
       'ported-heads',
@@ -213,7 +214,6 @@ export const genericPackages = [
       'big-brake-kit',
       'brake-pads-track',
       'wheels-lightweight',
-      'tires-track',
       'splitter',
       'wing',
       'radiator-upgrade',
@@ -1395,7 +1395,8 @@ export const upgradeModules = [
   },
 
   // ============================================================================
-  // WHEELS & TIRES MODULES
+  // WHEELS MODULE
+  // Note: Tire compound selection is handled by WheelTireConfigurator
   // ============================================================================
   {
     key: 'wheels-lightweight',
@@ -1404,7 +1405,7 @@ export const upgradeModules = [
     type: 'module',
     category: 'wheels',
     tier: 'trackPack',
-    description: 'Forged or flow-formed wheels. Brands: BBS, Volk, Enkei, Apex.',
+    description: 'Forged or flow-formed wheels reduce unsprung & rotational mass. Brands: BBS, Volk, Enkei, Apex.',
     estimatedCost: '$2,000 - $4,000',
     estimatedCostLow: 2000,
     estimatedCostHigh: 4000,
@@ -1415,77 +1416,6 @@ export const upgradeModules = [
     },
     metricChanges: {
       zeroToSixtyImprovement: 0.1, // Less rotational mass
-    },
-    carSlug: null,
-    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
-  },
-  {
-    key: 'tires-performance',
-    name: 'Max Performance Tires',
-    slug: 'tires-performance',
-    type: 'module',
-    category: 'wheels',
-    tier: 'streetSport',
-    description: '300TW summer tires. Brands: Michelin PS4S, Continental ExtremeContact.',
-    estimatedCost: '$800 - $1,500',
-    estimatedCostLow: 800,
-    estimatedCostHigh: 1500,
-    deltas: {
-      gripCornering: 1,
-      braking: 0.5,
-      trackPace: 0.5,
-    },
-    metricChanges: {
-      lateralGImprovement: 0.05,
-      brakingImprovement: 4,
-    },
-    carSlug: null,
-    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
-  },
-  {
-    key: 'tires-track',
-    name: '200TW Track Tires',
-    slug: 'tires-track',
-    type: 'module',
-    category: 'wheels',
-    tier: 'trackPack',
-    description: 'Semi-slick rubber. Brands: Yokohama A052, Bridgestone RE-71RS, Nankang NS-2R.',
-    estimatedCost: '$1,200 - $2,000',
-    estimatedCostLow: 1200,
-    estimatedCostHigh: 2000,
-    deltas: {
-      gripCornering: 2,
-      braking: 1,
-      trackPace: 1.5,
-      drivability: -1, // Wear fast, noisy, limited wet grip
-    },
-    metricChanges: {
-      lateralGImprovement: 0.15,
-      brakingImprovement: 8,
-    },
-    carSlug: null,
-    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
-  },
-  {
-    key: 'tires-slicks',
-    name: 'R-Compound Slicks',
-    slug: 'tires-slicks',
-    type: 'module',
-    category: 'wheels',
-    tier: 'timeAttack',
-    description: '100TW race tires. Brands: Hoosier A7, Toyo RR, NT01.',
-    estimatedCost: '$1,500 - $2,500',
-    estimatedCostLow: 1500,
-    estimatedCostHigh: 2500,
-    deltas: {
-      gripCornering: 3,
-      braking: 1.5,
-      trackPace: 2,
-      drivability: -2, // Track use only
-    },
-    metricChanges: {
-      lateralGImprovement: 0.25,
-      brakingImprovement: 12,
     },
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],

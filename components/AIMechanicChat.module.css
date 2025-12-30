@@ -1391,7 +1391,7 @@
 .feedbackInput {
   flex: 1;
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #f9fafb;
@@ -1444,7 +1444,7 @@
   
   .feedbackInput {
     padding: 6px 10px;
-    font-size: 12px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
   }
   
   .feedbackSubmitBtn {
@@ -1492,7 +1492,7 @@
   padding: 6px 0;
   background: transparent;
   border: none;
-  font-size: 13px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
   font-family: inherit;
   color: #111827;
   resize: none;
@@ -1587,7 +1587,7 @@
   }
   
   .input {
-    font-size: 15px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
     max-height: 70px;
   }
 }
@@ -1599,7 +1599,7 @@
   }
   
   .input {
-    font-size: 14px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
   }
 }
 

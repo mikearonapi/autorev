@@ -2065,7 +2065,7 @@ function GarageContent() {
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
-  const { isAuthenticated, user, isLoading: authLoading, isDataFetchReady, sessionExpired, authError } = useAuth();
+  const { isAuthenticated, user, profile, isLoading: authLoading, isDataFetchReady, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
   const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
@@ -2334,23 +2334,94 @@ function GarageContent() {
     await addFavorite(car);
   };
 
-  // Handle "Analyze All Vehicles" button - opens AL with fleet context
-  const handleAnalyzeAllVehicles = useCallback(() => {
-    // Build comprehensive fleet summary
+  // Handle "Analyze All Vehicles" button - opens AL with comprehensive context
+  const handleAnalyzeAllVehicles = useCallback(async () => {
+    // Build comprehensive vehicle summary with all available data
     const vehicleSummary = vehiclesWithCars.map((v, idx) => {
       const name = v.matchedCar?.name || `${v.vehicle.year} ${v.vehicle.make} ${v.vehicle.model}`;
-      const mileage = v.vehicle.mileage ? `${v.vehicle.mileage.toLocaleString()} mi` : 'Unknown mileage';
+      const mileage = v.vehicle.current_mileage || v.vehicle.mileage;
+      const mileageStr = mileage ? `${mileage.toLocaleString()} mi` : 'Unknown mileage';
       const year = v.vehicle.year || 'Unknown year';
-      return `${idx + 1}. ${name} (${year}) - ${mileage}`;
+      const usageType = v.vehicle.usage_type || 'daily';
+      const slug = v.matchedCar?.slug || '';
+      
+      // Include service history if available
+      let serviceInfo = '';
+      if (v.vehicle.last_oil_change_date || v.vehicle.last_oil_change_miles) {
+        const oilDate = v.vehicle.last_oil_change_date ? new Date(v.vehicle.last_oil_change_date).toLocaleDateString() : null;
+        const oilMiles = v.vehicle.last_oil_change_miles?.toLocaleString();
+        serviceInfo = ` | Last oil change: ${oilDate || 'unknown date'}${oilMiles ? ` at ${oilMiles} mi` : ''}`;
+      }
+      
+      return `${idx + 1}. ${name} (${year}) - ${mileageStr} - Usage: ${usageType}${serviceInfo}${slug ? ` [slug: ${slug}]` : ''}`;
     }).join('\n');
     
-    const prompt = `Analyze my entire vehicle collection and provide insights:\n\n${vehicleSummary}\n\nWhat should I prioritize for maintenance, what are the strengths of my fleet, and what gaps might I consider filling?`;
+    // Get favorites summary
+    const favoritesSummary = favoriteCars.length > 0 
+      ? favoriteCars.slice(0, 10).map(car => `- ${car.name || `${car.year} ${car.make} ${car.model}`}`).join('\n')
+      : 'No favorites saved';
+    
+    // Get builds summary
+    const buildsSummary = builds.length > 0
+      ? builds.slice(0, 5).map(b => `- ${b.name || 'Unnamed build'}: ${b.carSlug || 'unknown car'}`).join('\n')
+      : 'No build projects';
+    
+    // Get user location from profile if available
+    const userLocation = profile?.location_zip 
+      ? `${profile.location_city || ''}, ${profile.location_state || ''} ${profile.location_zip}`.trim()
+      : null;
+    
+    // Get current month/season for seasonal context
+    const now = new Date();
+    const month = now.toLocaleDateString('en-US', { month: 'long' });
+    const season = now.getMonth() >= 2 && now.getMonth() <= 4 ? 'Spring'
+      : now.getMonth() >= 5 && now.getMonth() <= 7 ? 'Summer'
+      : now.getMonth() >= 8 && now.getMonth() <= 10 ? 'Fall'
+      : 'Winter';
+    
+    // Build the comprehensive prompt
+    const prompt = `# Garage Concierge Analysis Request
+
+## My Vehicles (${vehiclesWithCars.length} total)
+${vehicleSummary}
+
+## My Favorites (${favoriteCars.length} cars)
+${favoritesSummary}
+
+## My Build Projects (${builds.length} projects)
+${buildsSummary}
+
+${userLocation ? `## My Location\n${userLocation}\n` : ''}
+## Current Date
+${month} ${now.getFullYear()} (${season})
+
+---
+
+Please provide a comprehensive "Garage Concierge" analysis covering:
+
+1. **Maintenance Priorities** - Based on mileage and last service dates, what should I address first? Use get_maintenance_schedule for each vehicle to check intervals.
+
+2. **Safety & Reliability Alerts** - Are there any known issues, TSBs, or recalls affecting my vehicles? Use get_known_issues for each.
+
+3. **Fleet Strengths** - What does my collection do well? (Performance, practicality, variety, etc.)
+
+4. **Fleet Gaps** - What's missing? Suggestions for my next vehicle based on my taste (favorites/builds).
+
+${userLocation ? `5. **Upcoming Events Near Me** - Use search_events to find relevant car events in my area.\n` : ''}
+6. **Fresh Content** - Any expert reviews, comparison tests, or news about my cars? Use get_expert_reviews.
+
+7. **Seasonal Considerations** - What should I be thinking about for ${season}? (Tire swaps, storage prep, road trip planning, etc.)
+
+8. **Recommended Next Steps** - Top 3 actionable items I should tackle.
+
+Be specific, mention actual vehicles by name, and use your tools to get accurate data. This is a concierge-level analysis!`;
     
     openChatWithPrompt(prompt, {
-      category: 'Fleet Analysis',
+      category: 'Garage Concierge',
       vehicleCount: vehiclesWithCars.length,
+      hasLocation: !!userLocation,
     });
-  }, [vehiclesWithCars, openChatWithPrompt]);
+  }, [vehiclesWithCars, favoriteCars, builds, profile, openChatWithPrompt]);
 
   // Toggle quick update mode
   const handleToggleQuickUpdate = () => {
