@@ -11,13 +11,10 @@ import { NextResponse } from 'next/server';
  * screenshot, then the returned URL is included in the feedback payload.
  */
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb', // Allow up to 10MB screenshots
-    },
-  },
-};
+// Route Segment Config (App Router)
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30; // 30 second timeout for upload
 
 export async function POST(request) {
   try {
