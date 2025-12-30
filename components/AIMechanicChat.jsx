@@ -830,6 +830,15 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   
   useEffect(() => {
     if (pendingPrompt && isOpen && !showIntro && isAuthenticated) {
+      // Always start a new chat when using quick action buttons
+      // This ensures the prompt is sent in a fresh conversation context
+      setCurrentConversationId(null);
+      setMessages([]);
+      setSuggestions([]);
+      setError(null);
+      setQuickReplies([]);
+      setDismissedCarSlug(null);
+      
       setQuickActionPrompt(pendingPrompt);
       // Clear the pending prompt from the provider
       if (onClearPendingPrompt) {
