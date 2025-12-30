@@ -14,9 +14,10 @@
  * Supports both authenticated and anonymous submissions.
  */
 
-import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
 import { useAuth } from './providers/AuthProvider';
 import styles from './FeedbackWidget.module.css';
+import html2canvas from 'html2canvas';
 
 // ============================================================================
 // FEEDBACK CONTEXT - For programmatic control from other components
@@ -176,6 +177,30 @@ const Icons = {
       <line x1="12" y1="8" x2="12.01" y2="8"/>
     </svg>
   ),
+  camera: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  ),
+  trash: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+    </svg>
+  ),
+  eye: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  checkCircle: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+  ),
 };
 
 // ============================================================================
@@ -304,6 +329,13 @@ export default function FeedbackWidget({
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState(null);
   
+  // Screenshot state
+  const [screenshotPreview, setScreenshotPreview] = useState(null); // base64 for preview
+  const [screenshotUrl, setScreenshotUrl] = useState(null); // uploaded URL
+  const [isCapturingScreenshot, setIsCapturingScreenshot] = useState(false);
+  const [isUploadingScreenshot, setIsUploadingScreenshot] = useState(false);
+  const widgetRef = useRef(null);
+  
   // Get auth context
   const { user, isAuthenticated, userTier } = useAuth();
   
@@ -338,11 +370,113 @@ export default function FeedbackWidget({
         setEmail('');
         setRating(0);
         setError(null);
+        setScreenshotPreview(null);
+        setScreenshotUrl(null);
         if (isSuccess) setIsSuccess(false);
       }, 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen, isSuccess, preselectedCategory]);
+
+  // Capture screenshot of the page (hides the feedback widget first)
+  const captureScreenshot = async () => {
+    if (typeof window === 'undefined') return;
+    
+    setIsCapturingScreenshot(true);
+    setError(null);
+    
+    try {
+      // Temporarily hide the widget overlay for screenshot
+      const overlay = document.querySelector(`.${styles.overlay}`);
+      if (overlay) {
+        overlay.style.visibility = 'hidden';
+      }
+      
+      // Small delay to ensure widget is hidden
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Capture the page
+      const canvas = await html2canvas(document.body, {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scale: Math.min(window.devicePixelRatio || 1, 2), // Limit scale for performance
+        width: window.innerWidth,
+        height: window.innerHeight,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        x: window.scrollX,
+        y: window.scrollY,
+      });
+      
+      // Restore widget visibility
+      if (overlay) {
+        overlay.style.visibility = 'visible';
+      }
+      
+      // Convert to base64
+      const base64Image = canvas.toDataURL('image/png', 0.9);
+      setScreenshotPreview(base64Image);
+      
+      // Upload to blob storage
+      setIsUploadingScreenshot(true);
+      
+      const uploadResponse = await fetch('/api/feedback/screenshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          screenshot: base64Image,
+          metadata: {
+            pageUrl: window.location.href,
+            pageTitle: document.title,
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            scrollPosition: `${window.scrollX},${window.scrollY}`,
+            capturedAt: new Date().toISOString(),
+          },
+        }),
+      });
+      
+      const uploadResult = await uploadResponse.json();
+      
+      if (!uploadResult.success) {
+        console.warn('[FeedbackWidget] Screenshot upload failed:', uploadResult.error);
+        // Keep preview but note upload failed - we can still show it locally
+        setError('Screenshot captured but upload failed. It will be included as preview only.');
+      } else {
+        setScreenshotUrl(uploadResult.data.url);
+      }
+    } catch (err) {
+      console.error('[FeedbackWidget] Screenshot capture error:', err);
+      setError('Failed to capture screenshot. Please try again.');
+      setScreenshotPreview(null);
+    } finally {
+      setIsCapturingScreenshot(false);
+      setIsUploadingScreenshot(false);
+    }
+  };
+
+  // Remove screenshot
+  const removeScreenshot = () => {
+    setScreenshotPreview(null);
+    setScreenshotUrl(null);
+  };
+
+  // Open screenshot in new tab for full view
+  const viewScreenshot = () => {
+    if (screenshotPreview) {
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head><title>Feedback Screenshot Preview</title></head>
+            <body style="margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#1a1a1a;">
+              <img src="${screenshotPreview}" style="max-width:100%;max-height:100vh;object-fit:contain;" />
+            </body>
+          </html>
+        `);
+      }
+    }
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -401,6 +535,14 @@ export default function FeedbackWidget({
         userTier: userTier || null,
         email: email || (user?.email) || null,
         
+        // Screenshot
+        screenshot_url: screenshotUrl || null,
+        screenshot_metadata: screenshotUrl ? {
+          capturedAt: new Date().toISOString(),
+          pageUrl,
+          viewport: typeof window !== 'undefined' ? `${window.innerWidth}x${window.innerHeight}` : null,
+        } : null,
+        
         // Common fields
         page_url: pageUrl,
         page_title: typeof document !== 'undefined' ? document.title : '',
@@ -409,6 +551,7 @@ export default function FeedbackWidget({
           browserInfo: getBrowserInfo(),
           screenWidth: typeof window !== 'undefined' ? window.innerWidth : null,
           screenHeight: typeof window !== 'undefined' ? window.innerHeight : null,
+          hasScreenshot: !!screenshotUrl,
         },
       };
 
@@ -589,6 +732,76 @@ export default function FeedbackWidget({
                     rows={4}
                     required
                   />
+                </div>
+
+                {/* Screenshot Capture */}
+                <div className={styles.field}>
+                  <label className={styles.label}>
+                    <Icons.camera size={16} />
+                    <span>Screenshot <span className={styles.optional}>(optional)</span></span>
+                  </label>
+                  
+                  <div className={styles.screenshotSection}>
+                    {!screenshotPreview && !isCapturingScreenshot && !isUploadingScreenshot && (
+                      <button
+                        type="button"
+                        className={styles.screenshotButton}
+                        onClick={captureScreenshot}
+                        disabled={isCapturingScreenshot || isUploadingScreenshot}
+                      >
+                        <Icons.camera size={18} />
+                        <span>Capture Current Page</span>
+                      </button>
+                    )}
+                    
+                    {(isCapturingScreenshot || isUploadingScreenshot) && (
+                      <div className={styles.screenshotUploading}>
+                        <div className={styles.spinner} />
+                        <span>{isCapturingScreenshot ? 'Capturing...' : 'Uploading...'}</span>
+                      </div>
+                    )}
+                    
+                    {screenshotPreview && !isUploadingScreenshot && (
+                      <>
+                        <div className={styles.screenshotPreview}>
+                          <img 
+                            src={screenshotPreview} 
+                            alt="Screenshot preview" 
+                            className={styles.screenshotImage}
+                          />
+                          <div className={styles.screenshotOverlay}>
+                            <button
+                              type="button"
+                              className={styles.screenshotView}
+                              onClick={viewScreenshot}
+                            >
+                              <Icons.eye size={14} />
+                              <span>View</span>
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.screenshotRemove}
+                              onClick={removeScreenshot}
+                            >
+                              <Icons.trash size={14} />
+                              <span>Remove</span>
+                            </button>
+                          </div>
+                        </div>
+                        {screenshotUrl && (
+                          <div className={styles.screenshotSuccess}>
+                            <Icons.checkCircle size={14} />
+                            <span>Screenshot attached and will be included with your feedback</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                  
+                  <p className={styles.hint}>
+                    <Icons.info size={12} />
+                    <span>Captures what you see on the page to help us understand the issue</span>
+                  </p>
                 </div>
 
                 {/* Email (optional) */}

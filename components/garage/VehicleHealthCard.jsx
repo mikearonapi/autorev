@@ -20,29 +20,41 @@ function parseDateInput(value) {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
-function computeHealth(health) {
+function computeHealth(health, maintenanceSpecs) {
   const today = new Date();
   const daysUntil = (d) => Math.floor((new Date(d) - today) / (1000 * 60 * 60 * 24));
 
   const issues = [];
   const warnings = [];
+  const details = [];
 
+  // Oil change tracking
   if (health.next_oil_due_mileage && health.mileage) {
     const delta = health.next_oil_due_mileage - health.mileage;
-    if (delta <= 0) issues.push('Oil change overdue');
-    else if (delta <= 500) warnings.push('Oil change due soon');
+    if (delta <= 0) {
+      issues.push(`Oil change overdue by ${Math.abs(delta).toLocaleString()} mi`);
+    } else if (delta <= 500) {
+      warnings.push(`Oil change due in ${delta.toLocaleString()} mi`);
+    } else {
+      details.push(`Oil change in ${delta.toLocaleString()} mi`);
+    }
+  } else if (maintenanceSpecs?.oil_change_interval_miles && !health.last_oil_change_mileage) {
+    // Has interval data but no tracking started
+    warnings.push(`Oil tracking not started (interval: ${maintenanceSpecs.oil_change_interval_miles.toLocaleString()} mi)`);
   }
 
   if (health.registration_due_date) {
     const days = daysUntil(health.registration_due_date);
-    if (days < 0) issues.push('Registration expired');
-    else if (days <= 30) warnings.push('Registration due soon');
+    if (days < 0) issues.push(`Registration expired ${Math.abs(days)} days ago`);
+    else if (days <= 30) warnings.push(`Registration due in ${days} days`);
+    else details.push(`Registration due: ${new Date(health.registration_due_date).toLocaleDateString()}`);
   }
 
   if (health.inspection_due_date) {
     const days = daysUntil(health.inspection_due_date);
-    if (days < 0) issues.push('Inspection expired');
-    else if (days <= 30) warnings.push('Inspection due soon');
+    if (days < 0) issues.push(`Inspection expired ${Math.abs(days)} days ago`);
+    else if (days <= 30) warnings.push(`Inspection due in ${days} days`);
+    else details.push(`Inspection due: ${new Date(health.inspection_due_date).toLocaleDateString()}`);
   }
 
   if (health.battery_status === 'dead' || health.battery_status === 'weak') {
@@ -51,9 +63,10 @@ function computeHealth(health) {
     warnings.push('Battery may need attention');
   }
 
-  if (issues.length) return { tone: 'urgent', label: 'Urgent', message: issues[0], count: issues.length };
-  if (warnings.length) return { tone: 'warn', label: 'Attention', message: warnings[0], count: warnings.length };
-  return { tone: 'good', label: 'All Good', message: 'No urgent items', count: 0 };
+  if (issues.length) return { tone: 'urgent', label: 'Urgent', message: issues[0], count: issues.length, allIssues: issues, allWarnings: warnings };
+  if (warnings.length) return { tone: 'warn', label: 'Attention', message: warnings[0], count: warnings.length, allIssues: issues, allWarnings: warnings };
+  if (details.length) return { tone: 'good', label: 'All Good', message: details[0], count: 0, allIssues: [], allWarnings: [] };
+  return { tone: 'good', label: 'All Good', message: 'No urgent items', count: 0, allIssues: [], allWarnings: [] };
 }
 
 function buildPatchPayload(form, baseline) {
@@ -73,6 +86,7 @@ export default function VehicleHealthCard({
   vehicleId,
   vehicleName,
   initialMileage,
+  maintenanceSpecs, // Car-specific maintenance specs from vehicle_maintenance_specs table
 }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -92,7 +106,7 @@ export default function VehicleHealthCard({
     inspection_due_date: '',
   });
 
-  const healthStatus = useMemo(() => computeHealth(baseline || {}), [baseline]);
+  const healthStatus = useMemo(() => computeHealth(baseline || {}, maintenanceSpecs), [baseline, maintenanceSpecs]);
 
   useEffect(() => {
     let ignore = false;
@@ -215,17 +229,52 @@ export default function VehicleHealthCard({
       <div className={styles.headerRow}>
         <div className={styles.titleGroup}>
           <p className={styles.title}>Vehicle Health</p>
-          <p className={styles.subtitle}>{vehicleName || 'Your vehicle'} • Tracking</p>
+          <p className={styles.subtitle}>{vehicleName || 'Your vehicle'}</p>
         </div>
         <div className={`${styles.badge} ${styles[healthStatus.tone]}`}>
-          {healthStatus.label}
-          {healthStatus.count > 0 ? ` • ${healthStatus.count}` : ''}
+          {healthStatus.label}{healthStatus.count > 0 ? ` • ${healthStatus.count}` : ''}
         </div>
       </div>
 
-      <div>
-        <p className={styles.sectionTitle}>Health Overview</p>
-        <p className={styles.statusText}>{healthStatus.message}</p>
+      <div className={styles.healthOverview}>
+        {/* Combined alerts - show all issues and warnings in one list */}
+        {(healthStatus.allIssues?.length > 0 || healthStatus.allWarnings?.length > 0) ? (
+          <div className={styles.alertList}>
+            {healthStatus.allIssues?.map((issue, i) => (
+              <p key={`issue-${i}`} className={styles.alertItem} data-type="urgent">⚠️ {issue}</p>
+            ))}
+            {healthStatus.allWarnings?.map((warn, i) => (
+              <p key={`warn-${i}`} className={styles.alertItem} data-type="warn">⚡ {warn}</p>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.statusText}>✓ {healthStatus.message}</p>
+        )}
+        
+        {/* Car-specific maintenance schedule - compact */}
+        {maintenanceSpecs && (maintenanceSpecs.oil_change_interval_miles || maintenanceSpecs.coolant_change_interval_miles || maintenanceSpecs.brake_fluid_change_interval_years) && (
+          <div className={styles.scheduleBox}>
+            <p className={styles.scheduleTitle}>Maintenance Schedule</p>
+            <div className={styles.scheduleItems}>
+              {maintenanceSpecs.oil_change_interval_miles && (
+                <span className={styles.scheduleItem}>
+                  🛢️ Oil: {maintenanceSpecs.oil_change_interval_miles.toLocaleString()} mi
+                  {maintenanceSpecs.oil_viscosity && ` (${maintenanceSpecs.oil_viscosity})`}
+                </span>
+              )}
+              {maintenanceSpecs.coolant_change_interval_miles && (
+                <span className={styles.scheduleItem}>
+                  🧊 Coolant: {maintenanceSpecs.coolant_change_interval_miles.toLocaleString()} mi
+                </span>
+              )}
+              {maintenanceSpecs.brake_fluid_change_interval_years && (
+                <span className={styles.scheduleItem}>
+                  🔴 Brake Fluid: {maintenanceSpecs.brake_fluid_change_interval_years} yr
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className={styles.grid}>
@@ -290,7 +339,14 @@ export default function VehicleHealthCard({
       {expanded && (
         <div className={styles.grid}>
           <div className={styles.field}>
-            <span className={styles.label}>Last Oil Change</span>
+            <div className={styles.labelRow}>
+              <span className={styles.label}>Last Oil Change</span>
+              {maintenanceSpecs?.oil_change_interval_miles && (
+                <span className={styles.intervalHint}>
+                  Interval: {maintenanceSpecs.oil_change_interval_miles.toLocaleString()} mi
+                </span>
+              )}
+            </div>
             <div className={styles.twoCol}>
               <input
                 className={styles.input}
@@ -308,6 +364,11 @@ export default function VehicleHealthCard({
                 onChange={(e) => handleChange('last_oil_change_mileage', e.target.value === '' ? '' : Number(e.target.value))}
               />
             </div>
+            {baseline?.next_oil_due_mileage && (
+              <p className={styles.helper}>
+                Next due: {baseline.next_oil_due_mileage.toLocaleString()} mi
+              </p>
+            )}
           </div>
 
           <div className={styles.field}>

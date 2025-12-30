@@ -213,10 +213,22 @@ export function OwnedVehiclesProvider({ children }) {
    * Fetch vehicles from server
    * Extracted so it can be used as a retry callback
    * @param {string} userId - User ID to fetch vehicles for
-   * @param {number} timeout - Timeout in ms (default 8000)
+   * @param {number} timeout - Timeout in ms (default 4000 - reduced for faster failures)
    */
-  const fetchVehicles = useCallback(async (userId, timeout = 8000) => {
+  const fetchVehicles = useCallback(async (userId, timeout = 4000) => {
     console.log('[OwnedVehiclesProvider] Fetching vehicles for user:', userId?.slice(0, 8) + '...');
+    
+    // OPTIMIZATION: Check for prefetched data FIRST before any async work
+    const prefetchedVehicles = getPrefetchedData('vehicles', userId);
+    if (prefetchedVehicles) {
+      console.log('[OwnedVehiclesProvider] Using prefetched data (instant)');
+      const vehicles = prefetchedVehicles.map(transformVehicle);
+      dispatch({ type: ActionTypes.SET, payload: vehicles });
+      syncedRef.current = true;
+      markComplete('vehicles');
+      setIsLoading(false);
+      return;
+    }
     
     // Create abort controller for timeout
     const controller = new AbortController();
@@ -226,27 +238,16 @@ export function OwnedVehiclesProvider({ children }) {
     }, timeout);
     
     try {
-      // Check for prefetched data first
-      const prefetchedVehicles = getPrefetchedData('vehicles', userId);
-      let data, error;
-      
-      if (prefetchedVehicles) {
-        console.log('[OwnedVehiclesProvider] Using prefetched data');
-        data = prefetchedVehicles;
-        error = null;
-      } else {
-        // Fetch with timeout
-        const fetchPromise = fetchUserVehicles(userId);
-        const timeoutPromise = new Promise((_, reject) => {
-          controller.signal.addEventListener('abort', () => {
-            reject(new Error('Request timed out'));
-          });
+      // Fetch with timeout
+      const fetchPromise = fetchUserVehicles(userId);
+      const timeoutPromise = new Promise((_, reject) => {
+        controller.signal.addEventListener('abort', () => {
+          reject(new Error('Request timed out'));
         });
-        
-        const result = await Promise.race([fetchPromise, timeoutPromise]);
-        data = result.data;
-        error = result.error;
-      }
+      });
+      
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
+      const { data, error } = result;
       
       // Clear timeout since fetch completed
       clearTimeout(timeoutId);

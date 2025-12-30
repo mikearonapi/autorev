@@ -37,6 +37,9 @@ export async function POST(request) {
       errorSource,
       errorHash,
       appVersion,
+      // Screenshot fields
+      screenshot_url,
+      screenshot_metadata,
     } = body;
 
     const normalizedMessage = message || body?.errorMetadata?.errorMessage;
@@ -153,6 +156,9 @@ export async function POST(request) {
       rating: rating || null,
       feature_context: featureContext || null,
       user_tier: userTier || null,
+      // Screenshot support
+      screenshot_url: screenshot_url || null,
+      screenshot_metadata: screenshot_metadata || null,
     };
 
     const { data, error } = await supabase
@@ -187,6 +193,7 @@ export async function POST(request) {
       message: normalizedMessage,
       page_url: feedbackData.page_url,
       user_tier: feedbackData.user_tier,
+      screenshot_url: feedbackData.screenshot_url,
     }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
 
     return Response.json({

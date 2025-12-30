@@ -335,6 +335,21 @@
   justify-content: center;
 }
 
+/* Container for the car image itself */
+.heroImageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile Quick Action Bar - DEPRECATED: Now uses mobileActionBar for consistency */
+/* Keeping selector for backwards compatibility but it's no longer used */
+.mobileQuickActionBar {
+  display: none;
+}
+
 .heroImage {
   width: 100%;
   height: 100%;
@@ -350,25 +365,87 @@
   transform: none !important;
 }
 
-/* CF-008: Mobile - Constrain car image to prevent overflow */
+/* CF-008: Mobile - Full width image with tight spacing */
 @media (max-width: 767px) {
-  .heroImage {
-    max-height: 35vh;
-    max-width: 90vw;
-    width: auto;
+  .heroImageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     height: auto;
   }
   
-  .heroImageWrapper {
-    padding: 10px;
+  .heroImage {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  /* Mobile Quick Action Bar - tight against image */
+  .mobileQuickActionBar {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    width: 100%;
+    flex-shrink: 0;
+    background: transparent;
+  }
+  
+  .mobileQuickActionBar .quickActionItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 10px;
+    min-width: 62px;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  
+  .mobileQuickActionBar .quickActionItem span {
+    font-size: 0.625rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .mobileQuickActionBar .quickActionItem svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
-/* Small mobile - even more constrained */
+/* Very small mobile screens */
+@media (max-width: 500px) {
+  .mobileQuickActionBar {
+    gap: 4px;
+    padding: 8px 4px;
+  }
+  
+  .mobileQuickActionBar .quickActionItem {
+    padding: 6px 8px;
+    min-width: 56px;
+  }
+  
+  .mobileQuickActionBar .quickActionItem span {
+    font-size: 0.5625rem;
+  }
+  
+  .mobileQuickActionBar .quickActionItem svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Small mobile - image fills width */
 @media (max-width: 480px) {
   .heroImage {
-    max-height: 30vh;
-    max-width: 85vw;
+    max-height: 35vh;
+    width: 100%;
   }
 }
 
@@ -397,6 +474,13 @@
   pointer-events: none;
 }
 
+/* Mobile: Hide gradient since layout is stacked, not overlapping */
+@media (max-width: 767px) {
+  .heroGradient {
+    display: none;
+  }
+}
+
 /* ===========================================
    SPEC PANEL - Left Side Overlay
    =========================================== */
@@ -417,29 +501,67 @@
 }
 
 @media (max-width: 767px) {
+  /* Mobile: Image stays fixed, panels overlay */
+  .heroDisplay {
+    position: relative;
+  }
+  
+  /* Image wrapper - fixed position, always visible behind panels */
+  .heroImageWrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+  }
+  
+  /* All panel states on mobile - overlay on image */
   .specPanel {
-    left: 12px;
-    top: 12px;
-    width: calc(100% - 24px);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: auto;
     max-width: none;
     padding: 12px;
-    /* CF-009: Better mobile panel - full width, scrollable content */
-    max-height: 45vh;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+  
+  /* Collapsed state: just header */
+  .specPanel_collapsed {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* Expanded state on mobile - taller overlay, full width */
+  .specPanel_expanded {
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 60vh;
     overflow-y: auto;
   }
   
   /* CF-009: Ensure details panel fills mobile screen properly with scroll */
   .specPanel_details {
-    left: 8px;
-    right: 8px;
-    top: 8px;
-    bottom: 8px;
-    width: auto;
-    max-width: none;
-    /* Use fixed positioning with defined bounds so content can scroll */
+    /* Override desktop width - use full width on mobile */
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    top: 0;
+    bottom: 70px; /* Space for mobile action bar */
+    border-radius: 0;
     max-height: none;
     height: auto;
-    /* CRITICAL: Allow scrolling within the panel on mobile */
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -476,6 +598,11 @@
 /* Mobile: Ensure expanded panel has enough space for action buttons */
 @media (max-width: 767px) {
   .specPanel_expanded {
+    /* Full width on mobile */
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
     /* Allow taller panel to fit all content including action row */
     max-height: 55vh;
     padding-bottom: 16px;
@@ -503,6 +630,16 @@
   .specPanel_details {
     width: calc(100% - 32px);
     max-width: none;
+  }
+}
+
+/* Mobile: Full width panels - must come after max-width: 1100px to override */
+@media (max-width: 767px) {
+  .specPanel_details {
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    max-width: none !important;
   }
 }
 
@@ -1011,6 +1148,96 @@
   }
 }
 
+/* Hide desktop header toggle on mobile - use mobile action bar instead */
+@media (max-width: 767px) {
+  .headerViewToggle {
+    display: none;
+  }
+}
+
+/* ===========================================
+   MOBILE ACTION BAR - Below car image
+   =========================================== */
+
+.mobileActionBar {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .mobileActionBar {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px; /* Moved down from 40px */
+    z-index: 20;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .mobileActionBar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Compact button size - 15% smaller to avoid content overlap */
+  .mobileActionBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 8px;
+    min-width: 52px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.5rem; /* ~8px */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+  
+  .mobileActionBtn svg {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .mobileActionBtn:hover,
+  .mobileActionBtn:active {
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+  }
+  
+  .mobileActionBtnActive {
+    background: rgba(196, 165, 100, 0.35);
+    border-color: rgba(196, 165, 100, 0.6);
+    color: #D4AF37;
+  }
+  
+  .mobileActionBtnActive:hover,
+  .mobileActionBtnActive:active {
+    background: rgba(196, 165, 100, 0.45);
+    color: #D4AF37;
+  }
+  
+  .mobileActionBtn span {
+    white-space: nowrap;
+  }
+}
+
 /* ===========================================
    OWNER'S REFERENCE VIEW - Compact VIN
    =========================================== */
@@ -1031,7 +1258,7 @@
   border-radius: 0.375rem;
   color: #ffffff;
   font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -1041,6 +1268,7 @@
   text-transform: none;
   letter-spacing: normal;
   font-family: var(--font-body);
+  font-size: 0.65rem;
 }
 
 .vinInputCompact:focus {
@@ -1455,9 +1683,10 @@
 }
 
 .firstServiceBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
   margin-top: 20px;
   padding: 12px 20px;
   background: #D4AF37;
@@ -1468,6 +1697,10 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.firstServiceBtn svg {
+  flex-shrink: 0;
 }
 
 .firstServiceBtn:hover {
@@ -2099,6 +2332,17 @@
   padding-right: 10px;
 }
 
+/* Ensure CarActionMenu has proper left spacing */
+.expandedActionsRow > div:last-child {
+  margin-left: 8px;
+}
+
+@media (max-width: 767px) {
+  .expandedActionsRow > div:last-child {
+    margin-left: 12px;
+  }
+}
+
 /* Override tooltip positioning within expanded row to show below buttons */
 .expandedActionsRow [class*="tooltip"] {
   bottom: auto !important;
@@ -2154,14 +2398,12 @@
   flex-shrink: 0;
 }
 
-/* Mobile and tablet - prevent quickActionBar overlap */
+/* Mobile and tablet - quickActionBar is now at bottom, no need to constrain width */
 @media (max-width: 767px) {
   .expandedActionsRow {
-    /* Constrain width to prevent overlap with quickActionBar on right side */
-    /* quickActionBar is ~72px wide + 24px from right = ~96px from right edge */
     width: 100%;
-    max-width: calc(100% - 100px);
-    gap: 8px;
+    max-width: 100%;
+    gap: 12px;
     flex-wrap: wrap;
   }
 }
@@ -2177,25 +2419,24 @@
 
   .expandedActionsRow {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 10px;
     margin-top: 12px;
     padding-top: 12px;
-    /* Constrain width - quickActionBar is ~56px wide + 12px from right = ~68px */
-    /* Use larger value for My Collection which has 4 buttons */
+    /* quickActionBar is now at bottom, full width available */
     width: 100%;
-    max-width: calc(100% - 80px);
+    max-width: 100%;
   }
 }
 
 /* Smaller screens - more compact action row */
 @media (max-width: 480px) {
   .expandedActionsRow {
-    gap: 4px;
+    gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
-    /* Smaller screens need tighter constraints */
+    /* quickActionBar is now at bottom, full width available */
     width: 100%;
-    max-width: calc(100% - 75px);
+    max-width: 100%;
   }
   
   .seeDetailsBtn {
@@ -2428,24 +2669,10 @@
   }
 }
 
-/* Hide on very small screens */
-@media (max-width: 500px) {
+/* Mobile: Hide the desktop quickActionBar - use mobileQuickActionBar instead */
+@media (max-width: 767px) {
   .quickActionBar {
-    right: 12px;
-  }
-  
-  .quickActionItem {
-    padding: 10px 12px;
-    min-width: 56px;
-  }
-  
-  .quickActionItem span {
-    font-size: 8px;
-  }
-  
-  .quickActionItem svg {
-    width: 16px;
-    height: 16px;
+    display: none;
   }
 }
 
@@ -2752,6 +2979,25 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   z-index: 10;
+}
+
+/* Mobile: Move counter to top right of image, below collapse button */
+@media (max-width: 767px) {
+  .vehicleCounter {
+    top: 56px; /* Below collapse button (~38px + padding) */
+    right: 12px;
+    bottom: auto;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+  }
+  
+  .vehicleCounter span:first-child {
+    font-size: 13px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -3808,6 +4054,36 @@
   color: #86efac;
 }
 
+/* Modified value indicator for performance metrics */
+.modifiedValue {
+  color: #86efac;
+  font-weight: 600;
+}
+
+.modifiedIndicator {
+  color: #86efac;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* Small modified badge for section headers */
+.modifiedBadgeSmall {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(134, 239, 172, 0.15);
+  border: 1px solid rgba(134, 239, 172, 0.3);
+  color: #86efac;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+}
+
 /* Tab Badge (count indicator) */
 .tabBadge {
   display: inline-flex;
@@ -4032,15 +4308,48 @@
    =========================================== */
 
 .quickActions {
-  display: none; /* Hidden on mobile - available in content area instead */
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-/* Show quick actions only on larger screens */
+/* Compact on mobile */
+@media (max-width: 767px) {
+  .quickActions {
+    gap: 4px;
+  }
+  
+  .quickActionBtn {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  
+  .quickActionBtn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .analyzeAllBtn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  
+  .analyzeAllBtn img {
+    width: 14px !important;
+    height: 14px !important;
+    margin-right: 4px !important;
+  }
+  
+  .analyzeAllBtn span {
+    display: none;
+  }
+}
+
+/* Larger screens */
 @media (min-width: 768px) {
   .quickActions {
-    display: flex;
+    gap: 8px;
   }
 }
 
@@ -4075,7 +4384,7 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 480px) {
   .quickActionLabel {
     display: inline;
   }

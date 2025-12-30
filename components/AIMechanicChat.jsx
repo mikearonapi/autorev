@@ -841,7 +841,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   // Handle quick action confirmation
   const handleQuickActionConfirm = useCallback(() => {
     if (quickActionPrompt?.prompt) {
-      sendMessage(quickActionPrompt.prompt);
+      // Use displayMessage if provided, otherwise show the full prompt
+      const options = quickActionPrompt.displayMessage 
+        ? { displayMessage: quickActionPrompt.displayMessage }
+        : {};
+      sendMessage(quickActionPrompt.prompt, options);
       setQuickActionPrompt(null);
     }
   }, [quickActionPrompt]);
@@ -1105,10 +1109,13 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     };
   }, []);
   
-  const sendMessage = async (messageText = input) => {
+  const sendMessage = async (messageText = input, options = {}) => {
     if (!messageText.trim() || isLoading) return;
     
     const userMessage = messageText.trim();
+    // displayMessage is what the user sees in chat; defaults to the actual message
+    const displayMessage = options.displayMessage?.trim() || userMessage;
+    
     setInput('');
     setError(null);
     setSuggestions([]);
@@ -1117,7 +1124,8 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setCurrentTool(null);
     setLoadingMessage('Thinking...');
     
-    const newMessages = [...messages, { role: 'user', content: userMessage }];
+    // Show the display message to the user, but send the full message to AL
+    const newMessages = [...messages, { role: 'user', content: displayMessage }];
     setMessages(newMessages);
     setIsLoading(true);
     
@@ -1694,7 +1702,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                         <p className={styles.quickActionLabel}>
                           {quickActionPrompt.context?.category ? `Ask about ${quickActionPrompt.context.category}` : 'Quick Question'}
                         </p>
-                        <p className={styles.quickActionText}>{quickActionPrompt.prompt}</p>
+                        <p className={styles.quickActionText}>{quickActionPrompt.displayMessage || quickActionPrompt.prompt}</p>
                       </div>
                       <div className={styles.quickActionButtons}>
                         <button 
@@ -1967,8 +1975,9 @@ export function AIMechanicProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState(null);
   
-  const openChatWithPrompt = useCallback((prompt, context = {}) => {
-    setPendingPrompt({ prompt, context });
+  const openChatWithPrompt = useCallback((prompt, context = {}, displayMessage = null) => {
+    // displayMessage is what the user sees; prompt is what AL receives
+    setPendingPrompt({ prompt, context, displayMessage });
     setIsOpen(true);
   }, []);
   

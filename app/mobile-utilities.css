@@ -507,6 +507,34 @@
    Prevent iOS zoom, improve touch targets
    ========================================================================== */
 
+/* 
+   GLOBAL: Prevent iOS zoom on input focus
+   iOS Safari zooms when input font-size < 16px
+   Apply to ALL text inputs/textareas on mobile
+*/
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="time"],
+  input:not([type]),
+  textarea,
+  select {
+    font-size: 16px !important;
+    /* Remove iOS default styling that can interfere */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
 /* Prevent zoom on input focus (iOS) - minimum 16px font */
 .input-no-zoom {
   font-size: max(16px, var(--font-size-base, 14px));

@@ -6,7 +6,7 @@
 
 ## Overview
 
-AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 17 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, and car events.
+AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 17 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, and analyze user vehicle health.
 
 | Attribute | Value |
 |-----------|-------|
@@ -18,7 +18,7 @@ AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has 
 | **Events** | Cars & Coffee, track days, car shows, and more |
 | **Pricing** | Token-based (mirrors Anthropic costs) |
 
-> **Last Verified:** December 15, 2024 — MCP-verified against `lib/alConfig.js` and `lib/alTools.js`
+> **Last Verified:** December 29, 2024 — MCP-verified against `lib/alConfig.js` and `lib/alTools.js`
 
 ---
 
@@ -72,13 +72,13 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 | `compare_cars` | — | ✓ | ✓ |
 | `search_encyclopedia` | — | ✓ | ✓ |
 | `get_upgrade_info` | — | ✓ | ✓ |
-| `search_forums` | — | ✓ | ✓ | *(stub - not implemented)* |
 | `search_parts` | — | ✓ | ✓ |
 | `get_maintenance_schedule` | — | ✓ | ✓ |
 | `search_knowledge` | — | ✓ | ✓ |
 | `get_track_lap_times` | — | ✓ | ✓ |
 | `get_dyno_runs` | — | ✓ | ✓ |
 | `search_community_insights` | — | ✓ | ✓ |
+| `analyze_vehicle_health` | — | ✓ | ✓ |
 | `recommend_build` | — | — | ✓ |
 
 ---
@@ -260,21 +260,7 @@ Detailed information about a specific modification.
 
 ---
 
-### 10. `search_forums`
-Search automotive forums (placeholder - not fully implemented).
-
-**Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `query` | string | Yes | Search query |
-| `car_context` | string | No | Car name for context |
-| `sources` | array | No | reddit, rennlist, m3post, etc. |
-
-**Returns:** Search suggestions and forum links
-
----
-
-### 11. `search_parts`
+### 10. `search_parts`
 Search the parts catalog with optional car fitment.
 
 **Parameters:**
@@ -289,7 +275,7 @@ Search the parts catalog with optional car fitment.
 
 ---
 
-### 12. `get_maintenance_schedule`
+### 11. `get_maintenance_schedule`
 Get maintenance specs and schedules.
 
 **Parameters:**
@@ -303,7 +289,7 @@ Get maintenance specs and schedules.
 
 ---
 
-### 13. `recommend_build`
+### 12. `recommend_build`
 Get upgrade recommendations for a specific goal.
 
 **Parameters:**
@@ -318,7 +304,7 @@ Get upgrade recommendations for a specific goal.
 
 ---
 
-### 14. `search_knowledge`
+### 13. `search_knowledge`
 Search the vector knowledge base with citations.
 
 **Parameters:**
@@ -335,7 +321,7 @@ Search the vector knowledge base with citations.
 
 ---
 
-### 15. `get_track_lap_times`
+### 14. `get_track_lap_times`
 Get citeable track lap times.
 
 **Parameters:**
@@ -348,7 +334,7 @@ Get citeable track lap times.
 
 ---
 
-### 16. `get_dyno_runs`
+### 15. `get_dyno_runs`
 Get citeable dyno data.
 
 **Parameters:**
@@ -362,8 +348,8 @@ Get citeable dyno data.
 
 ---
 
-### 17. `search_community_insights`
-Search community-sourced insights extracted from enthusiast forums.
+### 16. `search_community_insights` ⭐ PRIMARY FORUM TOOL
+Search community-sourced insights extracted from enthusiast forums. **This is the primary tool for forum/community data** — returns 1,226 curated insights from major car forums.
 
 **Parameters:**
 | Param | Type | Required | Description |
@@ -390,21 +376,64 @@ Search community-sourced insights extracted from enthusiast forums.
 
 **Data Sources:** Rennlist (Porsche), Bimmerpost (BMW), Miata.net (Mazda), FT86Club (Toyota/Subaru), CorvetteForum (Chevy), VWVortex (VW/Audi)
 
-**Best Practice:** Use this when users ask about real-world owner experiences, what actual owners say, or community wisdom. Complements `get_known_issues` and `search_knowledge` with forum-sourced data.
+**Fallback Behavior:** When no indexed insights are found, returns `fallback` object with:
+- `suggestedForums`: Brand-specific forum links (Rennlist, Bimmerpost, etc.)
+- `searchTip`: Pre-built search query for manual forum research
+
+**Best Practice:** Use this as the **primary tool** for any forum/community questions. It replaces the old `search_forums` stub. When no results are found, guide users to the suggested forums. Complements `get_known_issues` and `search_knowledge` with forum-sourced data.
+
+---
+
+### 17. `analyze_vehicle_health`
+Analyze a user's specific vehicle and provide personalized maintenance recommendations.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `vehicle_id` | string | No | User vehicle ID (uses first garage vehicle if not provided) |
+| `include_costs` | boolean | No | Include cost estimates for recommendations |
+| `user_id` | string | Yes* | User ID (*auto-injected by API route) |
+
+**Returns:**
+- `health_score`: Overall health score (0-100)
+- `recommendations`: Prioritized list (URGENT, DUE_SOON, UPCOMING)
+- `model_issues_to_watch`: Relevant known issues for the car's mileage/year
+- `storage_alerts`: Special alerts if vehicle is in storage mode
+
+**Recommendation Categories:**
+| Category | Examples |
+|----------|----------|
+| `oil` | Oil change due/overdue |
+| `inspection` | Vehicle inspection, registration |
+| `battery` | Battery age, weak/dead status |
+| `tires` | Low tread depth |
+| `brakes` | Brake fluid service |
+
+**Best Practice:** Use when user asks "what maintenance does my car need?", "is my car healthy?", or "what service is due?". Requires user to have a vehicle in their garage.
 
 ---
 
 ## System Prompt
 
-AL's behavior is defined by `buildALSystemPrompt()` in `lib/alConfig.js`:
+**SINGLE SOURCE OF TRUTH**: AL's behavior is defined by `buildALSystemPrompt()` in `lib/alConfig.js`.
 
-**Key Instructions:**
-1. Use tools first before answering car-specific questions
-2. Be specific with actual numbers from the database
-3. Be practical about budget, skill level, implications
-4. Be honest when unsure - don't guess on safety-critical info
-5. Keep responses concise (2-3 paragraphs unless more needed)
-6. Always mention safety considerations for mods/DIY
+Do NOT define system prompts elsewhere. All AL behavior configuration belongs in this function.
+
+**Key Behavioral Instructions:**
+1. **Database-First**: Always use tools before answering car-specific questions
+2. **Source Confidence**: Match language confidence to data quality (4 tiers)
+3. **Specificity**: Use actual numbers from the database, not approximations
+4. **Practicality**: Consider budget, skill level, real-world implications
+5. **Conciseness**: Lean SHORT by default, expand only when asked
+6. **No AI Fluff**: No filler phrases, no restating questions, get to the point
+7. **Safety**: Mention safety considerations for mods/DIY work
+8. **Attribution**: Always cite sources (AutoRev data, forum name, expert reviewer)
+
+**Source Confidence Tiers:**
+- **Tier 1 (AutoRev Verified)**: BE CONFIDENT - direct language, no hedging
+- **Tier 2 (Community Sourced)**: ATTRIBUTE CLEARLY - cite forum/source
+- **Tier 3 (General Knowledge)**: HEDGE + recommend verification
+- **Tier 4 (Insufficient Data)**: ASK, don't guess
 
 ---
 
@@ -418,12 +447,13 @@ AL automatically detects which automotive domain a question relates to and prior
 | reliability | reliable, issue, problem | get_known_issues, search_community_insights |
 | modifications | mod, upgrade, tune | search_parts, get_upgrade_info, search_community_insights |
 | buying | buy, price, worth | get_car_ai_context, search_community_insights |
-| maintenance | oil, service, interval | get_maintenance_schedule, search_community_insights |
+| maintenance | oil, service, interval | get_maintenance_schedule, analyze_vehicle_health |
 | track | track, lap, HPDE | get_track_lap_times |
 | comparison | vs, compare, better | compare_cars |
 | ownership | long-term, high mileage, costs | search_community_insights |
 | events | meetup, cars and coffee, track day, car show | search_events |
 | **education** | how, what, why, explain, work, learn | **search_encyclopedia**, get_upgrade_info, search_knowledge |
+| vehicle health | my car, health, due, overdue | **analyze_vehicle_health**, get_maintenance_schedule |
 
 ---
 

@@ -11,8 +11,10 @@
   display: flex;
   align-items: flex-end; /* Bottom sheet on mobile */
   justify-content: center;
-  z-index: 1000;
+  z-index: 1100; /* Above header (1050) and below critical overlays */
   padding: 0;
+  /* CRITICAL: Add top padding to account for header + beta banner on mobile */
+  padding-top: calc(110px + env(safe-area-inset-top, 0px)); /* ~60px header + ~40px banner + safe area */
   animation: fadeIn 0.2s ease;
   /* Prevent scroll blocking issues on Android */
   overscroll-behavior: contain;
@@ -24,6 +26,7 @@
   .overlay {
     align-items: center;
     padding: 20px;
+    padding-top: 20px; /* Reset for desktop centered modal */
   }
 }
 
@@ -37,8 +40,9 @@
   position: relative;
   width: 100%;
   max-width: 640px;
-  max-height: 95vh;
-  max-height: 95dvh;
+  /* Adjusted max-height to account for header/banner spacing (110px + safe area) */
+  max-height: calc(100vh - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   background: linear-gradient(145deg, rgba(30, 32, 38, 0.98), rgba(20, 22, 28, 0.98));
   border-radius: 16px 16px 0 0; /* Bottom sheet on mobile */
   border: 1px solid rgba(255, 255, 255, 0.1);

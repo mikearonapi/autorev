@@ -120,7 +120,7 @@ export function SavedBuildsProvider({ children }) {
    * @param {number} currentBuildsCount - Current builds count for stale-while-revalidate
    * @param {number} timeout - Timeout in ms (default 10000)
    */
-const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0, timeout = 10000) => {
+const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceRefetch = false, currentBuildsCount = 0, timeout = 5000) => {
   if (!isAuthenticated || !user?.id) {
     // Not authenticated - load from localStorage (clearing user data)
     console.log('[SavedBuildsProvider] Not authenticated, clearing user data and loading from localStorage');
@@ -141,12 +141,71 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     return;
   }
 
+  console.log('[SavedBuildsProvider] Fetching builds for user:', user.id?.slice(0, 8) + '...');
+
+  // OPTIMIZATION: Check for prefetched data FIRST before any async work
+  const prefetchedBuilds = getPrefetchedData('builds', user.id);
+  if (prefetchedBuilds) {
+    console.log('[SavedBuildsProvider] Using prefetched data (instant)');
+    const transformedBuilds = prefetchedBuilds.map(build => ({
+      id: build.id,
+      carSlug: build.car_slug,
+      carName: build.car_name,
+      name: build.project_name,
+      upgrades: Array.isArray(build.selected_upgrades) 
+        ? build.selected_upgrades 
+        : (build.selected_upgrades?.upgrades || []),
+      factoryConfig: build.selected_upgrades?.factoryConfig || null,
+      wheelFitment: build.selected_upgrades?.wheelFitment || null,
+      sizeSelections: build.selected_upgrades?.sizeSelections || null,
+      parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+        id: p.id,
+        partId: p.part_id,
+        quantity: p.quantity,
+        partName: p.part_name,
+        brandName: p.brand_name,
+        partNumber: p.part_number,
+        category: p.category,
+        vendorName: p.vendor_name,
+        productUrl: p.product_url,
+        currency: p.currency,
+        priceCents: p.price_cents,
+        priceRecordedAt: p.price_recorded_at,
+        requiresTune: p.requires_tune,
+        installDifficulty: p.install_difficulty,
+        estimatedLaborHours: p.estimated_labor_hours,
+        fitmentVerified: p.fitment_verified,
+        fitmentConfidence: p.fitment_confidence,
+        fitmentNotes: p.fitment_notes,
+        fitmentSourceUrl: p.fitment_source_url,
+        metadata: p.metadata,
+        createdAt: p.created_at,
+        updatedAt: p.updated_at,
+      })) : [],
+      totalHpGain: build.total_hp_gain || 0,
+      totalCostLow: build.total_cost_low || 0,
+      totalCostHigh: build.total_cost_high || 0,
+      finalHp: build.final_hp,
+      notes: build.notes,
+      isFavorite: build.is_favorite || false,
+      createdAt: build.created_at,
+      updatedAt: build.updated_at,
+    }));
+    
+    if (!cancelledRef.current) {
+      setBuilds(transformedBuilds);
+      syncedRef.current = true;
+      markComplete('builds');
+      setIsLoading(false);
+    }
+    return;
+  }
+
   // OPTIMIZATION: Show loading only if we don't have cached data
   // This implements stale-while-revalidate pattern
   if (currentBuildsCount === 0) {
     setIsLoading(true);
   }
-  console.log('[SavedBuildsProvider] Fetching builds for user:', user.id?.slice(0, 8) + '...');
   
   // Create abort controller for timeout
   const controller = new AbortController();
@@ -156,27 +215,16 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   }, timeout);
   
   try {
-    // Check for prefetched data first
-    const prefetchedBuilds = getPrefetchedData('builds', user.id);
-    let data, error;
-    
-    if (prefetchedBuilds) {
-      console.log('[SavedBuildsProvider] Using prefetched data');
-      data = prefetchedBuilds;
-      error = null;
-    } else {
-      // Fetch with timeout
-      const fetchPromise = fetchUserProjects(user.id);
-      const timeoutPromise = new Promise((_, reject) => {
-        controller.signal.addEventListener('abort', () => {
-          reject(new Error('Request timed out'));
-        });
+    // Fetch with timeout
+    const fetchPromise = fetchUserProjects(user.id);
+    const timeoutPromise = new Promise((_, reject) => {
+      controller.signal.addEventListener('abort', () => {
+        reject(new Error('Request timed out'));
       });
-      
-      const result = await Promise.race([fetchPromise, timeoutPromise]);
-      data = result.data;
-      error = result.error;
-    }
+    });
+    
+    const result = await Promise.race([fetchPromise, timeoutPromise]);
+    const { data, error } = result;
     
     // Clear timeout since fetch completed
     clearTimeout(timeoutId);

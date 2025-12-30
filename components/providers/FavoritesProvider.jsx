@@ -129,10 +129,29 @@ export function FavoritesProvider({ children }) {
    * Fetch favorites from server
    * Extracted so it can be used as a retry callback
    * @param {string} userId - User ID to fetch favorites for
-   * @param {number} timeout - Timeout in ms (default 8000)
+   * @param {number} timeout - Timeout in ms (default 4000 - reduced for faster failures)
    */
-  const fetchFavorites = useCallback(async (userId, timeout = 8000) => {
+  const fetchFavorites = useCallback(async (userId, timeout = 4000) => {
     console.log('[FavoritesProvider] Fetching favorites for user:', userId?.slice(0, 8) + '...');
+    
+    // OPTIMIZATION: Check for prefetched data FIRST before any async work
+    const prefetchedFavorites = getPrefetchedData('favorites', userId);
+    if (prefetchedFavorites) {
+      console.log('[FavoritesProvider] Using prefetched data (instant)');
+      const favorites = prefetchedFavorites.map(f => ({
+        slug: f.car_slug,
+        name: f.car_name,
+        years: f.car_years,
+        hp: f.car_hp,
+        priceRange: f.car_price_range,
+        addedAt: new Date(f.created_at).getTime(),
+      }));
+      dispatch({ type: FavoriteActionTypes.SET, payload: favorites });
+      syncedRef.current = true;
+      markComplete('favorites');
+      setIsLoading(false);
+      return;
+    }
     
     // Create abort controller for timeout
     const controller = new AbortController();
@@ -152,27 +171,16 @@ export function FavoritesProvider({ children }) {
         );
       }
 
-      // Check for prefetched data first
-      const prefetchedFavorites = getPrefetchedData('favorites', userId);
-      let data, error;
-      
-      if (prefetchedFavorites) {
-        console.log('[FavoritesProvider] Using prefetched data');
-        data = prefetchedFavorites;
-        error = null;
-      } else {
-        // Fetch favorites from Supabase with timeout
-        const fetchPromise = fetchUserFavorites(userId);
-        const timeoutPromise = new Promise((_, reject) => {
-          controller.signal.addEventListener('abort', () => {
-            reject(new Error('Request timed out'));
-          });
+      // Fetch favorites from Supabase with timeout
+      const fetchPromise = fetchUserFavorites(userId);
+      const timeoutPromise = new Promise((_, reject) => {
+        controller.signal.addEventListener('abort', () => {
+          reject(new Error('Request timed out'));
         });
-        
-        const result = await Promise.race([fetchPromise, timeoutPromise]);
-        data = result.data;
-        error = result.error;
-      }
+      });
+      
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
+      const { data, error } = result;
       
       // Clear timeout since fetch completed
       clearTimeout(timeoutId);

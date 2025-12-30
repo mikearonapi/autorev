@@ -895,3 +895,197 @@
 .typeButtonActive svg {
   fill: var(--type-color);
 }
+
+/* ===========================================
+   SCREENSHOT CAPTURE STYLES
+   =========================================== */
+
+/* Screenshot Section Container */
+.screenshotSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Screenshot capture button */
+.screenshotButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.screenshotButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-color: #94a3b8;
+  color: #334155;
+  transform: translateY(-1px);
+}
+
+.screenshotButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.screenshotButton svg {
+  color: #64748b;
+}
+
+/* Capturing state animation */
+.screenshotCapturing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Screenshot Preview */
+.screenshotPreview {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid #10b981;
+  background: #f0fdf4;
+}
+
+.screenshotImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.screenshotOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.screenshotPreview:hover .screenshotOverlay {
+  opacity: 1;
+}
+
+.screenshotRemove,
+.screenshotView {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.screenshotRemove {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.screenshotRemove:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.screenshotView {
+  background: #ffffff;
+  color: #1e293b;
+}
+
+.screenshotView:hover {
+  background: #f1f5f9;
+  transform: scale(1.05);
+}
+
+/* Screenshot success indicator */
+.screenshotSuccess {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #166534;
+}
+
+.screenshotSuccess svg {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+/* Uploading state */
+.screenshotUploading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-top-color: var(--sn-primary, #1a4d6e);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .screenshotButton {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .screenshotImage {
+    max-height: 160px;
+  }
+  
+  .screenshotRemove,
+  .screenshotView {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .screenshotOverlay {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+  }
+}

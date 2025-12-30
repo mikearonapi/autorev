@@ -439,6 +439,64 @@
   color: #10b981;
 }
 
+.feedbackScreenshot {
+  color: #f59e0b;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.feedbackScreenshot:hover {
+  color: #d97706;
+}
+
+/* Screenshot Preview in Feedback Card */
+.screenshotPreview {
+  margin-top: 0.75rem;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 300px;
+}
+
+.screenshotLink {
+  display: block;
+  position: relative;
+}
+
+.screenshotThumbnail {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: cover;
+  border: 2px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.screenshotThumbnail:hover {
+  border-color: #f59e0b;
+  transform: scale(1.02);
+}
+
+.screenshotOverlayText {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  font-size: 0.75rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.screenshotLink:hover .screenshotOverlayText {
+  opacity: 1;
+}
+
 .errorDetailsCard {
   margin-top: 0.75rem;
   padding: 0.75rem;

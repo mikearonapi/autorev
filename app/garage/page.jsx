@@ -34,194 +34,263 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateServiceLog, deleteServiceLog } from '@/lib/maintenanceService';
 import { decodeVIN } from '@/lib/vinDecoder';
 import { getSafetySummary } from '@/lib/nhtsaSafetyService';
+import { calculateAllModificationGains } from '@/lib/upgrades';
 import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
 import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
 import AskALButton from '@/components/AskALButton';
 import VehicleHealthCard from '@/components/garage/VehicleHealthCard';
 import { useAIChat } from '@/components/AIMechanicChat';
 
+// Icon wrapper to prevent browser extension DOM conflicts
+// Wrapping SVGs in a span prevents "removeChild" errors when extensions modify the DOM
+const IconWrapper = ({ children, style }) => (
+  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 0, ...style }} suppressHydrationWarning>
+    {children}
+  </span>
+);
+
 // Icons
 const Icons = {
-  car: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
-    </svg>
+  car: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+        <circle cx="7" cy="17" r="2"/>
+        <path d="M9 17h6"/>
+        <circle cx="17" cy="17" r="2"/>
+      </svg>
+    </IconWrapper>
   ),
-  chevronDown: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"/>
-    </svg>
+  chevronDown: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </IconWrapper>
   ),
-  chevronUp: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18 15 12 9 6 15"/>
-    </svg>
+  chevronUp: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    </IconWrapper>
   ),
-  x: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
+  x: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </IconWrapper>
   ),
-  heart: ({ size = 20, filled = false }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-    </svg>
+  heart: ({ size = 20, filled = false, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </IconWrapper>
   ),
-  wrench: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-    </svg>
+  wrench: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+    </IconWrapper>
   ),
-  arrowRight: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
-    </svg>
+  arrowRight: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </IconWrapper>
   ),
-  arrowLeft: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"/>
-      <polyline points="12 19 5 12 12 5"/>
-    </svg>
+  arrowLeft: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </IconWrapper>
   ),
-  trash: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6"/>
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-    </svg>
+  trash: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+    </IconWrapper>
   ),
-  plus: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"/>
-      <line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>
+  plus: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </IconWrapper>
   ),
-  gauge: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
+  gauge: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </IconWrapper>
   ),
-  folder: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-    </svg>
+  folder: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+    </IconWrapper>
   ),
-  tool: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 21h4l13-13a2.83 2.83 0 0 0-4-4L3 17v4z"/>
-      <path d="M14.5 5.5L18.5 9.5"/>
-    </svg>
+  tool: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 21h4l13-13a2.83 2.83 0 0 0-4-4L3 17v4z"/>
+        <path d="M14.5 5.5L18.5 9.5"/>
+      </svg>
+    </IconWrapper>
   ),
-  dollar: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23"/>
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-    </svg>
+  dollar: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </IconWrapper>
   ),
-  settings: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
+  settings: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </IconWrapper>
   ),
-  chevronLeft: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
+  chevronLeft: ({ size = 24, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </IconWrapper>
   ),
-  chevronRight: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
+  chevronRight: ({ size = 24, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </IconWrapper>
   ),
-  info: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="16" x2="12" y2="12"/>
-      <line x1="12" y1="8" x2="12.01" y2="8"/>
-    </svg>
+  info: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="16" x2="12" y2="12"/>
+        <line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+    </IconWrapper>
   ),
-  search: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
+  search: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </IconWrapper>
   ),
-  check: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
+  check: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </IconWrapper>
   ),
-  alert: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/>
-      <line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
+  alert: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </IconWrapper>
   ),
-  loader: ({ size = 16, className }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="12" y1="2" x2="12" y2="6"/>
-      <line x1="12" y1="18" x2="12" y2="22"/>
-      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
-      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-      <line x1="2" y1="12" x2="6" y2="12"/>
-      <line x1="18" y1="12" x2="22" y2="12"/>
-      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
-      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-    </svg>
+  loader: ({ size = 16, className, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="12" y1="2" x2="12" y2="6"/>
+        <line x1="12" y1="18" x2="12" y2="22"/>
+        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+        <line x1="2" y1="12" x2="6" y2="12"/>
+        <line x1="18" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+      </svg>
+    </IconWrapper>
   ),
-  shield: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
+  shield: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </IconWrapper>
   ),
-  star: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-    </svg>
+  star: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </IconWrapper>
   ),
-  fire: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-    </svg>
+  fire: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+      </svg>
+    </IconWrapper>
   ),
-  clipboard: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-    </svg>
+  clipboard: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+      </svg>
+    </IconWrapper>
   ),
-  book: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-    </svg>
+  book: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+    </IconWrapper>
   ),
-  calendar: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-      <line x1="16" y1="2" x2="16" y2="6"/>
-      <line x1="8" y1="2" x2="8" y2="6"/>
-      <line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
+  calendar: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </IconWrapper>
   ),
-  edit: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-    </svg>
+  edit: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+    </IconWrapper>
   ),
-  link: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-    </svg>
+  link: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      </svg>
+    </IconWrapper>
   ),
 };
 
@@ -289,6 +358,15 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       setVinInput('');
     }
   }, [type, item?.vehicle?.id]); // Key off vehicle ID, not just VIN
+  
+  // Reset maintenance & safety data when car changes to prevent stale data showing
+  useEffect(() => {
+    // Reset all car-specific data when switching vehicles
+    setMaintenanceData({ specs: null, issues: [], intervals: [] });
+    setFitmentOptions([]);
+    setSafetyData({ recalls: [], complaints: [], investigations: [], safetyRatings: null });
+    setServiceLogs([]);
+  }, [item?.vehicle?.id, item?.matchedCar?.slug]);
   
   // Fetch maintenance data for owned vehicles (when in expanded or details state)
   useEffect(() => {
@@ -621,6 +699,11 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const isOwnedVehicle = type === 'mycars';
   const isBuild = type === 'projects';
   const isFavorite = type === 'favorites';
+  
+  // Calculate all modification gains from installed mods (for owned vehicles)
+  const modificationGains = isOwnedVehicle && item.vehicle?.installedModifications?.length > 0
+    ? calculateAllModificationGains(item.vehicle.installedModifications, car)
+    : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0, brakingImprovement: 0, lateralGImprovement: 0 };
 
   // Get display name
   const displayName = isOwnedVehicle 
@@ -699,17 +782,121 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     <div className={styles.heroDisplay}>
       {/* Hero Image - Uses exclusive garage images (premium studio photography) */}
       <div className={styles.heroImageWrapper}>
-        {car ? (
-          <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
-        ) : (
-          <div className={styles.heroPlaceholder}>
-            <Icons.car size={120} />
+        <div className={styles.heroImageContainer}>
+          {car ? (
+            <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
+          ) : (
+            <div className={styles.heroPlaceholder}>
+              <Icons.car size={120} />
+            </div>
+          )}
+        </div>
+        
+        {/* Mobile Quick Action Bar - Inside image container, below car */}
+        {/* Uses same mobileActionBar styles for consistency */}
+        {panelState !== 'details' && (
+          <div className={styles.mobileActionBar}>
+            <button 
+              className={styles.mobileActionBtn}
+              onClick={() => {
+                setDetailsView('specs');
+                setPanelState('details');
+              }}
+            >
+              <Icons.info size={18} />
+              <span>Details</span>
+            </button>
+            {isOwnedVehicle && (
+              <>
+                <button 
+                  className={styles.mobileActionBtn}
+                  onClick={() => {
+                    setDetailsView('reference');
+                    setPanelState('details');
+                  }}
+                >
+                  <Icons.book size={18} />
+                  <span>Reference</span>
+                </button>
+                <button 
+                  className={styles.mobileActionBtn}
+                  onClick={() => {
+                    setDetailsView('safety');
+                    setPanelState('details');
+                  }}
+                >
+                  <Icons.shield size={18} />
+                  <span>Safety</span>
+                </button>
+                <button 
+                  className={styles.mobileActionBtn}
+                  onClick={() => {
+                    setDetailsView('service');
+                    setPanelState('details');
+                  }}
+                >
+                  <Icons.clipboard size={18} />
+                  <span>Service</span>
+                </button>
+                <button 
+                  className={styles.mobileActionBtn}
+                  onClick={() => {
+                    setDetailsView('health');
+                    setPanelState('details');
+                  }}
+                >
+                  <Icons.gauge size={18} />
+                  <span>Health</span>
+                </button>
+              </>
+            )}
           </div>
         )}
         
         {/* Gradient overlay for readability */}
         <div className={styles.heroGradient} />
       </div>
+
+      {/* Mobile Action Bar - Horizontal below car image, only visible on mobile in details mode */}
+      {panelState === 'details' && isOwnedVehicle && (
+        <div className={styles.mobileActionBar}>
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'specs' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('specs')}
+          >
+            <Icons.info size={18} />
+            <span>Details</span>
+          </button>
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'reference' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('reference')}
+          >
+            <Icons.book size={18} />
+            <span>Reference</span>
+          </button>
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'safety' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('safety')}
+          >
+            <Icons.shield size={18} />
+            <span>Safety</span>
+          </button>
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'service' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('service')}
+          >
+            <Icons.clipboard size={18} />
+            <span>Service</span>
+          </button>
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'health' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('health')}
+          >
+            <Icons.gauge size={18} />
+            <span>Health</span>
+          </button>
+        </div>
+      )}
 
       {/* Spec Panel - Left Side with consistent transparency */}
       <div className={`${styles.specPanel} ${styles[`specPanel_${panelState}`]}`}>
@@ -813,19 +1000,43 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               {car?.hp && (
                 <div className={styles.specItem}>
                   <span className={styles.specLabel}>Power</span>
-                  <span className={styles.specValue}>{car.hp} HP</span>
+                  <span className={styles.specValue}>
+                    {isOwnedVehicle && modificationGains.hpGain > 0 
+                      ? `${car.hp + modificationGains.hpGain} HP`
+                      : `${car.hp} HP`
+                    }
+                    {isOwnedVehicle && modificationGains.hpGain > 0 && (
+                      <span className={styles.modifiedIndicator}> (+{modificationGains.hpGain})</span>
+                    )}
+                  </span>
                 </div>
               )}
               {car?.zeroToSixty && (
                 <div className={styles.specItem}>
                   <span className={styles.specLabel}>0-60</span>
-                  <span className={styles.specValue}>{car.zeroToSixty}s</span>
+                  <span className={styles.specValue}>
+                    {isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0
+                      ? `${(car.zeroToSixty - modificationGains.zeroToSixtyImprovement).toFixed(1)}s`
+                      : `${car.zeroToSixty}s`
+                    }
+                    {isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 && (
+                      <span className={styles.modifiedIndicator}> (-{modificationGains.zeroToSixtyImprovement}s)</span>
+                    )}
+                  </span>
                 </div>
               )}
               {car?.torque && (
                 <div className={styles.specItem}>
                   <span className={styles.specLabel}>Torque</span>
-                  <span className={styles.specValue}>{car.torque} lb-ft</span>
+                  <span className={styles.specValue}>
+                    {isOwnedVehicle && modificationGains.torqueGain > 0
+                      ? `${car.torque + modificationGains.torqueGain} lb-ft`
+                      : `${car.torque} lb-ft`
+                    }
+                    {isOwnedVehicle && modificationGains.torqueGain > 0 && (
+                      <span className={styles.modifiedIndicator}> (+{modificationGains.torqueGain})</span>
+                    )}
+                  </span>
                 </div>
               )}
               {car?.drivetrain && (
@@ -913,6 +1124,12 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>Performance</span>
+                      {isOwnedVehicle && item.vehicle?.isModified && (
+                        <span className={styles.modifiedBadgeSmall}>
+                          <Icons.wrench size={10} />
+                          MODIFIED
+                        </span>
+                      )}
                       <AskALButton 
                         category="Performance"
                         prompt={`Tell me about the performance capabilities of my ${car?.name || 'car'}. How does it compare to competitors, and what are its strengths on the street and track?`}
@@ -920,12 +1137,77 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
-                      {car.hp && <div className={styles.detailBlockItem}><span>Horsepower</span><span>{car.hp} HP</span></div>}
-                      {car.torque && <div className={styles.detailBlockItem}><span>Torque</span><span>{car.torque} lb-ft</span></div>}
-                      {car.zeroToSixty && <div className={styles.detailBlockItem}><span>0-60 mph</span><span>{car.zeroToSixty}s</span></div>}
+                      {car.hp && (
+                        <div className={styles.detailBlockItem}>
+                          <span>Horsepower</span>
+                          <span className={isOwnedVehicle && modificationGains.hpGain > 0 ? styles.modifiedValue : ''}>
+                            {isOwnedVehicle && modificationGains.hpGain > 0 
+                              ? `${car.hp + modificationGains.hpGain} HP`
+                              : `${car.hp} HP`
+                            }
+                            {isOwnedVehicle && modificationGains.hpGain > 0 && (
+                              <span className={styles.modifiedIndicator}> (+{modificationGains.hpGain})</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {car.torque && (
+                        <div className={styles.detailBlockItem}>
+                          <span>Torque</span>
+                          <span className={isOwnedVehicle && modificationGains.torqueGain > 0 ? styles.modifiedValue : ''}>
+                            {isOwnedVehicle && modificationGains.torqueGain > 0
+                              ? `${car.torque + modificationGains.torqueGain} lb-ft`
+                              : `${car.torque} lb-ft`
+                            }
+                            {isOwnedVehicle && modificationGains.torqueGain > 0 && (
+                              <span className={styles.modifiedIndicator}> (+{modificationGains.torqueGain})</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {car.zeroToSixty && (
+                        <div className={styles.detailBlockItem}>
+                          <span>0-60 mph</span>
+                          <span className={isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 ? styles.modifiedValue : ''}>
+                            {isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0
+                              ? `${(car.zeroToSixty - modificationGains.zeroToSixtyImprovement).toFixed(1)}s`
+                              : `${car.zeroToSixty}s`
+                            }
+                            {isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 && (
+                              <span className={styles.modifiedIndicator}> (-{modificationGains.zeroToSixtyImprovement}s)</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
                       {car.quarterMile && <div className={styles.detailBlockItem}><span>1/4 Mile</span><span>{car.quarterMile}s</span></div>}
-                      {car.braking60To0 && <div className={styles.detailBlockItem}><span>60-0 Braking</span><span>{car.braking60To0} ft</span></div>}
-                      {car.lateralG && <div className={styles.detailBlockItem}><span>Lateral G</span><span>{car.lateralG}g</span></div>}
+                      {car.braking60To0 && (
+                        <div className={styles.detailBlockItem}>
+                          <span>60-0 Braking</span>
+                          <span className={isOwnedVehicle && modificationGains.brakingImprovement > 0 ? styles.modifiedValue : ''}>
+                            {isOwnedVehicle && modificationGains.brakingImprovement > 0
+                              ? `${car.braking60To0 - modificationGains.brakingImprovement} ft`
+                              : `${car.braking60To0} ft`
+                            }
+                            {isOwnedVehicle && modificationGains.brakingImprovement > 0 && (
+                              <span className={styles.modifiedIndicator}> (-{modificationGains.brakingImprovement} ft)</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {car.lateralG && (
+                        <div className={styles.detailBlockItem}>
+                          <span>Lateral G</span>
+                          <span className={isOwnedVehicle && modificationGains.lateralGImprovement > 0 ? styles.modifiedValue : ''}>
+                            {isOwnedVehicle && modificationGains.lateralGImprovement > 0
+                              ? `${(car.lateralG + modificationGains.lateralGImprovement).toFixed(2)}g`
+                              : `${car.lateralG}g`
+                            }
+                            {isOwnedVehicle && modificationGains.lateralGImprovement > 0 && (
+                              <span className={styles.modifiedIndicator}> (+{modificationGains.lateralGImprovement}g)</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
                       {car.topSpeed && <div className={styles.detailBlockItem}><span>Top Speed</span><span>{car.topSpeed} mph</span></div>}
                     </div>
                   </div>
@@ -1485,7 +1767,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       }}
                       className={styles.firstServiceBtn}
                     >
-                      <Icons.plus size={16} />
+                      <Icons.plus size={16} style={{ transform: 'translateY(3px)' }} />
                       Add First Service Record
                     </button>
                   </div>
@@ -1659,6 +1941,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim()
                   }
                   initialMileage={item.vehicle.mileage}
+                  maintenanceSpecs={maintenanceData.specs}
                 />
               </div>
             )}
@@ -2416,11 +2699,20 @@ ${userLocation ? `5. **Upcoming Events Near Me** - Use search_events to find rel
 
 Be specific, mention actual vehicles by name, and use your tools to get accurate data. This is a concierge-level analysis!`;
     
+    // Clean user-facing message (what they see in chat)
+    const vehicleNames = vehiclesWithCars.slice(0, 3).map(v => 
+      v.matchedCar?.name || `${v.vehicle.year} ${v.vehicle.make} ${v.vehicle.model}`
+    );
+    const vehicleList = vehicleNames.join(', ');
+    const moreText = vehiclesWithCars.length > 3 ? ` and ${vehiclesWithCars.length - 3} more` : '';
+    
+    const displayMessage = `Analyze my garage: ${vehicleList}${moreText}. Check maintenance priorities, safety alerts, and give me recommendations.`;
+    
     openChatWithPrompt(prompt, {
       category: 'Garage Concierge',
       vehicleCount: vehiclesWithCars.length,
       hasLocation: !!userLocation,
-    });
+    }, displayMessage);
   }, [vehiclesWithCars, favoriteCars, builds, profile, openChatWithPrompt]);
 
   // Toggle quick update mode
