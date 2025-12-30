@@ -45,24 +45,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 /* "Scroll" text */
 .scrollText {
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 11px;
+  font-size: clamp(6px, 0.4rem + 0.3vw, 8px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--sn-accent, #D4AF37);
   opacity: 0.9;
-}
-
-@media (min-width: 768px) {
-  .scrollText {
-    font-size: 12px;
-  }
 }
 
 /* Icon container */
@@ -75,31 +69,22 @@
 
 /* Mouse icon */
 .mouse {
-  width: 22px;
-  height: 34px;
-  border: 2px solid var(--sn-accent, #D4AF37);
-  border-radius: 11px;
+  width: clamp(12px, 0.6rem + 0.5vw, 16px);
+  height: clamp(18px, 1rem + 0.8vw, 24px);
+  border: 1.5px solid var(--sn-accent, #D4AF37);
+  border-radius: 6px;
   position: relative;
   display: flex;
   justify-content: center;
-  padding-top: 6px;
-}
-
-@media (min-width: 768px) {
-  .mouse {
-    width: 24px;
-    height: 38px;
-    border-radius: 12px;
-    padding-top: 7px;
-  }
+  padding-top: 3px;
 }
 
 /* Mouse wheel - animated */
 .wheel {
-  width: 4px;
-  height: 8px;
+  width: 2px;
+  height: 4px;
   background: var(--sn-accent, #D4AF37);
-  border-radius: 2px;
+  border-radius: 1px;
   animation: scrollWheel 2s ease-in-out infinite;
 }
 
@@ -143,6 +128,8 @@
   color: var(--sn-accent, #D4AF37);
   opacity: 0;
   animation: chevronBounce 2s ease-in-out infinite;
+  width: 10px;
+  height: 5px;
 }
 
 .chevron:nth-child(1) {
@@ -150,7 +137,7 @@
 }
 
 .chevron:nth-child(2) {
-  margin-top: -4px;
+  margin-top: -3px;
   animation-delay: 0.15s;
 }
 

@@ -52,15 +52,18 @@ export default function HeroSection({ carCount = 188 }) {
         />
       </div>
       <div className={styles.heroOverlay} />
-      <div className={styles.heroContent}>
+      {/* Main headline + subtitle - centered on car */}
+      <div className={styles.heroHeadlines}>
         <h1 className={styles.heroTitle}>
-          Find What<br />
-          <span className={styles.heroAccent}>Drives You</span>
+          Find What <span className={styles.heroAccent}>Drives You</span>
         </h1>
         <p className={styles.heroSubtitle}>
-          The sports car research platform for buyers and builders.<br />
-          Research. Track. Build. Learn. — {carCount || 188} cars and counting.
+          The AI-powered research platform for sports car enthusiasts — like having an obsessive car expert friend in your pocket.
         </p>
+      </div>
+      
+      {/* CTA button - positioned in shadow below car */}
+      <div className={styles.heroCta}>
         <button onClick={handleCtaClick} className={styles.heroJoinButton}>
           Join the auto
           <span className={styles.heroRevText}>rev</span>
@@ -70,8 +73,15 @@ export default function HeroSection({ carCount = 188 }) {
         </button>
       </div>
       
-      {/* Scroll Indicator */}
-      <ScrollIndicator className="scrollIndicator" />
+      {/* Tagline - positioned at 85% */}
+      <div className={styles.heroBottom}>
+        <p className={styles.heroTagline}>
+          Research. Own. Build. Connect. Learn. — {carCount || 188} cars and counting.
+        </p>
+      </div>
+      
+      {/* Scroll Indicator - positioned at 90% */}
+      <ScrollIndicator className={styles.heroScrollIndicator} />
       
       {/* Auth Modal */}
       <AuthModal 

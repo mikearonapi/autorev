@@ -19,30 +19,29 @@
   }
 }
 
-/* Hero Section - Compact on mobile, uses 85vh max to show content below */
+/* ==========================================================================
+   HERO SECTION - Clean, percentage-based positioning
+   ========================================================================== */
+
 .hero {
   position: relative;
-  min-height: 85vh;
-  min-height: 85dvh; /* Dynamic viewport for mobile browsers */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-xl) var(--space-md);
-  /* Account for fixed header + beta banner */
-  padding-top: calc(var(--space-xl) + var(--header-plus-banner-mobile));
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 600px;
+  max-height: 900px;
   background: var(--color-gray-900);
   overflow: hidden;
 }
 
 @media (min-width: 768px) {
   .hero {
-    min-height: 90vh;
-    padding: var(--space-2xl) var(--space-lg);
-    padding-top: calc(var(--space-2xl) + var(--header-plus-banner));
+    min-height: 700px;
+    max-height: 850px;
   }
 }
 
+/* Hero Background Image */
 .heroImageWrapper {
   position: absolute;
   inset: 0;
@@ -51,20 +50,20 @@
 
 .heroImage {
   object-fit: cover;
-  object-position: center 30%; /* Favor top of image on mobile for car visibility */
+  object-position: center 30%;
 }
 
 @media (min-width: 768px) {
   .heroImage {
-    object-position: center;
+    object-position: center 40%;
   }
 }
 
+/* Hero Overlay Gradient */
 .heroOverlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Stronger gradient on mobile for text readability */
   background: linear-gradient(
     to bottom,
     rgba(10, 10, 20, 0.7) 0%,
@@ -84,19 +83,32 @@
   }
 }
 
-.heroContent {
-  position: relative;
+/* Hero Headlines - Centered on the car (50% vertical) */
+.heroHeadlines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
   text-align: center;
-  max-width: 800px;
-  padding: 0 var(--space-sm);
+  width: 100%;
+  max-width: 900px;
+  padding: 0 var(--space-md);
+}
+
+/* CTA button container - 75% vertical */
+.heroCta {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
 }
 
 /* Hero Brand word container - fixed width to prevent layout shift */
 .heroRevWord {
   display: inline-block;
   text-align: left;
-  /* Width to accommodate "revolution" (longest word) */
   width: 5.8em;
 }
 
@@ -112,48 +124,78 @@
   opacity: 0;
 }
 
+/* Hero Title */
 .heroTitle {
   font-family: var(--font-display);
-  /* Mobile-first: ~2.5x larger for visual impact (was --font-size-2xl: 22-28px) */
-  font-size: clamp(2.75rem, 12vw, 3.5rem); /* 44-56px */
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: var(--line-height-tight);
-  margin-bottom: var(--space-md);
+  margin: 0 0 var(--space-md);
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    margin-bottom: var(--space-lg);
+  }
 }
 
 .heroAccent {
   color: var(--sn-accent);
 }
 
+/* Hero Subtitle */
 .heroSubtitle {
-  font-size: var(--font-size-sm);
+  font-size: clamp(0.95rem, 1.5vw, 1.25rem);
   color: var(--color-gray-300);
   line-height: var(--line-height-relaxed);
-  margin-bottom: var(--space-lg);
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  max-width: 650px;
 }
 
-@media (min-width: 768px) {
-  .heroSubtitle {
-    font-size: var(--font-size-base);
-    max-width: 600px;
-    margin-bottom: var(--space-xl);
-  }
+/* Hero Tagline */
+.heroTagline {
+  font-size: clamp(10px, 1.2vw, 14px);
+  color: var(--color-gray-400);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Bottom section - tagline at 85% */
+.heroBottom {
+  position: absolute;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Scroll indicator in hero - positioned at 90% */
+.heroScrollIndicator {
+  position: absolute !important;
+  top: 90% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: auto !important;
 }
 
 /* Hero Join Button - White border CTA */
 .heroJoinButton {
   display: inline-block;
-  font-size: var(--font-size-sm);
+  font-size: clamp(0.75rem, 0.5rem + 0.5vw, 0.95rem);
   color: var(--color-gray-300);
   line-height: var(--line-height-relaxed);
-  padding: var(--space-sm) var(--space-lg);
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  padding: clamp(8px, 0.4rem + 0.5vw, 12px) clamp(16px, 0.8rem + 1vw, 24px);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-md);
   background: transparent;
   text-decoration: none;
@@ -173,12 +215,7 @@
   transform: translateY(0);
 }
 
-@media (min-width: 768px) {
-  .heroJoinButton {
-    font-size: var(--font-size-base);
-    padding: var(--space-md) var(--space-xl);
-  }
-}
+/* heroJoinButton now uses clamp() for fluid sizing */
 
 /* Hero Join Button - "rev" brand text */
 .heroRevText {
@@ -353,7 +390,7 @@
 
 .sectionTitle {
   font-family: var(--font-display);
-  font-size: var(--font-size-xl);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
   font-weight: 600;
   color: var(--color-gray-900);
   text-transform: uppercase;
@@ -363,7 +400,7 @@
 
 @media (min-width: 768px) {
   .sectionTitle {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-3xl);
     margin-bottom: var(--space-sm);
   }
 }
@@ -963,15 +1000,6 @@
 
 /* Tablet Breakpoint Enhancements */
 @media (min-width: 768px) {
-  .heroTitle {
-    font-size: var(--font-size-4xl);
-    margin-bottom: var(--space-lg);
-  }
-
-  .heroSubtitle {
-    font-size: var(--font-size-lg);
-  }
-
   .heroCtas {
     flex-direction: row;
     justify-content: center;
@@ -997,10 +1025,6 @@
 
 /* Desktop Breakpoint Enhancements */
 @media (min-width: 1024px) {
-  .heroTitle {
-    font-size: var(--font-size-hero);
-  }
-
   .sectionTitle {
     font-size: var(--font-size-3xl);
   }
