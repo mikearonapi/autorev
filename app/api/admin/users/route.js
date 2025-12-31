@@ -276,14 +276,23 @@ export async function GET(request) {
       const activity = activityMap[profile.id] || { total: 0, types: {} };
       
       // Determine effective tier
+      // Priority: admin email > referral tier > subscription tier > free
+      const tierPriority = { free: 0, collector: 1, tuner: 2, admin: 3 };
       let effectiveTier = profile.subscription_tier || 'free';
+      
+      // Check for referral tier upgrade
       if (profile.referral_tier_granted) {
-        const tierPriority = { free: 0, collector: 1, tuner: 2, admin: 3 };
         const refTierValid = profile.referral_tier_lifetime || 
           (profile.referral_tier_expires_at && new Date(profile.referral_tier_expires_at) > new Date());
         if (refTierValid && tierPriority[profile.referral_tier_granted] > tierPriority[effectiveTier]) {
           effectiveTier = profile.referral_tier_granted;
         }
+      }
+      
+      // Admin email override - highest priority
+      // If user's email is in ADMIN_EMAILS, they are always admin tier
+      if (authUser.email && isAdminEmail(authUser.email)) {
+        effectiveTier = 'admin';
       }
 
       return {

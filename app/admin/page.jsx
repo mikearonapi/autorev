@@ -77,6 +77,10 @@ import {
   PlusIcon,
   XIcon,
   CreditCardIcon,
+  GlobeIcon,
+  MailIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
 } from './components/Icons';
 
 import styles from './page.module.css';
@@ -110,6 +114,8 @@ export default function AdminDashboardPage() {
   const [healthData, setHealthData] = useState(null);
   const [alertsData, setAlertsData] = useState(null);
   const [stripeData, setStripeData] = useState(null);
+  const [siteAnalytics, setSiteAnalytics] = useState(null);
+  const [emailStats, setEmailStats] = useState(null);
   
   // Check admin access
   useEffect(() => {
@@ -133,7 +139,7 @@ export default function AdminDashboardPage() {
     const apiRange = TIME_RANGE_MAP[timeRange]?.apiRange || 'all';
     
     try {
-      const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes, stripeRes] = await Promise.all([
+      const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes, stripeRes, siteRes, emailRes] = await Promise.all([
         fetch(`/api/admin/dashboard?range=${apiRange}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
@@ -153,6 +159,12 @@ export default function AdminDashboardPage() {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
         fetch(`/api/admin/stripe?range=${apiRange}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch(`/api/admin/site-analytics?range=${apiRange}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch('/api/admin/emails?view=stats', {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         })
       ]);
@@ -192,6 +204,16 @@ export default function AdminDashboardPage() {
       if (stripeRes.ok) {
         const stripeResult = await stripeRes.json();
         setStripeData(stripeResult);
+      }
+      
+      if (siteRes.ok) {
+        const siteResult = await siteRes.json();
+        setSiteAnalytics(siteResult);
+      }
+      
+      if (emailRes.ok) {
+        const emailResult = await emailRes.json();
+        setEmailStats(emailResult);
       }
       
       setLastUpdated(new Date());
@@ -374,9 +396,10 @@ export default function AdminDashboardPage() {
         {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <>
-            {/* Hero KPIs */}
+            {/* Hero KPIs - 6 cards covering all major areas */}
             <section className={styles.section}>
-              <div className={styles.kpiGrid}>
+              <div className={styles.kpiGridExpanded}>
+                {/* Users (from Users tab) */}
                 <KPICard
                   label="Total Users"
                   value={data?.users?.total || 0}
@@ -388,6 +411,18 @@ export default function AdminDashboardPage() {
                   loading={loading}
                 />
                 
+                {/* Site Traffic (from Site Analytics tab) */}
+                <KPICard
+                  label="Site Visitors"
+                  value={siteAnalytics?.summary?.visitors || 0}
+                  trend={siteAnalytics?.summary?.visitorsChange}
+                  interpretation={`${siteAnalytics?.summary?.pageViews || 0} page views • ${siteAnalytics?.summary?.bounceRate || 0}% bounce rate`}
+                  sparklineColor="#06b6d4"
+                  icon={<GlobeIcon size={18} />}
+                  loading={loading}
+                />
+                
+                {/* Engagement (from Growth tab) */}
                 <KPICard
                   label="AL Conversations"
                   value={data?.engagement?.alConversations || 0}
@@ -398,6 +433,7 @@ export default function AdminDashboardPage() {
                   loading={loading}
                 />
                 
+                {/* Financial (from Financials/Costs tabs) */}
                 <KPICard
                   label="Total Cash Outflow"
                   value={`$${totalLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
@@ -410,6 +446,7 @@ export default function AdminDashboardPage() {
                   loading={loading}
                 />
                 
+                {/* Revenue Progress (from Revenue tab) */}
                 <KPICard
                   label="Break-Even Progress"
                   value={data?.breakEven?.progressPercent || 0}
@@ -417,6 +454,23 @@ export default function AdminDashboardPage() {
                   interpretation={`${data?.breakEven?.currentUsers || 0} of ${breakEvenUsers} paying users needed.`}
                   sparklineColor="#22c55e"
                   icon={<TargetIcon size={18} />}
+                  loading={loading}
+                />
+                
+                {/* System Health (from Operations tab) */}
+                <KPICard
+                  label="System Status"
+                  value={healthData?.health?.status === 'healthy' ? 'Healthy' : 
+                         healthData?.health?.status === 'warning' ? 'Warning' : 
+                         healthData?.health?.status === 'critical' ? 'Critical' : 'Checking...'}
+                  interpretation={healthData?.errors?.total24h > 0 
+                    ? `${healthData.errors.total24h} errors in 24h • ${(alertsData?.alerts || []).filter(a => a.severity !== 'info').length} active alerts`
+                    : 'All systems operational • No active alerts'
+                  }
+                  sparklineColor={healthData?.health?.status === 'healthy' ? '#22c55e' : 
+                                  healthData?.health?.status === 'warning' ? '#f59e0b' : 
+                                  healthData?.health?.status === 'critical' ? '#ef4444' : '#3b82f6'}
+                  icon={healthData?.health?.status === 'healthy' ? <CheckCircleIcon size={18} /> : <AlertCircleIcon size={18} />}
                   loading={loading}
                 />
               </div>
@@ -506,30 +560,120 @@ export default function AdminDashboardPage() {
               />
             </section>
             
-            {/* Quick Links */}
+            {/* Operational Snapshot - Email & Traffic Details */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Operational Snapshot</h2>
+              <div className={styles.snapshotGrid}>
+                {/* Email Activity (from Emails tab) */}
+                <div className={styles.snapshotCard}>
+                  <div className={styles.snapshotHeader}>
+                    <MailIcon size={16} />
+                    <span>Email Activity</span>
+                  </div>
+                  <div className={styles.snapshotContent}>
+                    <div className={styles.snapshotStat}>
+                      <span className={styles.snapshotValue}>{emailStats?.stats?.total || 0}</span>
+                      <span className={styles.snapshotLabel}>Total Sent</span>
+                    </div>
+                    <div className={styles.snapshotStat}>
+                      <span className={styles.snapshotValue}>{emailStats?.stats?.delivered || emailStats?.stats?.total || 0}</span>
+                      <span className={styles.snapshotLabel}>Delivered</span>
+                    </div>
+                    <div className={styles.snapshotStat}>
+                      <span className={styles.snapshotValue}>{emailStats?.stats?.byTemplate?.welcome || 0}</span>
+                      <span className={styles.snapshotLabel}>Welcome</span>
+                    </div>
+                  </div>
+                  <button onClick={() => setActiveTab('emails')} className={styles.snapshotLink}>
+                    View Email Dashboard →
+                  </button>
+                </div>
+                
+                {/* Traffic Sources (from Site Analytics tab) */}
+                <div className={styles.snapshotCard}>
+                  <div className={styles.snapshotHeader}>
+                    <GlobeIcon size={16} />
+                    <span>Traffic Sources</span>
+                  </div>
+                  <div className={styles.snapshotContent}>
+                    {(siteAnalytics?.referrers || []).slice(0, 3).map((ref, i) => (
+                      <div key={i} className={styles.snapshotRow}>
+                        <span className={styles.snapshotSource}>{ref.source || 'Direct'}</span>
+                        <span className={styles.snapshotCount}>{ref.visitors}</span>
+                      </div>
+                    ))}
+                    {(!siteAnalytics?.referrers || siteAnalytics.referrers.length === 0) && (
+                      <div className={styles.snapshotEmpty}>No traffic data yet</div>
+                    )}
+                  </div>
+                  <button onClick={() => setActiveTab('analytics')} className={styles.snapshotLink}>
+                    View Site Analytics →
+                  </button>
+                </div>
+                
+                {/* Active Alerts (from Operations tab) */}
+                <div className={styles.snapshotCard}>
+                  <div className={styles.snapshotHeader}>
+                    <ActivityIcon size={16} />
+                    <span>Recent Alerts</span>
+                  </div>
+                  <div className={styles.snapshotContent}>
+                    {(alertsData?.alerts || healthData?.alerts || []).slice(0, 3).map((alert, i) => (
+                      <div key={i} className={`${styles.snapshotAlert} ${styles[alert.severity]}`}>
+                        <span className={styles.alertDot} />
+                        <span className={styles.alertText}>{alert.message || alert.title}</span>
+                      </div>
+                    ))}
+                    {(alertsData?.alerts || healthData?.alerts || []).length === 0 && (
+                      <div className={styles.snapshotEmpty}>
+                        <CheckCircleIcon size={14} />
+                        <span>No active alerts</span>
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => setActiveTab('operations')} className={styles.snapshotLink}>
+                    View Operations →
+                  </button>
+                </div>
+              </div>
+            </section>
+            
+            {/* Quick Access - All Tabs */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Quick Access</h2>
               <div className={styles.quickLinks}>
+                <button onClick={() => setActiveTab('users')} className={styles.quickLink}>
+                  <UsersIcon size={18} />
+                  <span>Users</span>
+                </button>
+                <button onClick={() => setActiveTab('analytics')} className={styles.quickLink}>
+                  <BarChartIcon size={18} />
+                  <span>Site Analytics</span>
+                </button>
                 <button onClick={() => setActiveTab('revenue')} className={`${styles.quickLink} ${styles.stripeLink}`}>
                   <CreditCardIcon size={18} />
-                  <span>Stripe Revenue</span>
+                  <span>Revenue</span>
+                </button>
+                <button onClick={() => setActiveTab('costs')} className={styles.quickLink}>
+                  <DollarSignIcon size={18} />
+                  <span>Costs</span>
                 </button>
                 <button onClick={() => setActiveTab('financials')} className={styles.quickLink}>
-                  <DollarSignIcon size={18} />
-                  <span>View Full P&L</span>
+                  <TargetIcon size={18} />
+                  <span>Financials</span>
                 </button>
                 <button onClick={() => setActiveTab('growth')} className={styles.quickLink}>
                   <TrendingUpIcon size={18} />
-                  <span>Growth Analytics</span>
+                  <span>Growth</span>
                 </button>
                 <button onClick={() => setActiveTab('operations')} className={styles.quickLink}>
                   <SettingsIcon size={18} />
                   <span>Operations</span>
                 </button>
-                <a href="/internal/qa" className={styles.quickLink}>
-                  <FlaskIcon size={18} />
-                  <span>QA Dashboard</span>
-                </a>
+                <button onClick={() => setActiveTab('emails')} className={styles.quickLink}>
+                  <MailIcon size={18} />
+                  <span>Emails</span>
+                </button>
               </div>
             </section>
           </>

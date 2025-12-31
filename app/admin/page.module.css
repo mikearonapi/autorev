@@ -535,6 +535,168 @@
   gap: 12px;
 }
 
+/* KPI Grid - Expanded (6 cards for Overview) */
+.kpiGridExpanded {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Operational Snapshot Grid */
+.snapshotGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.snapshotCard {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.snapshotHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--admin-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snapshotHeader svg {
+  opacity: 0.7;
+}
+
+.snapshotContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.snapshotStat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.snapshotValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--admin-text-primary);
+}
+
+.snapshotLabel {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+}
+
+.snapshotRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.snapshotRow:last-child {
+  border-bottom: none;
+}
+
+.snapshotSource {
+  font-size: 13px;
+  color: var(--admin-text-secondary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snapshotCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+}
+
+.snapshotAlert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.snapshotAlert .alertDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--admin-warning);
+}
+
+.snapshotAlert.critical .alertDot,
+.snapshotAlert.high .alertDot {
+  background: var(--admin-negative);
+}
+
+.snapshotAlert.warning .alertDot,
+.snapshotAlert.medium .alertDot {
+  background: var(--admin-warning);
+}
+
+.snapshotAlert.info .alertDot,
+.snapshotAlert.low .alertDot {
+  background: var(--admin-accent-blue);
+}
+
+.snapshotAlert .alertText {
+  font-size: 12px;
+  color: var(--admin-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snapshotEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+  color: var(--admin-text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.snapshotEmpty svg {
+  color: var(--admin-positive);
+}
+
+.snapshotLink {
+  background: none;
+  border: none;
+  padding: 8px 0 0;
+  font-size: 12px;
+  color: var(--admin-accent-blue);
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+  border-top: 1px solid var(--admin-border);
+  margin-top: auto;
+}
+
+.snapshotLink:hover {
+  color: var(--admin-accent-cyan);
+}
+
 /* Charts Grid - Compact */
 .chartsGrid {
   display: grid;
@@ -763,6 +925,14 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
+  .kpiGridExpanded {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .snapshotGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
   .operationsGrid {
     grid-template-columns: 1fr 1fr;
   }
@@ -840,6 +1010,8 @@
   }
   
   .kpiGrid,
+  .kpiGridExpanded,
+  .snapshotGrid,
   .operationsGrid {
     grid-template-columns: 1fr;
   }
