@@ -1557,6 +1557,29 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('onboarding_dismissed_until');
   }, []);
 
+  // Trigger onboarding manually (for re-watching from profile)
+  const triggerOnboarding = useCallback(() => {
+    // Clear localStorage dismissal
+    localStorage.removeItem('onboarding_dismissed_until');
+    
+    // Reset onboarding state to show the flow from the beginning
+    setOnboardingState({
+      showOnboarding: true,
+      onboardingStep: 1,
+      onboardingData: {
+        referral_source: state.profile?.referral_source || null,
+        referral_source_other: state.profile?.referral_source_other || '',
+        user_intent: state.profile?.user_intent || null,
+        email_opt_in_features: state.profile?.email_opt_in_features || false,
+        email_opt_in_events: state.profile?.email_opt_in_events || false,
+      },
+      onboardingDismissed: false,
+      dismissedCount: 0,
+    });
+    
+    console.log('[AuthProvider] Onboarding triggered manually');
+  }, [state.profile]);
+
   // Check onboarding status when profile loads
   useEffect(() => {
     if (state.isAuthenticated && state.profile) {
@@ -1593,6 +1616,7 @@ export function AuthProvider({ children }) {
     clearAuthError,
     dismissOnboarding,
     completeOnboarding,
+    triggerOnboarding,
     
     // Helpers
     isSupabaseConfigured,
@@ -1610,6 +1634,7 @@ export function AuthProvider({ children }) {
     clearAuthError,
     dismissOnboarding,
     completeOnboarding,
+    triggerOnboarding,
   ]);
 
   return (

@@ -284,3 +284,5 @@ The session cache optimization uses a **singleton promise pattern** to start the
 
 **Result:** ⚡ 40% faster auth, better UX, happier users! 🎉
 
+
+

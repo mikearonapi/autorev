@@ -223,3 +223,5 @@ function formatDrivetrainLabel(drivetrain) {
 
 export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/factory-options', feature: 'tuning-shop' });
 
+
+

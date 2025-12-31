@@ -170,6 +170,18 @@ const Icons = {
       <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
     </svg>
   ),
+  play: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+  ),
+  refresh: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/>
+      <polyline points="1 20 1 14 7 14"/>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+    </svg>
+  ),
 };
 
 // Car count for display (actual count from database via stats hook)
@@ -222,7 +234,7 @@ const PLANS = {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, profile, isAuthenticated, isLoading, logout, updateProfile, authError, sessionExpired, clearAuthError } = useAuth();
+  const { user, profile, isAuthenticated, isLoading, logout, updateProfile, authError, sessionExpired, clearAuthError, triggerOnboarding } = useAuth();
   const { count: favoritesCount } = useFavorites();
   const { builds } = useSavedBuilds();
   const { checkoutSubscription, checkoutCredits, resumeCheckout, isLoading: checkoutLoading, error: checkoutError } = useCheckout();
@@ -971,6 +983,24 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Replay Onboarding */}
+              <div className={styles.profileSubsection}>
+                <h3 className={styles.subsectionTitle}>
+                  <Icons.play size={18} />
+                  App Tour
+                </h3>
+                <p className={styles.locationDescription}>
+                  Missed something or want a refresher? Replay the AutoRev tour to discover all the features.
+                </p>
+                <button
+                  onClick={triggerOnboarding}
+                  className={styles.onboardingButton}
+                >
+                  <Icons.refresh size={18} />
+                  Replay App Tour
+                </button>
               </div>
             </section>
           )}

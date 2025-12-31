@@ -253,3 +253,5 @@ const [state, dispatch] = useReducer(reducer, null, () => {
 - Perceived load time improvement
 - Foundation for offline-first features
 
+
+

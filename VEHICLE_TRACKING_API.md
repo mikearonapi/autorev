@@ -669,3 +669,5 @@ For questions or issues:
 3. Verify DATABASE.md schema matches expectations
 4. Check Supabase RLS policies for `user_vehicles` table
 
+
+

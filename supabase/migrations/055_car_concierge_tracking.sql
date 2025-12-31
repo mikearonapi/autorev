@@ -41,3 +41,5 @@ COMMENT ON COLUMN user_vehicles.battery_status IS
   'Battery health status: good, fair, weak, dead, or unknown (default).';
 
 
+
+

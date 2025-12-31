@@ -256,3 +256,5 @@ GRANT EXECUTE ON FUNCTION update_vehicle_health_analyzed TO authenticated;
 COMMENT ON FUNCTION analyze_vehicle_health_data IS 
   'Fetches comprehensive vehicle data for AL analyze_vehicle_health tool. Returns vehicle tracking fields, service intervals, maintenance specs, known issues, and service logs.';
 
+
+

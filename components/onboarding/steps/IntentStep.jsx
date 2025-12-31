@@ -23,13 +23,34 @@ const INTENT_OPTIONS = [
   },
 ];
 
+// Checkmark icon for multi-select
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 /**
  * IntentStep Component
- * Step 3: What brings you to AutoRev?
+ * Step 3: What brings you to AutoRev? (MULTI-SELECT)
+ * 
+ * Users can select MULTIPLE reasons. At least one required.
  */
 export default function IntentStep({ className, formData, updateFormData }) {
-  const handleSelect = (value) => {
-    updateFormData({ user_intent: value });
+  // Get current selections as array
+  const selectedIntents = Array.isArray(formData.user_intents) ? formData.user_intents : [];
+  
+  // Toggle selection - add or remove from array
+  const handleToggle = (value) => {
+    let newIntents;
+    if (selectedIntents.includes(value)) {
+      // Remove if already selected
+      newIntents = selectedIntents.filter(v => v !== value);
+    } else {
+      // Add if not selected
+      newIntents = [...selectedIntents, value];
+    }
+    updateFormData({ user_intents: newIntents });
   };
 
   return (
@@ -40,22 +61,33 @@ export default function IntentStep({ className, formData, updateFormData }) {
       </p>
       
       <div className={styles.intentGrid}>
-        {INTENT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            className={`${styles.intentCard} ${formData.user_intent === option.value ? styles.selected : ''}`}
-            onClick={() => handleSelect(option.value)}
-            type="button"
-          >
-            <span className={styles.intentEmoji}>{option.emoji}</span>
-            <div className={styles.intentContent}>
-              <h3 className={styles.intentTitle}>{option.title}</h3>
-              <p className={styles.intentDesc}>{option.description}</p>
-            </div>
-          </button>
-        ))}
+        {INTENT_OPTIONS.map((option) => {
+          const isSelected = selectedIntents.includes(option.value);
+          
+          return (
+            <button
+              key={option.value}
+              className={`${styles.intentCard} ${isSelected ? styles.selected : ''}`}
+              onClick={() => handleToggle(option.value)}
+              type="button"
+              aria-pressed={isSelected}
+            >
+              <span className={styles.intentEmoji}>{option.emoji}</span>
+              <div className={styles.intentContent}>
+                <h3 className={styles.intentTitle}>{option.title}</h3>
+                <p className={styles.intentDesc}>{option.description}</p>
+              </div>
+              <span className={styles.intentCheckbox}>
+                <CheckIcon />
+              </span>
+            </button>
+          );
+        })}
       </div>
+      
+      <p className={styles.intentHint}>
+        Select all that apply
+      </p>
     </div>
   );
 }
-

@@ -178,3 +178,5 @@ $$;
 COMMENT ON FUNCTION get_vehicle_merged_specs(UUID) IS 
   'Returns stock specs from vehicle_maintenance_specs with user custom_specs for comparison/merging';
 
+
+

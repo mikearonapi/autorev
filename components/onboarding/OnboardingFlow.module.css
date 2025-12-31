@@ -1,31 +1,29 @@
 /* OnboardingFlow - First-time User Onboarding Modal */
+/* Cross-device compatible with multiple viewport fallbacks */
 
-/* Overlay */
+/* Overlay - full screen with solid background */
 .overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  /* Multiple height fallbacks for cross-device support */
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport - accounts for browser UI */
+  min-height: -webkit-fill-available; /* iOS Safari specific */
   z-index: 1200;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-md);
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  animation: overlayFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #1a1a1a;
+  /* Prevent any content from showing through */
+  isolation: isolate;
 }
 
-@keyframes overlayFadeIn {
-  from { 
-    opacity: 0;
-    backdrop-filter: blur(0);
-  }
-  to { 
-    opacity: 1;
-    backdrop-filter: blur(12px);
-  }
-}
-
-/* Modal Container - Dark theme */
+/* Modal Container */
 .modal {
   position: relative;
   width: 100%;
@@ -36,92 +34,64 @@
   background: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-xl);
-  box-shadow: 
-    0 24px 80px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
 }
 
-@keyframes modalSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* ==========================================================
+   UNIFIED PROGRESS BAR - Single continuous bar
+   ========================================================== */
+.progressBarContainer {
+  padding: var(--space-lg) var(--space-xl) var(--space-md);
+  flex-shrink: 0;
 }
 
-/* Progress Dots at Top */
-.progressDots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: var(--space-lg) var(--space-lg) var(--space-sm);
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.dot:hover:not(.dotActive):not(.dotCompleted) {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.2);
-}
-
-.dotActive {
-  width: 24px;
-  background: var(--sn-accent);
-}
-
-.dotCompleted {
-  background: var(--sn-accent);
-  opacity: 0.6;
-}
-
-/* Close Button */
-.closeBtn {
-  position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
-  z-index: 10;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: var(--radius-full);
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.closeBtn:hover {
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 4px;
   background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-  transform: rotate(90deg);
+  border-radius: var(--radius-full);
+  overflow: hidden;
 }
 
-/* Step Content Container */
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progressSteps {
+  display: none; /* Hidden on mobile, shown on desktop */
+}
+
+/* REMOVE OLD PROGRESS DOTS - We only use the bar now */
+.progressDots {
+  display: none !important;
+}
+
+.dot, .dotActive, .dotCompleted {
+  display: none !important;
+}
+
+/* Close Button - Removed (using "I'll do this later" link instead) */
+
+/* ==========================================================
+   STEP CONTENT - Vertically centered, no scroll on feature slides
+   ========================================================== */
 .stepContainer {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  overflow: hidden; /* Prevent scrolling - content must fit */
+  padding: var(--space-sm) var(--space-lg);
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 /* Slide Animations */
@@ -189,16 +159,109 @@
   margin: 0 0 var(--space-lg);
   text-align: center;
   max-width: 340px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-/* Selection Cards (for referral, intent) */
+/* ==========================================================
+   INTENT CARDS - Multi-select with checkboxes
+   ========================================================== */
+.intentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 400px;
+}
+
+.intentCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: left;
+}
+
+.intentCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.intentCard.selected {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--sn-accent);
+}
+
+.intentEmoji {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.intentContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.intentTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 2px;
+}
+
+.intentDesc {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Multi-select checkbox */
+.intentCheckbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: transparent;
+}
+
+.intentCard.selected .intentCheckbox {
+  background: var(--sn-accent);
+  border-color: var(--sn-accent);
+  color: #1a1a1a;
+}
+
+.intentHint {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: var(--space-md);
+}
+
+/* ==========================================================
+   FEATURE TOUR - Now uses separate module: FeatureTourStep.module.css
+   ========================================================== */
+/* Legacy styles removed - Feature tour now has its own CSS module */
+
+/* ==========================================================
+   SELECTION CARDS (for referral)
+   ========================================================== */
 .optionGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-sm);
   width: 100%;
+  max-width: 400px;
 }
 
 .optionCard {
@@ -246,61 +309,6 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* Intent Cards - Larger format */
-.intentGrid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  width: 100%;
-}
-
-.intentCard {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.intentCard:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(4px);
-}
-
-.intentCard.selected {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--sn-accent);
-}
-
-.intentEmoji {
-  font-size: 32px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.intentContent {
-  flex: 1;
-  text-align: left;
-}
-
-.intentTitle {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-white);
-  margin: 0 0 2px;
-}
-
-.intentDesc {
-  font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-}
-
 /* Other Input Field */
 .otherInput {
   width: 100%;
@@ -324,145 +332,15 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Feature Carousel */
-.carouselContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 280px;
-}
-
-.carousel {
-  flex: 1;
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  gap: var(--space-md);
-  padding: var(--space-sm) 0;
-}
-
-.carousel::-webkit-scrollbar {
-  display: none;
-}
-
-.featureCard {
-  flex: 0 0 100%;
-  scroll-snap-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-lg);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  text-align: center;
-}
-
-.featureIcon {
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-md);
-  color: var(--color-white);
-}
-
-.featureTitle {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-white);
-  margin: 0 0 var(--space-xs);
-}
-
-.featureDescription {
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.5;
-  margin: 0 0 var(--space-md);
-  max-width: 280px;
-}
-
-.featureHighlights {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-xs);
-}
-
-.featureTag {
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.featureTagHighlight {
-  background: rgba(212, 175, 55, 0.15);
-  color: var(--sn-accent);
-}
-
-/* Carousel Navigation */
-.carouselNav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-}
-
-.carouselDot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.carouselDot.active {
-  width: 16px;
-  background: var(--sn-accent);
-}
-
-.carouselArrow {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-full);
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.carouselArrow:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-white);
-}
-
-.carouselArrow:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-/* Email Preferences (Final Step) */
+/* ==========================================================
+   EMAIL PREFERENCES (Final Step)
+   ========================================================== */
 .emailPrefs {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
+  max-width: 400px;
   margin-bottom: var(--space-lg);
 }
 
@@ -523,7 +401,9 @@
   flex: 1;
 }
 
-/* Footer Navigation */
+/* ==========================================================
+   FOOTER NAVIGATION
+   ========================================================== */
 .footer {
   display: flex;
   flex-direction: column;
@@ -531,13 +411,15 @@
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-xl) var(--space-lg);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.3);
+  background: #1a1a1a; /* Match modal background for consistency */
+  flex-shrink: 0;
 }
 
 .navButtons {
   display: flex;
   gap: var(--space-sm);
   width: 100%;
+  justify-content: center;
 }
 
 .backBtn {
@@ -545,7 +427,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 12px 20px;
+  padding: 12px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
@@ -555,11 +437,36 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 44px;
+  flex-shrink: 0;
 }
 
 .backBtn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--color-white);
+}
+
+/* Skip button - middle button between Back and Continue */
+.skipBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.skipBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .nextBtn {
@@ -590,21 +497,9 @@
   cursor: not-allowed;
 }
 
-.skipLink {
-  font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.4);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-xs);
-  transition: color 0.2s ease;
-}
-
-.skipLink:hover {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Welcome Step Specific */
+/* ==========================================================
+   WELCOME STEP
+   ========================================================== */
 .welcomeIcon {
   width: 80px;
   height: 80px;
@@ -613,7 +508,7 @@
   justify-content: center;
   background: linear-gradient(135deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
   border-radius: var(--radius-xl);
-  margin: var(--space-lg) auto var(--space-xl);
+  margin: 0 auto var(--space-xl);
   color: var(--color-white);
 }
 
@@ -631,7 +526,6 @@
   font-size: var(--font-size-base);
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
-  margin: 0;
   text-align: center;
   max-width: 320px;
   margin: 0 auto;
@@ -642,15 +536,36 @@
   font-weight: 600;
 }
 
-/* Final Step CTA */
-.ctaSection {
+/* ==========================================================
+   FINAL STEP - Clean, focused completion screen
+   ========================================================== */
+.finalStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   text-align: center;
-  margin-top: auto;
-  padding-top: var(--space-md);
+}
+
+.finalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.ctaCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  text-align: center;
+  max-width: 320px;
 }
 
 .ctaIcon {
-  font-size: 48px;
+  font-size: 56px;
   margin-bottom: var(--space-sm);
 }
 
@@ -668,22 +583,66 @@
   margin: 0;
 }
 
-/* Mobile Full Screen */
+/* ==========================================================
+   MOBILE: FULL SCREEN - Cross-device compatible
+   Tested for: iOS Safari, Chrome, Android Chrome, Samsung Browser
+   ========================================================== */
 @media (max-width: 480px) {
   .overlay {
-    padding: 0;
+    /* Reset to ensure full coverage */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Fallback chain for different browsers */
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    /* No flex alignment - modal will be absolute positioned */
+    display: block;
   }
   
   .modal {
-    max-width: 100%;
-    max-height: 100%;
+    /* Absolute positioning within fixed overlay */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    /* Fallback chain */
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    max-width: none;
+    max-height: none;
     border-radius: 0;
     border: none;
+    /* Flex for content layout */
+    display: flex;
+    flex-direction: column;
   }
   
+  .progressBarContainer {
+    padding: var(--space-md) var(--space-lg) var(--space-sm);
+    /* iOS safe area for notch/dynamic island */
+    padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+  }
+
   .stepContainer {
-    padding: var(--space-md) var(--space-lg);
+    flex: 1;
+    padding: var(--space-xs) var(--space-md);
+    min-height: 0;
+    overflow: hidden;
+  }
+  
+  .footer {
+    padding: var(--space-sm) var(--space-md);
+    /* iOS safe area for home indicator */
+    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+    gap: var(--space-xs);
+    flex-shrink: 0;
   }
   
   .optionGrid {
@@ -693,17 +652,57 @@
   .optionCardWide {
     grid-column: span 1;
   }
+  
+  .welcomeIcon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .welcomeTitle {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .welcomeTagline {
+    font-size: var(--font-size-sm);
+  }
 }
 
-/* Tablet and up */
+/* ==========================================================
+   TABLET AND UP
+   ========================================================== */
 @media (min-width: 768px) {
   .modal {
     max-width: 480px;
-    min-height: 560px;
+    min-height: 500px;
   }
   
   .stepContainer {
-    padding: var(--space-lg) var(--space-2xl) var(--space-xl);
+    padding: var(--space-xl) var(--space-2xl);
+  }
+  
+  .progressSteps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 2px;
+  }
+  
+  .progressStep {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+  
+  .progressStep.active {
+    color: var(--sn-accent);
+  }
+  
+  .progressStep.completed {
+    color: rgba(255, 255, 255, 0.5);
   }
   
   .welcomeIcon {
@@ -715,4 +714,3 @@
     font-size: var(--font-size-4xl);
   }
 }
-

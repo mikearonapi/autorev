@@ -2,11 +2,12 @@
  * FeaturePhoneShowcase Component
  * 
  * Displays 3 iPhone frames showcasing core features:
- * - My Garage (car tracking) - 2 images cycling
- * - Tuning Shop (build planning) - 4 images cycling
- * - AL (AI assistant) - 4 images cycling
+ * - My Garage (car tracking) - 5 images cycling
+ * - Tuning Shop (build planning) - 6 images cycling
+ * - AL (AI assistant) - 5 images cycling
  * 
  * Each feature auto-rotates through screenshots with smooth dissolve transitions.
+ * Images sourced from /images/onboarding/ folder.
  * 
  * Responsive design:
  * - Desktop (≥1024px): 3 phones in a row, full size
@@ -21,24 +22,30 @@ import ImageCarousel from './ImageCarousel';
 import AdvancedImageCarousel from './AdvancedImageCarousel';
 import styles from './FeaturePhoneShowcase.module.css';
 
-// Image paths for each feature
+// Image paths for each feature (using onboarding screenshots)
 const GARAGE_IMAGES = [
-  '/images/iphone-Garage-01-Favorites.png',
-  '/images/iphone-Garage-02-Details.png'
+  '/images/onboarding/garage-01-hero.png',
+  '/images/onboarding/garage-02-details.png',
+  '/images/onboarding/garage-03-reference.png',
+  '/images/onboarding/garage-04-safety.png',
+  '/images/onboarding/garage-05-health.png'
 ];
 
 const TUNING_IMAGES = [
-  '/images/iphone-Tuning-Shop-01-Shop.png',
-  '/images/iphone-Tuning-Shop-02-Performance.png',
-  '/images/iphone-Tuning-Shop-03- Power.png',
-  '/images/iphone-Tuning-Shop-04-Learn-More.png'
+  '/images/onboarding/tuning-shop-01-overview.png',
+  '/images/onboarding/tuning-shop-02-config-wheels.png',
+  '/images/onboarding/tuning-shop-03-presets.png',
+  '/images/onboarding/tuning-shop-04-power-list.png',
+  '/images/onboarding/tuning-shop-05-part-detail.png',
+  '/images/onboarding/tuning-shop-06-metrics.png'
 ];
 
 const AL_IMAGES = [
-  '/images/iphone-AI-AL-01.png',
-  '/images/iphone-AI-Al-02-Chat.png',
-  '/images/iphone-AI-AL-03-Search.png',
-  '/images/iphone-AI-AL-04-Response.png'
+  '/images/onboarding/ai-al-01-intro.png',
+  '/images/onboarding/ai-al-02-empty.png',
+  '/images/onboarding/ai-al-03-thinking.png',
+  '/images/onboarding/ai-al-04-response-mods.png',
+  '/images/onboarding/ai-al-05-response-analysis.png'
 ];
 
 export default function FeaturePhoneShowcase() {
@@ -87,14 +94,14 @@ export default function FeaturePhoneShowcase() {
             </p>
           </div>
           
-          {/* Phone 3: AL Chat - Faster pace for first 3 images, slower for last */}
+          {/* Phone 3: AL Chat - Faster pace for buildup (intro, empty, thinking), slower for responses */}
           <div className={styles.phoneCard}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="small">
                 <AdvancedImageCarousel 
                   images={AL_IMAGES}
                   alt="AL AI assistant"
-                  displayDurations={[1500, 1500, 1500, 3000]}
+                  displayDurations={[1500, 1500, 1500, 3000, 3000]}
                   transitionDuration={800}
                 />
               </IPhoneFrame>

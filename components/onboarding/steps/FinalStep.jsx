@@ -1,110 +1,101 @@
 'use client';
 
-import styles from '../OnboardingFlow.module.css';
-
-// Checkmark icon for checkbox
-const CheckIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
+import { useRouter } from 'next/navigation';
+import styles from './FinalStep.module.css';
 
 /**
- * Get CTA configurations based on intent with dynamic car count
- * @param {number} carCount - Dynamic car count from database
+ * Action buttons for the final step
+ * Each takes the user directly to that feature
  */
-const getCTAConfig = (carCount) => ({
-  owner: {
-    emoji: '🚗',
-    title: 'Add Your First Car',
-    description: 'Track maintenance, get recalls, and more',
-  },
-  shopping: {
-    emoji: '🎯',
-    title: 'Find Your Perfect Match',
-    description: 'Answer a few questions to get personalized recommendations',
-  },
-  learning: {
+const ACTION_BUTTONS = [
+  {
+    id: 'browse',
     emoji: '🔍',
-    title: `Explore ${carCount} Sports Cars`,
-    description: 'Browse specs, reviews, and community insights',
+    label: 'Browse Cars',
+    description: 'Explore specs & reviews',
+    href: '/browse-cars',
   },
-});
+  {
+    id: 'selector',
+    emoji: '🎯',
+    label: 'Find My Match',
+    description: 'Get personalized picks',
+    href: '/car-selector',
+  },
+  {
+    id: 'garage',
+    emoji: '🚗',
+    label: 'My Garage',
+    description: 'Add & track my cars',
+    href: '/garage?add=true',
+  },
+  {
+    id: 'tuning',
+    emoji: '🔧',
+    label: 'Tuning Shop',
+    description: 'Plan my build',
+    href: '/tuning-shop',
+  },
+  {
+    id: 'community',
+    emoji: '📍',
+    label: 'Events',
+    description: 'Find local meets',
+    href: '/community',
+  },
+  {
+    id: 'learn',
+    emoji: '📚',
+    label: 'Learn',
+    description: 'How things work',
+    href: '/encyclopedia',
+  },
+];
 
 /**
  * FinalStep Component
- * Step 5: Email preferences and contextual CTA
+ * Final step: "You're all set!" with action buttons for each feature
  * 
  * @param {Object} props
  * @param {string} props.className - CSS class name for animation
- * @param {Object} props.formData - Form data state
- * @param {Function} props.updateFormData - Function to update form data
- * @param {string} props.userIntent - User's selected intent
- * @param {boolean} props.isSaving - Whether save is in progress
- * @param {number} props.carCount - Dynamic car count from database
+ * @param {Function} props.onComplete - Called when user selects an action
  */
 export default function FinalStep({ 
-  className, 
-  formData, 
-  updateFormData, 
-  userIntent,
-  isSaving,
-  carCount = 188,
+  className,
+  onComplete,
 }) {
-  const ctaConfigMap = getCTAConfig(carCount);
-  const ctaConfig = ctaConfigMap[userIntent] || ctaConfigMap.learning;
+  const router = useRouter();
 
-  const handleEmailToggle = (field) => {
-    updateFormData({ [field]: !formData[field] });
+  const handleAction = (href) => {
+    onComplete?.();
+    router.push(href);
   };
 
   return (
-    <div className={className}>
-      <h2 className={styles.stepTitle}>Stay in the loop</h2>
-      <p className={styles.stepDescription}>
-        Optional: Get notified about features and events you care about.
-      </p>
-      
-      <div className={styles.emailPrefs}>
-        <label className={styles.emailCheckbox}>
-          <input
-            type="checkbox"
-            checked={formData.email_opt_in_features}
-            onChange={() => handleEmailToggle('email_opt_in_features')}
-          />
-          <span className={styles.checkmark}>
-            <span className={styles.checkmarkIcon}>
-              <CheckIcon />
-            </span>
-          </span>
-          <span className={styles.emailLabel}>
-            Email me about new features and updates
-          </span>
-        </label>
-        
-        <label className={styles.emailCheckbox}>
-          <input
-            type="checkbox"
-            checked={formData.email_opt_in_events}
-            onChange={() => handleEmailToggle('email_opt_in_events')}
-          />
-          <span className={styles.checkmark}>
-            <span className={styles.checkmarkIcon}>
-              <CheckIcon />
-            </span>
-          </span>
-          <span className={styles.emailLabel}>
-            Notify me about car events near me
-          </span>
-        </label>
+    <div className={`${className} ${styles.container}`}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>You're all set!</h2>
+        <p className={styles.subtitle}>What would you like to do first?</p>
       </div>
       
-      <div className={styles.ctaSection}>
-        <div className={styles.ctaIcon}>{ctaConfig.emoji}</div>
-        <h3 className={styles.ctaTitle}>{ctaConfig.title}</h3>
-        <p className={styles.ctaDesc}>{ctaConfig.description}</p>
+      <div className={styles.actionGrid}>
+        {ACTION_BUTTONS.map((action) => (
+          <button
+            key={action.id}
+            className={styles.actionButton}
+            onClick={() => handleAction(action.href)}
+          >
+            <span className={styles.actionEmoji}>{action.emoji}</span>
+            <div className={styles.actionContent}>
+              <span className={styles.actionLabel}>{action.label}</span>
+              <span className={styles.actionDesc}>{action.description}</span>
+            </div>
+            <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        ))}
       </div>
     </div>
   );
 }
-

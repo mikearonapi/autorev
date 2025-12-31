@@ -32,8 +32,8 @@
 }
 
 .optionCard.selected {
-  background: rgba(220, 38, 38, 0.12);
-  border-color: rgba(220, 38, 38, 0.5);
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--sn-accent);
 }
 
 .optionIcon {
@@ -51,7 +51,7 @@
 }
 
 .optionCard.selected .optionIcon {
-  color: #dc2626;
+  color: var(--sn-accent);
 }
 
 .optionLabel {
@@ -62,15 +62,35 @@
   line-height: 1.2;
 }
 
-/* Tablet: 3 columns */
-@media (max-width: 500px) {
+/* Mobile: full-width rows for better touch targets */
+@media (max-width: 480px) {
   .optionGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
+    margin-top: var(--space-md);
+  }
+  
+  .optionCard {
+    padding: 12px 8px;
+    min-height: 72px;
+  }
+  
+  .optionIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .optionIcon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .optionLabel {
+    font-size: 11px;
   }
 }
 
-/* Mobile: 3 columns, tighter */
+/* Small mobile: 3 columns, tighter */
 @media (max-width: 380px) {
   .optionGrid {
     grid-template-columns: repeat(3, 1fr);
@@ -78,22 +98,22 @@
   }
   
   .optionCard {
-    padding: 8px 4px;
-    min-height: 56px;
+    padding: 10px 6px;
+    min-height: 64px;
   }
   
   .optionIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .optionIcon svg {
     width: 18px;
     height: 18px;
   }
   
-  .optionIcon svg {
-    width: 16px;
-    height: 16px;
-  }
-  
   .optionLabel {
-    font-size: 9px;
+    font-size: 10px;
   }
 }
 
@@ -122,6 +142,6 @@
 }
 
 .otherInput:focus {
-  border-color: rgba(220, 38, 38, 0.5);
+  border-color: var(--sn-accent);
   background: rgba(255, 255, 255, 0.08);
 }

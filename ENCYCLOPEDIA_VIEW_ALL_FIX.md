@@ -71,3 +71,5 @@ When users click "View all {N} →" on any section:
 - `app/encyclopedia/page.jsx`
 - `app/encyclopedia/page.module.css`
 
+
+

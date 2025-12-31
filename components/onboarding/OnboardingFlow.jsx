@@ -6,26 +6,104 @@ import styles from './OnboardingFlow.module.css';
 import WelcomeStep from './steps/WelcomeStep';
 import ReferralStep from './steps/ReferralStep';
 import IntentStep from './steps/IntentStep';
-import FeatureTourStep from './steps/FeatureTourStep';
+import FeatureSlide from './steps/FeatureSlide';
 import FinalStep from './steps/FinalStep';
 
-const TOTAL_STEPS = 5; // Welcome, Referral, Intent, FeatureTour, Final
-const DEFAULT_CAR_COUNT = 188; // Fallback if API fails
+
+// Feature slides configuration - each becomes its own step
+// Now supports multiple images per feature with auto-rotation
+const FEATURE_SLIDES = [
+  {
+    id: 'browse',
+    title: 'Browse & Research',
+    description: 'Explore sports cars with detailed specs, buying guides, and expert insights.',
+    images: [
+      { src: '/images/onboarding/browse-cars-01-hero.png', alt: 'Car detail hero page' },
+      { src: '/images/onboarding/browse-cars-02-overview.png', alt: 'Car overview with quick take' },
+      { src: '/images/onboarding/browse-cars-03-buying-guide.png', alt: 'Buying guide with best years' },
+    ],
+  },
+  {
+    id: 'selector',
+    title: 'Find Your Match',
+    description: 'Tell us what matters most and get personalized car recommendations.',
+    images: [
+      { src: '/images/onboarding/car-selector-01-preferences.png', alt: 'Preference sliders' },
+      { src: '/images/onboarding/car-selector-02-results.png', alt: 'Personalized recommendations' },
+    ],
+  },
+  {
+    id: 'garage',
+    title: 'Your Garage',
+    description: 'Track your cars, maintenance, recalls, and build progress all in one place.',
+    images: [
+      { src: '/images/onboarding/garage-01-hero.png', alt: 'Modified GT-R with performance stats' },
+      { src: '/images/onboarding/garage-02-details.png', alt: 'Performance details and specs' },
+      { src: '/images/onboarding/garage-03-reference.png', alt: 'VIN decoder and fluid specs' },
+      { src: '/images/onboarding/garage-04-safety.png', alt: 'Recalls and safety info' },
+      { src: '/images/onboarding/garage-05-health.png', alt: 'Maintenance tracking' },
+    ],
+  },
+  {
+    id: 'tuning',
+    title: 'Tuning Shop',
+    description: 'Plan your build with upgrade guides, compatibility checks, and performance estimates.',
+    images: [
+      { src: '/images/onboarding/tuning-shop-01-overview.png', alt: 'Tunability score overview' },
+      { src: '/images/onboarding/tuning-shop-02-config-wheels.png', alt: 'Wheels and tires config' },
+      { src: '/images/onboarding/tuning-shop-03-presets.png', alt: 'Build presets' },
+      { src: '/images/onboarding/tuning-shop-04-power-list.png', alt: 'Power upgrades list' },
+      { src: '/images/onboarding/tuning-shop-05-part-detail.png', alt: 'Part details' },
+      { src: '/images/onboarding/tuning-shop-06-metrics.png', alt: 'Performance metrics' },
+    ],
+  },
+  {
+    id: 'community',
+    title: 'Community',
+    description: 'Discover car events, meets, and shows happening near you.',
+    images: [
+      { src: '/images/onboarding/community-01-events-list.png', alt: 'Events list' },
+      { src: '/images/onboarding/community-02-event-detail.png', alt: 'Event details' },
+    ],
+  },
+  {
+    id: 'al',
+    title: 'Ask AL',
+    description: 'Get instant answers from our AI assistant trained on real car data.',
+    images: [
+      { src: '/images/onboarding/ai-al-01-intro.png', alt: 'AL introduction' },
+      { src: '/images/onboarding/ai-al-03-thinking.png', alt: 'AL thinking' },
+      { src: '/images/onboarding/ai-al-04-response-mods.png', alt: 'AL modification response' },
+      { src: '/images/onboarding/ai-al-05-response-analysis.png', alt: 'AL analysis response' },
+    ],
+  },
+];
+
+// Calculate total steps: Welcome + Referral + Intent + Feature slides + Final
+const TOTAL_STEPS = 3 + FEATURE_SLIDES.length + 1;
+
+// Step labels for progress bar (simplified grouping)
+const STEP_LABELS = ['Welcome', 'Source', 'Goals', 'Features', 'Finish'];
+
+// Map step number to label index for progress display
+const getProgressLabelIndex = (step) => {
+  if (step === 1) return 0; // Welcome
+  if (step === 2) return 1; // Source/Referral
+  if (step === 3) return 2; // Goals/Intent
+  if (step >= 4 && step < TOTAL_STEPS) return 3; // Features
+  return 4; // Finish
+};
 
 /**
  * OnboardingFlow Component
  * 
  * Multi-step onboarding modal for first-time users.
- * Collects referral source, user intent, and email preferences.
+ * Collects referral source, user intent (multi-select), and shows features.
  * 
- * @param {Object} props
- * @param {boolean} props.isOpen - Controls modal visibility
- * @param {Function} props.onClose - Called when modal is dismissed
- * @param {Function} props.onComplete - Called when onboarding is completed
- * @param {Object} props.user - Current user object
- * @param {Object} props.profile - Current user profile
- * @param {number} props.initialStep - Step to start from (for resume)
- * @param {Object} props.initialData - Partial data for resume
+ * Redesigned with:
+ * - Single unified progress bar
+ * - Individual feature slides (no carousel)
+ * - Full-screen mobile layout
  */
 export default function OnboardingFlow({ 
   isOpen, 
@@ -41,27 +119,26 @@ export default function OnboardingFlow({
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState('next');
   const [isSaving, setIsSaving] = useState(false);
-  const [carCount, setCarCount] = useState(DEFAULT_CAR_COUNT);
   
+  // Form data - note: user_intents is now an array for multi-select
   const [formData, setFormData] = useState({
     referral_source: initialData.referral_source || null,
     referral_source_other: initialData.referral_source_other || '',
-    user_intent: initialData.user_intent || null,
-    email_opt_in_features: initialData.email_opt_in_features || false,
-    email_opt_in_events: initialData.email_opt_in_events || false,
+    user_intents: initialData.user_intents || initialData.user_intent 
+      ? (Array.isArray(initialData.user_intents) ? initialData.user_intents : [initialData.user_intent])
+      : [],
   });
 
   // Get user's display name
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
 
-  // ============================================================
-  // IMPORTANT: Define saveProgress and handleDismiss BEFORE any
-  // useEffect that references them to avoid TDZ (Temporal Dead Zone)
-  // errors. Do not reorder these declarations.
-  // ============================================================
+  // Calculate progress percentage
+  const progressPercent = ((step - 1) / (TOTAL_STEPS - 1)) * 100;
+  
+  // Get current progress label index
+  const currentLabelIndex = getProgressLabelIndex(step);
 
   // Save progress to database
-  // Returns { success: boolean, error?: string } for completion calls
   const saveProgress = useCallback(async (data, completed = false) => {
     if (!user?.id) {
       console.warn('[Onboarding] No user ID, skipping save');
@@ -72,9 +149,15 @@ export default function OnboardingFlow({
       const endpoint = `/api/users/${user.id}/onboarding`;
       const method = completed ? 'POST' : 'PATCH';
       
+      // Convert user_intents array to legacy user_intent for API compatibility
+      const legacyData = {
+        ...data,
+        user_intent: data.user_intents?.[0] || null,
+      };
+      
       const payload = completed 
-        ? { ...data }
-        : { step, ...data };
+        ? { ...legacyData }
+        : { step, ...legacyData };
       
       console.log(`[Onboarding] Saving progress via ${method}:`, { completed, userId: user.id.slice(0, 8) });
       
@@ -100,23 +183,24 @@ export default function OnboardingFlow({
   }, [user?.id, step]);
 
   // Handle dismissal (save progress for resume)
-  // Must be defined before useEffect that references it
   const handleDismiss = useCallback(() => {
     saveProgress(formData);
     onClose?.();
   }, [formData, saveProgress, onClose]);
 
-  // Handle escape key (disabled on Step 2 - Referral)
+  // Handle escape key (disabled on required steps: Welcome, Referral, Intent)
+  const isRequiredStep = step === 1 || step === 2 || step === 3;
+  
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen && step !== 2) {
+      if (e.key === 'Escape' && isOpen && !isRequiredStep) {
         handleDismiss();
       }
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, step, handleDismiss]);
+  }, [isOpen, isRequiredStep, handleDismiss]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -131,33 +215,12 @@ export default function OnboardingFlow({
     };
   }, [isOpen]);
 
-  // Fetch car count from database on mount
-  useEffect(() => {
-    const fetchCarCount = async () => {
-      try {
-        const response = await fetch('/api/stats');
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.cars) {
-            setCarCount(data.cars);
-          }
-        }
-      } catch (err) {
-        console.warn('[OnboardingFlow] Failed to fetch car count, using default:', err);
-      }
-    };
-    
-    if (isOpen) {
-      fetchCarCount();
-    }
-  }, [isOpen]);
-
   // Handle form data updates
   const updateFormData = useCallback((updates) => {
     setFormData(prev => {
       const newData = { ...prev, ...updates };
       // Save progress when significant data changes
-      if (updates.referral_source !== undefined || updates.user_intent !== undefined) {
+      if (updates.referral_source !== undefined || updates.user_intents !== undefined) {
         saveProgress(newData);
       }
       return newData;
@@ -172,7 +235,6 @@ export default function OnboardingFlow({
       setTimeout(() => {
         setStep(step + 1);
         setIsAnimating(false);
-        // Save step progress
         saveProgress(formData);
       }, 200);
     }
@@ -190,65 +252,33 @@ export default function OnboardingFlow({
     }
   }, [step]);
 
-  // Handle backdrop click (disabled on Step 2 - Referral)
+  // Handle backdrop click (disabled on required steps: Welcome, Referral, Intent)
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && step !== 2) {
+    if (e.target === e.currentTarget && !isRequiredStep) {
       handleDismiss();
     }
   };
 
-  // Handle completion
+  // Handle completion - saves progress, FinalStep handles navigation
   const handleComplete = useCallback(async () => {
     setIsSaving(true);
     
     try {
-      // Save completion to database
       const result = await saveProgress(formData, true);
       
       if (!result.success) {
         console.error('[Onboarding] Failed to complete onboarding:', result.error);
-        // Still proceed with navigation - data may save on next login
-        // TODO: Consider showing an error toast here
       }
       
-      // Determine destination based on user intent
-      let destination = '/browse-cars';
-      if (formData.user_intent === 'owner') {
-        destination = '/garage?add=true';
-      } else if (formData.user_intent === 'shopping') {
-        destination = '/car-selector';
-      } else if (formData.user_intent === 'learning') {
-        destination = '/browse-cars';
-      }
-      
-      console.log('[Onboarding] Completed. Routing to:', destination, 'saveSuccess:', result.success);
-      
-      // Call completion callback
+      console.log('[Onboarding] Completed. saveSuccess:', result.success);
       onComplete?.(formData);
-      
-      // Navigate to contextual destination
-      router.push(destination);
       
     } catch (err) {
       console.error('[Onboarding] Error completing:', err);
     } finally {
       setIsSaving(false);
     }
-  }, [formData, saveProgress, onComplete, router]);
-
-  // Navigate to specific step via dot
-  const handleDotClick = (targetStep) => {
-    if (targetStep === step) return;
-    // Only allow going back to completed steps, not forward
-    if (targetStep < step) {
-      setSlideDirection(targetStep > step ? 'next' : 'prev');
-      setIsAnimating(true);
-      setTimeout(() => {
-        setStep(targetStep);
-        setIsAnimating(false);
-      }, 200);
-    }
-  };
+  }, [formData, saveProgress, onComplete]);
 
   // Check if current step can proceed
   const canProceed = useCallback(() => {
@@ -260,13 +290,9 @@ export default function OnboardingFlow({
           return formData.referral_source_other?.trim().length > 0;
         }
         return formData.referral_source !== null;
-      case 3: // Intent
-        return formData.user_intent !== null;
-      case 4: // Feature Tour
-        return true;
-      case 5: // Final
-        return true;
-      default:
+      case 3: // Intent (multi-select - at least one required)
+        return formData.user_intents && formData.user_intents.length > 0;
+      default: // Feature slides and Final
         return true;
     }
   }, [step, formData]);
@@ -286,70 +312,79 @@ export default function OnboardingFlow({
       onNext: handleNext,
     };
 
-    switch (step) {
-      case 1:
-        return <WelcomeStep {...stepProps} displayName={displayName} />;
-      case 2:
-        return <ReferralStep {...stepProps} />;
-      case 3:
-        return <IntentStep {...stepProps} />;
-      case 4:
-        return <FeatureTourStep {...stepProps} userIntent={formData.user_intent} carCount={carCount} />;
-      case 5:
-        return (
-          <FinalStep 
-            {...stepProps} 
-            userIntent={formData.user_intent}
-            isSaving={isSaving}
-            onComplete={handleComplete}
-            carCount={carCount}
-          />
-        );
-      default:
-        return null;
+    // Step 1: Welcome
+    if (step === 1) {
+      return <WelcomeStep {...stepProps} displayName={displayName} />;
     }
+    
+    // Step 2: Referral
+    if (step === 2) {
+      return <ReferralStep {...stepProps} />;
+    }
+    
+    // Step 3: Intent
+    if (step === 3) {
+      return <IntentStep {...stepProps} />;
+    }
+    
+    // Steps 4 through (TOTAL_STEPS - 1): Feature slides
+    const featureIndex = step - 4;
+    if (featureIndex >= 0 && featureIndex < FEATURE_SLIDES.length) {
+      const feature = FEATURE_SLIDES[featureIndex];
+      return (
+        <FeatureSlide
+          className={animationClass}
+          title={feature.title}
+          description={feature.description}
+          images={feature.images}
+        />
+      );
+    }
+    
+    // Final step - action buttons handle navigation
+    if (step === TOTAL_STEPS) {
+      return (
+        <FinalStep 
+          className={animationClass}
+          onComplete={handleComplete}
+        />
+      );
+    }
+    
+    return null;
   };
 
   // Get button text based on step
   const getNextButtonText = () => {
-    switch (step) {
-      case 1:
-        return "Let's Get Started";
-      case 5:
-        return isSaving ? 'Finishing...' : 'Finish & Explore';
-      default:
-        return 'Continue';
-    }
+    if (step === 1) return "Let's Get Started";
+    if (step === TOTAL_STEPS) return isSaving ? 'Finishing...' : "Let's Go!";
+    return 'Continue';
   };
+
+  // Check if we're on the final step
+  const isFinalStep = step === TOTAL_STEPS;
 
   return (
     <div className={styles.overlay} onClick={handleBackdropClick}>
       <div className={styles.modal} role="dialog" aria-modal="true" aria-label="Welcome to AutoRev">
-        {/* Close Button - hidden on Step 2 (Referral) to ensure we capture this key data */}
-        {step !== 2 && (
-          <button 
-            className={styles.closeBtn} 
-            onClick={handleDismiss} 
-            aria-label="Close and continue later"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        )}
-
-        {/* Progress Dots */}
-        <div className={styles.progressDots}>
-          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-            <button
-              key={i}
-              className={`${styles.dot} ${i + 1 === step ? styles.dotActive : ''} ${i + 1 < step ? styles.dotCompleted : ''}`}
-              onClick={() => handleDotClick(i + 1)}
-              aria-label={`Step ${i + 1}`}
-              disabled={i + 1 > step}
+        {/* Unified Progress Bar */}
+        <div className={styles.progressBarContainer}>
+          <div className={styles.progressBar}>
+            <div 
+              className={styles.progressFill} 
+              style={{ width: `${progressPercent}%` }}
             />
-          ))}
+          </div>
+          <div className={styles.progressSteps}>
+            {STEP_LABELS.map((label, i) => (
+              <span 
+                key={i}
+                className={`${styles.progressStep} ${i === currentLabelIndex ? styles.active : ''} ${i < currentLabelIndex ? styles.completed : ''}`}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* Step Content */}
@@ -357,39 +392,38 @@ export default function OnboardingFlow({
           {renderStep()}
         </div>
 
-        {/* Footer Navigation */}
-        <div className={styles.footer}>
-          <div className={styles.navButtons}>
-            {step > 1 && (
-              <button className={styles.backBtn} onClick={handleBack}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                Back
-              </button>
-            )}
-            <button 
-              className={styles.nextBtn} 
-              onClick={step === 5 ? handleComplete : handleNext}
-              disabled={!canProceed() || isSaving}
-            >
-              {getNextButtonText()}
-              {step < 5 && (
+        {/* Footer Navigation - hidden on final step (action buttons handle it) */}
+        {!isFinalStep && (
+          <div className={styles.footer}>
+            <div className={styles.navButtons}>
+              {step > 1 && (
+                <button className={styles.backBtn} onClick={handleBack}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Back
+                </button>
+              )}
+              {/* Skip button - only shown on non-required steps (feature slides) */}
+              {!isRequiredStep && !isFinalStep && (
+                <button className={styles.skipBtn} onClick={handleDismiss}>
+                  Skip for now
+                </button>
+              )}
+              <button 
+                className={styles.nextBtn} 
+                onClick={handleNext}
+                disabled={!canProceed() || isSaving}
+              >
+                {getNextButtonText()}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"/>
                 </svg>
-              )}
-            </button>
+              </button>
+            </div>
           </div>
-          {/* Hide skip link on Step 2 (Referral) - this is our most valuable data */}
-          {step !== 2 && (
-            <button className={styles.skipLink} onClick={handleDismiss}>
-              I'll do this later
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
 }
-

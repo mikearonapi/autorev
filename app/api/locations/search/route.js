@@ -189,3 +189,5 @@ function formatSuggestions(data) {
   return NextResponse.json({ suggestions });
 }
 
+
+

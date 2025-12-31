@@ -1103,6 +1103,37 @@
   margin: 0 0 var(--space-sm);
 }
 
+/* Onboarding Button */
+.onboardingButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.08) 100%);
+  color: #a855f7;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: var(--space-md);
+}
+
+.onboardingButton:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(168, 85, 247, 0.15) 100%);
+  border-color: #a855f7;
+  transform: translateY(-1px);
+}
+
+.onboardingButton:active {
+  transform: translateY(0);
+}
+
+.onboardingButton svg {
+  flex-shrink: 0;
+}
+
 /* ============================================
    BUTTONS
    ============================================ */

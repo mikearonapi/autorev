@@ -105,3 +105,5 @@ CREATE TRIGGER trigger_update_location_timestamp
   FOR EACH ROW
   EXECUTE FUNCTION update_location_timestamp();
 
+
+
