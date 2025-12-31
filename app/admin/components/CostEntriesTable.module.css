@@ -1,0 +1,383 @@
+/* CostEntriesTable Component Styles */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.headerTitle h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.entryCount {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Filter */
+.filterWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.filterSelect {
+  background: transparent;
+  border: none;
+  color: var(--admin-text-primary, #f8fafc);
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+
+.filterSelect option {
+  background: #1a1a2e;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--admin-text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Totals Bar */
+.totalsBar {
+  display: flex;
+  gap: 24px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.totalItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.totalLabel {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.totalValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.totalValue.rAndD {
+  color: var(--admin-accent-purple, #8b5cf6);
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-text-secondary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.table th.sortable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.table th.sortable:hover {
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+.table th svg {
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.amountHeader {
+  text-align: right;
+}
+
+.actionsHeader {
+  text-align: center;
+  width: 90px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table tbody tr.rAndDRow {
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.table tbody tr.rAndDRow:hover {
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.table td {
+  padding: 12px;
+  color: var(--admin-text-primary, #f8fafc);
+  vertical-align: middle;
+}
+
+/* Cells */
+.dateCell {
+  font-size: 12px;
+  color: var(--admin-text-secondary, #94a3b8);
+  white-space: nowrap;
+}
+
+.vendorCell {
+  font-weight: 500;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descriptionCell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.recurringBadge {
+  font-size: 12px;
+  color: var(--admin-accent-blue, #3b82f6);
+  cursor: help;
+}
+
+.categoryBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: 1px solid;
+}
+
+.typeBadge {
+  font-size: 11px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+.amountCell {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.actionsCell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Action Buttons */
+.editButton,
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--admin-text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.editButton:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--admin-accent-blue, #3b82f6);
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--admin-negative, #ef4444);
+}
+
+/* Delete Confirmation */
+.confirmDelete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.confirmYes,
+.confirmNo {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmYes {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--admin-negative, #ef4444);
+}
+
+.confirmYes:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.confirmNo {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.confirmNo:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--admin-text-primary, #f8fafc);
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.emptyState p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--admin-text-primary, #f8fafc);
+  margin: 0 0 4px 0;
+}
+
+.emptyState span {
+  font-size: 12px;
+  color: var(--admin-text-muted, #64748b);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .totalsBar {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .table th:nth-child(3),
+  .table td:nth-child(3) {
+    display: none; /* Hide description on mobile */
+  }
+  
+  .table th:nth-child(5),
+  .table td:nth-child(5) {
+    display: none; /* Hide type on mobile */
+  }
+}
+

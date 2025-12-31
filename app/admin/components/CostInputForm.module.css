@@ -7,6 +7,11 @@
   padding: 16px;
 }
 
+.container.editMode {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -23,6 +28,10 @@
   background: linear-gradient(135deg, var(--admin-accent-blue, #3b82f6), var(--admin-accent-purple, #8b5cf6));
   border-radius: 8px;
   color: white;
+}
+
+.iconWrapper.editIcon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
 .title {
@@ -184,6 +193,10 @@
   background: linear-gradient(135deg, var(--admin-accent-blue, #3b82f6), var(--admin-accent-purple, #8b5cf6));
   border: none;
   color: white;
+}
+
+.submitButton.editButton {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
 .submitButton:hover:not(:disabled) {

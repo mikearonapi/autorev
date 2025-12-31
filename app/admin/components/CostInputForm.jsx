@@ -3,13 +3,13 @@
 /**
  * Cost Input Form Component
  * 
- * Form for manually entering cost/expense entries.
+ * Form for manually entering or editing cost/expense entries.
  * Supports categorization, GL accounts, and recurring expenses.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './CostInputForm.module.css';
-import { DollarSignIcon, CheckCircleIcon, AlertCircleIcon } from './Icons';
+import { DollarSignIcon, CheckCircleIcon, AlertCircleIcon, EditIcon } from './Icons';
 
 // GL Account groups for the dropdown
 const GL_ACCOUNT_GROUPS = {
@@ -42,10 +42,30 @@ const COST_TYPES = [
   { value: 'ONE_TIME', label: 'One-Time' },
 ];
 
-export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
-  const [formData, setFormData] = useState({
+// Helper: Find GL code from account ID
+function findGLCodeFromId(glAccountId, glAccounts) {
+  if (!glAccountId || !glAccounts?.length) return '';
+  const account = glAccounts.find(gl => gl.id === glAccountId);
+  return account?.code || '';
+}
+
+// Helper: Find GL code from category if no account ID
+function findGLCodeFromCategory(category, isProductDev) {
+  if (isProductDev) return '7200'; // Default R&D code
+  switch (category) {
+    case 'INFRASTRUCTURE': return '6110';
+    case 'DEVELOPMENT': return '6210';
+    case 'COGS': return '5100';
+    default: return '6900';
+  }
+}
+
+export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry = null }) {
+  const isEditMode = !!editEntry;
+  
+  const getInitialFormData = () => ({
     entryDate: new Date().toISOString().split('T')[0],
-    glAccountCode: '',  // Primary categorization method
+    glAccountCode: '',
     costType: 'FIXED',
     vendor: '',
     amount: '',
@@ -53,6 +73,35 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
     isRecurring: false,
     recurrencePeriod: 'MONTHLY',
   });
+  
+  const [formData, setFormData] = useState(getInitialFormData());
+  
+  // Populate form when editing
+  useEffect(() => {
+    if (editEntry) {
+      // Find the GL code - either from the account ID or derive from category
+      let glCode = '';
+      if (editEntry.glAccountId) {
+        glCode = findGLCodeFromId(editEntry.glAccountId, glAccounts);
+      }
+      if (!glCode && editEntry.category) {
+        glCode = findGLCodeFromCategory(editEntry.category, editEntry.isProductDev);
+      }
+      
+      setFormData({
+        entryDate: editEntry.date || new Date().toISOString().split('T')[0],
+        glAccountCode: glCode,
+        costType: editEntry.type || 'FIXED',
+        vendor: editEntry.vendor || '',
+        amount: editEntry.amount?.toString() || '',
+        description: editEntry.description || '',
+        isRecurring: editEntry.isRecurring || false,
+        recurrencePeriod: 'MONTHLY',
+      });
+    } else {
+      setFormData(getInitialFormData());
+    }
+  }, [editEntry, glAccounts]);
   
   // Derive category and isProductDevelopment from GL account code
   const selectedGLCode = formData.glAccountCode;
@@ -96,7 +145,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
       // Find the GL account ID from the code
       const glAccount = glAccounts.find(gl => gl.code === formData.glAccountCode);
       
-      await onSubmit({
+      const submitData = {
         entryDate: formData.entryDate,
         glAccountId: glAccount?.id || null,
         costCategory: costCategory,
@@ -107,24 +156,37 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
         isRecurring: formData.isRecurring,
         recurrencePeriod: formData.isRecurring ? formData.recurrencePeriod : null,
         isProductDevelopment: isProductDevelopment,
-      });
+      };
+      
+      // Include ID if editing
+      if (isEditMode && editEntry?.id) {
+        submitData.id = editEntry.id;
+      }
+      
+      await onSubmit(submitData, isEditMode);
       
       setSuccess(true);
       
-      // Reset form after success
+      // Reset form after success (only for new entries, not edits)
       setTimeout(() => {
-        setFormData({
-          entryDate: new Date().toISOString().split('T')[0],
-          glAccountCode: '',
-          costType: 'FIXED',
-          vendor: '',
-          amount: '',
-          description: '',
-          isRecurring: false,
-          recurrencePeriod: 'MONTHLY',
-        });
+        if (!isEditMode) {
+          setFormData({
+            entryDate: new Date().toISOString().split('T')[0],
+            glAccountCode: '',
+            costType: 'FIXED',
+            vendor: '',
+            amount: '',
+            description: '',
+            isRecurring: false,
+            recurrencePeriod: 'MONTHLY',
+          });
+        }
         setSuccess(false);
-      }, 2000);
+        // Call onCancel to close form after edit
+        if (isEditMode && onCancel) {
+          onCancel();
+        }
+      }, 1500);
       
     } catch (err) {
       setError(err.message);
@@ -134,18 +196,18 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
   };
   
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isEditMode ? styles.editMode : ''}`}>
       <div className={styles.header}>
-        <div className={styles.iconWrapper}>
-          <DollarSignIcon size={18} />
+        <div className={`${styles.iconWrapper} ${isEditMode ? styles.editIcon : ''}`}>
+          {isEditMode ? <EditIcon size={18} /> : <DollarSignIcon size={18} />}
         </div>
-        <h3 className={styles.title}>Add Cost Entry</h3>
+        <h3 className={styles.title}>{isEditMode ? 'Edit Cost Entry' : 'Add Cost Entry'}</h3>
       </div>
       
       {success && (
         <div className={styles.successMessage}>
           <CheckCircleIcon size={16} />
-          <span>Cost entry added successfully!</span>
+          <span>Cost entry {isEditMode ? 'updated' : 'added'} successfully!</span>
         </div>
       )}
       
@@ -261,8 +323,11 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [] }) {
               Cancel
             </button>
           )}
-          <button type="submit" disabled={submitting} className={styles.submitButton}>
-            {submitting ? 'Adding...' : 'Add Entry'}
+          <button type="submit" disabled={submitting} className={`${styles.submitButton} ${isEditMode ? styles.editButton : ''}`}>
+            {submitting 
+              ? (isEditMode ? 'Saving...' : 'Adding...') 
+              : (isEditMode ? 'Save Changes' : 'Add Entry')
+            }
           </button>
         </div>
       </form>

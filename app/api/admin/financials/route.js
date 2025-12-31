@@ -598,3 +598,132 @@ export async function POST(request) {
   }
 }
 
+// PATCH: Update cost entry
+export async function PATCH(request) {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+  }
+  
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user || !isAdminEmail(user.email)) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+    
+    const body = await request.json();
+    const {
+      id,
+      entryDate,
+      glAccountId,
+      costCategory,
+      costType,
+      vendor,
+      amountCents,
+      description,
+      isRecurring,
+      recurrencePeriod,
+      isProductDevelopment,
+    } = body;
+    
+    // Validate required fields
+    if (!id) {
+      return NextResponse.json({ error: 'Entry ID is required' }, { status: 400 });
+    }
+    
+    if (!entryDate || !costCategory || !costType || !amountCents || !description) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    
+    const date = new Date(entryDate);
+    
+    const { data, error } = await supabase.from('cost_entries')
+      .update({
+        entry_date: entryDate,
+        gl_account_id: glAccountId || null,
+        cost_category: costCategory,
+        cost_type: costType,
+        vendor: vendor || null,
+        amount_cents: amountCents,
+        description,
+        is_recurring: isRecurring || false,
+        recurrence_period: recurrencePeriod || null,
+        fiscal_month: date.getMonth() + 1,
+        fiscal_year: date.getFullYear(),
+        is_product_development: isProductDevelopment || false,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('[Financials API] Update error:', error);
+      return NextResponse.json({ error: 'Failed to update cost entry' }, { status: 500 });
+    }
+    
+    if (!data) {
+      return NextResponse.json({ error: 'Cost entry not found' }, { status: 404 });
+    }
+    
+    return NextResponse.json({ success: true, entry: data });
+    
+  } catch (err) {
+    console.error('[Financials API] Error:', err);
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
+  }
+}
+
+// DELETE: Remove cost entry
+export async function DELETE(request) {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+  }
+  
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user || !isAdminEmail(user.email)) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+    
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Entry ID is required' }, { status: 400 });
+    }
+    
+    const { error } = await supabase.from('cost_entries')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error('[Financials API] Delete error:', error);
+      return NextResponse.json({ error: 'Failed to delete cost entry' }, { status: 500 });
+    }
+    
+    return NextResponse.json({ success: true, deleted: id });
+    
+  } catch (err) {
+    console.error('[Financials API] Error:', err);
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
+  }
+}
+

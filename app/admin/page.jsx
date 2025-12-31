@@ -36,6 +36,7 @@ import { AlertsList } from './components/AlertsList';
 import { PLStatement } from './components/PLStatement';
 import { MonthlyTrend } from './components/MonthlyTrend';
 import { CostInputForm } from './components/CostInputForm';
+import { CostEntriesTable } from './components/CostEntriesTable';
 import { UsageEstimate } from './components/UsageEstimate';
 import { RetentionMetrics } from './components/RetentionMetrics';
 import { SystemHealthPanel } from './components/SystemHealthPanel';
@@ -102,6 +103,7 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [showCostForm, setShowCostForm] = useState(false);
+  const [editingCostEntry, setEditingCostEntry] = useState(null);
   const [usageData, setUsageData] = useState(null);
   const [retentionData, setRetentionData] = useState(null);
   const [healthData, setHealthData] = useState(null);
@@ -207,12 +209,12 @@ export default function AdminDashboardPage() {
     }
   }, [isAdmin, session?.access_token, fetchData]);
   
-  // Handle cost submission
-  const handleCostSubmit = async (costData) => {
+  // Handle cost submission (add or edit)
+  const handleCostSubmit = async (costData, isEdit = false) => {
     if (!session?.access_token) throw new Error('Not authenticated');
     
     const response = await fetch('/api/admin/financials', {
-      method: 'POST',
+      method: isEdit ? 'PATCH' : 'POST',
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
         'Content-Type': 'application/json',
@@ -222,10 +224,44 @@ export default function AdminDashboardPage() {
     
     if (!response.ok) {
       const err = await response.json();
-      throw new Error(err.error || 'Failed to add cost entry');
+      throw new Error(err.error || `Failed to ${isEdit ? 'update' : 'add'} cost entry`);
+    }
+    
+    // Clear edit state and refresh data
+    setEditingCostEntry(null);
+    setShowCostForm(false);
+    await fetchData();
+  };
+  
+  // Handle cost deletion
+  const handleCostDelete = async (entryId) => {
+    if (!session?.access_token) throw new Error('Not authenticated');
+    
+    const response = await fetch(`/api/admin/financials?id=${entryId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+    });
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to delete cost entry');
     }
     
     await fetchData();
+  };
+  
+  // Handle editing a cost entry
+  const handleCostEdit = (entry) => {
+    setEditingCostEntry(entry);
+    setShowCostForm(true);
+  };
+  
+  // Handle cancel edit
+  const handleCostFormCancel = () => {
+    setEditingCostEntry(null);
+    setShowCostForm(false);
   };
   
   // Loading state
@@ -709,13 +745,21 @@ export default function AdminDashboardPage() {
               />
             </section>
             
-            {/* Cost Entry Form */}
+            {/* Cost Entry Form (Add/Edit) */}
             <section className={styles.section}>
               <div className={styles.costEntrySection}>
                 <div className={styles.costEntryHeader}>
-                  <h3 className={styles.subsectionTitle}>Add Cost Entry</h3>
+                  <h3 className={styles.subsectionTitle}>
+                    {editingCostEntry ? 'Edit Cost Entry' : 'Add Cost Entry'}
+                  </h3>
                   <button 
-                    onClick={() => setShowCostForm(!showCostForm)}
+                    onClick={() => {
+                      if (showCostForm) {
+                        handleCostFormCancel();
+                      } else {
+                        setShowCostForm(true);
+                      }
+                    }}
                     className={styles.addButton}
                   >
                     {showCostForm ? <XIcon size={14} /> : <PlusIcon size={14} />}
@@ -726,11 +770,23 @@ export default function AdminDashboardPage() {
                 {showCostForm && (
                   <CostInputForm 
                     onSubmit={handleCostSubmit}
-                    onCancel={() => setShowCostForm(false)}
+                    onCancel={handleCostFormCancel}
                     glAccounts={financials?.glAccounts || []}
+                    editEntry={editingCostEntry}
                   />
                 )}
               </div>
+            </section>
+            
+            {/* Cost Entries Table */}
+            <section className={styles.section}>
+              <CostEntriesTable 
+                entries={financials?.costs?.entries || []}
+                onEdit={handleCostEdit}
+                onDelete={handleCostDelete}
+                onRefresh={fetchData}
+                loading={loading}
+              />
             </section>
             
             {/* Monthly Cost Trend */}

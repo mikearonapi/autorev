@@ -60,7 +60,7 @@ export async function GET(request) {
         referred_by_code,
         cars_viewed_count,
         comparisons_made_count,
-        builds_saved_count,
+        projects_saved_count,
         created_at,
         updated_at
       `, { count: 'exact' });
@@ -221,7 +221,7 @@ export async function GET(request) {
         // Engagement stats
         carsViewed: profile.cars_viewed_count || 0,
         comparisons: profile.comparisons_made_count || 0,
-        savedBuilds: profile.builds_saved_count || 0,
+        savedBuilds: profile.projects_saved_count || 0,
         favorites: favoritesMap[profile.id] || 0,
         garageVehicles: garageMap[profile.id] || 0,
         
