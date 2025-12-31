@@ -20,12 +20,12 @@ import {
   ExternalLinkIcon,
 } from './Icons';
 
-// Tier badge colors
+// Tier badge colors - Dark theme compatible
 const TIER_COLORS = {
-  free: { bg: '#f3f4f6', text: '#6b7280' },
-  collector: { bg: '#dbeafe', text: '#1d4ed8' },
-  tuner: { bg: '#fae8ff', text: '#a21caf' },
-  admin: { bg: '#fef3c7', text: '#b45309' },
+  free: { bg: 'rgba(100, 116, 139, 0.15)', text: '#94a3b8', border: 'rgba(100, 116, 139, 0.3)' },
+  collector: { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' },
+  tuner: { bg: 'rgba(139, 92, 246, 0.15)', text: '#a78bfa', border: 'rgba(139, 92, 246, 0.3)' },
+  admin: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' },
 };
 
 // Format relative time
@@ -74,7 +74,11 @@ function TierBadge({ tier }) {
   return (
     <span 
       className={styles.tierBadge} 
-      style={{ backgroundColor: colors.bg, color: colors.text }}
+      style={{ 
+        backgroundColor: colors.bg, 
+        color: colors.text,
+        borderColor: colors.border 
+      }}
     >
       {tier}
     </span>
@@ -84,7 +88,7 @@ function TierBadge({ tier }) {
 // Source badge
 function SourceBadge({ source }) {
   const sourceColors = {
-    Direct: '#6b7280',
+    Direct: '#94a3b8',
     google: '#ea4335',
     facebook: '#1877f2',
     twitter: '#1da1f2',
@@ -93,7 +97,7 @@ function SourceBadge({ source }) {
     youtube: '#ff0000',
     referral: '#22c55e',
   };
-  const color = sourceColors[source] || '#6b7280';
+  const color = sourceColors[source] || '#94a3b8';
   
   return (
     <span className={styles.sourceBadge} style={{ borderColor: color, color }}>
@@ -102,12 +106,23 @@ function SourceBadge({ source }) {
   );
 }
 
+// Engagement item with label
+function EngagementItem({ value, label, icon }) {
+  return (
+    <div className={styles.engagementItem} title={label}>
+      <span className={styles.engagementValue}>{value}</span>
+      <span className={styles.engagementLabel}>{icon} {label}</span>
+    </div>
+  );
+}
+
 // Activity indicator
 function ActivityIndicator({ level }) {
   // level: 0 = inactive, 1 = low, 2 = medium, 3 = high
-  const colors = ['#e5e7eb', '#fcd34d', '#34d399', '#3b82f6'];
+  const colors = ['rgba(100, 116, 139, 0.3)', '#fbbf24', '#34d399', '#3b82f6'];
+  const labels = ['Inactive', 'Low activity', 'Medium activity', 'High activity'];
   return (
-    <div className={styles.activityIndicator}>
+    <div className={styles.activityIndicator} title={labels[level]}>
       {[0, 1, 2].map(i => (
         <span 
           key={i} 
@@ -304,9 +319,21 @@ export function UsersDashboard({ token, range = '7d' }) {
               </th>
               <th>Last Active</th>
               <th>Activity</th>
-              <th onClick={() => handleSort('cars_viewed_count')} className={styles.sortable}>
-                Engagement
-                {sort === 'cars_viewed_count' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              <th>
+                <div className={styles.engagementHeader}>
+                  <div className={styles.engagementHeaderItem}>
+                    <span className={styles.engagementHeaderIcon}>🚗</span>
+                    <span className={styles.engagementHeaderLabel}>Cars<br/>Viewed</span>
+                  </div>
+                  <div className={styles.engagementHeaderItem}>
+                    <span className={styles.engagementHeaderIcon}>❤️</span>
+                    <span className={styles.engagementHeaderLabel}>Favorites</span>
+                  </div>
+                  <div className={styles.engagementHeaderItem}>
+                    <span className={styles.engagementHeaderIcon}>💬</span>
+                    <span className={styles.engagementHeaderLabel}>AL<br/>Chats</span>
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
@@ -340,9 +367,9 @@ export function UsersDashboard({ token, range = '7d' }) {
                   <td><ActivityIndicator level={getActivityLevel(user)} /></td>
                   <td>
                     <div className={styles.engagementCell}>
-                      <span title="Cars viewed">{user.carsViewed}</span>
-                      <span title="Favorites">{user.favorites}</span>
-                      <span title="AL chats">{user.alConversations}</span>
+                      <EngagementItem value={user.carsViewed} label="Cars" icon="🚗" />
+                      <EngagementItem value={user.favorites} label="Favs" icon="❤️" />
+                      <EngagementItem value={user.alConversations} label="Chats" icon="💬" />
                     </div>
                   </td>
                 </tr>
