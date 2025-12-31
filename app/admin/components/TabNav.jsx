@@ -10,6 +10,7 @@ import styles from './TabNav.module.css';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'grid' },
+  { id: 'users', label: 'Users', icon: 'users' },
   { id: 'analytics', label: 'Site Analytics', icon: 'chart' },
   { id: 'financials', label: 'Financials', icon: 'dollar', subtitle: 'Summary' },
   { id: 'revenue', label: 'Revenue', icon: 'stripe', subtitle: 'Stripe' },
@@ -81,6 +82,15 @@ function TabIcon({ type }) {
           <path d="M18 20V10" />
           <path d="M12 20V4" />
           <path d="M6 20v-6" />
+        </svg>
+      );
+    case 'users':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       );
     default:

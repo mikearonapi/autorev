@@ -53,6 +53,7 @@ import { CostIntegrations } from './components/CostIntegrations';
 import { SiteAnalytics } from './components/SiteAnalytics';
 import { MarketingAnalytics } from './components/MarketingAnalytics';
 import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
+import { UsersDashboard } from './components/UsersDashboard';
 
 // Icons
 import {
@@ -495,6 +496,25 @@ export default function AdminDashboardPage() {
               </div>
             </section>
           </>
+        )}
+        
+        {/* USERS TAB */}
+        {activeTab === 'users' && (
+          <section className={styles.section}>
+            <div className={styles.tabHeader}>
+              <h2 className={styles.sectionTitle}>
+                <UsersIcon size={18} className={styles.sectionIcon} />
+                User Management
+              </h2>
+              <p className={styles.tabDescription}>
+                Search and analyze your user base. View attribution, engagement, tier distribution, and individual user details.
+              </p>
+            </div>
+            <UsersDashboard 
+              token={session?.access_token}
+              range={timeRange}
+            />
+          </section>
         )}
         
         {/* SITE ANALYTICS TAB */}
