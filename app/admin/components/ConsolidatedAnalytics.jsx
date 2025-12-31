@@ -585,7 +585,7 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
         <div className={styles.headerTitle}>
           <Icons.Activity size={18} />
           <h2>Site Analytics</h2>
-          <span className={styles.excludeNote}>(excludes /admin)</span>
+          <span className={styles.excludeNote} title="Excludes page views & signups from Mike & Cory when logged in. Anonymous visits cannot be distinguished.">(excludes admin activity)</span>
         </div>
         <LiveIndicator count={summary.online || 0} />
       </div>
