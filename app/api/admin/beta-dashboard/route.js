@@ -7,14 +7,14 @@
  * @route GET /api/admin/beta-dashboard
  */
 
-import { createClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
-    const supabase = createClient();
+    const supabase = await createServerSupabaseClient();
     
     // Get current user for auth check
     const { data: { user }, error: authError } = await supabase.auth.getUser();

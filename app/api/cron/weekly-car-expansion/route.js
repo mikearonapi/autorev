@@ -19,7 +19,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { notifyCronEnrichment, notifyCronError } from '@/lib/discord';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -312,7 +312,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('[WeeklyCarExpansion] Fatal error:', error);
     
-    notifyCronError('weekly-car-expansion', error.message, {
+    notifyCronFailure('weekly-car-expansion', error, {
       partialResults: results,
       duration: Date.now() - startTime
     });
