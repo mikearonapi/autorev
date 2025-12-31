@@ -327,15 +327,19 @@ export function UsersDashboard({ token, range = '7d' }) {
                   </div>
                   <div className={styles.engagementHeaderItem} title="Favorited cars (user_favorites)">
                     <span className={styles.engagementHeaderIcon}>❤️</span>
-                    <span className={styles.engagementHeaderLabel}>Favorites</span>
+                    <span className={styles.engagementHeaderLabel}>Favs</span>
                   </div>
                   <div className={styles.engagementHeaderItem} title="Saved tuning builds (user_projects)">
                     <span className={styles.engagementHeaderIcon}>🔧</span>
                     <span className={styles.engagementHeaderLabel}>Builds</span>
                   </div>
+                  <div className={styles.engagementHeaderItem} title="Saved events (event_saves)">
+                    <span className={styles.engagementHeaderIcon}>📅</span>
+                    <span className={styles.engagementHeaderLabel}>Events</span>
+                  </div>
                   <div className={styles.engagementHeaderItem} title="AL conversations started (al_conversations)">
                     <span className={styles.engagementHeaderIcon}>💬</span>
-                    <span className={styles.engagementHeaderLabel}>AL Chats</span>
+                    <span className={styles.engagementHeaderLabel}>AL</span>
                   </div>
                 </div>
               </th>
@@ -374,7 +378,8 @@ export function UsersDashboard({ token, range = '7d' }) {
                       <EngagementItem value={user.garageVehicles} label="Garage" icon="🚗" />
                       <EngagementItem value={user.favorites} label="Favs" icon="❤️" />
                       <EngagementItem value={user.savedBuilds} label="Builds" icon="🔧" />
-                      <EngagementItem value={user.alConversations} label="Chats" icon="💬" />
+                      <EngagementItem value={user.savedEvents} label="Events" icon="📅" />
+                      <EngagementItem value={user.alConversations} label="AL" icon="💬" />
                     </div>
                   </td>
                 </tr>
@@ -397,13 +402,16 @@ export function UsersDashboard({ token, range = '7d' }) {
                         </div>
                         
                         <div className={styles.expandedSection}>
-                          <h4>Engagement</h4>
+                          <h4>Platform Usage</h4>
                           <div className={styles.expandedGrid}>
                             <div><span>🚗 Garage:</span> {user.garageVehicles} {user.garageVehicles === 1 ? 'vehicle' : 'vehicles'}</div>
                             <div><span>❤️ Favorites:</span> {user.favorites} {user.favorites === 1 ? 'car' : 'cars'}</div>
-                            <div><span>🔧 Saved Builds:</span> {user.savedBuilds} {user.savedBuilds === 1 ? 'project' : 'projects'}</div>
-                            <div><span>📊 Comparisons:</span> {user.comparisons}</div>
-                            <div><span>Recent Activity:</span> {user.recentActivityCount} actions (30d)</div>
+                            <div><span>🔧 Builds:</span> {user.savedBuilds} {user.savedBuilds === 1 ? 'project' : 'projects'}</div>
+                            <div><span>📅 Events:</span> {user.savedEvents} saved</div>
+                            <div><span>🔀 Compares:</span> {user.compareLists} {user.compareLists === 1 ? 'list' : 'lists'}</div>
+                            <div><span>🔧 Service:</span> {user.serviceLogs} {user.serviceLogs === 1 ? 'log' : 'logs'}</div>
+                            <div><span>💬 Feedback:</span> {user.feedbackCount} submitted</div>
+                            <div><span>📈 Activity:</span> {user.recentActivityCount} actions (30d)</div>
                           </div>
                         </div>
                         

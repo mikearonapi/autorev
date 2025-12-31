@@ -170,6 +170,52 @@ export async function GET(request) {
       projectsMap[p.user_id] = (projectsMap[p.user_id] || 0) + 1;
     });
 
+    // Get saved events count from event_saves
+    const { data: eventSavesData } = await supabase
+      .from('event_saves')
+      .select('user_id')
+      .in('user_id', userIds);
+
+    const eventSavesMap = {};
+    eventSavesData?.forEach(e => {
+      eventSavesMap[e.user_id] = (eventSavesMap[e.user_id] || 0) + 1;
+    });
+
+    // Get compare lists count
+    const { data: compareListsData } = await supabase
+      .from('user_compare_lists')
+      .select('user_id')
+      .in('user_id', userIds);
+
+    const compareListsMap = {};
+    compareListsData?.forEach(c => {
+      compareListsMap[c.user_id] = (compareListsMap[c.user_id] || 0) + 1;
+    });
+
+    // Get service logs count (maintenance tracking)
+    const { data: serviceLogsData } = await supabase
+      .from('user_service_logs')
+      .select('user_id')
+      .in('user_id', userIds);
+
+    const serviceLogsMap = {};
+    serviceLogsData?.forEach(s => {
+      serviceLogsMap[s.user_id] = (serviceLogsMap[s.user_id] || 0) + 1;
+    });
+
+    // Get feedback count
+    const { data: feedbackData } = await supabase
+      .from('user_feedback')
+      .select('user_id')
+      .in('user_id', userIds);
+
+    const feedbackMap = {};
+    feedbackData?.forEach(f => {
+      if (f.user_id) {
+        feedbackMap[f.user_id] = (feedbackMap[f.user_id] || 0) + 1;
+      }
+    });
+
     // Get recent activity counts (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -258,10 +304,10 @@ export async function GET(request) {
         garageVehicles: garageMap[profile.id] || 0,       // user_vehicles
         favorites: favoritesMap[profile.id] || 0,         // user_favorites
         savedBuilds: projectsMap[profile.id] || 0,        // user_projects
-        comparisons: profile.comparisons_made_count || 0, // user_profiles
-        
-        // Legacy stat (not actively tracked - kept for reference)
-        carsViewed: profile.cars_viewed_count || 0,
+        savedEvents: eventSavesMap[profile.id] || 0,      // event_saves
+        compareLists: compareListsMap[profile.id] || 0,   // user_compare_lists
+        serviceLogs: serviceLogsMap[profile.id] || 0,     // user_service_logs (maintenance)
+        feedbackCount: feedbackMap[profile.id] || 0,      // user_feedback
         
         // AL usage (REAL conversation count from al_conversations)
         alCredits: credits.current_credits || 0,
