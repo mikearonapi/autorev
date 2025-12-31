@@ -26,6 +26,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
 import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
 import BetaBanner from '@/components/BetaBanner';
+import PageViewTracker from '@/components/PageViewTracker';
 
 const siteUrl = 'https://autorev.app';
 
@@ -277,9 +278,10 @@ export default function RootLayout({ children }) {
             <SavedBuildsProvider>
             <OwnedVehiclesProvider>
             <AIMechanicProvider>
-              {/* Scroll to top on route change */}
+              {/* Scroll to top on route change + Analytics tracking */}
               <Suspense fallback={null}>
                 <ScrollToTop />
+                <PageViewTracker />
               </Suspense>
               <Header />
               

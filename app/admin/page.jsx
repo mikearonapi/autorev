@@ -50,6 +50,7 @@ import { WebVitalsPanel } from './components/WebVitalsPanel';
 import EmailDashboard from './components/EmailDashboard';
 import { StripeDashboard } from './components/StripeDashboard';
 import { CostIntegrations } from './components/CostIntegrations';
+import { SiteAnalytics } from './components/SiteAnalytics';
 
 // Icons
 import {
@@ -492,6 +493,27 @@ export default function AdminDashboardPage() {
               </div>
             </section>
           </>
+        )}
+        
+        {/* SITE ANALYTICS TAB */}
+        {activeTab === 'analytics' && (
+          <section className={styles.section}>
+            <div className={styles.tabHeader}>
+              <h2 className={styles.sectionTitle}>
+                <BarChartIcon size={18} className={styles.sectionIcon} />
+                Site Analytics
+              </h2>
+              <p className={styles.tabDescription}>
+                Real-time visitor analytics powered by your own data. Tracks page views, visitors, 
+                geography, devices, and referrers.
+              </p>
+            </div>
+            <SiteAnalytics 
+              token={session?.access_token}
+              range={timeRange}
+              loading={loading}
+            />
+          </section>
         )}
         
         {/* REVENUE TAB - Stripe Dashboard */}

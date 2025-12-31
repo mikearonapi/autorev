@@ -1,0 +1,439 @@
+/**
+ * Site Analytics Dashboard Styles
+ * Matches Vercel Web Analytics aesthetic
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Loading & Error States */
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-muted, #888);
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-subtle, #333);
+  border-top-color: var(--accent-blue, #3b82f6);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: var(--accent-blue, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.retryButton:hover {
+  background: var(--accent-blue-hover, #2563eb);
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.statIcon {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  line-height: 1;
+}
+
+.statSubtext {
+  font-size: 0.75rem;
+  color: var(--text-muted, #666);
+}
+
+/* Stat card color accents */
+.statblue { border-left: 3px solid #3b82f6; }
+.statpurple { border-left: 3px solid #8b5cf6; }
+.statamber { border-left: 3px solid #f59e0b; }
+.statgreen { border-left: 3px solid #22c55e; }
+
+/* Chart Section */
+.chartSection {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin-bottom: 1rem;
+}
+
+.chart {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chartBars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding-right: 2.5rem;
+}
+
+.chartBarWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.chartBar {
+  width: 100%;
+  max-width: 40px;
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+.chartBar:hover {
+  background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.chartLabel {
+  font-size: 0.625rem;
+  color: var(--text-muted, #666);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.chartYAxis {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.625rem;
+  color: var(--text-muted, #666);
+  text-align: right;
+  width: 2rem;
+}
+
+.chartEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  color: var(--text-muted, #666);
+  font-size: 0.875rem;
+}
+
+/* Tab Navigation */
+.tabNav {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted, #888);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--text-primary, #fff);
+  background: var(--hover-bg, rgba(255,255,255,0.05));
+}
+
+.tabActive {
+  background: var(--accent-blue, #3b82f6) !important;
+  color: white !important;
+}
+
+/* Tab Content */
+.tabContent {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 12px;
+  padding: 1.25rem;
+  min-height: 300px;
+}
+
+/* Table Card */
+.tableCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tableTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin: 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid var(--border-subtle, #2a2a4a);
+}
+
+.table td {
+  padding: 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+  border-bottom: 1px solid var(--border-subtle, #1a1a3a);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: var(--hover-bg, rgba(255,255,255,0.02));
+}
+
+.alignRight {
+  text-align: right !important;
+}
+
+.tableEmpty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted, #666);
+  font-size: 0.875rem;
+}
+
+.pathCell {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8125rem;
+}
+
+.sourceCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Geography Section */
+.geoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.progressList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.countryRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.countryFlag {
+  font-size: 1.25rem;
+  width: 2rem;
+  text-align: center;
+}
+
+.countryName {
+  flex: 0 0 150px;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+}
+
+.countryBar {
+  flex: 1;
+  height: 8px;
+  background: var(--border-subtle, #2a2a4a);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.countryBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.countryPercent {
+  flex: 0 0 3rem;
+  text-align: right;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #888);
+  font-weight: 500;
+}
+
+/* Technology Grid */
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 800px) {
+  .techGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.techSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.techRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+}
+
+.techIcon {
+  font-size: 1rem;
+  width: 1.5rem;
+  text-align: center;
+}
+
+.techName {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+}
+
+.techBar {
+  flex: 0 0 60px;
+  height: 6px;
+  background: var(--border-subtle, #2a2a4a);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.techBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  border-radius: 3px;
+}
+
+.techPercent {
+  flex: 0 0 2.5rem;
+  text-align: right;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #888);
+}
+
+.techValue {
+  flex: 0 0 2.5rem;
+  text-align: right;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #888);
+  font-weight: 500;
+}
+
