@@ -7,9 +7,12 @@
  * @route GET /api/cron/daily-metrics
  */
 
-import { createClient } from '@/lib/supabase-server';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { notifyBetaMetrics } from '@/lib/discord';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -36,7 +39,11 @@ export async function GET(request) {
   const startTime = Date.now();
   
   try {
-    const supabase = createClient();
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Generate daily metrics snapshot
     const { data, error } = await supabase.rpc('generate_daily_metrics_snapshot');
