@@ -132,12 +132,42 @@ export async function GET(request) {
     // Get AL credits data
     const { data: alCredits } = await supabase
       .from('al_user_credits')
-      .select('user_id, current_credits, total_credits_used, conversation_count, last_used_at')
+      .select('user_id, current_credits, credits_used_this_month, is_unlimited')
       .in('user_id', userIds);
 
     const alCreditsMap = {};
     alCredits?.forEach(c => {
       alCreditsMap[c.user_id] = c;
+    });
+
+    // Get REAL AL conversation counts from al_conversations table
+    const { data: alConversations } = await supabase
+      .from('al_conversations')
+      .select('user_id, id, last_message_at')
+      .in('user_id', userIds);
+
+    const alConversationsMap = {};
+    alConversations?.forEach(c => {
+      if (!alConversationsMap[c.user_id]) {
+        alConversationsMap[c.user_id] = { count: 0, lastUsed: null };
+      }
+      alConversationsMap[c.user_id].count++;
+      // Track most recent conversation
+      if (!alConversationsMap[c.user_id].lastUsed || 
+          new Date(c.last_message_at) > new Date(alConversationsMap[c.user_id].lastUsed)) {
+        alConversationsMap[c.user_id].lastUsed = c.last_message_at;
+      }
+    });
+
+    // Get saved builds count from user_projects
+    const { data: projectsData } = await supabase
+      .from('user_projects')
+      .select('user_id')
+      .in('user_id', userIds);
+
+    const projectsMap = {};
+    projectsData?.forEach(p => {
+      projectsMap[p.user_id] = (projectsMap[p.user_id] || 0) + 1;
     });
 
     // Get recent activity counts (last 30 days)
@@ -186,6 +216,7 @@ export async function GET(request) {
       const authUser = usersMap[profile.id] || {};
       const attribution = attributionMap[profile.id] || {};
       const credits = alCreditsMap[profile.id] || {};
+      const alConvoData = alConversationsMap[profile.id] || { count: 0, lastUsed: null };
       const activity = activityMap[profile.id] || { total: 0, types: {} };
       
       // Determine effective tier
@@ -210,6 +241,7 @@ export async function GET(request) {
         subscriptionTier: profile.subscription_tier || 'free',
         referralTier: profile.referral_tier_granted,
         referralExpires: profile.referral_tier_expires_at,
+        isUnlimited: credits.is_unlimited || false,
         
         // Dates
         createdAt: profile.created_at,
@@ -222,18 +254,20 @@ export async function GET(request) {
         signupDevice: attribution.signup_device || null,
         signupCountry: attribution.signup_country || null,
         
-        // Engagement stats
-        carsViewed: profile.cars_viewed_count || 0,
-        comparisons: profile.comparisons_made_count || 0,
-        savedBuilds: profile.projects_saved_count || 0,
-        favorites: favoritesMap[profile.id] || 0,
-        garageVehicles: garageMap[profile.id] || 0,
+        // Engagement stats (REAL counts from actual tables)
+        garageVehicles: garageMap[profile.id] || 0,       // user_vehicles
+        favorites: favoritesMap[profile.id] || 0,         // user_favorites
+        savedBuilds: projectsMap[profile.id] || 0,        // user_projects
+        comparisons: profile.comparisons_made_count || 0, // user_profiles
         
-        // AL usage
+        // Legacy stat (not actively tracked - kept for reference)
+        carsViewed: profile.cars_viewed_count || 0,
+        
+        // AL usage (REAL conversation count from al_conversations)
         alCredits: credits.current_credits || 0,
-        alCreditsUsed: credits.total_credits_used || 0,
-        alConversations: credits.conversation_count || 0,
-        alLastUsed: credits.last_used_at || null,
+        alCreditsUsed: credits.credits_used_this_month || 0,
+        alConversations: alConvoData.count,               // REAL count from al_conversations
+        alLastUsed: alConvoData.lastUsed,                 // from al_conversations.last_message_at
         
         // Recent activity
         recentActivityCount: activity.total,

@@ -310,10 +310,10 @@
   border-radius: 3px;
 }
 
-/* Engagement Cell - Now with clear labels */
+/* Engagement Cell - Now with 4 columns: Garage, Favorites, Builds, AL Chats */
 .engagementCell {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   font-size: 0.75rem;
 }
 
@@ -338,17 +338,17 @@
   letter-spacing: 0.03em;
 }
 
-/* Engagement Header - Column labels */
+/* Engagement Header - Column labels for 4 metrics */
 .engagementHeader {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .engagementHeaderItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 40px;
+  min-width: 36px;
   text-align: center;
 }
 
@@ -532,10 +532,10 @@
   }
   
   .engagementCell {
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
   
   .engagementItem {
-    min-width: 28px;
+    min-width: 24px;
   }
 }

@@ -321,17 +321,21 @@ export function UsersDashboard({ token, range = '7d' }) {
               <th>Activity</th>
               <th>
                 <div className={styles.engagementHeader}>
-                  <div className={styles.engagementHeaderItem}>
+                  <div className={styles.engagementHeaderItem} title="Cars in user's garage (user_vehicles)">
                     <span className={styles.engagementHeaderIcon}>🚗</span>
-                    <span className={styles.engagementHeaderLabel}>Cars<br/>Viewed</span>
+                    <span className={styles.engagementHeaderLabel}>Garage</span>
                   </div>
-                  <div className={styles.engagementHeaderItem}>
+                  <div className={styles.engagementHeaderItem} title="Favorited cars (user_favorites)">
                     <span className={styles.engagementHeaderIcon}>❤️</span>
                     <span className={styles.engagementHeaderLabel}>Favorites</span>
                   </div>
-                  <div className={styles.engagementHeaderItem}>
+                  <div className={styles.engagementHeaderItem} title="Saved tuning builds (user_projects)">
+                    <span className={styles.engagementHeaderIcon}>🔧</span>
+                    <span className={styles.engagementHeaderLabel}>Builds</span>
+                  </div>
+                  <div className={styles.engagementHeaderItem} title="AL conversations started (al_conversations)">
                     <span className={styles.engagementHeaderIcon}>💬</span>
-                    <span className={styles.engagementHeaderLabel}>AL<br/>Chats</span>
+                    <span className={styles.engagementHeaderLabel}>AL Chats</span>
                   </div>
                 </div>
               </th>
@@ -367,8 +371,9 @@ export function UsersDashboard({ token, range = '7d' }) {
                   <td><ActivityIndicator level={getActivityLevel(user)} /></td>
                   <td>
                     <div className={styles.engagementCell}>
-                      <EngagementItem value={user.carsViewed} label="Cars" icon="🚗" />
+                      <EngagementItem value={user.garageVehicles} label="Garage" icon="🚗" />
                       <EngagementItem value={user.favorites} label="Favs" icon="❤️" />
+                      <EngagementItem value={user.savedBuilds} label="Builds" icon="🔧" />
                       <EngagementItem value={user.alConversations} label="Chats" icon="💬" />
                     </div>
                   </td>
@@ -394,11 +399,10 @@ export function UsersDashboard({ token, range = '7d' }) {
                         <div className={styles.expandedSection}>
                           <h4>Engagement</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>Cars Viewed:</span> {user.carsViewed}</div>
-                            <div><span>Comparisons:</span> {user.comparisons}</div>
-                            <div><span>Saved Builds:</span> {user.savedBuilds}</div>
-                            <div><span>Favorites:</span> {user.favorites}</div>
-                            <div><span>Garage:</span> {user.garageVehicles}</div>
+                            <div><span>🚗 Garage:</span> {user.garageVehicles} {user.garageVehicles === 1 ? 'vehicle' : 'vehicles'}</div>
+                            <div><span>❤️ Favorites:</span> {user.favorites} {user.favorites === 1 ? 'car' : 'cars'}</div>
+                            <div><span>🔧 Saved Builds:</span> {user.savedBuilds} {user.savedBuilds === 1 ? 'project' : 'projects'}</div>
+                            <div><span>📊 Comparisons:</span> {user.comparisons}</div>
                             <div><span>Recent Activity:</span> {user.recentActivityCount} actions (30d)</div>
                           </div>
                         </div>
