@@ -3,18 +3,20 @@
 /**
  * useAnalytics Hook
  * 
- * Provides easy event tracking throughout the app.
- * Automatically includes session context, user info, and UTM params.
+ * Comprehensive analytics tracking for:
+ * - Custom events with automatic context
+ * - User signup & attribution
+ * - Feature adoption tracking
+ * - Search analytics
+ * - Conversion/goal completion
+ * - Session and visitor identification
  * 
  * Usage:
- *   const { trackEvent } = useAnalytics();
+ *   const { trackEvent, trackFeatureUsage, trackSearch, trackGoal } = useAnalytics();
  *   trackEvent('button_clicked', { buttonId: 'signup-cta' });
- * 
- * Standard Events:
- *   - Onboarding: signup_started, signup_completed, onboarding_step_N, onboarding_completed
- *   - Features: car_selected, car_favorited, garage_added, al_conversation_started
- *   - Conversion: pricing_viewed, checkout_started, subscription_created
- *   - Navigation: cta_clicked, search_performed
+ *   trackFeatureUsage('al_chat');
+ *   trackSearch('nissan gtr', 'car_search', 15);
+ *   trackGoal('signup_completed');
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -194,11 +196,113 @@ export function useAnalytics() {
   }, [trackEvent]);
   
   /**
-   * Track feature usage
+   * Track feature usage (stored separately for adoption analysis)
    */
   const trackFeature = useCallback((featureName, data = {}) => {
     trackEvent(`feature_${featureName}`, data, { category: 'feature' });
   }, [trackEvent]);
+  
+  /**
+   * Track detailed feature usage (for feature adoption dashboard)
+   */
+  const trackFeatureUsage = useCallback(async (featureKey, carContext = null, timeSpentSeconds = null) => {
+    try {
+      const sessionId = getSessionId();
+      if (!sessionId) return;
+      
+      const payload = {
+        sessionId,
+        userId: user?.id || null,
+        featureKey,
+        entryPath: pathname,
+        carContext,
+        timeSpentSeconds
+      };
+      
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/analytics/feature', JSON.stringify(payload));
+      } else {
+        fetch('/api/analytics/feature', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(() => {});
+      }
+      
+      // Also track as regular event
+      trackEvent(`feature_used`, { featureKey, carContext }, { category: 'feature' });
+    } catch {
+      // Silently fail
+    }
+  }, [user?.id, pathname, trackEvent]);
+  
+  /**
+   * Track search queries and results
+   */
+  const trackSearch = useCallback(async (query, searchType = 'global', resultsCount = null, filters = {}) => {
+    try {
+      const sessionId = getSessionId();
+      if (!sessionId || !query) return;
+      
+      const payload = {
+        sessionId,
+        userId: user?.id || null,
+        searchQuery: query,
+        searchType,
+        resultsCount,
+        pageContext: pathname,
+        filtersApplied: filters
+      };
+      
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/analytics/search', JSON.stringify(payload));
+      } else {
+        fetch('/api/analytics/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch {
+      // Silently fail
+    }
+  }, [user?.id, pathname]);
+  
+  /**
+   * Track search result click
+   */
+  const trackSearchClick = useCallback(async (query, searchType, position, resultId, resultType) => {
+    try {
+      const sessionId = getSessionId();
+      if (!sessionId) return;
+      
+      const payload = {
+        sessionId,
+        userId: user?.id || null,
+        searchQuery: query,
+        searchType,
+        clickedResultPosition: position,
+        clickedResultId: resultId,
+        clickedResultType: resultType,
+        pageContext: pathname
+      };
+      
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/analytics/search', JSON.stringify(payload));
+      } else {
+        fetch('/api/analytics/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch {
+      // Silently fail
+    }
+  }, [user?.id, pathname]);
   
   /**
    * Track conversion events
@@ -207,12 +311,80 @@ export function useAnalytics() {
     trackEvent(conversionType, data, { category: 'conversion' });
   }, [trackEvent]);
   
+  /**
+   * Track goal completion (for goal tracking dashboard)
+   */
+  const trackGoal = useCallback(async (goalKey, valueCents = null) => {
+    try {
+      const sessionId = getSessionId();
+      if (!sessionId || !goalKey) return;
+      
+      const utmParams = getStoredUtmParams();
+      const firstTouch = getFirstTouch();
+      
+      const payload = {
+        goalKey,
+        sessionId,
+        userId: user?.id || null,
+        pagePath: pathname,
+        referrer: document.referrer || null,
+        utmSource: utmParams.utm_source,
+        utmMedium: utmParams.utm_medium,
+        utmCampaign: utmParams.utm_campaign,
+        valueCents,
+        attributionSource: firstTouch?.utm_source || utmParams.utm_source,
+        attributionMedium: firstTouch?.utm_medium || utmParams.utm_medium
+      };
+      
+      // Use fetch for reliability (goals are important)
+      fetch('/api/analytics/goal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+      
+      // Also track as event
+      trackEvent(goalKey, { valueCents }, { category: 'conversion' });
+    } catch {
+      // Silently fail
+    }
+  }, [user?.id, pathname, trackEvent]);
+  
+  /**
+   * Track CTA click with context
+   */
+  const trackCTA = useCallback((ctaId, ctaText, destination = null) => {
+    trackEvent(ANALYTICS_EVENTS.CTA_CLICKED, {
+      ctaId,
+      ctaText,
+      destination,
+      position: pathname
+    }, { category: 'navigation' });
+  }, [trackEvent, pathname]);
+  
+  /**
+   * Track error for monitoring
+   */
+  const trackError = useCallback((errorType, errorMessage, context = {}) => {
+    trackEvent('error_occurred', {
+      errorType,
+      errorMessage: errorMessage?.substring(0, 500),
+      ...context
+    }, { category: 'error' });
+  }, [trackEvent]);
+  
   return {
     trackEvent,
     trackSignup,
     trackOnboardingStep,
     trackFeature,
+    trackFeatureUsage,
+    trackSearch,
+    trackSearchClick,
     trackConversion,
+    trackGoal,
+    trackCTA,
+    trackError,
     getSessionId,
     getFirstTouch
   };
@@ -242,29 +414,108 @@ export const ANALYTICS_EVENTS = {
   
   // Feature adoption
   CAR_SELECTED: 'car_selected',
+  CAR_VIEWED: 'car_viewed',
   CAR_FAVORITED: 'car_favorited',
+  CAR_UNFAVORITED: 'car_unfavorited',
   CAR_COMPARED: 'car_compared',
+  CAR_SHARED: 'car_shared',
   GARAGE_ADDED: 'garage_added',
+  GARAGE_REMOVED: 'garage_removed',
   AL_CONVERSATION_STARTED: 'al_conversation_started',
   AL_QUESTION_ASKED: 'al_question_asked',
+  AL_RESPONSE_RATED: 'al_response_rated',
   BUILD_CREATED: 'build_created',
   BUILD_SAVED: 'build_saved',
+  BUILD_SHARED: 'build_shared',
   
   // Conversion
   PRICING_VIEWED: 'pricing_viewed',
   CHECKOUT_STARTED: 'checkout_started',
+  CHECKOUT_COMPLETED: 'checkout_completed',
   SUBSCRIPTION_CREATED: 'subscription_created',
   UPGRADE_COMPLETED: 'upgrade_completed',
+  TRIAL_STARTED: 'trial_started',
   
   // Navigation
   CTA_CLICKED: 'cta_clicked',
   SEARCH_PERFORMED: 'search_performed',
+  SEARCH_RESULT_CLICKED: 'search_result_clicked',
   FILTER_APPLIED: 'filter_applied',
+  NAVIGATION_CLICKED: 'navigation_clicked',
   
   // Engagement
   PAGE_SCROLLED: 'page_scrolled',
   VIDEO_PLAYED: 'video_played',
-  SHARE_CLICKED: 'share_clicked'
+  VIDEO_COMPLETED: 'video_completed',
+  SHARE_CLICKED: 'share_clicked',
+  COPY_PERFORMED: 'copy_performed',
+  LINK_CLICKED: 'link_clicked',
+  
+  // User actions
+  PROFILE_UPDATED: 'profile_updated',
+  SETTINGS_CHANGED: 'settings_changed',
+  NOTIFICATION_CLICKED: 'notification_clicked',
+  
+  // Errors
+  ERROR_OCCURRED: 'error_occurred',
+  PAGE_NOT_FOUND: 'page_not_found'
+};
+
+/**
+ * Feature keys for adoption tracking
+ */
+export const FEATURE_KEYS = {
+  // Core
+  CAR_BROWSE: 'car_browse',
+  CAR_VIEW: 'car_view',
+  CAR_SEARCH: 'car_search',
+  CAR_FILTER: 'car_filter',
+  
+  // Engagement
+  CAR_FAVORITE: 'car_favorite',
+  CAR_COMPARE: 'car_compare',
+  CAR_SHARE: 'car_share',
+  
+  // Account
+  GARAGE: 'garage',
+  PROFILE: 'profile',
+  SETTINGS: 'settings',
+  
+  // Premium
+  AL_CHAT: 'al_chat',
+  TUNING_SHOP: 'tuning_shop',
+  MOD_PLANNER: 'mod_planner',
+  VEHICLE_HEALTH: 'vehicle_health',
+  
+  // Community
+  EVENTS: 'events',
+  COMMUNITY: 'community',
+  
+  // Discovery
+  ENCYCLOPEDIA: 'encyclopedia',
+  DAILY_DOSE: 'daily_dose'
+};
+
+/**
+ * Goal keys for conversion tracking
+ */
+export const GOAL_KEYS = {
+  // Acquisition
+  SIGNUP: 'signup_completed',
+  ONBOARDING: 'onboarding_completed',
+  
+  // Activation
+  FIRST_CAR_VIEW: 'first_car_view',
+  FIRST_FAVORITE: 'first_favorite',
+  FIRST_AL_CHAT: 'first_al_chat',
+  
+  // Revenue
+  SUBSCRIPTION: 'subscription_created',
+  UPGRADE: 'upgrade_completed',
+  
+  // Engagement
+  DEEP_ENGAGEMENT: 'deep_engagement',
+  RETURN_VISIT: 'return_visit'
 };
 
 export default useAnalytics;

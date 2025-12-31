@@ -52,6 +52,7 @@ import { StripeDashboard } from './components/StripeDashboard';
 import { CostIntegrations } from './components/CostIntegrations';
 import { SiteAnalytics } from './components/SiteAnalytics';
 import { MarketingAnalytics } from './components/MarketingAnalytics';
+import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
 
 // Icons
 import {
@@ -499,15 +500,32 @@ export default function AdminDashboardPage() {
         {/* SITE ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <>
-            {/* Traffic Analytics */}
+            {/* Unified Analytics Dashboard */}
             <section className={styles.section}>
               <div className={styles.tabHeader}>
                 <h2 className={styles.sectionTitle}>
                   <BarChartIcon size={18} className={styles.sectionIcon} />
-                  Traffic Analytics
+                  Unified Analytics Dashboard
                 </h2>
                 <p className={styles.tabDescription}>
-                  Real-time visitor analytics. Tracks page views, visitors, geography, devices, and referrers.
+                  Complete analytics hub: traffic, engagement, funnels, feature adoption, user lifecycle, and goals.
+                </p>
+              </div>
+              <UnifiedAnalyticsDashboard 
+                token={session?.access_token}
+                range={timeRange}
+              />
+            </section>
+            
+            {/* Traffic Analytics (Detailed) */}
+            <section className={styles.section}>
+              <div className={styles.tabHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <BarChartIcon size={18} className={styles.sectionIcon} />
+                  Traffic Details
+                </h2>
+                <p className={styles.tabDescription}>
+                  Detailed breakdown of page views, visitors, geography, devices, and referrers.
                 </p>
               </div>
               <SiteAnalytics 

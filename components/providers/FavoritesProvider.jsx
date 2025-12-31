@@ -28,6 +28,7 @@ import {
 import { getPrefetchedData } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
+import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 
 /**
  * @typedef {Object} FavoriteCar
@@ -105,6 +106,7 @@ function favoritesReducer(state, action) {
 export function FavoritesProvider({ children }) {
   const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, refreshSession } = useAuth();
   const { markComplete, markStarted, markFailed } = useLoadingProgress();
+  const { trackEvent } = useAnalytics();
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -344,6 +346,15 @@ export function FavoritesProvider({ children }) {
 
     // Track activity (fire-and-forget)
     trackFavorite(car.slug, car.name, user?.id);
+    
+    // Track analytics event
+    trackEvent(ANALYTICS_EVENTS.CAR_FAVORITED, {
+      carSlug: car.slug,
+      carName: car.name,
+      carTier: car.tier,
+      carCategory: car.category,
+      isAuthenticated
+    });
 
     // If authenticated, save to Supabase
     if (isAuthenticated && user?.id) {
@@ -353,7 +364,7 @@ export function FavoritesProvider({ children }) {
         // Could revert optimistic update here if needed
       }
     }
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, trackEvent]);
 
   /**
    * Remove a car from favorites

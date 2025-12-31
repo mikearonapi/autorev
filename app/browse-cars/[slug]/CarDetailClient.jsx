@@ -27,6 +27,7 @@ import { FuelEconomySection, SafetyRatingsSection, PriceByYearSection } from '@/
 import { useAuth } from '@/components/providers/AuthProvider';
 import { trackCarView } from '@/lib/activityTracker';
 import { useCarPopularParts } from '@/hooks/useCarData';
+import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -334,15 +335,27 @@ export default function CarDetailClient({ car: rawCar }) {
 
   // Auth for activity tracking
   const { user } = useAuth();
+  const { trackEvent } = useAnalytics();
   const hasTrackedView = useRef(false);
 
   // Track page view once car is loaded
   useEffect(() => {
     if (car && !hasTrackedView.current) {
       trackCarView(car.slug, car.name, 'direct', user?.id);
+      
+      // Track analytics event
+      trackEvent(ANALYTICS_EVENTS.CAR_SELECTED, {
+        carSlug: car.slug,
+        carName: car.name,
+        carTier: car.tier,
+        carCategory: car.category,
+        carYears: car.years,
+        carHp: car.hp
+      });
+      
       hasTrackedView.current = true;
     }
-  }, [car, user?.id]);
+  }, [car, user?.id, trackEvent]);
 
   // Preload hero image
   useEffect(() => {
