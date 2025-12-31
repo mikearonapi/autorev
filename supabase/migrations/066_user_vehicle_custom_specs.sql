@@ -180,3 +180,4 @@ COMMENT ON FUNCTION get_vehicle_merged_specs(UUID) IS
 
 
 
+

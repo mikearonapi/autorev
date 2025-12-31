@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import { fontVariables } from '@/lib/fonts';
 import Header from '@/components/Header';
@@ -315,6 +316,7 @@ export default function RootLayout({ children }) {
             </ConsoleErrorInterceptor>
           </FetchInterceptor>
         </GlobalErrorHandler>
+        <Analytics />
       </body>
     </html>
   );

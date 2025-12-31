@@ -246,3 +246,4 @@ Update this document when adding new jobs!
 
 *See also: [DATABASE.md](./DATABASE.md) for table schemas, [AL.md](./AL.md) for AI assistant details*
 
+

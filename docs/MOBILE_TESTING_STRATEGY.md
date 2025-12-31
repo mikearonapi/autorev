@@ -179,3 +179,4 @@ Add Playwright visual regression tests to PR checks:
 4. **Allow text to wrap** - Never assume single-line headlines fit
 5. **Run visual tests** - Catch regressions before users do
 
+

@@ -107,3 +107,4 @@ CREATE TRIGGER trigger_update_location_timestamp
 
 
 
+
