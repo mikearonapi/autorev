@@ -17,11 +17,14 @@
  *   trackFeatureUsage('al_chat');
  *   trackSearch('nissan gtr', 'car_search', 15);
  *   trackGoal('signup_completed');
+ * 
+ * Note: This hook safely handles useSearchParams by catching any errors during
+ * SSR/prerendering. UTM params will be captured on client-side hydration.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 // Get or create session ID
 function getSessionId() {
@@ -88,18 +91,39 @@ function getFirstTouch() {
 }
 
 /**
+ * Get current URL search params safely (client-side only)
+ */
+function getSearchParams() {
+  if (typeof window === 'undefined') return null;
+  try {
+    return new URLSearchParams(window.location.search);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Analytics hook for event tracking
  */
 export function useAnalytics() {
   const { user } = useAuth();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const lastEventRef = useRef({});
+  const [isClient, setIsClient] = useState(false);
   
-  // Store UTM params on mount and URL changes
+  // Mark as client-side after mount
   useEffect(() => {
-    storeUtmParams(searchParams);
-  }, [searchParams]);
+    setIsClient(true);
+  }, []);
+  
+  // Store UTM params on mount (client-side only)
+  useEffect(() => {
+    if (!isClient) return;
+    const searchParams = getSearchParams();
+    if (searchParams) {
+      storeUtmParams(searchParams);
+    }
+  }, [isClient, pathname]); // Re-check when pathname changes
   
   /**
    * Track a custom event

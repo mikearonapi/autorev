@@ -14,6 +14,9 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+
+// Force dynamic rendering - this route uses request.headers and request.url
+export const dynamic = 'force-dynamic';
 import { isAdminEmail } from '@/lib/adminAccess';
 
 const supabaseAdmin = createClient(

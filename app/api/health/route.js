@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
+// Force dynamic rendering - this route uses request.url
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/health
  * 

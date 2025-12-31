@@ -8,6 +8,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
+// Force dynamic rendering - this route uses request.headers and request.url
+export const dynamic = 'force-dynamic';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/email';

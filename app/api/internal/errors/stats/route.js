@@ -6,6 +6,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
+// Force dynamic rendering - this route uses request.url
+export const dynamic = 'force-dynamic';
 import { getServiceClient } from '@/lib/supabaseServer';
 
 export async function GET(request) {
