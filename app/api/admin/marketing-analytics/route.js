@@ -11,12 +11,15 @@ import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { isAdminEmail, getAdminUserIdsCached } from '@/lib/adminAccess';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+// Paths to exclude from analytics
+const EXCLUDED_PATHS = ['/admin', '/internal'];
 
 function getDateRange(range) {
   const now = new Date();
@@ -68,35 +71,114 @@ export async function GET(request) {
     const range = searchParams.get('range') || '30d';
     const { startDate, endDate } = getDateRange(range);
     
-    // Fetch all data in parallel
-    const [funnelData, attributionData, cohortData, eventCounts, eventTrends] = await Promise.all([
-      supabaseAdmin.rpc('get_funnel_metrics', { p_start_date: startDate, p_end_date: endDate }),
+    // Get admin user IDs to exclude from analytics
+    const adminUserIds = await getAdminUserIdsCached(supabaseAdmin);
+    
+    // Calculate funnel metrics manually, excluding admin users
+    const [
+      pageViewsResult,
+      usersResult,
+      analyticsEventsResult,
+      attributionData,
+      cohortData
+    ] = await Promise.all([
+      // Get page views for visitor count (excluding admin paths and users)
+      supabaseAdmin
+        .from('page_views')
+        .select('session_id, user_id, path')
+        .gte('created_at', startDate)
+        .lte('created_at', endDate),
+      
+      // Get users (excluding admins) with their profiles
+      supabaseAdmin
+        .from('user_profiles')
+        .select('id, created_at, onboarding_completed_at, subscription_tier'),
+      
+      // Get analytics events for funnel stages
+      supabaseAdmin
+        .from('analytics_events')
+        .select('event_name, user_id, created_at')
+        .in('event_name', ['signup_completed', 'onboarding_completed', 'car_selected', 'first_al_conversation', 'subscription_started'])
+        .gte('created_at', startDate)
+        .lte('created_at', endDate),
+      
+      // Attribution (using RPC for now, will need migration to filter properly)
       supabaseAdmin.rpc('get_attribution_breakdown', { p_start_date: startDate, p_end_date: endDate }),
-      supabaseAdmin.rpc('get_cohort_retention', { p_weeks: 8 }),
-      supabaseAdmin.rpc('get_event_counts', { p_start_date: startDate, p_end_date: endDate }),
-      supabaseAdmin.rpc('get_event_trends', { 
-        p_event_names: ['signup_completed', 'onboarding_completed', 'car_selected', 'al_conversation_started'],
-        p_start_date: startDate, 
-        p_end_date: endDate 
-      })
+      
+      // Cohorts (using RPC for now)
+      supabaseAdmin.rpc('get_cohort_retention', { p_weeks: 8 })
     ]);
     
+    // Filter page views to exclude admin users and internal paths
+    const filteredViews = (pageViewsResult.data || []).filter(pv => {
+      if (pv.user_id && adminUserIds.includes(pv.user_id)) return false;
+      if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return false;
+      return true;
+    });
+    
+    // Calculate unique visitors
+    const uniqueSessions = new Set(filteredViews.map(pv => pv.session_id));
+    const visitors = uniqueSessions.size;
+    
+    // Filter users to exclude admins
+    const nonAdminUsers = (usersResult.data || []).filter(u => !adminUserIds.includes(u.id));
+    
+    // Filter events to exclude admins
+    const nonAdminEvents = (analyticsEventsResult.data || []).filter(e => !adminUserIds.includes(e.user_id));
+    
+    // Calculate funnel stages
+    const signupsInPeriod = nonAdminUsers.filter(u => 
+      u.created_at >= startDate && u.created_at <= endDate
+    ).length;
+    
+    const onboardedCount = nonAdminEvents.filter(e => e.event_name === 'onboarding_completed').length ||
+      nonAdminUsers.filter(u => 
+        u.onboarding_completed_at && 
+        u.onboarding_completed_at >= startDate && 
+        u.onboarding_completed_at <= endDate
+      ).length;
+    
+    const activatedCount = nonAdminEvents.filter(e => 
+      e.event_name === 'car_selected' || e.event_name === 'first_al_conversation'
+    ).length;
+    
+    const convertedCount = nonAdminEvents.filter(e => e.event_name === 'subscription_started').length ||
+      nonAdminUsers.filter(u => 
+        u.subscription_tier && 
+        u.subscription_tier !== 'free'
+      ).length;
+    
+    // Build funnel object
+    const funnel = {
+      visitors,
+      signups: signupsInPeriod,
+      onboarded: onboardedCount,
+      activated: activatedCount,
+      converted: convertedCount
+    };
+    
     // Calculate conversion rates
-    const funnel = funnelData.data || {};
     const conversionRates = {
       visitorToSignup: funnel.visitors > 0 
-        ? ((funnel.signupCompleted / funnel.visitors) * 100).toFixed(1) 
+        ? ((funnel.signups / funnel.visitors) * 100).toFixed(1) 
         : 0,
-      signupToOnboarding: funnel.signupCompleted > 0 
-        ? ((funnel.onboardingCompleted / funnel.signupCompleted) * 100).toFixed(1) 
+      signupToOnboarding: funnel.signups > 0 
+        ? ((funnel.onboarded / funnel.signups) * 100).toFixed(1) 
         : 0,
-      onboardingToActivation: funnel.onboardingCompleted > 0 
-        ? ((funnel.activated / funnel.onboardingCompleted) * 100).toFixed(1) 
+      onboardingToActivation: funnel.onboarded > 0 
+        ? ((funnel.activated / funnel.onboarded) * 100).toFixed(1) 
         : 0,
       activationToConversion: funnel.activated > 0 
         ? ((funnel.converted / funnel.activated) * 100).toFixed(1) 
         : 0
     };
+    
+    // Get event counts (excluding admin users)
+    const eventCounts = {};
+    nonAdminEvents.forEach(e => {
+      eventCounts[e.event_name] = (eventCounts[e.event_name] || 0) + 1;
+    });
+    const events = Object.entries(eventCounts).map(([name, count]) => ({ event_name: name, count }));
     
     return Response.json({
       range,
@@ -108,8 +190,8 @@ export async function GET(request) {
       },
       attribution: attributionData.data || {},
       cohorts: cohortData.data || [],
-      events: eventCounts.data || [],
-      eventTrends: eventTrends.data || []
+      events,
+      eventTrends: []
     });
     
   } catch (error) {

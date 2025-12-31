@@ -13,7 +13,7 @@ import { createClient } from '@supabase/supabase-js';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { isAdminEmail, getAdminUserIdsCached, getAdminEmails } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -178,6 +178,10 @@ async function handleGet(request) {
     
     const dateRange = getDateRange(range);
     
+    // Get admin user IDs and emails to exclude from analytics
+    const adminUserIds = await getAdminUserIdsCached(supabase);
+    const adminEmails = getAdminEmails();
+    
     // Fetch all data in parallel
     const [
       allUsersResult,
@@ -267,10 +271,10 @@ async function handleGet(request) {
         .gt('start_date', new Date().toISOString()),
     ]);
     
-    // Process user data
-    const allUsers = allUsersResult.data || [];
-    const periodUsers = periodUsersResult.data || [];
-    const previousPeriodUsers = previousPeriodUsersResult.data || [];
+    // Process user data (excluding admin users)
+    const allUsers = (allUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
+    const periodUsers = (periodUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
+    const previousPeriodUsers = (previousPeriodUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
     
     const usersByTier = allUsers.reduce((acc, u) => {
       const tier = u.subscription_tier || 'free';
@@ -291,10 +295,10 @@ async function handleGet(request) {
     // Generate cumulative growth data for chart
     const cumulativeGrowth = generateCumulativeData(allUsers, 'created_at');
     
-    // Process AL engagement data
-    const alConversations = alConversationsResult.data || [];
-    const previousAlConversations = previousAlConversationsResult.data || [];
-    const alBalances = alBalancesResult.data || [];
+    // Process AL engagement data (excluding admin users)
+    const alConversations = (alConversationsResult.data || []).filter(c => !adminUserIds.includes(c.user_id));
+    const previousAlConversations = (previousAlConversationsResult.data || []).filter(c => !adminUserIds.includes(c.user_id));
+    const alBalances = (alBalancesResult.data || []).filter(b => !adminUserIds.includes(b.user_id));
     
     // Unique users with AL conversations
     const alUserIds = new Set(alConversations.map(c => c.user_id));
