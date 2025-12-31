@@ -16,6 +16,115 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import styles from './UnifiedAnalyticsDashboard.module.css';
+import {
+  UsersIcon,
+  FileTextIcon,
+  UserIcon,
+  DollarSignIcon,
+  TrendingUpIcon,
+  TargetIcon,
+  BarChartIcon,
+  ActivityIcon,
+  GlobeIcon,
+  ClockIcon,
+  LayersIcon,
+  SearchIcon,
+  StarIcon,
+  AlertCircleIcon,
+  CheckCircleIcon,
+  ZapIcon,
+} from './Icons';
+
+// SVG Icons for the dashboard (ones not in Icons.jsx)
+function EyeIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function MousePointerIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+      <path d="M13 13l6 6" />
+    </svg>
+  );
+}
+
+function ScrollIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" />
+      <path d="M19 17V5a2 2 0 0 0-2-2H4" />
+    </svg>
+  );
+}
+
+function TrophyIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+    </svg>
+  );
+}
+
+function SearchQueryIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+
+function UserPlusIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="8.5" cy="7" r="4" />
+      <line x1="20" y1="8" x2="20" y2="14" />
+      <line x1="23" y1="11" x2="17" y2="11" />
+    </svg>
+  );
+}
+
+function UserCheckIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="8.5" cy="7" r="4" />
+      <polyline points="17 11 19 13 23 9" />
+    </svg>
+  );
+}
+
+function UserXIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="8.5" cy="7" r="4" />
+      <line x1="18" y1="8" x2="23" y2="13" />
+      <line x1="23" y1="8" x2="18" y2="13" />
+    </svg>
+  );
+}
+
+function LinkIcon({ size = 20, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
 
 // Real-time indicator
 function LiveIndicator({ count }) {
@@ -27,14 +136,16 @@ function LiveIndicator({ count }) {
   );
 }
 
-// Stat card with trend
-function MetricCard({ label, value, change, changeLabel, icon, color = 'blue' }) {
+// Stat card with icon
+function MetricCard({ label, value, change, changeLabel, icon: Icon, color = 'blue' }) {
   const isPositive = change > 0;
   const isNegative = change < 0;
   
   return (
     <div className={`${styles.metricCard} ${styles[`metric${color}`]}`}>
-      <div className={styles.metricIcon}>{icon}</div>
+      <div className={styles.metricIcon}>
+        <Icon size={24} />
+      </div>
       <div className={styles.metricContent}>
         <span className={styles.metricLabel}>{label}</span>
         <span className={styles.metricValue}>{value}</span>
@@ -53,11 +164,11 @@ function FunnelVisualization({ funnel }) {
   if (!funnel) return null;
   
   const stages = [
-    { key: 'visitors', label: 'Visitors', count: funnel.visitors || 0, color: '#3b82f6' },
-    { key: 'signups', label: 'Signups', count: funnel.signups || 0, color: '#8b5cf6' },
-    { key: 'onboarded', label: 'Onboarded', count: funnel.onboarded || 0, color: '#06b6d4' },
-    { key: 'activated', label: 'Activated', count: funnel.activated || 0, color: '#22c55e' },
-    { key: 'converted', label: 'Converted', count: funnel.converted || 0, color: '#f59e0b' }
+    { key: 'visitors', label: 'Visitors', count: funnel.visitors || 0, color: '#3b82f6', icon: UsersIcon },
+    { key: 'signups', label: 'Signups', count: funnel.signups || 0, color: '#8b5cf6', icon: UserPlusIcon },
+    { key: 'onboarded', label: 'Onboarded', count: funnel.onboarded || 0, color: '#06b6d4', icon: UserCheckIcon },
+    { key: 'activated', label: 'Activated', count: funnel.activated || 0, color: '#22c55e', icon: ZapIcon },
+    { key: 'converted', label: 'Converted', count: funnel.converted || 0, color: '#f59e0b', icon: DollarSignIcon }
   ];
   
   const maxCount = Math.max(...stages.map(s => s.count), 1);
@@ -69,6 +180,7 @@ function FunnelVisualization({ funnel }) {
         const conversionRate = i > 0 && stages[i-1].count > 0 
           ? ((stage.count / stages[i-1].count) * 100).toFixed(1)
           : null;
+        const Icon = stage.icon;
           
         return (
           <div key={stage.key} className={styles.funnelStage}>
@@ -76,7 +188,10 @@ function FunnelVisualization({ funnel }) {
               width: `${Math.max(widthPercent, 10)}%`,
               backgroundColor: stage.color 
             }}>
-              <span className={styles.funnelLabel}>{stage.label}</span>
+              <span className={styles.funnelLabel}>
+                <Icon size={14} className={styles.funnelIcon} />
+                {stage.label}
+              </span>
               <span className={styles.funnelCount}>{stage.count.toLocaleString()}</span>
             </div>
             {conversionRate && (
@@ -142,10 +257,11 @@ function FeatureAdoption({ features }) {
     <div className={styles.featureList}>
       {features.slice(0, 10).map((feature, i) => {
         const percent = ((feature.usage_count || 0) / maxUsage) * 100;
+        const Icon = getFeatureIcon(feature.feature_key);
         return (
           <div key={i} className={styles.featureRow}>
             <span className={styles.featureIcon}>
-              {getFeatureIcon(feature.feature_key)}
+              <Icon size={18} />
             </span>
             <span className={styles.featureName}>{formatFeatureName(feature.feature_key)}</span>
             <div className={styles.featureBar}>
@@ -167,26 +283,29 @@ function LifecycleDistribution({ lifecycle }) {
   if (!lifecycle) return null;
   
   const statuses = [
-    { key: 'new', label: 'New', color: '#3b82f6', icon: '🆕' },
-    { key: 'active', label: 'Active', color: '#22c55e', icon: '✅' },
-    { key: 'at_risk', label: 'At Risk', color: '#f59e0b', icon: '⚠️' },
-    { key: 'churned', label: 'Churned', color: '#ef4444', icon: '💤' }
+    { key: 'new', label: 'New', color: '#3b82f6', icon: UserPlusIcon },
+    { key: 'active', label: 'Active', color: '#22c55e', icon: UserCheckIcon },
+    { key: 'at_risk', label: 'At Risk', color: '#f59e0b', icon: AlertCircleIcon },
+    { key: 'churned', label: 'Churned', color: '#ef4444', icon: UserXIcon }
   ];
   
   const total = statuses.reduce((sum, s) => sum + (lifecycle[s.key] || 0), 0) || 1;
   
   return (
     <div className={styles.lifecycleGrid}>
-      {statuses.map(status => (
-        <div key={status.key} className={styles.lifecycleCard} style={{ borderLeftColor: status.color }}>
-          <div className={styles.lifecycleHeader}>
-            <span>{status.icon}</span>
-            <span>{status.label}</span>
+      {statuses.map(status => {
+        const Icon = status.icon;
+        return (
+          <div key={status.key} className={styles.lifecycleCard} style={{ borderLeftColor: status.color }}>
+            <div className={styles.lifecycleHeader}>
+              <Icon size={16} />
+              <span>{status.label}</span>
+            </div>
+            <div className={styles.lifecycleValue}>{(lifecycle[status.key] || 0).toLocaleString()}</div>
+            <div className={styles.lifecyclePercent}>{Math.round(((lifecycle[status.key] || 0) / total) * 100)}%</div>
           </div>
-          <div className={styles.lifecycleValue}>{(lifecycle[status.key] || 0).toLocaleString()}</div>
-          <div className={styles.lifecyclePercent}>{Math.round(((lifecycle[status.key] || 0) / total) * 100)}%</div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -281,29 +400,29 @@ function CohortHeatmap({ cohorts }) {
   );
 }
 
-// Helper functions
+// Helper functions - return icon components instead of emoji strings
 function getFeatureIcon(featureKey) {
-  const icons = {
-    car_browse: '🚗',
-    car_view: '👁️',
-    car_search: '🔍',
-    car_filter: '⚙️',
-    car_favorite: '❤️',
-    car_compare: '⚖️',
-    car_share: '📤',
-    garage: '🏠',
-    profile: '👤',
-    settings: '⚙️',
-    al_chat: '🤖',
-    tuning_shop: '🔧',
-    mod_planner: '📋',
-    vehicle_health: '🏥',
-    events: '📅',
-    community: '👥',
-    encyclopedia: '📚',
-    daily_dose: '📰'
+  const iconMap = {
+    car_browse: EyeIcon,
+    car_view: EyeIcon,
+    car_search: SearchQueryIcon,
+    car_filter: LayersIcon,
+    car_favorite: TrophyIcon,
+    car_compare: BarChartIcon,
+    car_share: LinkIcon,
+    garage: LayersIcon,
+    profile: UserIcon,
+    settings: LayersIcon,
+    al_chat: ZapIcon,
+    tuning_shop: ActivityIcon,
+    mod_planner: LayersIcon,
+    vehicle_health: CheckCircleIcon,
+    events: GlobeIcon,
+    community: UsersIcon,
+    encyclopedia: FileTextIcon,
+    daily_dose: FileTextIcon
   };
-  return icons[featureKey] || '📊';
+  return iconMap[featureKey] || BarChartIcon;
 }
 
 function formatFeatureName(featureKey) {
@@ -332,7 +451,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     
     try {
       // Fetch all analytics data in parallel
-      const [siteRes, marketingRes, advancedRes] = await Promise.all([
+      const [siteRes, marketingRes, advancedRes, dashboardRes] = await Promise.all([
         fetch(`/api/admin/site-analytics?range=${range}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
@@ -341,17 +460,23 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
         }),
         fetch(`/api/admin/advanced-analytics?range=${range}`, {
           headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => ({ ok: false })) // May not exist yet
+        }).catch(() => ({ ok: false })),
+        // Also fetch dashboard data to get accurate signup counts from user_profiles
+        fetch(`/api/admin/dashboard?range=${range}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(() => ({ ok: false }))
       ]);
       
       const site = siteRes.ok ? await siteRes.json() : null;
       const marketing = marketingRes.ok ? await marketingRes.json() : null;
       const advanced = advancedRes.ok ? await advancedRes.json() : null;
+      const dashboard = dashboardRes.ok ? await dashboardRes.json() : null;
       
       setData({
         site,
         marketing,
-        advanced
+        advanced,
+        dashboard
       });
     } catch (err) {
       console.error('[UnifiedAnalytics] Error:', err);
@@ -391,13 +516,19 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     );
   }
   
-  const { site, marketing, advanced } = data || {};
+  const { site, marketing, advanced, dashboard } = data || {};
+  
+  // Use actual signups from dashboard (user_profiles created in period)
+  const actualSignups = dashboard?.users?.newThisPeriod || 0;
   
   return (
     <div className={styles.container}>
       {/* Header with live indicator */}
       <div className={styles.header}>
-        <h2 className={styles.title}>📊 Analytics Dashboard</h2>
+        <div className={styles.headerLeft}>
+          <BarChartIcon size={24} className={styles.headerIcon} />
+          <h2 className={styles.title}>Analytics Dashboard</h2>
+        </div>
         <LiveIndicator count={site?.summary?.online || 0} />
       </div>
       
@@ -407,28 +538,28 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           label="Visitors" 
           value={(site?.summary?.visitors || 0).toLocaleString()} 
           change={site?.summary?.visitorsChange}
-          icon="👥"
+          icon={UsersIcon}
           color="blue"
         />
         <MetricCard 
           label="Page Views" 
           value={(site?.summary?.pageViews || 0).toLocaleString()}
           change={site?.summary?.pageViewsChange}
-          icon="📄"
+          icon={FileTextIcon}
           color="purple"
         />
         <MetricCard 
           label="Signups" 
-          value={(marketing?.funnel?.signups || 0).toLocaleString()}
-          change={marketing?.funnel?.signupsChange}
-          icon="✍️"
+          value={actualSignups.toLocaleString()}
+          change={dashboard?.users?.growthPercent}
+          icon={UserPlusIcon}
           color="green"
         />
         <MetricCard 
           label="Conversions" 
           value={(marketing?.funnel?.converted || 0).toLocaleString()}
           change={marketing?.funnel?.convertedChange}
-          icon="💰"
+          icon={DollarSignIcon}
           color="amber"
         />
       </div>
@@ -439,37 +570,43 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           className={`${styles.navButton} ${activeSection === 'overview' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('overview')}
         >
-          📈 Overview
+          <TrendingUpIcon size={16} />
+          Overview
         </button>
         <button 
           className={`${styles.navButton} ${activeSection === 'funnel' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('funnel')}
         >
-          🎯 Funnel
+          <TargetIcon size={16} />
+          Funnel
         </button>
         <button 
           className={`${styles.navButton} ${activeSection === 'engagement' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('engagement')}
         >
-          📊 Engagement
+          <BarChartIcon size={16} />
+          Engagement
         </button>
         <button 
           className={`${styles.navButton} ${activeSection === 'features' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('features')}
         >
-          ⭐ Features
+          <ZapIcon size={16} />
+          Features
         </button>
         <button 
           className={`${styles.navButton} ${activeSection === 'users' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('users')}
         >
-          👤 Users
+          <UserIcon size={16} />
+          Users
         </button>
         <button 
           className={`${styles.navButton} ${activeSection === 'goals' ? styles.navActive : ''}`}
           onClick={() => setActiveSection('goals')}
         >
-          🏆 Goals
+          <TrophyIcon size={16} />
+          Goals
         </button>
       </div>
       
@@ -490,14 +627,14 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
                     <span className={styles.trafficValue}>
                       {advanced?.engagement?.avgSessionDuration 
                         ? `${Math.round(advanced.engagement.avgSessionDuration / 60)}m`
-                        : '-'
+                        : '0m'
                       }
                     </span>
                   </div>
                   <div className={styles.trafficItem}>
                     <span className={styles.trafficLabel}>Pages/Session</span>
                     <span className={styles.trafficValue}>
-                      {advanced?.engagement?.pagesPerSession?.toFixed(1) || '-'}
+                      {advanced?.engagement?.pagesPerSession?.toFixed(1) || '0'}
                     </span>
                   </div>
                 </div>
@@ -515,8 +652,11 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
                 <div className={styles.sourceList}>
                   {site.referrers.slice(0, 5).map((ref, i) => (
                     <div key={i} className={styles.sourceRow}>
-                      <span>{ref.source === 'Direct' ? '🔗 Direct' : ref.source}</span>
-                      <span>{ref.visitors}</span>
+                      <span className={styles.sourceLabel}>
+                        <LinkIcon size={14} />
+                        {ref.source === 'Direct' ? 'Direct' : ref.source}
+                      </span>
+                      <span className={styles.sourceValue}>{ref.visitors}</span>
                     </div>
                   ))}
                 </div>
@@ -531,7 +671,10 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           <div className={styles.funnelSection}>
             <div className={styles.card}>
               <h3 className={styles.cardTitle}>Conversion Funnel</h3>
-              <FunnelVisualization funnel={marketing?.funnel} />
+              <FunnelVisualization funnel={{
+                ...marketing?.funnel,
+                signups: actualSignups // Use actual signups from user_profiles
+              }} />
             </div>
             
             <div className={styles.card}>
@@ -570,37 +713,37 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
                 <h3 className={styles.cardTitle}>Engagement Metrics</h3>
                 <div className={styles.engagementStats}>
                   <div className={styles.engagementStatItem}>
-                    <span className={styles.engagementIcon}>📜</span>
+                    <ScrollIcon size={24} className={styles.engagementStatIcon} />
                     <span className={styles.engagementStatLabel}>Avg Scroll Depth</span>
                     <span className={styles.engagementStatValue}>
                       {advanced?.engagement?.avgScrollDepth 
                         ? `${Math.round(advanced.engagement.avgScrollDepth)}%`
-                        : '-'
+                        : '0%'
                       }
                     </span>
                   </div>
                   <div className={styles.engagementStatItem}>
-                    <span className={styles.engagementIcon}>⏱️</span>
+                    <ClockIcon size={24} className={styles.engagementStatIcon} />
                     <span className={styles.engagementStatLabel}>Avg Time on Page</span>
                     <span className={styles.engagementStatValue}>
                       {advanced?.engagement?.avgTimeOnPage 
                         ? `${Math.round(advanced.engagement.avgTimeOnPage)}s`
-                        : '-'
+                        : '0s'
                       }
                     </span>
                   </div>
                   <div className={styles.engagementStatItem}>
-                    <span className={styles.engagementIcon}>👆</span>
+                    <MousePointerIcon size={24} className={styles.engagementStatIcon} />
                     <span className={styles.engagementStatLabel}>Avg Clicks/Page</span>
                     <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgClicksPerPage?.toFixed(1) || '-'}
+                      {advanced?.engagement?.avgClicksPerPage?.toFixed(1) || '0'}
                     </span>
                   </div>
                   <div className={styles.engagementStatItem}>
-                    <span className={styles.engagementIcon}>📊</span>
+                    <ActivityIcon size={24} className={styles.engagementStatIcon} />
                     <span className={styles.engagementStatLabel}>Engagement Score</span>
                     <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgScore?.toFixed(1) || '-'}/10
+                      {advanced?.engagement?.avgScore?.toFixed(1) || '0'}/10
                     </span>
                   </div>
                 </div>
@@ -637,7 +780,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
                   <div className={styles.healthItem}>
                     <span>Average Health Score</span>
                     <span className={styles.healthValue}>
-                      {advanced?.userHealth?.avgScore?.toFixed(1) || '-'}/100
+                      {advanced?.userHealth?.avgScore?.toFixed(1) || '0'}/100
                     </span>
                   </div>
                   <div className={styles.healthItem}>
@@ -690,4 +833,3 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
 }
 
 export default UnifiedAnalyticsDashboard;
-
