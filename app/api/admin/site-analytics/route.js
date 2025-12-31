@@ -12,7 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
-import { isAdminEmail, getAdminUserIdsCached } from '@/lib/adminAccess';
+import { isAdminEmail } from '@/lib/adminAccess';
 
 // Create admin client for reading analytics
 const supabaseAdmin = createClient(
@@ -242,7 +242,7 @@ export async function GET(request) {
     
     const onlineSessions = new Set();
     (recentViews || []).forEach(pv => {
-      if (pv.user_id && adminUserIds.includes(pv.user_id)) return;
+      // Only exclude internal paths, not admin users
       if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return;
       onlineSessions.add(pv.session_id);
     });
