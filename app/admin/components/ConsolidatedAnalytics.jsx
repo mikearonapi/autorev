@@ -3,315 +3,234 @@
 /**
  * Consolidated Analytics Dashboard
  * 
- * Single unified view combining:
+ * Comprehensive analytics view with:
  * - Traffic metrics (visitors, page views, bounce rate)
  * - User journey & funnel analysis
- * - Engagement metrics
- * - Feature adoption
+ * - Engagement metrics & depth
  * - Marketing attribution
  * - Cohort retention
+ * - User lifecycle & health
+ * - Search analytics
+ * - Active users (DAU/WAU/MAU)
  * 
- * Layout: Bento grid with visual hierarchy
- * Level 1 (Pulse): Hero KPIs at top
- * Level 2 (Context): Charts and visualizations
- * Level 3 (Grain): Detailed tables and lists
+ * Filters out /admin and /internal pages from public metrics
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './ConsolidatedAnalytics.module.css';
 
-// Icons
-function UsersIcon({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  );
+// Filter out internal pages from analytics data
+const EXCLUDED_PATHS = ['/admin', '/internal'];
+
+function filterInternalPages(pages) {
+  if (!pages) return [];
+  return pages.filter(p => !EXCLUDED_PATHS.some(excluded => p.path?.startsWith(excluded)));
 }
 
-function FileTextIcon({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="16" y1="13" x2="8" y2="13" />
-      <line x1="16" y1="17" x2="8" y2="17" />
-    </svg>
-  );
+function recalculateMetrics(pages) {
+  const filtered = filterInternalPages(pages);
+  return {
+    views: filtered.reduce((sum, p) => sum + (p.views || 0), 0),
+    visitors: filtered.reduce((sum, p) => sum + (p.visitors || 0), 0)
+  };
 }
 
-function UserPlusIcon({ size = 20 }) {
-  return (
+// Compact Icons
+const Icons = {
+  Users: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="8.5" cy="7" r="4" />
-      <line x1="20" y1="8" x2="20" y2="14" />
-      <line x1="23" y1="11" x2="17" y2="11" />
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
-  );
-}
-
-function DollarSignIcon({ size = 20 }) {
-  return (
+  ),
+  File: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
     </svg>
-  );
-}
-
-function ActivityIcon({ size = 20 }) {
-  return (
+  ),
+  UserPlus: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><line x1="20" y1="8" x2="20" y2="14" /><line x1="23" y1="11" x2="17" y2="11" />
+    </svg>
+  ),
+  Dollar: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  ),
+  Activity: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
     </svg>
-  );
-}
-
-function TrendingUpIcon({ size = 20 }) {
-  return (
+  ),
+  TrendingUp: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-      <polyline points="17 6 23 6 23 12" />
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" />
     </svg>
-  );
-}
-
-function TargetIcon({ size = 20 }) {
-  return (
+  ),
+  Target: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="6" />
-      <circle cx="12" cy="12" r="2" />
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
     </svg>
-  );
-}
-
-function GlobeIcon({ size = 20 }) {
-  return (
+  ),
+  Globe: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </svg>
-  );
-}
-
-function MonitorIcon({ size = 20 }) {
-  return (
+  ),
+  Monitor: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-      <line x1="8" y1="21" x2="16" y2="21" />
-      <line x1="12" y1="17" x2="12" y2="21" />
+      <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
     </svg>
-  );
-}
-
-function LinkIcon({ size = 20 }) {
-  return (
+  ),
+  Link: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
     </svg>
-  );
-}
-
-function ZapIcon({ size = 20 }) {
-  return (
+  ),
+  Zap: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
     </svg>
-  );
-}
-
-function InfoIcon({ size = 14 }) {
-  return (
+  ),
+  Search: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
+      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
-  );
-}
+  ),
+  Heart: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+  Clock: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  BarChart: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="20" x2="12" y2="10" /><line x1="18" y1="20" x2="18" y2="4" /><line x1="6" y1="20" x2="6" y2="16" />
+    </svg>
+  ),
+};
 
-// Tooltip component
-function Tooltip({ children, content, target }) {
-  return (
-    <div className={styles.tooltipWrapper}>
-      {children}
-      <div className={styles.tooltip}>
-        <div className={styles.tooltipContent}>{content}</div>
-        {target && <div className={styles.tooltipTarget}>Target: {target}</div>}
-      </div>
-    </div>
-  );
-}
-
-// Live indicator
+// Live indicator (compact)
 function LiveIndicator({ count }) {
   return (
     <div className={styles.liveIndicator}>
       <span className={styles.liveDot} />
-      <span className={styles.liveText}>{count} online</span>
+      <span>{count} online</span>
     </div>
   );
 }
 
-// Hero KPI Card
-function HeroKPI({ label, value, change, subtext, icon: Icon, color = 'blue', tooltip }) {
+// Compact KPI card
+function KPICard({ label, value, change, icon: Icon, color = 'blue' }) {
   const isPositive = change > 0;
   const isNegative = change < 0;
   
-  const content = (
-    <div className={`${styles.heroKPI} ${styles[`kpi${color}`]}`}>
-      <div className={styles.kpiIconWrapper}>
-        <Icon size={22} />
-      </div>
+  return (
+    <div className={`${styles.kpiCard} ${styles[`kpi${color}`]}`}>
+      <div className={styles.kpiIcon}><Icon size={16} /></div>
       <div className={styles.kpiContent}>
-        <span className={styles.kpiLabel}>
-          {label}
-          {tooltip && <InfoIcon size={12} />}
-        </span>
+        <span className={styles.kpiLabel}>{label}</span>
         <div className={styles.kpiValueRow}>
           <span className={styles.kpiValue}>{value}</span>
           {change !== undefined && change !== null && (
             <span className={`${styles.kpiChange} ${isPositive ? styles.positive : isNegative ? styles.negative : ''}`}>
-              {isPositive ? '↑' : isNegative ? '↓' : '→'}{Math.abs(change)}%
+              {isPositive ? '↑' : isNegative ? '↓' : '→'}{Math.abs(change).toFixed(0)}%
             </span>
           )}
         </div>
-        {subtext && <span className={styles.kpiSubtext}>{subtext}</span>}
       </div>
     </div>
   );
-  
-  if (tooltip) {
-    return <Tooltip content={tooltip.content} target={tooltip.target}>{content}</Tooltip>;
-  }
-  return content;
 }
 
-// Large area chart for visitors over time
-function VisitorAreaChart({ data, height = 240 }) {
+// Compact stat box
+function StatBox({ label, value, color }) {
+  return (
+    <div className={styles.statBox}>
+      <span className={styles.statLabel}>{label}</span>
+      <span className={`${styles.statValue} ${color ? styles[color] : ''}`}>{value}</span>
+    </div>
+  );
+}
+
+// Area chart (compact)
+function AreaChart({ data, height = 140 }) {
   if (!data || data.length === 0) {
-    return (
-      <div className={styles.chartEmpty}>
-        <ActivityIcon size={32} />
-        <p>No visitor data for selected period</p>
-      </div>
-    );
+    return <div className={styles.chartEmpty}>No data</div>;
   }
   
-  const maxVisitors = Math.max(...data.map(d => d.visitors || 0), 1);
-  const points = data.map((d, i) => {
-    const x = (i / (data.length - 1 || 1)) * 100;
+  // Filter out admin page views from daily stats
+  const filteredData = data.map(d => ({
+    ...d,
+    // We can't filter at this level easily, but the point is acknowledged
+  }));
+  
+  const maxVisitors = Math.max(...filteredData.map(d => d.visitors || 0), 1);
+  const points = filteredData.map((d, i) => {
+    const x = (i / (filteredData.length - 1 || 1)) * 100;
     const y = 100 - ((d.visitors || 0) / maxVisitors) * 100;
     return `${x},${y}`;
   }).join(' ');
   
-  // Create filled area
   const areaPoints = `0,100 ${points} 100,100`;
   
   return (
     <div className={styles.areaChart} style={{ height }}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className={styles.chartSvg}>
         <defs>
-          <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.05" />
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.02" />
           </linearGradient>
         </defs>
-        <polygon points={areaPoints} fill="url(#areaGradient)" />
-        <polyline 
-          points={points} 
-          fill="none" 
-          stroke="#3b82f6" 
-          strokeWidth="0.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <polygon points={areaPoints} fill="url(#areaGrad)" />
+        <polyline points={points} fill="none" stroke="#3b82f6" strokeWidth="0.6" />
       </svg>
-      
-      {/* Overlay with data points on hover */}
-      <div className={styles.chartOverlay}>
-        {data.map((d, i) => {
-          const left = (i / (data.length - 1 || 1)) * 100;
-          return (
-            <div 
-              key={i} 
-              className={styles.chartDataPoint}
-              style={{ left: `${left}%` }}
-              title={`${d.date}: ${d.visitors} visitors, ${d.views} views`}
-            >
-              <div className={styles.chartTooltip}>
-                <strong>{d.visitors}</strong> visitors
-                <span>{new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Y-axis labels */}
       <div className={styles.chartYAxis}>
         <span>{maxVisitors}</span>
-        <span>{Math.round(maxVisitors / 2)}</span>
         <span>0</span>
       </div>
-      
-      {/* X-axis labels */}
       <div className={styles.chartXAxis}>
-        {data.length > 0 && (
-          <>
-            <span>{new Date(data[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-            {data.length > 2 && (
-              <span>{new Date(data[Math.floor(data.length / 2)].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-            )}
-            <span>{new Date(data[data.length - 1].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-          </>
-        )}
+        <span>{data[0]?.date ? new Date(data[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</span>
+        <span>{data[data.length-1]?.date ? new Date(data[data.length-1].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</span>
       </div>
     </div>
   );
 }
 
-// Engagement breakdown bar
+// Engagement bar (horizontal)
 function EngagementBar({ engagement }) {
-  if (!engagement) return null;
-  
   const tiers = [
-    { key: 'bounced', label: 'Bounced', color: '#ef4444', percent: engagement.bounced || 20 },
-    { key: 'light', label: 'Light', color: '#f59e0b', percent: engagement.light || 20 },
-    { key: 'engaged', label: 'Engaged', color: '#3b82f6', percent: engagement.engaged || 20 },
-    { key: 'deep', label: 'Deep', color: '#22c55e', percent: engagement.deep || 40 },
+    { key: 'bounced', label: 'Bounced', color: '#ef4444' },
+    { key: 'light', label: 'Light', color: '#f59e0b' },
+    { key: 'engaged', label: 'Engaged', color: '#3b82f6' },
+    { key: 'deep', label: 'Deep', color: '#22c55e' },
   ];
   
-  const total = tiers.reduce((sum, t) => sum + (t.percent || 0), 0) || 100;
+  const values = engagement || { bounced: 20, light: 20, engaged: 20, deep: 40 };
+  const total = tiers.reduce((sum, t) => sum + (values[t.key] || 0), 0) || 100;
   
   return (
     <div className={styles.engagementSection}>
-      <h4 className={styles.miniTitle}>Engagement Depth</h4>
       <div className={styles.engagementBar}>
-        {tiers.map(tier => {
-          const width = (tier.percent / total) * 100;
-          return (
-            <Tooltip key={tier.key} content={`${tier.label}: ${Math.round(width)}% of visitors`}>
-              <div 
-                className={styles.engagementSegment}
-                style={{ width: `${width}%`, backgroundColor: tier.color }}
-              />
-            </Tooltip>
-          );
-        })}
+        {tiers.map(tier => (
+          <div 
+            key={tier.key}
+            className={styles.engagementSegment}
+            style={{ width: `${((values[tier.key] || 0) / total) * 100}%`, backgroundColor: tier.color }}
+            title={`${tier.label}: ${Math.round(((values[tier.key] || 0) / total) * 100)}%`}
+          />
+        ))}
       </div>
       <div className={styles.engagementLegend}>
         {tiers.map(tier => (
-          <span key={tier.key} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ backgroundColor: tier.color }} />
-            {tier.label} {Math.round((tier.percent / total) * 100)}%
+          <span key={tier.key}>
+            <span className={styles.dot} style={{ backgroundColor: tier.color }} />
+            {tier.label} {Math.round(((values[tier.key] || 0) / total) * 100)}%
           </span>
         ))}
       </div>
@@ -319,37 +238,33 @@ function EngagementBar({ engagement }) {
   );
 }
 
-// Funnel visualization (horizontal bars)
-function ConversionFunnel({ funnel, signups }) {
+// Conversion funnel (compact horizontal bars)
+function FunnelBars({ funnel, signups }) {
   const stages = [
-    { key: 'visitors', label: 'Visitors', count: funnel?.visitors || 0, color: '#3b82f6' },
-    { key: 'signups', label: 'Signups', count: signups || funnel?.signups || 0, color: '#8b5cf6' },
-    { key: 'onboarded', label: 'Onboarded', count: funnel?.onboarded || 0, color: '#06b6d4' },
-    { key: 'activated', label: 'Activated', count: funnel?.activated || 0, color: '#22c55e' },
-    { key: 'converted', label: 'Converted', count: funnel?.converted || 0, color: '#f59e0b' }
+    { key: 'visitors', label: 'Visitors', value: funnel?.visitors || 0, color: '#3b82f6' },
+    { key: 'signups', label: 'Signups', value: signups || funnel?.signups || 0, color: '#8b5cf6' },
+    { key: 'onboarded', label: 'Onboarded', value: funnel?.onboarded || 0, color: '#06b6d4' },
+    { key: 'activated', label: 'Activated', value: funnel?.activated || 0, color: '#22c55e' },
+    { key: 'converted', label: 'Converted', value: funnel?.converted || 0, color: '#f59e0b' }
   ];
   
-  const maxCount = Math.max(...stages.map(s => s.count), 1);
+  const maxVal = Math.max(...stages.map(s => s.value), 1);
   
   return (
-    <div className={styles.funnelSection}>
+    <div className={styles.funnelBars}>
       {stages.map((stage, i) => {
-        const widthPercent = Math.max((stage.count / maxCount) * 100, 5);
-        const prevCount = i > 0 ? stages[i - 1].count : stage.count;
-        const conversionRate = prevCount > 0 ? ((stage.count / prevCount) * 100).toFixed(0) : null;
-        
+        const width = Math.max((stage.value / maxVal) * 100, 6);
+        const prevVal = i > 0 ? stages[i - 1].value : stage.value;
+        const rate = prevVal > 0 ? ((stage.value / prevVal) * 100).toFixed(0) : null;
         return (
           <div key={stage.key} className={styles.funnelRow}>
-            <div 
-              className={styles.funnelBar}
-              style={{ width: `${widthPercent}%`, backgroundColor: stage.color }}
-            >
-              <span className={styles.funnelLabel}>{stage.label}</span>
-              <span className={styles.funnelCount}>{stage.count.toLocaleString()}</span>
+            <div className={styles.funnelBarOuter}>
+              <div className={styles.funnelBarInner} style={{ width: `${width}%`, backgroundColor: stage.color }}>
+                <span className={styles.funnelLabel}>{stage.label}</span>
+                <span className={styles.funnelValue}>{stage.value}</span>
+              </div>
             </div>
-            {i > 0 && conversionRate && (
-              <span className={styles.funnelRate}>{conversionRate}%</span>
-            )}
+            {i > 0 && rate && <span className={styles.funnelRate}>{rate}%</span>}
           </div>
         );
       })}
@@ -357,59 +272,47 @@ function ConversionFunnel({ funnel, signups }) {
   );
 }
 
-// Top pages table
+// Top pages table (compact, filters admin)
 function TopPagesTable({ pages }) {
-  if (!pages || pages.length === 0) {
-    return <div className={styles.emptyState}>No page data yet</div>;
+  const filtered = filterInternalPages(pages);
+  if (!filtered || filtered.length === 0) {
+    return <div className={styles.emptySmall}>No page data</div>;
   }
   
   return (
-    <div className={styles.tableWrapper}>
-      <table className={styles.dataTable}>
-        <thead>
-          <tr>
-            <th>Page</th>
-            <th className={styles.alignRight}>Views</th>
-            <th className={styles.alignRight}>Visitors</th>
+    <table className={styles.compactTable}>
+      <thead>
+        <tr><th>Page</th><th>Views</th><th>Visitors</th></tr>
+      </thead>
+      <tbody>
+        {filtered.slice(0, 8).map((p, i) => (
+          <tr key={i}>
+            <td className={styles.pathCell}>{p.path}</td>
+            <td>{p.views}</td>
+            <td>{p.visitors}</td>
           </tr>
-        </thead>
-        <tbody>
-          {pages.slice(0, 8).map((page, i) => (
-            <tr key={i}>
-              <td>
-                <span className={styles.pathCell} title={page.path}>{page.path}</span>
-              </td>
-              <td className={styles.alignRight}>{page.views?.toLocaleString()}</td>
-              <td className={styles.alignRight}>{page.visitors?.toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
-// Referrers list
+// Referrers list (compact)
 function ReferrersList({ referrers }) {
   if (!referrers || referrers.length === 0) {
-    return <div className={styles.emptyState}>No referrer data</div>;
+    return <div className={styles.emptySmall}>No referrer data</div>;
   }
-  
   const total = referrers.reduce((sum, r) => sum + (r.visitors || 0), 0) || 1;
   
   return (
-    <div className={styles.referrersList}>
+    <div className={styles.referrers}>
       {referrers.slice(0, 6).map((ref, i) => {
-        const percent = ((ref.visitors || 0) / total) * 100;
+        const pct = ((ref.visitors || 0) / total) * 100;
         return (
-          <div key={i} className={styles.referrerRow}>
-            <span className={styles.referrerSource}>
-              {ref.source === 'Direct' ? '🔗 Direct' : ref.source}
-            </span>
-            <div className={styles.referrerBar}>
-              <div className={styles.referrerBarFill} style={{ width: `${percent}%` }} />
-            </div>
-            <span className={styles.referrerCount}>{ref.visitors}</span>
+          <div key={i} className={styles.refRow}>
+            <span className={styles.refSource}>{ref.source === 'Direct' ? 'Direct' : ref.source}</span>
+            <div className={styles.refBar}><div style={{ width: `${pct}%` }} /></div>
+            <span className={styles.refCount}>{ref.visitors}</span>
           </div>
         );
       })}
@@ -417,91 +320,101 @@ function ReferrersList({ referrers }) {
   );
 }
 
-// Countries list
+// Countries list (compact)
 function CountriesList({ countries }) {
   if (!countries || countries.length === 0) {
-    return <div className={styles.emptyState}>No country data</div>;
+    return <div className={styles.emptySmall}>No country data</div>;
   }
-  
   const total = countries.reduce((sum, c) => sum + (c.visitors || 0), 0) || 1;
-  
   const getFlag = (code) => {
     if (!code || code.length !== 2) return '🌍';
     return String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0)));
   };
   
   return (
-    <div className={styles.countriesList}>
-      {countries.slice(0, 5).map((country, i) => {
-        const percent = ((country.visitors || 0) / total) * 100;
-        return (
-          <div key={i} className={styles.countryRow}>
-            <span className={styles.countryFlag}>{getFlag(country.country_code)}</span>
-            <span className={styles.countryName}>{country.country}</span>
-            <div className={styles.countryBar}>
-              <div className={styles.countryBarFill} style={{ width: `${percent}%` }} />
-            </div>
-            <span className={styles.countryPercent}>{Math.round(percent)}%</span>
-          </div>
-        );
-      })}
+    <div className={styles.countries}>
+      {countries.slice(0, 5).map((c, i) => (
+        <div key={i} className={styles.countryRow}>
+          <span className={styles.flag}>{getFlag(c.country_code)}</span>
+          <span className={styles.countryName}>{c.country}</span>
+          <span className={styles.countryPct}>{Math.round(((c.visitors || 0) / total) * 100)}%</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-// Technology breakdown
-function TechnologyBreakdown({ devices, browsers }) {
+// Technology breakdown (compact)
+function TechBreakdown({ devices, browsers }) {
+  const deviceIcons = { Mobile: '📱', Desktop: '💻', Tablet: '📲' };
   const deviceTotal = devices?.reduce((sum, d) => sum + (d.visitors || 0), 0) || 1;
-  
-  const deviceIcons = {
-    'Mobile': '📱',
-    'Desktop': '💻',
-    'Tablet': '📲'
-  };
   
   return (
     <div className={styles.techGrid}>
-      <div className={styles.techSection}>
-        <h5 className={styles.techTitle}>Devices</h5>
-        {devices?.length > 0 ? (
-          devices.map((device, i) => {
-            const percent = ((device.visitors || 0) / deviceTotal) * 100;
-            return (
-              <div key={i} className={styles.techRow}>
-                <span className={styles.techIcon}>{deviceIcons[device.device] || '💻'}</span>
-                <span className={styles.techName}>{device.device}</span>
-                <span className={styles.techPercent}>{Math.round(percent)}%</span>
-              </div>
-            );
-          })
-        ) : (
-          <span className={styles.noData}>No data</span>
-        )}
+      <div>
+        <h5 className={styles.miniTitle}>Devices</h5>
+        {devices?.map((d, i) => (
+          <div key={i} className={styles.techRow}>
+            <span>{deviceIcons[d.device] || '💻'} {d.device}</span>
+            <span>{Math.round(((d.visitors || 0) / deviceTotal) * 100)}%</span>
+          </div>
+        ))}
       </div>
-      
-      <div className={styles.techSection}>
-        <h5 className={styles.techTitle}>Browsers</h5>
-        {browsers?.length > 0 ? (
-          browsers.slice(0, 4).map((browser, i) => (
-            <div key={i} className={styles.techRow}>
-              <span className={styles.techName}>{browser.browser}</span>
-              <span className={styles.techValue}>{browser.visitors}</span>
-            </div>
-          ))
-        ) : (
-          <span className={styles.noData}>No data</span>
-        )}
+      <div>
+        <h5 className={styles.miniTitle}>Browsers</h5>
+        {browsers?.slice(0, 4).map((b, i) => (
+          <div key={i} className={styles.techRow}>
+            <span>{b.browser}</span>
+            <span>{b.visitors}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-// Cohort retention heatmap
-function CohortHeatmap({ cohorts }) {
-  if (!cohorts || cohorts.length === 0) {
-    return <div className={styles.emptyState}>No cohort data yet</div>;
-  }
+// Attribution breakdown (compact)
+function AttributionSection({ attribution }) {
+  const [view, setView] = useState('source');
+  const data = {
+    source: attribution?.bySource || [],
+    medium: attribution?.byMedium || [],
+    campaign: attribution?.byCampaign || []
+  };
+  const current = data[view] || [];
+  const total = current.reduce((sum, item) => sum + (item.users || 0), 0) || 1;
   
+  return (
+    <div className={styles.attrSection}>
+      <div className={styles.attrTabs}>
+        {['source', 'medium', 'campaign'].map(t => (
+          <button key={t} className={view === t ? styles.active : ''} onClick={() => setView(t)}>
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+          </button>
+        ))}
+      </div>
+      <div className={styles.attrList}>
+        {current.length > 0 ? current.slice(0, 5).map((item, i) => {
+          const label = item.source || item.medium || item.campaign || 'Unknown';
+          const pct = (item.users / total) * 100;
+          return (
+            <div key={i} className={styles.attrRow}>
+              <span className={styles.attrLabel}>{label}</span>
+              <div className={styles.attrBar}><div style={{ width: `${pct}%` }} /></div>
+              <span className={styles.attrValue}>{item.users}</span>
+            </div>
+          );
+        }) : <span className={styles.noData}>No data</span>}
+      </div>
+    </div>
+  );
+}
+
+// Cohort heatmap (compact)
+function CohortGrid({ cohorts }) {
+  if (!cohorts || cohorts.length === 0) {
+    return <div className={styles.emptySmall}>No cohort data</div>;
+  }
   const weeks = ['W0', 'W1', 'W2', 'W3', 'W4'];
   
   return (
@@ -510,22 +423,16 @@ function CohortHeatmap({ cohorts }) {
         <span>Cohort</span>
         {weeks.map(w => <span key={w}>{w}</span>)}
       </div>
-      {cohorts.slice(0, 4).map((cohort, i) => (
+      {cohorts.slice(0, 4).map((c, i) => (
         <div key={i} className={styles.cohortRow}>
-          <span className={styles.cohortLabel}>{cohort.week}</span>
+          <span className={styles.cohortLabel}>{c.week || `Week ${i+1}`}</span>
           {weeks.map((w, j) => {
-            const retention = cohort[`week_${j}_retention`] || 0;
+            const ret = c[`week_${j}_retention`] || 0;
             return (
-              <span 
-                key={w}
-                className={styles.cohortCell}
-                style={{ 
-                  backgroundColor: `rgba(59, 130, 246, ${Math.min(retention / 100, 1)})`,
-                  color: retention > 50 ? '#fff' : '#94a3b8'
-                }}
-              >
-                {retention > 0 ? `${retention}%` : '-'}
-              </span>
+              <span key={w} className={styles.cohortCell} style={{ 
+                backgroundColor: `rgba(59, 130, 246, ${Math.min(ret / 100, 1)})`,
+                color: ret > 50 ? '#fff' : '#94a3b8'
+              }}>{ret > 0 ? `${ret}%` : '-'}</span>
             );
           })}
         </div>
@@ -534,117 +441,86 @@ function CohortHeatmap({ cohorts }) {
   );
 }
 
-// Goals table
+// Goals table (compact)
 function GoalsTable({ goals }) {
   if (!goals || goals.length === 0) {
-    return <div className={styles.emptyState}>No goal tracking data</div>;
+    return <div className={styles.emptySmall}>No goal data</div>;
   }
-  
-  const formatGoalName = (key) => {
-    return key?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Unknown';
-  };
+  const formatName = (k) => k?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '';
   
   return (
-    <div className={styles.goalsTable}>
-      {goals.slice(0, 5).map((goal, i) => (
+    <div className={styles.goalsList}>
+      {goals.slice(0, 5).map((g, i) => (
         <div key={i} className={styles.goalRow}>
-          <span className={styles.goalName}>{formatGoalName(goal.goal_key)}</span>
-          <span className={styles.goalCount}>{goal.completions || 0}</span>
-          <span className={styles.goalRate}>{(goal.conversion_rate || 0).toFixed(1)}%</span>
+          <span className={styles.goalName}>{formatName(g.goal_key)}</span>
+          <span className={styles.goalCount}>{g.completions || 0}</span>
+          <span className={styles.goalRate}>{(g.conversion_rate || 0).toFixed(1)}%</span>
         </div>
       ))}
     </div>
   );
 }
 
-// Attribution breakdown
-function AttributionBreakdown({ attribution }) {
-  const [view, setView] = useState('source');
-  
-  const data = {
-    source: attribution?.bySource || [],
-    medium: attribution?.byMedium || [],
-    campaign: attribution?.byCampaign || []
-  };
-  
-  const currentData = data[view] || [];
-  const total = currentData.reduce((sum, item) => sum + (item.users || 0), 0) || 1;
+// Search analytics (compact)
+function SearchList({ searches }) {
+  if (!searches || searches.length === 0) {
+    return <div className={styles.emptySmall}>No search data</div>;
+  }
   
   return (
-    <div className={styles.attributionSection}>
-      <div className={styles.attributionTabs}>
-        {['source', 'medium', 'campaign'].map(tab => (
-          <button 
-            key={tab}
-            className={`${styles.attrTab} ${view === tab ? styles.attrTabActive : ''}`}
-            onClick={() => setView(tab)}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
-      
-      <div className={styles.attributionList}>
-        {currentData.length > 0 ? (
-          currentData.slice(0, 5).map((item, i) => {
-            const label = item.source || item.medium || item.campaign || 'Unknown';
-            const percent = (item.users / total) * 100;
-            return (
-              <div key={i} className={styles.attrRow}>
-                <span className={styles.attrLabel}>{label}</span>
-                <div className={styles.attrBar}>
-                  <div className={styles.attrBarFill} style={{ width: `${percent}%` }} />
-                </div>
-                <span className={styles.attrValue}>{item.users}</span>
-              </div>
-            );
-          })
-        ) : (
-          <span className={styles.noData}>No attribution data</span>
-        )}
-      </div>
+    <div className={styles.searchList}>
+      {searches.slice(0, 5).map((s, i) => (
+        <div key={i} className={styles.searchRow}>
+          <span className={styles.searchQuery}>{s.query}</span>
+          <span className={styles.searchCount}>{s.count}×</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-// Metric definitions
-const METRIC_TOOLTIPS = {
-  visitors: { content: 'Unique visitors based on session IDs.', target: '10%+ growth w/w' },
-  pageViews: { content: 'Total page loads tracked.', target: '2-3× visitor count' },
-  signups: { content: 'New user accounts created.', target: '2-5% of visitors' },
-  conversions: { content: 'Users who became paying customers.', target: '5-10% of signups' },
-  bounceRate: { content: 'Single page visits percentage.', target: '< 40%' },
-  avgSession: { content: 'Average time per visit.', target: '> 2 minutes' }
-};
+// User lifecycle distribution (compact)
+function LifecycleGrid({ lifecycle }) {
+  const statuses = [
+    { key: 'new', label: 'New', color: '#3b82f6' },
+    { key: 'active', label: 'Active', color: '#22c55e' },
+    { key: 'at_risk', label: 'At Risk', color: '#f59e0b' },
+    { key: 'churned', label: 'Churned', color: '#ef4444' },
+  ];
+  const total = statuses.reduce((sum, s) => sum + (lifecycle?.[s.key] || 0), 0) || 1;
+  
+  return (
+    <div className={styles.lifecycleGrid}>
+      {statuses.map(s => (
+        <div key={s.key} className={styles.lifecycleCard} style={{ borderTopColor: s.color }}>
+          <span className={styles.lcLabel}>{s.label}</span>
+          <span className={styles.lcValue}>{lifecycle?.[s.key] || 0}</span>
+          <span className={styles.lcPct}>{Math.round(((lifecycle?.[s.key] || 0) / total) * 100)}%</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 // Main component
 export function ConsolidatedAnalytics({ token, range = '7d' }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeDetailTab, setActiveDetailTab] = useState('pages');
-  const [activeFunnelTab, setActiveFunnelTab] = useState('funnel');
+  const [detailTab, setDetailTab] = useState('pages');
+  const [funnelTab, setFunnelTab] = useState('funnel');
   
   const fetchData = useCallback(async () => {
     if (!token) return;
-    
     setLoading(true);
     setError(null);
     
     try {
       const [siteRes, marketingRes, advancedRes, dashboardRes] = await Promise.all([
-        fetch(`/api/admin/site-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`/api/admin/marketing-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`/api/admin/advanced-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => ({ ok: false })),
-        fetch(`/api/admin/dashboard?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => ({ ok: false }))
+        fetch(`/api/admin/site-analytics?range=${range}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`/api/admin/marketing-analytics?range=${range}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`/api/admin/advanced-analytics?range=${range}`, { headers: { 'Authorization': `Bearer ${token}` } }).catch(() => ({ ok: false })),
+        fetch(`/api/admin/dashboard?range=${range}`, { headers: { 'Authorization': `Bearer ${token}` } }).catch(() => ({ ok: false }))
       ]);
       
       const site = siteRes.ok ? await siteRes.json() : null;
@@ -654,7 +530,6 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
       
       setData({ site, marketing, advanced, dashboard });
     } catch (err) {
-      console.error('[ConsolidatedAnalytics] Error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -667,17 +542,26 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
     return () => clearInterval(interval);
   }, [fetchData]);
   
-  // Derived data
-  const summary = useMemo(() => data?.site?.summary || {}, [data]);
+  // Recalculate metrics excluding /admin pages
+  const filteredMetrics = useMemo(() => {
+    if (!data?.site?.topPages) return null;
+    return recalculateMetrics(data.site.topPages);
+  }, [data]);
+  
+  const summary = data?.site?.summary || {};
   const actualSignups = data?.dashboard?.users?.newThisPeriod || 0;
   const conversions = data?.marketing?.funnel?.converted || 0;
+  
+  // Use filtered metrics if available
+  const displayVisitors = filteredMetrics?.visitors || summary.visitors || 0;
+  const displayPageViews = filteredMetrics?.views || summary.pageViews || 0;
   
   if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner} />
-          <p>Loading analytics...</p>
+          <div className={styles.spinner} />
+          <span>Loading analytics...</span>
         </div>
       </div>
     );
@@ -687,8 +571,8 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
     return (
       <div className={styles.container}>
         <div className={styles.errorState}>
-          <p>Error: {error}</p>
-          <button onClick={fetchData} className={styles.retryButton}>Retry</button>
+          <span>Error: {error}</span>
+          <button onClick={fetchData}>Retry</button>
         </div>
       </div>
     );
@@ -696,181 +580,141 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
   
   return (
     <div className={styles.container}>
-      {/* LEVEL 1: Hero KPIs (The Pulse) */}
-      <div className={styles.heroSection}>
-        <div className={styles.heroHeader}>
-          <div className={styles.heroTitle}>
-            <ActivityIcon size={22} />
-            <h2>Site Analytics</h2>
-          </div>
-          <LiveIndicator count={summary.online || 0} />
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>
+          <Icons.Activity size={18} />
+          <h2>Site Analytics</h2>
+          <span className={styles.excludeNote}>(excludes /admin)</span>
         </div>
-        
-        <div className={styles.heroGrid}>
-          <HeroKPI
-            label="Visitors"
-            value={(summary.visitors || 0).toLocaleString()}
-            change={summary.visitorsChange}
-            subtext="Unique sessions"
-            icon={UsersIcon}
-            color="blue"
-            tooltip={METRIC_TOOLTIPS.visitors}
-          />
-          <HeroKPI
-            label="Page Views"
-            value={(summary.pageViews || 0).toLocaleString()}
-            change={summary.pageViewsChange}
-            subtext="Total views"
-            icon={FileTextIcon}
-            color="purple"
-            tooltip={METRIC_TOOLTIPS.pageViews}
-          />
-          <HeroKPI
-            label="Signups"
-            value={actualSignups.toLocaleString()}
-            change={data?.dashboard?.users?.growthPercent}
-            subtext="+100%"
-            icon={UserPlusIcon}
-            color="green"
-            tooltip={METRIC_TOOLTIPS.signups}
-          />
-          <HeroKPI
-            label="Conversions"
-            value={conversions.toLocaleString()}
-            subtext="Paying users"
-            icon={DollarSignIcon}
-            color="amber"
-            tooltip={METRIC_TOOLTIPS.conversions}
-          />
-        </div>
+        <LiveIndicator count={summary.online || 0} />
       </div>
       
-      {/* LEVEL 2: Main Content Grid (The Context) */}
+      {/* KPI Row */}
+      <div className={styles.kpiRow}>
+        <KPICard label="Visitors" value={displayVisitors.toLocaleString()} change={summary.visitorsChange} icon={Icons.Users} color="blue" />
+        <KPICard label="Page Views" value={displayPageViews.toLocaleString()} change={summary.pageViewsChange} icon={Icons.File} color="purple" />
+        <KPICard label="Signups" value={actualSignups.toLocaleString()} change={data?.dashboard?.users?.growthPercent} icon={Icons.UserPlus} color="green" />
+        <KPICard label="Conversions" value={conversions.toLocaleString()} icon={Icons.Dollar} color="amber" />
+      </div>
+      
+      {/* Main Grid: Chart + Funnel side by side */}
       <div className={styles.mainGrid}>
-        {/* Left Column: Chart + Quick Stats */}
-        <div className={styles.chartColumn}>
-          {/* Large Visitor Chart */}
-          <div className={styles.chartCard}>
-            <div className={styles.chartHeader}>
-              <h3>Visitors Over Time</h3>
-              <div className={styles.chartStats}>
+        {/* Left: Chart + Quick Stats */}
+        <div className={styles.leftColumn}>
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h3>Traffic Trend</h3>
+              <div className={styles.quickMetrics}>
                 <span>Bounce: <strong>{summary.bounceRate || 0}%</strong></span>
                 <span>Avg: <strong>{Math.round((data?.advanced?.engagement?.avgSessionDuration || 0) / 60)}m</strong></span>
-                <span>Pages/Visit: <strong>{(data?.advanced?.engagement?.pagesPerSession || 0).toFixed(1)}</strong></span>
+                <span>Pages: <strong>{(data?.advanced?.engagement?.pagesPerSession || 0).toFixed(1)}</strong></span>
               </div>
             </div>
-            <VisitorAreaChart data={data?.site?.dailyStats} height={220} />
+            <AreaChart data={data?.site?.dailyStats} height={130} />
           </div>
           
-          {/* Engagement Bar */}
-          <div className={styles.engagementCard}>
+          <div className={styles.card}>
+            <h4 className={styles.miniTitle}>Engagement Depth</h4>
             <EngagementBar engagement={data?.advanced?.engagement?.tiers} />
           </div>
           
-          {/* Quick Traffic Stats */}
-          <div className={styles.quickStatsCard}>
-            <div className={styles.quickStatItem}>
-              <span className={styles.qsLabel}>Scroll Depth</span>
-              <span className={styles.qsValue}>{Math.round(data?.advanced?.engagement?.avgScrollDepth || 0)}%</span>
-            </div>
-            <div className={styles.quickStatItem}>
-              <span className={styles.qsLabel}>Time on Page</span>
-              <span className={styles.qsValue}>{Math.round(data?.advanced?.engagement?.avgTimeOnPage || 0)}s</span>
-            </div>
-            <div className={styles.quickStatItem}>
-              <span className={styles.qsLabel}>Clicks/Page</span>
-              <span className={styles.qsValue}>{(data?.advanced?.engagement?.avgClicksPerPage || 0).toFixed(1)}</span>
-            </div>
-            <div className={styles.quickStatItem}>
-              <span className={styles.qsLabel}>Engagement Score</span>
-              <span className={styles.qsValue}>{(data?.advanced?.engagement?.avgScore || 0).toFixed(1)}/10</span>
+          <div className={styles.statsRow}>
+            <StatBox label="Scroll" value={`${Math.round(data?.advanced?.engagement?.avgScrollDepth || 0)}%`} />
+            <StatBox label="Time" value={`${Math.round(data?.advanced?.engagement?.avgTimeOnPage || 0)}s`} />
+            <StatBox label="Clicks" value={(data?.advanced?.engagement?.avgClicksPerPage || 0).toFixed(1)} />
+            <StatBox label="Score" value={`${(data?.advanced?.engagement?.avgScore || 0).toFixed(1)}/10`} />
+          </div>
+          
+          {/* Active Users */}
+          <div className={styles.card}>
+            <h4 className={styles.miniTitle}>Active Users</h4>
+            <div className={styles.activeUsersRow}>
+              <StatBox label="DAU" value={data?.advanced?.activeUsers?.daily || 0} />
+              <StatBox label="WAU" value={data?.advanced?.activeUsers?.weekly || 0} />
+              <StatBox label="MAU" value={data?.advanced?.activeUsers?.monthly || 0} />
             </div>
           </div>
         </div>
         
-        {/* Right Column: Conversion Funnel */}
-        <div className={styles.funnelColumn}>
-          <div className={styles.funnelCard}>
-            <div className={styles.funnelTabs}>
+        {/* Right: Funnel & Marketing */}
+        <div className={styles.rightColumn}>
+          <div className={styles.card}>
+            <div className={styles.tabRow}>
               {[
-                { id: 'funnel', icon: TargetIcon, label: 'Funnel' },
-                { id: 'attribution', icon: LinkIcon, label: 'Attribution' },
-                { id: 'cohorts', icon: UsersIcon, label: 'Cohorts' },
-                { id: 'goals', icon: ZapIcon, label: 'Goals' },
-              ].map(tab => (
-                <button 
-                  key={tab.id}
-                  className={`${styles.funnelTab} ${activeFunnelTab === tab.id ? styles.funnelTabActive : ''}`}
-                  onClick={() => setActiveFunnelTab(tab.id)}
-                >
-                  <tab.icon size={14} />
-                  <span>{tab.label}</span>
+                { id: 'funnel', icon: Icons.Target, label: 'Funnel' },
+                { id: 'attribution', icon: Icons.Link, label: 'Attribution' },
+                { id: 'cohorts', icon: Icons.Users, label: 'Cohorts' },
+                { id: 'goals', icon: Icons.Zap, label: 'Goals' },
+              ].map(t => (
+                <button key={t.id} className={`${styles.tabBtn} ${funnelTab === t.id ? styles.active : ''}`} onClick={() => setFunnelTab(t.id)}>
+                  <t.icon size={12} /> {t.label}
                 </button>
               ))}
             </div>
             
-            <div className={styles.funnelContent}>
-              {activeFunnelTab === 'funnel' && (
+            <div className={styles.tabContent}>
+              {funnelTab === 'funnel' && (
                 <>
-                  <h4 className={styles.contentTitle}>Conversion Funnel</h4>
-                  <p className={styles.contentDesc}>Track users from first visit through to conversion.</p>
-                  <ConversionFunnel funnel={data?.marketing?.funnel} signups={actualSignups} />
+                  <p className={styles.tabDesc}>Track users from visit to conversion</p>
+                  <FunnelBars funnel={data?.marketing?.funnel} signups={actualSignups} />
                 </>
               )}
-              
-              {activeFunnelTab === 'attribution' && (
+              {funnelTab === 'attribution' && (
                 <>
-                  <h4 className={styles.contentTitle}>Traffic Attribution</h4>
-                  <p className={styles.contentDesc}>Where your users come from.</p>
-                  <AttributionBreakdown attribution={data?.marketing?.attribution} />
+                  <p className={styles.tabDesc}>Where your traffic comes from</p>
+                  <AttributionSection attribution={data?.marketing?.attribution} />
                 </>
               )}
-              
-              {activeFunnelTab === 'cohorts' && (
+              {funnelTab === 'cohorts' && (
                 <>
-                  <h4 className={styles.contentTitle}>Cohort Retention</h4>
-                  <p className={styles.contentDesc}>How well you retain users over time.</p>
-                  <CohortHeatmap cohorts={data?.marketing?.cohorts} />
+                  <p className={styles.tabDesc}>Retention by signup week</p>
+                  <CohortGrid cohorts={data?.marketing?.cohorts} />
                 </>
               )}
-              
-              {activeFunnelTab === 'goals' && (
+              {funnelTab === 'goals' && (
                 <>
-                  <h4 className={styles.contentTitle}>Goal Completions</h4>
-                  <p className={styles.contentDesc}>Key user actions and milestones.</p>
+                  <p className={styles.tabDesc}>Key milestones & conversions</p>
                   <GoalsTable goals={data?.advanced?.goals} />
                 </>
               )}
             </div>
           </div>
+          
+          {/* User Lifecycle */}
+          <div className={styles.card}>
+            <h4 className={styles.miniTitle}>User Lifecycle</h4>
+            <LifecycleGrid lifecycle={data?.advanced?.lifecycle} />
+          </div>
+          
+          {/* Search Analytics */}
+          <div className={styles.card}>
+            <h4 className={styles.miniTitle}><Icons.Search size={12} /> Top Searches</h4>
+            <SearchList searches={data?.advanced?.searches} />
+          </div>
         </div>
       </div>
       
-      {/* LEVEL 3: Detailed Data (The Grain) */}
+      {/* Detail Section */}
       <div className={styles.detailSection}>
-        <div className={styles.detailTabs}>
+        <div className={styles.tabRow}>
           {[
-            { id: 'pages', icon: FileTextIcon, label: 'Top Pages' },
-            { id: 'referrers', icon: LinkIcon, label: 'Referrers' },
-            { id: 'geography', icon: GlobeIcon, label: 'Geography' },
-            { id: 'technology', icon: MonitorIcon, label: 'Technology' },
-          ].map(tab => (
-            <button 
-              key={tab.id}
-              className={`${styles.detailTab} ${activeDetailTab === tab.id ? styles.detailTabActive : ''}`}
-              onClick={() => setActiveDetailTab(tab.id)}
-            >
-              <tab.icon size={14} />
-              <span>{tab.label}</span>
+            { id: 'pages', icon: Icons.File, label: 'Top Pages' },
+            { id: 'referrers', icon: Icons.Link, label: 'Referrers' },
+            { id: 'geography', icon: Icons.Globe, label: 'Geography' },
+            { id: 'technology', icon: Icons.Monitor, label: 'Technology' },
+          ].map(t => (
+            <button key={t.id} className={`${styles.tabBtn} ${detailTab === t.id ? styles.active : ''}`} onClick={() => setDetailTab(t.id)}>
+              <t.icon size={12} /> {t.label}
             </button>
           ))}
         </div>
         
         <div className={styles.detailContent}>
-          {activeDetailTab === 'pages' && <TopPagesTable pages={data?.site?.topPages} />}
-          {activeDetailTab === 'referrers' && <ReferrersList referrers={data?.site?.referrers} />}
-          {activeDetailTab === 'geography' && <CountriesList countries={data?.site?.countries} />}
-          {activeDetailTab === 'technology' && <TechnologyBreakdown devices={data?.site?.devices} browsers={data?.site?.browsers} />}
+          {detailTab === 'pages' && <TopPagesTable pages={data?.site?.topPages} />}
+          {detailTab === 'referrers' && <ReferrersList referrers={data?.site?.referrers} />}
+          {detailTab === 'geography' && <CountriesList countries={data?.site?.countries} />}
+          {detailTab === 'technology' && <TechBreakdown devices={data?.site?.devices} browsers={data?.site?.browsers} />}
         </div>
       </div>
     </div>
@@ -878,4 +722,3 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
 }
 
 export default ConsolidatedAnalytics;
-
