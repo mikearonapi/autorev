@@ -1,7 +1,7 @@
 {
-  "name": "AutoRev - Find What Drives You",
+  "name": "AutoRev - AI-Powered Sports Car Research",
   "short_name": "AutoRev",
-  "description": "Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a community that values mastery over materialism. Excellence over ego—from Miatas to GT3s.",
+  "description": "AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls. Tony Stark had Jarvis, now you have AL.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a1628",

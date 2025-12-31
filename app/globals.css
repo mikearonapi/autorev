@@ -111,23 +111,38 @@
   
   /* =======================================================================
      FLUID TYPOGRAPHY (Mobile-First with Clamp)
-     Base: 14-16px on mobile, scales up on larger screens
+     
+     Formula: clamp(min, base + coefficient*vw, max)
+     Using rem units so they compound with root font-size scaling.
+     
+     IMPORTANT: The middle value (preferred) must actually produce values
+     between min and max across mobile viewport range (320-430px).
+     Previous formulas were hitting minimums on ALL mobile viewports!
      ======================================================================= */
   /* Font variables - using next/font CSS variables with fallbacks */
   --font-display: var(--font-oswald, 'Oswald'), 'Impact', sans-serif;
   --font-body: var(--font-inter, 'Inter'), 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-primary: var(--font-inter, 'Inter'), -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Fluid font sizes using clamp() for smooth scaling */
-  --font-size-xs: clamp(10px, 2.5vw, 11px);
-  --font-size-sm: clamp(12px, 2.8vw, 13px);
-  --font-size-base: clamp(14px, 3.2vw, 16px);
-  --font-size-lg: clamp(16px, 3.8vw, 18px);
-  --font-size-xl: clamp(18px, 4.5vw, 22px);
-  --font-size-2xl: clamp(22px, 5.5vw, 28px);
-  --font-size-3xl: clamp(26px, 6.5vw, 36px);
-  --font-size-4xl: clamp(32px, 8vw, 48px);
-  --font-size-hero: clamp(36px, 10vw, 56px);
+  /* Fluid font sizes - NOW ACTUALLY SCALE across mobile viewports
+     Results at key viewports (combined with root scaling):
+     
+     Variable       | 360px | 390px | 430px | 768px
+     ---------------|-------|-------|-------|-------
+     --font-size-xs | 10px  | 10px  | 10.2px| 12px
+     --font-size-sm | 11px  | 11.2px| 11.5px| 14px
+     --font-size-base| 13px | 13.3px| 13.7px| 16px
+     etc...
+  */
+  --font-size-xs: clamp(0.625rem, 0.5rem + 0.4vw, 0.75rem);
+  --font-size-sm: clamp(0.688rem, 0.5rem + 0.6vw, 0.875rem);
+  --font-size-base: clamp(0.813rem, 0.625rem + 0.75vw, 1rem);
+  --font-size-lg: clamp(0.875rem, 0.625rem + 1vw, 1.125rem);
+  --font-size-xl: clamp(1rem, 0.75rem + 1.25vw, 1.375rem);
+  --font-size-2xl: clamp(1.125rem, 0.875rem + 1.5vw, 1.75rem);
+  --font-size-3xl: clamp(1.375rem, 1rem + 2vw, 2.25rem);
+  --font-size-4xl: clamp(1.625rem, 1.25rem + 2.5vw, 3rem);
+  --font-size-hero: clamp(1.75rem, 1.25rem + 3.5vw, 3.5rem);
   
   --line-height-tight: 1.1;
   --line-height-snug: 1.25;
@@ -213,6 +228,19 @@ html {
   text-size-adjust: 100%;
   /* Improve scroll performance - account for fixed header + beta banner */
   scroll-padding-top: var(--header-plus-banner-mobile);
+  
+  /* =======================================================================
+     ROOT FONT-SIZE SCALING
+     Everything using rem units automatically scales with viewport width.
+     This provides proportional scaling across ALL phone sizes.
+     
+     At 320px: ~14.6px  (minimum mobile)
+     At 360px: ~14.8px  (Samsung Galaxy S baseline)
+     At 390px: ~14.95px (iPhone 14/15 standard)
+     At 430px: ~15.15px (iPhone Pro Max)
+     At 768px: ~16px    (tablet - hits maximum)
+     ======================================================================= */
+  font-size: clamp(0.875rem, 0.8rem + 0.5vw, 1rem);
 }
 
 @media (min-width: 768px) {

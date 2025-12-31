@@ -2041,6 +2041,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
           }}
           editingLog={editingLog}
           onSave={handleSaveServiceLog}
+          maintenanceSpecs={maintenanceData?.specs}
         />
       )}
     </div>

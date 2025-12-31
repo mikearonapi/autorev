@@ -148,8 +148,6 @@ export default function ServiceLogModal({
     partsCost: '',
     laborCost: '',
     notes: '',
-    nextServiceMiles: '',
-    nextServiceDate: '',
     warrantyCovered: false,
   });
   
@@ -170,8 +168,6 @@ export default function ServiceLogModal({
         partsCost: editingLog.parts_cost || '',
         laborCost: editingLog.labor_cost || '',
         notes: editingLog.notes || '',
-        nextServiceMiles: editingLog.next_service_miles || '',
-        nextServiceDate: editingLog.next_service_date || '',
         warrantyCovered: editingLog.warranty_covered || false,
       });
     } else {
@@ -187,8 +183,6 @@ export default function ServiceLogModal({
         partsCost: '',
         laborCost: '',
         notes: '',
-        nextServiceMiles: '',
-        nextServiceDate: '',
         warrantyCovered: false,
       });
     }
@@ -202,30 +196,6 @@ export default function ServiceLogModal({
       serviceCategory: category,
       serviceType: categoryData.types[0],
     }));
-  };
-
-  // Calculate next service based on defaults
-  const calculateNextService = () => {
-    const categoryData = SERVICE_CATEGORIES[formData.serviceCategory];
-    if (!categoryData?.defaultInterval) return;
-
-    const currentMileage = parseInt(formData.mileage) || 0;
-    
-    if (categoryData.defaultInterval.miles && currentMileage) {
-      setFormData(prev => ({
-        ...prev,
-        nextServiceMiles: currentMileage + categoryData.defaultInterval.miles,
-      }));
-    }
-
-    if (categoryData.defaultInterval.months) {
-      const nextDate = new Date(formData.serviceDate);
-      nextDate.setMonth(nextDate.getMonth() + categoryData.defaultInterval.months);
-      setFormData(prev => ({
-        ...prev,
-        nextServiceDate: nextDate.toISOString().split('T')[0],
-      }));
-    }
   };
 
   // Calculate total cost
@@ -267,8 +237,6 @@ export default function ServiceLogModal({
         laborCost: parseFloat(formData.laborCost) || null,
         totalCost: totalCost || null,
         notes: formData.notes || null,
-        nextServiceMiles: parseInt(formData.nextServiceMiles) || null,
-        nextServiceDate: formData.nextServiceDate || null,
         warrantyCovered: formData.warrantyCovered,
         isScheduledMaintenance: true,
       });
@@ -434,41 +402,6 @@ export default function ServiceLogModal({
               <div className={styles.totalCost}>
                 <span className={styles.totalLabel}>Total</span>
                 <span className={styles.totalValue}>${totalCost.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Next Service Reminder */}
-          <div className={styles.reminderSection}>
-            <div className={styles.reminderHeader}>
-              <h3 className={styles.sectionTitle}>Next Service Reminder</h3>
-              <button 
-                type="button" 
-                className={styles.autoCalcBtn}
-                onClick={calculateNextService}
-              >
-                Auto-calculate
-              </button>
-            </div>
-            <div className={styles.reminderGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Due at Miles</label>
-                <input
-                  type="number"
-                  value={formData.nextServiceMiles}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nextServiceMiles: e.target.value }))}
-                  className={styles.input}
-                  placeholder="Next service miles"
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Due by Date</label>
-                <input
-                  type="date"
-                  value={formData.nextServiceDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nextServiceDate: e.target.value }))}
-                  className={styles.input}
-                />
               </div>
             </div>
           </div>

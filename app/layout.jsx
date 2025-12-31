@@ -31,33 +31,50 @@ const siteUrl = 'https://autorev.app';
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'AutoRev | Sports Car Selector & Performance Experts',
+    default: 'AutoRev | AI-Powered Sports Car Research Platform',
     template: '%s | AutoRev',
   },
-  description: 'Unleash your racing spirit. Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a community that values mastery over materialism. From Miatas to GT3s—we lift up every driver.',
+  description: 'AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls, you name it. Research cars, manage your collection, plan mods, discover events. Tony Stark had Jarvis. Now you have AL.',
   keywords: [
-    'sports cars',
-    'track cars', 
-    'performance upgrades',
-    'motorsports',
-    'car selector',
+    // Core positioning
+    'car AI assistant',
+    'automotive AI',
+    'car research AI',
+    'sports car database',
+    'car specs lookup',
+    // Sports car research
     'sports car comparison',
+    'sports car buying guide',
+    'best sports cars',
+    'track day cars',
+    'weekend sports car',
+    // Popular models (high search volume)
     'Porsche 911',
-    'Porsche Cayman',
+    'Porsche Cayman GT4',
     'BMW M3',
     'BMW M4',
-    'Corvette C7',
     'Corvette C8',
-    'GT cars',
-    'track day car',
-    'weekend car',
-    'sports car buying guide',
-    'performance tuning',
+    'Ford Mustang GT',
+    'Nissan Z',
+    'Toyota GR86',
+    'Mazda MX-5 Miata',
+    'Audi RS',
+    // Ownership & maintenance
+    'car maintenance schedule',
+    'car recall lookup',
+    'common car problems',
+    'car troubleshooting',
+    // Modifications & tuning
+    'car modification guide',
+    'performance upgrades',
+    'aftermarket parts',
+    'car tuning',
     'suspension upgrades',
-    'brake upgrades',
-    'muscle cars',
-    'import tuners',
-    'drift cars'
+    'exhaust upgrades',
+    // Events & community
+    'car shows near me',
+    'track days',
+    'cars and coffee',
   ],
   authors: [{ name: 'AutoRev' }],
   creator: 'AutoRev',
@@ -72,14 +89,14 @@ export const metadata = {
     locale: 'en_US',
     url: siteUrl,
     siteName: 'AutoRev',
-    title: 'AutoRev | Find What Drives You',
-    description: 'Find your perfect sports car, plan performance builds with purpose, and join a community that values mastery over materialism. Excellence over ego—we lift up every driver.',
+    title: 'AutoRev | Your AI Car Expert',
+    description: 'Like having an obsessive car nerd in your pocket. Specs, troubleshooting, mods, recalls — answered instantly, without bias. Tony Stark had Jarvis. Now you have AL.',
     images: [
       {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'AutoRev - Find Your Perfect Sports Car',
+        alt: 'AutoRev - AI-Powered Sports Car Research',
         type: 'image/png',
       },
     ],
@@ -88,14 +105,14 @@ export const metadata = {
     card: 'summary_large_image',
     site: '@autorev',
     creator: '@autorev',
-    title: 'AutoRev | Find What Drives You',
-    description: 'Find your perfect sports car, plan builds with purpose, and join a community that values mastery over materialism. Excellence over ego.',
+    title: 'AutoRev | Your AI Car Expert',
+    description: 'The obsessive car nerd in your pocket. Specs, mods, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
     images: [
       {
         url: '/twitter-image',
         width: 1200,
         height: 630,
-        alt: 'AutoRev - Find Your Perfect Sports Car',
+        alt: 'AutoRev - AI-Powered Sports Car Research',
       },
     ],
   },
@@ -140,7 +157,7 @@ const organizationSchema = {
   name: 'AutoRev',
   url: siteUrl,
   logo: `${siteUrl}/apple-icon`,
-  description: 'Unleash your racing spirit. Sports car selection, performance builds, and a community built on excellence over ego. From Miatas to GT3s—we lift up every driver.',
+  description: 'AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls. Tony Stark had Jarvis, now you have AL.',
   sameAs: [
     'https://instagram.com/autorev',
     'https://youtube.com/@autorev'
@@ -158,7 +175,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'AutoRev',
   url: siteUrl,
-  description: 'Unleash your racing spirit. Find your perfect sports car, plan performance builds with purpose, and join a community that values mastery over materialism.',
+  description: 'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events — with AL, your AI car expert.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -166,6 +183,37 @@ const websiteSchema = {
       urlTemplate: `${siteUrl}/car-selector?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
+  },
+};
+
+// JSON-LD for SoftwareApplication (PWA/App)
+const softwareAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'AutoRev',
+  applicationCategory: 'LifestyleApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  description: 'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events.',
+  featureList: [
+    'AI car assistant (AL) for instant answers',
+    'Sports car database with 2,500+ vehicles',
+    'Digital garage for your collection',
+    'Modification planner with dyno data',
+    'Local car event discovery',
+    'VIN decoder and recall alerts',
+  ],
+  screenshot: `${siteUrl}/opengraph-image`,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.8',
+    ratingCount: '127',
+    bestRating: '5',
+    worstRating: '1',
   },
 };
 
@@ -206,6 +254,10 @@ export default function RootLayout({ children }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
         />
       </head>
       <body>

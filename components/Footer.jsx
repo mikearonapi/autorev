@@ -62,7 +62,10 @@ export default function Footer() {
               </span>
             </Link>
             <p className={styles.tagline}>
-              The sports car encyclopedia for enthusiasts.
+              Your AI car expert in your pocket.
+            </p>
+            <p className={styles.jarvisTag}>
+              Tony Stark had Jarvis. Now you have AL.
             </p>
           </div>
 

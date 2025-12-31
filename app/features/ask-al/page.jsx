@@ -62,28 +62,28 @@ const ImagePlaceholder = () => (
 const FEATURES = [
   {
     icon: MessageIcon,
-    title: 'Natural Conversations',
-    description: 'Ask questions in plain English. AL understands context and gives you personalized answers.',
+    title: 'Skip the Forum Trolls',
+    description: 'No more digging through 50-page threads. AL cuts straight to the answer with sources you can trust.',
   },
   {
     icon: BrainIcon,
-    title: 'Deep Car Knowledge',
-    description: 'Trained on specifications, reviews, common issues, and real owner experiences.',
+    title: 'Never Forgets Anything',
+    description: 'Every spec, every known issue, every owner insight — instantly recalled. No more "I read this somewhere..."',
   },
   {
     icon: CarIcon,
-    title: 'Vehicle-Specific Advice',
-    description: 'Get answers tailored to your exact car, year, and current modifications.',
+    title: 'Your Car, Your Context',
+    description: 'AL knows your exact year, model, and mods. Answers are tailored to your specific situation.',
   },
   {
     icon: WrenchIcon,
-    title: 'Mod Recommendations',
-    description: 'Planning upgrades? AL suggests compatible parts and warns about conflicts.',
+    title: 'Mod Planning Made Easy',
+    description: 'Planning upgrades? AL suggests compatible parts, warns about conflicts, and links relevant YouTube videos.',
   },
   {
     icon: ShieldIcon,
-    title: 'Recall & TSB Alerts',
-    description: 'Stay informed about safety recalls and technical service bulletins for your car.',
+    title: 'Recalls & TSBs',
+    description: 'Never miss a safety recall or technical service bulletin. AL keeps you informed.',
   },
 ];
 
@@ -108,8 +108,13 @@ export default function AskALFeaturePage() {
           </h1>
           
           <p className={styles.heroDescription}>
-            Ask anything about sports cars. Get instant, knowledgeable answers about specs, 
-            modifications, maintenance, and more—powered by AI trained on real automotive data.
+            Like having the obsessive car nerd in your pocket — who&apos;s done all the research 
+            and never forgets anything. Tech specs, troubleshooting, aftermarket upgrades, recalls, 
+            you name it. Avoid the forum trolls, cut straight to the answer.
+          </p>
+          
+          <p className={styles.heroJarvisTag}>
+            Tony Stark had Jarvis. Now you have AL.
           </p>
           
           <Link href="/al" className={styles.heroCTA}>
@@ -168,11 +173,12 @@ export default function AskALFeaturePage() {
       <section className={styles.secondaryShowcase}>
         <div className={styles.secondaryContainer}>
           <div className={styles.secondaryContent}>
-            <h3>Real Data, Real Answers</h3>
+            <h3>No Bias. No Guessing.</h3>
             <p>
-              Unlike generic AI, AL is trained on AutoRev's database of sports cars, 
-              owner reviews, dyno results, and modification data. Ask about your 
-              specific car and get answers grounded in real-world experience.
+              Unlike generic AI that makes things up, AL is grounded in AutoRev&apos;s 
+              database of real specs, owner reviews, and verified mod data. 
+              Ask about your specific car and get answers you can actually trust — 
+              with sources, not hallucinations.
             </p>
             <Link href="/al" className={styles.heroCTA}>
               Try AL Now

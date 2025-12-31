@@ -92,7 +92,15 @@
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
   max-width: 600px;
+  margin: 0 auto var(--space-md);
+}
+
+.heroJarvisTag {
+  font-size: var(--font-size-base);
+  color: var(--sn-accent);
+  font-style: italic;
   margin: 0 auto var(--space-xl);
+  font-weight: 500;
 }
 
 .heroCTA {

@@ -336,6 +336,8 @@ export default function WheelTireConfigurator({
         tireSizeFront: wheelConfig.tireSizeFront || fitmentData?.oem?.tireSizeFront || '',
         tireSizeRear: wheelConfig.tireSizeRear || fitmentData?.oem?.tireSizeRear || '',
         tireCompound: wheelConfig.compound,
+        // Mark as custom to prevent re-initialization when passed back
+        isCustom: true,
         // Performance impact from compound - this is what affects metrics
         gripBonus: compound?.grip || 0,
         recommendedFor: compound?.id === 'track' ? ['track', 'competition'] : 

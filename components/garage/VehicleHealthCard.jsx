@@ -122,17 +122,19 @@ export default function VehicleHealthCard({
         const json = await res.json();
         if (!res.ok) throw new Error(json?.error || 'Failed to load vehicle health');
         if (ignore) return;
-        setBaseline(json);
+        // API returns { vehicle: {...} } - extract vehicle data
+        const vehicleData = json.vehicle || json;
+        setBaseline(vehicleData);
         setForm({
-          mileage: json.mileage ?? '',
-          last_started_at: formatDateInput(json.last_started_at),
-          battery_status: json.battery_status || 'unknown',
-          last_oil_change_date: formatDateInput(json.last_oil_change_date),
-          last_oil_change_mileage: json.last_oil_change_mileage ?? '',
-          tire_installed_date: formatDateInput(json.tire_installed_date),
-          tire_tread_32nds: json.tire_tread_32nds ?? '',
-          registration_due_date: formatDateInput(json.registration_due_date),
-          inspection_due_date: formatDateInput(json.inspection_due_date),
+          mileage: vehicleData.mileage ?? '',
+          last_started_at: formatDateInput(vehicleData.last_started_at),
+          battery_status: vehicleData.battery_status || 'unknown',
+          last_oil_change_date: formatDateInput(vehicleData.last_oil_change_date),
+          last_oil_change_mileage: vehicleData.last_oil_change_mileage ?? '',
+          tire_installed_date: formatDateInput(vehicleData.tire_installed_date),
+          tire_tread_32nds: vehicleData.tire_tread_32nds ?? '',
+          registration_due_date: formatDateInput(vehicleData.registration_due_date),
+          inspection_due_date: formatDateInput(vehicleData.inspection_due_date),
         });
       } catch (err) {
         if (!ignore) setError(err.message || 'Unable to load vehicle health');

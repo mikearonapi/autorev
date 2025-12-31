@@ -55,6 +55,15 @@
   font-size: var(--font-size-xs);
   color: var(--color-gray-500);
   max-width: 240px;
+  margin: 0;
+}
+
+.jarvisTag {
+  font-size: 11px;
+  color: var(--sn-accent);
+  font-style: italic;
+  opacity: 0.8;
+  margin: 0;
 }
 
 /* Newsletter - Compact inline */

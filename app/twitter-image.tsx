@@ -4,7 +4,7 @@ import { join } from 'path';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Using Node.js runtime to avoid Edge Function size limit (images exceed 2MB)
-export const alt = 'AutoRev - Find Your Perfect Sports Car';
+export const alt = 'AutoRev - AI-Powered Sports Car Research';
 export const size = {
   width: 1200,
   height: 630,
@@ -218,10 +218,10 @@ export default async function Image() {
             }}
           >
             {[
-              { label: 'Your Sports Car Match', highlight: true },
+              { label: 'Meet AL — Your AI Car Expert', highlight: true },
+              { label: 'Research', highlight: false },
               { label: 'My Garage', highlight: false },
               { label: 'Tuning Shop', highlight: false },
-              { label: 'Encyclopedia', highlight: false },
             ].map((feature) => (
               <div
                 key={feature.label}

@@ -37,8 +37,8 @@ export const revalidate = 60;
 
 // Homepage uses the default layout metadata but we can add specific homepage schema
 export const metadata = {
-  title: 'AutoRev | Find What Drives You',
-  description: 'Excellence over ego. Find your perfect sports car with our intelligent selector, plan performance builds with purpose, and join a brotherhood of drivers who value mastery over materialism. From Miatas to GT3s—we lift up every enthusiast.',
+  title: 'AutoRev | AI-Powered Sports Car Research',
+  description: 'Like having the obsessive car nerd in your pocket. Research cars, manage your collection, plan mods, discover events. Tech specs, troubleshooting, upgrades, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
   alternates: {
     canonical: '/',
   },

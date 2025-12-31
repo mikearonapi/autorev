@@ -13,6 +13,8 @@
     "test:integration": "node --test \"tests/integration/**/*.test.js\"",
     "test:all": "npm test && npm run test:integration",
     "test:e2e": "playwright test",
+    "test:mobile": "playwright test tests/mobile-viewport.spec.js",
+    "test:mobile:samsung": "playwright test tests/mobile-viewport.spec.js --grep 'Samsung'",
     "mobile:audit": "MOBILE_AUDIT=1 playwright test tests/e2e/mobile-audit.screenshots.spec.js",
     "seed": "node scripts/migrate-and-seed.js",
     "gen:seed-multi-brand-migration": "node scripts/generateSeedMultiBrandMigration.mjs",

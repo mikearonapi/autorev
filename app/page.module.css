@@ -127,14 +127,33 @@
 /* Hero Title */
 .heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  /* Fluid typography: scales from 28px (360px viewport) to 72px (1200px+) */
+  /* Formula adjusted for 360px Samsung baseline */
+  font-size: clamp(1.75rem, 4vw + 1rem, 4.5rem);
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: var(--line-height-tight);
   margin: 0 0 var(--space-md);
-  white-space: nowrap;
+  /* Allow wrapping on very narrow screens, with balanced line breaks */
+  white-space: normal;
+  text-wrap: balance; /* Modern browsers: balanced wrapping */
+  /* Fallback for older browsers */
+  word-break: keep-all; /* Prevent mid-word breaks */
+  overflow-wrap: break-word;
+}
+
+/* Extra-narrow devices (Samsung Galaxy S series, older Androids) */
+@media (max-width: 374px) {
+  .heroTitle {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    letter-spacing: 0.01em;
+  }
+  
+  .heroHeadlines {
+    padding: 0 var(--space-sm);
+  }
 }
 
 @media (min-width: 768px) {
@@ -156,14 +175,34 @@
   max-width: 650px;
 }
 
+/* Hero Jarvis Tagline - Memorable hook */
+.heroJarvisTag {
+  font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+  color: var(--color-gray-400);
+  line-height: var(--line-height-relaxed);
+  margin: var(--space-md) auto 0;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+@media (min-width: 768px) {
+  .heroJarvisTag {
+    margin-top: var(--space-lg);
+  }
+}
+
 /* Hero Tagline */
 .heroTagline {
-  font-size: clamp(10px, 1.2vw, 14px);
+  font-size: clamp(10px, 2.5vw, 14px);
   color: var(--color-gray-400);
   font-weight: 500;
   letter-spacing: 0.06em;
   margin: 0;
-  white-space: nowrap;
+  /* Allow wrapping on narrow viewports (Samsung 360px) */
+  white-space: normal;
+  text-align: center;
+  max-width: 100%;
+  padding: 0 var(--space-sm);
 }
 
 /* Bottom section - tagline at 85% */

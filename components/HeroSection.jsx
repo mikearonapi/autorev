@@ -58,7 +58,10 @@ export default function HeroSection({ carCount = 188 }) {
           Find What <span className={styles.heroAccent}>Drives You</span>
         </h1>
         <p className={styles.heroSubtitle}>
-          The AI-powered research platform for sports car enthusiasts — like having an obsessive car expert friend in your pocket.
+          The AI-powered research platform for sports car enthusiasts — like having the obsessive car nerd in your pocket who&apos;s done all the research and never forgets anything.
+        </p>
+        <p className={styles.heroJarvisTag}>
+          Tony Stark had Jarvis. Now you have <span className={styles.heroAccent}>AL</span>.
         </p>
       </div>
       

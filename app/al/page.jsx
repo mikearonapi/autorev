@@ -10,23 +10,26 @@ export async function generateMetadata() {
   }
 
   return {
-    title: 'AL | Car AI That Actually Knows Cars',
-    description: `Finally, an AI that doesn't guess. AL has ${stats.cars} sports cars, ${stats.insights?.toLocaleString() || '1,200+'} owner insights, ${stats.fitments?.toLocaleString() || '800+'} verified part fitments, and real performance data. Ask about specs, known issues, maintenance, or mods — and get answers with sources.`,
+    title: 'AL | Your AI Car Expert — Tony Stark Had Jarvis, Now You Have AL',
+    description: `Like having the obsessive car nerd in your pocket who's done all the research and never forgets anything. ${stats.cars} sports cars, ${stats.insights?.toLocaleString() || '1,200+'} owner insights. Specs, troubleshooting, mods, recalls — answered instantly.`,
     alternates: { canonical: '/al' },
     openGraph: {
-      title: 'AL — Finally, Car AI That Doesn\'t Guess',
-      description: `ChatGPT invents specs. AL cites sources. ${stats.cars} sports cars, ${stats.insights?.toLocaleString() || '1,200+'} forum insights, ${stats.fitments?.toLocaleString() || '800+'} verified fitments. Try it free.`,
+      title: 'AL — Your AI Car Expert',
+      description: `Tony Stark had Jarvis. Now you have AL. The obsessive car nerd in your pocket. ${stats.cars} sports cars, specs, mods, recalls — answered instantly.`,
       url: '/al',
       type: 'website',
     },
     keywords: [
-      'automotive ai',
-      'car research ai',
-      'sports car ai assistant',
-      'car buying research',
+      'car AI assistant',
+      'automotive AI',
+      'car research AI',
+      'sports car AI',
+      'car specs lookup',
+      'car troubleshooting AI',
+      'car modification advice',
+      'recall lookup',
+      'car maintenance help',
       'parts fitment search',
-      'car maintenance database',
-      'owner insights ai',
     ],
   };
 }
