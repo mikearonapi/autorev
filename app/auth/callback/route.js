@@ -13,11 +13,18 @@
  */
 
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
 import { sendWelcomeEmail } from '@/lib/email';
 import { processReferralSignup } from '@/lib/referralService';
+
+// Admin client for analytics tracking
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 /**
  * Maximum retry attempts for session verification
@@ -252,6 +259,48 @@ export async function GET(request) {
           sendWelcomeEmail(user).catch(err => 
             console.error('[Auth Callback] Welcome email failed:', err)
           );
+          
+          // Track signup event and save attribution (fire-and-forget)
+          const utmSource = cookieStore.get('utm_source')?.value;
+          const utmMedium = cookieStore.get('utm_medium')?.value;
+          const utmCampaign = cookieStore.get('utm_campaign')?.value;
+          
+          // Insert signup event
+          supabaseAdmin.from('user_events').insert({
+            event_name: 'signup_completed',
+            event_category: 'onboarding',
+            user_id: user.id,
+            session_id: `auth-${user.id.slice(0, 8)}-${Date.now()}`,
+            properties: { method: user.app_metadata?.provider || 'email' },
+            utm_source: utmSource || null,
+            utm_medium: utmMedium || null,
+            utm_campaign: utmCampaign || null
+          }).then(() => console.log('[Auth Callback] Signup event tracked'))
+            .catch(err => console.error('[Auth Callback] Failed to track signup event:', err));
+          
+          // Save user attribution
+          supabaseAdmin.from('user_attribution').insert({
+            user_id: user.id,
+            first_touch_source: utmSource || signupContext.referrer || 'direct',
+            first_touch_medium: utmMedium || null,
+            first_touch_campaign: utmCampaign || null,
+            first_touch_referrer: signupContext.referrer || null,
+            first_touch_landing_page: sourcePage || '/',
+            first_touch_at: new Date().toISOString(),
+            last_touch_source: utmSource || signupContext.referrer || 'direct',
+            last_touch_medium: utmMedium || null,
+            last_touch_campaign: utmCampaign || null,
+            last_touch_at: new Date().toISOString(),
+            signup_page: sourcePage || '/',
+            signup_device: 'Unknown',
+            signup_country: null
+          }).then(() => console.log('[Auth Callback] User attribution saved'))
+            .catch(err => {
+              // Ignore duplicate errors (user already has attribution)
+              if (!err.message?.includes('duplicate')) {
+                console.error('[Auth Callback] Failed to save attribution:', err);
+              }
+            });
 
           // Process referral if user signed up with a referral code
           const refCode = cookieStore.get('referral_code')?.value;

@@ -1,0 +1,366 @@
+/**
+ * Marketing Analytics Dashboard Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-muted, #888);
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-subtle, #333);
+  border-top-color: var(--accent-purple, #8b5cf6);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: var(--accent-purple, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Summary Grid */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 800px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.summaryCard {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.summaryValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+}
+
+/* Section Navigation */
+.sectionNav {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.sectionTab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted, #888);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sectionTab:hover {
+  color: var(--text-primary, #fff);
+  background: rgba(255,255,255,0.05);
+}
+
+.sectionTabActive {
+  background: var(--accent-purple, #8b5cf6) !important;
+  color: white !important;
+}
+
+/* Section Content */
+.sectionContent {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a4a);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin: 0;
+}
+
+.sectionDesc {
+  font-size: 0.875rem;
+  color: var(--text-muted, #888);
+  margin: 0;
+}
+
+/* Funnel Chart */
+.funnelChart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+.funnelStep {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.funnelStepLabel {
+  flex: 0 0 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.funnelStepName {
+  font-size: 0.8125rem;
+  color: var(--text-primary, #fff);
+}
+
+.funnelStepValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.funnelBarWrapper {
+  flex: 1;
+  height: 32px;
+  background: var(--border-subtle, #2a2a4a);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.funnelBar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.funnelDropoff {
+  flex: 0 0 50px;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Attribution Section */
+.attributionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.attributionTabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--border-subtle, #2a2a4a);
+  border-radius: 6px;
+  padding: 0.25rem;
+}
+
+.attrTab {
+  flex: 1;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-muted, #888);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.attrTab:hover {
+  color: var(--text-primary, #fff);
+}
+
+.attrTabActive {
+  background: var(--card-bg, #1a1a2e) !important;
+  color: var(--text-primary, #fff) !important;
+}
+
+.attributionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.attributionRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.attrLabel {
+  flex: 0 0 150px;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attrBar {
+  flex: 1;
+  height: 8px;
+  background: var(--border-subtle, #2a2a4a);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.attrBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  border-radius: 4px;
+}
+
+.attrValue {
+  flex: 0 0 3rem;
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.attrPercent {
+  flex: 0 0 3rem;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+}
+
+/* Cohort Table */
+.cohortTableWrapper {
+  overflow-x: auto;
+}
+
+.cohortTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cohortTable th {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-subtle, #2a2a4a);
+}
+
+.cohortTable td {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+  border-bottom: 1px solid var(--border-subtle, #1a1a3a);
+}
+
+.retentionGood {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.retentionMedium {
+  color: #f59e0b !important;
+}
+
+.retentionLow {
+  color: #ef4444 !important;
+}
+
+/* Events Table */
+.eventsTableWrapper {
+  overflow-x: auto;
+}
+
+.eventsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.eventsTable th {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-subtle, #2a2a4a);
+}
+
+.eventsTable td {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff);
+  border-bottom: 1px solid var(--border-subtle, #1a1a3a);
+}
+
+.eventName {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8125rem;
+}
+
+.eventCategory {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: white;
+  text-transform: uppercase;
+}
+

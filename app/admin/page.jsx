@@ -51,6 +51,7 @@ import EmailDashboard from './components/EmailDashboard';
 import { StripeDashboard } from './components/StripeDashboard';
 import { CostIntegrations } from './components/CostIntegrations';
 import { SiteAnalytics } from './components/SiteAnalytics';
+import { MarketingAnalytics } from './components/MarketingAnalytics';
 
 // Icons
 import {
@@ -497,23 +498,43 @@ export default function AdminDashboardPage() {
         
         {/* SITE ANALYTICS TAB */}
         {activeTab === 'analytics' && (
-          <section className={styles.section}>
-            <div className={styles.tabHeader}>
-              <h2 className={styles.sectionTitle}>
-                <BarChartIcon size={18} className={styles.sectionIcon} />
-                Site Analytics
-              </h2>
-              <p className={styles.tabDescription}>
-                Real-time visitor analytics powered by your own data. Tracks page views, visitors, 
-                geography, devices, and referrers.
-              </p>
-            </div>
-            <SiteAnalytics 
-              token={session?.access_token}
-              range={timeRange}
-              loading={loading}
-            />
-          </section>
+          <>
+            {/* Traffic Analytics */}
+            <section className={styles.section}>
+              <div className={styles.tabHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <BarChartIcon size={18} className={styles.sectionIcon} />
+                  Traffic Analytics
+                </h2>
+                <p className={styles.tabDescription}>
+                  Real-time visitor analytics. Tracks page views, visitors, geography, devices, and referrers.
+                </p>
+              </div>
+              <SiteAnalytics 
+                token={session?.access_token}
+                range={timeRange}
+                loading={loading}
+              />
+            </section>
+            
+            {/* Marketing Analytics */}
+            <section className={styles.section}>
+              <div className={styles.tabHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <TrendingUpIcon size={18} className={styles.sectionIcon} />
+                  Marketing Analytics
+                </h2>
+                <p className={styles.tabDescription}>
+                  Conversion funnels, attribution, cohort retention, and event tracking for marketing optimization.
+                </p>
+              </div>
+              <MarketingAnalytics 
+                token={session?.access_token}
+                range={timeRange}
+                loading={loading}
+              />
+            </section>
+          </>
         )}
         
         {/* REVENUE TAB - Stripe Dashboard */}

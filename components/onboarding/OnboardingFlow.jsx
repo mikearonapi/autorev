@@ -8,6 +8,7 @@ import ReferralStep from './steps/ReferralStep';
 import IntentStep from './steps/IntentStep';
 import FeatureSlide from './steps/FeatureSlide';
 import FinalStep from './steps/FinalStep';
+import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 
 
 // Feature slides configuration - each becomes its own step
@@ -115,6 +116,7 @@ export default function OnboardingFlow({
   initialData = {}
 }) {
   const router = useRouter();
+  const { trackEvent, trackOnboardingStep } = useAnalytics();
   const [step, setStep] = useState(initialStep);
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState('next');
@@ -128,6 +130,13 @@ export default function OnboardingFlow({
       ? (Array.isArray(initialData.user_intents) ? initialData.user_intents : [initialData.user_intent])
       : [],
   });
+  
+  // Track onboarding started
+  useEffect(() => {
+    if (isOpen && step === 1) {
+      trackEvent(ANALYTICS_EVENTS.ONBOARDING_STARTED);
+    }
+  }, [isOpen, step, trackEvent]);
 
   // Get user's display name
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
@@ -184,9 +193,14 @@ export default function OnboardingFlow({
 
   // Handle dismissal (save progress for resume)
   const handleDismiss = useCallback(() => {
+    // Track skip event
+    trackEvent(ANALYTICS_EVENTS.ONBOARDING_SKIPPED, {
+      skipped_at_step: step,
+      referral_source: formData.referral_source
+    });
     saveProgress(formData);
     onClose?.();
-  }, [formData, saveProgress, onClose]);
+  }, [formData, saveProgress, onClose, step, trackEvent]);
 
   // Handle escape key (disabled on required steps: Welcome, Referral, Intent)
   const isRequiredStep = step === 1 || step === 2 || step === 3;
@@ -233,12 +247,20 @@ export default function OnboardingFlow({
       setSlideDirection('next');
       setIsAnimating(true);
       setTimeout(() => {
-        setStep(step + 1);
+        const newStep = step + 1;
+        setStep(newStep);
         setIsAnimating(false);
         saveProgress(formData);
+        
+        // Track step progression
+        const stepNames = ['welcome', 'referral', 'intent', ...FEATURE_SLIDES.map(f => f.id), 'final'];
+        trackOnboardingStep(newStep, stepNames[newStep - 1] || `step_${newStep}`, {
+          referral_source: formData.referral_source,
+          intents_count: formData.user_intents?.length
+        });
       }, 200);
     }
-  }, [step, formData, saveProgress]);
+  }, [step, formData, saveProgress, trackOnboardingStep]);
 
   // Navigate to previous step
   const handleBack = useCallback(() => {
@@ -270,6 +292,13 @@ export default function OnboardingFlow({
         console.error('[Onboarding] Failed to complete onboarding:', result.error);
       }
       
+      // Track onboarding completion
+      trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETED, {
+        referral_source: formData.referral_source,
+        user_intents: formData.user_intents,
+        steps_viewed: TOTAL_STEPS
+      });
+      
       console.log('[Onboarding] Completed. saveSuccess:', result.success);
       onComplete?.(formData);
       
@@ -278,7 +307,7 @@ export default function OnboardingFlow({
     } finally {
       setIsSaving(false);
     }
-  }, [formData, saveProgress, onComplete]);
+  }, [formData, saveProgress, onComplete, trackEvent]);
 
   // Check if current step can proceed
   const canProceed = useCallback(() => {
