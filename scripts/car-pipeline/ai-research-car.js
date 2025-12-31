@@ -35,6 +35,7 @@ import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
+import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../../lib/backendAiLogger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -129,6 +130,23 @@ function log(msg, level = 'info') {
   console.log(`[${timestamp}] ${prefix[level] || ''} ${msg}`);
 }
 
+/**
+ * Track AI usage for cost analytics
+ */
+async function trackAiCall(response, phase, entityId) {
+  if (response?.usage) {
+    await trackBackendAiUsage({
+      purpose: AI_PURPOSES.CAR_RESEARCH,
+      scriptName: `ai-research-car:${phase}`,
+      inputTokens: response.usage.input_tokens || 0,
+      outputTokens: response.usage.output_tokens || 0,
+      model: response.model || 'claude-sonnet-4-20250514',
+      entityId,
+      source: AI_SOURCES.BACKEND_SCRIPT,
+    });
+  }
+}
+
 // =============================================================================
 // PHASE 1-2: AI CORE DATA RESEARCH
 // =============================================================================
@@ -189,6 +207,8 @@ JSON SCHEMA:
     max_tokens: 4000,
     messages: [{ role: 'user', content: prompt }]
   });
+  
+  await trackAiCall(response, 'core-data', carName);
 
   const content = response.content[0].text;
   const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -321,6 +341,8 @@ RULES:
     max_tokens: 3000,
     messages: [{ role: 'user', content: prompt }]
   });
+  
+  await trackAiCall(response, 'known-issues', carData.slug);
 
   const content = response.content[0].text;
   const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -389,6 +411,8 @@ Research actual specifications. Return ONLY the JSON object.`;
     max_tokens: 2000,
     messages: [{ role: 'user', content: prompt }]
   });
+  
+  await trackAiCall(response, 'maintenance-specs', carData.slug);
 
   const content = response.content[0].text;
   const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -451,6 +475,8 @@ RULES:
     max_tokens: 3000,
     messages: [{ role: 'user', content: prompt }]
   });
+  
+  await trackAiCall(response, 'service-intervals', carData.slug);
 
   const content = response.content[0].text;
   const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -596,6 +622,8 @@ Return ONLY the JSON object, no markdown.`;
     max_tokens: 4000, // Increased for larger editorial content
     messages: [{ role: 'user', content: prompt }]
   });
+  
+  await trackAiCall(response, 'scoring-editorial', carData.slug);
 
   const content = response.content[0].text;
   const jsonMatch = content.match(/\{[\s\S]*\}/);

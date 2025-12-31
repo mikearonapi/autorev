@@ -33,6 +33,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 import { createClient } from '@supabase/supabase-js';
+import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../lib/backendAiLogger.js';
 
 // ============================================================================
 // Configuration
@@ -85,9 +86,10 @@ const logError = (...args) => console.error('[ai-process:error]', ...args);
  * Call Claude API with a prompt
  * @param {string} systemPrompt - System prompt
  * @param {string} userPrompt - User prompt
+ * @param {string} [entityId] - Entity ID for tracking (e.g., video_id)
  * @returns {Promise<string>} AI response text
  */
-async function callClaude(systemPrompt, userPrompt) {
+async function callClaude(systemPrompt, userPrompt, entityId = null) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -111,6 +113,20 @@ async function callClaude(systemPrompt, userPrompt) {
   }
 
   const data = await response.json();
+  
+  // Track AI usage for cost analytics
+  if (data.usage) {
+    await trackBackendAiUsage({
+      purpose: AI_PURPOSES.YOUTUBE_PROCESSING,
+      scriptName: 'youtube-ai-processing',
+      inputTokens: data.usage.input_tokens || 0,
+      outputTokens: data.usage.output_tokens || 0,
+      model: options.model,
+      entityId,
+      source: AI_SOURCES.BACKEND_SCRIPT,
+    });
+  }
+  
   return data.content?.[0]?.text || '';
 }
 
@@ -301,7 +317,7 @@ async function processVideo(video, knownCarSlugs, supabase) {
   try {
     // Call AI for extraction
     const prompt = buildExtractionPrompt(title, channel_name, transcriptToProcess, knownCarSlugs);
-    const response = await callClaude(SYSTEM_PROMPT, prompt);
+    const response = await callClaude(SYSTEM_PROMPT, prompt, video_id);
     
     logVerbose(`  AI response length: ${response.length} chars`);
 

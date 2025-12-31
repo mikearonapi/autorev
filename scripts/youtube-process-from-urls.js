@@ -31,6 +31,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
+import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../lib/backendAiLogger.js';
 
 // ============================================================================
 // Configuration
@@ -234,6 +235,19 @@ RULES:
       max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     });
+
+    // Track AI usage for cost analytics
+    if (response.usage) {
+      await trackBackendAiUsage({
+        purpose: AI_PURPOSES.YOUTUBE_PROCESSING,
+        scriptName: 'youtube-process-from-urls',
+        inputTokens: response.usage.input_tokens || 0,
+        outputTokens: response.usage.output_tokens || 0,
+        model: 'claude-sonnet-4-20250514',
+        entityId: videoTitle,
+        source: AI_SOURCES.BACKEND_SCRIPT,
+      });
+    }
 
     const content = response.content[0].text;
     const jsonMatch = content.match(/\{[\s\S]*\}/);

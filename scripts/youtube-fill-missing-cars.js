@@ -10,6 +10,7 @@
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 import puppeteer from 'puppeteer';
+import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../lib/backendAiLogger.js';
 
 // Load env from .env.local
 import dotenv from 'dotenv';
@@ -255,6 +256,20 @@ ${transcript.slice(0, 15000)}`;
   }
 
   const data = await response.json();
+  
+  // Track AI usage for cost analytics
+  if (data.usage) {
+    await trackBackendAiUsage({
+      purpose: AI_PURPOSES.YOUTUBE_PROCESSING,
+      scriptName: 'youtube-fill-missing-cars',
+      inputTokens: data.usage.input_tokens || 0,
+      outputTokens: data.usage.output_tokens || 0,
+      model: 'claude-sonnet-4-20250514',
+      entityId: carSlug,
+      source: AI_SOURCES.BACKEND_SCRIPT,
+    });
+  }
+  
   const text = data.content[0]?.text || '';
   
   // Extract JSON from response

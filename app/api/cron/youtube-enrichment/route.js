@@ -20,6 +20,7 @@ import { createClient } from '@supabase/supabase-js';
 import { YoutubeTranscript } from 'youtube-transcript';
 import Anthropic from '@anthropic-ai/sdk';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '@/lib/backendAiLogger';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -421,6 +422,17 @@ async function processWithAI() {
         model: CONFIG.aiModel,
         max_tokens: 4000,
         messages: [{ role: 'user', content: prompt }],
+      });
+
+      // Track AI usage for cost analytics
+      await trackBackendAiUsage({
+        purpose: AI_PURPOSES.YOUTUBE_ENRICHMENT,
+        scriptName: 'youtube-enrichment-cron',
+        inputTokens: response.usage?.input_tokens || 0,
+        outputTokens: response.usage?.output_tokens || 0,
+        model: CONFIG.aiModel,
+        entityId: video.video_id,
+        source: AI_SOURCES.CRON_JOB,
       });
 
       const content = response.content[0].text;

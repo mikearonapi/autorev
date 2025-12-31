@@ -64,6 +64,228 @@ function sendSSE(controller, eventType, data) {
   controller.enqueue(encoder.encode(event));
 }
 
+// =============================================================================
+// PARALLEL TOOL EXECUTION
+// =============================================================================
+
+// =============================================================================
+// DOMAIN-BASED TOOL FILTERING
+// =============================================================================
+
+/**
+ * Core tools that should always be available (low token cost, high utility)
+ */
+const CORE_TOOLS = [
+  'get_car_ai_context',  // Primary tool for car questions
+  'compare_cars',        // For comparisons
+  'search_cars',         // For discovery
+];
+
+/**
+ * Domain to tool mapping - only include relevant tools for detected domains
+ * This reduces token count by not sending all 17 tools when only 5-8 are relevant
+ */
+const DOMAIN_TOOL_MAP = {
+  comparison: ['compare_cars', 'get_car_ai_context', 'search_cars', 'get_car_details'],
+  modifications: ['search_parts', 'get_upgrade_info', 'search_encyclopedia', 'recommend_build', 'search_knowledge', 'get_dyno_runs'],
+  performance: ['get_car_ai_context', 'get_dyno_runs', 'get_track_lap_times', 'search_knowledge'],
+  reliability: ['get_car_ai_context', 'get_known_issues', 'search_knowledge', 'search_community_insights'],
+  maintenance: ['get_car_ai_context', 'get_maintenance_schedule', 'search_knowledge', 'analyze_vehicle_health'],
+  buying: ['get_car_ai_context', 'search_knowledge', 'get_known_issues', 'search_community_insights', 'get_expert_reviews'],
+  track: ['get_car_ai_context', 'get_track_lap_times', 'search_knowledge', 'recommend_build', 'search_events'],
+  events: ['search_events'],
+  education: ['search_encyclopedia', 'get_upgrade_info', 'search_knowledge'],
+};
+
+/**
+ * Filter tools based on detected query domains to reduce token count.
+ * 
+ * @param {Array} allTools - All available tools
+ * @param {Array} domains - Detected query domains
+ * @param {Object} plan - User's plan (for tool access filtering)
+ * @returns {Array} Filtered tools relevant to the query
+ */
+function filterToolsByDomain(allTools, domains, plan) {
+  // First filter by plan access
+  const planAccessibleTools = allTools.filter(tool => 
+    plan.toolAccess === 'all' || plan.toolAccess.includes(tool.name)
+  );
+  
+  // If no domains detected or domains array is empty, return all plan-accessible tools
+  if (!domains || domains.length === 0) {
+    return planAccessibleTools;
+  }
+  
+  // Build set of relevant tool names from detected domains
+  const relevantToolNames = new Set(CORE_TOOLS);
+  
+  for (const domain of domains) {
+    const domainTools = DOMAIN_TOOL_MAP[domain];
+    if (domainTools) {
+      domainTools.forEach(tool => relevantToolNames.add(tool));
+    }
+  }
+  
+  // Filter to only include relevant tools
+  const filteredTools = planAccessibleTools.filter(tool => 
+    relevantToolNames.has(tool.name)
+  );
+  
+  // If filtering resulted in very few tools, include all plan-accessible tools
+  // (this handles edge cases where domain detection might miss something)
+  if (filteredTools.length < 4) {
+    return planAccessibleTools;
+  }
+  
+  return filteredTools;
+}
+
+// =============================================================================
+// TOOL INPUT NORMALIZATION
+// =============================================================================
+
+/**
+ * Normalize tool input by injecting user context where needed
+ */
+function normalizeToolInput(toolName, rawInput, context, userId) {
+  const input = rawInput && typeof rawInput === 'object' ? { ...rawInput } : {};
+  const userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
+  const userMatchedCarVariantKey = context?.userVehicle?.matched_car_variant_key || null;
+  
+  // Variant-accurate maintenance
+  if (toolName === 'get_maintenance_schedule') {
+    const hasVariantKey = Boolean(input.car_variant_key && String(input.car_variant_key).trim());
+    const requestedSlug = input.car_slug ? String(input.car_slug) : null;
+    const slugMatchesUser = Boolean(requestedSlug && userMatchedCarSlug && requestedSlug === userMatchedCarSlug);
+    if (!hasVariantKey && slugMatchesUser && userMatchedCarVariantKey) {
+      input.car_variant_key = userMatchedCarVariantKey;
+      input.__injected = { ...(input.__injected || {}), car_variant_key: true };
+    }
+  }
+  
+  // Vehicle health analysis requires user context
+  if (toolName === 'analyze_vehicle_health') {
+    if (userId && !input.user_id) {
+      input.user_id = userId;
+      input.__injected = { ...(input.__injected || {}), user_id: true };
+    }
+  }
+  
+  return input;
+}
+
+/**
+ * Execute multiple tools in parallel for faster response times.
+ * Claude often requests multiple tools at once - running them in parallel
+ * can cut response time significantly.
+ */
+async function executeToolsInParallel({
+  toolUseBlocks,
+  context,
+  userId,
+  userBalance,
+  correlationId,
+  cacheScopeKey,
+  onToolResult, // callback for streaming updates
+}) {
+  const results = [];
+  const timings = [];
+  const toolCallsUsed = [];
+  
+  // First, filter tools by availability and prepare execution promises
+  const toolPromises = toolUseBlocks.map(async (toolUse) => {
+    const toolStartTime = Date.now();
+    
+    // Check tool availability
+    if (!isToolAvailable(userBalance.plan, toolUse.name)) {
+      return {
+        toolUse,
+        result: {
+          type: 'tool_result',
+          tool_use_id: toolUse.id,
+          content: JSON.stringify({ 
+            error: 'This tool requires a higher subscription tier',
+            upgrade_required: true,
+          }),
+        },
+        timing: { tool: toolUse.name, durationMs: 0, cacheHit: false, unavailable: true },
+        success: false,
+      };
+    }
+    
+    toolCallsUsed.push(toolUse.name);
+    
+    try {
+      const normalizedInput = normalizeToolInput(toolUse.name, toolUse.input, context, userId);
+      const meta = { cacheHit: false };
+      
+      const result = await executeToolCall(toolUse.name, normalizedInput, { 
+        correlationId, 
+        cacheScopeKey, 
+        meta 
+      });
+      
+      const durationMs = Date.now() - toolStartTime;
+      
+      return {
+        toolUse,
+        result: {
+          type: 'tool_result',
+          tool_use_id: toolUse.id,
+          content: JSON.stringify(result),
+        },
+        timing: { 
+          tool: toolUse.name, 
+          durationMs, 
+          cacheHit: Boolean(meta.cacheHit),
+          inputKeys: normalizedInput ? Object.keys(normalizedInput) : [],
+        },
+        success: true,
+      };
+    } catch (err) {
+      console.error(`[AL:${correlationId}] Tool ${toolUse.name} failed:`, err);
+      const durationMs = Date.now() - toolStartTime;
+      
+      return {
+        toolUse,
+        result: {
+          type: 'tool_result',
+          tool_use_id: toolUse.id,
+          content: JSON.stringify({ error: 'Tool execution failed', message: err.message }),
+        },
+        timing: { tool: toolUse.name, durationMs, cacheHit: false, error: err.message },
+        success: false,
+      };
+    }
+  });
+  
+  // Execute all tools in parallel
+  const toolResults = await Promise.all(toolPromises);
+  
+  // Process results and call callbacks
+  for (const { toolUse, result, timing, success } of toolResults) {
+    results.push(result);
+    timings.push(timing);
+    
+    // Callback for streaming updates
+    if (onToolResult) {
+      onToolResult({
+        tool: toolUse.name,
+        id: toolUse.id,
+        success,
+        error: timing.error,
+        cacheHit: timing.cacheHit,
+      });
+    }
+    
+    if (!timing.unavailable) {
+      console.info(`[AL:${correlationId}] tool=${toolUse.name} ms=${timing.durationMs} cacheHit=${timing.cacheHit}`);
+    }
+  }
+  
+  return { results, timings, toolCallsUsed };
+}
+
 /**
  * Call Claude API with streaming enabled
  * Returns an async generator that yields events
@@ -147,10 +369,9 @@ async function handleStreamingResponse({
           conversationId: activeConversationId,
         });
 
-        // Filter tools based on user's plan
-        const availableTools = AL_TOOLS.filter(tool => 
-          plan.toolAccess === 'all' || plan.toolAccess.includes(tool.name)
-        );
+        // Filter tools based on user's plan AND detected domains
+        // Domain filtering reduces token count by only including relevant tools
+        const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan);
 
         // Build system prompt from single source of truth
         const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
@@ -252,86 +473,22 @@ async function handleStreamingResponse({
 
           // Check if we need to process tools
           if (stopReason === 'tool_use' && toolUseBuffer.length > 0) {
-            // Process tool calls
-            const toolResults = [];
+            // Execute all tools in parallel for faster response
+            const { results: toolResults, timings: newTimings, toolCallsUsed: newToolCalls } = 
+              await executeToolsInParallel({
+                toolUseBlocks: toolUseBuffer,
+                context,
+                userId,
+                userBalance,
+                correlationId,
+                cacheScopeKey,
+                onToolResult: (toolResult) => {
+                  sendSSE(controller, 'tool_result', toolResult);
+                },
+              });
             
-            for (const toolUse of toolUseBuffer) {
-              if (!isToolAvailable(userBalance.plan, toolUse.name)) {
-                toolResults.push({
-                  type: 'tool_result',
-                  tool_use_id: toolUse.id,
-                  content: JSON.stringify({ 
-                    error: 'This tool requires a higher subscription tier',
-                    upgrade_required: true,
-                  }),
-                });
-                continue;
-              }
-
-              toolCallsUsed.push(toolUse.name);
-
-              try {
-                // Normalize tool input (inject user context where needed)
-                const userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
-                const userMatchedCarVariantKey = context?.userVehicle?.matched_car_variant_key || null;
-                
-                const normalizedInput = (() => {
-                  const input = toolUse.input && typeof toolUse.input === 'object' ? { ...toolUse.input } : {};
-                  
-                  // Variant-accurate maintenance
-                  if (toolUse.name === 'get_maintenance_schedule') {
-                    const hasVariantKey = Boolean(input.car_variant_key && String(input.car_variant_key).trim());
-                    const requestedSlug = input.car_slug ? String(input.car_slug) : null;
-                    const slugMatchesUser = Boolean(requestedSlug && userMatchedCarSlug && requestedSlug === userMatchedCarSlug);
-                    if (!hasVariantKey && slugMatchesUser && userMatchedCarVariantKey) {
-                      input.car_variant_key = userMatchedCarVariantKey;
-                    }
-                  }
-                  
-                  // Vehicle health analysis requires user context
-                  if (toolUse.name === 'analyze_vehicle_health') {
-                    if (userId && !input.user_id) {
-                      input.user_id = userId;
-                    }
-                  }
-                  
-                  return input;
-                })();
-
-                const meta = { cacheHit: false };
-                const result = await executeToolCall(toolUse.name, normalizedInput, { 
-                  correlationId, 
-                  cacheScopeKey, 
-                  meta 
-                });
-                
-                // Send tool result event
-                sendSSE(controller, 'tool_result', { 
-                  tool: toolUse.name,
-                  id: toolUse.id,
-                  success: true,
-                });
-
-                toolResults.push({
-                  type: 'tool_result',
-                  tool_use_id: toolUse.id,
-                  content: JSON.stringify(result),
-                });
-              } catch (err) {
-                console.error(`[AL:${correlationId}] Tool ${toolUse.name} failed:`, err);
-                sendSSE(controller, 'tool_result', { 
-                  tool: toolUse.name,
-                  id: toolUse.id,
-                  success: false,
-                  error: err.message,
-                });
-                toolResults.push({
-                  type: 'tool_result',
-                  tool_use_id: toolUse.id,
-                  content: JSON.stringify({ error: 'Tool execution failed', message: err.message }),
-                });
-              }
-            }
+            toolCallsUsed.push(...newToolCalls);
+            toolTimings.push(...newTimings);
 
             // Continue conversation with tool results
             // Build assistant message with tool uses
@@ -638,10 +795,9 @@ export async function POST(request) {
     // Format context for the system prompt
     const contextText = formatContextForAI(context);
 
-    // Filter tools based on user's plan
-    const availableTools = AL_TOOLS.filter(tool => 
-      plan.toolAccess === 'all' || plan.toolAccess.includes(tool.name)
-    );
+    // Filter tools based on user's plan AND detected domains
+    // Domain filtering reduces token count by only including relevant tools
+    const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan);
 
     // Build system prompt from single source of truth
     const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
@@ -696,78 +852,19 @@ export async function POST(request) {
       // Extract tool use blocks
       const toolUseBlocks = response.content.filter(block => block.type === 'tool_use');
       
-      // Execute each tool call
-      const toolResults = [];
-      for (const toolUse of toolUseBlocks) {
-        // Check if user has access to this tool
-        if (!isToolAvailable(userBalance.plan, toolUse.name)) {
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: toolUse.id,
-            content: JSON.stringify({ 
-              error: 'This tool requires a higher subscription tier',
-              upgrade_required: true,
-            }),
-          });
-          continue;
-        }
-
-        toolCallsUsed.push(toolUse.name);
-        
-        try {
-          // Harden tool inputs:
-          // 1. For get_maintenance_schedule: inject car_variant_key when user's vehicle matches
-          // 2. For analyze_vehicle_health: inject user_id (required by the tool)
-          const normalizedInput = (() => {
-            const input = toolUse.input && typeof toolUse.input === 'object' ? { ...toolUse.input } : {};
-            
-            // Variant-accurate maintenance
-            if (toolUse.name === 'get_maintenance_schedule') {
-              const hasVariantKey = Boolean(input.car_variant_key && String(input.car_variant_key).trim());
-              const requestedSlug = input.car_slug ? String(input.car_slug) : null;
-              const slugMatchesUser = Boolean(requestedSlug && userMatchedCarSlug && requestedSlug === userMatchedCarSlug);
-              if (!hasVariantKey && slugMatchesUser && userMatchedCarVariantKey) {
-                input.car_variant_key = userMatchedCarVariantKey;
-                input.__injected = { ...(input.__injected || {}), car_variant_key: true };
-              }
-            }
-            
-            // Vehicle health analysis requires user context
-            if (toolUse.name === 'analyze_vehicle_health') {
-              if (userId && !input.user_id) {
-                input.user_id = userId;
-                input.__injected = { ...(input.__injected || {}), user_id: true };
-              }
-            }
-            
-            return input;
-          })();
-
-          const startedAt = Date.now();
-          const meta = { cacheHit: false };
-          const result = await executeToolCall(toolUse.name, normalizedInput, { correlationId, cacheScopeKey, meta });
-          const durationMs = Date.now() - startedAt;
-          toolTimings.push({
-            tool: toolUse.name,
-            durationMs,
-            cacheHit: Boolean(meta.cacheHit),
-            inputKeys: normalizedInput ? Object.keys(normalizedInput) : [],
-          });
-          console.info(`[AL:${correlationId}] tool=${toolUse.name} ms=${durationMs} cacheHit=${Boolean(meta.cacheHit)}`);
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: toolUse.id,
-            content: JSON.stringify(result),
-          });
-        } catch (err) {
-          console.error(`[AL:${correlationId}] Tool ${toolUse.name} failed:`, err);
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: toolUse.id,
-            content: JSON.stringify({ error: 'Tool execution failed', message: err.message }),
-          });
-        }
-      }
+      // Execute all tools in parallel for faster response
+      const { results: toolResults, timings: newTimings, toolCallsUsed: newToolCalls } = 
+        await executeToolsInParallel({
+          toolUseBlocks,
+          context,
+          userId,
+          userBalance,
+          correlationId,
+          cacheScopeKey,
+        });
+      
+      toolCallsUsed.push(...newToolCalls);
+      toolTimings.push(...newTimings);
 
       // Continue conversation with tool results
       const newMessages = [
