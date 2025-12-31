@@ -90,29 +90,33 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
     }
 
-    // Get user emails from auth.users (we have service role access)
+    // Get user emails from auth.users using the Admin API
+    // The auth schema cannot be queried via .from() - must use auth.admin methods
     const userIds = profiles.map(p => p.id);
     
-    const { data: authUsers, error: authUsersError } = await supabase
-      .from('auth.users')
-      .select('id, email, created_at, last_sign_in_at, raw_user_meta_data')
-      .in('id', userIds);
-
-    // If direct auth.users query fails (RLS), try alternate approach
     let usersMap = {};
-    if (!authUsersError && authUsers) {
-      authUsers.forEach(u => {
-        usersMap[u.id] = u;
-      });
-    } else {
-      // Fetch from auth.users using RPC or service key direct query
-      const { data: authData } = await supabase.rpc('get_admin_users_list', { user_ids: userIds }).catch(() => ({ data: null }));
-      if (authData) {
-        authData.forEach(u => {
-          usersMap[u.id] = u;
-        });
-      }
-    }
+    
+    // Fetch auth data for each user using the Admin API
+    // Use Promise.allSettled to handle any individual failures gracefully
+    const authPromises = userIds.map(id => 
+      supabase.auth.admin.getUserById(id)
+        .then(({ data, error }) => {
+          if (error || !data?.user) return null;
+          return {
+            id: data.user.id,
+            email: data.user.email,
+            created_at: data.user.created_at,
+            last_sign_in_at: data.user.last_sign_in_at,
+            raw_user_meta_data: data.user.user_metadata
+          };
+        })
+        .catch(() => null)
+    );
+    
+    const authResults = await Promise.all(authPromises);
+    authResults.forEach(u => {
+      if (u) usersMap[u.id] = u;
+    });
 
     // Get attribution data
     const { data: attributions } = await supabase

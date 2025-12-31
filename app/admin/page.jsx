@@ -54,6 +54,7 @@ import { CostIntegrations } from './components/CostIntegrations';
 import { SiteAnalytics } from './components/SiteAnalytics';
 import { MarketingAnalytics } from './components/MarketingAnalytics';
 import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
+import { ConsolidatedAnalytics } from './components/ConsolidatedAnalytics';
 import { UsersDashboard } from './components/UsersDashboard';
 
 // Icons
@@ -555,60 +556,12 @@ export default function AdminDashboardPage() {
         
         {/* SITE ANALYTICS TAB */}
         {activeTab === 'analytics' && (
-          <>
-            {/* Unified Analytics Dashboard */}
-            <section className={styles.section}>
-              <div className={styles.tabHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <BarChartIcon size={18} className={styles.sectionIcon} />
-                  Unified Analytics Dashboard
-                </h2>
-                <p className={styles.tabDescription}>
-                  Complete analytics hub: traffic, engagement, funnels, feature adoption, user lifecycle, and goals.
-                </p>
-              </div>
-              <UnifiedAnalyticsDashboard 
-                token={session?.access_token}
-                range={timeRange}
-              />
-            </section>
-            
-            {/* Traffic Analytics (Detailed) */}
-            <section className={styles.section}>
-              <div className={styles.tabHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <BarChartIcon size={18} className={styles.sectionIcon} />
-                  Traffic Details
-                </h2>
-                <p className={styles.tabDescription}>
-                  Detailed breakdown of page views, visitors, geography, devices, and referrers.
-                </p>
-              </div>
-              <SiteAnalytics 
-                token={session?.access_token}
-                range={timeRange}
-                loading={loading}
-              />
-            </section>
-            
-            {/* Marketing Analytics */}
-            <section className={styles.section}>
-              <div className={styles.tabHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <TrendingUpIcon size={18} className={styles.sectionIcon} />
-                  Marketing Analytics
-                </h2>
-                <p className={styles.tabDescription}>
-                  Conversion funnels, attribution, cohort retention, and event tracking for marketing optimization.
-                </p>
-              </div>
-              <MarketingAnalytics 
-                token={session?.access_token}
-                range={timeRange}
-                loading={loading}
-              />
-            </section>
-          </>
+          <section className={styles.section}>
+            <ConsolidatedAnalytics 
+              token={session?.access_token}
+              range={timeRange}
+            />
+          </section>
         )}
         
         {/* REVENUE TAB - Stripe Dashboard */}
