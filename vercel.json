@@ -16,59 +16,23 @@
     }
   ],
   "crons": [
-    {
-      "path": "/api/cron/flush-error-aggregates",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/process-scrape-jobs?max=3&delay=15000",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/process-scrape-jobs?max=10&delay=5000",
-      "schedule": "0 3 * * 0"
-    },
-    {
-      "path": "/api/cron/schedule-ingestion",
-      "schedule": "0 2 * * 0"
-    },
-    {
-      "path": "/api/cron/refresh-recalls?concurrency=3",
-      "schedule": "30 2 * * 0"
-    },
-    {
-      "path": "/api/cron/youtube-enrichment",
-      "schedule": "0 4 * * 1"
-    },
-    {
-      "path": "/api/cron/forum-scrape?mode=both&maxThreads=20&maxExtract=10",
-      "schedule": "0 5 * * 2,5"
-    },
-    {
-      "path": "/api/cron/refresh-complaints?concurrency=2&delay=500",
-      "schedule": "0 4 * * 0"
-    },
-    {
-      "path": "/api/cron/refresh-events?limit=100",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/daily-digest",
-      "schedule": "0 14 * * *"
-    },
-    {
-      "path": "/api/cron/daily-metrics",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/process-email-queue",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/schedule-inactivity-emails",
-      "schedule": "0 10 * * *"
-    }
+    { "path": "/api/cron/flush-error-aggregates", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/process-email-queue", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/process-scrape-jobs?max=3&delay=15000", "schedule": "*/15 * * * *" },
+    { "path": "/api/cron/daily-metrics", "schedule": "0 0 * * *" },
+    { "path": "/api/cron/refresh-events?limit=100", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/schedule-inactivity-emails", "schedule": "0 10 * * *" },
+    { "path": "/api/cron/daily-digest", "schedule": "0 14 * * *" },
+    { "path": "/api/cron/weekly-car-expansion?max=3", "schedule": "0 1 * * 0" },
+    { "path": "/api/cron/schedule-ingestion", "schedule": "30 1 * * 0" },
+    { "path": "/api/cron/refresh-recalls?concurrency=3", "schedule": "0 2 * * 0" },
+    { "path": "/api/cron/refresh-complaints?concurrency=2&delay=500", "schedule": "30 2 * * 0" },
+    { "path": "/api/cron/process-scrape-jobs?max=10&delay=5000", "schedule": "0 3 * * 0" },
+    { "path": "/api/cron/youtube-enrichment", "schedule": "0 4 * * 1" },
+    { "path": "/api/cron/forum-scrape?mode=both&maxThreads=20&maxExtract=10", "schedule": "0 5 * * 2,5" },
+    { "path": "/api/cron/al-optimization", "schedule": "0 3 * * 6" }
   ]
 }
+
 
 

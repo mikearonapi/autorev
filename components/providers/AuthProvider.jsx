@@ -516,6 +516,7 @@ export function AuthProvider({ children }) {
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
   const isAuthenticatedRef = useRef(false);
+  const isFreshLoginRef = useRef(false); // Tracks if current session is from a fresh login
   
   // Keep the ref in sync with state
   useEffect(() => {
@@ -855,6 +856,8 @@ export function AuthProvider({ children }) {
             console.log('[AuthProvider] Fresh OAuth login detected - will show welcome toast');
             consumeOAuthSignals();
             consumeLoginIntent();
+            // Mark as fresh login for onboarding
+            isFreshLoginRef.current = true;
             // Defer toast to after profile loads so we have the user's name
             setTimeout(() => {
               setState(prev => ({ ...prev, showWelcomeToast: true }));
@@ -933,8 +936,11 @@ export function AuthProvider({ children }) {
         const isFreshLogin = wasNotAuthenticated && hasFreshSignals;
         console.log('[AuthProvider] Handling SIGNED_IN event:', { wasNotAuthenticated, hasFreshSignals, isFreshLogin });
         
-        // Mark as authenticated
+        // Mark as authenticated and track fresh login for onboarding
         isAuthenticatedRef.current = true;
+        if (isFreshLogin) {
+          isFreshLoginRef.current = true;
+        }
         
         // Update state - keep isDataFetchReady false until prefetch completes
         setState(prev => ({
@@ -1108,6 +1114,7 @@ export function AuthProvider({ children }) {
         // Fresh login via INITIAL_SESSION - show welcome toast
         if (hasFreshSignals) {
           console.log('[AuthProvider] INITIAL_SESSION is fresh login - will show welcome toast');
+          isFreshLoginRef.current = true;
           setTimeout(() => {
             setState(prev => ({ ...prev, showWelcomeToast: true }));
           }, 500);
@@ -1326,6 +1333,11 @@ export function AuthProvider({ children }) {
     // Clear session cache to ensure fresh check on next login
     clearSessionCache();
     
+    // Clear onboarding dismissal so next login shows onboarding if incomplete
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('onboarding_dismissed_until');
+    }
+    
     // INSTANT: Clear state immediately so UI updates right away
     // NOTE: isDataFetchReady must be TRUE on logout so child providers 
     // (FavoritesProvider, OwnedVehiclesProvider, SavedBuildsProvider) can 
@@ -1425,7 +1437,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Check if user needs onboarding
-  const checkOnboardingStatus = useCallback(async (profile) => {
+  // isFreshLogin: true when user just logged in (vs page refresh with existing session)
+  const checkOnboardingStatus = useCallback(async (profile, isFreshLogin = false) => {
     // DEV: Allow forcing onboarding with ?showOnboarding=1 query param
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -1451,6 +1464,7 @@ export function AuthProvider({ children }) {
     
     // If onboarding is already completed, don't show
     if (profile?.onboarding_completed_at) {
+      console.log('[AuthProvider] Onboarding already completed, not showing');
       setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
       return;
     }
@@ -1462,22 +1476,30 @@ export function AuthProvider({ children }) {
       return;
     }
     
-    // Check localStorage for session-based dismissal (persists across browser sessions)
-    const dismissedUntil = localStorage.getItem('onboarding_dismissed_until');
-    if (dismissedUntil) {
-      const dismissedTime = parseInt(dismissedUntil, 10);
-      // Only honor dismissal for 24 hours
-      if (Date.now() < dismissedTime) {
-        console.log('[AuthProvider] Onboarding dismissed temporarily');
-        setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
-        return;
-      } else {
-        // Dismissal expired, clear it
-        localStorage.removeItem('onboarding_dismissed_until');
+    // For FRESH logins (not page refresh), always clear any temporary dismissal
+    // This ensures users who haven't completed onboarding see it immediately after login
+    if (isFreshLogin) {
+      console.log('[AuthProvider] Fresh login detected - clearing any temporary dismissal');
+      localStorage.removeItem('onboarding_dismissed_until');
+    } else {
+      // For page refreshes, check localStorage for session-based dismissal
+      const dismissedUntil = localStorage.getItem('onboarding_dismissed_until');
+      if (dismissedUntil) {
+        const dismissedTime = parseInt(dismissedUntil, 10);
+        // Only honor dismissal for 24 hours
+        if (Date.now() < dismissedTime) {
+          console.log('[AuthProvider] Onboarding dismissed temporarily (page refresh)');
+          setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
+          return;
+        } else {
+          // Dismissal expired, clear it
+          localStorage.removeItem('onboarding_dismissed_until');
+        }
       }
     }
 
     // Show onboarding for users who haven't completed it
+    console.log('[AuthProvider] Showing onboarding - user has not completed it yet');
     const dismissedCount = profile?.onboarding_dismissed_count || 0;
     setOnboardingState({
       showOnboarding: true,
@@ -1583,7 +1605,13 @@ export function AuthProvider({ children }) {
   // Check onboarding status when profile loads
   useEffect(() => {
     if (state.isAuthenticated && state.profile) {
-      checkOnboardingStatus(state.profile);
+      // Pass whether this is a fresh login (clears temporary dismissals)
+      const isFresh = isFreshLoginRef.current;
+      checkOnboardingStatus(state.profile, isFresh);
+      // Reset the fresh login flag after checking (so page refreshes work correctly)
+      if (isFresh) {
+        isFreshLoginRef.current = false;
+      }
     }
   }, [state.isAuthenticated, state.profile, checkOnboardingStatus]);
 

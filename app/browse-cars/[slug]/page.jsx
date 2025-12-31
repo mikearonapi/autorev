@@ -19,6 +19,7 @@
 import { notFound } from 'next/navigation';
 import { getCachedCarBySlug } from '@/lib/carsCache.js';
 import CarDetailClient from './CarDetailClient';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Enable ISR - revalidate every 5 minutes
 export const revalidate = 300;
@@ -37,6 +38,10 @@ export default async function CarDetailPage({ params }) {
     notFound();
   }
   
-  // Pass pre-fetched data to client component
-  return <CarDetailClient car={car} />;
+  // Pass pre-fetched data to client component wrapped in error boundary
+  return (
+    <ErrorBoundary name="CarDetailPage" featureContext="browse-cars">
+      <CarDetailClient car={car} />
+    </ErrorBoundary>
+  );
 }

@@ -209,6 +209,7 @@ async function discoverVideos() {
 
 /**
  * Search for YouTube review videos using Exa
+ * Uses multiple query strategies to find high-quality automotive review content
  * @param {string} carName - Full car name
  * @param {string} brand - Car brand
  * @returns {Promise<Array>} Array of video objects
@@ -216,13 +217,28 @@ async function discoverVideos() {
 async function searchYouTubeVideosWithExa(carName, brand) {
   const videos = new Map();
 
-  // Multiple search queries for better coverage
+  // Multiple search queries for comprehensive coverage
+  // Target high-quality channels and content types
   const searchQueries = [
+    // Direct car reviews
     `site:youtube.com "${carName}" review`,
-    `site:youtube.com "${brand} ${carName}" expert review`,
+    `site:youtube.com "${brand} ${carName}" owner review`,
+    // Enthusiast content channels (these produce high-quality, detailed reviews)
+    `site:youtube.com "${carName}" Throttle House`,
+    `site:youtube.com "${carName}" savagegeese`,
+    `site:youtube.com "${carName}" Doug DeMuro`,
+    `site:youtube.com "${carName}" Everyday Driver`,
+    `site:youtube.com "${carName}" The Straight Pipes`,
+    `site:youtube.com "${carName}" Carwow`,
+    // Track/driving content
+    `site:youtube.com "${carName}" track test POV`,
+    `site:youtube.com "${carName}" buyers guide`,
   ];
 
-  for (const query of searchQueries) {
+  // Dedupe queries and limit to avoid rate limits
+  const uniqueQueries = [...new Set(searchQueries)].slice(0, 6);
+
+  for (const query of uniqueQueries) {
     try {
       const response = await fetch('https://api.exa.ai/search', {
         method: 'POST',
@@ -232,9 +248,11 @@ async function searchYouTubeVideosWithExa(carName, brand) {
         },
         body: JSON.stringify({
           query: query,
-          numResults: 10,
-          type: 'keyword',
-          includeDomains: ['youtube.com'],
+          numResults: 15,
+          type: 'auto', // Let Exa choose best search type
+          includeDomains: ['youtube.com', 'youtu.be'],
+          // Prefer recent content but don't exclude classics
+          startPublishedDate: '2018-01-01T00:00:00.000Z',
         })
       });
 
@@ -248,35 +266,52 @@ async function searchYouTubeVideosWithExa(carName, brand) {
       for (const result of data.results || []) {
         if (!result.url) continue;
         
-        // Parse YouTube URL for video ID
-        const videoIdMatch = result.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-        if (!videoIdMatch) continue;
+        // Parse YouTube URL for video ID (handle multiple URL formats)
+        let videoId = null;
+        const watchMatch = result.url.match(/youtube\.com\/watch\?v=([^&\s]+)/);
+        const shortMatch = result.url.match(/youtu\.be\/([^?&\s]+)/);
+        const embedMatch = result.url.match(/youtube\.com\/embed\/([^?&\s]+)/);
         
-        const videoId = videoIdMatch[1];
-        if (videos.has(videoId)) continue;
+        if (watchMatch) videoId = watchMatch[1];
+        else if (shortMatch) videoId = shortMatch[1];
+        else if (embedMatch) videoId = embedMatch[1];
+        
+        if (!videoId || videos.has(videoId)) continue;
 
-        // Extract channel name from title if possible
-        let channelName = null;
-        if (result.author) {
-          channelName = result.author;
+        // Skip shorts (usually under 60 seconds, less valuable for deep reviews)
+        if (result.url.includes('/shorts/')) continue;
+
+        // Extract metadata
+        const channelName = result.author || null;
+        const title = result.title || 'Unknown Title';
+        
+        // Skip obvious non-review content
+        const lowerTitle = title.toLowerCase();
+        if (lowerTitle.includes('trailer') || 
+            lowerTitle.includes('commercial') ||
+            lowerTitle.includes('ad ') ||
+            lowerTitle.includes('teaser')) {
+          continue;
         }
 
         videos.set(videoId, {
           videoId,
           url: `https://www.youtube.com/watch?v=${videoId}`,
-          title: result.title || 'Unknown Title',
+          title,
           channelName,
+          publishedDate: result.publishedDate || null,
         });
       }
 
-      // Small delay between queries
-      await new Promise(r => setTimeout(r, 100));
+      // Small delay between queries to respect rate limits
+      await new Promise(r => setTimeout(r, 150));
 
     } catch (err) {
       console.error(`   Exa search error: ${err.message}`);
     }
   }
 
+  console.log(`   Found ${videos.size} unique videos for ${carName}`);
   return Array.from(videos.values());
 }
 
@@ -286,10 +321,11 @@ async function searchYouTubeVideosWithExa(carName, brand) {
 async function fetchTranscripts() {
   const stats = { processed: 0, success: 0, failed: 0 };
 
+  // Also check for videos stuck in 'transcript_fetched' with null transcripts
   const { data: videos } = await supabase
     .from('youtube_videos')
     .select('*')
-    .eq('processing_status', 'pending')
+    .or('processing_status.eq.pending,and(processing_status.eq.transcript_fetched,transcript_text.is.null)')
     .limit(CONFIG.transcriptBatchSize);
 
   if (!videos?.length) {
@@ -297,96 +333,138 @@ async function fetchTranscripts() {
     return stats;
   }
 
+  console.log(`   Processing ${videos.length} videos for transcripts...`);
+
   for (const video of videos) {
     stats.processed++;
     let transcriptText = null;
     let transcriptSource = null;
+    let transcriptLang = null;
 
-    // Try youtube-transcript library first
-    try {
-      const transcriptItems = await YoutubeTranscript.fetchTranscript(video.video_id);
-      transcriptText = transcriptItems.map(item => item.text).join(' ');
-      transcriptSource = 'youtube_library';
-    } catch (primaryError) {
-      console.log(`   Primary transcript failed for ${video.video_id}, trying Supadata...`);
-      
-      // Fallback to Supadata API
-      if (SUPADATA_API_KEY) {
-        try {
-          const supadata = await fetchTranscriptViaSupadata(video.video_id);
-          if (supadata) {
-            transcriptText = supadata.text;
-            transcriptSource = 'supadata_api';
-          }
-        } catch (fallbackError) {
-          console.log(`   Supadata fallback also failed: ${fallbackError.message}`);
+    // Strategy 1: Try Supadata API first (more reliable, handles age-restricted videos better)
+    if (SUPADATA_API_KEY) {
+      try {
+        console.log(`   Trying Supadata for ${video.video_id}...`);
+        const supadata = await fetchTranscriptViaSupadata(video.video_id);
+        if (supadata && supadata.text && supadata.text.length > 100) {
+          transcriptText = supadata.text;
+          transcriptSource = 'supadata_api';
+          transcriptLang = supadata.language;
+          console.log(`   ✓ Supadata transcript: ${supadata.text.length} chars`);
         }
+      } catch (supadataError) {
+        console.log(`   Supadata failed for ${video.video_id}: ${supadataError.message}`);
       }
     }
 
-    if (transcriptText) {
-      await supabase
+    // Strategy 2: Fallback to youtube-transcript library
+    if (!transcriptText) {
+      try {
+        console.log(`   Trying youtube-transcript library for ${video.video_id}...`);
+        const transcriptItems = await YoutubeTranscript.fetchTranscript(video.video_id);
+        if (transcriptItems && transcriptItems.length > 0) {
+          transcriptText = transcriptItems.map(item => item.text).join(' ');
+          transcriptSource = 'youtube_library';
+          console.log(`   ✓ youtube-transcript: ${transcriptText.length} chars`);
+        }
+      } catch (ytError) {
+        console.log(`   youtube-transcript failed for ${video.video_id}: ${ytError.message}`);
+      }
+    }
+
+    // Validate transcript quality before saving
+    if (transcriptText && transcriptText.length > 100) {
+      const { error: updateError } = await supabase
         .from('youtube_videos')
         .update({
           transcript_text: transcriptText,
           transcript_source: transcriptSource,
+          transcript_lang: transcriptLang,
           is_auto_generated: true,
           processing_status: 'transcript_fetched',
+          processing_error: null,
           updated_at: new Date().toISOString(),
         })
         .eq('video_id', video.video_id);
 
-      stats.success++;
-      console.log(`   ✓ Transcript (${transcriptSource}): ${video.title?.substring(0, 40) || video.video_id}...`);
+      if (updateError) {
+        console.error(`   Error saving transcript for ${video.video_id}:`, updateError);
+        stats.failed++;
+      } else {
+        stats.success++;
+        console.log(`   ✓ Saved transcript (${transcriptSource}): ${video.title?.substring(0, 40) || video.video_id}...`);
+      }
     } else {
       await supabase
         .from('youtube_videos')
         .update({
           processing_status: 'no_transcript',
-          processing_error: 'No transcript available from any source',
+          processing_error: transcriptText 
+            ? 'Transcript too short (<100 chars)' 
+            : 'No transcript available from any source',
           updated_at: new Date().toISOString(),
         })
         .eq('video_id', video.video_id);
 
       stats.failed++;
-      console.log(`   ✗ No transcript: ${video.title?.substring(0, 40) || video.video_id}...`);
+      console.log(`   ✗ No valid transcript: ${video.title?.substring(0, 40) || video.video_id}...`);
     }
+
+    // Small delay between videos to avoid rate limits
+    await new Promise(r => setTimeout(r, 500));
   }
 
   return stats;
 }
 
 /**
- * Fetch transcript for a YouTube video using Supadata API (fallback)
+ * Fetch transcript for a YouTube video using Supadata API
+ * Supadata provides reliable transcripts with language detection and multiple source options
  * @param {string} videoId - YouTube video ID
  * @returns {Promise<Object|null>} Transcript data or null if unavailable
  */
 async function fetchTranscriptViaSupadata(videoId) {
-  const url = `https://api.supadata.ai/v1/transcript?url=https://www.youtube.com/watch?v=${videoId}`;
+  // Use the youtube-specific transcript endpoint
+  const url = `https://api.supadata.ai/v1/youtube/transcript`;
   
   const response = await fetch(url, {
+    method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       'x-api-key': SUPADATA_API_KEY
-    }
+    },
+    body: JSON.stringify({
+      url: `https://www.youtube.com/watch?v=${videoId}`,
+      text: true, // Return plain text for easier processing
+      lang: 'en', // Prefer English transcripts
+    })
   });
 
   if (!response.ok) {
-    return null;
+    const errorText = await response.text();
+    throw new Error(`Supadata API error ${response.status}: ${errorText.substring(0, 100)}`);
   }
 
   const data = await response.json();
   
-  if (!data.content || data.content.length === 0) {
-    return null;
+  // Handle both text mode and content array mode
+  if (data.text && data.text.length > 0) {
+    return {
+      text: data.text,
+      language: data.lang || 'en',
+    };
+  }
+  
+  if (data.content && data.content.length > 0) {
+    // Convert Supadata content array format to text
+    const fullText = data.content.map(item => item.text || '').join(' ');
+    return {
+      text: fullText,
+      language: data.lang || 'en',
+    };
   }
 
-  // Convert Supadata format to text
-  const fullText = data.content.map(item => item.text || '').join(' ');
-
-  return {
-    text: fullText,
-    language: data.lang || 'en',
-  };
+  return null;
 }
 
 // ============================================================================

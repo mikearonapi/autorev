@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { postDailyDigest, postALIntelligence } from '@/lib/discord';
 import { generateALIntelligence } from '@/lib/alIntelligence';
-import { enhanceDigestStats } from '@/lib/digestEnhancer';
 import { logCronError } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
@@ -151,11 +150,13 @@ export async function GET(request) {
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
-      // Auto-errors (from yesterday) - get details for deduplication
+      // Auto-errors (from yesterday) - only count actionable errors (not wont_fix)
       supabase
-        .from('user_feedback')
-        .select('id, error_metadata')
-        .eq('category', 'auto-error')
+        .from('application_errors')
+        .select('id, message, severity')
+        .neq('status', 'wont_fix')
+        .neq('status', 'resolved')
+        .neq('status', 'fixed')
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', todayStart.toISOString()),
 
@@ -207,15 +208,14 @@ export async function GET(request) {
     // Active users = users who signed in yesterday
     const activeUsers = signInsResult.data?.length || signInsResult.count || 0;
 
-    // Deduplicate auto-errors by error message
+    // Count actionable errors (deduplicated by message)
     const autoErrorsList = autoErrorsResult.data || [];
     const uniqueErrorMessages = new Set();
     autoErrorsList.forEach(err => {
-      const msg = err.error_metadata?.errorMessage || 'Unknown error';
+      const msg = err.message || 'Unknown error';
       uniqueErrorMessages.add(msg);
     });
     const uniqueAutoErrors = uniqueErrorMessages.size;
-    const totalAutoErrors = autoErrorsList.length;
 
     // Base stats
     const baseStats = {
@@ -253,51 +253,67 @@ export async function GET(request) {
       topFeedbackCategories: topCategories,
     };
 
-    // Get previous day's stats for trending
-    const twoDaysAgo = new Date(yesterday);
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
-    twoDaysAgo.setHours(0, 0, 0, 0);
+    // Get 7-day stats for weekly summary
+    const weekAgo = new Date(todayStart);
+    weekAgo.setDate(weekAgo.getDate() - 7);
 
-    const [prevSignups, prevActiveUsers, prevALConversations] = await Promise.all([
+    const [
+      weekSignupsResult,
+      weekALResult,
+      weekErrorsResult,
+      weekActivityResult,
+    ] = await Promise.all([
+      // Signups in last 7 days
       supabase
         .from('user_profiles')
         .select('id', { count: 'exact', head: true })
-        .gte('created_at', twoDaysAgo.toISOString())
-        .lt('created_at', yesterday.toISOString()),
+        .gte('created_at', weekAgo.toISOString())
+        .lt('created_at', todayStart.toISOString()),
       
-      (async () => {
-        try {
-          return await supabase.rpc('get_daily_active_users', {
-            p_start_date: twoDaysAgo.toISOString(),
-            p_end_date: yesterday.toISOString(),
-          });
-        } catch (err) {
-          return { count: 0, data: null, error: null };
-        }
-      })(),
-      
+      // AL conversations in last 7 days
       supabase
         .from('al_conversations')
         .select('id', { count: 'exact', head: true })
-        .gte('created_at', twoDaysAgo.toISOString())
-        .lt('created_at', yesterday.toISOString()),
+        .gte('created_at', weekAgo.toISOString())
+        .lt('created_at', todayStart.toISOString()),
+      
+      // Unique actionable errors in last 7 days (excludes noise)
+      supabase
+        .from('application_errors')
+        .select('id', { count: 'exact', head: true })
+        .neq('status', 'wont_fix')
+        .neq('status', 'resolved')
+        .neq('status', 'fixed')
+        .gte('created_at', weekAgo.toISOString())
+        .lt('created_at', todayStart.toISOString()),
+      
+      // Active users (unique) in last 7 days
+      supabase
+        .from('user_activity')
+        .select('user_id')
+        .gte('created_at', weekAgo.toISOString())
+        .lt('created_at', todayStart.toISOString()),
     ]);
 
-    const previousStats = {
-      signups: prevSignups.count || 0,
-      activeUsers: prevActiveUsers?.count || prevActiveUsers?.data?.[0]?.count || 0,
-      alConversations: prevALConversations.count || 0,
+    // Calculate unique active users for the week
+    const weekActiveUsers = new Set(
+      (weekActivityResult.data || [])
+        .map(a => a.user_id)
+        .filter(Boolean)
+    ).size;
+
+    const weekStats = {
+      signups: weekSignupsResult.count || 0,
+      alConversations: weekALResult.count || 0,
+      errors: weekErrorsResult.count || 0,
+      avgActiveUsers: Math.round(weekActiveUsers / 7), // Rough daily average
     };
 
-    // Simple historical averages (could be more sophisticated with rolling averages)
-    const historicalAvg = {
-      signups: 2, // Default assumptions
-      contacts: 2,
-      alConversations: 10,
+    // Add week stats to base stats
+    const stats = {
+      ...baseStats,
+      weekStats,
     };
-
-    // Enhance stats with trends, alerts, wins, and actions
-    const stats = enhanceDigestStats(baseStats, previousStats, historicalAvg);
 
     // Generate AL Intelligence Report
     let alIntelligence = null;

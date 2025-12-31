@@ -289,7 +289,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | `referral_source_other` | text | Free text if referral_source is 'other' |
 | `user_intent` | text | User's primary intent. Enum: 'owner', 'shopping', 'learning' |
 | `onboarding_completed_at` | timestamptz | Timestamp when onboarding was completed. NULL if not completed. |
-| `onboarding_step` | integer | Current onboarding step (1-7). Used for resume functionality. |
+| `onboarding_step` | integer | Current onboarding step (1-10). Used for resume functionality. |
 | `email_opt_in_features` | boolean | User opted in to receive feature update emails (default: false) |
 | `email_opt_in_events` | boolean | User opted in to receive event notification emails (default: false) |
 

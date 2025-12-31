@@ -378,8 +378,11 @@ function MetricRow({ icon: Icon, label, stockValue, upgradedValue, unit, isLower
  * Experience Score Bar
  */
 function ScoreBar({ label, stockScore, upgradedScore }) {
-  const hasImproved = upgradedScore > stockScore;
-  const delta = upgradedScore - stockScore;
+  // Safety checks - handle null/undefined scores
+  const safeStockScore = stockScore ?? 7;
+  const safeUpgradedScore = upgradedScore ?? safeStockScore;
+  const hasImproved = safeUpgradedScore > safeStockScore;
+  const delta = safeUpgradedScore - safeStockScore;
   
   return (
     <div className={styles.scoreRow}>
@@ -388,19 +391,19 @@ function ScoreBar({ label, stockScore, upgradedScore }) {
         <span className={styles.scoreValues}>
           {hasImproved ? (
             <>
-              <span className={styles.stockVal}>{stockScore.toFixed(1)}</span>
+              <span className={styles.stockVal}>{safeStockScore.toFixed(1)}</span>
               <span className={styles.arrow}>→</span>
-              <span className={styles.upgradedVal}>{upgradedScore.toFixed(1)}</span>
+              <span className={styles.upgradedVal}>{safeUpgradedScore.toFixed(1)}</span>
             </>
           ) : (
-            <span className={styles.currentVal}>{stockScore.toFixed(1)}/10</span>
+            <span className={styles.currentVal}>{safeStockScore.toFixed(1)}/10</span>
           )}
         </span>
       </div>
       <div className={styles.track}>
-        <div className={styles.fillStock} style={{ width: `${(stockScore / 10) * 100}%` }} />
+        <div className={styles.fillStock} style={{ width: `${(safeStockScore / 10) * 100}%` }} />
         {hasImproved && (
-          <div className={styles.fillUpgrade} style={{ left: `${(stockScore / 10) * 100}%`, width: `${(delta / 10) * 100}%` }} />
+          <div className={styles.fillUpgrade} style={{ left: `${(safeStockScore / 10) * 100}%`, width: `${(delta / 10) * 100}%` }} />
         )}
       </div>
     </div>
@@ -1129,9 +1132,9 @@ export default function UpgradeCenter({
           {/* Experience Scores */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Experience Scores</h4>
-            <ScoreBar label="Comfort" stockScore={profile.stockScores.drivability || 7} upgradedScore={profile.upgradedScores.drivability || 7} />
-            <ScoreBar label="Reliability" stockScore={profile.stockScores.reliabilityHeat || 7.5} upgradedScore={profile.upgradedScores.reliabilityHeat || 7.5} />
-            <ScoreBar label="Sound" stockScore={profile.stockScores.soundEmotion || 8} upgradedScore={profile.upgradedScores.soundEmotion || 8} />
+            <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
+            <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
+            <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
           </div>
         </div>
       </div>

@@ -12,8 +12,11 @@
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
 
-// Valid enum values
-const VALID_REFERRAL_SOURCES = ['google', 'reddit', 'friend', 'forum', 'youtube', 'social', 'other'];
+// Valid enum values - must match options in components/onboarding/steps/ReferralStep.jsx
+const VALID_REFERRAL_SOURCES = [
+  'google', 'youtube', 'instagram', 'facebook', 'tiktok', 'twitter', 
+  'reddit', 'forum', 'podcast', 'blog', 'friend', 'social', 'other'
+];
 const VALID_USER_INTENTS = ['owner', 'shopping', 'learning'];
 
 /**
@@ -183,9 +186,10 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    if (step !== undefined && (typeof step !== 'number' || step < 1 || step > 7)) {
+    // Total onboarding steps: Welcome(1) + Referral(2) + Intent(3) + 6 Feature slides(4-9) + Final(10) = 10
+    if (step !== undefined && (typeof step !== 'number' || step < 1 || step > 10)) {
       return NextResponse.json(
-        { error: 'Step must be a number between 1 and 7' },
+        { error: 'Step must be a number between 1 and 10' },
         { status: 400 }
       );
     }
@@ -308,7 +312,7 @@ export async function POST(request, { params }) {
     // Build update object with completion timestamp
     const updates = {
       onboarding_completed_at: new Date().toISOString(),
-      onboarding_step: 7, // Mark as completed
+      onboarding_step: 10, // Mark as completed (final step)
     };
 
     // Include any final data from request

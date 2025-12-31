@@ -98,24 +98,30 @@ export async function GET(request) {
             threadsFound: 0,
             threadsScraped: 0,
             postsScraped: 0,
-            skipped: []
+            skipped: [],
+            forumDetails: []
           };
 
-          // Limit to 4 forums per run to avoid timeout (5 min max)
-          const maxForumsPerRun = 4;
+          // Limit to 3 forums per run to allow more threads per forum (5 min max)
+          const maxForumsPerRun = 3;
           const forumsToProcess = activeForums.slice(0, maxForumsPerRun);
+          
+          // Calculate threads per forum (ensure minimum 10 per forum)
+          const threadsPerForum = Math.max(10, Math.ceil(maxThreads / forumsToProcess.length));
           
           if (activeForums.length > maxForumsPerRun) {
             scrapeResults.skipped = activeForums.slice(maxForumsPerRun).map(f => f.slug);
-            console.log(`[ForumCron] Will process ${maxForumsPerRun} forums this run, ${scrapeResults.skipped.length} will be processed next run`);
+            console.log(`[ForumCron] Will process ${maxForumsPerRun} forums with ${threadsPerForum} threads each, ${scrapeResults.skipped.length} will be processed next run`);
           }
 
           for (const forum of forumsToProcess) {
             const forumStartTime = Date.now();
             try {
-              console.log(`[ForumCron] Scraping ${forum.slug}...`);
+              console.log(`[ForumCron] Scraping ${forum.slug} (max ${threadsPerForum} threads)...`);
               const scrapeResult = await scraperService.scrape(forum.slug, { 
-                maxThreads: Math.ceil(maxThreads / forumsToProcess.length) 
+                maxThreads: threadsPerForum,
+                // Pass relaxed filtering for initial discovery
+                relaxedFiltering: forum.total_threads_scraped < 100
               });
               scrapeResults.forums.push(forum.slug);
               scrapeResults.threadsFound += scrapeResult.results.threadsFound || 0;
@@ -123,7 +129,15 @@ export async function GET(request) {
               scrapeResults.postsScraped += scrapeResult.results.postsScraped || 0;
               
               const duration = ((Date.now() - forumStartTime) / 1000).toFixed(1);
-              console.log(`[ForumCron] ✓ ${forum.slug}: ${scrapeResult.results.threadsScraped || 0} threads in ${duration}s`);
+              console.log(`[ForumCron] ✓ ${forum.slug}: ${scrapeResult.results.threadsScraped || 0} threads, ${scrapeResult.results.postsScraped || 0} posts in ${duration}s`);
+              
+              scrapeResults.forumDetails.push({
+                forum: forum.slug,
+                found: scrapeResult.results.threadsFound || 0,
+                scraped: scrapeResult.results.threadsScraped || 0,
+                posts: scrapeResult.results.postsScraped || 0,
+                duration: `${duration}s`
+              });
             } catch (forumError) {
               const duration = ((Date.now() - forumStartTime) / 1000).toFixed(1);
               console.error(`[ForumCron] ✗ Error scraping ${forum.slug} after ${duration}s:`, forumError.message);
@@ -131,6 +145,11 @@ export async function GET(request) {
                 phase: 'scrape',
                 forum: forum.slug,
                 error: forumError.message
+              });
+              scrapeResults.forumDetails.push({
+                forum: forum.slug,
+                error: forumError.message,
+                duration: `${duration}s`
               });
             }
           }
@@ -188,6 +207,13 @@ export async function GET(request) {
     results.completedAt = new Date().toISOString();
     results.success = results.errors.length === 0;
 
+    // Build detailed forum breakdown for notification
+    const forumBreakdown = results.scrape?.forumDetails?.map(f => 
+      f.error 
+        ? `• ${f.forum}: ❌ ${f.error.substring(0, 50)}` 
+        : `• ${f.forum}: ${f.scraped}/${f.found} threads, ${f.posts} posts`
+    ).join('\n') || '';
+
     notifyCronEnrichment('Forum Community Insights', {
       duration: Date.now() - startTime,
       table: 'community_insights',
@@ -200,7 +226,9 @@ export async function GET(request) {
         { label: '📝 Posts Collected', value: results.scrape?.postsScraped || 0 },
         { label: '💡 Insights Extracted', value: results.extract?.insightsExtracted || 0 },
         { label: '🗂️ Forums Checked', value: results.scrape?.forums?.length || 0 },
+        { label: '⏭️ Forums Skipped', value: results.scrape?.skipped?.length || 0 },
       ],
+      notes: forumBreakdown ? `Forum breakdown:\n${forumBreakdown}` : undefined,
     });
 
     return NextResponse.json(results);

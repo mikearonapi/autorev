@@ -19,6 +19,7 @@ import {
   DONATION_PRESETS,
   DONATION_PRODUCT_ID,
 } from '@/lib/stripe';
+import { logServerError } from '@/lib/serverErrorLogger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -234,6 +235,15 @@ export async function POST(request) {
 
   } catch (err) {
     console.error('[Checkout] Error:', err);
+    
+    // Log to error tracking system (critical - revenue impact)
+    await logServerError(err, request, {
+      route: 'checkout',
+      feature: 'payments',
+      errorSource: 'api',
+      severity: 'blocking', // Payment failures are critical
+    });
+    
     return NextResponse.json(
       { error: err.message || 'Checkout failed' },
       { status: 500 }

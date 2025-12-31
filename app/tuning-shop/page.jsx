@@ -590,7 +590,7 @@ function ProjectsAnalytics({ builds }) {
         <span className={styles.analyticsLabel}>Total HP</span>
       </div>
       <div className={styles.analyticsStat}>
-        <span className={styles.analyticsValue}>${(analytics.totalCost / 1000).toFixed(1)}k</span>
+        <span className={styles.analyticsValue}>${((analytics.totalCost || 0) / 1000).toFixed(1)}k</span>
         <span className={styles.analyticsLabel}>Est. Total</span>
       </div>
       <div className={styles.analyticsStat}>

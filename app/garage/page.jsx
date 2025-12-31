@@ -40,6 +40,7 @@ import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
 import AskALButton from '@/components/AskALButton';
 import VehicleHealthCard from '@/components/garage/VehicleHealthCard';
 import { useAIChat } from '@/components/AIMechanicChat';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Icon wrapper to prevent browser extension DOM conflicts
 // Wrapping SVGs in a span prevents "removeChild" errors when extensions modify the DOM
@@ -3068,8 +3069,10 @@ function GarageLoading() {
 // Main export
 export default function GaragePage() {
   return (
-    <Suspense fallback={<GarageLoading />}>
-      <GarageContent />
-    </Suspense>
+    <ErrorBoundary name="GaragePage" featureContext="garage">
+      <Suspense fallback={<GarageLoading />}>
+        <GarageContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }

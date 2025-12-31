@@ -19,6 +19,7 @@ import {
   mapSubscriptionStatus,
 } from '@/lib/stripe';
 import { notifyPayment } from '@/lib/discord';
+import { logServerError } from '@/lib/serverErrorLogger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -94,7 +95,7 @@ async function getUserByEmail(email) {
 /**
  * Handle subscription created or updated
  */
-async function handleSubscriptionChange(subscription) {
+async function handleSubscriptionChange(subscription, isNew = false) {
   const customerId = subscription.customer;
   const status = mapSubscriptionStatus(subscription.status);
   
@@ -107,7 +108,11 @@ async function handleSubscriptionChange(subscription) {
     status,
     tier,
     subscriptionId: subscription.id,
+    isNew,
   });
+
+  // Get user for Discord notification
+  const user = await getUserByStripeCustomerId(customerId);
 
   // Update user profile
   const { error } = await supabase
@@ -127,6 +132,18 @@ async function handleSubscriptionChange(subscription) {
   if (error) {
     console.error('[Stripe Webhook] Error updating subscription:', error);
     throw error;
+  }
+
+  // Notify Discord for new subscriptions (upgrades)
+  if (isNew && (status === 'active' || status === 'trialing')) {
+    const amount = subscription.items?.data?.[0]?.price?.unit_amount || 0;
+    notifyPayment({
+      type: 'new_subscription',
+      amount,
+      tier,
+      userId: user?.id,
+      customerId,
+    }).catch(err => console.error('[Stripe Webhook] Discord notification failed:', err));
   }
 
   console.log('[Stripe Webhook] Subscription updated successfully');
@@ -310,6 +327,13 @@ export async function POST(request) {
     event = await verifyWebhookSignature(request);
   } catch (err) {
     console.error('[Stripe Webhook] Verification error:', err.message);
+    await logServerError(err, request, {
+      route: 'webhooks/stripe',
+      feature: 'payments',
+      errorSource: 'webhook',
+      errorType: 'webhook_verification_failed',
+      severity: 'blocking',
+    });
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
@@ -322,8 +346,11 @@ export async function POST(request) {
         break;
 
       case 'customer.subscription.created':
+        await handleSubscriptionChange(event.data.object, true); // isNew = true
+        break;
+
       case 'customer.subscription.updated':
-        await handleSubscriptionChange(event.data.object);
+        await handleSubscriptionChange(event.data.object, false);
         break;
 
       case 'customer.subscription.deleted':
@@ -346,6 +373,17 @@ export async function POST(request) {
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error('[Stripe Webhook] Handler error:', err);
+    
+    // Log to error tracking system (critical - payment/subscription impact)
+    await logServerError(err, request, {
+      route: 'webhooks/stripe',
+      feature: 'payments',
+      errorSource: 'webhook',
+      errorType: 'webhook_handler_failed',
+      severity: 'blocking',
+      eventType: event?.type,
+    });
+    
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }
