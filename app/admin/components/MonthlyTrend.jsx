@@ -25,7 +25,8 @@ function formatMonth(year, month, compact = false) {
   if (compact) {
     return new Date(year, month - 1).toLocaleString('en-US', { month: 'short' });
   }
-  return new Date(year, month - 1).toLocaleString('en-US', { month: 'short', year: '2-digit' });
+  // Use full 4-digit year to avoid confusion (e.g., "Dec 2025" not "Dec 25")
+  return new Date(year, month - 1).toLocaleString('en-US', { month: 'short', year: 'numeric' });
 }
 
 // Generate interpretive title (Rule 4.1)

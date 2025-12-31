@@ -1,0 +1,142 @@
+/* Tooltip Component Styles */
+
+.container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  margin-left: 4px;
+}
+
+.container:hover .iconWrapper {
+  opacity: 1;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(15, 15, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 200px;
+  max-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Position variants */
+.top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.left {
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.right {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Arrow */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(15, 15, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transform: rotate(45deg);
+}
+
+.top::after {
+  bottom: -5px;
+  left: 50%;
+  margin-left: -4px;
+  border-top: none;
+  border-left: none;
+}
+
+.bottom::after {
+  top: -5px;
+  left: 50%;
+  margin-left: -4px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.left::after {
+  right: -5px;
+  top: 50%;
+  margin-top: -4px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.right::after {
+  left: -5px;
+  top: 50%;
+  margin-top: -4px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Content */
+.tooltipLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin-bottom: 4px;
+}
+
+.tooltipDescription {
+  display: block;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+/* MetricLabel */
+.metricLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metricLabel .container {
+  margin-left: 2px;
+}
+

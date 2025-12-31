@@ -18,6 +18,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './ConsolidatedAnalytics.module.css';
+import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
 
 // Filter out internal pages from analytics data
 const EXCLUDED_PATHS = ['/admin', '/internal'];
@@ -125,7 +126,7 @@ function LiveIndicator({ count }) {
 }
 
 // Compact KPI card
-function KPICard({ label, value, change, icon: Icon, color = 'blue' }) {
+function KPICard({ label, value, change, icon: Icon, color = 'blue', tooltip }) {
   const isPositive = change > 0;
   const isNegative = change < 0;
   
@@ -133,7 +134,13 @@ function KPICard({ label, value, change, icon: Icon, color = 'blue' }) {
     <div className={`${styles.kpiCard} ${styles[`kpi${color}`]}`}>
       <div className={styles.kpiIcon}><Icon size={16} /></div>
       <div className={styles.kpiContent}>
-        <span className={styles.kpiLabel}>{label}</span>
+        <span className={styles.kpiLabel}>
+          {tooltip ? (
+            <Tooltip customLabel={tooltip.label || label} customDescription={tooltip.description}>
+              {label}
+            </Tooltip>
+          ) : label}
+        </span>
         <div className={styles.kpiValueRow}>
           <span className={styles.kpiValue}>{value}</span>
           {change !== undefined && change !== null && (
@@ -148,10 +155,16 @@ function KPICard({ label, value, change, icon: Icon, color = 'blue' }) {
 }
 
 // Compact stat box
-function StatBox({ label, value, color }) {
+function StatBox({ label, value, color, tooltip }) {
   return (
     <div className={styles.statBox}>
-      <span className={styles.statLabel}>{label}</span>
+      <span className={styles.statLabel}>
+        {tooltip ? (
+          <Tooltip metric={typeof tooltip === 'string' ? tooltip : undefined} customLabel={typeof tooltip === 'object' ? tooltip.label : undefined} customDescription={typeof tooltip === 'object' ? tooltip.description : undefined}>
+            {label}
+          </Tooltip>
+        ) : label}
+      </span>
       <span className={`${styles.statValue} ${color ? styles[color] : ''}`}>{value}</span>
     </div>
   );
@@ -584,18 +597,45 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
       <div className={styles.header}>
         <div className={styles.headerTitle}>
           <Icons.Activity size={18} />
-          <h2>Site Analytics</h2>
-          <span className={styles.excludeNote} title="Excludes page views & signups from Mike & Cory when logged in. Anonymous visits cannot be distinguished.">(excludes admin activity)</span>
+          <h2>Site & Growth Analytics</h2>
+          <span className={styles.excludeNote} title="Includes all user activity on public pages. Only /admin and /internal pages are excluded.">(all users)</span>
         </div>
         <LiveIndicator count={summary.online || 0} />
       </div>
       
       {/* KPI Row */}
       <div className={styles.kpiRow}>
-        <KPICard label="Visitors" value={displayVisitors.toLocaleString()} change={summary.visitorsChange} icon={Icons.Users} color="blue" />
-        <KPICard label="Page Views" value={displayPageViews.toLocaleString()} change={summary.pageViewsChange} icon={Icons.File} color="purple" />
-        <KPICard label="Signups" value={actualSignups.toLocaleString()} change={data?.dashboard?.users?.growthPercent} icon={Icons.UserPlus} color="green" />
-        <KPICard label="Conversions" value={conversions.toLocaleString()} icon={Icons.Dollar} color="amber" />
+        <KPICard 
+          label="Visitors" 
+          value={displayVisitors.toLocaleString()} 
+          change={summary.visitorsChange} 
+          icon={Icons.Users} 
+          color="blue"
+          tooltip={{ label: 'Unique Visitors', description: 'Number of unique sessions on public pages. Excludes admin users and internal paths.' }}
+        />
+        <KPICard 
+          label="Page Views" 
+          value={displayPageViews.toLocaleString()} 
+          change={summary.pageViewsChange} 
+          icon={Icons.File} 
+          color="purple"
+          tooltip={{ label: 'Page Views', description: 'Total pages viewed by visitors. Each page load counts as one view.' }}
+        />
+        <KPICard 
+          label="Signups" 
+          value={actualSignups.toLocaleString()} 
+          change={data?.dashboard?.users?.growthPercent} 
+          icon={Icons.UserPlus} 
+          color="green"
+          tooltip={{ label: 'New Signups', description: 'Users who created an account during this period.' }}
+        />
+        <KPICard 
+          label="Conversions" 
+          value={conversions.toLocaleString()} 
+          icon={Icons.Dollar} 
+          color="amber"
+          tooltip={{ label: 'Conversions', description: 'Users who upgraded to a paid tier or completed a purchase.' }}
+        />
       </div>
       
       {/* Main Grid: Chart + Funnel side by side */}
@@ -630,9 +670,9 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
           <div className={styles.card}>
             <h4 className={styles.miniTitle}>Active Users</h4>
             <div className={styles.activeUsersRow}>
-              <StatBox label="DAU" value={data?.advanced?.activeUsers?.daily || 0} />
-              <StatBox label="WAU" value={data?.advanced?.activeUsers?.weekly || 0} />
-              <StatBox label="MAU" value={data?.advanced?.activeUsers?.monthly || 0} />
+              <StatBox label="DAU" value={data?.advanced?.activeUsers?.daily || 0} tooltip="DAU" />
+              <StatBox label="WAU" value={data?.advanced?.activeUsers?.weekly || 0} tooltip="WAU" />
+              <StatBox label="MAU" value={data?.advanced?.activeUsers?.monthly || 0} tooltip="MAU" />
             </div>
           </div>
         </div>

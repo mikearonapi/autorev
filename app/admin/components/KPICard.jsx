@@ -14,6 +14,7 @@
 
 import { useMemo } from 'react';
 import styles from './KPICard.module.css';
+import { Tooltip } from './Tooltip';
 
 // Simple SVG sparkline component
 function Sparkline({ data, color = '#3b82f6', height = 40 }) {
@@ -146,6 +147,7 @@ export function KPICard({
   icon,
   loading = false,
   compact = false,
+  tooltip,  // { label: string, description: string } or metric key from METRIC_DEFINITIONS
 }) {
   if (loading) {
     return (
@@ -165,7 +167,17 @@ export function KPICard({
     <div className={`${styles.card} ${compact ? styles.compact : ''}`}>
       <div className={styles.header}>
         {icon && <span className={styles.icon}>{icon}</span>}
-        <span className={styles.label}>{label}</span>
+        <span className={styles.label}>
+          {tooltip ? (
+            <Tooltip 
+              metric={typeof tooltip === 'string' ? tooltip : undefined}
+              customLabel={typeof tooltip === 'object' ? tooltip.label : undefined}
+              customDescription={typeof tooltip === 'object' ? tooltip.description : undefined}
+            >
+              {label}
+            </Tooltip>
+          ) : label}
+        </span>
         {trend !== undefined && trend !== null && (
           <TrendIndicator value={trend} suffix={trendSuffix} />
         )}

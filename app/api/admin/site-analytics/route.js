@@ -79,13 +79,11 @@ export async function GET(request) {
     const range = searchParams.get('range') || '7d';
     const { startDate, endDate } = getDateRange(range);
     
-    // Get admin user IDs to exclude from analytics
-    const adminUserIds = await getAdminUserIdsCached(supabaseAdmin);
-    
-    // Fetch page views excluding admin users and internal paths
+    // Fetch page views (includes all users, excludes internal paths only)
+    // Note: We no longer filter out admin users - for small teams, seeing all activity is more useful
     const { data: pageViews, error: pvError } = await supabaseAdmin
       .from('page_views')
-      .select('id, session_id, user_id, path, referrer, country_code, device_type, browser, operating_system, created_at')
+      .select('id, session_id, user_id, path, referrer, country_code, device_type, browser, os, created_at')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
     
@@ -93,13 +91,9 @@ export async function GET(request) {
       console.error('[Site Analytics] Page views error:', pvError);
     }
     
-    // Filter out admin users and internal paths
+    // Filter out internal paths only (keep admin user activity on public pages)
     const filteredViews = (pageViews || []).filter(pv => {
-      // Exclude admin users (by user_id)
-      if (pv.user_id && adminUserIds.includes(pv.user_id)) {
-        return false;
-      }
-      // Exclude internal paths
+      // Exclude internal paths like /admin, /internal
       if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) {
         return false;
       }
@@ -200,7 +194,7 @@ export async function GET(request) {
     // Operating Systems
     const osMap = new Map();
     filteredViews.forEach(pv => {
-      const os = pv.operating_system || 'Unknown';
+      const os = pv.os || 'Unknown';
       if (!osMap.has(os)) {
         osMap.set(os, { os, visitors: 0, sessions: new Set() });
       }

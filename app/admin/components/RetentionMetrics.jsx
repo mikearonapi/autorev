@@ -13,6 +13,7 @@
 
 import { useMemo } from 'react';
 import styles from './RetentionMetrics.module.css';
+import { Tooltip } from './Tooltip';
 
 // Generate interpretive title based on retention data (Rule 4.1)
 function generateInterpretiveTitle(retention) {
@@ -158,15 +159,21 @@ export function RetentionMetrics({ retention, loading = false }) {
         {/* Active Users */}
         <div className={styles.activeUsers}>
           <div className={styles.activeUserItem}>
-            <span className={styles.activeLabel}>DAU</span>
+            <span className={styles.activeLabel}>
+              <Tooltip metric="DAU">DAU</Tooltip>
+            </span>
             <span className={styles.activeValue}>{current?.dau || 0}</span>
           </div>
           <div className={styles.activeUserItem}>
-            <span className={styles.activeLabel}>WAU</span>
+            <span className={styles.activeLabel}>
+              <Tooltip metric="WAU">WAU</Tooltip>
+            </span>
             <span className={styles.activeValue}>{current?.wau || 0}</span>
           </div>
           <div className={styles.activeUserItem}>
-            <span className={styles.activeLabel}>MAU</span>
+            <span className={styles.activeLabel}>
+              <Tooltip metric="MAU">MAU</Tooltip>
+            </span>
             <span className={styles.activeValue}>{current?.mau || 0}</span>
           </div>
         </div>

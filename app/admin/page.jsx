@@ -607,7 +607,7 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
                   <button onClick={() => setActiveTab('analytics')} className={styles.snapshotLink}>
-                    View Site Analytics →
+                    View Site & Growth →
                   </button>
                 </div>
                 
@@ -638,44 +638,6 @@ export default function AdminDashboardPage() {
               </div>
             </section>
             
-            {/* Quick Access - All Tabs */}
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Quick Access</h2>
-              <div className={styles.quickLinks}>
-                <button onClick={() => setActiveTab('users')} className={styles.quickLink}>
-                  <UsersIcon size={18} />
-                  <span>Users</span>
-                </button>
-                <button onClick={() => setActiveTab('analytics')} className={styles.quickLink}>
-                  <BarChartIcon size={18} />
-                  <span>Site Analytics</span>
-                </button>
-                <button onClick={() => setActiveTab('revenue')} className={`${styles.quickLink} ${styles.stripeLink}`}>
-                  <CreditCardIcon size={18} />
-                  <span>Revenue</span>
-                </button>
-                <button onClick={() => setActiveTab('costs')} className={styles.quickLink}>
-                  <DollarSignIcon size={18} />
-                  <span>Costs</span>
-                </button>
-                <button onClick={() => setActiveTab('financials')} className={styles.quickLink}>
-                  <TargetIcon size={18} />
-                  <span>Financials</span>
-                </button>
-                <button onClick={() => setActiveTab('growth')} className={styles.quickLink}>
-                  <TrendingUpIcon size={18} />
-                  <span>Growth</span>
-                </button>
-                <button onClick={() => setActiveTab('operations')} className={styles.quickLink}>
-                  <SettingsIcon size={18} />
-                  <span>Operations</span>
-                </button>
-                <button onClick={() => setActiveTab('emails')} className={styles.quickLink}>
-                  <MailIcon size={18} />
-                  <span>Emails</span>
-                </button>
-              </div>
-            </section>
           </>
         )}
         
@@ -700,12 +662,100 @@ export default function AdminDashboardPage() {
         
         {/* SITE ANALYTICS TAB */}
         {activeTab === 'analytics' && (
-          <section className={styles.section}>
-            <ConsolidatedAnalytics 
-              token={session?.access_token}
-              range={timeRange}
-            />
-          </section>
+          <>
+            {/* Site Analytics (Consolidated) */}
+            <section className={styles.section}>
+              <ConsolidatedAnalytics 
+                token={session?.access_token}
+                range={timeRange}
+              />
+            </section>
+            
+            {/* User Growth KPIs */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <UsersIcon size={18} className={styles.sectionIcon} />
+                User Growth Metrics
+              </h2>
+              <div className={styles.kpiGrid}>
+                <KPICard
+                  label="Total Users"
+                  value={data?.users?.total || 0}
+                  trend={data?.users?.growthPercent}
+                  interpretation={getUserInterpretation()}
+                  sparklineData={data?.users?.cumulativeGrowth?.map(d => d.count)}
+                  sparklineColor="#3b82f6"
+                  icon={<UsersIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Weekly Active Users"
+                  value={data?.engagement?.weeklyActiveUsers || 0}
+                  trend={data?.engagement?.wauPercent}
+                  trendSuffix="% of total"
+                  interpretation={`${data?.engagement?.wauPercent || 0}% of users active in 7 days.`}
+                  sparklineColor="#8b5cf6"
+                  icon={<TrendingUpIcon size={18} />}
+                  loading={loading}
+                  tooltip="WAU"
+                />
+                
+                <KPICard
+                  label="AL Conversations"
+                  value={data?.engagement?.alConversations || 0}
+                  trend={data?.engagement?.engagementChange}
+                  interpretation={`${data?.engagement?.conversationsPerUser || 0} avg per user.`}
+                  sparklineColor="#06b6d4"
+                  icon={<MessageCircleIcon size={18} />}
+                  loading={loading}
+                />
+                
+                <KPICard
+                  label="Conversion to Paid"
+                  value={financials?.executive?.conversionRate || 0}
+                  valueSuffix="%"
+                  interpretation={`${financials?.executive?.payingUsers || 0} paying users.`}
+                  sparklineColor="#22c55e"
+                  icon={<TargetIcon size={18} />}
+                  loading={loading}
+                  tooltip="CONVERSION"
+                />
+              </div>
+            </section>
+            
+            {/* Growth Charts */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <BarChartIcon size={18} className={styles.sectionIcon} />
+                Growth Trends
+              </h2>
+              <div className={styles.chartsGrid}>
+                <GrowthChart 
+                  data={data?.users?.cumulativeGrowth} 
+                  title="User Growth (Cumulative)"
+                  height={180}
+                />
+                
+                <FunnelChart 
+                  funnel={data?.funnel}
+                  title="Conversion Funnel"
+                />
+              </div>
+            </section>
+            
+            {/* Retention & Engagement */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <TrendingUpIcon size={18} className={styles.sectionIcon} />
+                Retention & Engagement
+              </h2>
+              <RetentionMetrics 
+                retention={retentionData}
+                loading={loading}
+              />
+            </section>
+          </>
         )}
         
         {/* REVENUE TAB - Stripe Dashboard */}
@@ -833,15 +883,6 @@ export default function AdminDashboardPage() {
               </div>
             </section>
             
-            {/* External Cost Integrations */}
-            <section className={styles.section}>
-              <CostIntegrations 
-                token={session?.access_token}
-                range={timeRange}
-                loading={loading}
-              />
-            </section>
-            
             {/* Cost Entry Form (Add/Edit) */}
             <section className={styles.section}>
               <div className={styles.costEntrySection}>
@@ -892,6 +933,15 @@ export default function AdminDashboardPage() {
                 data={financials?.monthlyTrend}
                 title="Monthly Cost History"
                 compact={false}
+              />
+            </section>
+            
+            {/* External Cost Integrations - at bottom */}
+            <section className={styles.section}>
+              <CostIntegrations 
+                token={session?.access_token}
+                range={timeRange}
+                loading={loading}
               />
             </section>
           </>
@@ -1031,93 +1081,6 @@ export default function AdminDashboardPage() {
         )}
         
         {/* GROWTH TAB */}
-        {activeTab === 'growth' && (
-          <>
-            {/* User KPIs */}
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <UsersIcon size={18} className={styles.sectionIcon} />
-                User Metrics
-              </h2>
-              <div className={styles.kpiGrid}>
-                <KPICard
-                  label="Total Users"
-                  value={data?.users?.total || 0}
-                  trend={data?.users?.growthPercent}
-                  interpretation={getUserInterpretation()}
-                  sparklineData={data?.users?.cumulativeGrowth?.map(d => d.count)}
-                  sparklineColor="#3b82f6"
-                  icon={<UsersIcon size={18} />}
-                  loading={loading}
-                />
-                
-                <KPICard
-                  label="Weekly Active Users"
-                  value={data?.engagement?.weeklyActiveUsers || 0}
-                  trend={data?.engagement?.wauPercent}
-                  trendSuffix="% of total"
-                  interpretation={`${data?.engagement?.wauPercent || 0}% of users active in 7 days.`}
-                  sparklineColor="#8b5cf6"
-                  icon={<TrendingUpIcon size={18} />}
-                  loading={loading}
-                />
-                
-                <KPICard
-                  label="AL Conversations"
-                  value={data?.engagement?.alConversations || 0}
-                  trend={data?.engagement?.engagementChange}
-                  interpretation={`${data?.engagement?.conversationsPerUser || 0} avg per user.`}
-                  sparklineColor="#06b6d4"
-                  icon={<MessageCircleIcon size={18} />}
-                  loading={loading}
-                />
-                
-                <KPICard
-                  label="Conversion to Paid"
-                  value={financials?.executive?.conversionRate || 0}
-                  valueSuffix="%"
-                  interpretation={`${financials?.executive?.payingUsers || 0} paying users.`}
-                  sparklineColor="#22c55e"
-                  icon={<TargetIcon size={18} />}
-                  loading={loading}
-                />
-              </div>
-            </section>
-            
-            {/* Charts */}
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <BarChartIcon size={18} className={styles.sectionIcon} />
-                Growth Analytics
-              </h2>
-              <div className={styles.chartsGrid}>
-                <GrowthChart 
-                  data={data?.users?.cumulativeGrowth} 
-                  title="User Growth (Cumulative)"
-                  height={180}
-                />
-                
-                <FunnelChart 
-                  funnel={data?.funnel}
-                  title="Conversion Funnel"
-                />
-              </div>
-            </section>
-            
-            {/* Retention & Engagement */}
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <TrendingUpIcon size={18} className={styles.sectionIcon} />
-                Retention & Engagement
-              </h2>
-              <RetentionMetrics 
-                retention={retentionData}
-                loading={loading}
-              />
-            </section>
-          </>
-        )}
-        
         {/* OPERATIONS TAB */}
         {/* Layout follows Visual Hierarchy: Level 1 KPIs → Level 2 Charts → Level 3 Details */}
         {activeTab === 'operations' && (

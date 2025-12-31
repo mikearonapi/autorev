@@ -11,11 +11,10 @@ import styles from './TabNav.module.css';
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'grid' },
   { id: 'users', label: 'Users', icon: 'users' },
-  { id: 'analytics', label: 'Site Analytics', icon: 'chart' },
+  { id: 'analytics', label: 'Site & Growth', icon: 'chart' },
   { id: 'financials', label: 'Financials', icon: 'dollar', subtitle: 'Summary' },
   { id: 'revenue', label: 'Revenue', icon: 'stripe', subtitle: 'Stripe' },
   { id: 'costs', label: 'Costs', icon: 'wallet', subtitle: 'Analysis' },
-  { id: 'growth', label: 'Growth', icon: 'trending' },
   { id: 'operations', label: 'Operations', icon: 'settings' },
   { id: 'emails', label: 'Emails', icon: 'mail' },
 ];

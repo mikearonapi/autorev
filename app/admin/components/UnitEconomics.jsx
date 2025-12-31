@@ -16,6 +16,7 @@
  */
 
 import styles from './UnitEconomics.module.css';
+import { Tooltip } from './Tooltip';
 
 function formatCurrency(amount) {
   if (amount === null || amount === undefined || isNaN(amount)) return '$0.00';
@@ -144,7 +145,9 @@ export function UnitEconomics({
         <div className={styles.metric}>
           <div className={styles.metricHeader}>
             <span className={styles.metricIcon}><DollarIcon /></span>
-            <span className={styles.metricLabel}>ARPU</span>
+            <span className={styles.metricLabel}>
+              <Tooltip metric="ARPU">ARPU</Tooltip>
+            </span>
           </div>
           <span className={styles.metricValue}>{formatCurrency(arpu)}</span>
           <span className={styles.metricSubtext}>per user/month</span>
@@ -153,7 +156,9 @@ export function UnitEconomics({
         <div className={styles.metric}>
           <div className={styles.metricHeader}>
             <span className={styles.metricIcon}><DollarIcon /></span>
-            <span className={styles.metricLabel}>LTV</span>
+            <span className={styles.metricLabel}>
+              <Tooltip metric="LTV">LTV</Tooltip>
+            </span>
           </div>
           <span className={styles.metricValue}>{formatCurrency(ltv)}</span>
           <span className={styles.metricSubtext}>24-month projected</span>
@@ -162,7 +167,9 @@ export function UnitEconomics({
         <div className={styles.metric}>
           <div className={styles.metricHeader}>
             <span className={styles.metricIcon}><DollarIcon /></span>
-            <span className={styles.metricLabel}>CAC</span>
+            <span className={styles.metricLabel}>
+              <Tooltip metric="CAC">CAC</Tooltip>
+            </span>
           </div>
           <span className={styles.metricValue}>{cac > 0 ? formatCurrency(cac) : '$0'}</span>
           <span className={styles.metricSubtext}>{marketingSpend > 0 ? 'per acquired user' : 'organic growth'}</span>
@@ -171,7 +178,9 @@ export function UnitEconomics({
         <div className={styles.metric}>
           <div className={styles.metricHeader}>
             <span className={styles.metricIcon}><TrendIcon /></span>
-            <span className={styles.metricLabel}>Conversion</span>
+            <span className={styles.metricLabel}>
+              <Tooltip metric="CONVERSION">Conversion</Tooltip>
+            </span>
           </div>
           <span className={styles.metricValue}>{conversionRate.toFixed(1)}%</span>
           <span className={styles.metricSubtext}>{payingUsers} of {totalUsers} users</span>
@@ -182,7 +191,9 @@ export function UnitEconomics({
       <div className={styles.ratios}>
         <div className={`${styles.ratioCard} ${styles[ltvCacHealth.status]}`}>
           <div className={styles.ratioHeader}>
-            <span className={styles.ratioLabel}>LTV:CAC Ratio</span>
+            <span className={styles.ratioLabel}>
+              <Tooltip metric="LTV_CAC">LTV:CAC Ratio</Tooltip>
+            </span>
             <span className={`${styles.ratioBadge} ${styles[ltvCacHealth.status]}`}>
               {ltvCacHealth.label}
             </span>
@@ -202,7 +213,9 @@ export function UnitEconomics({
         
         <div className={`${styles.ratioCard} ${styles[runwayHealth.status]}`}>
           <div className={styles.ratioHeader}>
-            <span className={styles.ratioLabel}>Cash Runway</span>
+            <span className={styles.ratioLabel}>
+              <Tooltip metric="RUNWAY">Cash Runway</Tooltip>
+            </span>
             <span className={`${styles.ratioBadge} ${styles[runwayHealth.status]}`}>
               {runwayHealth.label}
             </span>
