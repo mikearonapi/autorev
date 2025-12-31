@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { fontVariables } from '@/lib/fonts';
 import Header from '@/components/Header';
