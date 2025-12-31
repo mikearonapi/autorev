@@ -387,6 +387,24 @@
    CF-001: Ensure 44px minimum touch targets
    =========================================== */
 
+/* Small mobile: extra compact for 2-column grid */
+@media (max-width: 479px) {
+  .compactBtn {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+  }
+  
+  .compactBtn svg {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .compactMenu {
+    gap: 2px;
+  }
+}
+
 @media (max-width: 767px) {
   /* Compact buttons on mobile - slightly smaller for tight spaces */
   .compactBtn {

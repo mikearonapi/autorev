@@ -576,8 +576,6 @@ export default function SportsCarComparison() {
                 <option value="0-60000">Under $60K</option>
                 <option value="0-50000">Under $50K</option>
                 <option value="0-40000">Under $40K</option>
-                <option value="100000-Infinity">$100K+</option>
-                <option value="150000-Infinity">$150K+</option>
               </select>
             </div>
 
@@ -939,8 +937,6 @@ export default function SportsCarComparison() {
                 <option value="0-60000">Under $60K</option>
                 <option value="0-50000">Under $50K</option>
                 <option value="0-40000">Under $40K</option>
-                <option value="100000-Infinity">$100K+</option>
-                <option value="150000-Infinity">$150K+</option>
               </select>
 
               <select 
