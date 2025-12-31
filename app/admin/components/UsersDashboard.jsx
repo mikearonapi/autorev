@@ -341,6 +341,18 @@ export function UsersDashboard({ token, range = '7d' }) {
                     <span className={styles.engagementHeaderIcon}>💬</span>
                     <span className={styles.engagementHeaderLabel}>AL</span>
                   </div>
+                  <div className={styles.engagementHeaderItem} title="Compare lists created (user_compare_lists)">
+                    <span className={styles.engagementHeaderIcon}>🔀</span>
+                    <span className={styles.engagementHeaderLabel}>Compare</span>
+                  </div>
+                  <div className={styles.engagementHeaderItem} title="Service/maintenance logs (user_service_logs)">
+                    <span className={styles.engagementHeaderIcon}>🛠️</span>
+                    <span className={styles.engagementHeaderLabel}>Service</span>
+                  </div>
+                  <div className={styles.engagementHeaderItem} title="Feedback submitted (user_feedback)">
+                    <span className={styles.engagementHeaderIcon}>📝</span>
+                    <span className={styles.engagementHeaderLabel}>Feedback</span>
+                  </div>
                 </div>
               </th>
             </tr>
@@ -380,6 +392,9 @@ export function UsersDashboard({ token, range = '7d' }) {
                       <EngagementItem value={user.savedBuilds} label="Builds" icon="🔧" />
                       <EngagementItem value={user.savedEvents} label="Events" icon="📅" />
                       <EngagementItem value={user.alConversations} label="AL" icon="💬" />
+                      <EngagementItem value={user.compareLists} label="Compare" icon="🔀" />
+                      <EngagementItem value={user.serviceLogs} label="Service" icon="🛠️" />
+                      <EngagementItem value={user.feedbackCount} label="Feedback" icon="📝" />
                     </div>
                   </td>
                 </tr>
