@@ -11,7 +11,6 @@
  * - Feature adoption
  * - User lifecycle
  * - Goal tracking
- * - Search analytics
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -25,17 +24,15 @@ import {
   TargetIcon,
   BarChartIcon,
   ActivityIcon,
-  GlobeIcon,
   ClockIcon,
   LayersIcon,
-  SearchIcon,
-  StarIcon,
   AlertCircleIcon,
   CheckCircleIcon,
   ZapIcon,
+  InfoIcon,
 } from './Icons';
 
-// SVG Icons for the dashboard (ones not in Icons.jsx)
+// SVG Icons for the dashboard
 function EyeIcon({ size = 20, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -126,49 +123,155 @@ function LinkIcon({ size = 20, className = '' }) {
   );
 }
 
-// Real-time indicator
-function LiveIndicator({ count }) {
+// Tooltip component with metric definitions
+function Tooltip({ children, content, target }) {
   return (
-    <div className={styles.liveIndicator}>
-      <span className={styles.liveDot} />
-      <span className={styles.liveText}>{count} online now</span>
+    <div className={styles.tooltipWrapper}>
+      {children}
+      <div className={styles.tooltip}>
+        <div className={styles.tooltipContent}>{content}</div>
+        {target && <div className={styles.tooltipTarget}>Target: {target}</div>}
+      </div>
     </div>
   );
 }
 
-// Stat card with icon
-function MetricCard({ label, value, change, changeLabel, icon: Icon, color = 'blue' }) {
+// Metric definitions for tooltips
+const METRIC_DEFINITIONS = {
+  visitors: {
+    content: 'Unique visitors based on session IDs during this period.',
+    target: 'Growth > 10% week-over-week'
+  },
+  pageViews: {
+    content: 'Total page loads tracked. Multiple views per visitor count separately.',
+    target: '2-3× visitor count'
+  },
+  signups: {
+    content: 'New user accounts created during this period.',
+    target: '2-5% of visitors'
+  },
+  conversions: {
+    content: 'Users who completed a paid action (subscription, purchase).',
+    target: '5-10% of signups'
+  },
+  bounceRate: {
+    content: 'Percentage of visitors who left after viewing only one page.',
+    target: '< 40% (lower is better)'
+  },
+  avgSession: {
+    content: 'Average time spent per visit across all sessions.',
+    target: '> 2 minutes'
+  },
+  pagesPerSession: {
+    content: 'Average number of pages viewed per session.',
+    target: '> 2.5 pages'
+  },
+  scrollDepth: {
+    content: 'How far down the page visitors scroll on average.',
+    target: '> 50%'
+  },
+  timeOnPage: {
+    content: 'Average time spent on individual pages.',
+    target: '> 30 seconds'
+  },
+  clicksPerPage: {
+    content: 'Average interactive clicks per page view.',
+    target: '> 2 clicks'
+  },
+  engagementScore: {
+    content: 'Composite score based on time, scroll, and interactions (0-10).',
+    target: '> 5.0'
+  },
+  dau: {
+    content: 'Daily Active Users - unique users active today.',
+    target: '> 20% of total users'
+  },
+  wau: {
+    content: 'Weekly Active Users - unique users active this week.',
+    target: '> 40% of total users'
+  },
+  mau: {
+    content: 'Monthly Active Users - unique users active this month.',
+    target: '> 60% of total users'
+  },
+  healthScore: {
+    content: 'User engagement health based on recent activity patterns.',
+    target: '> 70/100'
+  },
+  atRisk: {
+    content: 'Users showing declining engagement who may churn.',
+    target: '< 10% of active users'
+  },
+  churned: {
+    content: 'Users inactive for 30+ days.',
+    target: '< 5% monthly'
+  }
+};
+
+// Live indicator
+function LiveIndicator({ count }) {
+  return (
+    <div className={styles.liveIndicator}>
+      <span className={styles.liveDot} />
+      <span className={styles.liveText}>{count} online</span>
+    </div>
+  );
+}
+
+// Compact metric card with tooltip
+function MetricCard({ label, value, change, icon: Icon, color = 'blue', tooltip }) {
   const isPositive = change > 0;
   const isNegative = change < 0;
   
-  return (
+  const card = (
     <div className={`${styles.metricCard} ${styles[`metric${color}`]}`}>
-      <div className={styles.metricIcon}>
-        <Icon size={24} />
-      </div>
+      <div className={styles.metricIcon}><Icon size={20} /></div>
       <div className={styles.metricContent}>
         <span className={styles.metricLabel}>{label}</span>
         <span className={styles.metricValue}>{value}</span>
         {change !== undefined && (
           <span className={`${styles.metricChange} ${isPositive ? styles.positive : isNegative ? styles.negative : ''}`}>
-            {isPositive ? '↑' : isNegative ? '↓' : '→'} {Math.abs(change)}% {changeLabel || 'vs last period'}
+            {isPositive ? '↑' : isNegative ? '↓' : '→'}{Math.abs(change)}%
           </span>
         )}
       </div>
     </div>
   );
+  
+  if (tooltip) {
+    return <Tooltip content={tooltip.content} target={tooltip.target}>{card}</Tooltip>;
+  }
+  return card;
 }
 
-// Funnel visualization
+// Compact stat item with tooltip
+function StatItem({ label, value, tooltip }) {
+  const content = (
+    <div className={styles.statItem}>
+      <span className={styles.statLabel}>
+        {label}
+        {tooltip && <InfoIcon size={12} className={styles.infoIcon} />}
+      </span>
+      <span className={styles.statValue}>{value}</span>
+    </div>
+  );
+  
+  if (tooltip) {
+    return <Tooltip content={tooltip.content} target={tooltip.target}>{content}</Tooltip>;
+  }
+  return content;
+}
+
+// Funnel visualization (compact)
 function FunnelVisualization({ funnel }) {
   if (!funnel) return null;
   
   const stages = [
-    { key: 'visitors', label: 'Visitors', count: funnel.visitors || 0, color: '#3b82f6', icon: UsersIcon },
-    { key: 'signups', label: 'Signups', count: funnel.signups || 0, color: '#8b5cf6', icon: UserPlusIcon },
-    { key: 'onboarded', label: 'Onboarded', count: funnel.onboarded || 0, color: '#06b6d4', icon: UserCheckIcon },
-    { key: 'activated', label: 'Activated', count: funnel.activated || 0, color: '#22c55e', icon: ZapIcon },
-    { key: 'converted', label: 'Converted', count: funnel.converted || 0, color: '#f59e0b', icon: DollarSignIcon }
+    { key: 'visitors', label: 'Visitors', count: funnel.visitors || 0, color: '#3b82f6' },
+    { key: 'signups', label: 'Signups', count: funnel.signups || 0, color: '#8b5cf6' },
+    { key: 'onboarded', label: 'Onboarded', count: funnel.onboarded || 0, color: '#06b6d4' },
+    { key: 'activated', label: 'Activated', count: funnel.activated || 0, color: '#22c55e' },
+    { key: 'converted', label: 'Converted', count: funnel.converted || 0, color: '#f59e0b' }
   ];
   
   const maxCount = Math.max(...stages.map(s => s.count), 1);
@@ -178,25 +281,19 @@ function FunnelVisualization({ funnel }) {
       {stages.map((stage, i) => {
         const widthPercent = (stage.count / maxCount) * 100;
         const conversionRate = i > 0 && stages[i-1].count > 0 
-          ? ((stage.count / stages[i-1].count) * 100).toFixed(1)
+          ? ((stage.count / stages[i-1].count) * 100).toFixed(0)
           : null;
-        const Icon = stage.icon;
           
         return (
           <div key={stage.key} className={styles.funnelStage}>
             <div className={styles.funnelBar} style={{ 
-              width: `${Math.max(widthPercent, 10)}%`,
+              width: `${Math.max(widthPercent, 8)}%`,
               backgroundColor: stage.color 
             }}>
-              <span className={styles.funnelLabel}>
-                <Icon size={14} className={styles.funnelIcon} />
-                {stage.label}
-              </span>
+              <span className={styles.funnelLabel}>{stage.label}</span>
               <span className={styles.funnelCount}>{stage.count.toLocaleString()}</span>
             </div>
-            {conversionRate && (
-              <span className={styles.funnelConversion}>{conversionRate}%</span>
-            )}
+            {conversionRate && <span className={styles.funnelConversion}>{conversionRate}%</span>}
           </div>
         );
       })}
@@ -204,15 +301,15 @@ function FunnelVisualization({ funnel }) {
   );
 }
 
-// Engagement breakdown
+// Engagement bar (compact)
 function EngagementBreakdown({ engagement }) {
-  if (!engagement) return null;
+  if (!engagement) return <div className={styles.emptyState}>No data</div>;
   
   const tiers = [
-    { key: 'bounced', label: 'Bounced', color: '#ef4444' },
-    { key: 'light', label: 'Light', color: '#f59e0b' },
-    { key: 'engaged', label: 'Engaged', color: '#3b82f6' },
-    { key: 'deep', label: 'Deep', color: '#22c55e' }
+    { key: 'bounced', label: 'Bounced', color: '#ef4444', tip: 'Left after 1 page' },
+    { key: 'light', label: 'Light', color: '#f59e0b', tip: 'Minimal interaction' },
+    { key: 'engaged', label: 'Engaged', color: '#3b82f6', tip: 'Good interaction' },
+    { key: 'deep', label: 'Deep', color: '#22c55e', tip: 'Highly engaged' }
   ];
   
   const total = tiers.reduce((sum, t) => sum + (engagement[t.key] || 0), 0) || 1;
@@ -223,52 +320,44 @@ function EngagementBreakdown({ engagement }) {
         {tiers.map(tier => {
           const percent = ((engagement[tier.key] || 0) / total) * 100;
           return (
-            <div 
-              key={tier.key}
-              className={styles.engagementSegment}
-              style={{ width: `${percent}%`, backgroundColor: tier.color }}
-              title={`${tier.label}: ${Math.round(percent)}%`}
-            />
+            <Tooltip key={tier.key} content={tier.tip} target={tier.key === 'bounced' ? '< 30%' : tier.key === 'deep' ? '> 20%' : null}>
+              <div 
+                className={styles.engagementSegment}
+                style={{ width: `${percent}%`, backgroundColor: tier.color }}
+              />
+            </Tooltip>
           );
         })}
       </div>
       <div className={styles.engagementLegend}>
         {tiers.map(tier => (
-          <div key={tier.key} className={styles.engagementLegendItem}>
+          <span key={tier.key} className={styles.legendItem}>
             <span className={styles.legendDot} style={{ backgroundColor: tier.color }} />
-            <span>{tier.label}</span>
-            <span className={styles.legendValue}>{Math.round(((engagement[tier.key] || 0) / total) * 100)}%</span>
-          </div>
+            {tier.label} {Math.round(((engagement[tier.key] || 0) / total) * 100)}%
+          </span>
         ))}
       </div>
     </div>
   );
 }
 
-// Feature adoption chart
+// Feature list (compact)
 function FeatureAdoption({ features }) {
   if (!features || features.length === 0) {
-    return <div className={styles.emptyState}>No feature data yet</div>;
+    return <div className={styles.emptyState}>No feature data</div>;
   }
   
   const maxUsage = Math.max(...features.map(f => f.usage_count || 0), 1);
   
   return (
     <div className={styles.featureList}>
-      {features.slice(0, 10).map((feature, i) => {
+      {features.slice(0, 8).map((feature, i) => {
         const percent = ((feature.usage_count || 0) / maxUsage) * 100;
-        const Icon = getFeatureIcon(feature.feature_key);
         return (
           <div key={i} className={styles.featureRow}>
-            <span className={styles.featureIcon}>
-              <Icon size={18} />
-            </span>
             <span className={styles.featureName}>{formatFeatureName(feature.feature_key)}</span>
             <div className={styles.featureBar}>
-              <div 
-                className={styles.featureBarFill}
-                style={{ width: `${percent}%` }}
-              />
+              <div className={styles.featureBarFill} style={{ width: `${percent}%` }} />
             </div>
             <span className={styles.featureCount}>{(feature.usage_count || 0).toLocaleString()}</span>
           </div>
@@ -278,105 +367,86 @@ function FeatureAdoption({ features }) {
   );
 }
 
-// User lifecycle distribution
+// Lifecycle grid (compact)
 function LifecycleDistribution({ lifecycle }) {
   if (!lifecycle) return null;
   
   const statuses = [
-    { key: 'new', label: 'New', color: '#3b82f6', icon: UserPlusIcon },
-    { key: 'active', label: 'Active', color: '#22c55e', icon: UserCheckIcon },
-    { key: 'at_risk', label: 'At Risk', color: '#f59e0b', icon: AlertCircleIcon },
-    { key: 'churned', label: 'Churned', color: '#ef4444', icon: UserXIcon }
+    { key: 'new', label: 'New', color: '#3b82f6', tip: 'Recently signed up' },
+    { key: 'active', label: 'Active', color: '#22c55e', tip: 'Engaged in last 7 days' },
+    { key: 'at_risk', label: 'At Risk', color: '#f59e0b', tip: 'Declining engagement' },
+    { key: 'churned', label: 'Churned', color: '#ef4444', tip: 'Inactive 30+ days' }
   ];
   
   const total = statuses.reduce((sum, s) => sum + (lifecycle[s.key] || 0), 0) || 1;
   
   return (
     <div className={styles.lifecycleGrid}>
-      {statuses.map(status => {
-        const Icon = status.icon;
-        return (
-          <div key={status.key} className={styles.lifecycleCard} style={{ borderLeftColor: status.color }}>
-            <div className={styles.lifecycleHeader}>
-              <Icon size={16} />
-              <span>{status.label}</span>
-            </div>
-            <div className={styles.lifecycleValue}>{(lifecycle[status.key] || 0).toLocaleString()}</div>
-            <div className={styles.lifecyclePercent}>{Math.round(((lifecycle[status.key] || 0) / total) * 100)}%</div>
+      {statuses.map(status => (
+        <Tooltip key={status.key} content={status.tip}>
+          <div className={styles.lifecycleCard} style={{ borderColor: status.color }}>
+            <span className={styles.lifecycleLabel}>{status.label}</span>
+            <span className={styles.lifecycleValue}>{(lifecycle[status.key] || 0).toLocaleString()}</span>
+            <span className={styles.lifecyclePercent}>{Math.round(((lifecycle[status.key] || 0) / total) * 100)}%</span>
           </div>
-        );
-      })}
+        </Tooltip>
+      ))}
     </div>
   );
 }
 
-// Goal completion table
+// Goals table (compact)
 function GoalCompletions({ goals }) {
   if (!goals || goals.length === 0) {
-    return <div className={styles.emptyState}>No goal data yet</div>;
+    return <div className={styles.emptyState}>No goal data</div>;
   }
   
   return (
     <div className={styles.goalTable}>
-      <div className={styles.goalHeader}>
-        <span>Goal</span>
-        <span>Completions</span>
-        <span>Conv. Rate</span>
-        <span>Value</span>
-      </div>
-      {goals.map((goal, i) => (
+      {goals.slice(0, 5).map((goal, i) => (
         <div key={i} className={styles.goalRow}>
           <span className={styles.goalName}>{formatGoalName(goal.goal_key)}</span>
           <span className={styles.goalCompletions}>{(goal.completions || 0).toLocaleString()}</span>
           <span className={styles.goalRate}>{(goal.conversion_rate || 0).toFixed(1)}%</span>
-          <span className={styles.goalValue}>
-            {goal.total_value_cents 
-              ? `$${(goal.total_value_cents / 100).toFixed(0)}`
-              : '-'
-            }
-          </span>
         </div>
       ))}
     </div>
   );
 }
 
-// Search analytics
+// Search list (compact)
 function SearchInsights({ searches }) {
   if (!searches || searches.length === 0) {
-    return <div className={styles.emptyState}>No search data yet</div>;
+    return <div className={styles.emptyState}>No search data</div>;
   }
   
   return (
     <div className={styles.searchList}>
-      {searches.slice(0, 10).map((search, i) => (
+      {searches.slice(0, 5).map((search, i) => (
         <div key={i} className={styles.searchRow}>
-          <span className={styles.searchQuery}>"{search.query}"</span>
+          <span className={styles.searchQuery}>{search.query}</span>
           <span className={styles.searchCount}>{search.count}×</span>
-          <span className={styles.searchClickRate}>
-            {search.click_rate ? `${(search.click_rate * 100).toFixed(0)}% CTR` : 'No clicks'}
-          </span>
         </div>
       ))}
     </div>
   );
 }
 
-// Cohort heatmap
+// Cohort heatmap (compact)
 function CohortHeatmap({ cohorts }) {
   if (!cohorts || cohorts.length === 0) {
-    return <div className={styles.emptyState}>No cohort data yet</div>;
+    return <div className={styles.emptyState}>No cohort data</div>;
   }
   
-  const weeks = ['W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'];
+  const weeks = ['W0', 'W1', 'W2', 'W3', 'W4'];
   
   return (
     <div className={styles.cohortTable}>
       <div className={styles.cohortHeader}>
-        <span className={styles.cohortLabel}>Cohort</span>
+        <span>Cohort</span>
         {weeks.map(w => <span key={w}>{w}</span>)}
       </div>
-      {cohorts.slice(0, 8).map((cohort, i) => (
+      {cohorts.slice(0, 4).map((cohort, i) => (
         <div key={i} className={styles.cohortRow}>
           <span className={styles.cohortLabel}>{cohort.week}</span>
           {weeks.map((w, j) => {
@@ -387,7 +457,7 @@ function CohortHeatmap({ cohorts }) {
                 className={styles.cohortCell}
                 style={{ 
                   backgroundColor: `rgba(59, 130, 246, ${retention / 100})`,
-                  color: retention > 50 ? '#fff' : '#1f2937'
+                  color: retention > 50 ? '#fff' : '#374151'
                 }}
               >
                 {retention > 0 ? `${retention}%` : '-'}
@@ -400,41 +470,13 @@ function CohortHeatmap({ cohorts }) {
   );
 }
 
-// Helper functions - return icon components instead of emoji strings
-function getFeatureIcon(featureKey) {
-  const iconMap = {
-    car_browse: EyeIcon,
-    car_view: EyeIcon,
-    car_search: SearchQueryIcon,
-    car_filter: LayersIcon,
-    car_favorite: TrophyIcon,
-    car_compare: BarChartIcon,
-    car_share: LinkIcon,
-    garage: LayersIcon,
-    profile: UserIcon,
-    settings: LayersIcon,
-    al_chat: ZapIcon,
-    tuning_shop: ActivityIcon,
-    mod_planner: LayersIcon,
-    vehicle_health: CheckCircleIcon,
-    events: GlobeIcon,
-    community: UsersIcon,
-    encyclopedia: FileTextIcon,
-    daily_dose: FileTextIcon
-  };
-  return iconMap[featureKey] || BarChartIcon;
-}
-
+// Helper functions
 function formatFeatureName(featureKey) {
-  return featureKey
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
+  return featureKey?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '';
 }
 
 function formatGoalName(goalKey) {
-  return goalKey
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
+  return goalKey?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '';
 }
 
 export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
@@ -450,7 +492,6 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     setError(null);
     
     try {
-      // Fetch all analytics data in parallel
       const [siteRes, marketingRes, advancedRes, dashboardRes] = await Promise.all([
         fetch(`/api/admin/site-analytics?range=${range}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -461,7 +502,6 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
         fetch(`/api/admin/advanced-analytics?range=${range}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }).catch(() => ({ ok: false })),
-        // Also fetch dashboard data to get accurate signup counts from user_profiles
         fetch(`/api/admin/dashboard?range=${range}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }).catch(() => ({ ok: false }))
@@ -472,12 +512,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
       const advanced = advancedRes.ok ? await advancedRes.json() : null;
       const dashboard = dashboardRes.ok ? await dashboardRes.json() : null;
       
-      setData({
-        site,
-        marketing,
-        advanced,
-        dashboard
-      });
+      setData({ site, marketing, advanced, dashboard });
     } catch (err) {
       console.error('[UnifiedAnalytics] Error:', err);
       setError(err.message);
@@ -488,8 +523,6 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
   
   useEffect(() => {
     fetchData();
-    
-    // Auto-refresh every 5 minutes
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
@@ -499,7 +532,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
       <div className={styles.container}>
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner} />
-          <p>Loading analytics...</p>
+          <p>Loading...</p>
         </div>
       </div>
     );
@@ -509,7 +542,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     return (
       <div className={styles.container}>
         <div className={styles.errorState}>
-          <p>Error loading analytics: {error}</p>
+          <p>Error: {error}</p>
           <button onClick={fetchData} className={styles.retryButton}>Retry</button>
         </div>
       </div>
@@ -517,17 +550,15 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
   }
   
   const { site, marketing, advanced, dashboard } = data || {};
-  
-  // Use actual signups from dashboard (user_profiles created in period)
   const actualSignups = dashboard?.users?.newThisPeriod || 0;
   
   return (
     <div className={styles.container}>
-      {/* Header with live indicator */}
+      {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <BarChartIcon size={24} className={styles.headerIcon} />
-          <h2 className={styles.title}>Analytics Dashboard</h2>
+          <BarChartIcon size={20} className={styles.headerIcon} />
+          <h2 className={styles.title}>Analytics</h2>
         </div>
         <LiveIndicator count={site?.summary?.online || 0} />
       </div>
@@ -540,6 +571,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           change={site?.summary?.visitorsChange}
           icon={UsersIcon}
           color="blue"
+          tooltip={METRIC_DEFINITIONS.visitors}
         />
         <MetricCard 
           label="Page Views" 
@@ -547,6 +579,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           change={site?.summary?.pageViewsChange}
           icon={FileTextIcon}
           color="purple"
+          tooltip={METRIC_DEFINITIONS.pageViews}
         />
         <MetricCard 
           label="Signups" 
@@ -554,6 +587,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           change={dashboard?.users?.growthPercent}
           icon={UserPlusIcon}
           color="green"
+          tooltip={METRIC_DEFINITIONS.signups}
         />
         <MetricCard 
           label="Conversions" 
@@ -561,270 +595,178 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
           change={marketing?.funnel?.convertedChange}
           icon={DollarSignIcon}
           color="amber"
+          tooltip={METRIC_DEFINITIONS.conversions}
         />
       </div>
       
-      {/* Section Navigation */}
+      {/* Tab Navigation */}
       <div className={styles.sectionNav}>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'overview' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('overview')}
-        >
-          <TrendingUpIcon size={16} />
-          Overview
-        </button>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'funnel' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('funnel')}
-        >
-          <TargetIcon size={16} />
-          Funnel
-        </button>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'engagement' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('engagement')}
-        >
-          <BarChartIcon size={16} />
-          Engagement
-        </button>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'features' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('features')}
-        >
-          <ZapIcon size={16} />
-          Features
-        </button>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'users' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('users')}
-        >
-          <UserIcon size={16} />
-          Users
-        </button>
-        <button 
-          className={`${styles.navButton} ${activeSection === 'goals' ? styles.navActive : ''}`}
-          onClick={() => setActiveSection('goals')}
-        >
-          <TrophyIcon size={16} />
-          Goals
-        </button>
+        {[
+          { id: 'overview', icon: TrendingUpIcon, label: 'Overview' },
+          { id: 'funnel', icon: TargetIcon, label: 'Funnel' },
+          { id: 'engagement', icon: ActivityIcon, label: 'Engage' },
+          { id: 'features', icon: ZapIcon, label: 'Features' },
+          { id: 'users', icon: UserIcon, label: 'Users' },
+          { id: 'goals', icon: TrophyIcon, label: 'Goals' },
+        ].map(tab => (
+          <button 
+            key={tab.id}
+            className={`${styles.navButton} ${activeSection === tab.id ? styles.navActive : ''}`}
+            onClick={() => setActiveSection(tab.id)}
+          >
+            <tab.icon size={14} />
+            <span className={styles.navLabel}>{tab.label}</span>
+          </button>
+        ))}
       </div>
       
-      {/* Section Content */}
+      {/* Content */}
       <div className={styles.sectionContent}>
         {activeSection === 'overview' && (
-          <div className={styles.overviewSection}>
-            <div className={styles.twoColumn}>
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>Traffic Overview</h3>
-                <div className={styles.trafficStats}>
-                  <div className={styles.trafficItem}>
-                    <span className={styles.trafficLabel}>Bounce Rate</span>
-                    <span className={styles.trafficValue}>{site?.summary?.bounceRate || 0}%</span>
-                  </div>
-                  <div className={styles.trafficItem}>
-                    <span className={styles.trafficLabel}>Avg Session</span>
-                    <span className={styles.trafficValue}>
-                      {advanced?.engagement?.avgSessionDuration 
-                        ? `${Math.round(advanced.engagement.avgSessionDuration / 60)}m`
-                        : '0m'
-                      }
-                    </span>
-                  </div>
-                  <div className={styles.trafficItem}>
-                    <span className={styles.trafficLabel}>Pages/Session</span>
-                    <span className={styles.trafficValue}>
-                      {advanced?.engagement?.pagesPerSession?.toFixed(1) || '0'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>Engagement Distribution</h3>
-                <EngagementBreakdown engagement={advanced?.engagement?.tiers} />
+          <>
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Traffic</h3>
+              <div className={styles.statsGrid}>
+                <StatItem 
+                  label="Bounce Rate" 
+                  value={`${site?.summary?.bounceRate || 0}%`}
+                  tooltip={METRIC_DEFINITIONS.bounceRate}
+                />
+                <StatItem 
+                  label="Avg Session" 
+                  value={advanced?.engagement?.avgSessionDuration ? `${Math.round(advanced.engagement.avgSessionDuration / 60)}m` : '0m'}
+                  tooltip={METRIC_DEFINITIONS.avgSession}
+                />
+                <StatItem 
+                  label="Pages/Session" 
+                  value={advanced?.engagement?.pagesPerSession?.toFixed(1) || '0'}
+                  tooltip={METRIC_DEFINITIONS.pagesPerSession}
+                />
               </div>
             </div>
             
             <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Top Sources</h3>
+              <h3 className={styles.cardTitle}>Engagement</h3>
+              <EngagementBreakdown engagement={advanced?.engagement?.tiers} />
+            </div>
+            
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Sources</h3>
               {site?.referrers?.length > 0 ? (
                 <div className={styles.sourceList}>
-                  {site.referrers.slice(0, 5).map((ref, i) => (
+                  {site.referrers.slice(0, 4).map((ref, i) => (
                     <div key={i} className={styles.sourceRow}>
-                      <span className={styles.sourceLabel}>
-                        <LinkIcon size={14} />
-                        {ref.source === 'Direct' ? 'Direct' : ref.source}
-                      </span>
-                      <span className={styles.sourceValue}>{ref.visitors}</span>
+                      <span>{ref.source === 'Direct' ? 'Direct' : ref.source}</span>
+                      <span>{ref.visitors}</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className={styles.emptyState}>No referrer data</div>
+                <div className={styles.emptyState}>No data</div>
               )}
             </div>
-          </div>
+          </>
         )}
         
         {activeSection === 'funnel' && (
-          <div className={styles.funnelSection}>
+          <>
             <div className={styles.card}>
               <h3 className={styles.cardTitle}>Conversion Funnel</h3>
-              <FunnelVisualization funnel={{
-                ...marketing?.funnel,
-                signups: actualSignups // Use actual signups from user_profiles
-              }} />
+              <FunnelVisualization funnel={{ ...marketing?.funnel, signups: actualSignups }} />
             </div>
             
             <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Cohort Retention</h3>
+              <h3 className={styles.cardTitle}>Retention</h3>
               <CohortHeatmap cohorts={marketing?.cohorts} />
             </div>
-            
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Attribution</h3>
-              {marketing?.attribution?.length > 0 ? (
-                <div className={styles.attributionList}>
-                  {marketing.attribution.slice(0, 5).map((attr, i) => (
-                    <div key={i} className={styles.attributionRow}>
-                      <div className={styles.attributionSource}>
-                        <strong>{attr.source || 'Direct'}</strong>
-                        <span>{attr.medium || '-'}</span>
-                      </div>
-                      <div className={styles.attributionMetrics}>
-                        <span>{attr.signups} signups</span>
-                        <span>{attr.conversions} converts</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={styles.emptyState}>No attribution data</div>
-              )}
-            </div>
-          </div>
+          </>
         )}
         
         {activeSection === 'engagement' && (
-          <div className={styles.engagementSection}>
-            <div className={styles.twoColumn}>
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>Engagement Metrics</h3>
-                <div className={styles.engagementStats}>
-                  <div className={styles.engagementStatItem}>
-                    <ScrollIcon size={24} className={styles.engagementStatIcon} />
-                    <span className={styles.engagementStatLabel}>Avg Scroll Depth</span>
-                    <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgScrollDepth 
-                        ? `${Math.round(advanced.engagement.avgScrollDepth)}%`
-                        : '0%'
-                      }
-                    </span>
-                  </div>
-                  <div className={styles.engagementStatItem}>
-                    <ClockIcon size={24} className={styles.engagementStatIcon} />
-                    <span className={styles.engagementStatLabel}>Avg Time on Page</span>
-                    <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgTimeOnPage 
-                        ? `${Math.round(advanced.engagement.avgTimeOnPage)}s`
-                        : '0s'
-                      }
-                    </span>
-                  </div>
-                  <div className={styles.engagementStatItem}>
-                    <MousePointerIcon size={24} className={styles.engagementStatIcon} />
-                    <span className={styles.engagementStatLabel}>Avg Clicks/Page</span>
-                    <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgClicksPerPage?.toFixed(1) || '0'}
-                    </span>
-                  </div>
-                  <div className={styles.engagementStatItem}>
-                    <ActivityIcon size={24} className={styles.engagementStatIcon} />
-                    <span className={styles.engagementStatLabel}>Engagement Score</span>
-                    <span className={styles.engagementStatValue}>
-                      {advanced?.engagement?.avgScore?.toFixed(1) || '0'}/10
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>Top Searches</h3>
-                <SearchInsights searches={advanced?.searches} />
+          <>
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Metrics</h3>
+              <div className={styles.statsGrid}>
+                <StatItem 
+                  label="Scroll Depth" 
+                  value={`${Math.round(advanced?.engagement?.avgScrollDepth || 0)}%`}
+                  tooltip={METRIC_DEFINITIONS.scrollDepth}
+                />
+                <StatItem 
+                  label="Time on Page" 
+                  value={`${Math.round(advanced?.engagement?.avgTimeOnPage || 0)}s`}
+                  tooltip={METRIC_DEFINITIONS.timeOnPage}
+                />
+                <StatItem 
+                  label="Clicks/Page" 
+                  value={advanced?.engagement?.avgClicksPerPage?.toFixed(1) || '0'}
+                  tooltip={METRIC_DEFINITIONS.clicksPerPage}
+                />
+                <StatItem 
+                  label="Score" 
+                  value={`${advanced?.engagement?.avgScore?.toFixed(1) || '0'}/10`}
+                  tooltip={METRIC_DEFINITIONS.engagementScore}
+                />
               </div>
             </div>
-          </div>
+            
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Top Searches</h3>
+              <SearchInsights searches={advanced?.searches} />
+            </div>
+          </>
         )}
         
         {activeSection === 'features' && (
-          <div className={styles.featuresSection}>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Feature Adoption</h3>
-              <FeatureAdoption features={advanced?.features} />
-            </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Feature Adoption</h3>
+            <FeatureAdoption features={advanced?.features} />
           </div>
         )}
         
         {activeSection === 'users' && (
-          <div className={styles.usersSection}>
+          <>
             <div className={styles.card}>
-              <h3 className={styles.cardTitle}>User Lifecycle</h3>
+              <h3 className={styles.cardTitle}>Lifecycle</h3>
               <LifecycleDistribution lifecycle={advanced?.lifecycle} />
             </div>
             
-            <div className={styles.twoColumn}>
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>User Health</h3>
-                <div className={styles.healthStats}>
-                  <div className={styles.healthItem}>
-                    <span>Average Health Score</span>
-                    <span className={styles.healthValue}>
-                      {advanced?.userHealth?.avgScore?.toFixed(1) || '0'}/100
-                    </span>
-                  </div>
-                  <div className={styles.healthItem}>
-                    <span>At-Risk Users</span>
-                    <span className={styles.healthValue}>
-                      {advanced?.userHealth?.atRiskCount || 0}
-                    </span>
-                  </div>
-                  <div className={styles.healthItem}>
-                    <span>Churned (30d)</span>
-                    <span className={styles.healthValue}>
-                      {advanced?.userHealth?.churnedCount || 0}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.card}>
-                <h3 className={styles.cardTitle}>Active Users</h3>
-                <div className={styles.activeUsers}>
-                  <div className={styles.activeItem}>
-                    <span>DAU</span>
-                    <span>{advanced?.activeUsers?.daily || 0}</span>
-                  </div>
-                  <div className={styles.activeItem}>
-                    <span>WAU</span>
-                    <span>{advanced?.activeUsers?.weekly || 0}</span>
-                  </div>
-                  <div className={styles.activeItem}>
-                    <span>MAU</span>
-                    <span>{advanced?.activeUsers?.monthly || 0}</span>
-                  </div>
-                </div>
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Activity</h3>
+              <div className={styles.statsGrid}>
+                <StatItem label="DAU" value={advanced?.activeUsers?.daily || 0} tooltip={METRIC_DEFINITIONS.dau} />
+                <StatItem label="WAU" value={advanced?.activeUsers?.weekly || 0} tooltip={METRIC_DEFINITIONS.wau} />
+                <StatItem label="MAU" value={advanced?.activeUsers?.monthly || 0} tooltip={METRIC_DEFINITIONS.mau} />
               </div>
             </div>
-          </div>
+            
+            <div className={styles.card}>
+              <h3 className={styles.cardTitle}>Health</h3>
+              <div className={styles.statsGrid}>
+                <StatItem 
+                  label="Avg Score" 
+                  value={`${advanced?.userHealth?.avgScore?.toFixed(0) || 0}/100`}
+                  tooltip={METRIC_DEFINITIONS.healthScore}
+                />
+                <StatItem 
+                  label="At Risk" 
+                  value={advanced?.userHealth?.atRiskCount || 0}
+                  tooltip={METRIC_DEFINITIONS.atRisk}
+                />
+                <StatItem 
+                  label="Churned" 
+                  value={advanced?.userHealth?.churnedCount || 0}
+                  tooltip={METRIC_DEFINITIONS.churned}
+                />
+              </div>
+            </div>
+          </>
         )}
         
         {activeSection === 'goals' && (
-          <div className={styles.goalsSection}>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Goal Completions</h3>
-              <GoalCompletions goals={advanced?.goals} />
-            </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Goal Completions</h3>
+            <GoalCompletions goals={advanced?.goals} />
           </div>
         )}
       </div>
