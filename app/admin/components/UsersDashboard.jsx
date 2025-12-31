@@ -106,12 +106,11 @@ function SourceBadge({ source }) {
   );
 }
 
-// Engagement item with label
-function EngagementItem({ value, label, icon }) {
+// Engagement value - just the number, aligned with column header
+function EngagementValue({ value, label }) {
   return (
-    <div className={styles.engagementItem} title={label}>
-      <span className={styles.engagementValue}>{value}</span>
-      <span className={styles.engagementLabel}>{icon} {label}</span>
+    <div className={styles.engagementValue} title={label}>
+      {value}
     </div>
   );
 }
@@ -317,43 +316,45 @@ export function UsersDashboard({ token, range = '7d' }) {
                 Joined
                 {sort === 'created_at' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th>Last Active</th>
-              <th>Activity</th>
-              <th>
-                <div className={styles.engagementHeader}>
-                  <div className={styles.engagementHeaderItem} title="Cars in user's garage (user_vehicles)">
-                    <span className={styles.engagementHeaderIcon}>🚗</span>
-                    <span className={styles.engagementHeaderLabel}>Garage</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Favorited cars (user_favorites)">
-                    <span className={styles.engagementHeaderIcon}>❤️</span>
-                    <span className={styles.engagementHeaderLabel}>Favs</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Saved tuning builds (user_projects)">
-                    <span className={styles.engagementHeaderIcon}>🔧</span>
-                    <span className={styles.engagementHeaderLabel}>Builds</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Saved events (event_saves)">
-                    <span className={styles.engagementHeaderIcon}>📅</span>
-                    <span className={styles.engagementHeaderLabel}>Events</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="AL conversations started (al_conversations)">
-                    <span className={styles.engagementHeaderIcon}>💬</span>
-                    <span className={styles.engagementHeaderLabel}>AL</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Compare lists created (user_compare_lists)">
-                    <span className={styles.engagementHeaderIcon}>🔀</span>
-                    <span className={styles.engagementHeaderLabel}>Compare</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Service/maintenance logs (user_service_logs)">
-                    <span className={styles.engagementHeaderIcon}>🛠️</span>
-                    <span className={styles.engagementHeaderLabel}>Service</span>
-                  </div>
-                  <div className={styles.engagementHeaderItem} title="Feedback submitted (user_feedback)">
-                    <span className={styles.engagementHeaderIcon}>📝</span>
-                    <span className={styles.engagementHeaderLabel}>Feedback</span>
-                  </div>
-                </div>
+              <th onClick={() => handleSort('last_sign_in')} className={styles.sortable}>
+                Last Active
+                {sort === 'last_sign_in' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('recent_activity')} className={styles.sortable}>
+                Activity
+                {sort === 'recent_activity' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('garage')} className={`${styles.sortable} ${styles.engagementCol}`} title="Cars in user's garage">
+                🚗
+                {sort === 'garage' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('favorites')} className={`${styles.sortable} ${styles.engagementCol}`} title="Favorited cars">
+                ❤️
+                {sort === 'favorites' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('builds')} className={`${styles.sortable} ${styles.engagementCol}`} title="Saved tuning builds">
+                🔧
+                {sort === 'builds' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('events')} className={`${styles.sortable} ${styles.engagementCol}`} title="Saved events">
+                📅
+                {sort === 'events' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('al_chats')} className={`${styles.sortable} ${styles.engagementCol}`} title="AL conversations">
+                💬
+                {sort === 'al_chats' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('compares')} className={`${styles.sortable} ${styles.engagementCol}`} title="Compare lists">
+                🔀
+                {sort === 'compares' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('service')} className={`${styles.sortable} ${styles.engagementCol}`} title="Service logs">
+                🛠️
+                {sort === 'service' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+              </th>
+              <th onClick={() => handleSort('feedback')} className={`${styles.sortable} ${styles.engagementCol}`} title="Feedback submitted">
+                📝
+                {sort === 'feedback' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
             </tr>
           </thead>
@@ -385,24 +386,20 @@ export function UsersDashboard({ token, range = '7d' }) {
                   <td className={styles.dateCell}>{formatRelativeTime(user.createdAt)}</td>
                   <td className={styles.dateCell}>{formatRelativeTime(user.lastSignIn)}</td>
                   <td><ActivityIndicator level={getActivityLevel(user)} /></td>
-                  <td>
-                    <div className={styles.engagementCell}>
-                      <EngagementItem value={user.garageVehicles} label="Garage" icon="🚗" />
-                      <EngagementItem value={user.favorites} label="Favs" icon="❤️" />
-                      <EngagementItem value={user.savedBuilds} label="Builds" icon="🔧" />
-                      <EngagementItem value={user.savedEvents} label="Events" icon="📅" />
-                      <EngagementItem value={user.alConversations} label="AL" icon="💬" />
-                      <EngagementItem value={user.compareLists} label="Compare" icon="🔀" />
-                      <EngagementItem value={user.serviceLogs} label="Service" icon="🛠️" />
-                      <EngagementItem value={user.feedbackCount} label="Feedback" icon="📝" />
-                    </div>
-                  </td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.garageVehicles} label="Garage vehicles" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.favorites} label="Favorited cars" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.savedBuilds} label="Saved builds" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.savedEvents} label="Saved events" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.alConversations} label="AL conversations" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.compareLists} label="Compare lists" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.serviceLogs} label="Service logs" /></td>
+                  <td className={styles.engagementCol}><EngagementValue value={user.feedbackCount} label="Feedback submitted" /></td>
                 </tr>
                 
                 {/* Expanded Row */}
                 {expandedUser === user.id && (
                   <tr className={styles.expandedRow}>
-                    <td colSpan="7">
+                    <td colSpan="14">
                       <div className={styles.expandedContent}>
                         <div className={styles.expandedSection}>
                           <h4>Attribution</h4>

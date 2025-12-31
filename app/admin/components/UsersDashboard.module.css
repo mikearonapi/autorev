@@ -310,7 +310,21 @@
   border-radius: 3px;
 }
 
-/* Engagement Cell - Now with 8 columns for full platform usage tracking */
+/* Engagement column - individual metric columns */
+.engagementCol {
+  text-align: center !important;
+  min-width: 40px;
+  padding: 0.5rem 0.25rem !important;
+}
+
+.engagementValue {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Legacy styles kept for reference */
 .engagementCell {
   display: flex;
   gap: 0.5rem;
@@ -338,31 +352,7 @@
   letter-spacing: 0.03em;
 }
 
-/* Engagement Header - Column labels for 8 metrics */
-.engagementHeader {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.engagementHeaderItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 32px;
-  text-align: center;
-}
-
-.engagementHeaderIcon {
-  font-size: 0.75rem;
-  margin-bottom: 2px;
-  opacity: 0.7;
-}
-
-.engagementHeaderLabel {
-  font-size: 0.5rem;
-  line-height: 1.2;
-  color: var(--text-muted);
-}
+/* Legacy engagement header styles - no longer used */
 
 /* Expanded Row */
 .expandedRow td {

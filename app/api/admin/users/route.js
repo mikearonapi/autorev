@@ -75,10 +75,20 @@ export async function GET(request) {
       query = query.eq('subscription_tier', tierFilter);
     }
 
-    // Apply sorting
-    const validSortFields = ['created_at', 'updated_at', 'display_name', 'subscription_tier', 'cars_viewed_count'];
-    const sortField = validSortFields.includes(sort) ? sort : 'created_at';
-    query = query.order(sortField, { ascending: order === 'asc' });
+    // Apply sorting - only for database fields
+    // Engagement fields (garage, favorites, etc.) will be sorted post-query
+    const dbSortFields = ['created_at', 'updated_at', 'display_name', 'subscription_tier'];
+    const engagementSortFields = ['garage', 'favorites', 'builds', 'events', 'al_chats', 'compares', 'service', 'feedback', 'recent_activity', 'last_sign_in'];
+    
+    const isDbSort = dbSortFields.includes(sort);
+    const isEngagementSort = engagementSortFields.includes(sort);
+    
+    if (isDbSort) {
+      query = query.order(sort, { ascending: order === 'asc' });
+    } else {
+      // Default to created_at for initial fetch, we'll sort later for engagement fields
+      query = query.order('created_at', { ascending: false });
+    }
 
     // Apply pagination
     query = query.range(offset, offset + limit - 1);
@@ -323,6 +333,43 @@ export async function GET(request) {
         referredByCode: profile.referred_by_code || null,
       };
     });
+
+    // Apply post-query sorting for engagement fields
+    const sortFieldMap = {
+      'garage': 'garageVehicles',
+      'favorites': 'favorites',
+      'builds': 'savedBuilds',
+      'events': 'savedEvents',
+      'al_chats': 'alConversations',
+      'compares': 'compareLists',
+      'service': 'serviceLogs',
+      'feedback': 'feedbackCount',
+      'recent_activity': 'recentActivityCount',
+      'last_sign_in': 'lastSignIn',
+    };
+    
+    if (sortFieldMap[sort]) {
+      const field = sortFieldMap[sort];
+      users.sort((a, b) => {
+        let aVal = a[field];
+        let bVal = b[field];
+        
+        // Handle dates
+        if (field === 'lastSignIn') {
+          aVal = aVal ? new Date(aVal).getTime() : 0;
+          bVal = bVal ? new Date(bVal).getTime() : 0;
+        }
+        
+        // Handle nulls/undefined
+        if (aVal == null) aVal = 0;
+        if (bVal == null) bVal = 0;
+        
+        if (order === 'asc') {
+          return aVal - bVal;
+        }
+        return bVal - aVal;
+      });
+    }
 
     // Get summary stats
     const { data: tierCounts } = await supabase
