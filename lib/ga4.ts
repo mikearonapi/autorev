@@ -30,8 +30,7 @@ function safeGtag(
   if (!GA_MEASUREMENT_ID) return;
   
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window.gtag as any)(command, ...args);
+    (window.gtag as Function)(command, ...args);
   } catch (error) {
     // Silently fail - analytics should never break the app
     console.warn('[GA4] gtag call failed:', error);
