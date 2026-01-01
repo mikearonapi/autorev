@@ -10,6 +10,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { computeMissingUserProfileRows } from '@/lib/adminUsersService';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
@@ -17,8 +18,33 @@ export const dynamic = 'force-dynamic';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+async function listUsersSafe(supabase, options) {
+  try {
+    const { data, error } = await supabase.auth.admin.listUsers(options);
+    if (error) return { users: [], total: null, error };
+    return { users: data?.users || [], total: typeof data?.total === 'number' ? data.total : null, error: null };
+  } catch (err) {
+    // Some environments/SDK versions can throw if options are unsupported
+    try {
+      const { data, error } = await supabase.auth.admin.listUsers();
+      if (error) return { users: [], total: null, error };
+      return { users: data?.users || [], total: typeof data?.total === 'number' ? data.total : null, error: null };
+    } catch (innerErr) {
+      return { users: [], total: null, error: innerErr };
+    }
+  }
+}
+
 export async function GET(request) {
   try {
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('[AdminUsers] Missing Supabase env vars', {
+        hasUrl: Boolean(supabaseUrl),
+        hasServiceKey: Boolean(supabaseServiceKey),
+      });
+      return NextResponse.json({ error: 'Supabase admin not configured' }, { status: 500 });
+    }
+
     // Verify admin access
     const authHeader = request.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
@@ -43,8 +69,49 @@ export async function GET(request) {
     const sort = searchParams.get('sort') || 'created_at';
     const order = searchParams.get('order') || 'desc';
     const tierFilter = searchParams.get('tier') || '';
+    const debug = searchParams.get('debug') === '1';
     
     const offset = (page - 1) * limit;
+
+    // ------------------------------------------------------------------
+    // Ensure `user_profiles` stays in sync with `auth.users`
+    //
+    // Admin panel should never "lose" users due to missing profile rows.
+    // We do a light self-heal by:
+    // - listing auth users (admin API)
+    // - inserting any missing `user_profiles` rows (id + basic metadata)
+    // ------------------------------------------------------------------
+    const { users: authUsersPage, total: authUsersTotal, error: authListError } =
+      await listUsersSafe(supabase, { page: 1, perPage: 1000 });
+
+    if (authListError) {
+      console.warn('[AdminUsers] auth.admin.listUsers error:', authListError);
+    } else if (authUsersPage.length) {
+      const authIds = authUsersPage.map(u => u.id);
+      const { data: existingProfiles, error: existingProfilesError } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .in('id', authIds);
+
+      if (existingProfilesError) {
+        console.warn('[AdminUsers] Failed checking existing profiles:', existingProfilesError);
+      } else {
+        const existingIdSet = new Set((existingProfiles || []).map(p => p.id));
+        const missingRows = computeMissingUserProfileRows(authUsersPage, existingIdSet);
+
+        if (missingRows.length) {
+          const { error: insertError } = await supabase
+            .from('user_profiles')
+            .upsert(missingRows, { onConflict: 'id', ignoreDuplicates: true });
+
+          if (insertError) {
+            console.warn('[AdminUsers] Failed to backfill missing user_profiles:', insertError);
+          } else {
+            console.info('[AdminUsers] Backfilled missing user_profiles:', { count: missingRows.length });
+          }
+        }
+      }
+    }
     
     // Build query for users with profiles and attribution
     let query = supabase
@@ -104,29 +171,45 @@ export async function GET(request) {
     // The auth schema cannot be queried via .from() - must use auth.admin methods
     const userIds = profiles.map(p => p.id);
     
-    let usersMap = {};
-    
-    // Fetch auth data for each user using the Admin API
-    // Use Promise.allSettled to handle any individual failures gracefully
-    const authPromises = userIds.map(id => 
-      supabase.auth.admin.getUserById(id)
-        .then(({ data, error }) => {
-          if (error || !data?.user) return null;
-          return {
-            id: data.user.id,
-            email: data.user.email,
-            created_at: data.user.created_at,
-            last_sign_in_at: data.user.last_sign_in_at,
-            raw_user_meta_data: data.user.user_metadata
-          };
-        })
-        .catch(() => null)
-    );
-    
-    const authResults = await Promise.all(authPromises);
-    authResults.forEach(u => {
-      if (u) usersMap[u.id] = u;
-    });
+    const usersMap = {};
+
+    // Prefer the single `listUsers` call we already made (avoids N calls).
+    // Fallback to getUserById only for IDs not present in the list.
+    if (!authListError) {
+      for (const u of authUsersPage) {
+        if (!u?.id) continue;
+        usersMap[u.id] = {
+          id: u.id,
+          email: u.email,
+          created_at: u.created_at,
+          last_sign_in_at: u.last_sign_in_at,
+          raw_user_meta_data: u.user_metadata,
+        };
+      }
+    }
+
+    const idsNeedingLookup = userIds.filter(id => !usersMap[id]);
+    if (idsNeedingLookup.length) {
+      const authPromises = idsNeedingLookup.map(id =>
+        supabase.auth.admin.getUserById(id)
+          .then(({ data, error }) => {
+            if (error || !data?.user) return null;
+            return {
+              id: data.user.id,
+              email: data.user.email,
+              created_at: data.user.created_at,
+              last_sign_in_at: data.user.last_sign_in_at,
+              raw_user_meta_data: data.user.user_metadata,
+            };
+          })
+          .catch(() => null)
+      );
+
+      const authResults = await Promise.all(authPromises);
+      for (const u of authResults) {
+        if (u?.id) usersMap[u.id] = u;
+      }
+    }
 
     // Get attribution data
     const { data: attributions } = await supabase
@@ -394,9 +477,12 @@ export async function GET(request) {
       });
 
     // Get total users and active users
-    const { count: totalUsers } = await supabase
+    const { count: totalProfileUsers } = await supabase
       .from('user_profiles')
       .select('id', { count: 'exact', head: true });
+
+    // Prefer auth total (authoritative). Fallback to profile count.
+    const totalUsers = (typeof authUsersTotal === 'number' ? authUsersTotal : totalProfileUsers) || 0;
 
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -420,7 +506,7 @@ export async function GET(request) {
     });
 
     // Return with explicit cache-control to prevent browser caching
-    return NextResponse.json({
+    const responseBody = {
       users,
       pagination: {
         page,
@@ -429,12 +515,30 @@ export async function GET(request) {
         totalPages: Math.ceil(count / limit),
       },
       summary: {
-        totalUsers: totalUsers || 0,
+        totalUsers,
         activeUsers7d: uniqueActiveUsers,
         tierBreakdown: tierCounts || { free: 0, collector: 0, tuner: 0, admin: 0 },
         sourceBreakdown: sourceCounts,
       },
-    }, {
+    };
+
+    // Optional debug for admins (helps confirm the admin panel is hitting the intended project)
+    if (debug) {
+      let supabaseHost = null;
+      try {
+        supabaseHost = supabaseUrl ? new URL(supabaseUrl).host : null;
+      } catch {
+        supabaseHost = null;
+      }
+      responseBody.debug = {
+        supabaseHost,
+        authUsersTotal,
+        userProfilesTotal: totalProfileUsers,
+        pageCountFromProfilesQuery: count,
+      };
+    }
+
+    return NextResponse.json(responseBody, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
         'Pragma': 'no-cache',
