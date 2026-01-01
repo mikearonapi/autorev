@@ -13,7 +13,7 @@ import { createClient } from '@supabase/supabase-js';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { isAdminEmail, getAdminUserIdsCached, getAdminEmails } from '@/lib/adminAccess';
+import { isAdminEmail } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -178,11 +178,9 @@ async function handleGet(request) {
     
     const dateRange = getDateRange(range);
     
-    // Get admin user IDs and emails to exclude from analytics
-    const adminUserIds = await getAdminUserIdsCached(supabase);
-    const adminEmails = getAdminEmails();
-    
     // Fetch all data in parallel
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    
     const [
       allUsersResult,
       periodUsersResult,
@@ -200,6 +198,7 @@ async function handleGet(request) {
       feedbackResult,
       pendingEventsResult,
       upcomingEventsResult,
+      weeklyActiveUsersResult,
     ] = await Promise.all([
       // All users (for total count and growth chart)
       supabase.from('user_profiles').select('id, subscription_tier, created_at'),
@@ -269,12 +268,17 @@ async function handleGet(request) {
         .select('id', { count: 'exact', head: true })
         .eq('status', 'approved')
         .gt('start_date', new Date().toISOString()),
+      
+      // Weekly active users (from user_activity table - true WAU)
+      supabase.from('user_activity')
+        .select('user_id')
+        .gte('created_at', weekAgo),
     ]);
     
-    // Process user data (excluding admin users)
-    const allUsers = (allUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
-    const periodUsers = (periodUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
-    const previousPeriodUsers = (previousPeriodUsersResult.data || []).filter(u => !adminUserIds.includes(u.id));
+    // Process user data (include ALL users for consistent counts across dashboard)
+    const allUsers = allUsersResult.data || [];
+    const periodUsers = periodUsersResult.data || [];
+    const previousPeriodUsers = previousPeriodUsersResult.data || [];
     
     const usersByTier = allUsers.reduce((acc, u) => {
       const tier = u.subscription_tier || 'free';
@@ -295,22 +299,18 @@ async function handleGet(request) {
     // Generate cumulative growth data for chart
     const cumulativeGrowth = generateCumulativeData(allUsers, 'created_at');
     
-    // Process AL engagement data (excluding admin users)
-    const alConversations = (alConversationsResult.data || []).filter(c => !adminUserIds.includes(c.user_id));
-    const previousAlConversations = (previousAlConversationsResult.data || []).filter(c => !adminUserIds.includes(c.user_id));
-    const alBalances = (alBalancesResult.data || []).filter(b => !adminUserIds.includes(b.user_id));
+    // Process AL engagement data (include ALL users for consistent counts)
+    const alConversations = alConversationsResult.data || [];
+    const previousAlConversations = previousAlConversationsResult.data || [];
+    const alBalances = alBalancesResult.data || [];
     
     // Unique users with AL conversations
     const alUserIds = new Set(alConversations.map(c => c.user_id));
     const alUsers = alUserIds.size;
     
-    // Weekly active users (conversations in last 7 days)
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const weeklyActiveUserIds = new Set(
-      alConversations
-        .filter(c => new Date(c.created_at) > weekAgo)
-        .map(c => c.user_id)
-    );
+    // Weekly active users (from user_activity table - true WAU)
+    const weeklyActivityData = weeklyActiveUsersResult.data || [];
+    const weeklyActiveUserIds = new Set(weeklyActivityData.map(a => a.user_id));
     const weeklyActiveUsers = weeklyActiveUserIds.size;
     const wauPercent = allUsers.length > 0 
       ? Math.round((weeklyActiveUsers / allUsers.length) * 100)

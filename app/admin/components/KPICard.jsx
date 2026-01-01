@@ -140,6 +140,7 @@ export function KPICard({
   valuePrefix = '',
   valueSuffix = '',
   interpretation,
+  subtext,     // Optional small secondary text below interpretation
   sparklineData,
   sparklineColor,
   trend,
@@ -191,6 +192,10 @@ export function KPICard({
       
       {interpretation && (
         <p className={styles.interpretation}>{interpretation}</p>
+      )}
+      
+      {subtext && (
+        <p className={styles.subtext}>{subtext}</p>
       )}
       
       {!compact && sparklineData && sparklineData.length > 0 && (

@@ -17,18 +17,15 @@ import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
-import { isAdminEmail, getAdminUserIdsCached } from '@/lib/adminAccess';
+import { isAdminEmail } from '@/lib/adminAccess';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Paths to exclude from analytics
+// Paths to exclude from analytics (internal admin pages only)
 const EXCLUDED_PATHS = ['/admin', '/internal'];
-
-// Store admin IDs globally for helper functions
-let currentAdminIds = [];
 
 function getDateRange(range) {
   const now = new Date();
@@ -71,9 +68,6 @@ export async function GET(request) {
     if (authError || !user || !isAdminEmail(user.email)) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
-    // Get admin user IDs to exclude from analytics
-    currentAdminIds = await getAdminUserIdsCached(supabaseAdmin);
     
     // Get date range
     const { searchParams } = new URL(request.url);
@@ -121,17 +115,17 @@ export async function GET(request) {
 
 async function getEngagementMetrics(startDate, endDate) {
   try {
-    // Get engagement tier distribution (excluding admin users)
+    // Get engagement tier distribution
+    // Note: page_engagement uses 'path' not 'page_path' and has no user_id column
     const { data: tierData } = await supabaseAdmin
       .from('page_engagement')
-      .select('engagement_tier, user_id, page_path')
+      .select('engagement_tier, path')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
     
-    // Filter out admin users and internal paths
+    // Filter out internal paths only (no user_id in this table)
     const filteredTierData = (tierData || []).filter(row => {
-      if (row.user_id && currentAdminIds.includes(row.user_id)) return false;
-      if (EXCLUDED_PATHS.some(path => row.page_path?.startsWith(path))) return false;
+      if (EXCLUDED_PATHS.some(excluded => row.path?.startsWith(excluded))) return false;
       return true;
     });
     
@@ -142,17 +136,16 @@ async function getEngagementMetrics(startDate, endDate) {
       }
     });
     
-    // Get average metrics (excluding admin users)
+    // Get average metrics
     const { data: avgData } = await supabaseAdmin
       .from('page_engagement')
-      .select('max_scroll_depth_percent, time_on_page_seconds, engaged_time_seconds, click_count, engagement_score, user_id, page_path')
+      .select('max_scroll_depth_percent, time_on_page_seconds, engaged_time_seconds, click_count, engagement_score, path')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
     
-    // Filter out admin users and internal paths
+    // Filter out internal paths only
     const filteredAvgData = (avgData || []).filter(row => {
-      if (row.user_id && currentAdminIds.includes(row.user_id)) return false;
-      if (EXCLUDED_PATHS.some(path => row.page_path?.startsWith(path))) return false;
+      if (EXCLUDED_PATHS.some(excluded => row.path?.startsWith(excluded))) return false;
       return true;
     });
     
@@ -163,7 +156,7 @@ async function getEngagementMetrics(startDate, endDate) {
     const avgClicks = filteredAvgData.reduce((sum, r) => sum + (r.click_count || 0), 0) / count;
     const avgScore = filteredAvgData.reduce((sum, r) => sum + (r.engagement_score || 0), 0) / count;
     
-    // Get session duration (excluding admin users and internal paths)
+    // Get session duration (include all users, filter internal paths only)
     const { data: sessionData } = await supabaseAdmin
       .from('page_views')
       .select('session_id, user_id, path, created_at')
@@ -171,10 +164,9 @@ async function getEngagementMetrics(startDate, endDate) {
       .lte('created_at', endDate)
       .order('created_at', { ascending: true });
     
-    // Filter out admin users and internal paths
+    // Filter out internal paths only (include all users)
     const filteredSessionData = (sessionData || []).filter(pv => {
-      if (pv.user_id && currentAdminIds.includes(pv.user_id)) return false;
-      if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return false;
+      if (EXCLUDED_PATHS.some(excluded => pv.path?.startsWith(excluded))) return false;
       return true;
     });
     
@@ -224,12 +216,12 @@ async function getFeatureAdoption(startDate, endDate) {
       .gte('created_at', startDate)
       .lte('created_at', endDate);
     
-    // Filter out admin users
-    const filteredData = (data || []).filter(row => !currentAdminIds.includes(row.user_id));
+    // Include all users for consistent counts
+    const allData = data || [];
     
     // Aggregate by feature
     const featureMap = new Map();
-    filteredData.forEach(row => {
+    allData.forEach(row => {
       const count = featureMap.get(row.feature_key) || 0;
       featureMap.set(row.feature_key, count + 1);
     });
@@ -252,11 +244,11 @@ async function getLifecycleDistribution() {
       .from('user_lifecycle_status')
       .select('user_id, current_status');
     
-    // Filter out admin users
-    const filteredData = (data || []).filter(row => !currentAdminIds.includes(row.user_id));
+    // Include all users for consistent counts
+    const allData = data || [];
     
     const lifecycle = { new: 0, active: 0, at_risk: 0, churned: 0 };
-    filteredData.forEach(row => {
+    allData.forEach(row => {
       if (row.current_status && lifecycle[row.current_status] !== undefined) {
         lifecycle[row.current_status]++;
       }
@@ -363,7 +355,7 @@ async function getActiveUserCounts() {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     
-    // Fetch user IDs separately so we can filter out admins
+    // Fetch user IDs (include all users for consistent counts)
     const [dailyData, weeklyData, monthlyData] = await Promise.all([
       supabaseAdmin
         .from('page_views')
@@ -382,11 +374,10 @@ async function getActiveUserCounts() {
         .gte('created_at', monthAgo.toISOString())
     ]);
     
-    // Filter out admin users and internal paths, get unique user counts
+    // Filter internal paths only (include all users), get unique user counts
     const filterAndCount = (data) => {
       const filtered = (data?.data || []).filter(pv => {
-        if (currentAdminIds.includes(pv.user_id)) return false;
-        if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return false;
+        if (EXCLUDED_PATHS.some(excluded => pv.path?.startsWith(excluded))) return false;
         return true;
       });
       return new Set(filtered.map(pv => pv.user_id)).size;
@@ -409,13 +400,13 @@ async function getUserHealth() {
       .from('user_lifecycle_status')
       .select('user_id, engagement_score, current_status');
     
-    // Filter out admin users
-    const filteredData = (data || []).filter(u => !currentAdminIds.includes(u.user_id));
+    // Include all users for consistent counts
+    const allData = data || [];
     
-    const total = filteredData.length || 1;
-    const avgScore = filteredData.reduce((sum, u) => sum + (u.engagement_score || 0), 0) / total;
-    const atRiskCount = filteredData.filter(u => u.current_status === 'at_risk').length;
-    const churnedCount = filteredData.filter(u => u.current_status === 'churned').length;
+    const total = allData.length || 1;
+    const avgScore = allData.reduce((sum, u) => sum + (u.engagement_score || 0), 0) / total;
+    const atRiskCount = allData.filter(u => u.current_status === 'at_risk').length;
+    const churnedCount = allData.filter(u => u.current_status === 'churned').length;
     
     return {
       avgScore,

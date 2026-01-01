@@ -379,6 +379,19 @@
   margin-bottom: 16px;
 }
 
+.tabHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tabHeaderTop > div:first-child {
+  flex: 1;
+  min-width: 280px;
+}
+
 .tabHeader .sectionTitle {
   margin-bottom: 6px;
   padding-bottom: 0;

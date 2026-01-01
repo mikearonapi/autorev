@@ -3,7 +3,7 @@
  * 
  * Returns analytics data for the admin dashboard.
  * Requires admin authentication.
- * Excludes admin users from all metrics.
+ * Includes all users but excludes internal paths (/admin, /internal) from page view counts.
  * 
  * GET /api/admin/site-analytics?range=7d
  */
@@ -233,7 +233,7 @@ export async function GET(request) {
       ? Math.round((bouncedSessions / uniqueSessions.size) * 1000) / 10 
       : 0;
     
-    // Get real-time online count (last 5 minutes, excluding admins)
+    // Get real-time online count (last 5 minutes)
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     const { data: recentViews } = await supabaseAdmin
       .from('page_views')

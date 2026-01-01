@@ -25,6 +25,7 @@ import { isAdminEmail } from '@/lib/adminAccess';
 // Components
 import { TabNav } from './components/TabNav';
 import { TimeRangeToggle } from './components/TimeRangeToggle';
+import { MonthYearSelector } from './components/MonthYearSelector';
 import { KPICard } from './components/KPICard';
 import { GrowthChart } from './components/GrowthChart';
 import { FunnelChart } from './components/FunnelChart';
@@ -102,6 +103,8 @@ export default function AdminDashboardPage() {
   // State
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('all'); // Default to all time to show December
+  const [selectedMonth, setSelectedMonth] = useState(null); // null = all time, or 1-12
+  const [selectedYear, setSelectedYear] = useState(null);   // null = all time, or year
   const [data, setData] = useState(null);
   const [financials, setFinancials] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -129,6 +132,16 @@ export default function AdminDashboardPage() {
     }
   }, [isAuthenticated, user, authLoading]);
   
+  // Handle month/year selection change
+  const handleMonthYearChange = (month, year) => {
+    setSelectedMonth(month);
+    setSelectedYear(year);
+    // When selecting a specific month, switch timeRange to 'month'
+    if (month && year) {
+      setTimeRange('month');
+    }
+  };
+  
   // Fetch dashboard data
   const fetchData = useCallback(async () => {
     if (!session?.access_token) return;
@@ -136,14 +149,25 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError(null);
     
-    const apiRange = TIME_RANGE_MAP[timeRange]?.apiRange || 'all';
+    // Build API range parameter
+    let apiRange = TIME_RANGE_MAP[timeRange]?.apiRange || 'all';
+    
+    // Build month/year query params for specific month selection
+    const monthYearParams = selectedMonth && selectedYear 
+      ? `&year=${selectedYear}&month=${selectedMonth}`
+      : '';
+    
+    // If we have a specific month selected, force range to 'month'
+    if (selectedMonth && selectedYear) {
+      apiRange = 'month';
+    }
     
     try {
       const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes, stripeRes, siteRes, emailRes] = await Promise.all([
-        fetch(`/api/admin/dashboard?range=${apiRange}`, {
+        fetch(`/api/admin/dashboard?range=${apiRange}${monthYearParams}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
-        fetch(`/api/admin/financials?range=${apiRange}`, {
+        fetch(`/api/admin/financials?range=${apiRange}${monthYearParams}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
         fetch(`/api/admin/usage?range=${apiRange}`, {
@@ -224,12 +248,23 @@ export default function AdminDashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [session?.access_token, timeRange]);
+  }, [session?.access_token, timeRange, selectedMonth, selectedYear]);
   
   useEffect(() => {
     if (isAdmin && session?.access_token) {
       fetchData();
     }
+  }, [isAdmin, session?.access_token, fetchData]);
+  
+  // Auto-refresh every 60 seconds for near real-time updates
+  useEffect(() => {
+    if (!isAdmin || !session?.access_token) return;
+    
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 60000); // 60 seconds
+    
+    return () => clearInterval(intervalId);
   }, [isAdmin, session?.access_token, fetchData]);
   
   // Handle cost submission (add or edit)
@@ -762,19 +797,29 @@ export default function AdminDashboardPage() {
         {activeTab === 'revenue' && (
           <section className={styles.section}>
             <div className={styles.tabHeader}>
-              <h2 className={styles.sectionTitle}>
-                <CreditCardIcon size={18} className={styles.sectionIcon} />
-                Revenue Analysis
-              </h2>
-              <p className={styles.tabDescription}>
-                Real-time revenue data from Stripe. For complete financial overview, see{' '}
-                <button 
-                  onClick={() => setActiveTab('financials')} 
-                  className={styles.inlineLink}
-                >
-                  Financials
-                </button>.
-              </p>
+              <div className={styles.tabHeaderTop}>
+                <div>
+                  <h2 className={styles.sectionTitle}>
+                    <CreditCardIcon size={18} className={styles.sectionIcon} />
+                    Revenue Analysis
+                  </h2>
+                  <p className={styles.tabDescription}>
+                    Real-time revenue data from Stripe. For complete financial overview, see{' '}
+                    <button 
+                      onClick={() => setActiveTab('financials')} 
+                      className={styles.inlineLink}
+                    >
+                      Financials
+                    </button>.
+                  </p>
+                </div>
+                <MonthYearSelector
+                  selectedMonth={selectedMonth}
+                  selectedYear={selectedYear}
+                  onChange={handleMonthYearChange}
+                  disabled={loading}
+                />
+              </div>
             </div>
             <StripeDashboard 
               token={session?.access_token}
@@ -790,27 +835,37 @@ export default function AdminDashboardPage() {
             {/* Cost KPIs */}
             <section className={styles.section}>
               <div className={styles.tabHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <DollarSignIcon size={18} className={styles.sectionIcon} />
-                  Cost Analysis
-                </h2>
-                <p className={styles.tabDescription}>
-                  Detailed breakdown of all operational costs. View{' '}
-                  <button 
-                    onClick={() => setActiveTab('financials')} 
-                    className={styles.inlineLink}
-                  >
-                    Financials
-                  </button>{' '}
-                  for executive summary or{' '}
-                  <button 
-                    onClick={() => setActiveTab('revenue')} 
-                    className={styles.inlineLink}
-                  >
-                    Revenue
-                  </button>{' '}
-                  for income details.
-                </p>
+                <div className={styles.tabHeaderTop}>
+                  <div>
+                    <h2 className={styles.sectionTitle}>
+                      <DollarSignIcon size={18} className={styles.sectionIcon} />
+                      Cost Analysis
+                    </h2>
+                    <p className={styles.tabDescription}>
+                      Detailed breakdown of all operational costs. View{' '}
+                      <button 
+                        onClick={() => setActiveTab('financials')} 
+                        className={styles.inlineLink}
+                      >
+                        Financials
+                      </button>{' '}
+                      for executive summary or{' '}
+                      <button 
+                        onClick={() => setActiveTab('revenue')} 
+                        className={styles.inlineLink}
+                      >
+                        Revenue
+                      </button>{' '}
+                      for income details.
+                    </p>
+                  </div>
+                  <MonthYearSelector
+                    selectedMonth={selectedMonth}
+                    selectedYear={selectedYear}
+                    onChange={handleMonthYearChange}
+                    disabled={loading}
+                  />
+                </div>
               </div>
               
               <div className={styles.kpiGrid}>
@@ -955,21 +1010,31 @@ export default function AdminDashboardPage() {
             <section className={styles.section}>
               <div className={styles.financialHeader}>
                 <div className={styles.tabHeader}>
-                  <h2 className={styles.sectionTitle}>
-                    <DollarSignIcon size={18} className={styles.sectionIcon} />
-                    Financial Summary
-                  </h2>
-                  <p className={styles.tabDescription}>
-                    Executive overview of your financial position. Drill down into{' '}
-                    <button onClick={() => setActiveTab('revenue')} className={styles.inlineLink}>
-                      Revenue
-                    </button>{' '}
-                    or{' '}
-                    <button onClick={() => setActiveTab('costs')} className={styles.inlineLink}>
-                      Costs
-                    </button>{' '}
-                    for detailed analysis.
-                  </p>
+                  <div className={styles.tabHeaderTop}>
+                    <div>
+                      <h2 className={styles.sectionTitle}>
+                        <DollarSignIcon size={18} className={styles.sectionIcon} />
+                        Financial Summary
+                      </h2>
+                      <p className={styles.tabDescription}>
+                        Executive overview of your financial position. Drill down into{' '}
+                        <button onClick={() => setActiveTab('revenue')} className={styles.inlineLink}>
+                          Revenue
+                        </button>{' '}
+                        or{' '}
+                        <button onClick={() => setActiveTab('costs')} className={styles.inlineLink}>
+                          Costs
+                        </button>{' '}
+                        for detailed analysis.
+                      </p>
+                    </div>
+                    <MonthYearSelector
+                      selectedMonth={selectedMonth}
+                      selectedYear={selectedYear}
+                      onChange={handleMonthYearChange}
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
                 <div className={styles.financialActions}>
                   <ExportButtons 

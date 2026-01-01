@@ -11,7 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
-import { isAdminEmail, getAdminUserIdsCached } from '@/lib/adminAccess';
+import { isAdminEmail } from '@/lib/adminAccess';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -71,10 +71,7 @@ export async function GET(request) {
     const range = searchParams.get('range') || '30d';
     const { startDate, endDate } = getDateRange(range);
     
-    // Get admin user IDs to exclude from analytics
-    const adminUserIds = await getAdminUserIdsCached(supabaseAdmin);
-    
-    // Calculate funnel metrics manually, excluding admin users
+    // Calculate funnel metrics (include all users for consistent counts)
     const [
       pageViewsResult,
       usersResult,
@@ -109,10 +106,9 @@ export async function GET(request) {
       supabaseAdmin.rpc('get_cohort_retention', { p_weeks: 8 })
     ]);
     
-    // Filter page views to exclude admin users and internal paths
+    // Filter page views to exclude internal paths only (include all users)
     const filteredViews = (pageViewsResult.data || []).filter(pv => {
-      if (pv.user_id && adminUserIds.includes(pv.user_id)) return false;
-      if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return false;
+      if (EXCLUDED_PATHS.some(excluded => pv.path?.startsWith(excluded))) return false;
       return true;
     });
     
@@ -120,30 +116,30 @@ export async function GET(request) {
     const uniqueSessions = new Set(filteredViews.map(pv => pv.session_id));
     const visitors = uniqueSessions.size;
     
-    // Filter users to exclude admins
-    const nonAdminUsers = (usersResult.data || []).filter(u => !adminUserIds.includes(u.id));
+    // Include ALL users for consistent counts across dashboard
+    const allUsers = usersResult.data || [];
     
-    // Filter events to exclude admins
-    const nonAdminEvents = (analyticsEventsResult.data || []).filter(e => !adminUserIds.includes(e.user_id));
+    // Include ALL events for consistent counts
+    const allEvents = analyticsEventsResult.data || [];
     
     // Calculate funnel stages
-    const signupsInPeriod = nonAdminUsers.filter(u => 
+    const signupsInPeriod = allUsers.filter(u => 
       u.created_at >= startDate && u.created_at <= endDate
     ).length;
     
-    const onboardedCount = nonAdminEvents.filter(e => e.event_name === 'onboarding_completed').length ||
-      nonAdminUsers.filter(u => 
+    const onboardedCount = allEvents.filter(e => e.event_name === 'onboarding_completed').length ||
+      allUsers.filter(u => 
         u.onboarding_completed_at && 
         u.onboarding_completed_at >= startDate && 
         u.onboarding_completed_at <= endDate
       ).length;
     
-    const activatedCount = nonAdminEvents.filter(e => 
+    const activatedCount = allEvents.filter(e => 
       e.event_name === 'car_selected' || e.event_name === 'first_al_conversation'
     ).length;
     
-    const convertedCount = nonAdminEvents.filter(e => e.event_name === 'subscription_started').length ||
-      nonAdminUsers.filter(u => 
+    const convertedCount = allEvents.filter(e => e.event_name === 'subscription_started').length ||
+      allUsers.filter(u => 
         u.subscription_tier && 
         u.subscription_tier !== 'free'
       ).length;
@@ -175,7 +171,7 @@ export async function GET(request) {
     
     // Get event counts (excluding admin users)
     const eventCounts = {};
-    nonAdminEvents.forEach(e => {
+    allEvents.forEach(e => {
       eventCounts[e.event_name] = (eventCounts[e.event_name] || 0) + 1;
     });
     const events = Object.entries(eventCounts).map(([name, count]) => ({ event_name: name, count }));
