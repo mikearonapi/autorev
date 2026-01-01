@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
 import Image from 'next/image';
@@ -12,15 +13,9 @@ const SparkleIcon = ({ size = 14 }) => (
   </svg>
 );
 
-const PlayIcon = ({ size = 48 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.6)" />
-    <polygon points="10 8 16 12 10 16 10 8" fill="white" />
-  </svg>
-);
-
 /**
  * Landing page hero with split layout: text left, video/phone right
+ * Falls back to phone mockup if video fails to load
  */
 export default function LandingHero({
   pageId,
@@ -37,6 +32,8 @@ export default function LandingHero({
   phoneSrc,
   phoneAlt,
 }) {
+  const [videoFailed, setVideoFailed] = useState(false);
+
   const trackCta = (ctaLabel, destination) => {
     try {
       trackEvent('landing_page_cta_click', {
@@ -50,8 +47,13 @@ export default function LandingHero({
     }
   };
 
-  const hasVideo = Boolean(videoSrc);
+  const hasVideo = Boolean(videoSrc) && !videoFailed;
   const hasPhone = Boolean(phoneSrc);
+
+  const handleVideoError = () => {
+    // Video failed to load - fall back to phone mockup
+    setVideoFailed(true);
+  };
 
   return (
     <section className={styles.hero}>
@@ -107,6 +109,7 @@ export default function LandingHero({
                   muted
                   loop
                   playsInline
+                  onError={handleVideoError}
                 />
               </div>
             ) : hasPhone ? (
@@ -124,12 +127,7 @@ export default function LandingHero({
                   </div>
                 </IPhoneFrame>
               </div>
-            ) : (
-              <div className={styles.videoPlaceholder}>
-                <PlayIcon />
-                <span>Video coming soon</span>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
