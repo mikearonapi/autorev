@@ -110,11 +110,15 @@ export default function LandingAL({
                         ref={videoRef}
                         className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
                         src={videoSrc}
+                        autoPlay
                         muted
                         loop
                         playsInline
+                        preload="auto"
+                        webkit-playsinline="true"
                         onError={handleVideoError}
                         onCanPlay={handleVideoCanPlay}
+                        onLoadedData={handleVideoCanPlay}
                       />
                     </>
                   ) : (

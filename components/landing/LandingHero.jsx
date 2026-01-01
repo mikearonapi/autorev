@@ -127,8 +127,11 @@ export default function LandingHero({
                         muted
                         loop
                         playsInline
+                        preload="auto"
+                        webkit-playsinline="true"
                         onError={handleVideoError}
                         onCanPlay={handleVideoCanPlay}
+                        onLoadedData={handleVideoCanPlay}
                       />
                     </>
                   ) : hasPhone ? (
