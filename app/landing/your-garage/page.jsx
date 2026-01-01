@@ -192,7 +192,7 @@ export default function YourGarageLandingPage() {
         subhead="Add your cars and see all the details in one place. Start free — upgrade for full owner reference tools."
         primaryCtaLabel="Add Your Car"
         primaryCtaHref="/garage"
-        note="Free tier includes collection + favorites. Enthusiast+ unlocks owner reference."
+        note="Start free — add your cars and explore. Upgrade anytime for full features."
       />
     </div>
   );

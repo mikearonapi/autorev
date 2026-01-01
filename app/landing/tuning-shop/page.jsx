@@ -216,7 +216,7 @@ export default function TuningShopLandingPage() {
         subhead="Stop guessing. See what your build could achieve before you start buying parts."
         primaryCtaLabel="Open Tuning Shop"
         primaryCtaHref="/tuning-shop"
-        note="Free to explore. Save builds with a free account."
+        note="Start free — explore builds and save them with a free account"
       />
     </div>
   );

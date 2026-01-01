@@ -163,7 +163,7 @@ export default function FindYourCarLandingPage() {
         subhead="Stop researching in circles. Tell us what matters and see which cars actually match."
         primaryCtaLabel="Find Your Perfect Match"
         primaryCtaHref="/car-selector"
-        note="Free. No account required."
+        note="Start free today — create an account to save your results"
       />
     </div>
   );

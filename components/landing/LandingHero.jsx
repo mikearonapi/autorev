@@ -98,7 +98,7 @@ export default function LandingHero({
               ) : null}
             </div>
 
-            <p className={styles.note}>Free. No credit card required.</p>
+            <p className={styles.note}>Join free — no credit card required</p>
           </div>
 
           {/* Right: Video or Phone mockup - both in iPhone frame */}

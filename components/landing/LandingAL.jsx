@@ -97,7 +97,7 @@ export default function LandingAL({
               >
                 Ask AL Now
               </Button>
-              <p className={styles.note}>Free for all users. No account required.</p>
+              <p className={styles.note}>Try it free — no sign-up needed to start</p>
             </div>
           </div>
         </div>
