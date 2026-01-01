@@ -19,6 +19,25 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+async function getAuthUsersTotalSafe(supabase) {
+  try {
+    const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
+    if (error) return null;
+    if (typeof data?.total === 'number') return data.total;
+    return Array.isArray(data?.users) ? data.users.length : null;
+  } catch (err) {
+    // Some environments/SDK versions can throw if options are unsupported
+    try {
+      const { data, error } = await supabase.auth.admin.listUsers();
+      if (error) return null;
+      if (typeof data?.total === 'number') return data.total;
+      return Array.isArray(data?.users) ? data.users.length : null;
+    } catch {
+      return null;
+    }
+  }
+}
+
 // Fixed monthly costs (from COST_ANALYSIS_PL.md)
 const FIXED_COSTS = {
   supabase: { name: 'Supabase Pro', amount: 45, category: 'infrastructure' },
@@ -182,6 +201,7 @@ async function handleGet(request) {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     
     const [
+      authUsersTotal,
       allUsersResult,
       periodUsersResult,
       previousPeriodUsersResult,
@@ -200,6 +220,9 @@ async function handleGet(request) {
       upcomingEventsResult,
       weeklyActiveUsersResult,
     ] = await Promise.all([
+      // Authoritative user total (auth.users)
+      getAuthUsersTotalSafe(supabase),
+
       // All users (for total count and growth chart)
       supabase.from('user_profiles').select('id, subscription_tier, created_at'),
       
@@ -279,6 +302,9 @@ async function handleGet(request) {
     const allUsers = allUsersResult.data || [];
     const periodUsers = periodUsersResult.data || [];
     const previousPeriodUsers = previousPeriodUsersResult.data || [];
+
+    // Prefer auth total (authoritative). Fallback to profiles.
+    const totalUsers = (typeof authUsersTotal === 'number' ? authUsersTotal : allUsers.length);
     
     const usersByTier = allUsers.reduce((acc, u) => {
       const tier = u.subscription_tier || 'free';
@@ -312,8 +338,8 @@ async function handleGet(request) {
     const weeklyActivityData = weeklyActiveUsersResult.data || [];
     const weeklyActiveUserIds = new Set(weeklyActivityData.map(a => a.user_id));
     const weeklyActiveUsers = weeklyActiveUserIds.size;
-    const wauPercent = allUsers.length > 0 
-      ? Math.round((weeklyActiveUsers / allUsers.length) * 100)
+    const wauPercent = totalUsers > 0 
+      ? Math.round((weeklyActiveUsers / totalUsers) * 100)
       : 0;
     
     // Conversations per user
@@ -331,11 +357,11 @@ async function handleGet(request) {
     
     // Calculate funnel
     const funnel = {
-      signups: allUsers.length,
+      signups: totalUsers,
       activeUsers: weeklyActiveUsers,
       alUsers,
       conversionRates: {
-        signupToActive: allUsers.length > 0 ? Math.round((weeklyActiveUsers / allUsers.length) * 100) : 0,
+        signupToActive: totalUsers > 0 ? Math.round((weeklyActiveUsers / totalUsers) * 100) : 0,
         activeToAL: weeklyActiveUsers > 0 ? Math.round((alUsers / weeklyActiveUsers) * 100) : 0,
       },
     };
@@ -355,7 +381,7 @@ async function handleGet(request) {
     const avgRevenuePerUser = 7.5; // Blended average
     const conversionRate = 0.1; // 10%
     const usersNeeded = Math.ceil(totalMonthly / (avgRevenuePerUser * conversionRate));
-    const breakEvenProgress = Math.min(Math.round((allUsers.length / usersNeeded) * 100), 100);
+    const breakEvenProgress = Math.min(Math.round((totalUsers / usersNeeded) * 100), 100);
     
     // System health - check actual status
     // Database: Check if we got data successfully (we reached this point, so DB is working)
@@ -427,7 +453,7 @@ async function handleGet(request) {
       timeRange: range,
       
       users: {
-        total: allUsers.length,
+        total: totalUsers,
         newThisPeriod,
         growthPercent,
         byDay: usersByDay,
@@ -457,7 +483,7 @@ async function handleGet(request) {
       },
       
       breakEven: {
-        currentUsers: allUsers.length,
+        currentUsers: totalUsers,
         usersNeeded,
         progressPercent: breakEvenProgress,
       },

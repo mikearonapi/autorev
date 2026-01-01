@@ -10,7 +10,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
-import { computeMissingUserProfileRows } from '@/lib/adminUsersService';
+import { buildPagination, buildProfilesForAuthUsers, computeMissingUserProfileRows } from '@/lib/adminUsersService';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
@@ -71,7 +71,7 @@ export async function GET(request) {
     const tierFilter = searchParams.get('tier') || '';
     const debug = searchParams.get('debug') === '1';
     
-    const offset = (page - 1) * limit;
+    const isFiltered = Boolean(search) || Boolean(tierFilter);
 
     // ------------------------------------------------------------------
     // Ensure `user_profiles` stays in sync with `auth.users`
@@ -81,13 +81,16 @@ export async function GET(request) {
     // - listing auth users (admin API)
     // - inserting any missing `user_profiles` rows (id + basic metadata)
     // ------------------------------------------------------------------
-    const { users: authUsersPage, total: authUsersTotal, error: authListError } =
-      await listUsersSafe(supabase, { page: 1, perPage: 1000 });
+    // For the default view (no filters), we want the table rows to reflect auth-users
+    // so the admin panel never "drops" users due to profile drift.
+    // When filtered, we keep the existing DB-driven query so filters behave as expected.
+    const { users: authUsersForPage, total: authUsersTotal, error: authListError } =
+      await listUsersSafe(supabase, { page: isFiltered ? 1 : page, perPage: isFiltered ? 1000 : limit });
 
     if (authListError) {
       console.warn('[AdminUsers] auth.admin.listUsers error:', authListError);
-    } else if (authUsersPage.length) {
-      const authIds = authUsersPage.map(u => u.id);
+    } else if (authUsersForPage.length) {
+      const authIds = authUsersForPage.map(u => u.id);
       const { data: existingProfiles, error: existingProfilesError } = await supabase
         .from('user_profiles')
         .select('id')
@@ -97,7 +100,7 @@ export async function GET(request) {
         console.warn('[AdminUsers] Failed checking existing profiles:', existingProfilesError);
       } else {
         const existingIdSet = new Set((existingProfiles || []).map(p => p.id));
-        const missingRows = computeMissingUserProfileRows(authUsersPage, existingIdSet);
+        const missingRows = computeMissingUserProfileRows(authUsersForPage, existingIdSet);
 
         if (missingRows.length) {
           const { error: insertError } = await supabase
@@ -113,70 +116,102 @@ export async function GET(request) {
       }
     }
     
-    // Build query for users with profiles and attribution
-    let query = supabase
-      .from('user_profiles')
-      .select(`
-        id,
-        display_name,
-        preferred_units,
-        subscription_tier,
-        referral_tier_granted,
-        referral_tier_expires_at,
-        referral_tier_lifetime,
-        referred_by_code,
-        cars_viewed_count,
-        comparisons_made_count,
-        projects_saved_count,
-        created_at,
-        updated_at
-      `, { count: 'exact' });
+    // ------------------------------------------------------------------
+    // Select which users we’re returning (page) + how we compute pagination
+    // ------------------------------------------------------------------
+    /** @type {any[]} */
+    let profiles = [];
+    /** @type {number|null} */
+    let count = null;
+    /** @type {string[]} */
+    let userIds = [];
 
-    // Apply search filter
-    if (search) {
-      query = query.or(`display_name.ilike.%${search}%,id.eq.${isUUID(search) ? search : '00000000-0000-0000-0000-000000000000'}`);
-    }
-
-    // Apply tier filter
-    if (tierFilter) {
-      query = query.eq('subscription_tier', tierFilter);
-    }
+    const profileSelect = `
+      id,
+      display_name,
+      preferred_units,
+      subscription_tier,
+      referral_tier_granted,
+      referral_tier_expires_at,
+      referral_tier_lifetime,
+      referred_by_code,
+      cars_viewed_count,
+      comparisons_made_count,
+      projects_saved_count,
+      created_at,
+      updated_at
+    `;
 
     // Apply sorting - only for database fields
     // Engagement fields (garage, favorites, etc.) will be sorted post-query
     const dbSortFields = ['created_at', 'updated_at', 'display_name', 'subscription_tier'];
     const engagementSortFields = ['garage', 'favorites', 'builds', 'events', 'al_chats', 'compares', 'service', 'feedback', 'recent_activity', 'last_sign_in'];
-    
     const isDbSort = dbSortFields.includes(sort);
     const isEngagementSort = engagementSortFields.includes(sort);
-    
-    if (isDbSort) {
-      query = query.order(sort, { ascending: order === 'asc' });
+
+    if (!isFiltered) {
+      // Default view: build the page from auth.users (authoritative)
+      userIds = authUsersForPage.map(u => u.id).filter(Boolean);
+
+      const { data: pageProfiles, error: pageProfilesError } = await supabase
+        .from('user_profiles')
+        .select(profileSelect)
+        .in('id', userIds);
+
+      if (pageProfilesError) {
+        console.error('[AdminUsers] Profiles error:', pageProfilesError);
+        return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
+      }
+
+      const profileById = new Map((pageProfiles || []).map(p => [p.id, p]));
+      profiles = buildProfilesForAuthUsers(authUsersForPage, profileById);
+      count = (typeof authUsersTotal === 'number' ? authUsersTotal : null);
     } else {
-      // Default to created_at for initial fetch, we'll sort later for engagement fields
-      query = query.order('created_at', { ascending: false });
-    }
+      // Filtered view: keep DB-driven query for correct filtering behavior
+      const pagination = buildPagination({ page, limit, total: Number.MAX_SAFE_INTEGER });
+      const offset = pagination.offset;
 
-    // Apply pagination
-    query = query.range(offset, offset + limit - 1);
+      let query = supabase
+        .from('user_profiles')
+        .select(profileSelect, { count: 'exact' });
 
-    const { data: profiles, count, error: profilesError } = await query;
+      if (search) {
+        query = query.or(`display_name.ilike.%${search}%,id.eq.${isUUID(search) ? search : '00000000-0000-0000-0000-000000000000'}`);
+      }
 
-    if (profilesError) {
-      console.error('[AdminUsers] Profiles error:', profilesError);
-      return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
+      if (tierFilter) {
+        query = query.eq('subscription_tier', tierFilter);
+      }
+
+      if (isDbSort) {
+        query = query.order(sort, { ascending: order === 'asc' });
+      } else {
+        // Default to created_at for initial fetch, we'll sort later for engagement fields
+        query = query.order('created_at', { ascending: false });
+      }
+
+      query = query.range(offset, offset + limit - 1);
+
+      const { data: filteredProfiles, count: filteredCount, error: profilesError } = await query;
+
+      if (profilesError) {
+        console.error('[AdminUsers] Profiles error:', profilesError);
+        return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
+      }
+
+      profiles = filteredProfiles || [];
+      count = typeof filteredCount === 'number' ? filteredCount : null;
+      userIds = profiles.map(p => p.id);
     }
 
     // Get user emails from auth.users using the Admin API
     // The auth schema cannot be queried via .from() - must use auth.admin methods
-    const userIds = profiles.map(p => p.id);
-    
     const usersMap = {};
 
     // Prefer the single `listUsers` call we already made (avoids N calls).
     // Fallback to getUserById only for IDs not present in the list.
     if (!authListError) {
-      for (const u of authUsersPage) {
+      for (const u of authUsersForPage) {
         if (!u?.id) continue;
         usersMap[u.id] = {
           id: u.id,
@@ -438,6 +473,10 @@ export async function GET(request) {
       'feedback': 'feedbackCount',
       'recent_activity': 'recentActivityCount',
       'last_sign_in': 'lastSignIn',
+      // DB-ish sorts (needed when we source the page from auth.users)
+      'created_at': 'createdAt',
+      'display_name': 'displayName',
+      'subscription_tier': 'subscriptionTier',
     };
     
     if (sortFieldMap[sort]) {
@@ -447,18 +486,24 @@ export async function GET(request) {
         let bVal = b[field];
         
         // Handle dates
-        if (field === 'lastSignIn') {
+        if (field === 'lastSignIn' || field === 'createdAt') {
           aVal = aVal ? new Date(aVal).getTime() : 0;
           bVal = bVal ? new Date(bVal).getTime() : 0;
         }
         
-        // Handle nulls/undefined
+        // Handle strings (displayName, subscriptionTier)
+        if (typeof aVal === 'string' || typeof bVal === 'string') {
+          const aStr = (aVal == null ? '' : String(aVal)).toLowerCase();
+          const bStr = (bVal == null ? '' : String(bVal)).toLowerCase();
+          if (order === 'asc') return aStr.localeCompare(bStr);
+          return bStr.localeCompare(aStr);
+        }
+
+        // Handle nulls/undefined for numeric comparisons
         if (aVal == null) aVal = 0;
         if (bVal == null) bVal = 0;
-        
-        if (order === 'asc') {
-          return aVal - bVal;
-        }
+
+        if (order === 'asc') return aVal - bVal;
         return bVal - aVal;
       });
     }
@@ -511,8 +556,8 @@ export async function GET(request) {
       pagination: {
         page,
         limit,
-        total: count,
-        totalPages: Math.ceil(count / limit),
+        total: 0, // filled below after we compute authoritative totals
+        totalPages: 1,
       },
       summary: {
         totalUsers,
@@ -521,6 +566,16 @@ export async function GET(request) {
         sourceBreakdown: sourceCounts,
       },
     };
+
+    // Pagination totals:
+    // - When filtered: use the filtered profile count (matches the rows returned)
+    // - Otherwise: use auth total (authoritative), fallback to profile count if needed
+    const paginationTotal =
+      (typeof count === 'number'
+        ? count
+        : (typeof authUsersTotal === 'number' ? authUsersTotal : (totalProfileUsers || 0)));
+    responseBody.pagination.total = paginationTotal;
+    responseBody.pagination.totalPages = Math.max(1, Math.ceil(paginationTotal / limit));
 
     // Optional debug for admins (helps confirm the admin panel is hitting the intended project)
     if (debug) {
@@ -535,6 +590,7 @@ export async function GET(request) {
         authUsersTotal,
         userProfilesTotal: totalProfileUsers,
         pageCountFromProfilesQuery: count,
+        isFiltered,
       };
     }
 
