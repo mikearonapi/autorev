@@ -10,8 +10,11 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Force dynamic rendering - this route uses request.headers and request.url
+// Force dynamic rendering - NEVER cache this API route
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
