@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import styles from './LandingTestimonial.module.css';
 
 const QuoteIcon = ({ size = 32 }) => (
@@ -5,6 +8,27 @@ const QuoteIcon = ({ size = 32 }) => (
     <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
   </svg>
 );
+
+/**
+ * Avatar with fallback to initial on load error
+ */
+function Avatar({ name, src }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (!src || imgError) {
+    return <span className={styles.avatarInitial}>{name.charAt(0)}</span>;
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      className={styles.avatarImg}
+      onError={() => setImgError(true)}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
 
 /**
  * Testimonial section for landing pages
@@ -32,11 +56,7 @@ export default function LandingTestimonial({ testimonials = [] }) {
               <blockquote className={styles.quote}>{t.quote}</blockquote>
               <div className={styles.author}>
                 <div className={styles.avatar}>
-                  {t.avatar ? (
-                    <img src={t.avatar} alt={t.name} className={styles.avatarImg} />
-                  ) : (
-                    <span className={styles.avatarInitial}>{t.name.charAt(0)}</span>
-                  )}
+                  <Avatar name={t.name} src={t.avatar} />
                 </div>
                 <div className={styles.authorInfo}>
                   <span className={styles.authorName}>{t.name}</span>
