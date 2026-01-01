@@ -130,7 +130,7 @@ export default async function Image() {
                 border: `2px solid ${BRAND.gold}`,
                 borderRadius: '50px',
                 padding: '8px 18px',
-                width: 'fit-content',
+                alignSelf: 'flex-start',
               }}
             >
               <span style={{ color: BRAND.goldLight, fontSize: '16px', fontWeight: 600 }}>
