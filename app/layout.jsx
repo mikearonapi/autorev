@@ -295,8 +295,7 @@ export default function RootLayout({ children }) {
               <Header />
               
               {/* Beta banner - shown during beta period */}
-              {/* TEMPORARILY DISABLED FOR VIDEO RECORDING */}
-              {/* <BetaBanner /> */}
+              <BetaBanner />
               
               {/* Feedback corner - discreet top-right feedback icon */}
               <FeedbackCorner />

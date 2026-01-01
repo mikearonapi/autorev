@@ -175,9 +175,8 @@
   --header-height: 56px;
   --header-height-mobile: 48px;
   --header-height-desktop: 64px;
-  /* TEMPORARILY SET TO 0 FOR VIDEO RECORDING - restore to 44px/40px when done */
-  --beta-banner-height: 0px;
-  --beta-banner-height-mobile: 0px;
+  --beta-banner-height: 44px;
+  --beta-banner-height-mobile: 40px;
   --selected-car-banner-height: 52px;
   
   /* Combined heights for layout calculations */
