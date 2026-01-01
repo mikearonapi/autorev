@@ -1,8 +1,15 @@
 /* Compact problem section - inline pain points */
 
 .section {
-  padding: var(--space-lg) 0;
+  /* Tighter mobile padding */
+  padding: var(--space-md) 0;
   background: var(--color-gray-900);
+}
+
+@media (min-width: 480px) {
+  .section {
+    padding: var(--space-lg) 0;
+  }
 }
 
 @media (min-width: 768px) {
@@ -14,7 +21,13 @@
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-sm);
+}
+
+@media (min-width: 480px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
 }
 
 @media (min-width: 768px) {
@@ -25,13 +38,20 @@
 
 .headline {
   font-family: var(--font-display);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-align: center;
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
+}
+
+@media (min-width: 480px) {
+  .headline {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-md);
+  }
 }
 
 @media (min-width: 768px) {
@@ -44,7 +64,13 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+}
+
+@media (min-width: 480px) {
+  .grid {
+    gap: var(--space-sm);
+  }
 }
 
 @media (min-width: 640px) {
@@ -64,10 +90,18 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-md);
-  padding: var(--space-md);
+  /* Tighter mobile padding */
+  padding: var(--space-sm);
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   align-items: flex-start;
+}
+
+@media (min-width: 480px) {
+  .card {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
 }
 
 @media (min-width: 1024px) {
@@ -80,8 +114,8 @@
 }
 
 .icon {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -89,6 +123,13 @@
   border-radius: var(--radius-sm);
   background: rgba(212, 175, 55, 0.1);
   color: var(--sn-accent);
+}
+
+@media (min-width: 480px) {
+  .icon {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -111,17 +152,31 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
+}
+
+@media (min-width: 480px) {
+  .title {
+    font-size: var(--font-size-sm);
+    margin: 0 0 4px;
+  }
 }
 
 .description {
-  font-size: var(--font-size-xs);
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.6);
-  line-height: 1.4;
+  line-height: 1.35;
   margin: 0;
+}
+
+@media (min-width: 480px) {
+  .description {
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+  }
 }

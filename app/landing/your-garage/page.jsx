@@ -55,12 +55,14 @@ const TESTIMONIALS = [
   {
     name: 'Mike',
     role: 'Co-founder, AutoRev',
-    quote: "I own a 996 and an E92 M3. Finding maintenance specs used to mean digging through forums and PDFs. I built My Garage so I could have everything about my cars in one place — specs, known issues, safety data, all of it.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocJK1K-ufstc_sqBjvFJH5E7fVwd6rwlJCusBzF2Q7yxtHt1hzu0sQ=s96-c',
+    quote: "Every time I needed to check something — oil specs, common issues, service intervals — I was digging through forums and PDFs. I built My Garage so all that information lives in one place, organized around my specific car.",
   },
   {
     name: 'Cory',
     role: 'Co-founder, AutoRev',
-    quote: "Every time I wanted to check something about my car, I had to open 5 different tabs. What oil does it take? What are the common problems? Is there a recall? AutoRev puts it all in one spot.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocLBUVkqYd9vWLf09JgiBMlAe-amaPmyBD4WJJlXiNKSsmitnw=s96-c',
+    quote: "I know maintenance intervals, common failures, and which years to avoid for dozens of cars. My Garage organizes all of that knowledge by your specific vehicle — the same info I'd pull from memory, but accessible to everyone instantly.",
   },
 ];
 

@@ -3,7 +3,14 @@
 .hero {
   position: relative;
   overflow: hidden;
-  padding: calc(var(--header-plus-banner-mobile) + var(--space-lg)) var(--space-md) var(--space-xl);
+  /* Tighter mobile padding for better viewport fit */
+  padding: calc(var(--header-plus-banner-mobile) + var(--space-md)) var(--space-sm) var(--space-lg);
+}
+
+@media (min-width: 480px) {
+  .hero {
+    padding: calc(var(--header-plus-banner-mobile) + var(--space-lg)) var(--space-md) var(--space-xl);
+  }
 }
 
 @media (min-width: 768px) {
@@ -33,8 +40,15 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-xl);
+  /* Tighter mobile gap */
+  gap: var(--space-md);
   align-items: center;
+}
+
+@media (min-width: 480px) {
+  .grid {
+    gap: var(--space-lg);
+  }
 }
 
 @media (min-width: 900px) {
@@ -84,23 +98,30 @@
 }
 
 .subhead {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.75);
   line-height: var(--line-height-relaxed);
   max-width: 48ch;
-  margin: 0 0 var(--space-lg);
+  margin: 0 auto var(--space-md);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 480px) {
   .subhead {
-    margin-left: 0;
-    margin-right: 0;
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-lg);
   }
 }
 
 @media (min-width: 768px) {
   .subhead {
     font-size: var(--font-size-lg);
+  }
+}
+
+@media (min-width: 900px) {
+  .subhead {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
@@ -125,9 +146,15 @@
 }
 
 .note {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
   margin: 0;
+}
+
+@media (min-width: 480px) {
+  .note {
+    font-size: 12px;
+  }
 }
 
 @media (min-width: 900px) {
@@ -140,19 +167,21 @@
 .visual {
   display: flex;
   justify-content: center;
+  /* Prevent layout shift from scaled phone */
+  margin: calc(var(--space-md) * -1) 0;
+}
+
+@media (min-width: 900px) {
+  .visual {
+    margin: 0;
+  }
 }
 
 .phoneWrapper {
   position: relative;
-  /* Scale down to 75% of original size */
-  transform: scale(0.75);
+  /* Scale consistent with LandingAL (0.85) for uniform appearance */
+  transform: scale(0.85);
   transform-origin: center center;
-}
-
-@media (min-width: 900px) {
-  .phoneWrapper {
-    transform-origin: center center;
-  }
 }
 
 .phoneContent {

@@ -59,12 +59,14 @@ const TESTIMONIALS = [
   {
     name: 'Mike',
     role: 'Co-founder, AutoRev',
-    quote: "I spent months researching sports cars — YouTube, forums, spreadsheets. Every source contradicted the last. I built the Car Selector because I needed a tool that asked what I cared about, not what some reviewer thought was important.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocJK1K-ufstc_sqBjvFJH5E7fVwd6rwlJCusBzF2Q7yxtHt1hzu0sQ=s96-c',
+    quote: "I spent months researching sports cars — YouTube, forums, spreadsheets. Every source contradicted the last, and none of them asked what actually mattered to ME. I built the Car Selector because I needed a tool that started with my priorities, not someone else's opinion.",
   },
   {
     name: 'Cory',
     role: 'Co-founder, AutoRev',
-    quote: "When I was shopping for my first sports car, I had no idea where to start. I knew I wanted something fun, but every site assumed I already knew what make and model. AutoRev is what I wish existed back then.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocLBUVkqYd9vWLf09JgiBMlAe-amaPmyBD4WJJlXiNKSsmitnw=s96-c',
+    quote: "When friends ask me which car to buy, my first question is always 'what do you care about?' A Cayman is perfect for one person and wrong for another. The Car Selector captures that conversation — it asks the right questions and surfaces the cars that actually fit.",
   },
 ];
 

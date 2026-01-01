@@ -67,12 +67,14 @@ const TESTIMONIALS = [
   {
     name: 'Mike',
     role: 'Co-founder, AutoRev',
-    quote: "I spent years modifying my M3 based on forum advice and YouTube videos. Half the time I bought parts that didn't work well together. I built the Tuning Shop so you can plan your entire build before spending a dime.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocJK1K-ufstc_sqBjvFJH5E7fVwd6rwlJCusBzF2Q7yxtHt1hzu0sQ=s96-c',
+    quote: "I wasted money on mods that didn't make sense together — parts that conflicted, upgrades in the wrong order. I built the Tuning Shop so you can see the whole build path before spending a dime, instead of learning expensive lessons the hard way.",
   },
   {
     name: 'Cory',
     role: 'Co-founder, AutoRev',
-    quote: "Building a car should be fun, not stressful. But without a plan, you end up with a random collection of parts instead of a coherent build. AutoRev lets you see the whole picture before you start buying.",
+    avatar: 'https://lh3.googleusercontent.com/a/ACg8ocLBUVkqYd9vWLf09JgiBMlAe-amaPmyBD4WJJlXiNKSsmitnw=s96-c',
+    quote: "I've seen too many builds go sideways — big turbo kits before fuel system upgrades, power mods when the suspension can't handle it. The Tuning Shop puts all that knowledge in one place so you can plan a build that actually makes sense.",
   },
 ];
 
