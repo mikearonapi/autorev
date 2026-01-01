@@ -87,6 +87,8 @@ export default function FindYourCarLandingPage() {
         primaryCtaHref="/car-selector"
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
+        videoSrc="/videos/find-your-car-demo.mp4"
+        videoPoster="/images/onboarding/car-selector-02-results.png"
         phoneSrc="/images/onboarding/car-selector-02-results.png"
         phoneAlt="AutoRev Car Selector showing matched cars"
       />
