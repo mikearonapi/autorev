@@ -4,20 +4,20 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
   const cases = [
     {
       route: '/landing/find-your-car',
-      heading: 'Find Your Perfect Sports Car in 2 Minutes',
+      heading: 'Not Sure Which Sports Car Is Right for You?',
       cta: 'Take the Quiz',
       expectedUrl: /\/car-selector(?:\?|#|$)/,
     },
     {
       route: '/landing/your-garage',
-      heading: "Your Car's Command Center",
+      heading: "All Your Car's Details in One Place",
       cta: 'Add Your Car',
       expectedUrl: /\/garage(?:\?|#|$)/,
     },
     {
       route: '/landing/tuning-shop',
-      heading: 'Stop Guessing. Start Building.',
-      cta: 'Explore Parts',
+      heading: 'Plan Your Build Before You Buy',
+      cta: 'Open Tuning Shop',
       expectedUrl: /\/tuning-shop(?:\?|#|$)/,
     },
   ];
@@ -26,7 +26,7 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
     await page.goto(new URL(c.route, baseURL).toString(), { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: c.heading })).toBeVisible();
 
-    await page.getByRole('link', { name: c.cta, exact: true }).click();
+    await page.getByRole('link', { name: c.cta, exact: true }).first().click();
     await expect(page).toHaveURL(c.expectedUrl);
   }
 });

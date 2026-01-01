@@ -68,6 +68,21 @@
   margin-bottom: var(--space-md);
 }
 
+.stepNumber {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-accent) 0%, var(--sn-accent-dark) 100%);
+  color: var(--color-gray-900);
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  margin-bottom: var(--space-md);
+}
+
 .stepTitle {
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
