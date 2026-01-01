@@ -19,8 +19,10 @@ export default function LandingProblem({ headline, items = [] }) {
           {items.map((item) => (
             <div key={item.title} className={styles.card}>
               <div className={styles.icon}>{item.icon}</div>
-              <h3 className={styles.title}>{item.title}</h3>
-              <p className={styles.description}>{item.description}</p>
+              <div className={styles.cardContent}>
+                <h3 className={styles.title}>{item.title}</h3>
+                <p className={styles.description}>{item.description}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -28,5 +30,3 @@ export default function LandingProblem({ headline, items = [] }) {
     </section>
   );
 }
-
-

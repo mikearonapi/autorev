@@ -1,16 +1,18 @@
+/* Compact problem section - inline pain points */
+
 .section {
-  padding: var(--space-2xl) 0;
+  padding: var(--space-lg) 0;
   background: var(--color-gray-900);
 }
 
 @media (min-width: 768px) {
   .section {
-    padding: var(--space-3xl) 0;
+    padding: var(--space-xl) 0;
   }
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 var(--space-md);
 }
@@ -23,62 +25,103 @@
 
 .headline {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  color: var(--color-white);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  text-align: center;
-  margin: 0 0 var(--space-xl);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
-}
-
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-xl);
-  }
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-}
-
-.icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  background: rgba(212, 175, 55, 0.12);
-  color: var(--sn-accent);
-  margin-bottom: var(--space-md);
-}
-
-.title {
-  font-family: var(--font-display);
   font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  margin: 0 0 var(--space-xs);
+  text-align: center;
+  margin: 0 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .headline {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-lg);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .card {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    padding: var(--space-md) var(--space-sm);
+  }
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--sn-accent);
+}
+
+@media (min-width: 1024px) {
+  .icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .cardContent {
+    width: 100%;
+  }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
 }
 
 .description {
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.75);
-  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
   margin: 0;
 }
-
-
