@@ -41,19 +41,6 @@ export default async function Image() {
           background: `linear-gradient(135deg, ${BRAND.primaryDark} 0%, ${BRAND.primary} 50%, ${BRAND.primaryLight} 100%)`,
         }}
       >
-        {/* Grid pattern overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)`,
-            backgroundSize: '32px 32px',
-            display: 'flex',
-          }}
-        />
 
         {/* Left accent stripe */}
         <div
@@ -120,21 +107,23 @@ export default async function Image() {
               gap: '24px',
             }}
           >
-            {/* Feature badge */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'rgba(212,175,55,0.2)',
-                border: `2px solid ${BRAND.gold}`,
-                borderRadius: '50px',
-                padding: '8px 18px',
-              }}
-            >
-              <span style={{ color: BRAND.goldLight, fontSize: '16px', fontWeight: 600 }}>
-                🔧 Tuning Shop
-              </span>
+            {/* Feature badge wrapper - flex row prevents horizontal stretch */}
+            <div style={{ display: 'flex' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(212,175,55,0.2)',
+                  border: `2px solid ${BRAND.gold}`,
+                  borderRadius: '50px',
+                  padding: '8px 18px',
+                }}
+              >
+                <span style={{ color: BRAND.goldLight, fontSize: '16px', fontWeight: 600 }}>
+                  🔧 Tuning Shop
+                </span>
+              </div>
             </div>
 
             {/* Main headline */}
