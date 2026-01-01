@@ -6,17 +6,6 @@ import Image from 'next/image';
 import { trackEvent } from '@/lib/ga4';
 import styles from './LandingAL.module.css';
 
-const ALIcon = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M12 8V4H8" />
-    <rect width="16" height="12" x="4" y="8" rx="2" />
-    <path d="M2 14h2" />
-    <path d="M20 14h2" />
-    <path d="M15 13v2" />
-    <path d="M9 13v2" />
-  </svg>
-);
-
 /**
  * AL (AI Assistant) section for landing pages
  * Tailored to each page's persona and problems
@@ -66,7 +55,13 @@ export default function LandingAL({
           {/* Right: Content */}
           <div className={styles.content}>
             <div className={styles.badge}>
-              <ALIcon />
+              <Image
+                src="/images/al-mascot.png"
+                alt="AL"
+                width={24}
+                height={24}
+                className={styles.alAvatar}
+              />
               <span>AL — Your Car Expert</span>
             </div>
 
@@ -97,7 +92,7 @@ export default function LandingAL({
               >
                 Ask AL Now
               </Button>
-              <p className={styles.note}>Try it free — no sign-up needed to start</p>
+              <p className={styles.note}>Free with any account — sign up in seconds</p>
             </div>
           </div>
         </div>
@@ -105,4 +100,3 @@ export default function LandingAL({
     </section>
   );
 }
-

@@ -395,6 +395,7 @@ async function handleStreamingResponse({
 
         const usageTotals = { inputTokens: 0, outputTokens: 0, callCount: 0 };
         const toolCallsUsed = [];
+        const toolTimings = [];
         let fullResponse = '';
         let currentToolUse = null;
         let toolUseBuffer = [];
