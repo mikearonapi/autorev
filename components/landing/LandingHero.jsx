@@ -64,8 +64,8 @@ export default function LandingHero({
       <div className={styles.bg} aria-hidden="true" />
       <div className={styles.container}>
         <div className={styles.grid}>
-          {/* Left: Text content */}
-          <div className={styles.content}>
+          {/* Text content - shows first on mobile */}
+          <div className={styles.textContent}>
             {badgeText ? (
               <div className={styles.badge}>
                 <SparkleIcon />
@@ -75,33 +75,9 @@ export default function LandingHero({
 
             <h1 className={styles.headline}>{headline}</h1>
             <p className={styles.subhead}>{subhead}</p>
-
-            <div className={styles.ctas}>
-              <Button
-                href={primaryCtaHref}
-                variant="secondary"
-                size="lg"
-                onClick={() => trackCta(primaryCtaLabel, primaryCtaHref)}
-              >
-                {primaryCtaLabel}
-              </Button>
-
-              {secondaryCtaLabel && secondaryCtaHref ? (
-                <Button
-                  href={secondaryCtaHref}
-                  variant="outlineLight"
-                  size="lg"
-                  onClick={() => trackCta(secondaryCtaLabel, secondaryCtaHref)}
-                >
-                  {secondaryCtaLabel}
-                </Button>
-              ) : null}
-            </div>
-
-            <p className={styles.note}>Join free — no credit card required</p>
           </div>
 
-          {/* Right: Video or Phone mockup - both in iPhone frame */}
+          {/* Phone mockup - shows second on mobile */}
           <div className={styles.visual}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="medium">
@@ -147,6 +123,33 @@ export default function LandingHero({
                 </div>
               </IPhoneFrame>
             </div>
+          </div>
+
+          {/* CTAs - shows third on mobile, below phone */}
+          <div className={styles.ctaContent}>
+            <div className={styles.ctas}>
+              <Button
+                href={primaryCtaHref}
+                variant="secondary"
+                size="lg"
+                onClick={() => trackCta(primaryCtaLabel, primaryCtaHref)}
+              >
+                {primaryCtaLabel}
+              </Button>
+
+              {secondaryCtaLabel && secondaryCtaHref ? (
+                <Button
+                  href={secondaryCtaHref}
+                  variant="outlineLight"
+                  size="lg"
+                  onClick={() => trackCta(secondaryCtaLabel, secondaryCtaHref)}
+                >
+                  {secondaryCtaLabel}
+                </Button>
+              ) : null}
+            </div>
+
+            <p className={styles.note}>Join free — no credit card required</p>
           </div>
         </div>
       </div>
