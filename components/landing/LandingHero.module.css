@@ -3,13 +3,13 @@
 .hero {
   position: relative;
   overflow: hidden;
-  /* Tighter mobile padding for better viewport fit */
-  padding: calc(var(--header-plus-banner-mobile) + var(--space-md)) var(--space-sm) var(--space-lg);
+  /* Mobile padding with breathing room below banner */
+  padding: calc(var(--header-plus-banner-mobile) + var(--space-lg)) var(--space-sm) var(--space-lg);
 }
 
 @media (min-width: 480px) {
   .hero {
-    padding: calc(var(--header-plus-banner-mobile) + var(--space-lg)) var(--space-md) var(--space-xl);
+    padding: calc(var(--header-plus-banner-mobile) + var(--space-xl)) var(--space-md) var(--space-xl);
   }
 }
 
