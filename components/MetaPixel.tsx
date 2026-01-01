@@ -4,7 +4,7 @@
  * Meta Pixel (Facebook Pixel) Component
  * 
  * Loads the Meta Pixel script and initializes tracking.
- * Uses Next.js Script component with afterInteractive strategy.
+ * Uses Next.js Script component with lazyOnload strategy to prevent double-firing.
  * 
  * Environment variable: NEXT_PUBLIC_META_PIXEL_ID
  * 
@@ -23,22 +23,24 @@ export default function MetaPixel() {
 
   return (
     <>
-      {/* Initialize Meta Pixel */}
+      {/* Load Meta Pixel base script */}
       <Script
-        id="meta-pixel"
+        id="meta-pixel-script"
+        src="https://connect.facebook.net/en_US/fbevents.js"
+        strategy="afterInteractive"
+      />
+      
+      {/* Initialize Meta Pixel - separate script ensures single execution */}
+      <Script
+        id="meta-pixel-init"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${META_PIXEL_ID}');
-            fbq('track', 'PageView');
+            if (!window._fbq_initialized) {
+              window._fbq_initialized = true;
+              fbq('init', '${META_PIXEL_ID}');
+              fbq('track', 'PageView');
+            }
           `,
         }}
       />
