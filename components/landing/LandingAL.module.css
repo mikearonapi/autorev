@@ -61,6 +61,25 @@
   height: 100%;
 }
 
+/* Video inside phone frame */
+.video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.videoLoading {
+  opacity: 0;
+}
+
+.videoReady {
+  opacity: 1;
+}
+
 /* Right: Content */
 .content {
   text-align: center;

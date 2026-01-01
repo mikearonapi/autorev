@@ -152,6 +152,7 @@ export default function FindYourCarLandingPage() {
           "What's the best first sports car for someone coming from an SUV?",
           "Compare the Supra vs 370Z vs Cayman for canyon driving",
         ]}
+        videoSrc="/videos/al-find-your-car-demo.mp4"
         imageSrc="/images/onboarding/ai-al-05-response-analysis.png"
       />
 

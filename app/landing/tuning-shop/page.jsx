@@ -205,6 +205,7 @@ export default function TuningShopLandingPage() {
           "Is FBO worth it on the N54, or should I go straight to single turbo?",
           "What's a good 400whp build for a 370Z on a $5k budget?",
         ]}
+        videoSrc="/videos/al-tuning-shop-demo.mp4"
         imageSrc="/images/onboarding/ai-al-04-response-specs.png"
       />
 

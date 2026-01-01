@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
 import Image from 'next/image';
@@ -9,15 +10,58 @@ import styles from './LandingAL.module.css';
 /**
  * AL (AI Assistant) section for landing pages
  * Tailored to each page's persona and problems
+ * Video plays automatically when scrolled into view
  */
 export default function LandingAL({
   pageId,
   headline,
   description,
   exampleQuestions = [],
+  videoSrc,
   imageSrc = '/images/onboarding/ai-al-05-response-analysis.png',
   imageAlt = 'AL - AutoRev AI Assistant',
 }) {
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const videoRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  // Intersection Observer to detect when section is in view
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !videoSrc) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of section is visible
+        rootMargin: '0px',
+      }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [videoSrc]);
+
+  // Play/pause video based on visibility
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isInView && videoReady) {
+      video.play().catch(() => {
+        // Autoplay blocked - that's okay
+      });
+    } else {
+      video.pause();
+    }
+  }, [isInView, videoReady]);
+
   const handleCtaClick = () => {
     try {
       trackEvent('landing_page_cta_click', {
@@ -31,22 +75,57 @@ export default function LandingAL({
     }
   };
 
+  const handleVideoError = () => {
+    setVideoFailed(true);
+  };
+
+  const handleVideoCanPlay = () => {
+    setVideoReady(true);
+  };
+
+  const hasVideo = Boolean(videoSrc) && !videoFailed;
+
   return (
-    <section className={styles.section}>
+    <section ref={sectionRef} className={styles.section}>
       <div className={styles.container}>
         <div className={styles.grid}>
-          {/* Left: Phone with AL screenshot */}
+          {/* Left: Phone with AL video/screenshot */}
           <div className={styles.visual}>
             <div className={styles.phoneWrapper}>
               <IPhoneFrame size="medium">
                 <div className={styles.phoneContent}>
-                  <Image
-                    src={imageSrc}
-                    alt={imageAlt}
-                    fill
-                    sizes="280px"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                  />
+                  {hasVideo ? (
+                    <>
+                      {/* Show static image until video is ready */}
+                      {!videoReady && (
+                        <Image
+                          src={imageSrc}
+                          alt={imageAlt}
+                          fill
+                          sizes="280px"
+                          style={{ objectFit: 'cover', objectPosition: 'top' }}
+                        />
+                      )}
+                      <video
+                        ref={videoRef}
+                        className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
+                        src={videoSrc}
+                        muted
+                        loop
+                        playsInline
+                        onError={handleVideoError}
+                        onCanPlay={handleVideoCanPlay}
+                      />
+                    </>
+                  ) : (
+                    <Image
+                      src={imageSrc}
+                      alt={imageAlt}
+                      fill
+                      sizes="280px"
+                      style={{ objectFit: 'cover', objectPosition: 'top' }}
+                    />
+                  )}
                 </div>
               </IPhoneFrame>
             </div>

@@ -181,6 +181,7 @@ export default function YourGarageLandingPage() {
           "What are the common issues with the E92 M3 S65 engine?",
           "How often should I change the diff fluid on my 996?",
         ]}
+        videoSrc="/videos/al-your-garage-demo.mp4"
         imageSrc="/images/onboarding/ai-al-03-context.png"
       />
 
