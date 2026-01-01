@@ -515,12 +515,21 @@ async function handleGet(request) {
       timestamp: new Date().toISOString(),
     };
     
-    // Return with explicit cache-control to prevent browser caching
+    // Add debug timestamp to verify fresh data
+    response._debug = {
+      timestamp: new Date().toISOString(),
+      totalUsersFromQuery: allUsers.length,
+      source: 'user_profiles direct query'
+    };
+
+    // Return with aggressive cache-control to prevent ALL caching
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
         'Pragma': 'no-cache',
         'Expires': '0',
+        'Surrogate-Control': 'no-store',
+        'CDN-Cache-Control': 'no-store'
       },
     });
     

@@ -1,15 +1,14 @@
-/* Compact hero section for landing pages */
+/* Split hero: text left, video/phone right (like Hey Alfred) */
 
 .hero {
   position: relative;
   overflow: hidden;
-  text-align: center;
-  padding: calc(var(--header-plus-banner-mobile) + var(--space-xl)) var(--space-md) var(--space-lg);
+  padding: calc(var(--header-plus-banner-mobile) + var(--space-lg)) var(--space-md) var(--space-xl);
 }
 
 @media (min-width: 768px) {
   .hero {
-    padding: calc(var(--header-plus-banner) + var(--space-2xl)) var(--space-lg) var(--space-xl);
+    padding: calc(var(--header-plus-banner) + var(--space-xl)) var(--space-lg) var(--space-2xl);
   }
 }
 
@@ -27,8 +26,33 @@
 .container {
   position: relative;
   z-index: 1;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+  }
+}
+
+/* Left: Text content */
+.content {
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .content {
+    text-align: left;
+  }
 }
 
 .badge {
@@ -50,11 +74,11 @@
 
 .headline {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  line-height: 1.1;
+  line-height: 1.05;
   color: var(--color-white);
   margin: 0 0 var(--space-sm);
 }
@@ -63,8 +87,15 @@
   font-size: var(--font-size-base);
   color: rgba(255, 255, 255, 0.75);
   line-height: var(--line-height-relaxed);
-  max-width: 55ch;
-  margin: 0 auto var(--space-lg);
+  max-width: 48ch;
+  margin: 0 0 var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  .subhead {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 @media (min-width: 768px) {
@@ -77,14 +108,77 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  max-width: 320px;
-  margin: 0 auto;
+  margin-bottom: var(--space-sm);
 }
 
 @media (min-width: 480px) {
   .ctas {
     flex-direction: row;
-    max-width: 480px;
     justify-content: center;
   }
+}
+
+@media (min-width: 900px) {
+  .ctas {
+    justify-content: flex-start;
+  }
+}
+
+.note {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+@media (min-width: 900px) {
+  .note {
+    text-align: left;
+  }
+}
+
+/* Right: Video or Phone */
+.visual {
+  display: flex;
+  justify-content: center;
+}
+
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.phoneWrapper {
+  position: relative;
+}
+
+.phoneContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.videoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 9 / 16;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--font-size-sm);
 }

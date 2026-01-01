@@ -1,9 +1,9 @@
-import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTracking } from '@/components/landing';
+import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
 export const metadata = {
   title: 'Find Your Car | AutoRev',
-  description: "Not sure which sports car is right for you? Set your priorities and we'll match you with cars that fit what YOU care about.",
+  description: "Stop wasting time researching the wrong car. Set your priorities and we'll match you with sports cars that actually fit what YOU care about.",
   alternates: { canonical: '/landing/find-your-car' },
 };
 
@@ -53,7 +53,25 @@ const Icons = {
       <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
     </svg>
   ),
+  chat: ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+    </svg>
+  ),
 };
+
+const TESTIMONIALS = [
+  {
+    name: 'Mike',
+    role: 'Co-founder, AutoRev',
+    quote: "I spent months researching sports cars — YouTube, forums, spreadsheets. Every source contradicted the last. I built the Car Selector because I needed a tool that asked what I cared about, not what some reviewer thought was important.",
+  },
+  {
+    name: 'Cory',
+    role: 'Co-founder, AutoRev',
+    quote: "When I was shopping for my first sports car, I had no idea where to start. I knew I wanted something fun, but every site assumed I already knew what make and model. AutoRev is what I wish existed back then.",
+  },
+];
 
 export default function FindYourCarLandingPage() {
   return (
@@ -63,10 +81,14 @@ export default function FindYourCarLandingPage() {
       <LandingHero
         pageId="find-your-car"
         badgeText="Car Selector"
-        headline="Which Sports Car Actually Fits You?"
-        subhead="Tell us what you care about — sound, track, reliability, comfort, value — and we'll match you with cars that fit YOUR priorities."
+        headline="Stop Wasting Time on the Wrong Car"
+        subhead="Tell us what you care about — sound, track, reliability, comfort, value — and we'll match you with cars that actually fit YOUR priorities. No more guessing."
         primaryCtaLabel="Find Your Perfect Match"
         primaryCtaHref="/car-selector"
+        secondaryCtaLabel="See How It Works"
+        secondaryCtaHref="#features"
+        phoneSrc="/images/onboarding/car-selector-02-results.png"
+        phoneAlt="AutoRev Car Selector showing matched cars"
       />
 
       <LandingProblem
@@ -95,14 +117,14 @@ export default function FindYourCarLandingPage() {
         ]}
       />
 
-      <div id="feature" />
+      <div id="features" />
       <FeatureShowcase
         icon={<Icons.sliders />}
         headline="Set Your Priorities"
-        description="Adjust sliders for what matters to you: sound, track ability, reliability, daily comfort, value, driver fun, and aftermarket support."
+        description="Adjust sliders for what matters to you: sound, track ability, reliability, daily comfort, value, driver fun, and aftermarket support. There's no right or wrong — just what YOU care about."
         bullets={[
           '7 priority categories you can weight',
-          'No right or wrong answers',
+          'Drag sliders to match your preferences',
           'Takes about 2 minutes',
         ]}
         imageSrc="/images/onboarding/car-selector-01-preferences.png"
@@ -114,21 +136,37 @@ export default function FindYourCarLandingPage() {
         reversed
         icon={<Icons.target />}
         headline="See Your Matches"
-        description="We score every car against YOUR priorities and show you a ranked list. See why each car scored the way it did."
+        description="We score every car in our database against YOUR priorities and show you a ranked list. See exactly why each car scored the way it did."
         bullets={[
           'Cars ranked by fit to your priorities',
-          'Filter by price and body style',
-          'Dive into specs and owner insights',
+          'See the score breakdown for each car',
+          'Filter by price range and body style',
         ]}
         imageSrc="/images/onboarding/car-selector-02-results.png"
         imageAlt="AutoRev Car Selector results"
         imageCaption="Your Matches"
       />
 
+      <FeatureShowcase
+        icon={<Icons.chat />}
+        headline="Ask AL for Help"
+        description="Still stuck? Ask AL — our AI car expert. Describe what you're looking for in plain English and get personalized recommendations backed by real data."
+        bullets={[
+          'Describe your ideal car in your own words',
+          'Get recommendations with reasoning',
+          'Ask follow-up questions',
+        ]}
+        imageSrc="/images/onboarding/ai-al-05-response-analysis.png"
+        imageAlt="AutoRev AL providing car recommendations"
+        imageCaption="Ask AL"
+      />
+
+      <LandingTestimonial testimonials={TESTIMONIALS} />
+
       <LandingCTA
         pageId="find-your-car"
-        headline="Find the car that fits you"
-        subhead="Stop researching in circles. Tell us what matters and see which cars match."
+        headline="Find your car in minutes"
+        subhead="Stop researching in circles. Tell us what matters and see which cars actually match."
         primaryCtaLabel="Find Your Perfect Match"
         primaryCtaHref="/car-selector"
         note="Free. No account required."

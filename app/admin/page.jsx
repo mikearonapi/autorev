@@ -365,11 +365,10 @@ export default function AdminDashboardPage() {
   // Interpretations
   const getUserInterpretation = () => {
     if (!data?.users) return 'Loading...';
-    const { newThisPeriod, growthPercent, total } = data.users;
-    const period = timeRange === 'day' ? 'today' : timeRange === 'week' ? 'this week' : timeRange === 'month' ? 'this month' : 'since launch';
-    if (newThisPeriod === 0) return `No new signups ${period}. Total: ${total}.`;
-    if (growthPercent > 0) return `+${growthPercent}% growth ${period}. ${newThisPeriod} new user${newThisPeriod > 1 ? 's' : ''}.`;
-    return `${newThisPeriod} new user${newThisPeriod > 1 ? 's' : ''} joined ${period}.`;
+    const { total } = data.users;
+    const activeUsers = data?.engagement?.weeklyActiveUsers || 0;
+    const activePercent = total > 0 ? Math.round((activeUsers / total) * 100) : 0;
+    return `${activeUsers} active in last 7 days (${activePercent}% of users).`;
   };
   
   return (

@@ -1,6 +1,8 @@
 'use client';
 
 import Button from '@/components/Button';
+import IPhoneFrame from '@/components/IPhoneFrame';
+import Image from 'next/image';
 import { trackEvent } from '@/lib/ga4';
 import styles from './LandingHero.module.css';
 
@@ -10,20 +12,15 @@ const SparkleIcon = ({ size = 14 }) => (
   </svg>
 );
 
-/**
- * @typedef {Object} LandingHeroProps
- * @property {string} pageId
- * @property {string} headline
- * @property {string} subhead
- * @property {string} primaryCtaLabel
- * @property {string} primaryCtaHref
- * @property {string=} secondaryCtaLabel
- * @property {string=} secondaryCtaHref
- * @property {string=} badgeText
- */
+const PlayIcon = ({ size = 48 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.6)" />
+    <polygon points="10 8 16 12 10 16 10 8" fill="white" />
+  </svg>
+);
 
 /**
- * @param {LandingHeroProps} props
+ * Landing page hero with split layout: text left, video/phone right
  */
 export default function LandingHero({
   pageId,
@@ -34,6 +31,11 @@ export default function LandingHero({
   secondaryCtaLabel,
   secondaryCtaHref,
   badgeText,
+  // Video or phone mockup
+  videoSrc,
+  videoPoster,
+  phoneSrc,
+  phoneAlt,
 }) {
   const trackCta = (ctaLabel, destination) => {
     try {
@@ -48,46 +50,89 @@ export default function LandingHero({
     }
   };
 
+  const hasVideo = Boolean(videoSrc);
+  const hasPhone = Boolean(phoneSrc);
+
   return (
     <section className={styles.hero}>
       <div className={styles.bg} aria-hidden="true" />
       <div className={styles.container}>
-        {badgeText ? (
-          <div className={styles.badge}>
-            <SparkleIcon />
-            <span>{badgeText}</span>
+        <div className={styles.grid}>
+          {/* Left: Text content */}
+          <div className={styles.content}>
+            {badgeText ? (
+              <div className={styles.badge}>
+                <SparkleIcon />
+                <span>{badgeText}</span>
+              </div>
+            ) : null}
+
+            <h1 className={styles.headline}>{headline}</h1>
+            <p className={styles.subhead}>{subhead}</p>
+
+            <div className={styles.ctas}>
+              <Button
+                href={primaryCtaHref}
+                variant="secondary"
+                size="lg"
+                onClick={() => trackCta(primaryCtaLabel, primaryCtaHref)}
+              >
+                {primaryCtaLabel}
+              </Button>
+
+              {secondaryCtaLabel && secondaryCtaHref ? (
+                <Button
+                  href={secondaryCtaHref}
+                  variant="outlineLight"
+                  size="lg"
+                  onClick={() => trackCta(secondaryCtaLabel, secondaryCtaHref)}
+                >
+                  {secondaryCtaLabel}
+                </Button>
+              ) : null}
+            </div>
+
+            <p className={styles.note}>Free. No credit card required.</p>
           </div>
-        ) : null}
 
-        <h1 className={styles.headline}>{headline}</h1>
-        <p className={styles.subhead}>{subhead}</p>
-
-        <div className={styles.ctas}>
-          <Button
-            href={primaryCtaHref}
-            variant="secondary"
-            size="lg"
-            fullWidth
-            onClick={() => trackCta(primaryCtaLabel, primaryCtaHref)}
-          >
-            {primaryCtaLabel}
-          </Button>
-
-          {secondaryCtaLabel && secondaryCtaHref ? (
-            <Button
-              href={secondaryCtaHref}
-              variant="outlineLight"
-              size="lg"
-              fullWidth
-              onClick={() => trackCta(secondaryCtaLabel, secondaryCtaHref)}
-            >
-              {secondaryCtaLabel}
-            </Button>
-          ) : null}
+          {/* Right: Video or Phone mockup */}
+          <div className={styles.visual}>
+            {hasVideo ? (
+              <div className={styles.videoWrapper}>
+                <video
+                  className={styles.video}
+                  src={videoSrc}
+                  poster={videoPoster}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              </div>
+            ) : hasPhone ? (
+              <div className={styles.phoneWrapper}>
+                <IPhoneFrame size="large">
+                  <div className={styles.phoneContent}>
+                    <Image
+                      src={phoneSrc}
+                      alt={phoneAlt || 'App screenshot'}
+                      fill
+                      sizes="(max-width: 768px) 280px, 360px"
+                      style={{ objectFit: 'cover', objectPosition: 'top' }}
+                      priority
+                    />
+                  </div>
+                </IPhoneFrame>
+              </div>
+            ) : (
+              <div className={styles.videoPlaceholder}>
+                <PlayIcon />
+                <span>Video coming soon</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
-
