@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import MetaPixel from '@/components/MetaPixel';
 import './globals.css';
 import { fontVariables } from '@/lib/fonts';
 import Header from '@/components/Header';
@@ -270,6 +271,9 @@ export default function RootLayout({ children }) {
         
         {/* Google Analytics 4 */}
         <GoogleAnalytics />
+        
+        {/* Meta Pixel (Facebook Pixel) */}
+        <MetaPixel />
       </head>
       <body>
         <GlobalErrorHandler>
