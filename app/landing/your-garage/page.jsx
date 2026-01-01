@@ -73,7 +73,6 @@ export default function YourGarageLandingPage() {
 
       <LandingHero
         pageId="your-garage"
-        badgeText="My Garage"
         headline="Everything About Your Car. One Place."
         subhead="Maintenance specs, safety ratings, known issues — organized around YOUR specific car. No more digging through forums and PDFs."
         primaryCtaLabel="Add Your Car"

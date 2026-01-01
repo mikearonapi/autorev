@@ -40,7 +40,6 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  /* Tighter mobile gap */
   gap: var(--space-md);
   align-items: center;
 }
@@ -55,6 +54,13 @@
   .grid {
     grid-template-columns: 1.1fr 0.9fr;
     gap: var(--space-2xl);
+  }
+}
+
+/* Mobile: Show phone first, then content below */
+@media (max-width: 899px) {
+  .visual {
+    order: -1;
   }
 }
 
@@ -127,15 +133,35 @@
 
 .ctas {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--space-xs);
   margin-bottom: var(--space-sm);
+}
+
+/* Compact buttons on mobile to fit side-by-side */
+.ctas :global(.button) {
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+  font-size: var(--font-size-sm);
 }
 
 @media (min-width: 480px) {
   .ctas {
-    flex-direction: row;
-    justify-content: center;
+    gap: var(--space-sm);
+  }
+  
+  .ctas :global(.button) {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+}
+
+@media (min-width: 768px) {
+  .ctas :global(.button) {
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+    font-size: var(--font-size-base);
   }
 }
 

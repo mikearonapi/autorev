@@ -85,7 +85,6 @@ export default function TuningShopLandingPage() {
 
       <LandingHero
         pageId="tuning-shop"
-        badgeText="Tuning Shop"
         headline="Build Smarter, Not Random"
         subhead="Configure upgrades, see estimated power gains, and build with a plan — instead of throwing parts at your car and hoping for the best."
         primaryCtaLabel="Open Tuning Shop"

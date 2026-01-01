@@ -77,7 +77,6 @@ export default function FindYourCarLandingPage() {
 
       <LandingHero
         pageId="find-your-car"
-        badgeText="Car Selector"
         headline="Find the Perfect Sports Car for You"
         subhead="Tell us what you care about — sound, track, reliability, comfort, value — and we'll match you with cars that actually fit YOUR priorities. No more guessing."
         primaryCtaLabel="Find Your Perfect Match"
