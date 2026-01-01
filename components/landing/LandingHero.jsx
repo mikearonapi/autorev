@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
 import Image from 'next/image';
@@ -15,7 +15,7 @@ const SparkleIcon = ({ size = 14 }) => (
 
 /**
  * Landing page hero with split layout: text left, video/phone right
- * Falls back to phone mockup if video fails to load
+ * Video plays inside iPhone frame, falls back to static image if video fails
  */
 export default function LandingHero({
   pageId,
@@ -28,11 +28,12 @@ export default function LandingHero({
   badgeText,
   // Video or phone mockup
   videoSrc,
-  videoPoster,
   phoneSrc,
   phoneAlt,
 }) {
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef(null);
 
   const trackCta = (ctaLabel, destination) => {
     try {
@@ -51,8 +52,11 @@ export default function LandingHero({
   const hasPhone = Boolean(phoneSrc);
 
   const handleVideoError = () => {
-    // Video failed to load - fall back to phone mockup
     setVideoFailed(true);
+  };
+
+  const handleVideoCanPlay = () => {
+    setVideoReady(true);
   };
 
   return (
@@ -97,37 +101,49 @@ export default function LandingHero({
             <p className={styles.note}>Free. No credit card required.</p>
           </div>
 
-          {/* Right: Video or Phone mockup */}
+          {/* Right: Video or Phone mockup - both in iPhone frame */}
           <div className={styles.visual}>
-            {hasVideo ? (
-              <div className={styles.videoWrapper}>
-                <video
-                  className={styles.video}
-                  src={videoSrc}
-                  poster={videoPoster}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  onError={handleVideoError}
-                />
-              </div>
-            ) : hasPhone ? (
-              <div className={styles.phoneWrapper}>
-                <IPhoneFrame size="large">
-                  <div className={styles.phoneContent}>
+            <div className={styles.phoneWrapper}>
+              <IPhoneFrame size="medium">
+                <div className={styles.phoneContent}>
+                  {hasVideo ? (
+                    <>
+                      {/* Show static image until video is ready to prevent flash */}
+                      {!videoReady && hasPhone && (
+                        <Image
+                          src={phoneSrc}
+                          alt={phoneAlt || 'App screenshot'}
+                          fill
+                          sizes="280px"
+                          style={{ objectFit: 'cover', objectPosition: 'top' }}
+                          priority
+                        />
+                      )}
+                      <video
+                        ref={videoRef}
+                        className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
+                        src={videoSrc}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        onError={handleVideoError}
+                        onCanPlay={handleVideoCanPlay}
+                      />
+                    </>
+                  ) : hasPhone ? (
                     <Image
                       src={phoneSrc}
                       alt={phoneAlt || 'App screenshot'}
                       fill
-                      sizes="(max-width: 768px) 280px, 360px"
+                      sizes="280px"
                       style={{ objectFit: 'cover', objectPosition: 'top' }}
                       priority
                     />
-                  </div>
-                </IPhoneFrame>
-              </div>
-            ) : null}
+                  ) : null}
+                </div>
+              </IPhoneFrame>
+            </div>
           </div>
         </div>
       </div>

@@ -20,21 +20,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './ConsolidatedAnalytics.module.css';
 import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
 
-// Filter out internal pages from analytics data
-const EXCLUDED_PATHS = ['/admin', '/internal'];
-
-function filterInternalPages(pages) {
-  if (!pages) return [];
-  return pages.filter(p => !EXCLUDED_PATHS.some(excluded => p.path?.startsWith(excluded)));
-}
-
-function recalculateMetrics(pages) {
-  const filtered = filterInternalPages(pages);
-  return {
-    views: filtered.reduce((sum, p) => sum + (p.views || 0), 0),
-    visitors: filtered.reduce((sum, p) => sum + (p.visitors || 0), 0)
-  };
-}
+// NOTE: "Visitors" must be unique visitors. Do NOT sum per-page visitors (double counts).
 
 // Compact Icons
 const Icons = {
@@ -555,19 +541,13 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
     return () => clearInterval(interval);
   }, [fetchData]);
   
-  // Recalculate metrics excluding /admin pages
-  const filteredMetrics = useMemo(() => {
-    if (!data?.site?.topPages) return null;
-    return recalculateMetrics(data.site.topPages);
-  }, [data]);
-  
   const summary = data?.site?.summary || {};
   const actualSignups = data?.dashboard?.users?.newThisPeriod || 0;
   const conversions = data?.marketing?.funnel?.converted || 0;
   
-  // Use filtered metrics if available
-  const displayVisitors = filteredMetrics?.visitors || summary.visitors || 0;
-  const displayPageViews = filteredMetrics?.views || summary.pageViews || 0;
+  // Single source of truth: values computed server-side in /api/admin/site-analytics
+  const displayVisitors = summary.visitors || 0;
+  const displayPageViews = summary.pageViews || 0;
   
   if (loading) {
     return (
@@ -611,7 +591,7 @@ export function ConsolidatedAnalytics({ token, range = '7d' }) {
           change={summary.visitorsChange} 
           icon={Icons.Users} 
           color="blue"
-          tooltip={{ label: 'Unique Visitors', description: 'Number of unique sessions on public pages. Excludes admin users and internal paths.' }}
+          tooltip={{ label: 'Unique Visitors', description: 'Unique visitors on public pages, excluding internal paths and bot traffic.' }}
         />
         <KPICard 
           label="Page Views" 

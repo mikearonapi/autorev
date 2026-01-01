@@ -1,4 +1,4 @@
-/* Split hero: text left, video/phone right (like Hey Alfred) */
+/* Split hero: text left, video/phone right */
 
 .hero {
   position: relative;
@@ -26,7 +26,7 @@
 .container {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -39,7 +39,7 @@
 
 @media (min-width: 900px) {
   .grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.1fr 0.9fr;
     gap: var(--space-2xl);
   }
 }
@@ -136,29 +136,23 @@
   }
 }
 
-/* Right: Video or Phone */
+/* Right: Phone with video */
 .visual {
   display: flex;
   justify-content: center;
 }
 
-.videoWrapper {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
 .phoneWrapper {
   position: relative;
+  /* Scale down to 75% of original size */
+  transform: scale(0.75);
+  transform-origin: center center;
+}
+
+@media (min-width: 900px) {
+  .phoneWrapper {
+    transform-origin: center center;
+  }
 }
 
 .phoneContent {
@@ -167,18 +161,22 @@
   height: 100%;
 }
 
-.videoPlaceholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
+/* Video inside phone frame */
+.video {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 360px;
-  aspect-ratio: 9 / 16;
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px dashed rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-xl);
-  color: rgba(255, 255, 255, 0.4);
-  font-size: var(--font-size-sm);
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Hide video until ready to prevent flash */
+.videoLoading {
+  opacity: 0;
+}
+
+.videoReady {
+  opacity: 1;
 }

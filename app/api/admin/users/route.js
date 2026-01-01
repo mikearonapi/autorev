@@ -8,6 +8,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
 
 // Force dynamic - never cache this route
 export const dynamic = 'force-dynamic';
@@ -248,11 +249,10 @@ export async function GET(request) {
     });
 
     // ========================================
-    // STEP 5: Get summary stats (fresh queries)
+    // STEP 5: Get summary stats (single source of truth helpers)
     // ========================================
-    const { count: totalUsers } = await supabase
-      .from('user_profiles')
-      .select('id', { count: 'exact', head: true });
+    const totalUsers = await getTotalUsersCount(supabase);
+    const tierBreakdown = await getUserTierBreakdown(supabase);
 
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { data: activeUsers } = await supabase
@@ -261,17 +261,6 @@ export async function GET(request) {
       .gte('created_at', sevenDaysAgo);
     
     const uniqueActiveUsers = new Set((activeUsers || []).map(a => a.user_id)).size;
-
-    // Tier breakdown
-    const { data: allProfiles } = await supabase
-      .from('user_profiles')
-      .select('subscription_tier');
-    
-    const tierBreakdown = { free: 0, collector: 0, tuner: 0, admin: 0 };
-    (allProfiles || []).forEach(p => {
-      const tier = p.subscription_tier || 'free';
-      tierBreakdown[tier] = (tierBreakdown[tier] || 0) + 1;
-    });
 
     // ========================================
     // STEP 6: Return response with no-cache headers
@@ -285,7 +274,7 @@ export async function GET(request) {
         totalPages: Math.ceil((totalCount || 0) / limit)
       },
       summary: {
-        totalUsers: totalUsers || 0,
+        totalUsers,
         activeUsers7d: uniqueActiveUsers,
         tierBreakdown
       },

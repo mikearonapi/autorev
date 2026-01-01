@@ -91,7 +91,6 @@ export default function TuningShopLandingPage() {
         secondaryCtaLabel="Ask AL for Advice"
         secondaryCtaHref="/al"
         videoSrc="/videos/tuning-shop-demo.mp4"
-        videoPoster="/images/onboarding/tuning-shop-01-overview.png"
         phoneSrc="/images/onboarding/tuning-shop-01-overview.png"
         phoneAlt="AutoRev Tuning Shop overview"
       />

@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -219,7 +220,7 @@ async function handleGet(request) {
       upcomingEventsResult,
       weeklyActiveUsersResult,
     ] = await Promise.all([
-      // All users - DIRECT DB QUERY (source of truth, no auth.admin.listUsers which has replication lag)
+      // Users for charts (created_at used for cumulative growth). Do NOT use data.length for totals.
       supabase.from('user_profiles').select('id, subscription_tier, created_at'),
       
       // Users created in current period
@@ -299,14 +300,11 @@ async function handleGet(request) {
     const periodUsers = periodUsersResult.data || [];
     const previousPeriodUsers = previousPeriodUsersResult.data || [];
 
-    // DIRECT DATABASE COUNT - no fallback to auth.admin.listUsers (has replication lag)
-    const totalUsers = allUsers.length;
-    
-    const usersByTier = allUsers.reduce((acc, u) => {
-      const tier = u.subscription_tier || 'free';
-      acc[tier] = (acc[tier] || 0) + 1;
-      return acc;
-    }, {});
+    // Single source of truth for totals: exact DB counts (head:true) to avoid row-cap / partial result issues.
+    const [totalUsers, usersByTier] = await Promise.all([
+      getTotalUsersCount(supabase),
+      getUserTierBreakdown(supabase),
+    ]);
     
     // Calculate growth percentage
     const newThisPeriod = periodUsers.length;

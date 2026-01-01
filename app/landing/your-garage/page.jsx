@@ -84,7 +84,6 @@ export default function YourGarageLandingPage() {
         secondaryCtaLabel="Browse Cars First"
         secondaryCtaHref="/browse-cars"
         videoSrc="/videos/your-garage-demo.mp4"
-        videoPoster="/images/onboarding/garage-02-details.png"
         phoneSrc="/images/onboarding/garage-02-details.png"
         phoneAlt="AutoRev My Garage showing car details"
       />
