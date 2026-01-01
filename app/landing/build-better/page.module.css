@@ -1,0 +1,121 @@
+.page {
+  background: #070b10;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--space-lg);
+  }
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-white);
+  text-align: center;
+  margin: 0 0 var(--space-xl);
+}
+
+.credibility {
+  padding: var(--space-2xl) 0;
+  background: #0a0f14;
+}
+
+@media (min-width: 768px) {
+  .credibility {
+    padding: var(--space-3xl) 0;
+  }
+}
+
+.exampleCard {
+  max-width: 860px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.exampleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.exampleTitle {
+  font-weight: 800;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--font-size-xs);
+}
+
+.exampleTag {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--sn-accent);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.exampleGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+.exampleRow {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.exampleRow:first-child {
+  border-top: none;
+}
+
+.exampleLabel {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.exampleValue {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.exampleNote {
+  margin: var(--space-md) 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+@media (max-width: 420px) {
+  .exampleRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+

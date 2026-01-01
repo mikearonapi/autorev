@@ -1,0 +1,84 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: calc(var(--header-plus-banner-mobile) + var(--space-3xl)) var(--space-md) var(--space-2xl);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: calc(var(--header-plus-banner) + var(--space-4xl)) var(--space-lg) var(--space-3xl);
+  }
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(800px 400px at 10% 15%, rgba(26, 77, 110, 0.45) 0%, rgba(26, 77, 110, 0) 60%),
+    radial-gradient(700px 350px at 90% 25%, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0) 55%),
+    radial-gradient(900px 450px at 50% 95%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(135deg, #040b10 0%, #07131b 45%, #070b10 100%);
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--sn-accent);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-lg);
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: var(--font-size-hero);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: var(--line-height-tight);
+  color: var(--color-white);
+  margin: 0 0 var(--space-md);
+}
+
+.subhead {
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: var(--line-height-relaxed);
+  max-width: 62ch;
+  margin: 0 auto var(--space-xl);
+}
+
+.ctas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .ctas {
+    grid-template-columns: 1fr 1fr;
+    max-width: 640px;
+    gap: var(--space-md);
+  }
+}
+
+

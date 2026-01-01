@@ -201,7 +201,6 @@ async function handleGet(request) {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     
     const [
-      authUsersTotal,
       allUsersResult,
       periodUsersResult,
       previousPeriodUsersResult,
@@ -220,10 +219,7 @@ async function handleGet(request) {
       upcomingEventsResult,
       weeklyActiveUsersResult,
     ] = await Promise.all([
-      // Authoritative user total (auth.users)
-      getAuthUsersTotalSafe(supabase),
-
-      // All users (for total count and growth chart)
+      // All users - DIRECT DB QUERY (source of truth, no auth.admin.listUsers which has replication lag)
       supabase.from('user_profiles').select('id, subscription_tier, created_at'),
       
       // Users created in current period
@@ -303,8 +299,8 @@ async function handleGet(request) {
     const periodUsers = periodUsersResult.data || [];
     const previousPeriodUsers = previousPeriodUsersResult.data || [];
 
-    // Prefer profiles count (direct DB query is more reliable than auth.admin.listUsers which can have replication lag)
-    const totalUsers = allUsers.length || (typeof authUsersTotal === 'number' ? authUsersTotal : 0);
+    // DIRECT DATABASE COUNT - no fallback to auth.admin.listUsers (has replication lag)
+    const totalUsers = allUsers.length;
     
     const usersByTier = allUsers.reduce((acc, u) => {
       const tier = u.subscription_tier || 'free';
