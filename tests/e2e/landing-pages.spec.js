@@ -4,19 +4,19 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
   const cases = [
     {
       route: '/landing/find-your-car',
-      heading: 'Which Sports Car Actually Fits You?',
+      heading: 'Stop Wasting Time on the Wrong Car',
       cta: 'Find Your Perfect Match',
       expectedUrl: /\/car-selector(?:\?|#|$)/,
     },
     {
       route: '/landing/your-garage',
-      heading: 'All Your Car Details in One Place',
+      heading: 'Everything About Your Car. One Place.',
       cta: 'Add Your Car',
       expectedUrl: /\/garage(?:\?|#|$)/,
     },
     {
       route: '/landing/tuning-shop',
-      heading: 'Plan Your Build Before You Buy',
+      heading: 'Build Smarter, Not Random',
       cta: 'Open Tuning Shop',
       expectedUrl: /\/tuning-shop(?:\?|#|$)/,
     },
