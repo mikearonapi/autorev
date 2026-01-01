@@ -79,11 +79,11 @@ export async function GET(request) {
     const range = searchParams.get('range') || '7d';
     const { startDate, endDate } = getDateRange(range);
     
-    // Fetch page views (includes all users, excludes internal paths only)
+    // Fetch page views (includes all users, excludes bots and internal paths)
     // Note: We no longer filter out admin users - for small teams, seeing all activity is more useful
     const { data: pageViews, error: pvError } = await supabaseAdmin
       .from('page_views')
-      .select('id, session_id, user_id, path, referrer, country_code, device_type, browser, os, created_at')
+      .select('id, session_id, visitor_id, user_id, path, referrer, country_code, device_type, browser, os, created_at, is_bot')
       .gte('created_at', startDate)
       .lte('created_at', endDate);
     
@@ -91,8 +91,12 @@ export async function GET(request) {
       console.error('[Site Analytics] Page views error:', pvError);
     }
     
-    // Filter out internal paths only (keep admin user activity on public pages)
+    // Filter out internal paths and bot traffic (to align with Vercel Analytics)
     const filteredViews = (pageViews || []).filter(pv => {
+      // Exclude bots
+      if (pv.is_bot === true) {
+        return false;
+      }
       // Exclude internal paths like /admin, /internal
       if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) {
         return false;
@@ -101,8 +105,11 @@ export async function GET(request) {
     });
     
     // Calculate metrics from filtered data
+    // Use visitor_id for unique visitors (persists across sessions like Vercel)
+    // Fall back to session_id for older records without visitor_id
+    const uniqueVisitors = new Set(filteredViews.map(pv => pv.visitor_id || pv.session_id));
     const uniqueSessions = new Set(filteredViews.map(pv => pv.session_id));
-    const visitors = uniqueSessions.size;
+    const visitors = uniqueVisitors.size;
     const pageViewCount = filteredViews.length;
     
     // Top pages (excluding internal)
@@ -237,16 +244,18 @@ export async function GET(request) {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     const { data: recentViews } = await supabaseAdmin
       .from('page_views')
-      .select('session_id, user_id, path')
+      .select('session_id, visitor_id, user_id, path, is_bot')
       .gte('created_at', fiveMinutesAgo);
     
-    const onlineSessions = new Set();
+    const onlineVisitors = new Set();
     (recentViews || []).forEach(pv => {
+      // Exclude bots
+      if (pv.is_bot === true) return;
       // Only exclude internal paths, not admin users
       if (EXCLUDED_PATHS.some(path => pv.path?.startsWith(path))) return;
-      onlineSessions.add(pv.session_id);
+      onlineVisitors.add(pv.visitor_id || pv.session_id);
     });
-    const onlineCount = onlineSessions.size;
+    const onlineCount = onlineVisitors.size;
     
     // Build response
     const response = {
@@ -254,10 +263,14 @@ export async function GET(request) {
       startDate,
       endDate,
       summary: {
-        visitors,
+        visitors,           // Unique people (via visitor_id, persists in localStorage)
+        sessions: uniqueSessions.size,  // Total visits (browser sessions)
         pageViews: pageViewCount,
         bounceRate,
-        online: onlineCount
+        online: onlineCount,
+        pagesPerSession: uniqueSessions.size > 0 
+          ? Math.round((pageViewCount / uniqueSessions.size) * 10) / 10 
+          : 0
       },
       topPages,
       referrers,

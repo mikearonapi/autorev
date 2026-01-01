@@ -3,6 +3,7 @@
  * 
  * Tracks page views for the internal analytics dashboard.
  * Uses Vercel geo headers for location data.
+ * Includes bot filtering to align with Vercel Analytics.
  * 
  * POST /api/analytics/track
  */
@@ -17,10 +18,78 @@ const supabaseAdmin = createClient(
 );
 
 /**
+ * Common bot/crawler user agent patterns
+ * These are filtered out by Vercel Analytics, so we should too
+ */
+const BOT_PATTERNS = [
+  /bot/i,
+  /crawl/i,
+  /spider/i,
+  /slurp/i,
+  /mediapartners/i,
+  /googlebot/i,
+  /bingbot/i,
+  /yandex/i,
+  /baidu/i,
+  /duckduckbot/i,
+  /facebookexternalhit/i,
+  /linkedinbot/i,
+  /twitterbot/i,
+  /whatsapp/i,
+  /telegrambot/i,
+  /discordbot/i,
+  /applebot/i,
+  /semrush/i,
+  /ahrefs/i,
+  /mj12bot/i,
+  /dotbot/i,
+  /petalbot/i,
+  /bytespider/i,
+  /gptbot/i,
+  /claudebot/i,
+  /anthropic/i,
+  /chatgpt/i,
+  /headless/i,
+  /phantom/i,
+  /selenium/i,
+  /puppeteer/i,
+  /playwright/i,
+  /wget/i,
+  /curl/i,
+  /httpx/i,
+  /python-requests/i,
+  /axios/i,
+  /node-fetch/i,
+  /go-http-client/i,
+  /java\//i,
+  /okhttp/i,
+  /postman/i,
+  /insomnia/i,
+  /preview/i,
+  /prerender/i,
+  /lighthouse/i,
+  /pagespeed/i,
+  /gtmetrix/i,
+  /pingdom/i,
+  /uptimerobot/i,
+  /statuscake/i,
+];
+
+/**
+ * Check if user agent is a bot/crawler
+ */
+function isBot(userAgent) {
+  if (!userAgent) return false;
+  return BOT_PATTERNS.some(pattern => pattern.test(userAgent));
+}
+
+/**
  * Parse user agent to extract device, browser, and OS info
  */
 function parseUserAgent(ua) {
-  if (!ua) return { device: 'Unknown', browser: 'Unknown', os: 'Unknown' };
+  if (!ua) return { device: 'Unknown', browser: 'Unknown', os: 'Unknown', isBot: false };
+  
+  const botDetected = isBot(ua);
   
   // Device type
   let device = 'Desktop';
@@ -75,7 +144,8 @@ function parseUserAgent(ua) {
     browser,
     browserVersion,
     os,
-    osVersion
+    osVersion,
+    isBot: botDetected
   };
 }
 
@@ -120,6 +190,7 @@ export async function POST(request) {
       route,
       referrer,
       sessionId,
+      visitorId,  // Persistent across sessions (localStorage)
       pageUrl,
       userId,
       pageLoadTime
@@ -135,7 +206,13 @@ export async function POST(request) {
     
     // Get user agent
     const userAgent = headersList.get('user-agent') || '';
-    const { device, browser, browserVersion, os, osVersion } = parseUserAgent(userAgent);
+    const { device, browser, browserVersion, os, osVersion, isBot: botDetected } = parseUserAgent(userAgent);
+    
+    // Skip bot traffic entirely (like Vercel Analytics does)
+    // This keeps our metrics aligned with Vercel's numbers
+    if (botDetected) {
+      return Response.json({ success: true, skipped: 'bot' });
+    }
     
     // Get geo info from Vercel headers
     const country = headersList.get('x-vercel-ip-country') || null;
@@ -149,13 +226,15 @@ export async function POST(request) {
     // Parse UTM parameters
     const utmParams = parseUtmParams(pageUrl);
     
-    // Insert page view
+    // Insert page view with visitor_id for accurate unique visitor counting
     const { error } = await supabaseAdmin
       .from('page_views')
       .insert({
         path,
         route: route || path,
         session_id: sessionId,
+        visitor_id: visitorId || null,  // Persistent visitor ID
+        is_bot: false,  // Already filtered bots above
         referrer: referrer || null,
         referrer_hostname: referrerHostname,
         device_type: device,

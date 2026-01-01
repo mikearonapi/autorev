@@ -493,7 +493,14 @@ async function handleGet(request) {
       timestamp: new Date().toISOString(),
     };
     
-    return NextResponse.json(response);
+    // Return with explicit cache-control to prevent browser caching
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
     
   } catch (err) {
     console.error('[Admin Dashboard] Error:', err);

@@ -419,6 +419,7 @@ export async function GET(request) {
       sourceCounts[source] = (sourceCounts[source] || 0) + 1;
     });
 
+    // Return with explicit cache-control to prevent browser caching
     return NextResponse.json({
       users,
       pagination: {
@@ -432,6 +433,12 @@ export async function GET(request) {
         activeUsers7d: uniqueActiveUsers,
         tierBreakdown: tierCounts || { free: 0, collector: 0, tuner: 0, admin: 0 },
         sourceBreakdown: sourceCounts,
+      },
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
 
