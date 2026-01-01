@@ -233,6 +233,9 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="AutoRev" />
         
+        {/* Facebook Domain Verification */}
+        <meta name="facebook-domain-verification" content="vu8n45bve2gdnsxj7x3leq648aci5e" />
+        
         {/* Preconnect to external domains for faster resource loading */}
         <link rel="preconnect" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
