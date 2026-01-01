@@ -1,4 +1,5 @@
 export { default as FeatureShowcase } from './FeatureShowcase';
+export { default as LandingAL } from './LandingAL';
 export { default as LandingCTA } from './LandingCTA';
 export { default as LandingHero } from './LandingHero';
 export { default as LandingProblem } from './LandingProblem';

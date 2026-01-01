@@ -1,9 +1,9 @@
-import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
 export const metadata = {
   title: 'Find Your Car | AutoRev',
-  description: "Stop wasting time researching the wrong car. Set your priorities and we'll match you with sports cars that actually fit what YOU care about.",
+  description: "Not sure which sports car is right for you? Set your priorities and we'll match you with cars that actually fit what YOU care about.",
   alternates: { canonical: '/landing/find-your-car' },
 };
 
@@ -53,11 +53,6 @@ const Icons = {
       <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
     </svg>
   ),
-  chat: ({ size = 18 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-    </svg>
-  ),
 };
 
 const TESTIMONIALS = [
@@ -81,7 +76,7 @@ export default function FindYourCarLandingPage() {
       <LandingHero
         pageId="find-your-car"
         badgeText="Car Selector"
-        headline="Stop Wasting Time on the Wrong Car"
+        headline="Find the Perfect Sports Car for You"
         subhead="Tell us what you care about — sound, track, reliability, comfort, value — and we'll match you with cars that actually fit YOUR priorities. No more guessing."
         primaryCtaLabel="Find Your Perfect Match"
         primaryCtaHref="/car-selector"
@@ -148,18 +143,16 @@ export default function FindYourCarLandingPage() {
         imageCaption="Your Matches"
       />
 
-      <FeatureShowcase
-        icon={<Icons.chat />}
-        headline="Ask AL for Help"
-        description="Still stuck? Ask AL — our AI car expert. Describe what you're looking for in plain English and get personalized recommendations backed by real data."
-        bullets={[
-          'Describe your ideal car in your own words',
-          'Get recommendations with reasoning',
-          'Ask follow-up questions',
+      <LandingAL
+        pageId="find-your-car"
+        headline="Still Not Sure? Ask AL"
+        description="Describe what you're looking for in plain English. AL knows every car in our database and can help you narrow down your options based on your specific situation."
+        exampleQuestions={[
+          "I want something fun but reliable for a daily driver under $50k",
+          "What's the best first sports car for someone coming from an SUV?",
+          "Compare the Supra vs 370Z vs Cayman for canyon driving",
         ]}
         imageSrc="/images/onboarding/ai-al-05-response-analysis.png"
-        imageAlt="AutoRev AL providing car recommendations"
-        imageCaption="Ask AL"
       />
 
       <LandingTestimonial testimonials={TESTIMONIALS} />

@@ -130,13 +130,6 @@ export default function OnboardingFlow({
       ? (Array.isArray(initialData.user_intents) ? initialData.user_intents : [initialData.user_intent])
       : [],
   });
-  
-  // Track onboarding started
-  useEffect(() => {
-    if (isOpen && step === 1) {
-      trackEvent(ANALYTICS_EVENTS.ONBOARDING_STARTED);
-    }
-  }, [isOpen, step, trackEvent]);
 
   // Get user's display name
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
@@ -146,6 +139,14 @@ export default function OnboardingFlow({
   
   // Get current progress label index
   const currentLabelIndex = getProgressLabelIndex(step);
+
+  // Handle escape key (disabled on required steps: Welcome, Referral, Intent)
+  const isRequiredStep = step === 1 || step === 2 || step === 3;
+
+  // =========================================================================
+  // CALLBACKS - All useCallback hooks MUST be declared before any useEffect
+  // that references them to avoid TDZ (Temporal Dead Zone) errors.
+  // =========================================================================
 
   // Save progress to database
   const saveProgress = useCallback(async (data, completed = false) => {
@@ -202,9 +203,30 @@ export default function OnboardingFlow({
     onClose?.();
   }, [formData, saveProgress, onClose, step, trackEvent]);
 
-  // Handle escape key (disabled on required steps: Welcome, Referral, Intent)
-  const isRequiredStep = step === 1 || step === 2 || step === 3;
+  // Handle form data updates
+  const updateFormData = useCallback((updates) => {
+    setFormData(prev => {
+      const newData = { ...prev, ...updates };
+      // Save progress when significant data changes
+      if (updates.referral_source !== undefined || updates.user_intents !== undefined) {
+        saveProgress(newData);
+      }
+      return newData;
+    });
+  }, [saveProgress]);
+
+  // =========================================================================
+  // EFFECTS - All useEffect hooks come AFTER callbacks to avoid TDZ errors.
+  // =========================================================================
   
+  // Track onboarding started
+  useEffect(() => {
+    if (isOpen && step === 1) {
+      trackEvent(ANALYTICS_EVENTS.ONBOARDING_STARTED);
+    }
+  }, [isOpen, step, trackEvent]);
+
+  // Handle escape key
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
@@ -228,18 +250,6 @@ export default function OnboardingFlow({
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  // Handle form data updates
-  const updateFormData = useCallback((updates) => {
-    setFormData(prev => {
-      const newData = { ...prev, ...updates };
-      // Save progress when significant data changes
-      if (updates.referral_source !== undefined || updates.user_intents !== undefined) {
-        saveProgress(newData);
-      }
-      return newData;
-    });
-  }, [saveProgress]);
 
   // Navigate to next step
   const handleNext = useCallback(() => {

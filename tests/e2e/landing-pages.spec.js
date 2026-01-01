@@ -4,7 +4,7 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
   const cases = [
     {
       route: '/landing/find-your-car',
-      heading: 'Stop Wasting Time on the Wrong Car',
+      heading: 'Find the Perfect Sports Car for You',
       cta: 'Find Your Perfect Match',
       expectedUrl: /\/car-selector(?:\?|#|$)/,
     },

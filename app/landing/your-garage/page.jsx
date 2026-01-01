@@ -1,4 +1,4 @@
-import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
 export const metadata = {
@@ -49,11 +49,6 @@ const Icons = {
       <line x1="12" y1="17" x2="12.01" y2="17" />
     </svg>
   ),
-  heart: ({ size = 18 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  ),
 };
 
 const TESTIMONIALS = [
@@ -81,8 +76,8 @@ export default function YourGarageLandingPage() {
         subhead="Maintenance specs, safety ratings, known issues — organized around YOUR specific car. No more digging through forums and PDFs."
         primaryCtaLabel="Add Your Car"
         primaryCtaHref="/garage"
-        secondaryCtaLabel="Browse Cars First"
-        secondaryCtaHref="/browse-cars"
+        secondaryCtaLabel="See How It Works"
+        secondaryCtaHref="#features"
         videoSrc="/videos/your-garage-demo.mp4"
         phoneSrc="/images/onboarding/garage-02-details.png"
         phoneAlt="AutoRev My Garage showing car details"
@@ -121,7 +116,7 @@ export default function YourGarageLandingPage() {
         description="Add your cars and see all their details in one place. Specs, variants, production info — organized and always accessible. Save favorites while you're researching too."
         bullets={[
           'Add cars you own to your collection (free)',
-          'Save cars you\'re researching as favorites (free)',
+          "Save cars you're researching as favorites (free)",
           'See specs, variants, and trim details',
           'Track your entire collection in one spot',
         ]}
@@ -177,6 +172,18 @@ export default function YourGarageLandingPage() {
         imageCaption="Vehicle Health"
       />
 
+      <LandingAL
+        pageId="your-garage"
+        headline="Ask AL About Your Car"
+        description="Have a question about your specific car? AL knows your make, model, and year — and can answer maintenance questions, explain common issues, and help you understand what to watch for."
+        exampleQuestions={[
+          "What oil should I use in my 2015 BMW M3?",
+          "What are the common issues with the E92 M3 S65 engine?",
+          "How often should I change the diff fluid on my 996?",
+        ]}
+        imageSrc="/images/onboarding/ai-al-03-context.png"
+      />
+
       <LandingTestimonial testimonials={TESTIMONIALS} />
 
       <LandingCTA
@@ -185,8 +192,6 @@ export default function YourGarageLandingPage() {
         subhead="Add your cars and see all the details in one place. Start free — upgrade for full owner reference tools."
         primaryCtaLabel="Add Your Car"
         primaryCtaHref="/garage"
-        secondaryCtaLabel="Browse Cars First"
-        secondaryCtaHref="/browse-cars"
         note="Free tier includes collection + favorites. Enthusiast+ unlocks owner reference."
       />
     </div>

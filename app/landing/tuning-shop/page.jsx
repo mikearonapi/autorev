@@ -1,4 +1,4 @@
-import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
 export const metadata = {
@@ -88,8 +88,8 @@ export default function TuningShopLandingPage() {
         subhead="Configure upgrades, see estimated power gains, and build with a plan — instead of throwing parts at your car and hoping for the best."
         primaryCtaLabel="Open Tuning Shop"
         primaryCtaHref="/tuning-shop"
-        secondaryCtaLabel="Ask AL for Advice"
-        secondaryCtaHref="/al"
+        secondaryCtaLabel="See How It Works"
+        secondaryCtaHref="#features"
         videoSrc="/videos/tuning-shop-demo.mp4"
         phoneSrc="/images/onboarding/tuning-shop-01-overview.png"
         phoneAlt="AutoRev Tuning Shop overview"
@@ -196,6 +196,18 @@ export default function TuningShopLandingPage() {
         imageCaption="Saved Builds"
       />
 
+      <LandingAL
+        pageId="tuning-shop"
+        headline="Get Build Advice from AL"
+        description="Not sure where to start? AL knows your platform and can recommend mods based on your goals and budget. Ask about compatibility, common build paths, and what to prioritize."
+        exampleQuestions={[
+          "What mods should I do first on my E92 M3 for track use?",
+          "Is FBO worth it on the N54, or should I go straight to single turbo?",
+          "What's a good 400whp build for a 370Z on a $5k budget?",
+        ]}
+        imageSrc="/images/onboarding/ai-al-04-response-specs.png"
+      />
+
       <LandingTestimonial testimonials={TESTIMONIALS} />
 
       <LandingCTA
@@ -204,8 +216,6 @@ export default function TuningShopLandingPage() {
         subhead="Stop guessing. See what your build could achieve before you start buying parts."
         primaryCtaLabel="Open Tuning Shop"
         primaryCtaHref="/tuning-shop"
-        secondaryCtaLabel="Ask AL About Your Build"
-        secondaryCtaHref="/al"
         note="Free to explore. Save builds with a free account."
       />
     </div>

@@ -22,6 +22,18 @@ import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
 
 // NOTE: "Visitors" must be unique visitors. Do NOT sum per-page visitors (double counts).
 
+/**
+ * Filter out internal pages from analytics data.
+ * These pages are admin-only and shouldn't be included in public-facing metrics.
+ */
+function filterInternalPages(pages) {
+  if (!pages || !Array.isArray(pages)) return [];
+  return pages.filter(p => {
+    const path = (p.path || '').toLowerCase();
+    return !path.startsWith('/admin') && !path.startsWith('/internal');
+  });
+}
+
 // Compact Icons
 const Icons = {
   Users: ({ size = 16 }) => (
