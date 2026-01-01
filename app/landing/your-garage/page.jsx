@@ -2,9 +2,9 @@ import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTracki
 import styles from './page.module.css';
 
 export const metadata = {
-  title: 'Own Smarter',
+  title: 'Your Garage',
   description: "Everything about your car. One place. Build a personal command center for maintenance, recalls, and known issues.",
-  alternates: { canonical: '/landing/own-smarter' },
+  alternates: { canonical: '/landing/your-garage' },
 };
 
 const Icons = {
@@ -55,13 +55,13 @@ const Icons = {
   ),
 };
 
-export default function OwnSmarterLandingPage() {
+export default function YourGarageLandingPage() {
   return (
     <div className={styles.page}>
-      <LandingTracking pageId="own-smarter" />
+      <LandingTracking pageId="your-garage" />
 
       <LandingHero
-        pageId="own-smarter"
+        pageId="your-garage"
         badgeText="For proud owners"
         headline="Your Car's Command Center"
         subhead="Maintenance specs, recall awareness, known issues, and more — organized around your specific car."
@@ -144,7 +144,7 @@ export default function OwnSmarterLandingPage() {
       </section>
 
       <LandingCTA
-        pageId="own-smarter"
+        pageId="your-garage"
         headline="Know your car better"
         subhead="Start your Garage today. Save favorites for free — upgrade anytime to unlock VIN decode, recalls, and owner reference tools."
         primaryCtaLabel="Add Your Car Free"

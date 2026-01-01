@@ -2,9 +2,9 @@ import { FeatureShowcase, LandingCTA, LandingHero, LandingProblem, LandingTracki
 import styles from './page.module.css';
 
 export const metadata = {
-  title: 'Build Better',
+  title: 'Tuning Shop',
   description: 'Build with confidence. Car-specific fitments, real dyno data, and AI build guidance for your platform.',
-  alternates: { canonical: '/landing/build-better' },
+  alternates: { canonical: '/landing/tuning-shop' },
 };
 
 const Icons = {
@@ -39,13 +39,13 @@ const Icons = {
   ),
 };
 
-export default function BuildBetterLandingPage() {
+export default function TuningShopLandingPage() {
   return (
     <div className={styles.page}>
-      <LandingTracking pageId="build-better" />
+      <LandingTracking pageId="tuning-shop" />
 
       <LandingHero
-        pageId="build-better"
+        pageId="tuning-shop"
         badgeText="For builders & track rats"
         headline="Stop Guessing. Start Building."
         subhead="Car-specific fitments, real dyno measurements, and build recommendations from AI that actually knows cars."
@@ -140,7 +140,7 @@ export default function BuildBetterLandingPage() {
       </section>
 
       <LandingCTA
-        pageId="build-better"
+        pageId="tuning-shop"
         headline="Build something great"
         subhead="Start with upgrade planning today. Unlock full parts + dyno databases with the Tuner tier when you're ready."
         primaryCtaLabel="Browse Tuning Shop"

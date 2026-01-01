@@ -9,13 +9,13 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
       expectedUrl: /\/car-selector(?:\?|#|$)/,
     },
     {
-      route: '/landing/own-smarter',
+      route: '/landing/your-garage',
       heading: "Your Car's Command Center",
       cta: 'Add Your Car',
       expectedUrl: /\/garage(?:\?|#|$)/,
     },
     {
-      route: '/landing/build-better',
+      route: '/landing/tuning-shop',
       heading: 'Stop Guessing. Start Building.',
       cta: 'Explore Parts',
       expectedUrl: /\/tuning-shop(?:\?|#|$)/,
