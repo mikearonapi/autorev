@@ -123,14 +123,13 @@ export default async function Image() {
             {/* Feature badge */}
             <div
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: `rgba(212,175,55,0.2)`,
+                background: 'rgba(212,175,55,0.2)',
                 border: `2px solid ${BRAND.gold}`,
                 borderRadius: '50px',
                 padding: '8px 18px',
-                alignSelf: 'flex-start',
               }}
             >
               <span style={{ color: BRAND.goldLight, fontSize: '16px', fontWeight: 600 }}>
