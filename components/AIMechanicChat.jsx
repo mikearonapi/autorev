@@ -26,6 +26,7 @@ import {
   addKnownCar
 } from '../lib/stores/alPreferencesStore';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { trackALConversationStart } from '@/lib/ga4';
 
 /**
  * Hook for responsive screen size detection
@@ -1137,7 +1138,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     setCurrentTool(null);
     setLoadingMessage('Thinking...');
     
-    // Track AL question asked
+    // Track AL question asked (internal analytics)
     const isFirstMessage = messages.length === 0;
     trackEvent(isFirstMessage ? ANALYTICS_EVENTS.AL_CONVERSATION_STARTED : ANALYTICS_EVENTS.AL_QUESTION_ASKED, {
       carSlug: focusedCar?.slug || selectedCar?.slug,
@@ -1146,6 +1147,15 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       messageLength: userMessage.length,
       isFirstMessage
     });
+    
+    // Track GA4 al_conversation_start (only on first message)
+    if (isFirstMessage) {
+      trackALConversationStart(
+        user?.id || 'anonymous',
+        userMessage,
+        focusedCar?.slug || selectedCar?.slug
+      );
+    }
     
     // Show the display message to the user, but send the full message to AL
     const newMessages = [...messages, { role: 'user', content: displayMessage }];

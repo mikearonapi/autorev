@@ -117,7 +117,7 @@ export async function GET(request) {
     }
     
     // ------------------------------------------------------------------
-    // Select which users we’re returning (page) + how we compute pagination
+    // Select which users we're returning (page) + how we compute pagination
     // ------------------------------------------------------------------
     /** @type {any[]} */
     let profiles = [];
@@ -149,23 +149,35 @@ export async function GET(request) {
     const isDbSort = dbSortFields.includes(sort);
     const isEngagementSort = engagementSortFields.includes(sort);
 
+    // Always query user_profiles directly for the most accurate/fresh data
+    // auth.admin.listUsers can have replication lag causing stale counts
     if (!isFiltered) {
-      // Default view: build the page from auth.users (authoritative)
-      userIds = authUsersForPage.map(u => u.id).filter(Boolean);
+      // Default view: query user_profiles directly (more reliable than auth.admin.listUsers)
+      const pagination = buildPagination({ page, limit, total: Number.MAX_SAFE_INTEGER });
+      const offset = pagination.offset;
 
-      const { data: pageProfiles, error: pageProfilesError } = await supabase
+      let query = supabase
         .from('user_profiles')
-        .select(profileSelect)
-        .in('id', userIds);
+        .select(profileSelect, { count: 'exact' });
+
+      if (isDbSort) {
+        query = query.order(sort, { ascending: order === 'asc' });
+      } else {
+        query = query.order('created_at', { ascending: false });
+      }
+
+      query = query.range(offset, offset + limit - 1);
+
+      const { data: pageProfiles, count: profileCount, error: pageProfilesError } = await query;
 
       if (pageProfilesError) {
         console.error('[AdminUsers] Profiles error:', pageProfilesError);
         return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
       }
 
-      const profileById = new Map((pageProfiles || []).map(p => [p.id, p]));
-      profiles = buildProfilesForAuthUsers(authUsersForPage, profileById);
-      count = (typeof authUsersTotal === 'number' ? authUsersTotal : null);
+      profiles = pageProfiles || [];
+      count = typeof profileCount === 'number' ? profileCount : null;
+      userIds = profiles.map(p => p.id);
     } else {
       // Filtered view: keep DB-driven query for correct filtering behavior
       const pagination = buildPagination({ page, limit, total: Number.MAX_SAFE_INTEGER });
@@ -257,10 +269,10 @@ export async function GET(request) {
       attributionMap[a.user_id] = a;
     });
 
-    // Get AL credits data
+    // Get AL credits data - include messages_this_month for more accurate usage display
     const { data: alCredits } = await supabase
       .from('al_user_credits')
-      .select('user_id, current_credits, credits_used_this_month, is_unlimited')
+      .select('user_id, current_credits, credits_used_this_month, messages_this_month, is_unlimited')
       .in('user_id', userIds);
 
     const alCreditsMap = {};
@@ -446,9 +458,10 @@ export async function GET(request) {
         serviceLogs: serviceLogsMap[profile.id] || 0,     // user_service_logs (maintenance)
         feedbackCount: feedbackMap[profile.id] || 0,      // user_feedback
         
-        // AL usage (REAL conversation count from al_conversations)
+        // AL usage (REAL data from al_user_credits and al_conversations)
         alCredits: credits.current_credits || 0,
         alCreditsUsed: credits.credits_used_this_month || 0,
+        alMessagesThisMonth: credits.messages_this_month || 0,  // Actual message count
         alConversations: alConvoData.count,               // REAL count from al_conversations
         alLastUsed: alConvoData.lastUsed,                 // from al_conversations.last_message_at
         
@@ -526,8 +539,8 @@ export async function GET(request) {
       .from('user_profiles')
       .select('id', { count: 'exact', head: true });
 
-    // Prefer auth total (authoritative). Fallback to profile count.
-    const totalUsers = (typeof authUsersTotal === 'number' ? authUsersTotal : totalProfileUsers) || 0;
+    // Prefer profile count (direct DB query is more reliable than auth.admin.listUsers which can lag)
+    const totalUsers = totalProfileUsers || (typeof authUsersTotal === 'number' ? authUsersTotal : 0);
 
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -568,12 +581,11 @@ export async function GET(request) {
     };
 
     // Pagination totals:
-    // - When filtered: use the filtered profile count (matches the rows returned)
-    // - Otherwise: use auth total (authoritative), fallback to profile count if needed
+    // - Use the count from query (profile count) - more reliable than auth.admin.listUsers
     const paginationTotal =
       (typeof count === 'number'
         ? count
-        : (typeof authUsersTotal === 'number' ? authUsersTotal : (totalProfileUsers || 0)));
+        : (totalProfileUsers || (typeof authUsersTotal === 'number' ? authUsersTotal : 0)));
     responseBody.pagination.total = paginationTotal;
     responseBody.pagination.totalPages = Math.max(1, Math.ceil(paginationTotal / limit));
 

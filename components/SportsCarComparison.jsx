@@ -17,6 +17,7 @@ import CarImage from './CarImage';
 import CarActionMenu from './CarActionMenu';
 import ScoringInfo from './ScoringInfo';
 import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
+import { trackCarSelectorComplete } from '@/lib/ga4';
 
 /**
  * Extract the low price from a price range string like "$55-70K" → 55000
@@ -470,6 +471,31 @@ export default function SportsCarComparison() {
   const recommendations = useMemo(() => {
     return getRecommendations(filteredCars, weights);
   }, [filteredCars, weights]);
+
+  // Track GA4 car_selector_complete event (once per session when recommendations are generated)
+  const ga4TrackedRef = useRef(false);
+  useEffect(() => {
+    // Only track once per component mount
+    if (ga4TrackedRef.current) return;
+    
+    // Check if we have at least one valid recommendation
+    const recommendedCars = Object.values(recommendations).filter(car => car && car.slug);
+    if (recommendedCars.length === 0) return;
+    
+    // Fire the GA4 event
+    const selectedCarSlugs = recommendedCars.map(car => car.slug);
+    const filtersApplied = {
+      weights,
+      mustHaveFilters,
+      priceMin,
+      priceMax,
+      searchTerm: searchTerm || undefined,
+    };
+    
+    trackCarSelectorComplete(selectedCarSlugs, filtersApplied);
+    ga4TrackedRef.current = true;
+    console.log('[SportsCarComparison] GA4 car_selector_complete tracked:', selectedCarSlugs.length, 'cars');
+  }, [recommendations, weights, mustHaveFilters, priceMin, priceMax, searchTerm]);
 
   // Active priorities for summary display (legacy, kept for potential future use)
   const activePriorities = useMemo(() => 

@@ -29,6 +29,7 @@ import { getPrefetchedData } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { trackAddToGarage } from '@/lib/ga4';
 
 /**
  * @typedef {Object} FavoriteCar
@@ -347,7 +348,7 @@ export function FavoritesProvider({ children }) {
     // Track activity (fire-and-forget)
     trackFavorite(car.slug, car.name, user?.id);
     
-    // Track analytics event
+    // Track internal analytics event
     trackEvent(ANALYTICS_EVENTS.CAR_FAVORITED, {
       carSlug: car.slug,
       carName: car.name,
@@ -355,6 +356,9 @@ export function FavoritesProvider({ children }) {
       carCategory: car.category,
       isAuthenticated
     });
+    
+    // Track GA4 add_to_garage event
+    trackAddToGarage(user?.id || 'anonymous', car.slug, 'favorite');
 
     // If authenticated, save to Supabase
     if (isAuthenticated && user?.id) {

@@ -303,8 +303,8 @@ async function handleGet(request) {
     const periodUsers = periodUsersResult.data || [];
     const previousPeriodUsers = previousPeriodUsersResult.data || [];
 
-    // Prefer auth total (authoritative). Fallback to profiles.
-    const totalUsers = (typeof authUsersTotal === 'number' ? authUsersTotal : allUsers.length);
+    // Prefer profiles count (direct DB query is more reliable than auth.admin.listUsers which can have replication lag)
+    const totalUsers = allUsers.length || (typeof authUsersTotal === 'number' ? authUsersTotal : 0);
     
     const usersByTier = allUsers.reduce((acc, u) => {
       const tier = u.subscription_tier || 'free';

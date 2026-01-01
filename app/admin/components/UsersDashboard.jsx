@@ -28,13 +28,19 @@ const TIER_COLORS = {
   admin: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' },
 };
 
-// Format relative time
+// Format relative time - using UTC dates to avoid timezone issues
 function formatRelativeTime(dateStr) {
   if (!dateStr) return 'Never';
   const date = new Date(dateStr);
   const now = new Date();
-  const diff = now - date;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  
+  // Compare UTC date strings to get accurate day difference
+  const dateUTC = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const nowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  
+  const diffMs = nowUTC - dateUTC;
+  const days = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  
   if (days === 0) return 'Today';
   if (days === 1) return 'Yesterday';
   if (days < 7) return `${days}d ago`;
@@ -134,7 +140,7 @@ function ActivityIndicator({ level }) {
 }
 
 // Main component
-export function UsersDashboard({ token, range = '7d' }) {
+export function UsersDashboard({ token, range = '7d', currentUserId = null }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -384,7 +390,13 @@ export function UsersDashboard({ token, range = '7d' }) {
                   <td><TierBadge tier={user.tier} /></td>
                   <td><SourceBadge source={user.source} /></td>
                   <td className={styles.dateCell}>{formatRelativeTime(user.createdAt)}</td>
-                  <td className={styles.dateCell}>{formatRelativeTime(user.lastSignIn)}</td>
+                  <td className={styles.dateCell}>
+                    {user.id === currentUserId ? (
+                      <span className={styles.activeNow}>Active Now</span>
+                    ) : (
+                      formatRelativeTime(user.lastSignIn)
+                    )}
+                  </td>
                   <td><ActivityIndicator level={getActivityLevel(user)} /></td>
                   <td className={styles.engagementCol}><EngagementValue value={user.garageVehicles} label="Garage vehicles" /></td>
                   <td className={styles.engagementCol}><EngagementValue value={user.favorites} label="Favorited cars" /></td>
@@ -430,8 +442,8 @@ export function UsersDashboard({ token, range = '7d' }) {
                         <div className={styles.expandedSection}>
                           <h4>AL Usage</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>Credits:</span> {user.alCredits}</div>
-                            <div><span>Used:</span> {user.alCreditsUsed}</div>
+                            <div><span>Credits:</span> {user.isUnlimited ? '∞' : user.alCredits}</div>
+                            <div><span>Messages:</span> {user.alMessagesThisMonth || 0}</div>
                             <div><span>Conversations:</span> {user.alConversations}</div>
                             <div><span>Last Used:</span> {formatDate(user.alLastUsed)}</div>
                           </div>
@@ -441,7 +453,14 @@ export function UsersDashboard({ token, range = '7d' }) {
                           <h4>Dates</h4>
                           <div className={styles.expandedGrid}>
                             <div><span>Joined:</span> {formatDate(user.createdAt)}</div>
-                            <div><span>Last Sign In:</span> {formatDate(user.lastSignIn)}</div>
+                            <div>
+                              <span>Last Sign In:</span>{' '}
+                              {user.id === currentUserId ? (
+                                <span className={styles.activeNow}>Active Now</span>
+                              ) : (
+                                formatDate(user.lastSignIn)
+                              )}
+                            </div>
                           </div>
                         </div>
                         

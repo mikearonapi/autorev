@@ -14,6 +14,7 @@ import {
 import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
 import { getSessionEarly, clearSessionCache } from '@/lib/sessionCache';
 import { useLoadingProgress } from './LoadingProgressProvider';
+import { trackSignUp as ga4TrackSignUp, trackLogin as ga4TrackLogin } from '@/lib/ga4';
 import dynamic from 'next/dynamic';
 
 // Dynamically import OnboardingFlow to avoid SSR issues
@@ -862,6 +863,17 @@ export function AuthProvider({ children }) {
             setTimeout(() => {
               setState(prev => ({ ...prev, showWelcomeToast: true }));
             }, 500);
+            
+            // GA4 tracking: Check if new signup vs returning user
+            const userCreatedAt = new Date(user.created_at);
+            const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+            if (isNewUser) {
+              console.log('[AuthProvider] New user signup detected - firing GA4 sign_up');
+              ga4TrackSignUp(user.app_metadata?.provider || 'google');
+            } else {
+              console.log('[AuthProvider] Returning user login - firing GA4 login');
+              ga4TrackLogin(user.app_metadata?.provider || 'google');
+            }
           }
           
           // Clean up auth_ts from URL if present
@@ -961,6 +973,17 @@ export function AuthProvider({ children }) {
           setTimeout(() => {
             setState(prev => ({ ...prev, showWelcomeToast: true }));
           }, 500);
+          
+          // GA4 tracking: Check if new signup vs returning user
+          const userCreatedAt = new Date(session.user.created_at);
+          const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+          if (isNewUser) {
+            console.log('[AuthProvider] New user signup via SIGNED_IN - firing GA4 sign_up');
+            ga4TrackSignUp(session.user.app_metadata?.provider || 'google');
+          } else {
+            console.log('[AuthProvider] Returning user via SIGNED_IN - firing GA4 login');
+            ga4TrackLogin(session.user.app_metadata?.provider || 'google');
+          }
           
           // Fire off prefetch in background (don't wait for it)
           prefetchAllUserData(session.user.id).catch(err => {
@@ -1118,6 +1141,17 @@ export function AuthProvider({ children }) {
           setTimeout(() => {
             setState(prev => ({ ...prev, showWelcomeToast: true }));
           }, 500);
+          
+          // GA4 tracking: Check if new signup vs returning user
+          const userCreatedAt = new Date(session.user.created_at);
+          const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+          if (isNewUser) {
+            console.log('[AuthProvider] New user signup via INITIAL_SESSION - firing GA4 sign_up');
+            ga4TrackSignUp(session.user.app_metadata?.provider || 'google');
+          } else {
+            console.log('[AuthProvider] Returning user via INITIAL_SESSION - firing GA4 login');
+            ga4TrackLogin(session.user.app_metadata?.provider || 'google');
+          }
         }
         
         // Load data silently in background (same path for fresh and recovery)

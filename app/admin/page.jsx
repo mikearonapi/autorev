@@ -691,6 +691,7 @@ export default function AdminDashboardPage() {
             <UsersDashboard 
               token={session?.access_token}
               range={timeRange}
+              currentUserId={user?.id}
             />
           </section>
         )}

@@ -28,6 +28,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { trackCarView } from '@/lib/activityTracker';
 import { useCarPopularParts } from '@/hooks/useCarData';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { trackCarDetailView } from '@/lib/ga4';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -343,7 +344,7 @@ export default function CarDetailClient({ car: rawCar }) {
     if (car && !hasTrackedView.current) {
       trackCarView(car.slug, car.name, 'direct', user?.id);
       
-      // Track analytics event
+      // Track internal analytics event
       trackEvent(ANALYTICS_EVENTS.CAR_SELECTED, {
         carSlug: car.slug,
         carName: car.name,
@@ -352,6 +353,9 @@ export default function CarDetailClient({ car: rawCar }) {
         carYears: car.years,
         carHp: car.hp
       });
+      
+      // Track GA4 car_detail_view event
+      trackCarDetailView(car.slug, user?.id);
       
       hasTrackedView.current = true;
     }
