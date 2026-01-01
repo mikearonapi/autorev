@@ -163,9 +163,11 @@ export default function AdminDashboardPage() {
     }
     
     try {
+      // Add cache-busting timestamp to ensure fresh data
+      const cacheBust = `&_t=${Date.now()}`;
       const [dashboardRes, financialsRes, usageRes, retentionRes, healthRes, alertsRes, stripeRes, siteRes, emailRes] = await Promise.all([
-        fetch(`/api/admin/dashboard?range=${apiRange}${monthYearParams}`, {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        fetch(`/api/admin/dashboard?range=${apiRange}${monthYearParams}${cacheBust}`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}`, 'Cache-Control': 'no-cache' }
         }),
         fetch(`/api/admin/financials?range=${apiRange}${monthYearParams}`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
