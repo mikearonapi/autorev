@@ -1,10 +1,125 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
+const siteUrl = 'https://autorev.app';
+const pageUrl = `${siteUrl}/landing/find-your-car`;
+
 export const metadata = {
-  title: 'Find Your Car | AutoRev',
-  description: "Not sure which sports car is right for you? Set your priorities and we'll match you with cars that actually fit what YOU care about.",
-  alternates: { canonical: '/landing/find-your-car' },
+  title: 'Find Your Perfect Sports Car | Car Matching Tool | AutoRev',
+  description: "Stop researching in circles. Tell us what matters — sound, track, reliability, comfort, value — and we'll match you with sports cars that actually fit YOUR priorities. 2,500+ cars scored against your preferences.",
+  keywords: [
+    'sports car finder',
+    'car matching tool',
+    'which sports car should I buy',
+    'car comparison tool',
+    'best sports car for me',
+    'car selector quiz',
+    'sports car recommendation',
+    'find the right car',
+    'car buying guide',
+    'sports car priorities',
+    'Porsche finder',
+    'BMW M car comparison',
+    'Corvette vs Cayman',
+    'best track car',
+    'best daily driver sports car',
+  ],
+  alternates: { 
+    canonical: pageUrl,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: pageUrl,
+    siteName: 'AutoRev',
+    title: 'Find Your Perfect Sports Car | AutoRev',
+    description: "Set your priorities. Get matched with cars that fit. No more guessing — just cars scored against what YOU care about.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev Car Selector - Find Your Perfect Sports Car Match',
+        type: 'image/png',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@autorev',
+    creator: '@autorev',
+    title: 'Find Your Perfect Sports Car | AutoRev',
+    description: "Set your priorities. Get matched with cars that fit. 2,500+ sports cars scored against what YOU care about.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev Car Selector - Find Your Perfect Sports Car Match',
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
+// JSON-LD Structured Data for the Car Selector Landing Page
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Find Your Perfect Sports Car',
+  description: "Tell us what matters — sound, track, reliability, comfort, value — and we'll match you with sports cars that actually fit YOUR priorities.",
+  url: pageUrl,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'AutoRev',
+    url: siteUrl,
+  },
+  mainEntity: {
+    '@type': 'SoftwareApplication',
+    name: 'AutoRev Car Selector',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web',
+    description: 'AI-powered car matching tool that scores sports cars against your personal priorities',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    featureList: [
+      'Set priorities across 7 categories (sound, track, reliability, comfort, value, fun, aftermarket)',
+      'Get personalized car rankings',
+      'See score breakdowns for each car',
+      'Filter by price range and body style',
+      'Compare multiple cars side-by-side',
+    ],
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Find Your Car',
+        item: pageUrl,
+      },
+    ],
+  },
 };
 
 const Icons = {
@@ -73,6 +188,11 @@ const TESTIMONIALS = [
 export default function FindYourCarLandingPage() {
   return (
     <div className={styles.page}>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+      />
       <LandingTracking pageId="find-your-car" />
 
       <LandingHero

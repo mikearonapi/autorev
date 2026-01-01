@@ -1,10 +1,129 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
+const siteUrl = 'https://autorev.app';
+const pageUrl = `${siteUrl}/landing/your-garage`;
+
 export const metadata = {
-  title: 'Your Garage | AutoRev',
-  description: "Stop digging through forums and PDFs. All the details about your car — maintenance specs, safety ratings, known issues — in one place.",
-  alternates: { canonical: '/landing/your-garage' },
+  title: 'My Garage - Digital Car Collection & Maintenance Hub | AutoRev',
+  description: "Your car's complete reference in one place. Maintenance specs, oil types, fluid capacities, safety ratings, common issues, and service intervals — organized for YOUR specific vehicle. No more forum digging.",
+  keywords: [
+    'car maintenance tracker',
+    'vehicle maintenance app',
+    'car collection tracker',
+    'digital garage',
+    'car specs database',
+    'maintenance schedule app',
+    'oil type lookup',
+    'car fluid capacity',
+    'vehicle service intervals',
+    'car safety ratings',
+    'common car problems',
+    'car known issues',
+    'BMW maintenance specs',
+    'Porsche owner reference',
+    'sports car maintenance',
+    'car recall lookup',
+    'vehicle health tracker',
+  ],
+  alternates: { 
+    canonical: pageUrl,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: pageUrl,
+    siteName: 'AutoRev',
+    title: 'My Garage - Your Car Reference Hub | AutoRev',
+    description: "Everything about your car in one place. Maintenance specs, safety ratings, known issues — no more digging through forums and PDFs.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev My Garage - Digital Car Collection & Maintenance Hub',
+        type: 'image/png',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@autorev',
+    creator: '@autorev',
+    title: 'My Garage - Your Car Reference Hub | AutoRev',
+    description: "Your car's complete reference in one place. Specs, safety, issues — organized for YOUR vehicle.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev My Garage - Digital Car Collection & Maintenance Hub',
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
+// JSON-LD Structured Data for the My Garage Landing Page
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'My Garage - Digital Car Collection & Maintenance Hub',
+  description: "Your car's complete reference in one place. Maintenance specs, oil types, fluid capacities, safety ratings, common issues, and service intervals.",
+  url: pageUrl,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'AutoRev',
+    url: siteUrl,
+  },
+  mainEntity: {
+    '@type': 'SoftwareApplication',
+    name: 'AutoRev My Garage',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web',
+    description: 'Digital garage to track your car collection with complete maintenance specs, safety ratings, and known issues',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      description: 'Free tier includes car collection, favorites, and basic specs. Enthusiast+ unlocks full owner reference.',
+    },
+    featureList: [
+      'Track cars you own in your digital collection',
+      'Save cars you\'re researching as favorites',
+      'View maintenance specs (oil type, fluid capacities)',
+      'Access NHTSA safety ratings and crash test results',
+      'Learn about common issues reported by owners',
+      'Get service interval recommendations',
+    ],
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'My Garage',
+        item: pageUrl,
+      },
+    ],
+  },
 };
 
 const Icons = {
@@ -69,6 +188,11 @@ const TESTIMONIALS = [
 export default function YourGarageLandingPage() {
   return (
     <div className={styles.page}>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+      />
       <LandingTracking pageId="your-garage" />
 
       <LandingHero

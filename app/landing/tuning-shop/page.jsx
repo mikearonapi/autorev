@@ -1,10 +1,131 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
 import styles from './page.module.css';
 
+const siteUrl = 'https://autorev.app';
+const pageUrl = `${siteUrl}/landing/tuning-shop`;
+
 export const metadata = {
-  title: 'Tuning Shop | AutoRev',
-  description: 'Stop guessing what mods to buy. Plan your build, see estimated power gains, and build with a plan instead of throwing parts at your car.',
-  alternates: { canonical: '/landing/tuning-shop' },
+  title: 'Tuning Shop - Car Modification Planner & Build Calculator | AutoRev',
+  description: "Plan your build before you spend. Configure upgrades, see estimated horsepower gains, and visualize your complete build — intake, exhaust, tune, suspension, wheels. Stop throwing parts at your car and build with a plan.",
+  keywords: [
+    'car modification planner',
+    'car build calculator',
+    'horsepower calculator',
+    'car tuning guide',
+    'performance upgrade planner',
+    'car mod builder',
+    'intake exhaust tune calculator',
+    'suspension upgrade guide',
+    'wheel fitment calculator',
+    'FBO build calculator',
+    'E85 tune calculator',
+    'BMW tuning guide',
+    'Porsche modification planner',
+    'Corvette build planner',
+    'sports car mods',
+    'best car upgrades',
+    'dyno power gains',
+    'car build cost estimator',
+  ],
+  alternates: { 
+    canonical: pageUrl,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: pageUrl,
+    siteName: 'AutoRev',
+    title: 'Tuning Shop - Plan Your Build | AutoRev',
+    description: "Configure upgrades, see estimated power gains, and build with a plan. Stop guessing — visualize your complete build before spending a dollar.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev Tuning Shop - Car Modification Planner & Build Calculator',
+        type: 'image/png',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@autorev',
+    creator: '@autorev',
+    title: 'Tuning Shop - Plan Your Build | AutoRev',
+    description: "Configure mods, see HP gains, build with a plan. Stop throwing parts at your car — visualize first.",
+    images: [
+      {
+        url: `${pageUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'AutoRev Tuning Shop - Car Modification Planner & Build Calculator',
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
+// JSON-LD Structured Data for the Tuning Shop Landing Page
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Tuning Shop - Car Modification Planner & Build Calculator',
+  description: "Plan your build before you spend. Configure upgrades, see estimated horsepower gains, and visualize your complete build.",
+  url: pageUrl,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'AutoRev',
+    url: siteUrl,
+  },
+  mainEntity: {
+    '@type': 'SoftwareApplication',
+    name: 'AutoRev Tuning Shop',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web',
+    description: 'Car modification planner that lets you configure upgrades, see estimated power gains, and visualize your complete build',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      description: 'Free to explore and plan builds. Save builds with a free account.',
+    },
+    featureList: [
+      'Configure intake, exhaust, tune, suspension, wheels upgrades',
+      'See estimated HP and torque gains per modification',
+      'Track running total of projected output',
+      'Estimate build cost as you configure',
+      'Save and compare multiple build configurations',
+      'Visualize wheel and tire setups',
+      'Get AI-powered build advice from AL',
+    ],
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Tuning Shop',
+        item: pageUrl,
+      },
+    ],
+  },
 };
 
 const Icons = {
@@ -81,6 +202,11 @@ const TESTIMONIALS = [
 export default function TuningShopLandingPage() {
   return (
     <div className={styles.page}>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+      />
       <LandingTracking pageId="tuning-shop" />
 
       <LandingHero

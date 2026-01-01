@@ -240,6 +240,25 @@ export default async function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // Marketing landing pages (high priority for SEO)
+    {
+      url: `${SITE_URL}/landing/find-your-car`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/landing/your-garage`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/landing/tuning-shop`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
   ];
 
   // ==========================================================================
