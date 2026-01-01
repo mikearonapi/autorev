@@ -21,13 +21,17 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
  * Safely call gtag function
  * Handles cases where gtag is undefined (ad blockers, script not loaded)
  */
-function safeGtag(...args: Parameters<typeof window.gtag>): void {
+function safeGtag(
+  command: 'config' | 'event' | 'js' | 'set' | 'consent',
+  ...args: unknown[]
+): void {
   if (typeof window === 'undefined') return;
   if (typeof window.gtag !== 'function') return;
   if (!GA_MEASUREMENT_ID) return;
   
   try {
-    window.gtag(...args);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window.gtag as any)(command, ...args);
   } catch (error) {
     // Silently fail - analytics should never break the app
     console.warn('[GA4] gtag call failed:', error);
