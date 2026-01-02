@@ -211,8 +211,8 @@ export default function TuningShopLandingPage() {
 
       <LandingHero
         pageId="tuning-shop"
-        headline="Build Smarter, Not Random"
-        subhead="Configure upgrades, see estimated power gains, and build with a plan — instead of throwing parts at your car and hoping for the best."
+        headline="We've Done the Research For You"
+        subhead="The information is out there, it's just hard to find. Configure upgrades, see estimated power gains, and build with a plan — without the forum trolls."
         primaryCtaLabel="Open Tuning Shop"
         primaryCtaHref="/tuning-shop"
         secondaryCtaLabel="See How It Works"

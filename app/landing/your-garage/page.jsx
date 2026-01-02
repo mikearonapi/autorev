@@ -198,7 +198,7 @@ export default function YourGarageLandingPage() {
       <LandingHero
         pageId="your-garage"
         headline="Everything About Your Car. One Place."
-        subhead="Maintenance specs, safety ratings, known issues — organized around YOUR specific car. No more digging through forums and PDFs."
+        subhead="Maintenance specs, parts and records. Known issues, recalls, and recommendations based on VIN. No more digging through forums and PDFs."
         primaryCtaLabel="Add Your Car"
         primaryCtaHref="/garage"
         secondaryCtaLabel="See How It Works"
