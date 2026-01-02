@@ -2029,21 +2029,30 @@
 .carListItem {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   padding: 12px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   margin-bottom: 8px;
-  cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .carListItem:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(212, 175, 55, 0.3);
+}
+
+.carListClickable {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
 }
 
 .carListImage {
@@ -2063,6 +2072,7 @@
 .carListInfo {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .carListName {
@@ -2071,12 +2081,25 @@
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .carListMeta {
   display: block;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carListActionWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .carListAction {
@@ -2148,6 +2171,46 @@
   .titleCompact {
     font-size: 12px;
     letter-spacing: 0.08em;
+  }
+  
+  /* Extra compact modal list for very small screens */
+  .carListItem {
+    padding: 8px 6px;
+    gap: 6px;
+  }
+  
+  .carListClickable {
+    gap: 8px;
+  }
+  
+  .carListImage {
+    width: 56px;
+    height: 38px;
+  }
+  
+  .carListName {
+    font-size: 12px;
+  }
+  
+  .carListMeta {
+    font-size: 10px;
+  }
+  
+  .carList {
+    padding: 0 8px 8px;
+  }
+  
+  .modalHeader h2 {
+    font-size: 18px;
+  }
+  
+  .searchBox {
+    padding: 0 8px;
+  }
+  
+  .searchHint {
+    padding: 0 8px;
+    font-size: 11px;
   }
 }
 
@@ -2333,6 +2396,60 @@
   .sortSelect {
     font-size: 14px;
     padding: 10px 28px 10px 12px;
+  }
+  
+  /* Modal car list mobile optimizations */
+  .carListItem {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+  
+  .carListClickable {
+    gap: 10px;
+  }
+  
+  .carListImage {
+    width: 60px;
+    height: 40px;
+  }
+  
+  .carListName {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  
+  .carListMeta {
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  .carListActionWrapper {
+    margin-left: 4px;
+  }
+  
+  .carListAction {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  
+  .carList {
+    padding: 0 12px 12px;
+  }
+  
+  .modalHeader {
+    padding: 16px;
+  }
+  
+  .searchBox {
+    padding: 0 12px;
+  }
+  
+  .searchHint {
+    padding: 0 12px;
   }
   
   .compareModal {

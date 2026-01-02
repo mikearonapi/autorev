@@ -255,7 +255,6 @@ function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [], cars = [
                   onSelect(car);
                   onClose();
                 }}
-                style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%', flex: 1, cursor: 'pointer' }}
               >
                 <div className={styles.carListImage}>
                   <CarImage car={car} variant="thumbnail" showName={false} />
@@ -267,7 +266,7 @@ function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [], cars = [
                   </span>
                 </div>
               </div>
-              <div className={styles.carListAction}>
+              <div className={styles.carListActionWrapper}>
                 <CarActionMenu car={car} variant="compact" theme="dark" />
               </div>
             </div>
