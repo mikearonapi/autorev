@@ -20,6 +20,7 @@ import {
 } from '@/lib/stripe';
 import { notifyPayment } from '@/lib/discord';
 import { logServerError } from '@/lib/serverErrorLogger';
+import { sendSubscribeEvent, sendPurchaseEvent } from '@/lib/metaConversionsApi';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -144,6 +145,20 @@ async function handleSubscriptionChange(subscription, isNew = false) {
       userId: user?.id,
       customerId,
     }).catch(err => console.error('[Stripe Webhook] Discord notification failed:', err));
+    
+    // Send Meta Conversions API Subscribe event for new paid subscriptions
+    if (user) {
+      sendSubscribeEvent(
+        { email: user.email || user.id }, // Use user ID as fallback if email not in profile
+        {
+          value: amount,
+          tier: tier,
+        },
+        {
+          eventSourceUrl: 'https://autorev.app/checkout',
+        }
+      ).catch(err => console.error('[Stripe Webhook] Meta Subscribe event failed:', err));
+    }
   }
 
   console.log('[Stripe Webhook] Subscription updated successfully');
@@ -275,6 +290,18 @@ async function handleCheckoutCompleted(session) {
           credits: creditPack.credits,
           userId: user.id,
         }).catch(err => console.error('[Stripe Webhook] Discord notification failed:', err));
+        
+        // Send Meta Conversions API Purchase event for AL credit packs
+        sendPurchaseEvent(
+          { email: user.email || user.id },
+          {
+            value: item.amount_total,
+            contentName: `AL Credits - ${creditPack.name || creditPack.credits + ' credits'}`,
+          },
+          {
+            eventSourceUrl: 'https://autorev.app/checkout',
+          }
+        ).catch(err => console.error('[Stripe Webhook] Meta Purchase event failed:', err));
 
         continue;
       }

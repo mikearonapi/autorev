@@ -19,6 +19,7 @@ import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
 import { sendWelcomeEmail } from '@/lib/email';
 import { processReferralSignup } from '@/lib/referralService';
+import { sendLeadEvent } from '@/lib/metaConversionsApi';
 
 // Admin client for analytics tracking
 const supabaseAdmin = createClient(
@@ -258,6 +259,19 @@ export async function GET(request) {
           // Send welcome email (fire-and-forget)
           sendWelcomeEmail(user).catch(err => 
             console.error('[Auth Callback] Welcome email failed:', err)
+          );
+          
+          // Send Meta Conversions API Lead event (fire-and-forget)
+          sendLeadEvent(user, {
+            eventSourceUrl: sourcePage ? `https://autorev.app${sourcePage}` : 'https://autorev.app/signup',
+            userAgent: request.headers.get('user-agent'),
+            clientIpAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+            customData: {
+              signup_method: user.app_metadata?.provider || 'email',
+              ...(carContext && { car_context: carContext }),
+            },
+          }).catch(err => 
+            console.error('[Auth Callback] Meta Lead event failed:', err)
           );
           
           // Track signup event and save attribution (fire-and-forget)
