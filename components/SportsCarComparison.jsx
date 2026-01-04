@@ -20,15 +20,28 @@ import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesSt
 import { trackCarSelectorComplete } from '@/lib/ga4';
 
 /**
- * Extract the low price from a price range string like "$55-70K" → 55000
+ * Extract the low price from a price range string
+ * Handles both abbreviated ("$55-70K") and full formats ("$1,300,000 - $1,700,000")
  * Falls back to priceAvg if parsing fails
  */
 function getPriceLow(car) {
   if (car.priceRange) {
-    // Match patterns like "$55-70K", "$85-100K", "$12-25K"
-    const match = car.priceRange.match(/\$(\d+)/);
+    // Match the first price value (digits with optional commas): "$1,300,000" or "$55"
+    const match = car.priceRange.match(/\$([\d,]+)/);
     if (match) {
-      return parseInt(match[1], 10) * 1000;
+      // Remove commas and parse as integer
+      const rawNumber = parseInt(match[1].replace(/,/g, ''), 10);
+      
+      // Check if string uses 'K' abbreviation (e.g., "$55-70K")
+      const hasKSuffix = /K\b/i.test(car.priceRange);
+      
+      // For abbreviated amounts with K suffix and small numbers, multiply by 1000
+      // For full dollar amounts (e.g., "$1,300,000"), use as-is
+      if (hasKSuffix && rawNumber < 10000) {
+        return rawNumber * 1000;
+      }
+      
+      return rawNumber;
     }
   }
   return car.priceAvg;
