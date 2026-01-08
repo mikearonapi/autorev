@@ -28,10 +28,14 @@ export default function MyBuildsSection() {
 
   async function fetchMyBuilds() {
     try {
-      const { data, error } = await supabase.rpc('get_user_community_posts', {
-        p_user_id: user.id,
-        p_limit: 20,
-      });
+      // Query only published builds for this user
+      const { data, error } = await supabase
+        .from('community_posts')
+        .select('id, title, slug, car_name, post_type')
+        .eq('user_id', user.id)
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
       if (error) throw error;
       setBuilds(data || []);

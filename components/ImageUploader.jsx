@@ -1,23 +1,67 @@
 'use client';
 
 /**
- * Image Uploader Component
+ * Media Uploader Component
  * 
- * Drag-and-drop image upload with preview.
+ * Drag-and-drop image and video upload with preview.
  * Uploads to /api/uploads endpoint.
+ * 
+ * Supports:
+ * - Images: JPEG, PNG, WebP, GIF (up to 10MB)
+ * - Videos: MP4, WebM, MOV (up to 500MB)
  */
 
 import React, { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './ImageUploader.module.css';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+// File size limits
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB for images
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB for videos
+
+// Allowed file types
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
+const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
+
+/**
+ * Check if file is a video
+ */
+function isVideoFile(file) {
+  return ALLOWED_VIDEO_TYPES.includes(file.type);
+}
+
+/**
+ * Format duration in seconds to mm:ss
+ */
+function formatDuration(seconds) {
+  if (!seconds) return '';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Get video duration from file
+ */
+async function getVideoDuration(file) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(Math.round(video.duration));
+    };
+    video.onerror = () => resolve(null);
+    video.src = URL.createObjectURL(file);
+  });
+}
 
 export default function ImageUploader({ 
   onUploadComplete,
   onUploadError,
-  maxFiles = 5,
+  onVideoClick,
+  maxFiles = 10,
   vehicleId,
   buildId,
   existingImages = [],
@@ -41,10 +85,15 @@ export default function ImageUploader({
 
   const validateFile = (file) => {
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return `Invalid file type. Allowed: JPEG, PNG, WebP, GIF`;
+      return `Invalid file type. Allowed: JPEG, PNG, WebP, GIF, MP4, WebM, MOV`;
     }
-    if (file.size > MAX_FILE_SIZE) {
-      return `File too large. Maximum size: 10MB`;
+    
+    const isVideo = isVideoFile(file);
+    const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+    
+    if (file.size > maxSize) {
+      const sizeMB = maxSize / 1024 / 1024;
+      return `File too large. Maximum size: ${sizeMB}MB for ${isVideo ? 'videos' : 'images'}`;
     }
     return null;
   };
@@ -54,7 +103,18 @@ export default function ImageUploader({
     formData.append('file', file);
     if (vehicleId) formData.append('vehicleId', vehicleId);
     if (buildId) formData.append('buildId', buildId);
-    formData.append('isPrimary', uploads.length === 0 ? 'true' : 'false');
+    
+    // Only set isPrimary for images (first image becomes hero)
+    // Videos should not be primary
+    const isVideo = isVideoFile(file);
+    const existingImages = uploads.filter(u => u.media_type !== 'video');
+    formData.append('isPrimary', (!isVideo && existingImages.length === 0) ? 'true' : 'false');
+
+    // Get video duration if it's a video
+    if (isVideo) {
+      const duration = await getVideoDuration(file);
+      if (duration) formData.append('duration', duration.toString());
+    }
 
     const response = await fetch('/api/uploads', {
       method: 'POST',
@@ -213,10 +273,13 @@ export default function ImageUploader({
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
             <span className={styles.dropText}>
-              {dragActive ? 'Drop images here' : 'Drag & drop images or click to browse'}
+              {dragActive ? 'Drop files here' : 'Drag & drop images or videos, or click to browse'}
             </span>
             <span className={styles.dropHint}>
-              JPEG, PNG, WebP, GIF • Max {maxFiles} images • 10MB each
+              JPEG, PNG, WebP, GIF • Max 10 images • 10MB each
+            </span>
+            <span className={styles.dropHint}>
+              MP4, WebM, MOV • Max 500MB per video
             </span>
           </div>
         )}
@@ -229,56 +292,100 @@ export default function ImageUploader({
         </div>
       )}
 
-      {/* Image Previews */}
+      {/* Media Previews */}
       {uploads.length > 0 && (
         <div className={styles.previews}>
-          {uploads.map((image, index) => (
-            <div 
-              key={image.id || index} 
-              className={`${styles.preview} ${image.is_primary ? styles.primary : ''}`}
-            >
-              <Image
-                src={image.blob_url || image.thumbnail_url}
-                alt={image.caption || `Upload ${index + 1}`}
-                width={120}
-                height={80}
-                className={styles.previewImage}
-              />
-              
-              <div className={styles.previewOverlay}>
-                {image.is_primary && (
-                  <span className={styles.primaryBadge}>Primary</span>
+          {uploads.map((media, index) => {
+            const isVideo = media.media_type === 'video';
+            
+            return (
+              <div 
+                key={media.id || index} 
+                className={`${styles.preview} ${media.is_primary ? styles.primary : ''} ${isVideo ? styles.videoPreview : ''}`}
+                onClick={() => isVideo && onVideoClick && onVideoClick(media)}
+              >
+                {isVideo ? (
+                  <>
+                    {/* Video thumbnail or placeholder */}
+                    <div className={styles.videoThumbnail}>
+                      {media.video_thumbnail_url ? (
+                        <Image
+                          src={media.video_thumbnail_url}
+                          alt={media.caption || `Video ${index + 1}`}
+                          width={120}
+                          height={80}
+                          className={styles.previewImage}
+                        />
+                      ) : (
+                        <div className={styles.videoPlaceholder}>
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <rect x="2" y="2" width="20" height="20" rx="2" />
+                            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+                          </svg>
+                        </div>
+                      )}
+                      {/* Play icon overlay */}
+                      <div className={styles.playIconOverlay}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                          <polygon points="8 5 19 12 8 19 8 5" />
+                        </svg>
+                      </div>
+                      {/* Duration badge */}
+                      {media.duration_seconds && (
+                        <span className={styles.durationBadge}>
+                          {formatDuration(media.duration_seconds)}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <Image
+                    src={media.blob_url || media.thumbnail_url}
+                    alt={media.caption || `Upload ${index + 1}`}
+                    width={120}
+                    height={80}
+                    className={styles.previewImage}
+                  />
                 )}
                 
-                <div className={styles.previewActions}>
-                  {!image.is_primary && (
+                <div className={styles.previewOverlay}>
+                  {media.is_primary && (
+                    <span className={styles.primaryBadge}>Hero</span>
+                  )}
+                  {isVideo && (
+                    <span className={styles.videoBadge}>Video</span>
+                  )}
+                  
+                  <div className={styles.previewActions}>
+                    {!media.is_primary && !isVideo && (
+                      <button
+                        type="button"
+                        className={styles.actionBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetPrimary(media.id);
+                        }}
+                        title="Set as hero image"
+                      >
+                        ⭐
+                      </button>
+                    )}
                     <button
                       type="button"
                       className={styles.actionBtn}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSetPrimary(image.id);
+                        handleRemove(media.id);
                       }}
-                      title="Set as primary"
+                      title="Remove"
                     >
-                      ⭐
+                      ✕
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    className={styles.actionBtn}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemove(image.id);
-                    }}
-                    title="Remove"
-                  >
-                    ✕
-                  </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           
           {/* Add more button */}
           {uploads.length < maxFiles && (

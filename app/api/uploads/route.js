@@ -1,10 +1,10 @@
 /**
- * Image Uploads API
+ * Media Uploads API
  * 
- * Handles user image uploads via Vercel Blob.
+ * Handles user image and video uploads via Vercel Blob.
  * 
- * POST /api/uploads - Upload a new image
- * DELETE /api/uploads?id=xxx - Delete an image
+ * POST /api/uploads - Upload a new image or video
+ * DELETE /api/uploads?id=xxx - Delete a media file
  * 
  * @route /api/uploads
  */
@@ -15,9 +15,22 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 
-// Max file size: 10MB
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+// File size limits
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB for images
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB for videos
+
+// Allowed file types
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/mov'];
+const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
+
+/**
+ * Determine media type from content type
+ */
+function getMediaType(contentType) {
+  if (ALLOWED_VIDEO_TYPES.includes(contentType)) return 'video';
+  return 'image';
+}
 
 /**
  * Get authenticated user from request
@@ -69,21 +82,29 @@ export async function POST(request) {
     // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json({ 
-        error: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(', ')}` 
+        error: `Invalid file type. Allowed: images (JPEG, PNG, WebP, GIF) and videos (MP4, WebM, MOV)` 
       }, { status: 400 });
     }
 
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
+    // Determine media type and validate size accordingly
+    const mediaType = getMediaType(file.type);
+    const maxSize = mediaType === 'video' ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+    
+    if (file.size > maxSize) {
       return NextResponse.json({ 
-        error: `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB` 
+        error: `File too large. Maximum size: ${maxSize / 1024 / 1024}MB for ${mediaType}s` 
       }, { status: 400 });
     }
 
     // Generate unique filename
     const timestamp = Date.now();
-    const ext = file.type.split('/')[1] === 'jpeg' ? 'jpg' : file.type.split('/')[1];
-    const filename = `user-uploads/${user.id}/${timestamp}.${ext}`;
+    let ext = file.type.split('/')[1];
+    // Handle special cases
+    if (ext === 'jpeg') ext = 'jpg';
+    if (ext === 'quicktime') ext = 'mov';
+    
+    const folder = mediaType === 'video' ? 'user-videos' : 'user-uploads';
+    const filename = `${folder}/${user.id}/${timestamp}.${ext}`;
 
     // Upload to Vercel Blob
     const blob = await put(filename, file, {
@@ -101,22 +122,35 @@ export async function POST(request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
+    // Build insert data
+    const insertData = {
+      user_id: user.id,
+      user_vehicle_id: vehicleId || null,
+      user_build_id: buildId || null,
+      community_post_id: postId || null,
+      blob_url: blob.url,
+      blob_pathname: blob.pathname,
+      file_name: file.name || `upload-${timestamp}`,
+      file_size: file.size,
+      content_type: file.type,
+      caption: caption || null,
+      is_primary: isPrimary,
+      upload_source: 'web',
+      media_type: mediaType,
+    };
+    
+    // Add video-specific fields if applicable
+    if (mediaType === 'video') {
+      const duration = formData.get('duration');
+      const videoResolution = formData.get('resolution');
+      
+      if (duration) insertData.duration_seconds = parseInt(duration, 10);
+      if (videoResolution) insertData.video_resolution = videoResolution;
+    }
+
     const { data: imageRecord, error: dbError } = await supabase
       .from('user_uploaded_images')
-      .insert({
-        user_id: user.id,
-        user_vehicle_id: vehicleId || null,
-        user_build_id: buildId || null,
-        community_post_id: postId || null,
-        blob_url: blob.url,
-        blob_pathname: blob.pathname,
-        file_name: file.name || `upload-${timestamp}`,
-        file_size: file.size,
-        content_type: file.type,
-        caption: caption || null,
-        is_primary: isPrimary,
-        upload_source: 'web',
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -135,6 +169,7 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       image: imageRecord,
+      mediaType: mediaType,
     });
 
   } catch (error) {
