@@ -725,6 +725,7 @@ function TuningShopContent() {
   const buildsLoading = buildsState.isLoading || false;
   const deleteBuild = buildsState.deleteBuild || (() => {});
   const getBuildById = buildsState.getBuildById || (() => null);
+  const refreshBuilds = buildsState.refreshBuilds || (() => {});
   const vehicles = vehiclesState.vehicles || [];
   const vehiclesLoading = vehiclesState.isLoading || false;
   
@@ -827,6 +828,11 @@ function TuningShopContent() {
       window.history.pushState({}, '', '/tuning-shop');
     }
     setActiveTab(tabId);
+    
+    // Refresh builds when switching to projects tab to ensure fresh data
+    if (tabId === 'projects' && isAuthenticated) {
+      refreshBuilds();
+    }
   };
 
   // Get cars from favorites with full car data
