@@ -3,11 +3,15 @@
  * 
  * GET /api/community/posts - List posts
  * POST /api/community/posts - Create a new post
+ * PATCH /api/community/posts - Update a post (publish/unpublish)
+ * 
+ * All mutations invalidate the community page cache for immediate updates.
  * 
  * @route /api/community/posts
  */
 
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
@@ -171,6 +175,21 @@ export async function POST(request) {
       }
     }
 
+    // Invalidate cache so new post appears immediately on community pages
+    try {
+      revalidatePath('/community/builds');
+      revalidatePath('/community');
+      // Also revalidate brand-specific page if we have a car slug
+      if (carSlug) {
+        const brand = carSlug.split('-')[0]; // Extract brand from slug (e.g., "acura" from "acura-integra-type-r")
+        revalidatePath(`/community/builds?brand=${brand}`);
+      }
+      console.log('[CommunityPosts API] Cache revalidated for community pages');
+    } catch (revalidateError) {
+      // Don't fail the request if revalidation fails
+      console.warn('[CommunityPosts API] Cache revalidation warning:', revalidateError);
+    }
+
     return NextResponse.json({
       success: true,
       post,
@@ -179,6 +198,78 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('[CommunityPosts API] Error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
+
+/**
+ * PATCH /api/community/posts
+ * Update a community post (publish/unpublish)
+ */
+export async function PATCH(request) {
+  try {
+    // Verify authentication
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { postId, isPublished, title, description } = body;
+
+    if (!postId) {
+      return NextResponse.json({ error: 'postId is required' }, { status: 400 });
+    }
+
+    // Build update object
+    const updates = {};
+    if (typeof isPublished === 'boolean') {
+      updates.is_published = isPublished;
+      updates.is_approved = isPublished; // Sync approval with publish status
+    }
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+
+    // Update post (only if user owns it)
+    const { data: post, error: updateError } = await supabaseAdmin
+      .from('community_posts')
+      .update(updates)
+      .eq('id', postId)
+      .eq('user_id', user.id) // Ensure user owns the post
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('[CommunityPosts API] Update error:', updateError);
+      return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
+    }
+
+    if (!post) {
+      return NextResponse.json({ error: 'Post not found or not authorized' }, { status: 404 });
+    }
+
+    // Invalidate cache so changes appear immediately
+    try {
+      revalidatePath('/community/builds');
+      revalidatePath('/community');
+      if (post.car_slug) {
+        const brand = post.car_slug.split('-')[0];
+        revalidatePath(`/community/builds?brand=${brand}`);
+      }
+      // Also revalidate the specific post page
+      revalidatePath(`/community/builds/${post.slug}`);
+      console.log('[CommunityPosts API] Cache revalidated for post update');
+    } catch (revalidateError) {
+      console.warn('[CommunityPosts API] Cache revalidation warning:', revalidateError);
+    }
+
+    return NextResponse.json({
+      success: true,
+      post,
+    });
+
+  } catch (error) {
+    console.error('[CommunityPosts API] PATCH Error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

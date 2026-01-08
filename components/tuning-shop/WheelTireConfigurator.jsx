@@ -220,13 +220,33 @@ export default function WheelTireConfigurator({
     const parseFront = parseWheelSize(oem.wheelSizeFront);
     const parseRear = parseWheelSize(oem.wheelSizeRear || oem.wheelSizeFront);
     
+    // Get tire sizes, ensuring rim diameter matches wheel diameter
+    let tireSizeFront = oem.tireSizeFront || '';
+    let tireSizeRear = oem.tireSizeRear || oem.tireSizeFront || '';
+    
+    // Fix tire size rim diameter if it doesn't match wheel diameter
+    if (parseFront.diameter && tireSizeFront) {
+      const tireRimFront = getTireSizeRimDiameter(tireSizeFront);
+      if (tireRimFront && tireRimFront !== parseFront.diameter) {
+        console.warn(`[WheelTireConfig] Fixing tire/wheel mismatch: front tire rim ${tireRimFront}" → wheel ${parseFront.diameter}"`);
+        tireSizeFront = updateTireSizeRimDiameter(tireSizeFront, parseFront.diameter);
+      }
+    }
+    if (parseRear.diameter && tireSizeRear) {
+      const tireRimRear = getTireSizeRimDiameter(tireSizeRear);
+      if (tireRimRear && tireRimRear !== parseRear.diameter) {
+        console.warn(`[WheelTireConfig] Fixing tire/wheel mismatch: rear tire rim ${tireRimRear}" → wheel ${parseRear.diameter}"`);
+        tireSizeRear = updateTireSizeRimDiameter(tireSizeRear, parseRear.diameter);
+      }
+    }
+    
     setWheelConfig({
       diameterFront: parseFront.diameter || '',
       diameterRear: parseRear.diameter || '',
       widthFront: parseFront.width || '',
       widthRear: parseRear.width || '',
-      tireSizeFront: oem.tireSizeFront || '',
-      tireSizeRear: oem.tireSizeRear || oem.tireSizeFront || '',
+      tireSizeFront,
+      tireSizeRear,
       compound: 'summer',
       isStaggered: oem.wheelSizeFront !== oem.wheelSizeRear,
     });
@@ -266,6 +286,18 @@ export default function WheelTireConfigurator({
         if (field === 'diameterFront') updated.diameterRear = value;
         if (field === 'widthFront') updated.widthRear = value;
         if (field === 'tireSizeFront') updated.tireSizeRear = value;
+      }
+      
+      // When wheel diameter changes, update tire size rim diameter to match
+      if (field === 'diameterFront' && value) {
+        updated.tireSizeFront = updateTireSizeRimDiameter(prev.tireSizeFront, value);
+        // Also update rear if not staggered
+        if (!prev.isStaggered) {
+          updated.tireSizeRear = updateTireSizeRimDiameter(prev.tireSizeRear, value);
+        }
+      }
+      if (field === 'diameterRear' && value && prev.isStaggered) {
+        updated.tireSizeRear = updateTireSizeRimDiameter(prev.tireSizeRear, value);
       }
       
       return updated;
@@ -656,6 +688,36 @@ function parseWheelSize(sizeStr) {
   }
   
   return { diameter: '', width: '' };
+}
+
+/**
+ * Update the rim diameter in a tire size string
+ * Tire format: {width}/{aspect}ZR{rim} or {width}/{aspect}R{rim}
+ * Example: "235/40ZR19" with newDiameter "20" => "235/40ZR20"
+ */
+function updateTireSizeRimDiameter(tireSize, newDiameter) {
+  if (!tireSize || !newDiameter) return tireSize;
+  
+  // Match patterns like "235/40ZR19", "255/35R20", "265/40ZR19"
+  // Captures: width, aspect ratio, speed rating (optional Z), and rim diameter
+  const match = tireSize.match(/^(\d+)\/(\d+)(Z?R)(\d+)$/i);
+  if (match) {
+    const [, width, aspect, speedRating, ] = match;
+    return `${width}/${aspect}${speedRating}${newDiameter}`;
+  }
+  
+  return tireSize;
+}
+
+/**
+ * Extract the rim diameter from a tire size string
+ * Example: "235/40ZR19" => "19"
+ */
+function getTireSizeRimDiameter(tireSize) {
+  if (!tireSize) return null;
+  
+  const match = tireSize.match(/^(\d+)\/(\d+)Z?R(\d+)$/i);
+  return match ? match[3] : null;
 }
 
 /**

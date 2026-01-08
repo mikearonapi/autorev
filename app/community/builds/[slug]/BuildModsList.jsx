@@ -163,11 +163,11 @@ function normalizeCategory(category) {
 export default function BuildModsList({ parts = [], buildData = null, isOwner = false, onEditPart }) {
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   
-  // Combine parts from community_post_parts and build selected_upgrades
+  // Combine parts from build's project_parts and selected_upgrades
   const allMods = useMemo(() => {
     const mods = [];
 
-    // Add community post specific parts (user-specified products)
+    // Add user-specified parts (from parts prop if provided)
     if (parts && parts.length > 0) {
       parts.forEach(part => {
         mods.push({
@@ -185,7 +185,7 @@ export default function BuildModsList({ parts = [], buildData = null, isOwner = 
           notes: part.notes,
           isRecommended: part.is_recommended,
           productUrl: part.product_url,
-          source: 'community_post',
+          source: 'parts_list',
           hasDetails: !!(part.brand_name || part.product_name),
         });
       });

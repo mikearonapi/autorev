@@ -946,19 +946,23 @@ export default function UpgradeCenter({
         }
         
         // Handle community post based on toggle state
-        if (linkedCommunityPost && !shareToNewCommunity && supabase) {
-          // Unpublish existing post
+        if (linkedCommunityPost && !shareToNewCommunity) {
+          // Unpublish existing post via API (includes cache invalidation)
           try {
-            const { error: unpublishError } = await supabase
-              .from('community_posts')
-              .update({ is_published: false, is_approved: false })
-              .eq('id', linkedCommunityPost.id);
+            const response = await fetch('/api/community/posts', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                postId: linkedCommunityPost.id,
+                isPublished: false,
+              }),
+            });
             
-            if (unpublishError) {
-              console.error('[UpgradeCenter] Error unpublishing community post:', unpublishError);
-            } else {
+            if (response.ok) {
               // Clear the linked post since it's now unpublished
               setLinkedCommunityPost(null);
+            } else {
+              console.error('[UpgradeCenter] Error unpublishing community post');
             }
           } catch (err) {
             console.error('[UpgradeCenter] Error unpublishing community post:', err);
@@ -990,13 +994,17 @@ export default function UpgradeCenter({
           } catch (err) {
             console.error('[UpgradeCenter] Error creating community post:', err);
           }
-        } else if (linkedCommunityPost && shareToNewCommunity && supabase) {
-          // Re-publish existing post that was unpublished
+        } else if (linkedCommunityPost && shareToNewCommunity) {
+          // Re-publish existing post via API (includes cache invalidation)
           try {
-            await supabase
-              .from('community_posts')
-              .update({ is_published: true, is_approved: true })
-              .eq('id', linkedCommunityPost.id);
+            await fetch('/api/community/posts', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                postId: linkedCommunityPost.id,
+                isPublished: true,
+              }),
+            });
           } catch (err) {
             console.error('[UpgradeCenter] Error re-publishing community post:', err);
           }
