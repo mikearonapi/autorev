@@ -43,6 +43,8 @@ import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { supabase } from '@/lib/supabase';
+// Import shared upgrade category definitions (single source of truth)
+import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCategories.js';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
@@ -50,6 +52,7 @@ import { supabase } from '@/lib/supabase';
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
 import ImageUploader from './ImageUploader';
+import VideoPlayer from './VideoPlayer';
 
 // Compact Icons
 const Icons = {
@@ -208,7 +211,7 @@ const Icons = {
   ),
 };
 
-// Package & Category configs
+// Package configs
 const PACKAGES = [
   { key: 'stock', label: 'Stock' },
   { key: 'streetSport', label: 'Street' },
@@ -218,16 +221,28 @@ const PACKAGES = [
   { key: 'custom', label: 'Custom' },
 ];
 
-const UPGRADE_CATEGORIES = [
-  { key: 'power', label: 'Power', icon: Icons.bolt, color: '#f59e0b' },
-  { key: 'forcedInduction', label: 'Turbo/SC', icon: Icons.turbo, color: '#ef4444' },
-  { key: 'chassis', label: 'Chassis', icon: Icons.target, color: '#10b981' },
-  { key: 'brakes', label: 'Brakes', icon: Icons.disc, color: '#dc2626' },
-  { key: 'cooling', label: 'Cooling', icon: Icons.thermometer, color: '#3b82f6' },
-  { key: 'wheels', label: 'Wheels', icon: Icons.circle, color: '#8b5cf6' },
-  { key: 'aero', label: 'Aero', icon: Icons.wind, color: '#06b6d4' },
-  { key: 'drivetrain', label: 'Drivetrain', icon: Icons.settings, color: '#f97316' },
-];
+// Map icon names from shared categories to local Icon components
+const ICON_NAME_TO_COMPONENT = {
+  bolt: Icons.bolt,
+  turbo: Icons.turbo,
+  target: Icons.target,
+  disc: Icons.disc,
+  thermometer: Icons.thermometer,
+  circle: Icons.circle,
+  wind: Icons.wind,
+  settings: Icons.settings,
+  grid: Icons.settings, // fallback for 'other' category
+};
+
+/**
+ * UPGRADE_CATEGORIES - derived from shared definitions
+ * This ensures consistency with BuildModsList and other components.
+ * Icon names are mapped to local Icon components for rendering.
+ */
+const UPGRADE_CATEGORIES = SHARED_UPGRADE_CATEGORIES.map(cat => ({
+  ...cat,
+  icon: ICON_NAME_TO_COMPONENT[cat.icon] || Icons.settings,
+}));
 
 
 /**
@@ -621,6 +636,9 @@ export default function UpgradeCenter({
   
   // Toggle for whether to share to / keep in community when saving
   const [shareToNewCommunity, setShareToNewCommunity] = useState(false);
+  
+  // Video player state
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
@@ -1309,18 +1327,19 @@ export default function UpgradeCenter({
             <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
           </div>
           
-          {/* Build Photos Section */}
+          {/* Build Photos & Videos Section */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>
               <Icons.camera size={14} />
-              Build Photos
+              Build Photos & Videos
             </h4>
             <p className={styles.sectionHint}>
-              Add photos of your build. The first image will be your hero image when sharing.
+              Add photos and videos of your build. The first photo will be your hero image when sharing.
             </p>
             <ImageUploader
-              onUploadComplete={(images) => setBuildImages(images)}
-              onUploadError={(err) => console.error('[UpgradeCenter] Image upload error:', err)}
+              onUploadComplete={(media) => setBuildImages(media)}
+              onUploadError={(err) => console.error('[UpgradeCenter] Media upload error:', err)}
+              onVideoClick={(video) => setSelectedVideo(video)}
               maxFiles={10}
               buildId={currentBuildId}
               existingImages={buildImages}
@@ -1328,7 +1347,7 @@ export default function UpgradeCenter({
             />
             {!user && (
               <p className={styles.loginHint}>
-                Sign in to upload photos of your build
+                Sign in to upload photos and videos of your build
               </p>
             )}
           </div>
@@ -1385,6 +1404,15 @@ export default function UpgradeCenter({
           upgrade={selectedUpgradeForModal}
           onClose={() => setSelectedUpgradeForModal(null)}
           showAddToBuild={false}
+        />
+      )}
+      
+      {/* Video Player Modal */}
+      {selectedVideo && (
+        <VideoPlayer
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          autoPlay={true}
         />
       )}
       

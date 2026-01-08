@@ -9,156 +9,20 @@
  * - Expandable category cards
  * - Shows specific products when specified
  * - Owner can add/edit specific parts
+ * 
+ * Uses shared category definitions from @/lib/upgradeCategories.js
+ * to ensure consistency with UpgradeCenter and other components.
  */
 
 import { useState, useMemo } from 'react';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
+import {
+  CATEGORY_BY_KEY,
+  CATEGORY_ICONS,
+  CATEGORY_ORDER,
+  normalizeCategory,
+} from '@/lib/upgradeCategories.js';
 import styles from './BuildModsList.module.css';
-
-// SVG Icon components for categories
-const CategoryIcons = {
-  intake: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-    </svg>
-  ),
-  exhaust: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 1.85-1.56 3.36-3.5 3.36H6.5C4.56 15.36 3 13.85 3 12s1.56-3.36 3.5-3.36h11c1.94 0 3.5 1.51 3.5 3.36z"/>
-      <path d="M3 12l-1 4h3l1-4M22 12l-1 4h-3l1-4"/>
-    </svg>
-  ),
-  ecu: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="4" width="16" height="16" rx="2"/>
-      <rect x="9" y="9" width="6" height="6"/>
-      <line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/>
-      <line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/>
-      <line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="15" x2="4" y2="15"/>
-      <line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="15" x2="22" y2="15"/>
-    </svg>
-  ),
-  turbo: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M12 6v6l4 2"/>
-      <path d="M16 8a4 4 0 0 1 0 8"/>
-      <path d="M8 8a4 4 0 0 0 0 8"/>
-    </svg>
-  ),
-  supercharger: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-    </svg>
-  ),
-  intercooler: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="6" width="20" height="12" rx="2"/>
-      <line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/>
-      <line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/>
-    </svg>
-  ),
-  fuel: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 22V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
-      <path d="M15 12h4a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2"/>
-      <path d="M7 2v4"/><path d="M11 2v4"/>
-      <rect x="3" y="12" width="12" height="4"/>
-    </svg>
-  ),
-  engine: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-    </svg>
-  ),
-  suspension: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19h16M4 15l4-8 4 4 4-4 4 8"/>
-      <circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/>
-    </svg>
-  ),
-  brakes: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="6"/>
-      <circle cx="12" cy="12" r="2"/>
-    </svg>
-  ),
-  wheels: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="4"/>
-      <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-      <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-    </svg>
-  ),
-  tires: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="6"/>
-    </svg>
-  ),
-  aero: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 12L7 2h10l5 10-5 10H7l-5-10z"/>
-      <path d="M12 8v8M8 12h8"/>
-    </svg>
-  ),
-  interior: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 18v-6a8 8 0 0 1 16 0v6"/>
-      <path d="M4 18h16"/>
-      <path d="M6 18v2M18 18v2"/>
-    </svg>
-  ),
-  exterior: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3L1 9l11 6 9-4.91V17M12 21V9"/>
-    </svg>
-  ),
-  other: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <path d="M3 9h18M9 21V9"/>
-    </svg>
-  ),
-};
-
-// Category metadata with colors
-const CATEGORY_INFO = {
-  intake: { label: 'Intake', color: '#60a5fa' },
-  exhaust: { label: 'Exhaust', color: '#f97316' },
-  ecu: { label: 'ECU / Tune', color: '#a78bfa' },
-  turbo: { label: 'Turbo', color: '#f43f5e' },
-  supercharger: { label: 'Supercharger', color: '#fbbf24' },
-  intercooler: { label: 'Intercooler', color: '#38bdf8' },
-  fuel: { label: 'Fuel System', color: '#fb923c' },
-  engine: { label: 'Engine', color: '#ef4444' },
-  suspension: { label: 'Suspension', color: '#22c55e' },
-  brakes: { label: 'Brakes', color: '#dc2626' },
-  wheels: { label: 'Wheels', color: '#94a3b8' },
-  tires: { label: 'Tires', color: '#475569' },
-  aero: { label: 'Aero', color: '#06b6d4' },
-  interior: { label: 'Interior', color: '#8b5cf6' },
-  exterior: { label: 'Exterior', color: '#ec4899' },
-  other: { label: 'Other', color: '#6b7280' },
-};
-
-// Normalize category key
-function normalizeCategory(category) {
-  if (!category) return 'other';
-  const normalized = category.toLowerCase().trim();
-  // Map common variations
-  const categoryMap = {
-    'tune': 'ecu',
-    'tuning': 'ecu',
-    'flash': 'ecu',
-    'forced-induction': 'turbo',
-    'forced_induction': 'turbo',
-    'forcedinduction': 'turbo',
-  };
-  return categoryMap[normalized] || (CATEGORY_INFO[normalized] ? normalized : 'other');
-}
 
 export default function BuildModsList({ parts = [], buildData = null, isOwner = false, onEditPart }) {
   const [expandedCategories, setExpandedCategories] = useState(new Set());
@@ -281,11 +145,13 @@ export default function BuildModsList({ parts = [], buildData = null, isOwner = 
     }, {});
   }, [allMods]);
 
-  // Sort categories by predefined order
+  // Sort categories by predefined order (uses shared CATEGORY_ORDER)
   const sortedCategories = useMemo(() => {
-    const categoryOrder = Object.keys(CATEGORY_INFO);
     return Object.keys(modsByCategory).sort((a, b) => {
-      return categoryOrder.indexOf(a) - categoryOrder.indexOf(b);
+      const indexA = CATEGORY_ORDER.indexOf(a);
+      const indexB = CATEGORY_ORDER.indexOf(b);
+      // Unknown categories go to the end
+      return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
     });
   }, [modsByCategory]);
 
@@ -355,28 +221,28 @@ export default function BuildModsList({ parts = [], buildData = null, isOwner = 
       {/* Category Cards */}
       <div className={styles.categoriesGrid}>
         {sortedCategories.map((category, catIdx) => {
-          const info = CATEGORY_INFO[category] || CATEGORY_INFO.other;
+          const catInfo = CATEGORY_BY_KEY[category] || CATEGORY_BY_KEY.other;
           const categoryMods = modsByCategory[category];
           const isExpanded = expandedCategories.has(category);
           const categoryHpGain = categoryMods.reduce((sum, m) => sum + (m.hpGain || 0), 0);
           const hasAnyDetails = categoryMods.some(m => m.hasDetails);
-          const IconComponent = CategoryIcons[category] || CategoryIcons.other;
+          const iconElement = CATEGORY_ICONS[catInfo?.icon] || CATEGORY_ICONS.grid;
 
           return (
             <div 
               key={category} 
               className={`${styles.categoryCard} ${isExpanded ? styles.expanded : ''}`}
-              style={{ '--category-color': info.color }}
+              style={{ '--category-color': catInfo?.color || '#6b7280' }}
             >
               <button 
                 className={styles.categoryHeader}
                 onClick={() => toggleCategory(category)}
               >
                 <div className={styles.categoryIconWrapper}>
-                  <IconComponent />
+                  {iconElement}
                 </div>
                 <div className={styles.categoryInfo}>
-                  <span className={styles.categoryLabel}>{info.label}</span>
+                  <span className={styles.categoryLabel}>{catInfo?.label || 'Other'}</span>
                   <span className={styles.categoryMeta}>
                     {categoryMods.length} mod{categoryMods.length !== 1 ? 's' : ''}
                     {categoryHpGain > 0 && ` • +${categoryHpGain}hp`}
