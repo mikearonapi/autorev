@@ -147,52 +147,63 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
   const prefetchedBuilds = getPrefetchedData('builds', user.id);
   if (prefetchedBuilds) {
     console.log('[SavedBuildsProvider] Using prefetched data (instant)');
-    const transformedBuilds = prefetchedBuilds.map(build => ({
-      id: build.id,
-      carSlug: build.car_slug,
-      carName: build.car_name,
-      name: build.project_name,
-      upgrades: Array.isArray(build.selected_upgrades) 
-        ? build.selected_upgrades 
-        : (build.selected_upgrades?.upgrades || []),
-      factoryConfig: build.selected_upgrades?.factoryConfig || null,
-      wheelFitment: build.selected_upgrades?.wheelFitment || null,
-      sizeSelections: build.selected_upgrades?.sizeSelections || null,
-      heroSource: build.selected_upgrades?.heroSource || 'stock',
-      heroImageId: build.selected_upgrades?.heroImageId || null,
-      parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
-        id: p.id,
-        partId: p.part_id,
-        quantity: p.quantity,
-        partName: p.part_name,
-        brandName: p.brand_name,
-        partNumber: p.part_number,
-        category: p.category,
-        vendorName: p.vendor_name,
-        productUrl: p.product_url,
-        currency: p.currency,
-        priceCents: p.price_cents,
-        priceRecordedAt: p.price_recorded_at,
-        requiresTune: p.requires_tune,
-        installDifficulty: p.install_difficulty,
-        estimatedLaborHours: p.estimated_labor_hours,
-        fitmentVerified: p.fitment_verified,
-        fitmentConfidence: p.fitment_confidence,
-        fitmentNotes: p.fitment_notes,
-        fitmentSourceUrl: p.fitment_source_url,
-        metadata: p.metadata,
-        createdAt: p.created_at,
-        updatedAt: p.updated_at,
-      })) : [],
-      totalHpGain: build.total_hp_gain || 0,
-      totalCostLow: build.total_cost_low || 0,
-      totalCostHigh: build.total_cost_high || 0,
-      finalHp: build.final_hp,
-      notes: build.notes,
-      isFavorite: build.is_favorite || false,
-      createdAt: build.created_at,
-      updatedAt: build.updated_at,
-    }));
+    const transformedBuilds = prefetchedBuilds.map(build => {
+      // Get hero image from uploaded images (is_primary=true, or first non-video image)
+      const uploadedImages = build.user_uploaded_images || [];
+      const heroImage = uploadedImages.find(img => img.is_primary && img.media_type !== 'video')
+        || uploadedImages.find(img => img.media_type !== 'video')
+        || null;
+      
+      return {
+        id: build.id,
+        carSlug: build.car_slug,
+        carName: build.car_name,
+        name: build.project_name,
+        upgrades: Array.isArray(build.selected_upgrades) 
+          ? build.selected_upgrades 
+          : (build.selected_upgrades?.upgrades || []),
+        factoryConfig: build.selected_upgrades?.factoryConfig || null,
+        wheelFitment: build.selected_upgrades?.wheelFitment || null,
+        sizeSelections: build.selected_upgrades?.sizeSelections || null,
+        heroSource: build.selected_upgrades?.heroSource || 'stock',
+        heroImageId: build.selected_upgrades?.heroImageId || null,
+        // Include hero image URL for display in project cards
+        heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
+        uploadedImages: uploadedImages,
+        parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+          id: p.id,
+          partId: p.part_id,
+          quantity: p.quantity,
+          partName: p.part_name,
+          brandName: p.brand_name,
+          partNumber: p.part_number,
+          category: p.category,
+          vendorName: p.vendor_name,
+          productUrl: p.product_url,
+          currency: p.currency,
+          priceCents: p.price_cents,
+          priceRecordedAt: p.price_recorded_at,
+          requiresTune: p.requires_tune,
+          installDifficulty: p.install_difficulty,
+          estimatedLaborHours: p.estimated_labor_hours,
+          fitmentVerified: p.fitment_verified,
+          fitmentConfidence: p.fitment_confidence,
+          fitmentNotes: p.fitment_notes,
+          fitmentSourceUrl: p.fitment_source_url,
+          metadata: p.metadata,
+          createdAt: p.created_at,
+          updatedAt: p.updated_at,
+        })) : [],
+        totalHpGain: build.total_hp_gain || 0,
+        totalCostLow: build.total_cost_low || 0,
+        totalCostHigh: build.total_cost_high || 0,
+        finalHp: build.final_hp,
+        notes: build.notes,
+        isFavorite: build.is_favorite || false,
+        createdAt: build.created_at,
+        updatedAt: build.updated_at,
+      };
+    });
     
     if (!cancelledRef.current) {
       setBuilds(transformedBuilds);
@@ -255,53 +266,64 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     }
     
     if (data) {
-      const transformedBuilds = data.map(build => ({
-        id: build.id,
-        carSlug: build.car_slug,
-        carName: build.car_name,
-        name: build.project_name,
-        // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
-        upgrades: Array.isArray(build.selected_upgrades) 
-          ? build.selected_upgrades 
-          : (build.selected_upgrades?.upgrades || []),
-        factoryConfig: build.selected_upgrades?.factoryConfig || null,
-        wheelFitment: build.selected_upgrades?.wheelFitment || null,
-        sizeSelections: build.selected_upgrades?.sizeSelections || null,
-        heroSource: build.selected_upgrades?.heroSource || 'stock',
-        heroImageId: build.selected_upgrades?.heroImageId || null,
-        parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
-          id: p.id,
-          partId: p.part_id,
-          quantity: p.quantity,
-          partName: p.part_name,
-          brandName: p.brand_name,
-          partNumber: p.part_number,
-          category: p.category,
-          vendorName: p.vendor_name,
-          productUrl: p.product_url,
-          currency: p.currency,
-          priceCents: p.price_cents,
-          priceRecordedAt: p.price_recorded_at,
-          requiresTune: p.requires_tune,
-          installDifficulty: p.install_difficulty,
-          estimatedLaborHours: p.estimated_labor_hours,
-          fitmentVerified: p.fitment_verified,
-          fitmentConfidence: p.fitment_confidence,
-          fitmentNotes: p.fitment_notes,
-          fitmentSourceUrl: p.fitment_source_url,
-          metadata: p.metadata,
-          createdAt: p.created_at,
-          updatedAt: p.updated_at,
-        })) : [],
-        totalHpGain: build.total_hp_gain || 0,
-        totalCostLow: build.total_cost_low || 0,
-        totalCostHigh: build.total_cost_high || 0,
-        finalHp: build.final_hp,
-        notes: build.notes,
-        isFavorite: build.is_favorite || false,
-        createdAt: build.created_at,
-        updatedAt: build.updated_at,
-      }));
+      const transformedBuilds = data.map(build => {
+        // Get hero image from uploaded images (is_primary=true, or first non-video image)
+        const uploadedImages = build.user_uploaded_images || [];
+        const heroImage = uploadedImages.find(img => img.is_primary && img.media_type !== 'video')
+          || uploadedImages.find(img => img.media_type !== 'video')
+          || null;
+        
+        return {
+          id: build.id,
+          carSlug: build.car_slug,
+          carName: build.car_name,
+          name: build.project_name,
+          // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
+          upgrades: Array.isArray(build.selected_upgrades) 
+            ? build.selected_upgrades 
+            : (build.selected_upgrades?.upgrades || []),
+          factoryConfig: build.selected_upgrades?.factoryConfig || null,
+          wheelFitment: build.selected_upgrades?.wheelFitment || null,
+          sizeSelections: build.selected_upgrades?.sizeSelections || null,
+          heroSource: build.selected_upgrades?.heroSource || 'stock',
+          heroImageId: build.selected_upgrades?.heroImageId || null,
+          // Include hero image URL for display in project cards
+          heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
+          uploadedImages: uploadedImages,
+          parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+            id: p.id,
+            partId: p.part_id,
+            quantity: p.quantity,
+            partName: p.part_name,
+            brandName: p.brand_name,
+            partNumber: p.part_number,
+            category: p.category,
+            vendorName: p.vendor_name,
+            productUrl: p.product_url,
+            currency: p.currency,
+            priceCents: p.price_cents,
+            priceRecordedAt: p.price_recorded_at,
+            requiresTune: p.requires_tune,
+            installDifficulty: p.install_difficulty,
+            estimatedLaborHours: p.estimated_labor_hours,
+            fitmentVerified: p.fitment_verified,
+            fitmentConfidence: p.fitment_confidence,
+            fitmentNotes: p.fitment_notes,
+            fitmentSourceUrl: p.fitment_source_url,
+            metadata: p.metadata,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at,
+          })) : [],
+          totalHpGain: build.total_hp_gain || 0,
+          totalCostLow: build.total_cost_low || 0,
+          totalCostHigh: build.total_cost_high || 0,
+          finalHp: build.final_hp,
+          notes: build.notes,
+          isFavorite: build.is_favorite || false,
+          createdAt: build.created_at,
+          updatedAt: build.updated_at,
+        };
+      });
       
       console.log('[SavedBuildsProvider] Fetched', transformedBuilds.length, 'builds');
       

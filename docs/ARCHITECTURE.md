@@ -2,7 +2,7 @@
 
 > How the system works
 >
-> **Last Verified:** December 28, 2024 — Updated with Stripe integration + accurate counts
+> **Last Verified:** January 8, 2026 — Updated with route groups architecture + performance optimizations
 
 ---
 
@@ -82,6 +82,127 @@
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Route Group Architecture
+
+AutoRev uses Next.js route groups to split the application into two distinct layout contexts:
+
+```
+app/
+├── (marketing)/          # Public-facing, lightweight layout
+│   ├── layout.jsx        # Minimal providers
+│   ├── page.jsx          # Home page
+│   ├── landing/          # Landing pages
+│   ├── join/             # Sign up page
+│   ├── features/         # Feature pages
+│   ├── articles/         # Blog/articles
+│   ├── car-selector/     # Car selector tool
+│   ├── community/        # Community pages
+│   ├── al/               # AL landing
+│   ├── compare/          # Comparison pages
+│   ├── contact/          # Contact form
+│   ├── encyclopedia/     # Encyclopedia
+│   ├── events/           # Events listing
+│   ├── privacy/          # Privacy policy
+│   ├── terms/            # Terms of service
+│   └── unsubscribe/      # Email unsubscribe
+│
+├── (app)/                # Authenticated app, full providers
+│   ├── layout.jsx        # Full provider stack
+│   ├── browse-cars/      # Car browsing (needs Favorites, Compare)
+│   ├── garage/           # User's garage (needs OwnedVehicles)
+│   ├── tuning-shop/      # Tuning shop (needs SavedBuilds)
+│   ├── profile/          # User profile
+│   └── mod-planner/      # Mod planning tool
+│
+├── admin/                # Admin routes (root layout)
+├── internal/             # Internal tools (root layout)
+├── auth/                 # Auth callbacks (root layout)
+├── api/                  # API routes (root layout)
+└── layout.jsx            # Root layout (global providers)
+```
+
+### Provider Dependencies
+
+| Route Group | Providers Needed |
+|-------------|------------------|
+| `(marketing)` | Auth, QueryProvider (minimal) |
+| `(app)` | Auth, Favorites, Compare, SavedBuilds, OwnedVehicles, AIMechanic |
+
+### Why Route Groups?
+
+1. **Performance**: Marketing pages don't load app-specific providers
+2. **Bundle Size**: Smaller JS bundles for landing pages
+3. **LCP Improvement**: Faster initial paint without provider initialization
+4. **Maintainability**: Clear separation of public vs authenticated features
+
+---
+
+## Performance Optimizations
+
+### Image Loading Strategy
+
+| Context | Strategy | Implementation |
+|---------|----------|----------------|
+| **Hero images** | `priority={true}` | Single above-fold image |
+| **Carousels** | Current + next only | Render 2 images, preload next |
+| **Decorative backgrounds** | `loading="lazy"` | Lower quality, deferred |
+| **Below-fold content** | `loading="lazy"` | Default browser behavior |
+
+### Carousel Optimization Pattern
+
+```jsx
+// Only render current and next image
+const nextIndex = (currentIndex + 1) % images.length;
+const indicesToRender = [currentIndex, nextIndex];
+
+// Preload upcoming image
+useEffect(() => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = images[(currentIndex + 1) % images.length].src;
+  document.head.appendChild(link);
+  return () => link.parentNode?.removeChild(link);
+}, [currentIndex]);
+
+// Only start animation when visible
+useEffect(() => {
+  const observer = new IntersectionObserver(([entry]) => {
+    setIsVisible(entry.isIntersecting);
+  }, { threshold: 0.1 });
+  observer.observe(containerRef.current);
+  return () => observer.disconnect();
+}, []);
+```
+
+### Video Preload Settings
+
+| Video Type | Preload | Rationale |
+|------------|---------|-----------|
+| Hero video | `metadata` | Load poster, defer full video |
+| Below-fold | `none` | Only load when user scrolls |
+
+### Analytics Script Loading
+
+| Script | Strategy | Load Timing |
+|--------|----------|-------------|
+| Google Analytics | `afterInteractive` | After hydration |
+| Meta Pixel | `lazyOnload` | After page idle |
+
+### Performance Regression Tests
+
+Location: `tests/e2e/performance-regression.spec.js`
+
+Tests ensure:
+- Priority image count ≤ limit per page
+- Video preload attributes correct
+- Carousel renders only 2 images
+- Decorative backgrounds lazy-loaded
+- No console warnings about priority images
+- Analytics scripts use correct strategy
 
 ---
 

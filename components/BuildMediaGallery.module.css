@@ -188,7 +188,7 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  padding: 3px 8px;
+  padding: 4px 10px;
   background: linear-gradient(135deg, #d4af37, #b8973a);
   color: #000;
   font-size: 0.625rem;
@@ -196,6 +196,83 @@
   text-transform: uppercase;
   border-radius: 4px;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.primaryBadge svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Hero item highlight */
+.heroItem {
+  border: 2px solid #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+}
+
+/* Set as Hero button - shown on hover for non-hero images */
+.setHeroBtn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.setHeroBtn svg {
+  width: 10px;
+  height: 10px;
+  fill: rgba(255, 255, 255, 0.7);
+}
+
+.mediaItem:hover .setHeroBtn {
+  opacity: 1;
+}
+
+.setHeroBtn:hover {
+  background: linear-gradient(135deg, #d4af37, #b8973a);
+  color: #000;
+  border-color: #d4af37;
+}
+
+.setHeroBtn:hover svg {
+  fill: #000;
+}
+
+/* Stock image label */
+.stockItem {
+  position: relative;
+}
+
+.stockLabel {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  z-index: 1;
 }
 
 /* Lightbox */
@@ -341,28 +418,46 @@
 }
 
 @media (max-width: 480px) {
-  .heroSelector {
-    padding: 0.75rem;
+  /* Prevent horizontal overflow on mobile */
+  .gallery {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
   
-  .heroOption {
-    width: 100px;
+  .sectionTitle {
+    font-size: 0.8125rem;
+    flex-wrap: wrap;
   }
   
-  .heroOptionImage {
-    height: 60px;
-  }
-  
-  .heroOptionTitle {
-    font-size: 0.6875rem;
+  .sectionHint {
+    font-size: 0.75rem;
   }
   
   .mediaGrid {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+  }
+  
+  .mediaSection {
+    max-width: 100%;
+    overflow: hidden;
   }
   
   .playOverlay {
     width: 40px;
     height: 40px;
+  }
+  
+  /* On mobile, always show the Set as Hero button (no hover) */
+  .setHeroBtn {
+    opacity: 1;
+    padding: 3px 6px;
+    font-size: 0.5625rem;
+  }
+  
+  .primaryBadge {
+    padding: 3px 6px;
+    font-size: 0.5625rem;
   }
 }

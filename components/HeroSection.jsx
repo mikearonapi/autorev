@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import styles from '@/app/page.module.css';
+import styles from '@/app/(marketing)/page.module.css';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 

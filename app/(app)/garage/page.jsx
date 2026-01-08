@@ -3001,8 +3001,10 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
           src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp"
           alt="Garage Background"
           fill
-          priority
-          quality={75}
+          priority={false}
+          loading="lazy"
+          quality={50}
+          sizes="100vw"
           style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.4 }}
         />
       </div>

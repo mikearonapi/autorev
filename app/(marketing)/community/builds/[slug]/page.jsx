@@ -481,24 +481,17 @@ export default async function BuildDetailPage({ params }) {
 
   const shareUrl = getPostShareUrl(post.slug);
   
-  // Get hero source preference from build settings (stored in selected_upgrades JSONB)
-  const buildSettings = post.buildData?.selected_upgrades || {};
-  const heroSource = buildSettings.heroSource || 'stock';
-  const heroImageId = buildSettings.heroImageId;
+  // Hero image logic - use is_primary as single source of truth
+  // If an uploaded image has is_primary=true, use it as hero; otherwise use stock photo
+  const primaryImage = post.images?.find(img => img.is_primary);
+  const hasUserHero = !!primaryImage;
+  const heroImageUrl = hasUserHero 
+    ? (primaryImage.blob_url || primaryImage.thumbnail_url)
+    : post.carImageUrl;
   
-  // Determine hero image based on user preference
-  const primaryImage = post.images?.find(img => img.is_primary) || post.images?.[0];
-  const selectedHeroImage = heroImageId 
-    ? post.images?.find(img => img.id === heroImageId)
-    : primaryImage;
-  
-  // Use stock photo if heroSource is 'stock', otherwise use uploaded image
-  const heroImageUrl = heroSource === 'stock' || !selectedHeroImage
-    ? post.carImageUrl
-    : selectedHeroImage?.blob_url || post.carImageUrl;
-  
-  const galleryImages = post.images?.filter(img => img.id !== selectedHeroImage?.id) || [];
-  const hasUserImages = post.images && post.images.length > 0;
+  // Show ALL images in gallery (user can showcase their full gallery)
+  const galleryImages = post.images || [];
+  const hasUserImages = galleryImages.length > 0;
 
   // Calculate total mods count
   const partsCount = post.parts?.length || 0;
@@ -542,7 +535,7 @@ export default async function BuildDetailPage({ params }) {
               className={styles.mainImage}
             />
             <div className={styles.heroOverlay} />
-            {!hasUserImages && (
+            {!hasUserHero && (
               <span className={styles.stockImageBadge}>Stock Photo</span>
             )}
             
@@ -720,10 +713,14 @@ export default async function BuildDetailPage({ params }) {
             </section>
           )}
 
-          {/* Image Gallery */}
-          {galleryImages.length > 0 && (
+          {/* Image Gallery - Show all user-uploaded photos */}
+          {hasUserImages && (
             <section className={styles.section}>
-              <ImageGallery images={galleryImages} title="Build Gallery" />
+              <ImageGallery 
+                images={galleryImages} 
+                title={`Build Photos (${galleryImages.length})`}
+                heroImageId={primaryImage?.id}
+              />
             </section>
           )}
 

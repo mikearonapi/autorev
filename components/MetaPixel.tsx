@@ -4,7 +4,8 @@
  * Meta Pixel (Facebook Pixel) Component
  * 
  * Loads the Meta Pixel script and initializes tracking.
- * Uses Next.js Script component with lazyOnload strategy to prevent double-firing.
+ * Uses Next.js Script component with lazyOnload strategy for performance.
+ * This delays loading until after hydration and idle time, improving LCP.
  * 
  * Environment variable: NEXT_PUBLIC_META_PIXEL_ID
  * 
@@ -23,17 +24,17 @@ export default function MetaPixel() {
 
   return (
     <>
-      {/* Load Meta Pixel base script */}
+      {/* Load Meta Pixel base script - lazyOnload for performance */}
       <Script
         id="meta-pixel-script"
         src="https://connect.facebook.net/en_US/fbevents.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       
       {/* Initialize Meta Pixel - separate script ensures single execution */}
       <Script
         id="meta-pixel-init"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             if (!window._fbq_initialized) {

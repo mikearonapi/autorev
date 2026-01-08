@@ -78,6 +78,7 @@ export default function FeatureShowcase({
                     fill
                     sizes="(max-width: 768px) 280px, 320px"
                     style={{ objectFit: 'cover', objectPosition: 'top' }}
+                    loading="lazy"
                   />
                 </div>
               </IPhoneFrame>

@@ -122,8 +122,29 @@ export default function ImageUploader({
     });
 
     if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Upload failed');
+      // Handle non-JSON error responses (e.g., Vercel "Request Entity Too Large")
+      let errorMessage = 'Upload failed';
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } else {
+          // Plain text error from Vercel/server
+          const text = await response.text();
+          if (text.includes('Request Entity Too Large') || response.status === 413) {
+            errorMessage = 'File too large. Please try a smaller file.';
+          } else if (text) {
+            errorMessage = text.length > 100 ? `${text.substring(0, 100)}...` : text;
+          }
+        }
+      } catch (e) {
+        // If parsing fails, use status code
+        if (response.status === 413) {
+          errorMessage = 'File too large. Please try a smaller file.';
+        }
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

@@ -10,7 +10,7 @@ import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './ImageGallery.module.css';
 
-export default function ImageGallery({ images = [], title = 'Gallery' }) {
+export default function ImageGallery({ images = [], title = 'Gallery', heroImageId = null }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
   // Handle keyboard navigation
@@ -59,30 +59,41 @@ export default function ImageGallery({ images = [], title = 'Gallery' }) {
       <div className={styles.gallery}>
         <h2 className={styles.title}>{title}</h2>
         <div className={styles.grid}>
-          {images.map((image, index) => (
-            <button
-              key={image.id || index}
-              className={styles.gridItem}
-              onClick={() => setLightboxIndex(index)}
-              aria-label={`View image ${index + 1}`}
-            >
-              <Image
-                src={image.blob_url || image.thumbnail_url}
-                alt={image.caption || `Image ${index + 1}`}
-                fill
-                className={styles.gridImage}
-                sizes="(max-width: 640px) 50vw, 200px"
-              />
-              <div className={styles.gridOverlay}>
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  <line x1="11" y1="8" x2="11" y2="14"/>
-                  <line x1="8" y1="11" x2="14" y2="11"/>
-                </svg>
-              </div>
-            </button>
-          ))}
+          {images.map((image, index) => {
+            const isHero = image.id === heroImageId || image.is_primary;
+            return (
+              <button
+                key={image.id || index}
+                className={`${styles.gridItem} ${isHero ? styles.heroItem : ''}`}
+                onClick={() => setLightboxIndex(index)}
+                aria-label={`View image ${index + 1}${isHero ? ' (Hero)' : ''}`}
+              >
+                <Image
+                  src={image.blob_url || image.thumbnail_url}
+                  alt={image.caption || `Image ${index + 1}`}
+                  fill
+                  className={styles.gridImage}
+                  sizes="(max-width: 640px) 50vw, 200px"
+                />
+                {isHero && (
+                  <span className={styles.heroBadge}>
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Hero
+                  </span>
+                )}
+                <div className={styles.gridOverlay}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    <line x1="11" y1="8" x2="11" y2="14"/>
+                    <line x1="8" y1="11" x2="14" y2="11"/>
+                  </svg>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

@@ -46,32 +46,60 @@ const carouselImages = [
 
 export default function CarSelector() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // Track if this is the initial render (for priority logic)
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   // Auto-advance carousel every 1.5 seconds
   // Image, name, and dot all change at exactly the same moment
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex(prev => (prev + 1) % carouselImages.length);
+      setIsInitialRender(false);
     }, 1500);
 
     return () => clearInterval(interval);
   }, []);
 
+  // Preload the NEXT image before transition starts
+  // This prevents flash when transitioning to a new image
+  useEffect(() => {
+    const nextIndex = (currentIndex + 1) % carouselImages.length;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = carouselImages[nextIndex].src;
+    document.head.appendChild(link);
+    
+    return () => {
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    };
+  }, [currentIndex]);
+
   const currentImage = carouselImages[currentIndex];
+  
+  // Only render current and next images (not all 15)
+  // This dramatically reduces initial page weight
+  const nextIndex = (currentIndex + 1) % carouselImages.length;
+  const indicesToRender = [currentIndex, nextIndex];
 
   return (
     <div className={styles.page} data-no-main-offset>
       {/* Hero Section with Carousel */}
       <section className={styles.hero}>
         <div className={styles.heroImageWrapper}>
-          {/* All images rendered, crossfade via opacity - no flash */}
-          {carouselImages.map((image, idx) => (
+          {/* Only render current + next image for crossfade (not all 15) */}
+          {indicesToRender.map((idx, renderIdx) => (
             <Image
-              key={image.src}
-              src={image.src}
-              alt={image.alt}
+              key={carouselImages[idx].src}
+              src={carouselImages[idx].src}
+              alt={carouselImages[idx].alt}
               fill
-              priority={idx < 3} // Prioritize first few images
+              // Only the first image on initial render gets priority
+              priority={isInitialRender && renderIdx === 0 && currentIndex === 0}
+              loading={renderIdx === 0 ? 'eager' : 'lazy'}
               quality={85}
               className={`${styles.heroImage} ${idx === currentIndex ? styles.heroImageActive : ''}`}
               sizes="100vw"

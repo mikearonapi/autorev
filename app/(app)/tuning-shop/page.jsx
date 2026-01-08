@@ -25,7 +25,6 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CarImage from '@/components/CarImage';
 import CarActionMenu from '@/components/CarActionMenu';
 import UpgradeCenter from '@/components/UpgradeCenter';
-import ShareBuildModal from '@/components/ShareBuildModal';
 import OnboardingPopup, { tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
 import { fetchCars } from '@/lib/carsClient';
 
@@ -321,98 +320,46 @@ function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoa
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }, [build.createdAt]);
   
-  if (viewMode === 'list') {
-    return (
-      <div 
-        className={`${styles.projectListCard} ${isSelected ? styles.projectFullCardSelected : ''}`}
-        onClick={handleClick}
-      >
-        {compareMode && (
-          <div className={`${styles.selectCheckbox} ${isSelected ? styles.selectCheckboxSelected : ''}`}>
-            {isSelected && <Icons.check size={14} />}
-          </div>
-        )}
-        <div className={styles.projectListImage}>
-          <CarImage car={build.car} variant="thumbnail" showName={false} />
-        </div>
-        <div className={styles.projectListContent}>
-          <div className={styles.projectListMain}>
-            <h4>{build.name}</h4>
-            <p>{build.car.name}</p>
-          </div>
-          <div className={styles.projectListStat}>
-            <span className={styles.statLabel}>HP Gain</span>
-            <span className={`${styles.statValue} ${styles.statValueGreen}`}>+{build.totalHpGain || 0}</span>
-          </div>
-          <div className={styles.projectListStat}>
-            <span className={styles.statLabel}>Est. Cost</span>
-            <span className={`${styles.statValue} ${styles.statValueGold}`}>${(build.totalCostLow || 0).toLocaleString()}</span>
-          </div>
-          <div className={styles.projectListStat}>
-            <span className={styles.statLabel}>Date</span>
-            <span className={styles.statValue}>{formattedDate}</span>
-          </div>
-        </div>
-        <button
-          className={styles.shareBtn}
-          onClick={(e) => {
-            e.stopPropagation();
-            onShare();
-          }}
-          title="Share to community"
-        >
-          <Icons.share size={16} />
-        </button>
-        <button
-          className={styles.deleteBtn}
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          title="Delete project"
-        >
-          <Icons.trash size={16} />
-        </button>
-      </div>
-    );
-  }
+  // Use user's hero image if available, otherwise fall back to stock image
+  const hasUserHeroImage = !!build.heroImageUrl;
   
-  // Grid view (default)
+  // Use compact card style for both views (same as "Continue a Project" cards)
   return (
-    <div
+    <div 
+      className={`${styles.projectCard} ${isSelected ? styles.projectCardSelected : ''}`}
       onClick={handleClick}
-      className={`${styles.projectFullCard} ${isSelected ? styles.projectFullCardSelected : ''}`}
     >
       {compareMode && (
-        <div className={styles.cardSelectOverlay}>
-          <div className={`${styles.selectCheckbox} ${isSelected ? styles.selectCheckboxSelected : ''}`}>
-            {isSelected && <Icons.check size={14} />}
-          </div>
+        <div className={`${styles.selectCheckbox} ${isSelected ? styles.selectCheckboxSelected : ''}`}>
+          {isSelected && <Icons.check size={14} />}
         </div>
       )}
-      {/* Delete button - only visible on desktop (hidden on mobile, shown in actions row) */}
-      <button
-        className={`${styles.deleteBtn} ${styles.deleteBtnDesktop}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        title="Delete project"
-      >
-        <Icons.trash size={16} />
-      </button>
-      <div className={styles.projectFullImage}>
-        <CarImage car={build.car} variant="hero" showName={false} />
+      <div className={styles.projectImage}>
+        {hasUserHeroImage ? (
+          <Image
+            src={build.heroImageUrl}
+            alt={build.name}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="120px"
+          />
+        ) : (
+          <CarImage car={build.car} variant="thumbnail" showName={false} />
+        )}
       </div>
-      <div className={styles.projectFullContent}>
-        <div className={styles.projectFullHeader}>
-          <div>
-            <h4>{build.name}</h4>
-            <p className={styles.projectFullCar}>{build.car.name}</p>
-          </div>
-          {/* Share button - desktop only in header */}
+      <div className={styles.projectInfo}>
+        <h4>{build.name}</h4>
+        <p>{build.car.name}</p>
+        <div className={styles.projectStats}>
+          {build.totalHpGain > 0 && <span>+{build.totalHpGain} hp</span>}
+          {build.totalCostLow > 0 && <span>${build.totalCostLow.toLocaleString()}</span>}
+        </div>
+      </div>
+      <div className={styles.projectActions}>
+        <span className={styles.projectDate}>{formattedDate}</span>
+        <div className={styles.projectActionButtons}>
           <button
-            className={`${styles.shareBtn} ${styles.shareBtnDesktop}`}
+            className={styles.shareBtn}
             onClick={(e) => {
               e.stopPropagation();
               onShare();
@@ -421,46 +368,16 @@ function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoa
           >
             <Icons.share size={16} />
           </button>
-        </div>
-        <div className={styles.projectFullStats}>
-          {build.totalHpGain > 0 && (
-            <span className={styles.statBadge}>+{build.totalHpGain} hp</span>
-          )}
-          {build.totalCostLow > 0 && (
-            <span className={styles.statBadge}>${build.totalCostLow.toLocaleString()}</span>
-          )}
-        </div>
-        {/* Desktop date - hidden on mobile */}
-        {formattedDate && (
-          <span className={`${styles.projectDate} ${styles.projectDateDesktop}`}>{formattedDate}</span>
-        )}
-        {/* Mobile: Footer with date and actions */}
-        <div className={styles.projectCardFooter}>
-          {formattedDate && (
-            <span className={styles.projectDate}>{formattedDate}</span>
-          )}
-          <div className={styles.projectCardActions}>
-            <button
-              className={styles.actionBtnMobile}
-              onClick={(e) => {
-                e.stopPropagation();
-                onShare();
-              }}
-              title="Share"
-            >
-              <Icons.share size={14} />
-            </button>
-            <button
-              className={`${styles.actionBtnMobile} ${styles.actionBtnDelete}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              title="Delete"
-            >
-              <Icons.trash size={14} />
-            </button>
-          </div>
+          <button
+            className={styles.deleteBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            title="Delete project"
+          >
+            <Icons.trash size={16} />
+          </button>
         </div>
       </div>
     </div>
@@ -682,16 +599,13 @@ function TuningShopContent() {
   
   // Projects tab state
   const [projectsSort, setProjectsSort] = useState('date-desc');
-  const [projectsView, setProjectsView] = useState('grid'); // 'grid' or 'list'
   const [vehicleFilter, setVehicleFilter] = useState('all');
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
-  // Share modal state
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [buildToShare, setBuildToShare] = useState(null);
-  const [buildToShareImages, setBuildToShareImages] = useState([]);
+  // Flag to open save modal when loading a build for sharing
+  const [openSaveModalOnLoad, setOpenSaveModalOnLoad] = useState(false);
   
   // New tuning shop state for factory config and wheel selection
   const [factoryConfig, setFactoryConfig] = useState(null);
@@ -826,6 +740,10 @@ function TuningShopContent() {
       setSelectedCar(null);
       setCurrentBuildId(null);
       window.history.pushState({}, '', '/tuning-shop');
+    } else if (tabId === 'projects') {
+      // Clear URL params to prevent useEffect from snapping back to upgrades tab
+      // The useEffect watches `builds` and would otherwise see ?build=... and reset to upgrades
+      window.history.pushState({}, '', '/tuning-shop');
     }
     setActiveTab(tabId);
     
@@ -954,23 +872,26 @@ function TuningShopContent() {
     setSelectedForCompare([]);
   }, []);
   
-  // Share build handler - fetch images for the build being shared
-  const handleShareBuild = useCallback(async (build) => {
-    setBuildToShare(build);
-    setBuildToShareImages([]);
-    setShowShareModal(true);
-    
-    // Fetch images for this build
-    try {
-      const response = await fetch(`/api/builds/${build.id}/images`);
-      if (response.ok) {
-        const data = await response.json();
-        setBuildToShareImages(data.images || []);
+  // Share build handler - loads build in UpgradeCenter and opens save modal
+  // This ensures there's ONE unified way to share builds (via the save modal's share toggle)
+  const handleShareBuild = useCallback((build) => {
+    const car = allCars.find(c => c.slug === build.carSlug);
+    if (car) {
+      setSelectedCar(car);
+      setCurrentBuildId(build.id);
+      // Restore factory config and wheel fitment from saved build
+      if (build.factoryConfig) {
+        setFactoryConfig(build.factoryConfig);
       }
-    } catch (err) {
-      console.error('[TuningShop] Error fetching build images:', err);
+      if (build.wheelFitment) {
+        selectFitment(build.wheelFitment);
+      }
+      // Set flag to open save modal when UpgradeCenter mounts
+      setOpenSaveModalOnLoad(true);
+      setActiveTab('upgrades');
+      window.history.pushState({}, '', `/tuning-shop?build=${build.id}`);
     }
-  }, []);
+  }, [allCars, selectFitment]);
 
   const handleSelectCar = (car) => {
     setSelectedCar(car);
@@ -1026,8 +947,10 @@ function TuningShopContent() {
           src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp"
           alt="Tuning Shop Background"
           fill
-          priority
-          quality={75}
+          priority={false}
+          loading="lazy"
+          quality={50}
+          sizes="100vw"
           style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.4 }}
         />
       </div>
@@ -1101,7 +1024,17 @@ function TuningShopContent() {
                       onClick={() => handleLoadBuild(build)}
                     >
                       <div className={styles.projectImage}>
-                        <CarImage car={build.car} variant="thumbnail" showName={false} />
+                        {build.heroImageUrl ? (
+                          <Image
+                            src={build.heroImageUrl}
+                            alt={build.name}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            sizes="120px"
+                          />
+                        ) : (
+                          <CarImage car={build.car} variant="thumbnail" showName={false} />
+                        )}
                       </div>
                       <div className={styles.projectInfo}>
                         <h4>{build.name}</h4>
@@ -1221,6 +1154,8 @@ function TuningShopContent() {
                   onFactoryConfigChange={setFactoryConfig}
                   selectedWheelFitment={selectedFitment}
                   onWheelFitmentChange={selectFitment}
+                  openSaveModalOnMount={openSaveModalOnLoad}
+                  onSaveModalOpened={() => setOpenSaveModalOnLoad(false)}
                 />
               </ErrorBoundary>
             </div>
@@ -1308,23 +1243,6 @@ function TuningShopContent() {
                     ))}
                   </select>
                   
-                  {/* View Toggle */}
-                  <div className={styles.viewToggle}>
-                    <button 
-                      className={projectsView === 'grid' ? styles.active : ''}
-                      onClick={() => setProjectsView('grid')}
-                      title="Grid view"
-                    >
-                      <Icons.grid size={16} />
-                    </button>
-                    <button 
-                      className={projectsView === 'list' ? styles.active : ''}
-                      onClick={() => setProjectsView('list')}
-                      title="List view"
-                    >
-                      <Icons.list size={16} />
-                    </button>
-                  </div>
                 </div>
               </div>
               
@@ -1351,12 +1269,11 @@ function TuningShopContent() {
                           <span>{group.builds.length} project{group.builds.length !== 1 ? 's' : ''}</span>
                         </div>
                       </div>
-                      <div className={projectsView === 'grid' ? styles.projectsFullGrid : styles.projectsList}>
+                      <div className={styles.projectsList}>
                         {group.builds.map(build => (
                           <ProjectCard 
                             key={build.id}
                             build={build}
-                            viewMode={projectsView}
                             compareMode={compareMode}
                             isSelected={selectedForCompare.some(b => b.id === build.id)}
                             onSelect={() => handleSelectForCompare(build)}
@@ -1373,12 +1290,11 @@ function TuningShopContent() {
                 </div>
               ) : (
                 // Flat Grid/List View
-                <div className={projectsView === 'grid' ? styles.projectsFullGrid : styles.projectsList}>
+                <div className={styles.projectsList}>
                   {filteredAndSortedBuilds.map(build => (
                     <ProjectCard 
                       key={build.id}
                       build={build}
-                      viewMode={projectsView}
                       compareMode={compareMode}
                       isSelected={selectedForCompare.some(b => b.id === build.id)}
                       onSelect={() => handleSelectForCompare(build)}
@@ -1426,30 +1342,6 @@ function TuningShopContent() {
         defaultMode={authModal.defaultMode}
       />
       
-      {/* Share Build Modal */}
-      {showShareModal && buildToShare && (
-        <ShareBuildModal
-          isOpen={showShareModal}
-          onClose={() => {
-            setShowShareModal(false);
-            setBuildToShare(null);
-            setBuildToShareImages([]);
-          }}
-          build={{
-            id: buildToShare.id,
-            build_name: buildToShare.name,
-            notes: buildToShare.notes,
-            total_hp_gain: buildToShare.totalHpGain || 0,
-            total_cost_low: buildToShare.totalCostLow || 0,
-            total_cost_high: buildToShare.totalCostHigh || 0,
-          }}
-          carSlug={buildToShare.carSlug}
-          carName={buildToShare.car?.name || buildToShare.carName}
-          existingImages={buildToShareImages}
-          userId={authState.user?.id}
-        />
-      )}
-
       {/* Onboarding Popup */}
       <OnboardingPopup 
         storageKey="autorev_tuningshop_onboarding_dismissed"

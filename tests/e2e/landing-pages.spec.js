@@ -16,7 +16,7 @@ test('landing pages load and primary CTAs navigate', async ({ page, baseURL }) =
     },
     {
       route: '/landing/tuning-shop',
-      heading: 'Build Smarter, Not Random',
+      heading: "We've Done the Research For You",
       cta: 'Open Tuning Shop',
       expectedUrl: /\/tuning-shop(?:\?|#|$)/,
     },

@@ -816,8 +816,17 @@
 }
 
 @media (max-width: 640px) {
+  /* Container overflow control */
+  .container {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  
   .upgradeSection {
     margin-top: 12px;
+    max-width: 100%;
+    overflow: hidden;
   }
   
   .upgradeSectionTitle {
@@ -827,8 +836,11 @@
   
   .upgradeToggle {
     padding: 10px 12px;
-    gap: 10px;
+    gap: 8px;
     border-radius: 8px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .upgradeCheckbox {
@@ -841,20 +853,40 @@
     height: 10px;
   }
   
+  .upgradeInfo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
   .upgradeName {
     font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .upgradeDesc {
     font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .upgradeMeta {
+    flex-shrink: 0;
+    max-width: 80px;
+    text-align: right;
   }
   
   .upgradeCost {
     font-size: 10px;
+    white-space: nowrap;
   }
   
   .upgradeGain {
     font-size: 8px;
     padding: 1px 5px;
+    white-space: nowrap;
   }
 }

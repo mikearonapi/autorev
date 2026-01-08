@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './UpgradeCenter.module.css';
 import {
   getPerformanceProfile,
@@ -603,6 +604,8 @@ export default function UpgradeCenter({
   onFactoryConfigChange = null,
   selectedWheelFitment = null,
   onWheelFitmentChange = null,
+  openSaveModalOnMount = false,
+  onSaveModalOpened = null,
 }) {
   const { isAuthenticated, user } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
@@ -638,12 +641,11 @@ export default function UpgradeCenter({
   // Toggle for whether to share to / keep in community when saving
   const [shareToNewCommunity, setShareToNewCommunity] = useState(false);
   
+  // Separate community title (public name like "My Stormtrooper") from build name (internal)
+  const [communityTitle, setCommunityTitle] = useState('');
+  
   // Video player state
   const [selectedVideo, setSelectedVideo] = useState(null);
-  
-  // Hero image selection - 'stock' or 'uploaded'
-  const [heroSource, setHeroSource] = useState('stock');
-  const [selectedHeroImageId, setSelectedHeroImageId] = useState(null);
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
@@ -668,13 +670,6 @@ export default function UpgradeCenter({
         // Load saved build name
         if (build.name) {
           setBuildName(build.name);
-        }
-        // Load hero image settings
-        if (build.heroSource) {
-          setHeroSource(build.heroSource);
-        }
-        if (build.heroImageId) {
-          setSelectedHeroImageId(build.heroImageId);
         }
       }
     }
@@ -730,9 +725,14 @@ export default function UpgradeCenter({
         if (!error && data) {
           setLinkedCommunityPost(data);
           setShareToNewCommunity(data.is_published !== false); // Default to keeping shared
+          // Load community title from existing post
+          if (data.title) {
+            setCommunityTitle(data.title);
+          }
         } else {
           setLinkedCommunityPost(null);
           setShareToNewCommunity(false); // Default off for new builds
+          setCommunityTitle(''); // Reset community title
         }
       } catch (err) {
         console.error('[UpgradeCenter] Error checking linked community post:', err);
@@ -744,6 +744,20 @@ export default function UpgradeCenter({
     
     checkLinkedPost();
   }, [currentBuildId]);
+  
+  // Open save modal on mount if requested (e.g., from Projects share button)
+  // This unifies sharing through the save modal's community toggle
+  useEffect(() => {
+    if (openSaveModalOnMount && currentBuildId && !checkingCommunityPost) {
+      // Set default build name if not already set
+      if (!buildName && car) {
+        setBuildName(`${car.name} Build`);
+      }
+      setShowSaveModal(true);
+      // Notify parent that modal has been opened
+      onSaveModalOpened?.();
+    }
+  }, [openSaveModalOnMount, currentBuildId, checkingCommunityPost, buildName, car, onSaveModalOpened]);
   
   // Guard: return empty upgrades structure if no car
   const availableUpgrades = useMemo(() => {
@@ -934,7 +948,10 @@ export default function UpgradeCenter({
   
   const handleSaveBuild = async () => {
     if (!canSave) { setSaveError('Please sign in'); return; }
-    if (!buildName.trim()) { setSaveError('Enter a name'); return; }
+    if (!buildName.trim()) { setSaveError('Enter a build name'); return; }
+    if (shareToNewCommunity && !communityTitle.trim() && !buildName.trim()) { 
+      setSaveError('Enter a community title'); return; 
+    }
     if (saveToGarage && !selectedGarageVehicle) { setSaveError('Select a vehicle from your garage'); return; }
     
     setIsSaving(true);
@@ -955,9 +972,7 @@ export default function UpgradeCenter({
         // Include factory configuration and wheel fitment from props
         factoryConfig: factoryConfig || null,
         wheelFitment: selectedWheelFitment || null,
-        // Hero image settings
-        heroSource: heroSource,
-        heroImageId: selectedHeroImageId,
+        // Note: Hero image is now stored as is_primary on user_uploaded_images
       };
       
       const result = currentBuildId 
@@ -1036,14 +1051,15 @@ export default function UpgradeCenter({
             console.error('[UpgradeCenter] Error unpublishing community post:', err);
           }
         } else if (!linkedCommunityPost && shareToNewCommunity && savedBuildId) {
-          // Create new community post
+          // Create new community post - use communityTitle or fall back to buildName
+          const postTitle = (communityTitle || buildName).trim();
           try {
             const response = await fetch('/api/community/posts', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 postType: 'build',
-                title: buildName.trim(),
+                title: postTitle,
                 description: '',
                 buildId: savedBuildId,
                 carSlug: car.slug,
@@ -1063,7 +1079,9 @@ export default function UpgradeCenter({
             console.error('[UpgradeCenter] Error creating community post:', err);
           }
         } else if (linkedCommunityPost && shareToNewCommunity) {
-          // Re-publish existing post via API (includes cache invalidation)
+          // Update existing post via API (includes cache invalidation)
+          // Also update title if user changed it
+          const postTitle = (communityTitle || buildName).trim();
           try {
             await fetch('/api/community/posts', {
               method: 'PATCH',
@@ -1071,10 +1089,11 @@ export default function UpgradeCenter({
               body: JSON.stringify({
                 postId: linkedCommunityPost.id,
                 isPublished: true,
+                title: postTitle, // Update title in case user changed it
               }),
             });
           } catch (err) {
-            console.error('[UpgradeCenter] Error re-publishing community post:', err);
+            console.error('[UpgradeCenter] Error updating community post:', err);
           }
         }
         
@@ -1127,17 +1146,28 @@ export default function UpgradeCenter({
   const tierInfo = tierConfig[car.tier] || {};
   const activeCategoryData = UPGRADE_CATEGORIES.find(c => c.key === activeCategory);
   
-  // Get image URL for hero
-  const heroImageUrl = car.hero_image_url || car.thumbnail_url || `/images/cars/${car.slug}.png`;
+  // Get user's selected hero image (is_primary = true) or fall back to stock
+  const userHeroImage = buildImages.find(img => img.is_primary && img.media_type !== 'video');
+  const hasCustomHero = !!userHeroImage;
   
   return (
     <div className={styles.upgradeCenter}>
       {/* Vehicle Hero Section - Large, Prominent Display */}
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          {/* Hero Image */}
+          {/* Hero Image - Show user's selected hero if available, otherwise stock */}
           <div className={styles.heroImageContainer}>
-            <CarImage car={car} variant="hero" showName={false} priority />
+            {hasCustomHero ? (
+              <Image
+                src={userHeroImage.blob_url || userHeroImage.thumbnail_url}
+                alt={`${car.name} - Your Photo`}
+                fill
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+            ) : (
+              <CarImage car={car} variant="hero" showName={false} priority />
+            )}
             <div className={styles.heroImageOverlay} />
           </div>
           
@@ -1389,13 +1419,28 @@ export default function UpgradeCenter({
             
             {/* Upload Component */}
             <ImageUploader
-              onUploadComplete={(media) => {
+              onUploadComplete={async (media) => {
                 setBuildImages(media);
-                // If this is the first uploaded image, auto-select it as hero
+                // If this is the first uploaded image, auto-set it as hero (is_primary)
                 const images = media.filter(m => m.media_type !== 'video');
-                if (images.length === 1 && heroSource === 'stock') {
-                  setHeroSource('uploaded');
-                  setSelectedHeroImageId(images[0].id);
+                const hasHero = images.some(img => img.is_primary);
+                if (images.length === 1 && !hasHero) {
+                  // Auto-set first image as hero
+                  try {
+                    const response = await fetch('/api/uploads', {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ imageId: images[0].id, isPrimary: true }),
+                    });
+                    if (response.ok) {
+                      setBuildImages(prev => prev.map(img => ({
+                        ...img,
+                        is_primary: img.id === images[0].id,
+                      })));
+                    }
+                  } catch (err) {
+                    console.error('[UpgradeCenter] Error auto-setting hero:', err);
+                  }
                 }
               }}
               onUploadError={(err) => console.error('[UpgradeCenter] Media upload error:', err)}
@@ -1406,39 +1451,52 @@ export default function UpgradeCenter({
               disabled={!user}
             />
             
-            {/* Hero Selection & Gallery */}
-            {(buildImages.length > 0 || user) && (
-              <BuildMediaGallery
-                car={car}
-                media={buildImages}
-                heroSource={heroSource}
-                selectedHeroImageId={selectedHeroImageId}
-                onHeroSourceChange={setHeroSource}
-                onHeroImageSelect={setSelectedHeroImageId}
-                onVideoClick={(video) => setSelectedVideo(video)}
-                onSetPrimary={async (imageId) => {
-                  // Update primary in database
-                  try {
-                    const response = await fetch('/api/uploads', {
+            {/* Gallery with Hero Selection - tap any image to make it the hero */}
+            <BuildMediaGallery
+              car={car}
+              media={buildImages}
+              onVideoClick={(video) => setSelectedVideo(video)}
+              onSetPrimary={async (imageId) => {
+                // Update primary in database - this sets is_primary = true for selected, false for others
+                try {
+                  const response = await fetch('/api/uploads', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageId, isPrimary: true }),
+                  });
+                  if (response.ok) {
+                    // Update local state - the selected image becomes hero, shown at top
+                    setBuildImages(prev => prev.map(img => ({
+                      ...img,
+                      is_primary: img.id === imageId,
+                    })));
+                  }
+                } catch (err) {
+                  console.error('[UpgradeCenter] Error setting hero image:', err);
+                }
+              }}
+              onSetStockHero={async () => {
+                // Clear is_primary on all images to revert to stock hero
+                try {
+                  // Clear primary on all images for this build
+                  for (const img of buildImages.filter(i => i.is_primary)) {
+                    await fetch('/api/uploads', {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ imageId, isPrimary: true }),
+                      body: JSON.stringify({ imageId: img.id, isPrimary: false }),
                     });
-                    if (response.ok) {
-                      // Update local state
-                      setBuildImages(prev => prev.map(img => ({
-                        ...img,
-                        is_primary: img.id === imageId,
-                      })));
-                    }
-                  } catch (err) {
-                    console.error('[UpgradeCenter] Error setting primary image:', err);
                   }
-                }}
-                showHeroSelector={buildImages.filter(m => m.media_type !== 'video').length > 0}
-                readOnly={!user}
-              />
-            )}
+                  // Update local state
+                  setBuildImages(prev => prev.map(img => ({
+                    ...img,
+                    is_primary: false,
+                  })));
+                } catch (err) {
+                  console.error('[UpgradeCenter] Error setting stock hero:', err);
+                }
+              }}
+              readOnly={!user}
+            />
             
             {!user && (
               <p className={styles.loginHint}>
@@ -1725,12 +1783,37 @@ export default function UpgradeCenter({
                   <button 
                     type="button"
                     className={`${styles.toggleSwitch} ${shareToNewCommunity ? styles.toggleSwitchOn : ''}`}
-                    onClick={() => setShareToNewCommunity(!shareToNewCommunity)}
+                    onClick={() => {
+                      const newValue = !shareToNewCommunity;
+                      setShareToNewCommunity(newValue);
+                      // Default community title to build name if enabling and title is empty
+                      if (newValue && !communityTitle) {
+                        setCommunityTitle(buildName);
+                      }
+                    }}
                     aria-pressed={shareToNewCommunity}
                   >
                     <span className={styles.toggleKnob} />
                   </button>
                 </div>
+                
+                {/* Community Title Input - shown when sharing is enabled */}
+                {shareToNewCommunity && (
+                  <div className={styles.communityTitleInput}>
+                    <label className={styles.communityTitleLabel}>Community Title</label>
+                    <input
+                      type="text"
+                      className={styles.formInput}
+                      value={communityTitle}
+                      onChange={e => setCommunityTitle(e.target.value)}
+                      placeholder="e.g., My Stormtrooper, Weekend Track Weapon"
+                    />
+                    <span className={styles.communityTitleHint}>
+                      This is the public name shown on Community Builds
+                    </span>
+                  </div>
+                )}
+                
                 {linkedCommunityPost && !shareToNewCommunity && (
                   <p className={styles.communityToggleWarning}>
                     ⚠️ This build will be removed from the community when you save.

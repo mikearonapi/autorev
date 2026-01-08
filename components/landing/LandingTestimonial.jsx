@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import Image from 'next/image';
 import styles from './LandingTestimonial.module.css';
 
 const QuoteIcon = ({ size = 32 }) => (
@@ -11,21 +9,22 @@ const QuoteIcon = ({ size = 32 }) => (
 
 /**
  * Avatar with fallback to initial on load error
+ * Uses next/image for optimization with CSS-based error fallback
  */
 function Avatar({ name, src }) {
-  const [imgError, setImgError] = useState(false);
-
-  if (!src || imgError) {
+  if (!src) {
     return <span className={styles.avatarInitial}>{name.charAt(0)}</span>;
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={name}
+      width={48}
+      height={48}
       className={styles.avatarImg}
-      onError={() => setImgError(true)}
       referrerPolicy="no-referrer"
+      unoptimized // Google profile images don't need optimization pipeline
     />
   );
 }

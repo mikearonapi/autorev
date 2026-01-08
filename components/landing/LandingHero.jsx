@@ -103,7 +103,7 @@ export default function LandingHero({
                         muted
                         loop
                         playsInline
-                        preload="auto"
+                        preload="metadata"
                         webkit-playsinline="true"
                         onError={handleVideoError}
                         onCanPlay={handleVideoCanPlay}

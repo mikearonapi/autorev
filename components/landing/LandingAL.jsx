@@ -104,6 +104,7 @@ export default function LandingAL({
                           fill
                           sizes="280px"
                           style={{ objectFit: 'cover', objectPosition: 'top' }}
+                          loading="lazy"
                         />
                       )}
                       <video
@@ -114,7 +115,7 @@ export default function LandingAL({
                         muted
                         loop
                         playsInline
-                        preload="auto"
+                        preload="none"
                         webkit-playsinline="true"
                         onError={handleVideoError}
                         onCanPlay={handleVideoCanPlay}
@@ -128,6 +129,7 @@ export default function LandingAL({
                       fill
                       sizes="280px"
                       style={{ objectFit: 'cover', objectPosition: 'top' }}
+                      loading="lazy"
                     />
                   )}
                 </div>

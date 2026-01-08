@@ -9,11 +9,10 @@
  * - Content scaled to 70% for realistic presentation
  * 
  * Adapted from Tailwind reference guide to CSS Modules
+ * 
+ * Server component - no client-side interactivity needed
  */
 
-'use client';
-
-import { ReactNode } from 'react';
 import styles from './IPhoneFrame.module.css';
 
 /**

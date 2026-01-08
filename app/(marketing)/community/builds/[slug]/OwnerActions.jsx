@@ -19,15 +19,13 @@ export default function OwnerActions({ postId, ownerId, buildSlug, carSlug, user
 
   // Redirect to UpgradeCenter with the build loaded
   const handleEditClick = () => {
-    if (!carSlug) {
-      console.warn('[OwnerActions] Missing carSlug, cannot redirect to UpgradeCenter');
-      return;
-    }
-    
     // Navigate to tuning shop with the build pre-loaded
+    // The tuning shop page reads ?build=<id> or ?plan=<carSlug> from URL params
     const url = userBuildId 
-      ? `/tuning-shop/${carSlug}?build=${userBuildId}`
-      : `/tuning-shop/${carSlug}`;
+      ? `/tuning-shop?build=${userBuildId}`
+      : carSlug 
+        ? `/tuning-shop?plan=${carSlug}`
+        : '/tuning-shop';
     
     router.push(url);
   };

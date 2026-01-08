@@ -359,17 +359,44 @@
 @media (max-width: 640px) {
   .container {
     padding: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    max-width: 100%;
+  }
+  
+  .headerLeft {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+  
+  .title {
+    font-size: 13px;
   }
   
   .copyBtn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .subtitle {
+    flex-wrap: wrap;
+  }
+  
+  .list {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .listItem {
+    max-width: 100%;
+    overflow: hidden;
   }
   
   .editRow {
@@ -378,6 +405,7 @@
   
   .input {
     min-width: 0;
+    font-size: 16px; /* Prevent iOS zoom */
   }
   
   .inputSmall {
@@ -387,15 +415,61 @@
   
   .itemHeader {
     padding: 12px;
+    gap: 10px;
+    max-width: 100%;
   }
   
   .itemInfo {
     flex-wrap: wrap;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .itemName {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  .itemBrand {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  .itemActions {
+    flex-shrink: 0;
+    gap: 6px;
   }
   
   .addPartInline,
   .editPartInline {
     margin-left: 0;
     margin-top: 6px;
+  }
+  
+  .buildReviewBtn {
+    padding: 14px;
+    gap: 10px;
+  }
+  
+  .buildReviewText {
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .buildReviewTitle {
+    font-size: 13px;
+  }
+  
+  .buildReviewSubtitle {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
