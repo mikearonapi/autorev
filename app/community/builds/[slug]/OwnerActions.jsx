@@ -26,7 +26,7 @@ export default function OwnerActions({ postId, ownerId, buildSlug, carSlug, user
     
     // Navigate to tuning shop with the build pre-loaded
     const url = userBuildId 
-      ? `/tuning-shop/${carSlug}?buildId=${userBuildId}`
+      ? `/tuning-shop/${carSlug}?build=${userBuildId}`
       : `/tuning-shop/${carSlug}`;
     
     router.push(url);

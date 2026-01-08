@@ -480,9 +480,24 @@ export default async function BuildDetailPage({ params }) {
   }
 
   const shareUrl = getPostShareUrl(post.slug);
+  
+  // Get hero source preference from build settings (stored in selected_upgrades JSONB)
+  const buildSettings = post.buildData?.selected_upgrades || {};
+  const heroSource = buildSettings.heroSource || 'stock';
+  const heroImageId = buildSettings.heroImageId;
+  
+  // Determine hero image based on user preference
   const primaryImage = post.images?.find(img => img.is_primary) || post.images?.[0];
-  const heroImageUrl = primaryImage?.blob_url || post.carImageUrl;
-  const galleryImages = post.images?.filter(img => img.id !== primaryImage?.id) || [];
+  const selectedHeroImage = heroImageId 
+    ? post.images?.find(img => img.id === heroImageId)
+    : primaryImage;
+  
+  // Use stock photo if heroSource is 'stock', otherwise use uploaded image
+  const heroImageUrl = heroSource === 'stock' || !selectedHeroImage
+    ? post.carImageUrl
+    : selectedHeroImage?.blob_url || post.carImageUrl;
+  
+  const galleryImages = post.images?.filter(img => img.id !== selectedHeroImage?.id) || [];
   const hasUserImages = post.images && post.images.length > 0;
 
   // Calculate total mods count

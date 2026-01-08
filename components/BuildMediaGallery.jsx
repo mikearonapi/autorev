@@ -12,6 +12,7 @@
 
 import React, { useState, useCallback } from 'react';
 import Image from 'next/image';
+import { getCarHeroImage } from '@/lib/images';
 import styles from './BuildMediaGallery.module.css';
 
 // Icons
@@ -84,17 +85,18 @@ export default function BuildMediaGallery({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Get the stock image URL
-  const stockImageUrl = car?.hero_image_url || car?.thumbnail_url || `/images/cars/${car?.slug}.png`;
+  // Get the stock image URL using the shared images utility
+  const stockImageUrl = getCarHeroImage(car);
 
   // Filter images only (not videos) for hero selection
   const uploadedImages = media.filter(m => m.media_type !== 'video');
   const videos = media.filter(m => m.media_type === 'video');
 
-  // Get the current hero image
-  const heroImage = heroSource === 'stock' 
+  // Get the current hero image - fall back to stock if no uploaded images or invalid selection
+  const selectedUploadedImage = uploadedImages.find(img => img.id === selectedHeroImageId);
+  const heroImage = heroSource === 'stock' || !selectedUploadedImage
     ? { url: stockImageUrl, type: 'stock' }
-    : uploadedImages.find(img => img.id === selectedHeroImageId) || uploadedImages[0] || { url: stockImageUrl, type: 'stock' };
+    : selectedUploadedImage;
 
   const handleOpenLightbox = useCallback((index) => {
     setLightboxIndex(index);

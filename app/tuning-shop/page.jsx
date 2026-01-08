@@ -1043,14 +1043,16 @@ function TuningShopContent() {
           <div className={styles.tabPills}>
             {tabs.map(tab => {
               const Icon = tab.icon;
+              // Only disable Upgrade Center tab when no car selected
               const isDisabled = tab.id === 'upgrades' && !selectedCar;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => !isDisabled && handleTabChange(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`${styles.tabPill} ${activeTab === tab.id ? styles.tabPillActive : ''} ${isDisabled ? styles.tabPillDisabled : ''}`}
                   disabled={isDisabled}
                   title={isDisabled ? 'Select a car first' : undefined}
+                  type="button"
                 >
                   <Icon size={16} />
                   <span>{tab.label}</span>
