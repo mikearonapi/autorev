@@ -209,6 +209,7 @@ export default function WheelTireConfigurator({
     loadData();
     
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car?.slug]);
 
   // Initialize wheel config from OEM data

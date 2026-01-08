@@ -416,4 +416,3 @@ export function FilterIcon({ size = 24, className = '' }) {
     </svg>
   );
 }
-

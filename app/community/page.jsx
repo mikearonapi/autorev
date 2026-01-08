@@ -4,87 +4,112 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import EventCard from '@/components/EventCard';
-import EventCategoryPill from '@/components/EventCategoryPill';
 import { useState, useEffect } from 'react';
 
-// Icons (Lucide style)
+// Icons (Lucide style) - color prop for explicit stroke color
 const Icons = {
-  search: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
-    </svg>
-  ),
-  mapPin: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-      <circle cx="12" cy="10" r="3"/>
-    </svg>
-  ),
-  coffee: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-      <line x1="6" y1="1" x2="6" y2="4"/>
-      <line x1="10" y1="1" x2="10" y2="4"/>
-      <line x1="14" y1="1" x2="14" y2="4"/>
-    </svg>
-  ),
-  flag: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-      <line x1="4" y1="22" x2="4" y2="15"/>
-    </svg>
-  ),
-  cone: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m3 22 4.5-17a2 2 0 0 1 3 0l4.5 17"/>
-      <path d="M2 22h20"/>
-      <path d="M6 18h12"/>
-      <path d="M8 14h8"/>
-    </svg>
-  ),
-  trophy: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-      <path d="M4 22h16"/>
-      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-      <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
-    </svg>
-  ),
-  users: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  ),
-  arrowRight: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  arrowRight: ({ size = 20, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/>
       <polyline points="12 5 19 12 12 19"/>
     </svg>
   ),
+  wrench: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+  calendar: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  ),
+  eye: ({ size = 20, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  star: ({ size = 20, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+  ),
 };
 
-const CATEGORIES = [
-  { name: 'Cars & Coffee', slug: 'cars-and-coffee', icon: <Icons.coffee />, description: 'Morning meetups with fellow enthusiasts' },
-  { name: 'Track Days', slug: 'track-day', icon: <Icons.flag />, description: 'HPDE and open lapping sessions' },
-  { name: 'Autocross', slug: 'autocross', icon: <Icons.cone />, description: 'Timed runs on closed courses' },
-  { name: 'Car Shows', slug: 'car-show', icon: <Icons.trophy />, description: 'Concours and display events' },
-  { name: 'Club Events', slug: 'club-meetup', icon: <Icons.users />, description: 'Brand and model club gatherings' },
-];
+// Build Card component for displaying community builds
+function BuildCard({ build }) {
+  const primaryImage = build.primary_image || build.images?.find(img => img.is_primary) || build.images?.[0];
+  const imageUrl = primaryImage?.blob_url || primaryImage?.thumbnail_url || build.car_image_url;
+  
+  return (
+    <Link href={`/community/builds/${build.slug}`} className={styles.buildCard}>
+      <div className={styles.buildCardImage}>
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={build.title}
+            fill
+            className={styles.buildImage}
+            sizes="(max-width: 640px) 260px, 300px"
+          />
+        ) : (
+          <div className={styles.buildPlaceholder}>
+            <Icons.wrench size={32} />
+          </div>
+        )}
+        {build.is_featured && (
+          <span className={styles.featuredBadge}>
+            <Icons.star size={10} />
+            Featured
+          </span>
+        )}
+        <div className={styles.buildCardOverlay}>
+          <span className={styles.viewBuildBtn}>View Build</span>
+        </div>
+      </div>
+      <div className={styles.buildCardContent}>
+        <h3 className={styles.buildCardTitle}>{build.title}</h3>
+        {build.car_name && (
+          <p className={styles.buildCardCar}>{build.car_name}</p>
+        )}
+        <div className={styles.buildCardMeta}>
+          {build.author && (
+            <div className={styles.buildAuthor}>
+              {build.author.avatar_url && (
+                <Image
+                  src={build.author.avatar_url}
+                  alt={build.author.display_name || 'User'}
+                  width={18}
+                  height={18}
+                  className={styles.buildAuthorAvatar}
+                />
+              )}
+              <span>{build.author.display_name || 'Anonymous'}</span>
+            </div>
+          )}
+          <span className={styles.buildViewCount}>
+            <Icons.eye size={12} />
+            {build.view_count || 0}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export default function CommunityPage() {
   const [featuredEvents, setFeaturedEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [locationQuery, setLocationQuery] = useState('');
+  const [popularBuilds, setPopularBuilds] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [loadingBuilds, setLoadingBuilds] = useState(true);
 
   useEffect(() => {
-    async function fetchFeatured() {
+    // Fetch featured events
+    async function fetchEvents() {
       try {
         const res = await fetch('/api/events/featured?limit=4');
         if (res.ok) {
@@ -94,62 +119,132 @@ export default function CommunityPage() {
       } catch (err) {
         console.error('Failed to fetch featured events:', err);
       } finally {
-        setLoading(false);
+        setLoadingEvents(false);
       }
     }
-    fetchFeatured();
+
+    // Fetch most viewed builds
+    async function fetchBuilds() {
+      try {
+        const res = await fetch('/api/community/builds?limit=12&sort=popular');
+        if (res.ok) {
+          const data = await res.json();
+          const builds = data.builds || [];
+          // Take top 6 most viewed
+          setPopularBuilds(builds.slice(0, 6));
+        }
+      } catch (err) {
+        console.error('Failed to fetch builds:', err);
+      } finally {
+        setLoadingBuilds(false);
+      }
+    }
+
+    fetchEvents();
+    fetchBuilds();
   }, []);
 
   return (
-    <div className={styles.page}>
-      {/* Hero Section */}
+    <div className={styles.page} data-no-main-offset>
+      {/* Hero Section - Now broader community focus */}
       <section className={styles.hero}>
         <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
           <span className={styles.badge}>Community</span>
           <h1 className={styles.heroTitle}>
-            Find Your <span className={styles.titleAccent}>Next Event</span>
+            Connect with <span className={styles.titleAccent}>Enthusiasts</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Discover Cars & Coffee meetups, track days, car shows, and more in your area.
-            Connect with the AutoRev community.
+            Explore community builds, discover local events, and connect with fellow car enthusiasts.
           </p>
 
-          <div className={styles.searchContainer}>
-            <div className={styles.searchWrapper}>
-              <Icons.mapPin size={20} />
-              <input
-                type="text"
-                placeholder="Enter ZIP code or City, State"
-                className={styles.searchInput}
-                value={locationQuery}
-                onChange={(e) => setLocationQuery(e.target.value)}
-              />
-              <button className={styles.nearMeBtn}>
-                Near Me
-              </button>
-            </div>
-            <Link 
-              href={`/community/events${locationQuery ? `?location=${encodeURIComponent(locationQuery)}` : ''}`}
-              className={styles.searchBtn}
-            >
-              Find Events
-              <Icons.arrowRight size={18} />
+          {/* Quick navigation cards */}
+          <div className={styles.heroNav}>
+            <Link href="/community/builds" className={styles.heroNavCard}>
+              <div className={styles.heroNavIcon}>
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#d4af37" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  style={{ display: 'block', minWidth: '20px', minHeight: '20px' }}
+                >
+                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+              </div>
+              <div className={styles.heroNavText}>
+                <span className={styles.heroNavTitle}>Community Builds</span>
+                <span className={styles.heroNavDesc}>Browse real projects</span>
+              </div>
+              <Icons.arrowRight size={16} />
+            </Link>
+            <Link href="/community/events" className={styles.heroNavCard}>
+              <div className={styles.heroNavIcon}>
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#d4af37" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  style={{ display: 'block', minWidth: '20px', minHeight: '20px' }}
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div className={styles.heroNavText}>
+                <span className={styles.heroNavTitle}>Local Events</span>
+                <span className={styles.heroNavDesc}>Find meetups near you</span>
+              </div>
+              <Icons.arrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Most Viewed Builds Section */}
+      <section className={styles.section}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Most Viewed Builds</h2>
+            <Link href="/community/builds" className={styles.viewAllLink}>
+              View All Builds
+              <Icons.arrowRight size={16} />
             </Link>
           </div>
 
-          <div className={styles.quickFilters}>
-            {CATEGORIES.slice(0, 5).map(cat => (
-              <Link 
-                key={cat.slug} 
-                href={`/community/events?type=${cat.slug}`}
-                className={styles.quickFilterBtn}
-              >
-                <span className={styles.quickFilterIcon}>{cat.icon}</span>
-                {cat.name}
+          {loadingBuilds ? (
+            <div className={styles.loadingState}>
+              <div className={styles.spinner} />
+              <p>Loading builds...</p>
+            </div>
+          ) : popularBuilds.length > 0 ? (
+            <div className={styles.buildsCarousel}>
+              <div className={styles.buildsTrack}>
+                {popularBuilds.map(build => (
+                  <BuildCard key={build.id} build={build} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className={styles.emptyBuildsState}>
+              <Icons.wrench size={40} />
+              <h3>No builds yet</h3>
+              <p>Be the first to share your project with the community!</p>
+              <Link href="/tuning-shop" className={styles.ctaButton}>
+                Create Your Build
               </Link>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -164,12 +259,12 @@ export default function CommunityPage() {
             </Link>
           </div>
 
-          {loading ? (
+          {loadingEvents ? (
             <div className={styles.loadingState}>
               <div className={styles.spinner} />
               <p>Loading events...</p>
             </div>
-          ) : (
+          ) : featuredEvents.length > 0 ? (
             <div className={styles.eventsGrid}>
               {featuredEvents.map(event => (
                 <EventCard 
@@ -179,67 +274,43 @@ export default function CommunityPage() {
                 />
               ))}
             </div>
+          ) : (
+            <div className={styles.emptyEventsState}>
+              <Icons.calendar size={40} />
+              <h3>No upcoming events</h3>
+              <p>Check back soon or submit an event you know about!</p>
+              <Link href="/events/submit" className={styles.ctaButtonSecondary}>
+                Submit an Event
+              </Link>
+            </div>
           )}
         </div>
       </section>
 
-      {/* Categories Grid */}
-      <section className={styles.sectionAlt}>
+      {/* Share Your Build CTA */}
+      <section className={styles.buildCtaSection}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Browse by Category</h2>
-          <div className={styles.categoriesGrid}>
-            {CATEGORIES.map(cat => (
-              <Link 
-                key={cat.slug} 
-                href={`/community/events?type=${cat.slug}`}
-                className={styles.categoryCard}
-              >
-                <div className={styles.categoryIconWrapper}>
-                  {cat.icon}
-                </div>
-                <h3 className={styles.categoryName}>{cat.name}</h3>
-                <p className={styles.categoryDescription}>{cat.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Community Teaser */}
-      <section className={styles.section}>
-        <div className={`${styles.container} ${styles.comingSoonContainer}`}>
-          <div className={styles.comingSoonContent}>
-            <div className={styles.comingSoonBadge}>Coming Soon</div>
-            <h2 className={styles.sectionTitle}>Join the Club</h2>
-            <p className={styles.comingSoonText}>
-              We're building a comprehensive community hub for enthusiasts. Soon you'll be able to:
-            </p>
-            <ul className={styles.featureList}>
-              <li className={styles.featureItem}>
-                <div className={styles.checkIcon}><Icons.users size={14} /></div>
-                Join and create car clubs
-              </li>
-              <li className={styles.featureItem}>
-                <div className={styles.checkIcon}><Icons.flag size={14} /></div>
-                Share your build progress
-              </li>
-              <li className={styles.featureItem}>
-                <div className={styles.checkIcon}><Icons.mapPin size={14} /></div>
-                Connect with local enthusiasts
-              </li>
-              <li className={styles.featureItem}>
-                <div className={styles.checkIcon}><Icons.trophy size={14} /></div>
-                Organize your own events
-              </li>
-            </ul>
-            <Link href="/join" className={styles.ctaButton}>
-              Join AutoRev to Get Notified
+          <div className={styles.buildCtaContent}>
+            <div className={styles.buildCtaText}>
+              <h2>Share Your Project</h2>
+              <p>
+                Got a build you're proud of? Share photos, mods, and inspiration with thousands of enthusiasts.
+              </p>
+              <div className={styles.buildCtaFeatures}>
+                <span>📸 Upload photos</span>
+                <span>🔧 Document your mods</span>
+                <span>📱 Share on social media</span>
+              </div>
+            </div>
+            <Link href="/tuning-shop" className={styles.buildCtaButton}>
+              Create Your Build
+              <Icons.arrowRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Submit CTA */}
+      {/* Submit Event CTA */}
       <section className={styles.ctaSection}>
         <div className={styles.container}>
           <h2 className={styles.ctaTitle}>Know of an event we're missing?</h2>

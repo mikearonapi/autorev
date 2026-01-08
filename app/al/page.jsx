@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import PageClient from './PageClient';
 import { getPlatformStats } from '@/lib/statsService';
 
@@ -35,7 +36,12 @@ export async function generateMetadata() {
 }
 
 export default function ALPage() {
-  return <PageClient />;
+  // Wrap in Suspense because PageClient uses useSearchParams()
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
+      <PageClient />
+    </Suspense>
+  );
 }
 
 

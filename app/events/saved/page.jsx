@@ -97,7 +97,7 @@ export default function SavedEventsPage() {
   // Loading state (auth)
   if (authLoading) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <header className={styles.hero}>
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
@@ -123,7 +123,7 @@ export default function SavedEventsPage() {
   // Not authenticated - show sign in prompt
   if (!isAuthenticated) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <header className={styles.hero}>
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
@@ -175,7 +175,7 @@ export default function SavedEventsPage() {
   // Tier gate (only shows if not in beta and user doesn't have collector tier)
   if (!canAccessSavedEvents) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <header className={styles.hero}>
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
@@ -199,7 +199,7 @@ export default function SavedEventsPage() {
   }
   
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Header */}
       <header className={styles.hero}>
         <div className={styles.heroOverlay} />

@@ -28,6 +28,28 @@ import { logCronError } from '@/lib/serverErrorLogger';
 const CRON_SECRET = process.env.CRON_SECRET;
 
 /**
+ * Per-source timeout in milliseconds (5 minutes)
+ * This prevents any single source from blocking the entire cron job
+ */
+const SOURCE_TIMEOUT_MS = 5 * 60 * 1000;
+
+/**
+ * Wrap a promise with a timeout
+ * @param {Promise} promise - The promise to wrap
+ * @param {number} timeoutMs - Timeout in milliseconds
+ * @param {string} operationName - Name for error messages
+ * @returns {Promise}
+ */
+function withTimeout(promise, timeoutMs, operationName) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error(`${operationName} timed out after ${timeoutMs / 1000}s`)), timeoutMs)
+    )
+  ]);
+}
+
+/**
  * Check if request is authorized
  */
 function isAuthorized(request) {
@@ -118,13 +140,14 @@ export async function GET(request) {
   };
 
   try {
-    // 0a. Cleanup stale running jobs (older than 30 minutes)
-    const staleThreshold = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    // 0a. Cleanup stale running jobs (older than 10 minutes - generous timeout)
+    // Individual sources have 5-minute timeouts, so 10 minutes means something went very wrong
+    const staleThreshold = new Date(Date.now() - 10 * 60 * 1000).toISOString();
     const { data: staleJobs, error: staleErr } = await supabaseServiceRole
       .from('scrape_jobs')
       .update({
         status: 'failed',
-        error_message: 'Job marked stale by cleanup - exceeded 30 minute runtime',
+        error_message: 'Job marked stale by cleanup - exceeded 10 minute runtime (likely hung)',
         completed_at: new Date().toISOString(),
       })
       .eq('job_type', 'events_refresh')
@@ -253,15 +276,19 @@ export async function GET(request) {
 
         const scrapeJobId = jobRow.id;
 
-        console.log(`[refresh-events] Fetching from ${source.name}...`);
+        console.log(`[refresh-events] Fetching from ${source.name} (timeout: ${SOURCE_TIMEOUT_MS / 1000}s)...`);
         
-        // Fetch events from source
-        const { events: rawEvents, errors: fetchErrors } = await fetchFromSource(source, {
-          limit: limit || 100,
-          dryRun,
-          rangeStart,
-          rangeEnd,
-        });
+        // Fetch events from source with timeout to prevent hanging
+        const { events: rawEvents, errors: fetchErrors } = await withTimeout(
+          fetchFromSource(source, {
+            limit: limit || 100,
+            dryRun,
+            rangeStart,
+            rangeEnd,
+          }),
+          SOURCE_TIMEOUT_MS,
+          `Fetch from ${source.name}`
+        );
         
         sourceResult.eventsDiscovered = rawEvents.length;
         results.eventsDiscovered += rawEvents.length;
@@ -346,24 +373,42 @@ export async function GET(request) {
             .select('id, slug');
           
           if (insertErr) {
-            // If batch upsert fails (e.g., slug collision), try inserting one-by-one
-            console.warn(`[refresh-events] Batch upsert failed, trying individual inserts:`, insertErr.message);
+            // If batch upsert fails (e.g., slug collision), try inserting one-by-one with slug regeneration
+            console.warn(`[refresh-events] Batch upsert failed, trying individual inserts with slug recovery:`, insertErr.message);
             let successCount = 0;
             const individualErrors = [];
             
             for (const event of eventsToCreate) {
-              const { error: singleErr } = await supabaseServiceRole
-                .from('events')
-                .upsert([event], { onConflict: 'source_url,start_date', ignoreDuplicates: true })
-                .select('id');
+              let attempts = 0;
+              const maxAttempts = 3;
+              let inserted = false;
               
-              if (singleErr) {
-                // Skip this event but continue with others
-                individualErrors.push(`${event.name}: ${singleErr.message}`);
-              } else {
-                successCount++;
-                // Track the slug as used for future events in this batch
-                allExistingSlugs.add(event.slug);
+              while (!inserted && attempts < maxAttempts) {
+                const { error: singleErr } = await supabaseServiceRole
+                  .from('events')
+                  .upsert([event], { onConflict: 'source_url,start_date', ignoreDuplicates: true })
+                  .select('id');
+                
+                if (singleErr) {
+                  // Check if it's a slug collision - regenerate and retry
+                  if (singleErr.message.includes('events_slug_key') && attempts < maxAttempts - 1) {
+                    // Generate new unique slug
+                    const timestamp = Date.now();
+                    const random = Math.random().toString(36).substring(2, 6);
+                    event.slug = `${event.slug.substring(0, 60)}-${random}`.replace(/--+/g, '-');
+                    attempts++;
+                    console.log(`[refresh-events] Slug collision, retrying with new slug: ${event.slug}`);
+                  } else {
+                    // Other error or max attempts reached
+                    individualErrors.push(`${event.name}: ${singleErr.message}`);
+                    break;
+                  }
+                } else {
+                  inserted = true;
+                  successCount++;
+                  // Track the slug as used for future events in this batch
+                  allExistingSlugs.add(event.slug);
+                }
               }
             }
             

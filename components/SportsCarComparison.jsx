@@ -18,6 +18,7 @@ import CarActionMenu from './CarActionMenu';
 import ScoringInfo from './ScoringInfo';
 import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
 import { trackCarSelectorComplete } from '@/lib/ga4';
+import { useAIChat } from '@/components/AIMechanicChat';
 
 /**
  * Extract the low price from a price range string
@@ -275,6 +276,9 @@ export default function SportsCarComparison() {
     priorityDescriptors,
     isLoading: configLoading 
   } = useAppConfig();
+  
+  // AL chat integration for decision assistance
+  const { openChatWithPrompt } = useAIChat();
 
   // Build derived config values from database configs
   const tierConfigWithStyles = useMemo(
@@ -459,6 +463,7 @@ export default function SportsCarComparison() {
         if (sortBy === 'name') return a.name.localeCompare(b.name);
         return b[sortBy] - a[sortBy];
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [carData, weights, sortBy, priceMin, priceMax, searchTerm, mustHaveFilters, calculateTotal, getCarOrigin, matchesStyle]);
 
   // Get user's top priorities for ranking display
@@ -467,6 +472,7 @@ export default function SportsCarComparison() {
       ...p,
       ...categoriesWithIcons.find(c => c.key === p.key)
     })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [weights]
   );
 
@@ -515,6 +521,7 @@ export default function SportsCarComparison() {
     categoriesWithIcons
       .filter(cat => weights[cat.key] > 1)
       .map(cat => ({ ...cat, weight: weights[cat.key] })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [weights]
   );
 
@@ -877,6 +884,37 @@ export default function SportsCarComparison() {
               );
             })}
           </div>
+          
+          {/* AL Decision Assistance CTA */}
+          <div className={styles.alDecisionCta}>
+            <button
+              className={styles.alDecisionBtn}
+              onClick={() => {
+                const topCars = Object.values(recommendations)
+                  .filter(car => car && car.name)
+                  .slice(0, 3)
+                  .map(car => car.name);
+                const carsContext = topCars.length > 0 
+                  ? `Based on my priorities, my top matches are: ${topCars.join(', ')}. ` 
+                  : '';
+                const prioritiesContext = Object.entries(weights)
+                  .filter(([, v]) => v > 1)
+                  .map(([k]) => k)
+                  .join(', ');
+                const prioritiesText = prioritiesContext 
+                  ? `My priorities are: ${prioritiesContext}. ` 
+                  : '';
+                openChatWithPrompt(
+                  `${carsContext}${prioritiesText}Help me decide which sports car is right for me. Consider my driving style, practical needs, and what I'll actually use the car for.`,
+                  { category: 'Car Selection' },
+                  'Help me find my perfect sports car'
+                );
+              }}
+            >
+              <Icons.zap size={16} />
+              Can&apos;t decide? Ask AL to help
+            </button>
+          </div>
         </section>
 
         {/* About Our Scoring & Sources */}
@@ -1000,6 +1038,17 @@ export default function SportsCarComparison() {
                 </div>
                 <h3>No vehicles found</h3>
                 <p>Try adjusting your filters or widening the price range.</p>
+                <button
+                  className={styles.emptyStateAlBtn}
+                  onClick={() => openChatWithPrompt(
+                    'I\'m looking for a sports car but haven\'t found one that matches my criteria. Help me find options or suggest alternatives based on what I\'m looking for.',
+                    { category: 'Car Search' },
+                    'Help me find a sports car'
+                  )}
+                >
+                  <Icons.zap size={16} />
+                  Ask AL to help find cars
+                </button>
               </div>
             ) : (
               <div className={styles.tableScrollContainer}>

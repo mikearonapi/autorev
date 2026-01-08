@@ -256,7 +256,7 @@ export default function JoinPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
       <section className={styles.hero}>
         {/* Background Image */}

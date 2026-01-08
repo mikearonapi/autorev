@@ -231,7 +231,7 @@ export default function CommunityEventDetailPage() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <div className={styles.loadingState}>
           <div className={styles.spinner} />
           <p>Loading event details...</p>
@@ -242,7 +242,7 @@ export default function CommunityEventDetailPage() {
 
   if (error || !event) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <div className={styles.errorState}>
           <h2>Event Not Found</h2>
           <p>{error || 'The event you\'re looking for doesn\'t exist or has expired.'}</p>
@@ -294,7 +294,7 @@ export default function CommunityEventDetailPage() {
   const carAffinities = car_affinities.filter(a => a.car_slug);
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Back Link */}
       <div className={styles.backLinkContainer}>
         <Link href="/community/events" className={styles.backLink}>

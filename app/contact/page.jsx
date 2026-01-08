@@ -184,7 +184,7 @@ export default function Contact() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroOverlay} />

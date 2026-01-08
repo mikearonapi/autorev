@@ -10,6 +10,7 @@ import EventMap from '@/components/EventMap';
 import EventCalendarView from '@/components/EventCalendarView';
 import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useAIChat } from '@/components/AIMechanicChat';
 
 // Icons
 const Icons = {
@@ -42,6 +43,9 @@ function EventsContent() {
   const searchParams = useSearchParams();
   const { isAuthenticated, user, profile, session, isLoading: authLoading } = useAuth();
   const userTier = profile?.subscription_tier || 'free';
+  
+  // AL chat integration for event discovery
+  const { openChatWithPrompt } = useAIChat();
 
   // State
   const [events, setEvents] = useState([]);
@@ -248,7 +252,7 @@ function EventsContent() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Header */}
       <header className={styles.hero}>
         <div className={styles.heroOverlay} />
@@ -260,10 +264,25 @@ function EventsContent() {
           <p className={styles.heroSubtitle}>
             Cars & Coffee meetups, track days, car shows, and more near you
           </p>
-          <Link href="/events/submit" className={styles.submitEventBtn}>
-            <Icons.plus />
-            Submit Event
-          </Link>
+          <div className={styles.heroActions}>
+            <Link href="/events/submit" className={styles.submitEventBtn}>
+              <Icons.plus />
+              Submit Event
+            </Link>
+            <button 
+              onClick={() => openChatWithPrompt(
+                'Help me find car events near me. I\'m interested in track days, Cars & Coffee meetups, car shows, and racing events. What events are coming up?',
+                { category: 'Events' },
+                'Find car events near me'
+              )}
+              className={styles.askAlEventsBtn}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Ask AL for Events
+            </button>
+          </div>
         </div>
       </header>
 
@@ -345,15 +364,34 @@ function EventsContent() {
               <Icons.calendar size={48} />
               <h3>No upcoming events found</h3>
               <p>Try adjusting your filters or check the "Include past events" option.</p>
-              <button 
-                onClick={() => handleFilterChange({ 
-                  location: '', type: '', start_date: '', end_date: '', 
-                  is_track_event: false, is_free: false, brand: '', for_my_cars: false 
-                })}
-                className={styles.submitBtn}
-              >
-                Clear Filters
-              </button>
+              <div className={styles.emptyStateActions}>
+                <button 
+                  onClick={() => handleFilterChange({ 
+                    location: '', type: '', start_date: '', end_date: '', 
+                    is_track_event: false, is_free: false, brand: '', for_my_cars: false 
+                  })}
+                  className={styles.submitBtn}
+                >
+                  Clear Filters
+                </button>
+                <button 
+                  onClick={() => {
+                    const locationContext = filters.location ? ` near ${filters.location}` : '';
+                    const typeContext = filters.type ? ` (looking for ${filters.type} events)` : '';
+                    openChatWithPrompt(
+                      `I'm looking for car events${locationContext}${typeContext} but couldn't find any. Can you help me discover automotive events, meetups, or track days in my area?`,
+                      { category: 'Events' },
+                      'Help me find car events'
+                    );
+                  }}
+                  className={styles.askAlEmptyBtn}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  Ask AL to Help
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -431,7 +469,7 @@ function EventsContent() {
 
 export default function EventsPage() {
   return (
-    <Suspense fallback={<div className={styles.page}><div className={styles.loadingState}>Loading...</div></div>}>
+    <Suspense fallback={<div className={styles.page} data-no-main-offset><div className={styles.loadingState}>Loading...</div></div>}>
       <EventsContent />
     </Suspense>
   );

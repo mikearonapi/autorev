@@ -29,8 +29,10 @@ export default async function Icon() {
           background: '#ffffff',
         }}
       >
+{/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`data:image/png;base64,${Buffer.from(logoData).toString('base64')}`}
+          alt=""
           width={30}
           height={30}
           style={{

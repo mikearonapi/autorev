@@ -202,6 +202,7 @@ export function ExecutiveInsights({
     if (token) {
       fetchCachedInsights();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
   
   const fetchCachedInsights = async () => {

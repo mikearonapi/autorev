@@ -74,6 +74,7 @@ export default function ErrorDashboard() {
   // Fetch errors when filters change
   useEffect(() => {
     fetchErrors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [severity, errorSource, status, resolved, feature]);
 
   const fetchStats = async () => {

@@ -180,3 +180,11 @@ Add Playwright visual regression tests to PR checks:
 5. **Run visual tests** - Catch regressions before users do
 
 
+
+
+
+
+
+
+
+

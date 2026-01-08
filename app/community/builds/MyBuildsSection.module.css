@@ -1,0 +1,51 @@
+/* My Public Builds Section - Compact */
+
+.compactSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.compactLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.compactLink {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #d4af37;
+  text-decoration: none;
+  padding: 0.375rem 0.75rem;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.compactLink:hover {
+  background: rgba(212, 175, 55, 0.25);
+  color: #e5c158;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .compactSection {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .compactLabel {
+    font-size: 0.75rem;
+  }
+
+  .compactLink {
+    font-size: 0.6875rem;
+    padding: 0.3125rem 0.625rem;
+  }
+}
+

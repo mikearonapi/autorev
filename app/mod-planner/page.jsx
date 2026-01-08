@@ -228,7 +228,7 @@ function PerformanceContent() {
   // If a car is selected, show the Performance HUB
   if (selectedCar) {
     return (
-      <div className={styles.pageFullWidth}>
+      <div className={styles.pageFullWidth} data-no-main-offset>
         <PerformanceHub car={selectedCar} initialBuildId={buildId} onChangeCar={handleChangeCar} />
       </div>
     );
@@ -242,7 +242,7 @@ function PerformanceContent() {
 
   // Car selection view - Redesigned for quick access
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section - Compact */}
       <section className={styles.heroCompact}>
         <div className={styles.heroImageWrapper}>
@@ -460,7 +460,7 @@ function PerformanceContent() {
  */
 function PerformanceLoading() {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       <section className={styles.hero}>
         <div className={styles.heroImageWrapper}>
           <Image

@@ -293,6 +293,57 @@ const Icons = {
       </svg>
     </IconWrapper>
   ),
+  sparkles: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z"/>
+        <path d="M5 3v4"/>
+        <path d="M19 17v4"/>
+        <path d="M3 5h4"/>
+        <path d="M17 19h4"/>
+      </svg>
+    </IconWrapper>
+  ),
+  unlock: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+      </svg>
+    </IconWrapper>
+  ),
+  loader: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+        <line x1="12" y1="2" x2="12" y2="6"/>
+        <line x1="12" y1="18" x2="12" y2="22"/>
+        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+        <line x1="2" y1="12" x2="6" y2="12"/>
+        <line x1="18" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+      </svg>
+    </IconWrapper>
+  ),
+  alertCircle: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </IconWrapper>
+  ),
+  refresh: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+    </IconWrapper>
+  ),
 };
 
 // Brand Logo Component - displays brand name with consistent gold color
@@ -346,6 +397,11 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   const [editingLog, setEditingLog] = useState(null);
   const [deletingLogId, setDeletingLogId] = useState(null);
   
+  // Daily driver enrichment state
+  const [enrichmentData, setEnrichmentData] = useState(null);
+  const [enrichmentStatus, setEnrichmentStatus] = useState('none'); // 'none', 'checking', 'available', 'enriching', 'enriched', 'error'
+  const [enrichmentError, setEnrichmentError] = useState(null);
+  
   // Initialize VIN from vehicle data (reset all VIN state when vehicle changes)
   useEffect(() => {
     // Always reset VIN state when the selected vehicle changes
@@ -358,6 +414,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     } else {
       setVinInput('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, item?.vehicle?.id]); // Key off vehicle ID, not just VIN
   
   // Reset maintenance & safety data when car changes to prevent stale data showing
@@ -367,7 +424,59 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     setFitmentOptions([]);
     setSafetyData({ recalls: [], complaints: [], investigations: [], safetyRatings: null });
     setServiceLogs([]);
+    // Reset enrichment data
+    setEnrichmentData(null);
+    setEnrichmentStatus('none');
+    setEnrichmentError(null);
   }, [item?.vehicle?.id, item?.matchedCar?.slug]);
+  
+  // Check enrichment status for unmatched vehicles (daily drivers)
+  useEffect(() => {
+    const checkEnrichmentStatus = async () => {
+      if (type !== 'mycars') return;
+      
+      // Only check for unmatched vehicles (daily drivers)
+      const hasMatchedCar = item?.vehicle?.matchedCarSlug || item?.matchedCar?.slug;
+      if (hasMatchedCar && !item?.matchedCar?._hasNoMatchedCar) return;
+      
+      const vehicleId = item?.vehicle?.id;
+      if (!vehicleId) return;
+      
+      setEnrichmentStatus('checking');
+      
+      try {
+        const response = await fetch(`/api/garage/enrich?vehicleId=${vehicleId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          if (data.enrichment) {
+            setEnrichmentData(data.enrichment);
+            setEnrichmentStatus('enriched');
+            // Also populate maintenance data from enrichment
+            if (data.enrichment.maintenance_specs || data.enrichment.service_intervals || data.enrichment.known_issues) {
+              setMaintenanceData({
+                specs: data.enrichment.maintenance_specs || null,
+                intervals: data.enrichment.service_intervals || [],
+                issues: data.enrichment.known_issues || [],
+              });
+            }
+          } else if (data.sharedEnrichmentAvailable) {
+            setEnrichmentStatus('available');
+          } else {
+            setEnrichmentStatus('none');
+          }
+        } else {
+          setEnrichmentStatus('none');
+        }
+      } catch (err) {
+        console.error('[HeroVehicleDisplay] Error checking enrichment:', err);
+        setEnrichmentStatus('none');
+      }
+    };
+    
+    checkEnrichmentStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, item?.vehicle?.id, item?.vehicle?.matchedCarSlug, item?.matchedCar?._hasNoMatchedCar]);
   
   // Fetch maintenance data for owned vehicles (when in expanded or details state)
   useEffect(() => {
@@ -637,6 +746,46 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     }
   };
 
+  // Handle daily driver enrichment
+  const handleEnrichVehicle = async () => {
+    const vehicleId = item?.vehicle?.id;
+    if (!vehicleId) return;
+    
+    setEnrichmentStatus('enriching');
+    setEnrichmentError(null);
+    
+    try {
+      const response = await fetch('/api/garage/enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vehicleId }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setEnrichmentData(data.enrichment);
+        setEnrichmentStatus('enriched');
+        
+        // Populate maintenance data from enrichment
+        if (data.enrichment) {
+          setMaintenanceData({
+            specs: data.enrichment.maintenance_specs || null,
+            intervals: data.enrichment.service_intervals || [],
+            issues: data.enrichment.known_issues || [],
+          });
+        }
+      } else {
+        setEnrichmentError(data.error || 'Enrichment failed');
+        setEnrichmentStatus('error');
+      }
+    } catch (err) {
+      console.error('[HeroVehicleDisplay] Enrichment error:', err);
+      setEnrichmentError('Failed to enrich vehicle. Please try again.');
+      setEnrichmentStatus('error');
+    }
+  };
+
   // Service log handlers
   const handleSaveServiceLog = async (logData) => {
     const vehicleId = item?.vehicle?.id;
@@ -693,10 +842,20 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     setEditingLog(null);
   };
   
-  if (!item) return null;
-
   // Determine what data we're showing based on type
-  const car = type === 'projects' ? item.car : (item.matchedCar || item);
+  // For daily drivers with enrichment, merge the enrichment image into the car object
+  // NOTE: useMemo must be called before any early returns (React hooks rules)
+  const baseCar = type === 'projects' ? item?.car : (item?.matchedCar || item);
+  const car = useMemo(() => {
+    if (!baseCar) return null;
+    if (enrichmentData?.image_url && baseCar?._hasNoMatchedCar) {
+      return { ...baseCar, imageGarageUrl: enrichmentData.image_url };
+    }
+    return baseCar;
+  }, [baseCar, enrichmentData?.image_url]);
+
+  if (!item) return null;
+  
   const isOwnedVehicle = type === 'mycars';
   const isBuild = type === 'projects';
   const isFavorite = type === 'favorites';
@@ -1067,7 +1226,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
             </div>
 
             {/* Quick link to reference */}
-            {isOwnedVehicle && (
+            {isOwnedVehicle && !car?._hasNoMatchedCar && (
               <div className={styles.variantMatchRow}>
                 <button
                   className={styles.variantMatchLink}
@@ -1080,6 +1239,59 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   <Icons.book size={14} />
                   <span>Reference</span>
                 </button>
+              </div>
+            )}
+
+            {/* Daily Driver Enrichment Prompt */}
+            {isOwnedVehicle && car?._hasNoMatchedCar && enrichmentStatus !== 'enriched' && (
+              <div className={styles.enrichmentPrompt}>
+                {enrichmentStatus === 'none' || enrichmentStatus === 'available' ? (
+                  <>
+                    <div className={styles.enrichmentPromptText}>
+                      <Icons.sparkles size={16} />
+                      <span>Unlock maintenance specs, service intervals, and more</span>
+                    </div>
+                    <button
+                      className={styles.enrichmentButton}
+                      onClick={handleEnrichVehicle}
+                    >
+                      <Icons.unlock size={14} />
+                      Unlock Full Details
+                    </button>
+                  </>
+                ) : enrichmentStatus === 'checking' ? (
+                  <div className={styles.enrichmentPromptText}>
+                    <Icons.loader size={16} />
+                    <span>Checking for data...</span>
+                  </div>
+                ) : enrichmentStatus === 'enriching' ? (
+                  <div className={styles.enrichmentPromptText}>
+                    <Icons.loader size={16} />
+                    <span>Researching your vehicle...</span>
+                  </div>
+                ) : enrichmentStatus === 'error' ? (
+                  <>
+                    <div className={styles.enrichmentPromptText}>
+                      <Icons.alertCircle size={16} />
+                      <span>{enrichmentError || 'Something went wrong'}</span>
+                    </div>
+                    <button
+                      className={styles.enrichmentButton}
+                      onClick={handleEnrichVehicle}
+                    >
+                      <Icons.refresh size={14} />
+                      Try Again
+                    </button>
+                  </>
+                ) : null}
+              </div>
+            )}
+
+            {/* Enrichment Success Indicator */}
+            {isOwnedVehicle && car?._hasNoMatchedCar && enrichmentStatus === 'enriched' && (
+              <div className={styles.enrichmentSuccess}>
+                <Icons.check size={14} />
+                <span>Full details available</span>
               </div>
             )}
 
@@ -2277,6 +2489,7 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars 
       }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 30);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, existingBuilds]);
   
   if (!isOpen) return null;
@@ -2432,9 +2645,12 @@ function GarageContent() {
         slug: vehicle.matchedCarSlug || `user-vehicle-${vehicle.id}`,
         years: vehicle.year?.toString(),
         brand: vehicle.make,
+        // Include enrichment image URL if available (for daily drivers)
+        imageGarageUrl: vehicle.enrichment?.imageUrl || null,
         // Placeholder flags so components know this is partial data
         _isTemporary: true,
         _hasNoMatchedCar: !vehicle.matchedCarSlug,
+        _enrichmentStatus: vehicle.enrichmentStatus,
       } : null;
       
       return {
@@ -2764,7 +2980,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
   // If viewing a build detail, show that instead
   if (selectedBuild) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <BuildDetailView 
           build={selectedBuild}
           car={allCars.find(c => c.slug === selectedBuild.carSlug)}
@@ -2778,7 +2994,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
   }
   
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Optimized Background Image */}
       <div className={styles.backgroundImageWrapper}>
         <Image
@@ -2818,37 +3034,65 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
 
         <div className={styles.headerRight}>
           {/* Quick Actions for My Collection tab */}
-          {activeTab === 'mycars' && vehicles.length > 0 && (
+          {activeTab === 'mycars' && (
             <div className={styles.quickActions}>
-              {/* Quick Update Mode Toggle */}
+              {/* Add Vehicle Button - Always visible */}
               <button
-                className={`${styles.quickActionBtn} ${quickUpdateMode ? styles.quickActionBtnActive : ''}`}
-                onClick={handleToggleQuickUpdate}
-                title={quickUpdateMode ? 'Cancel Quick Update' : 'Quick Update All Mileage'}
+                className={styles.addVehicleBtn}
+                onClick={() => setIsAddVehicleOpen(true)}
+                title="Add a vehicle to your garage"
               >
-                <Icons.edit size={16} />
-                <span className={styles.quickActionLabel}>
-                  {quickUpdateMode ? 'Cancel' : 'Quick Update'}
-                </span>
+                <Icons.plus size={16} />
+                <span className={styles.quickActionLabel}>Add Vehicle</span>
               </button>
 
-              {/* Analyze All Vehicles - Enthusiast+ */}
-              <PremiumGate feature="alCollector" fallback={null}>
+              {/* Quick Update Mode Toggle - Only when you have vehicles */}
+              {vehicles.length > 0 && (
                 <button
-                  className={styles.analyzeAllBtn}
-                  onClick={handleAnalyzeAllVehicles}
-                  title="Analyze All Vehicles with AL"
+                  className={`${styles.quickActionBtn} ${quickUpdateMode ? styles.quickActionBtnActive : ''}`}
+                  onClick={handleToggleQuickUpdate}
+                  title={quickUpdateMode ? 'Cancel Quick Update' : 'Quick Update All Mileage'}
                 >
-                  <img 
-                    src="/images/al-mascot.png" 
-                    alt=""
-                    width={16}
-                    height={16}
-                    style={{ marginRight: 6 }}
-                  />
-                  <span>Analyze All</span>
+                  <Icons.edit size={16} />
+                  <span className={styles.quickActionLabel}>
+                    {quickUpdateMode ? 'Cancel' : 'Quick Update'}
+                  </span>
                 </button>
-              </PremiumGate>
+              )}
+
+              {/* Analyze All Vehicles - Enthusiast+ */}
+              {vehicles.length > 0 && (
+                <PremiumGate feature="alCollector" fallback={null}>
+                  <button
+                    className={styles.analyzeAllBtn}
+                    onClick={handleAnalyzeAllVehicles}
+                    title="Analyze All Vehicles with AL"
+                  >
+                    <img 
+                      src="/images/al-mascot.png" 
+                      alt=""
+                      width={16}
+                      height={16}
+                      style={{ marginRight: 6 }}
+                    />
+                    <span>Analyze All</span>
+                  </button>
+                </PremiumGate>
+              )}
+            </div>
+          )}
+
+          {/* Add Favorites button when on Favorites tab */}
+          {activeTab === 'favorites' && (
+            <div className={styles.quickActions}>
+              <button
+                className={styles.addVehicleBtn}
+                onClick={() => setIsAddFavoritesOpen(true)}
+                title="Add favorites from our catalog"
+              >
+                <Icons.plus size={16} />
+                <span className={styles.quickActionLabel}>Add Favorites</span>
+              </button>
             </div>
           )}
         </div>
@@ -3058,7 +3302,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
 // Loading fallback
 function GarageLoading() {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       <div className={styles.loadingContainer}>
         <LoadingSpinner size="large" />
       </div>

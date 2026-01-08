@@ -25,7 +25,22 @@ const VALID_EVENT_TYPES = [
   'ai_mechanic_used',
   'search_performed',
   'filter_applied',
+  'event_saved',       // New: for engagement tracking
+  'parts_search',      // New: for engagement tracking
 ];
+
+/**
+ * Map activity types to engagement activity types
+ * Only certain activities count toward engagement score
+ */
+const ENGAGEMENT_ACTIVITY_MAP = {
+  vehicle_added: 'garage_car',
+  ai_mechanic_used: 'al_conversation',
+  build_saved: 'build_saved',
+  comparison_completed: 'comparison',
+  event_saved: 'event_saved',
+  parts_search: 'parts_search',
+};
 
 /**
  * POST /api/activity
@@ -74,6 +89,20 @@ async function handlePost(request) {
   if (error) {
     console.error('[Activity API] Error logging activity:', error);
     throw error; // Let the wrapper handle it
+  }
+
+  // Update engagement score if this activity counts and user is authenticated
+  if (user_id && ENGAGEMENT_ACTIVITY_MAP[event_type]) {
+    const engagementType = ENGAGEMENT_ACTIVITY_MAP[event_type];
+    
+    // Fire and forget - don't block on engagement update
+    supabase.rpc('increment_engagement_activity', {
+      p_user_id: user_id,
+      p_activity_type: engagementType,
+    }).catch((engageError) => {
+      // Log but don't fail the request
+      console.warn('[Activity API] Engagement update failed:', engageError.message);
+    });
   }
 
   return NextResponse.json({ success: true });

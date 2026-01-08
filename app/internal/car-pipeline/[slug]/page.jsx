@@ -151,6 +151,7 @@ export default function CarPipelineDetailPage({ params }) {
 
   useEffect(() => {
     fetchPipelineRun();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const fetchPipelineRun = async () => {

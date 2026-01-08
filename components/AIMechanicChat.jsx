@@ -1727,32 +1727,73 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 {/* Quick Action Prompt - shows when user clicks Ask AL button */}
                 {quickActionPrompt && (
                   <div className={styles.quickActionPrompt}>
-                    <div className={styles.quickActionCard}>
-                      <div className={styles.quickActionIcon}>
-                        <ALMascot size={32} />
+                    {/* Multi-option mode: show multiple cards */}
+                    {quickActionPrompt.options ? (
+                      <>
+                        <div className={styles.quickActionHeader}>
+                          <ALMascot size={32} />
+                          <span className={styles.quickActionHeaderText}>
+                            {quickActionPrompt.context?.category || 'Ask AL'}
+                          </span>
+                          <button 
+                            className={styles.quickActionDismissSmall}
+                            onClick={handleQuickActionDismiss}
+                          >
+                            <Icons.x size={14} />
+                          </button>
+                        </div>
+                        <div className={styles.quickActionOptions}>
+                          {quickActionPrompt.options.map((option, idx) => (
+                            <button
+                              key={idx}
+                              className={styles.quickActionOptionCard}
+                              onClick={() => {
+                                const opts = option.displayMessage 
+                                  ? { displayMessage: option.displayMessage }
+                                  : {};
+                                sendMessage(option.prompt, opts);
+                                setQuickActionPrompt(null);
+                              }}
+                            >
+                              <span className={styles.quickActionOptionText}>
+                                {option.displayMessage || option.prompt}
+                              </span>
+                              <span className={styles.quickActionOptionArrow}>
+                                <Icons.arrowUp size={14} />
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      /* Single prompt mode: show one card */
+                      <div className={styles.quickActionCard}>
+                        <div className={styles.quickActionIcon}>
+                          <ALMascot size={32} />
+                        </div>
+                        <div className={styles.quickActionContent}>
+                          <p className={styles.quickActionLabel}>
+                            {quickActionPrompt.context?.category ? `Ask about ${quickActionPrompt.context.category}` : 'Quick Question'}
+                          </p>
+                          <p className={styles.quickActionText}>{quickActionPrompt.displayMessage || quickActionPrompt.prompt}</p>
+                        </div>
+                        <div className={styles.quickActionButtons}>
+                          <button 
+                            className={styles.quickActionConfirm}
+                            onClick={handleQuickActionConfirm}
+                          >
+                            <Icons.arrowUp size={16} />
+                            Ask AL
+                          </button>
+                          <button 
+                            className={styles.quickActionDismiss}
+                            onClick={handleQuickActionDismiss}
+                          >
+                            <Icons.x size={14} />
+                          </button>
+                        </div>
                       </div>
-                      <div className={styles.quickActionContent}>
-                        <p className={styles.quickActionLabel}>
-                          {quickActionPrompt.context?.category ? `Ask about ${quickActionPrompt.context.category}` : 'Quick Question'}
-                        </p>
-                        <p className={styles.quickActionText}>{quickActionPrompt.displayMessage || quickActionPrompt.prompt}</p>
-                      </div>
-                      <div className={styles.quickActionButtons}>
-                        <button 
-                          className={styles.quickActionConfirm}
-                          onClick={handleQuickActionConfirm}
-                        >
-                          <Icons.arrowUp size={16} />
-                          Ask AL
-                        </button>
-                        <button 
-                          className={styles.quickActionDismiss}
-                          onClick={handleQuickActionDismiss}
-                        >
-                          <Icons.x size={14} />
-                        </button>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
                 
@@ -2008,9 +2049,10 @@ export function AIMechanicProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState(null);
   
-  const openChatWithPrompt = useCallback((prompt, context = {}, displayMessage = null) => {
+  const openChatWithPrompt = useCallback((prompt, context = {}, displayMessage = null, extra = {}) => {
     // displayMessage is what the user sees; prompt is what AL receives
-    setPendingPrompt({ prompt, context, displayMessage });
+    // extra.options allows multi-option mode (array of { prompt, displayMessage })
+    setPendingPrompt({ prompt, context, displayMessage, options: extra?.options });
     setIsOpen(true);
   }, []);
   

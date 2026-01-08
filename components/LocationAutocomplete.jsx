@@ -138,6 +138,7 @@ export default function LocationAutocomplete({
         clearTimeout(debounceRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Initialize Google services

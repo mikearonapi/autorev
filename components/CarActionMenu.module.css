@@ -79,20 +79,42 @@
   border-radius: 8px;
   color: var(--btn-text);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
   font-size: 13px;
   font-weight: 500;
+  /* Force GPU layer to prevent flickering on state changes */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Icon inside button - smooth transitions */
+.actionBtn svg {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  transform: translateZ(0);
 }
 
 .actionBtn:hover:not(:disabled) {
   background: var(--btn-hover-bg);
   border-color: var(--btn-hover-border);
   color: var(--btn-hover-text);
-  transform: translateY(-1px);
+  transform: translateZ(0) translateY(-1px);
 }
 
 .actionBtn:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateZ(0) translateY(0);
+}
+
+/* Loading state - prevent icon swap flicker */
+.actionBtn.loading {
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 /* Pulse animation on hover for "premium" feel */
@@ -113,12 +135,14 @@
   background: rgba(16, 185, 129, 0.9);
   border-color: rgba(16, 185, 129, 1);
   color: #ffffff;
+  transform: translateZ(0);
 }
 
 .actionBtn.activeFavorite {
   background: rgba(239, 68, 68, 0.9);
   border-color: rgba(239, 68, 68, 1);
   color: #ffffff;
+  transform: translateZ(0);
 }
 
 .actionBtn.modBtn {
@@ -154,16 +178,31 @@
   border-radius: 8px;
   color: var(--btn-text);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  /* Force GPU layer to prevent flickering on state changes */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Icon inside button - smooth transitions */
+.compactBtn svg {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  transform: translateZ(0);
 }
 
 .compactBtn:hover:not(:disabled) {
   background: var(--btn-hover-bg);
   border-color: var(--btn-hover-border);
   color: var(--btn-hover-text);
-  transform: translateY(-1px);
+  transform: translateZ(0) translateY(-1px);
 }
 
 .compactBtn:disabled {
@@ -175,12 +214,20 @@
   background: rgba(16, 185, 129, 0.9);
   border-color: rgba(16, 185, 129, 1);
   color: #ffffff;
+  transform: translateZ(0);
 }
 
 .compactBtn.activeFavorite {
   background: rgba(239, 68, 68, 0.9);
   border-color: rgba(239, 68, 68, 1);
   color: #ffffff;
+  transform: translateZ(0);
+}
+
+/* Loading state - prevent icon swap flicker */
+.compactBtn.loading {
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 /* Dropdown Menu */
@@ -305,9 +352,20 @@
   border-radius: 8px;
   color: var(--btn-text);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
   font-size: 13px;
   font-weight: 500;
+  /* Force GPU layer to prevent flickering */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.quickBtn svg {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  transform: translateZ(0);
 }
 
 .quickBtnSmall {
@@ -336,6 +394,7 @@
   background: rgba(16, 185, 129, 0.9); /* Opaque green */
   border-color: rgba(16, 185, 129, 1);
   color: #ffffff;
+  transform: translateZ(0);
 }
 
 /* Tooltip */
@@ -467,6 +526,14 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(360deg); }
+}
+
+/* Smooth spinner animation - GPU accelerated */
+.loading svg,
+.compactBtn.loading svg,
+.actionBtn.loading svg {
+  animation: spin 0.8s linear infinite;
+  transform-origin: center center;
 }

@@ -476,8 +476,10 @@ export function PriceByYearSection({ carSlug, carName }) {
   );
 }
 
-export default {
+const CarDetailSections = {
   FuelEconomySection,
   SafetyRatingsSection,
   PriceByYearSection,
 };
+
+export default CarDetailSections;

@@ -97,11 +97,13 @@ export function AsyncLapTimesSection({ carSlug, carName, isTeaser }) {
   );
 }
 
-export default {
+const CarDetailSections = {
   AsyncFuelEconomySection,
   AsyncSafetySection,
   AsyncPriceByYearSection,
   AsyncExpertReviewsSection,
   AsyncLapTimesSection,
 };
+
+export default CarDetailSections;
 

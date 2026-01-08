@@ -116,6 +116,8 @@ const defaultState = {
 function transformVehicle(row) {
   const installedMods = row.installed_modifications || [];
   const customSpecs = row.custom_specs || {};
+  const enrichment = row.daily_driver_enrichments;
+  
   return {
     id: row.id,
     vin: row.vin,
@@ -149,6 +151,17 @@ function transformVehicle(row) {
     // Custom specs (user-specific modification details)
     customSpecs: customSpecs,
     hasCustomSpecs: Object.keys(customSpecs).length > 0,
+    // Daily driver enrichment data
+    enrichmentId: row.enrichment_id,
+    enrichmentStatus: row.enrichment_status || 'none',
+    enrichment: enrichment ? {
+      id: enrichment.id,
+      maintenanceSpecs: enrichment.maintenance_specs,
+      serviceIntervals: enrichment.service_intervals,
+      knownIssues: enrichment.known_issues,
+      imageUrl: enrichment.image_url,
+      status: enrichment.status,
+    } : null,
   };
 }
 

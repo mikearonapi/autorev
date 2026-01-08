@@ -74,6 +74,7 @@ export default function ManualEntryPage() {
     if (selectedCar) {
       loadExistingEntries();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCar]);
   
   async function loadExistingEntries() {

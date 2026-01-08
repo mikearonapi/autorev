@@ -11,6 +11,7 @@ import {
   CONTENT_TYPES,
   upgradeDetails,
 } from '@/lib/encyclopediaData';
+import AskALButton from '@/components/AskALButton';
 
 // =============================================================================
 // ICONS
@@ -214,7 +215,15 @@ function SearchBar({ onSearch, onSelect }) {
       
       {isOpen && query.length >= 2 && results.length === 0 && (
         <div className={styles.searchResults}>
-          <div className={styles.searchNoResults}>No results found</div>
+          <div className={styles.searchNoResults}>
+            <span>No results found</span>
+            <AskALButton 
+              category="Encyclopedia"
+              prompt={`Explain "${query}" in the context of automotive performance and sports cars. Include how it works, why it matters, and any related concepts I should understand.`}
+              variant="compact"
+              className={styles.searchAskAl}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -790,7 +799,14 @@ function ArticleView({ article, onNavigate }) {
           {renderIcon()}
         </div>
         <div className={styles.articleHeaderContent}>
-          <h1 className={styles.articleTitle}>{article.title}</h1>
+          <div className={styles.articleTitleRow}>
+            <h1 className={styles.articleTitle}>{article.title}</h1>
+            <AskALButton 
+              category={article.title}
+              prompt={`Explain ${article.title} in more detail. Include how it works, why it matters for performance, and practical applications for sports cars. If it's a modification, include typical costs, difficulty, and what gains to expect.`}
+              variant="icon"
+            />
+          </div>
           {article.subtitle && (
             <p className={styles.articleSubtitle}>{article.subtitle}</p>
           )}
@@ -1054,7 +1070,7 @@ function EncyclopediaContent() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Page Banner */}
       <PageBanner isCollapsed={bannerCollapsed} />
 

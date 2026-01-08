@@ -624,10 +624,18 @@
 }
 
 .searchNoResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
   padding: 1.5rem;
   text-align: center;
   color: var(--enc-text-muted);
   font-size: 0.875rem;
+}
+
+.searchAskAl {
+  margin-top: 0.25rem;
 }
 
 /* =============================================================================
@@ -857,6 +865,12 @@
   min-width: 0;
 }
 
+.articleTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
 .articleTitle {
   font-size: 1.375rem;
   font-weight: 700;
@@ -866,6 +880,7 @@
   letter-spacing: -0.025em;
   /* Ensure long titles wrap properly */
   word-break: break-word;
+  flex: 1;
 }
 
 @media (min-width: 480px) {

@@ -60,7 +60,7 @@ export default function CarSelector() {
   const currentImage = carouselImages[currentIndex];
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section with Carousel */}
       <section className={styles.hero}>
         <div className={styles.heroImageWrapper}>

@@ -61,6 +61,7 @@ export default function robots() {
         allow: [
           '/browse-cars/',
           '/community/events/',
+          '/community/builds/', // Public builds for image indexing
           '/public/',
         ],
         disallow: [

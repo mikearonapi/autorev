@@ -28,6 +28,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
 import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
 import BetaBanner from '@/components/BetaBanner';
+import { BannerProvider } from '@/components/providers/BannerProvider';
 import PageViewTracker from '@/components/PageViewTracker';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
@@ -294,6 +295,7 @@ export default function RootLayout({ children }) {
             <SavedBuildsProvider>
             <OwnedVehiclesProvider>
             <AIMechanicProvider>
+            <BannerProvider>
               {/* Scroll to top on route change + Analytics tracking */}
               <Suspense fallback={null}>
                 <ScrollToTop />
@@ -301,7 +303,8 @@ export default function RootLayout({ children }) {
               </Suspense>
               <Header />
               
-              {/* Beta banner - shown during beta period */}
+              {/* Beta banner - shown during beta period. 
+                  Registers with BannerProvider to update content offsets. */}
               <BetaBanner />
               
               {/* Feedback corner - discreet top-right feedback icon */}
@@ -319,6 +322,7 @@ export default function RootLayout({ children }) {
               
               {/* Mobile sticky CTA bar - shows on scroll */}
               <MobileBottomCta />
+            </BannerProvider>
             </AIMechanicProvider>
             </OwnedVehiclesProvider>
             </SavedBuildsProvider>

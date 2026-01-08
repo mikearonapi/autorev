@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -234,11 +235,13 @@ export default function PageClient() {
   const { isAuthenticated, profile, isLoading: authLoading, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
   const { openChat } = useAIChat();
+  const searchParams = useSearchParams();
   const [accordionOpen, setAccordionOpen] = useState(() => toolGroups.map(() => false));
   const [pendingPrompt, setPendingPrompt] = useState('');
   const [stats, setStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const capabilitiesRef = useRef(null);
+  const hasHandledUrlQuery = useRef(false);
 
   // Fetch stats from API
   useEffect(() => {
@@ -257,6 +260,28 @@ export default function PageClient() {
     }
     fetchStats();
   }, []);
+
+  // Handle URL query params for pre-filled questions (e.g., from Parts Selector)
+  useEffect(() => {
+    if (hasHandledUrlQuery.current || authLoading) return;
+    
+    const queryQuestion = searchParams.get('q');
+    const carSlug = searchParams.get('car');
+    
+    if (queryQuestion && isAuthenticated) {
+      hasHandledUrlQuery.current = true;
+      // Open chat and prefill the question
+      openChat();
+      setTimeout(() => {
+        attemptPrefill(queryQuestion);
+      }, 300);
+    } else if (queryQuestion && !isAuthenticated && !authLoading) {
+      // Store the question and prompt login
+      setPendingPrompt(queryQuestion);
+      hasHandledUrlQuery.current = true;
+      authModal.openSignIn();
+    }
+  }, [searchParams, isAuthenticated, authLoading, openChat, authModal]);
 
   const handleOpenChat = useCallback(() => {
     // Don't try to open chat while auth is still loading
@@ -329,7 +354,7 @@ export default function PageClient() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>

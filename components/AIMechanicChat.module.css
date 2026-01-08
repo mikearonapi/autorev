@@ -3390,6 +3390,93 @@
   color: #374151;
 }
 
+/* Multi-option mode styles */
+.quickActionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 340px;
+}
+
+.quickActionHeaderText {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.quickActionDismissSmall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: rgba(156, 163, 175, 0.1);
+  border: none;
+  border-radius: 6px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickActionDismissSmall:hover {
+  background: rgba(156, 163, 175, 0.2);
+  color: #6b7280;
+}
+
+.quickActionOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.quickActionOptionCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(212, 160, 74, 0.08), rgba(212, 160, 74, 0.02));
+  border: 1px solid rgba(212, 160, 74, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  animation: quickActionFadeIn 0.25s ease-out;
+}
+
+.quickActionOptionCard:hover {
+  background: linear-gradient(135deg, rgba(212, 160, 74, 0.15), rgba(212, 160, 74, 0.05));
+  border-color: rgba(212, 160, 74, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 160, 74, 0.15);
+}
+
+.quickActionOptionText {
+  flex: 1;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.quickActionOptionArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #d4a04a, #c49a3a);
+  border-radius: 8px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .quickActionPrompt {
@@ -3398,6 +3485,14 @@
   
   .quickActionCard {
     padding: 20px;
+    max-width: 100%;
+  }
+  
+  .quickActionHeader {
+    max-width: 100%;
+  }
+  
+  .quickActionOptions {
     max-width: 100%;
   }
   

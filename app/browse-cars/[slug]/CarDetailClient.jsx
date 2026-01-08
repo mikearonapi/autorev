@@ -29,6 +29,7 @@ import { trackCarView } from '@/lib/activityTracker';
 import { useCarPopularParts } from '@/hooks/useCarData';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { trackCarDetailView } from '@/lib/ga4';
+import AskALButton from '@/components/AskALButton';
 
 // Icons - compact inline SVG components
 const Icons = {
@@ -398,7 +399,7 @@ export default function CarDetailClient({ car: rawCar }) {
   // If no car data (shouldn't happen with server-side fetch)
   if (!car) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-no-main-offset>
         <div className={styles.errorState}>
           <Icons.alertCircle size={48} />
           <h2>Vehicle not found</h2>
@@ -415,7 +416,7 @@ export default function CarDetailClient({ car: rawCar }) {
   const tier = tierConfig[car.tier] || { label: car.tier };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-no-main-offset>
       {/* ================================================================
           HERO SECTION - Compact, impactful first impression
           ================================================================ */}
@@ -826,6 +827,12 @@ export default function CarDetailClient({ car: rawCar }) {
                 <div className={styles.sectionHeader}>
                   <Icons.check size={22} />
                   <h2>Best Years to Buy</h2>
+                  <AskALButton 
+                    category="Buying Guide"
+                    prompt={`What should I look for when buying a ${car.name}? Include best model years, must-have options, red flags to watch for during a PPI, and negotiation tips.`}
+                    carName={car.name}
+                    variant="icon"
+                  />
                 </div>
                 <div className={styles.yearsList}>
                   {car.bestYearsDetailed.map((item, i) => (
@@ -1121,6 +1128,12 @@ export default function CarDetailClient({ car: rawCar }) {
                 <div className={styles.sectionHeader}>
                   <Icons.tool size={22} />
                   <h2>Major Service Costs</h2>
+                  <AskALButton 
+                    category="Maintenance"
+                    prompt={`What is the recommended maintenance schedule for the ${car.name} (${car.years})? Include service intervals, fluid specifications, and typical costs for both dealer and independent shops.`}
+                    carName={car.name}
+                    variant="icon"
+                  />
                 </div>
                 <div className={styles.serviceGrid}>
                   {car.majorServiceCosts.oilChange && (
@@ -1161,6 +1174,12 @@ export default function CarDetailClient({ car: rawCar }) {
                 <div className={styles.sectionHeader}>
                   <Icons.alertCircle size={22} />
                   <h2>Known Issues</h2>
+                  <AskALButton 
+                    category="Known Issues"
+                    prompt={`What are the most critical known issues with the ${car.name} (${car.years})? Include severity, affected model years, typical repair costs, and how to prevent or detect them early.`}
+                    carName={car.name}
+                    variant="icon"
+                  />
                 </div>
                 <div className={styles.issuesList}>
                   {car.commonIssuesDetailed.map((issue, i) => (
@@ -1304,6 +1323,12 @@ export default function CarDetailClient({ car: rawCar }) {
               <div className={styles.sectionHeader}>
                 <Icons.play size={22} />
                 <h2>Expert Reviews</h2>
+                <AskALButton 
+                  category="Expert Reviews"
+                  prompt={`What do automotive experts and reviewers agree on about the ${car.name} (${car.years})? Summarize the consensus on its strengths, weaknesses, and who it's best suited for.`}
+                  carName={car.name}
+                  variant="icon"
+                />
               </div>
               <ExpertReviews carSlug={car.slug} car={car} />
             </section>
@@ -1352,6 +1377,12 @@ export default function CarDetailClient({ car: rawCar }) {
               <div className={styles.sectionHeader}>
                 <Icons.gauge size={22} />
                 <h2>Performance Scores</h2>
+                <AskALButton 
+                  category="Performance"
+                  prompt={`How does the ${car.name} (${car.years}) compare to its direct competitors in terms of performance? Include 0-60 times, lap times, handling characteristics, and what makes it stand out.`}
+                  carName={car.name}
+                  variant="icon"
+                />
               </div>
               
               <div className={styles.scoreGrid}>

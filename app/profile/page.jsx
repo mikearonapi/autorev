@@ -664,7 +664,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Header with Gradient */}
       <div className={styles.heroHeader}>
         <div className={styles.heroOverlay} />

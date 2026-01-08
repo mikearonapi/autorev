@@ -1329,6 +1329,20 @@
 .statValueGreen { color: #4ade80; }
 .statValueGold { color: #d4af37; }
 
+/* List view action buttons - positioned at end of flex row */
+.projectListCard .shareBtn,
+.projectListCard .deleteBtn {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  flex-shrink: 0;
+}
+
+.projectListCard .shareBtn {
+  margin-left: auto;
+}
+
 .selectCheckbox {
   width: 22px;
   height: 22px;
@@ -1368,16 +1382,16 @@
   .projectFullCard {
     flex-direction: row;
     border-radius: 14px;
-    min-height: 110px;
+    min-height: auto;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
   }
   
   .projectFullImage {
-    width: 110px;
-    min-width: 110px;
-    max-width: 110px;
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
     height: auto;
-    aspect-ratio: 3/2;
+    aspect-ratio: 1;
     border-radius: 14px 0 0 14px;
   }
   
@@ -1387,17 +1401,23 @@
   
   .projectFullContent {
     flex: 1;
-    padding: 14px 50px 14px 14px; /* Extra right padding for delete button */
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     min-width: 0;
+    gap: 8px;
+  }
+  
+  .projectFullHeader {
+    margin-bottom: 0;
+    gap: 8px;
   }
   
   .projectFullContent h4 {
     font-size: 15px;
     font-weight: 700;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1405,7 +1425,6 @@
   
   .projectFullCar {
     font-size: 12px;
-    margin-bottom: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1417,31 +1436,80 @@
   }
   
   .statBadge {
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 5px;
   }
   
-  .deleteBtn {
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    opacity: 1; /* Always visible on mobile */
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
-  }
-  
-  .projectDate {
-    font-size: 10px;
-    margin-top: 6px;
-    padding-top: 6px;
+  /* Mobile: Hide desktop share/delete buttons */
+  .shareBtnDesktop,
+  .deleteBtnDesktop {
+    display: none !important;
   }
   
   .cardSelectOverlay {
-    top: 10px;
-    left: 10px;
+    top: 8px;
+    left: 8px;
+  }
+}
+
+/* Project Card Footer - Mobile Actions */
+.projectCardFooter {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .projectCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  
+  .projectCardFooter .projectDate {
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  
+  .projectCardActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .actionBtnMobile {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .actionBtnMobile:hover,
+  .actionBtnMobile:active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    transform: scale(0.95);
+  }
+  
+  .actionBtnMobile.actionBtnDelete:hover,
+  .actionBtnMobile.actionBtnDelete:active {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #ef4444;
   }
 }
 
@@ -1499,6 +1567,19 @@
   position: relative;
 }
 
+.projectFullHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.projectFullHeader > div {
+  flex: 1;
+  min-width: 0;
+}
+
 .projectFullContent h4 {
   font-size: 17px;
   font-weight: 700;
@@ -1511,7 +1592,7 @@
 .projectFullCar {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
-  margin: 0 0 14px;
+  margin: 0;
   font-weight: 500;
   letter-spacing: 0.01em;
 }
@@ -1543,10 +1624,37 @@
 }
 
 /* CF-001: Touch target compliance - minimum 44px */
+/* Share button - in content header, promotes community sharing */
+.shareBtn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.shareBtn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 1), rgba(37, 99, 235, 1));
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.6);
+}
+
+/* Delete button - TOP RIGHT, hidden until hover (destructive action) */
 .deleteBtn {
   position: absolute;
   top: 8px;
   right: 8px;
+  z-index: 5;
   width: 44px;
   height: 44px;
   display: flex;
@@ -1559,12 +1667,12 @@
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s ease;
-  z-index: 5;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
-.projectFullCard:hover .deleteBtn {
+.projectFullCard:hover .deleteBtn,
+.projectListCard:hover .deleteBtn {
   opacity: 1;
 }
 
@@ -1573,10 +1681,14 @@
   color: #ffffff;
 }
 
-/* Always show delete button on touch devices */
+/* Always show action buttons on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .deleteBtn {
     opacity: 1;
+  }
+  
+  .shareBtn:active {
+    transform: scale(0.95);
   }
   
   .deleteBtn:active {
@@ -1595,6 +1707,13 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Desktop date - hidden on mobile */
+@media (max-width: 640px) {
+  .projectDateDesktop {
+    display: none;
+  }
 }
 
 /* =========================================== 

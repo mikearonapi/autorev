@@ -87,6 +87,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
       .sort((a, b) => b.score - a.score)
       .map(item => item.car)
       .slice(0, 30);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, allCars]);
 
   // Check if a car is already favorited

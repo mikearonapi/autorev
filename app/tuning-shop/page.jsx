@@ -25,6 +25,7 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CarImage from '@/components/CarImage';
 import CarActionMenu from '@/components/CarActionMenu';
 import UpgradeCenter from '@/components/UpgradeCenter';
+import ShareBuildModal from '@/components/ShareBuildModal';
 import OnboardingPopup, { tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
 import { fetchCars } from '@/lib/carsClient';
 
@@ -203,6 +204,15 @@ const Icons = {
       <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
     </svg>
   ),
+  share: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  ),
 };
 
 // Car Picker Modal for searching/selecting cars
@@ -296,7 +306,7 @@ function EmptyState({ icon: IconComponent, title, description, actionLabel, onAc
 }
 
 // Project Card Component (works in both grid and list views)
-function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoad, onDelete }) {
+function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoad, onDelete, onShare }) {
   const handleClick = () => {
     if (compareMode) {
       onSelect();
@@ -344,6 +354,16 @@ function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoa
           </div>
         </div>
         <button
+          className={styles.shareBtn}
+          onClick={(e) => {
+            e.stopPropagation();
+            onShare();
+          }}
+          title="Share to community"
+        >
+          <Icons.share size={16} />
+        </button>
+        <button
           className={styles.deleteBtn}
           onClick={(e) => {
             e.stopPropagation();
@@ -370,26 +390,9 @@ function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoa
           </div>
         </div>
       )}
-      <div className={styles.projectFullImage}>
-        <CarImage car={build.car} variant="hero" showName={false} />
-      </div>
-      <div className={styles.projectFullContent}>
-        <h4>{build.name}</h4>
-        <p className={styles.projectFullCar}>{build.car.name}</p>
-        <div className={styles.projectFullStats}>
-          {build.totalHpGain > 0 && (
-            <span className={styles.statBadge}>+{build.totalHpGain} hp</span>
-          )}
-          {build.totalCostLow > 0 && (
-            <span className={styles.statBadge}>${build.totalCostLow.toLocaleString()}</span>
-          )}
-        </div>
-        {formattedDate && (
-          <span className={styles.projectDate}>{formattedDate}</span>
-        )}
-      </div>
+      {/* Delete button - only visible on desktop (hidden on mobile, shown in actions row) */}
       <button
-        className={styles.deleteBtn}
+        className={`${styles.deleteBtn} ${styles.deleteBtnDesktop}`}
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
@@ -398,6 +401,68 @@ function ProjectCard({ build, viewMode, compareMode, isSelected, onSelect, onLoa
       >
         <Icons.trash size={16} />
       </button>
+      <div className={styles.projectFullImage}>
+        <CarImage car={build.car} variant="hero" showName={false} />
+      </div>
+      <div className={styles.projectFullContent}>
+        <div className={styles.projectFullHeader}>
+          <div>
+            <h4>{build.name}</h4>
+            <p className={styles.projectFullCar}>{build.car.name}</p>
+          </div>
+          {/* Share button - desktop only in header */}
+          <button
+            className={`${styles.shareBtn} ${styles.shareBtnDesktop}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onShare();
+            }}
+            title="Share to community"
+          >
+            <Icons.share size={16} />
+          </button>
+        </div>
+        <div className={styles.projectFullStats}>
+          {build.totalHpGain > 0 && (
+            <span className={styles.statBadge}>+{build.totalHpGain} hp</span>
+          )}
+          {build.totalCostLow > 0 && (
+            <span className={styles.statBadge}>${build.totalCostLow.toLocaleString()}</span>
+          )}
+        </div>
+        {/* Desktop date - hidden on mobile */}
+        {formattedDate && (
+          <span className={`${styles.projectDate} ${styles.projectDateDesktop}`}>{formattedDate}</span>
+        )}
+        {/* Mobile: Footer with date and actions */}
+        <div className={styles.projectCardFooter}>
+          {formattedDate && (
+            <span className={styles.projectDate}>{formattedDate}</span>
+          )}
+          <div className={styles.projectCardActions}>
+            <button
+              className={styles.actionBtnMobile}
+              onClick={(e) => {
+                e.stopPropagation();
+                onShare();
+              }}
+              title="Share"
+            >
+              <Icons.share size={14} />
+            </button>
+            <button
+              className={`${styles.actionBtnMobile} ${styles.actionBtnDelete}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              title="Delete"
+            >
+              <Icons.trash size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -622,6 +687,11 @@ function TuningShopContent() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  
+  // Share modal state
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [buildToShare, setBuildToShare] = useState(null);
+  const [buildToShareImages, setBuildToShareImages] = useState([]);
   
   // New tuning shop state for factory config and wheel selection
   const [factoryConfig, setFactoryConfig] = useState(null);
@@ -877,6 +947,24 @@ function TuningShopContent() {
     setCompareMode(false);
     setSelectedForCompare([]);
   }, []);
+  
+  // Share build handler - fetch images for the build being shared
+  const handleShareBuild = useCallback(async (build) => {
+    setBuildToShare(build);
+    setBuildToShareImages([]);
+    setShowShareModal(true);
+    
+    // Fetch images for this build
+    try {
+      const response = await fetch(`/api/builds/${build.id}/images`);
+      if (response.ok) {
+        const data = await response.json();
+        setBuildToShareImages(data.images || []);
+      }
+    } catch (err) {
+      console.error('[TuningShop] Error fetching build images:', err);
+    }
+  }, []);
 
   const handleSelectCar = (car) => {
     setSelectedCar(car);
@@ -925,7 +1013,7 @@ function TuningShopContent() {
   ];
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Optimized Background Image */}
       <div className={styles.backgroundImageWrapper}>
         <Image
@@ -1268,6 +1356,7 @@ function TuningShopContent() {
                             onDelete={() => {
                               if (confirm('Delete this project?')) deleteBuild(build.id);
                             }}
+                            onShare={() => handleShareBuild(build)}
                           />
                         ))}
                       </div>
@@ -1289,6 +1378,7 @@ function TuningShopContent() {
                       onDelete={() => {
                         if (confirm('Delete this project?')) deleteBuild(build.id);
                       }}
+                      onShare={() => handleShareBuild(build)}
                     />
                   ))}
                 </div>
@@ -1327,6 +1417,30 @@ function TuningShopContent() {
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
       />
+      
+      {/* Share Build Modal */}
+      {showShareModal && buildToShare && (
+        <ShareBuildModal
+          isOpen={showShareModal}
+          onClose={() => {
+            setShowShareModal(false);
+            setBuildToShare(null);
+            setBuildToShareImages([]);
+          }}
+          build={{
+            id: buildToShare.id,
+            build_name: buildToShare.name,
+            notes: buildToShare.notes,
+            total_hp_gain: buildToShare.totalHpGain || 0,
+            total_cost_low: buildToShare.totalCostLow || 0,
+            total_cost_high: buildToShare.totalCostHigh || 0,
+          }}
+          carSlug={buildToShare.carSlug}
+          carName={buildToShare.car?.name || buildToShare.carName}
+          existingImages={buildToShareImages}
+          userId={authState.user?.id}
+        />
+      )}
 
       {/* Onboarding Popup */}
       <OnboardingPopup 
@@ -1341,7 +1455,7 @@ function TuningShopContent() {
 // Loading fallback
 function TuningShopLoading() {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       <div className={styles.loadingContainer}>
         <LoadingSpinner size="large" />
       </div>

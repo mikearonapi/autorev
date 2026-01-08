@@ -17,6 +17,7 @@ import CarActionMenu from '@/components/CarActionMenu';
 import { useFeedback } from '@/components/FeedbackWidget';
 import { useCarsList } from '@/hooks/useCarData';
 import { usePrefetchCar } from '@/components/PrefetchCarLink';
+import { useAIChat } from '@/components/AIMechanicChat';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';
@@ -160,6 +161,9 @@ function CarCatalogContent() {
   // Feedback hook for car requests
   const { openCarRequest } = useFeedback();
   
+  // AL chat integration for search assistance
+  const { openChatWithPrompt } = useAIChat();
+  
   // Handle adding car to My Collection
   const handleAddToMyCars = async (car) => {
     // Don't proceed while auth is still loading
@@ -279,7 +283,7 @@ function CarCatalogContent() {
   }, [cars, searchQuery, selectedMake, selectedTier, selectedCategory, sortBy]);
 
   return (
-    <div className={styles.catalogPage}>
+    <div className={styles.catalogPage} data-no-main-offset>
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroImageWrapper}>
@@ -463,6 +467,27 @@ function CarCatalogContent() {
                 Clear All Filters
               </button>
               <button 
+                onClick={() => {
+                  const searchContext = searchQuery ? ` I was searching for "${searchQuery}".` : '';
+                  const filterContext = [];
+                  if (selectedMake !== 'all') filterContext.push(`make: ${selectedMake}`);
+                  if (selectedTier !== 'all') filterContext.push(`tier: ${selectedTier}`);
+                  if (selectedCategory !== 'all') filterContext.push(`category: ${selectedCategory}`);
+                  const filterText = filterContext.length > 0 ? ` My filters: ${filterContext.join(', ')}.` : '';
+                  openChatWithPrompt(
+                    `Help me find a sports car that matches my criteria.${searchContext}${filterText} What options would you recommend?`,
+                    { category: 'Car Search' },
+                    'Help me find a sports car'
+                  );
+                }}
+                className={styles.askAlBtn}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                Ask AL to Help
+              </button>
+              <button 
                 onClick={() => openCarRequest(`I was searching for "${searchQuery}" but couldn't find it.`)}
                 className={styles.requestCarBtn}
               >
@@ -515,7 +540,7 @@ function CarCatalogContent() {
 export default function CarCatalog() {
   return (
     <Suspense fallback={
-      <div className={styles.catalogPage}>
+      <div className={styles.catalogPage} data-no-main-offset>
         <section className={styles.hero}>
           <div className={styles.heroImageWrapper}>
             <Image

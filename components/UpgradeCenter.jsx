@@ -42,11 +42,14 @@ import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
+import { supabase } from '@/lib/supabase';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
 // Mobile-first tuning shop components
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
+import PartsSelector from './tuning-shop/PartsSelector';
+import ImageUploader from './ImageUploader';
 
 // Compact Icons
 const Icons = {
@@ -125,6 +128,35 @@ const Icons = {
       <circle cx="12" cy="12" r="10"/>
       <line x1="12" y1="16" x2="12" y2="12"/>
       <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
+  externalLink: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+      <polyline points="15 3 21 3 21 9"/>
+      <line x1="10" y1="14" x2="21" y2="3"/>
+    </svg>
+  ),
+  share: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  ),
+  camera: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  ),
+  globe: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
     </svg>
   ),
   turbo: ({ size = 16 }) => (
@@ -556,7 +588,7 @@ export default function UpgradeCenter({
   selectedWheelFitment = null,
   onWheelFitmentChange = null,
 }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
   const { vehicles, applyModifications, addVehicle } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
@@ -579,6 +611,16 @@ export default function UpgradeCenter({
 
   // Selected parts for builds (loaded from saved builds, UI removed)
   const [selectedParts, setSelectedParts] = useState([]);
+  
+  // Build photos - stored separately and linked to build ID
+  const [buildImages, setBuildImages] = useState([]);
+  
+  // Track if current build has a linked community post
+  const [linkedCommunityPost, setLinkedCommunityPost] = useState(null);
+  const [checkingCommunityPost, setCheckingCommunityPost] = useState(false);
+  
+  // Toggle for whether to share to / keep in community when saving
+  const [shareToNewCommunity, setShareToNewCommunity] = useState(false);
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
@@ -603,6 +645,71 @@ export default function UpgradeCenter({
       }
     }
   }, [initialBuildId, getBuildById, safeCarSlug]);
+  
+  // Load build images when build ID changes
+  useEffect(() => {
+    async function loadBuildImages() {
+      if (!currentBuildId || !supabase) {
+        setBuildImages([]);
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_uploaded_images')
+          .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height')
+          .eq('user_build_id', currentBuildId)
+          .order('is_primary', { ascending: false })
+          .order('display_order', { ascending: true })
+          .order('created_at', { ascending: true });
+        
+        if (error) {
+          console.error('[UpgradeCenter] Error loading build images:', error);
+          return;
+        }
+        
+        setBuildImages(data || []);
+      } catch (err) {
+        console.error('[UpgradeCenter] Error loading build images:', err);
+      }
+    }
+    
+    loadBuildImages();
+  }, [currentBuildId]);
+
+  // Check if current build has a linked community post
+  useEffect(() => {
+    async function checkLinkedPost() {
+      if (!currentBuildId || !supabase) {
+        setLinkedCommunityPost(null);
+        return;
+      }
+      
+      setCheckingCommunityPost(true);
+      try {
+        const { data, error } = await supabase
+          .from('community_posts')
+          .select('id, slug, title, is_published')
+          .eq('user_build_id', currentBuildId)
+          .maybeSingle();
+        
+        if (!error && data) {
+          setLinkedCommunityPost(data);
+          setShareToNewCommunity(data.is_published !== false); // Default to keeping shared
+        } else {
+          setLinkedCommunityPost(null);
+          setShareToNewCommunity(false); // Default off for new builds
+        }
+      } catch (err) {
+        console.error('[UpgradeCenter] Error checking linked community post:', err);
+        setLinkedCommunityPost(null);
+      } finally {
+        setCheckingCommunityPost(false);
+      }
+    }
+    
+    checkLinkedPost();
+  }, [currentBuildId]);
   
   // Guard: return empty upgrades structure if no car
   const availableUpgrades = useMemo(() => {
@@ -835,6 +942,63 @@ export default function UpgradeCenter({
           
           if (modResult.error) {
             setSaveError('Project saved but failed to apply to garage vehicle');
+          }
+        }
+        
+        // Handle community post based on toggle state
+        if (linkedCommunityPost && !shareToNewCommunity && supabase) {
+          // Unpublish existing post
+          try {
+            const { error: unpublishError } = await supabase
+              .from('community_posts')
+              .update({ is_published: false, is_approved: false })
+              .eq('id', linkedCommunityPost.id);
+            
+            if (unpublishError) {
+              console.error('[UpgradeCenter] Error unpublishing community post:', unpublishError);
+            } else {
+              // Clear the linked post since it's now unpublished
+              setLinkedCommunityPost(null);
+            }
+          } catch (err) {
+            console.error('[UpgradeCenter] Error unpublishing community post:', err);
+          }
+        } else if (!linkedCommunityPost && shareToNewCommunity && savedBuildId) {
+          // Create new community post
+          try {
+            const response = await fetch('/api/community/posts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                postType: 'build',
+                title: buildName.trim(),
+                description: '',
+                buildId: savedBuildId,
+                carSlug: car.slug,
+                carName: car.name,
+                imageIds: [], // Will use images already linked to build
+              }),
+            });
+            
+            if (response.ok) {
+              const postData = await response.json();
+              console.log('[UpgradeCenter] Created community post:', postData);
+              // Will be loaded on next check
+            } else {
+              console.error('[UpgradeCenter] Error creating community post');
+            }
+          } catch (err) {
+            console.error('[UpgradeCenter] Error creating community post:', err);
+          }
+        } else if (linkedCommunityPost && shareToNewCommunity && supabase) {
+          // Re-publish existing post that was unpublished
+          try {
+            await supabase
+              .from('community_posts')
+              .update({ is_published: true, is_approved: true })
+              .eq('id', linkedCommunityPost.id);
+          } catch (err) {
+            console.error('[UpgradeCenter] Error re-publishing community post:', err);
           }
         }
         
@@ -1136,6 +1300,43 @@ export default function UpgradeCenter({
             <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
             <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
           </div>
+          
+          {/* Build Photos Section */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>
+              <Icons.camera size={14} />
+              Build Photos
+            </h4>
+            <p className={styles.sectionHint}>
+              Add photos of your build. The first image will be your hero image when sharing.
+            </p>
+            <ImageUploader
+              onUploadComplete={(images) => setBuildImages(images)}
+              onUploadError={(err) => console.error('[UpgradeCenter] Image upload error:', err)}
+              maxFiles={10}
+              buildId={currentBuildId}
+              existingImages={buildImages}
+              disabled={!user}
+            />
+            {!user && (
+              <p className={styles.loginHint}>
+                Sign in to upload photos of your build
+              </p>
+            )}
+          </div>
+          
+          {/* Parts Shopping List - Based on selected upgrades */}
+          {effectiveModules.length > 0 && (
+            <PartsSelector
+              selectedUpgrades={effectiveModules}
+              selectedParts={selectedParts}
+              onPartsChange={setSelectedParts}
+              carName={car?.name}
+              carSlug={car?.slug}
+              totalHpGain={hpGain}
+              totalCostRange={{ low: totalCost.low, high: totalCost.high }}
+            />
+          )}
         </div>
       </div>
       
@@ -1358,6 +1559,48 @@ export default function UpgradeCenter({
                 })()}
               </div>
               
+              {/* Community Sharing Toggle - Always show */}
+              <div className={styles.communityToggleSection}>
+                <div className={styles.communityToggleRow}>
+                  <div className={styles.communityToggleInfo}>
+                    <Icons.globe size={16} />
+                    <div className={styles.communityToggleText}>
+                      <span className={styles.communityToggleLabel}>
+                        {linkedCommunityPost ? 'Shared to Community' : 'Share to Community'}
+                      </span>
+                      {linkedCommunityPost && (
+                        <a 
+                          href={`/community/builds/${linkedCommunityPost.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.communityToggleLink}
+                        >
+                          View Post <Icons.externalLink size={10} />
+                        </a>
+                      )}
+                      {!linkedCommunityPost && (
+                        <span className={styles.communityToggleHint}>
+                          Make this build visible to everyone
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    className={`${styles.toggleSwitch} ${shareToNewCommunity ? styles.toggleSwitchOn : ''}`}
+                    onClick={() => setShareToNewCommunity(!shareToNewCommunity)}
+                    aria-pressed={shareToNewCommunity}
+                  >
+                    <span className={styles.toggleKnob} />
+                  </button>
+                </div>
+                {linkedCommunityPost && !shareToNewCommunity && (
+                  <p className={styles.communityToggleWarning}>
+                    ⚠️ This build will be removed from the community when you save.
+                  </p>
+                )}
+              </div>
+              
               {saveError && (
                 <div className={styles.saveErrorMessage}>
                   <Icons.alertCircle size={14} />
@@ -1380,6 +1623,21 @@ export default function UpgradeCenter({
                   <>
                     <span className={styles.savingSpinner} />
                     Saving...
+                  </>
+                ) : linkedCommunityPost && shareToNewCommunity ? (
+                  <>
+                    <Icons.save size={14} />
+                    Save & Update Community Post
+                  </>
+                ) : linkedCommunityPost && !shareToNewCommunity ? (
+                  <>
+                    <Icons.save size={14} />
+                    Save & Remove from Community
+                  </>
+                ) : shareToNewCommunity ? (
+                  <>
+                    <Icons.save size={14} />
+                    Save & Share to Community
                   </>
                 ) : (
                   <>

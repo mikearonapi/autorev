@@ -287,3 +287,11 @@ The session cache optimization uses a **singleton promise pattern** to start the
 
 
 
+
+
+
+
+
+
+
+

@@ -1,0 +1,88 @@
+{
+  "counters": {
+    "buyers": 4,
+    "owners": 2,
+    "builders": 1,
+    "cinematic": 2
+  },
+  "pairIndex": {
+    "buyers": 0,
+    "owners": 0,
+    "builders": 0,
+    "cinematic": 0
+  },
+  "carIndex": {
+    "buyers": 1,
+    "owners": 1,
+    "builders": 1,
+    "cinematic": 1
+  },
+  "totalGenerated": 19,
+  "lastRun": "2026-01-02T12:48:28.816Z",
+  "history": [
+    {
+      "timestamp": "2026-01-02T12:37:11.291Z",
+      "category": "buyers",
+      "file": "04-A-dream-discovery-porsche-911-gt3.mp4",
+      "car": "Porsche 911 GT3",
+      "concept": "dream-discovery",
+      "clip": "A"
+    },
+    {
+      "timestamp": "2026-01-02T12:39:08.111Z",
+      "category": "buyers",
+      "file": "04-B-dream-discovery-porsche-911-gt3.mp4",
+      "car": "Porsche 911 GT3",
+      "concept": "dream-discovery",
+      "clip": "B"
+    },
+    {
+      "timestamp": "2026-01-02T12:40:45.251Z",
+      "category": "owners",
+      "file": "02-A-morning-ritual-toyota-gr86.mp4",
+      "car": "Toyota GR86",
+      "concept": "morning-ritual",
+      "clip": "A"
+    },
+    {
+      "timestamp": "2026-01-02T12:42:11.935Z",
+      "category": "owners",
+      "file": "02-B-morning-ritual-toyota-gr86.mp4",
+      "car": "Toyota GR86",
+      "concept": "morning-ritual",
+      "clip": "B"
+    },
+    {
+      "timestamp": "2026-01-02T12:43:38.632Z",
+      "category": "builders",
+      "file": "01-A-track-attack-subaru-wrx-sti.mp4",
+      "car": "Subaru WRX STI",
+      "concept": "track-attack",
+      "clip": "A"
+    },
+    {
+      "timestamp": "2026-01-02T12:45:15.260Z",
+      "category": "builders",
+      "file": "01-B-track-attack-subaru-wrx-sti.mp4",
+      "car": "Subaru WRX STI",
+      "concept": "track-attack",
+      "clip": "B"
+    },
+    {
+      "timestamp": "2026-01-02T12:46:52.121Z",
+      "category": "cinematic",
+      "file": "02-A-golden-hour-porsche-911-gt3-rs.mp4",
+      "car": "Porsche 911 GT3 RS",
+      "concept": "golden-hour",
+      "clip": "A"
+    },
+    {
+      "timestamp": "2026-01-02T12:48:28.586Z",
+      "category": "cinematic",
+      "file": "02-B-golden-hour-porsche-911-gt3-rs.mp4",
+      "car": "Porsche 911 GT3 RS",
+      "concept": "golden-hour",
+      "clip": "B"
+    }
+  ]
+}

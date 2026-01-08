@@ -44,3 +44,11 @@ COMMENT ON COLUMN user_vehicles.battery_status IS
 
 
 
+
+
+
+
+
+
+
+

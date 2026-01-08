@@ -58,7 +58,7 @@ export default async function Home() {
   const carCount = await getCarCount();
   
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section with cycling text */}
       <HeroSection carCount={carCount} />
 

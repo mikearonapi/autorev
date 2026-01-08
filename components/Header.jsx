@@ -39,14 +39,16 @@ const ChevronIcon = () => (
 );
 
 // Navigation links - KISS principles: clear, direct names that match URLs
+// - Articles: Top-level editorial content (comparisons, enthusiast, technical)
 // - Cars: Dropdown for Browse Cars & Sports Car Match (no dedicated page)
 // - My Garage: Personal user area (collection & favorites)
 // - Tuning Shop: Mod planner & projects
-// - Community: Events, Forums, Clubs (future)
+// - Community: Events, Builds, Clubs (future)
 // - Encyclopedia: Automotive Education
 // - AutoRev AI: AI-powered automotive assistant
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/articles', label: 'Articles' },
   { 
     label: 'Cars',
     subLinks: [
@@ -60,6 +62,7 @@ const navLinks = [
     href: '/community', 
     label: 'Community',
     subLinks: [
+      { href: '/community/builds', label: 'Community Builds' },
       { href: '/community/events', label: 'Events' },
       { href: '/events/saved', label: 'Saved Events' },
       { href: '/events/submit', label: 'Submit Event' },

@@ -6,6 +6,7 @@
  * - All car detail pages (from cars table via carsClient)
  * - Event pages (from events table)
  * - Encyclopedia topics (from static data)
+ * - Public community builds (user-shared builds for SEO)
  * 
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
@@ -16,7 +17,7 @@ import { getNavigationTree } from '@/lib/encyclopediaData';
 
 const SITE_URL = 'https://autorev.app';
 
-// Supabase client for fetching dynamic data (events only)
+// Supabase client for fetching dynamic data
 function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -63,6 +64,36 @@ async function fetchEvents() {
     return data || [];
   } catch (err) {
     console.warn('[Sitemap] Error fetching events:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Fetch all public community builds for sitemap inclusion.
+ * These are user-shared builds that help with SEO.
+ * @returns {Promise<Array>}
+ */
+async function fetchPublicBuilds() {
+  try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from('community_posts')
+      .select('slug, updated_at, published_at, car_name')
+      .eq('is_published', true)
+      .eq('post_type', 'build')
+      .order('published_at', { ascending: false })
+      .limit(1000);
+
+    if (error) {
+      console.warn('[Sitemap] Error fetching public builds:', error.message);
+      return [];
+    }
+
+    return data || [];
+  } catch (err) {
+    console.warn('[Sitemap] Error fetching public builds:', err.message);
     return [];
   }
 }
@@ -132,6 +163,12 @@ export default async function sitemap() {
     },
     {
       url: `${SITE_URL}/community/events`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/community/builds`,
       lastModified: now,
       changeFrequency: 'daily',
       priority: 0.85,
@@ -295,6 +332,17 @@ export default async function sitemap() {
   }));
 
   // ==========================================================================
+  // PUBLIC COMMUNITY BUILDS (user-shared builds for SEO)
+  // ==========================================================================
+  const publicBuilds = await fetchPublicBuilds();
+  const buildPages = publicBuilds.map((build) => ({
+    url: `${SITE_URL}/community/builds/${build.slug}`,
+    lastModified: build.updated_at ? new Date(build.updated_at) : (build.published_at ? new Date(build.published_at) : now),
+    changeFrequency: 'weekly',
+    priority: 0.65, // Higher priority than encyclopedia, similar to events
+  }));
+
+  // ==========================================================================
   // COMBINE ALL PAGES
   // ==========================================================================
   const allPages = [
@@ -302,9 +350,10 @@ export default async function sitemap() {
     ...carPages,
     ...eventPages,
     ...encyclopediaPages,
+    ...buildPages,
   ];
 
-  console.log(`[Sitemap] Generated: ${staticPages.length} static, ${carPages.length} cars, ${eventPages.length} events, ${encyclopediaPages.length} encyclopedia topics`);
+  console.log(`[Sitemap] Generated: ${staticPages.length} static, ${carPages.length} cars, ${eventPages.length} events, ${encyclopediaPages.length} encyclopedia topics, ${buildPages.length} public builds`);
 
   return allPages;
 }

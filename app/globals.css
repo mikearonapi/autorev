@@ -183,6 +183,14 @@
   --header-plus-banner-mobile: calc(var(--header-height-mobile) + var(--beta-banner-height-mobile));
   --header-plus-banner: calc(var(--header-height) + var(--beta-banner-height));
   
+  /* Dynamic content offset - changes based on banner state
+     This is the recommended way to offset content below fixed header/banners.
+     Use --content-offset for full offset, or --header-only for header-only */
+  --content-offset-mobile: var(--header-plus-banner-mobile);
+  --content-offset: var(--header-plus-banner);
+  --header-only-mobile: var(--header-height-mobile);
+  --header-only: var(--header-height);
+  
   /* Mobile-first content widths */
   --content-width-narrow: 480px;
   --content-width-medium: 720px;
@@ -261,6 +269,48 @@ body {
   overflow-x: hidden;
   /* Improve touch scrolling */
   -webkit-overflow-scrolling: touch;
+}
+
+/* --------------------------------------------------------------------------
+   Dynamic Banner-Aware Layout System
+   
+   When no banner is shown, adjust content offset variables to header-only.
+   This allows pages to automatically adjust their layout based on whether
+   a site-wide banner is currently displayed.
+   
+   Usage in pages:
+   - padding-top: var(--content-offset-mobile);  (Mobile)
+   - padding-top: var(--content-offset);         (Tablet+)
+   -------------------------------------------------------------------------- */
+html:not([data-has-banner]) {
+  --content-offset-mobile: var(--header-height-mobile);
+  --content-offset: var(--header-height);
+  scroll-padding-top: var(--header-height-mobile);
+}
+
+@media (min-width: 768px) {
+  html:not([data-has-banner]) {
+    scroll-padding-top: var(--header-height);
+  }
+}
+
+/* Main content area - automatically offset below fixed header/banners */
+main {
+  padding-top: var(--content-offset-mobile);
+}
+
+@media (min-width: 768px) {
+  main {
+    padding-top: var(--content-offset);
+  }
+}
+
+/* 
+  Utility class for pages that handle their own offset (e.g., full-bleed heroes).
+  Apply data-no-main-offset to the page's root element to disable auto-offset.
+*/
+main:has([data-no-main-offset]) {
+  padding-top: 0;
 }
 
 img, video {

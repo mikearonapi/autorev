@@ -11,13 +11,16 @@
  * 5. See Car Profile (Details)
  */
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './CarActionMenu.module.css';
 import { useFavorites } from './providers/FavoritesProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useCompare } from './providers/CompareProvider';
+
+// Minimum time to show loading state (prevents flickering on fast operations)
+const MIN_LOADING_DURATION_MS = 400;
 
 // Icons - Premium Lucide-style SVGs
 const Icons = {
@@ -151,22 +154,24 @@ export default function CarActionMenu({
     isInCompare = compareUtils.isInCompare;
   } catch (e) { /* Provider missing */ }
 
-  if (!car) return null;
-
-  // Check states
-  const isOwned = vehicles?.some(v => v.matchedCarSlug === car.slug);
-  const isFav = isFavorite(car.slug);
-  const isComparing = isInCompare(car.slug);
+  // Check states (safe even if car is null)
+  const isOwned = car && vehicles?.some(v => v.matchedCarSlug === car.slug);
+  const isFav = car && isFavorite(car.slug);
+  const isComparing = car && isInCompare(car.slug);
   const canCompare = !isCompareFull || isComparing;
 
   // Handle adding to collection (ownership)
-  const handleAddToCollection = async (e) => {
+  // Uses minimum loading duration to prevent flickering on fast operations
+  // NOTE: useCallback must be called unconditionally (before any early returns)
+  const handleAddToCollection = useCallback(async (e) => {
     e?.stopPropagation?.();
     e?.preventDefault?.();
     
-    if (isOwned || isAdding) return;
+    if (!car || isOwned || isAdding) return;
     
+    const startTime = Date.now();
     setIsAdding(true);
+    
     try {
       const yearMatch = car.years?.match(/(\d{4})/);
       const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
@@ -188,9 +193,19 @@ export default function CarActionMenu({
     } catch (err) {
       console.error('[CarActionMenu] Error adding to collection:', err);
     } finally {
-      setIsAdding(false);
+      // Ensure minimum loading duration to prevent flickering
+      const elapsed = Date.now() - startTime;
+      const remaining = MIN_LOADING_DURATION_MS - elapsed;
+      
+      if (remaining > 0) {
+        setTimeout(() => setIsAdding(false), remaining);
+      } else {
+        setIsAdding(false);
+      }
     }
-  };
+  }, [car, isOwned, isAdding, addVehicle, isFav, removeFavorite, onAction]);
+
+  if (!car) return null;
 
   // Handle favorite toggle
   const handleToggleFavorite = (e) => {
@@ -503,19 +518,22 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
 
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!car) return null;
+  // Check states (safe even if car is null)
+  const isOwned = car && vehicles?.some(v => v.matchedCarSlug === car.slug);
+  const isFav = car && isFavorite(car.slug);
+  const isComparing = car && isInCompare(car.slug);
 
-  const isOwned = vehicles?.some(v => v.matchedCarSlug === car.slug);
-  const isFav = isFavorite(car.slug);
-  const isComparing = isInCompare(car.slug);
-
-  const handleClick = async (e) => {
+  // NOTE: useCallback must be called unconditionally (before any early returns)
+  const handleClick = useCallback(async (e) => {
     e?.stopPropagation?.();
     e?.preventDefault?.();
+
+    if (!car) return;
 
     switch (action) {
       case 'own':
         if (!isOwned) {
+          const startTime = Date.now();
           setIsLoading(true);
           try {
             const yearMatch = car.years?.match(/(\d{4})/);
@@ -524,7 +542,15 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
             await addVehicle({ year, make, model, matchedCarSlug: car.slug });
             if (isFav) removeFavorite(car.slug);
           } finally {
-            setIsLoading(false);
+            // Ensure minimum loading duration to prevent flickering on Android
+            const elapsed = Date.now() - startTime;
+            const remaining = MIN_LOADING_DURATION_MS - elapsed;
+            
+            if (remaining > 0) {
+              setTimeout(() => setIsLoading(false), remaining);
+            } else {
+              setIsLoading(false);
+            }
           }
         }
         break;
@@ -544,7 +570,9 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
         router.push(`/browse-cars/${car.slug}`);
         break;
     }
-  };
+  }, [action, car, isOwned, isFav, isComparing, isCompareFull, router, addVehicle, removeFavorite, addFavorite, toggleCompare]);
+
+  if (!car) return null;
 
   const icons = { own: Icons.car, favorite: Icons.heart, compare: Icons.compare, mod: Icons.wrench, project: Icons.wrench, profile: Icons.arrowRight };
   const Icon = icons[action] || Icons.car;

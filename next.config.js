@@ -29,9 +29,21 @@ const nextConfig = {
     ],
   },
 
-  // Redirect old Vite routes if needed (optional)
+  // Redirects for route migrations
   async redirects() {
-    return [];
+    return [
+      // Migrate /compare to /articles/comparisons
+      {
+        source: '/compare',
+        destination: '/articles/comparisons',
+        permanent: true,
+      },
+      {
+        source: '/compare/:slug',
+        destination: '/articles/comparisons/:slug',
+        permanent: true,
+      },
+    ];
   },
 };
 

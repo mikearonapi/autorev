@@ -36,6 +36,7 @@ export default function ReferralPanel({ userId }) {
   // Fetch referral data
   useEffect(() => {
     fetchReferralData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   async function fetchReferralData() {

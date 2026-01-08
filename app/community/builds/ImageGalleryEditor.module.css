@@ -1,0 +1,367 @@
+/* Image Gallery Editor Styles */
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Section Headers */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader h4 {
+  font-size: 1rem;
+  color: var(--text-primary, #fff);
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #71717a);
+}
+
+/* Hero Image Section */
+.heroSection {
+  margin-bottom: 1rem;
+}
+
+.heroImageWrapper {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.heroImage {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.heroImageWrapper:hover .heroImage {
+  transform: scale(1.02);
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+.heroBadge {
+  background: var(--accent-gold, #f59e0b);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Gallery Grid */
+.gallerySection {
+  margin-top: 0.5rem;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.galleryItem {
+  position: relative;
+}
+
+.galleryImageWrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.galleryImageWrapper:hover {
+  border-color: var(--accent-blue, #3b82f6);
+}
+
+.galleryImage {
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.galleryImageWrapper:hover .galleryImage {
+  transform: scale(1.05);
+}
+
+/* Image Actions */
+.imageActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.setHeroBtn,
+.deleteImageBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.setHeroBtn {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-blue, #3b82f6);
+}
+
+.setHeroBtn:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.deleteImageBtn {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-red, #ef4444);
+  flex: 0;
+  padding: 0.5rem 0.625rem;
+}
+
+.deleteImageBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.emptyState h4 {
+  font-size: 1.125rem;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  font-size: 0.875rem;
+  color: var(--text-muted, #71717a);
+}
+
+/* Upload Section */
+.uploadSection {
+  position: relative;
+}
+
+.uploadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-primary, #fff);
+  font-size: 0.875rem;
+  z-index: 10;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent-blue, #3b82f6);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s;
+  z-index: 10;
+}
+
+.lightboxClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightboxContent {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lightboxImage {
+  object-fit: contain;
+}
+
+.lightboxCaption {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.lightboxSetHero {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent-gold, #f59e0b);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.lightboxSetHero:hover {
+  background: var(--accent-gold-hover, #d97706);
+}
+
+/* Navigation Arrows */
+.lightboxNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.lightboxNav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightboxNav.prev {
+  left: 1rem;
+}
+
+.lightboxNav.next {
+  right: 1rem;
+}
+
+@media (max-width: 768px) {
+  .lightbox {
+    padding: 1rem;
+  }
+  
+  .lightboxNav {
+    padding: 0.75rem;
+  }
+  
+  .lightboxNav.prev {
+    left: 0.5rem;
+  }
+  
+  .lightboxNav.next {
+    right: 0.5rem;
+  }
+  
+  .galleryGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .imageActions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .setHeroBtn,
+  .deleteImageBtn {
+    font-size: 0.6875rem;
+    padding: 0.375rem;
+  }
+  
+  .deleteImageBtn {
+    flex: 1;
+  }
+}
+

@@ -31,8 +31,10 @@ export default async function AppleIcon() {
           borderRadius: '40px',
         }}
       >
+{/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`data:image/png;base64,${Buffer.from(logoData).toString('base64')}`}
+          alt=""
           width={150}
           height={150}
           style={{

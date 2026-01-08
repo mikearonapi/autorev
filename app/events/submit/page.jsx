@@ -350,7 +350,7 @@ export default function SubmitEventPage() {
   // Auth loading state
   if (authLoading) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <header className={styles.hero}>
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
@@ -373,7 +373,7 @@ export default function SubmitEventPage() {
   // Success state
   if (submitSuccess) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-no-main-offset>
         <div className={styles.successContainer}>
           <div className={styles.successIcon}>
             <Icons.check size={48} />
@@ -399,7 +399,7 @@ export default function SubmitEventPage() {
   }
   
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Header */}
       <header className={styles.hero}>
         <div className={styles.heroOverlay} />

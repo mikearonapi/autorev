@@ -60,7 +60,7 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Fetch user's vehicles
+    // Fetch user's vehicles with enrichment data
     const { data: vehicles, error } = await supabase
       .from('user_vehicles')
       .select(`
@@ -86,7 +86,17 @@ export async function GET(request, { params }) {
         active_build_id,
         total_hp_gain,
         modified_at,
-        custom_specs
+        custom_specs,
+        enrichment_id,
+        enrichment_status,
+        daily_driver_enrichments (
+          id,
+          maintenance_specs,
+          service_intervals,
+          known_issues,
+          image_url,
+          status
+        )
       `)
       .eq('user_id', userId)
       .eq('ownership_status', 'owned')
@@ -104,6 +114,7 @@ export async function GET(request, { params }) {
     // Transform to client-friendly format
     const transformedVehicles = (vehicles || []).map(v => {
       const customSpecs = v.custom_specs || {};
+      const enrichment = v.daily_driver_enrichments;
       return {
         id: v.id,
         vin: v.vin,
@@ -131,6 +142,17 @@ export async function GET(request, { params }) {
         // Custom specs (user-specific modification details)
         customSpecs: customSpecs,
         hasCustomSpecs: Object.keys(customSpecs).length > 0,
+        // Daily driver enrichment data
+        enrichmentId: v.enrichment_id,
+        enrichmentStatus: v.enrichment_status || 'none',
+        enrichment: enrichment ? {
+          id: enrichment.id,
+          maintenanceSpecs: enrichment.maintenance_specs,
+          serviceIntervals: enrichment.service_intervals,
+          knownIssues: enrichment.known_issues,
+          imageUrl: enrichment.image_url,
+          status: enrichment.status,
+        } : null,
       };
     });
 

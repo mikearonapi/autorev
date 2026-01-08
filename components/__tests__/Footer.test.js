@@ -44,6 +44,22 @@ describe('Footer', () => {
     expect(container.querySelector('footer')).toBeInTheDocument();
     expect(container.querySelectorAll('nav').length).toBeGreaterThan(0);
   });
+
+  it('renders social media links with proper attributes', () => {
+    render(<Footer />);
+    
+    const instagramLink = screen.getByLabelText('Follow us on Instagram');
+    expect(instagramLink).toBeInTheDocument();
+    expect(instagramLink).toHaveAttribute('href', 'https://www.instagram.com/autorev.app/');
+    expect(instagramLink).toHaveAttribute('target', '_blank');
+    expect(instagramLink).toHaveAttribute('rel', 'noopener noreferrer');
+    
+    const facebookLink = screen.getByLabelText('Follow us on Facebook');
+    expect(facebookLink).toBeInTheDocument();
+    expect(facebookLink).toHaveAttribute('href', 'https://www.facebook.com/profile.php?id=61585868463925');
+    expect(facebookLink).toHaveAttribute('target', '_blank');
+    expect(facebookLink).toHaveAttribute('rel', 'noopener noreferrer');
+  });
 });
 
 

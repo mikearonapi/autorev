@@ -1,3 +1,8 @@
+/* ==========================================================================
+   404 Page - Pit Lane Theme
+   "Lost in the Pit Lane" - A fun automotive 404 experience
+   ========================================================================== */
+
 .page {
   /* Account for fixed header + beta banner */
   min-height: calc(100vh - var(--header-plus-banner));
@@ -6,6 +11,16 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+  
+  /* Gold/Amber pit lane background */
+  background: linear-gradient(
+    135deg,
+    var(--sn-accent) 0%,
+    var(--sn-accent-dark) 50%,
+    #8B7355 100%
+  );
 }
 
 @media (min-width: 768px) {
@@ -14,68 +29,502 @@
   }
 }
 
-.content {
-  text-align: center;
-  max-width: 400px;
+/* --------------------------------------------------------------------------
+   Animated Pit Lane Lines (racing stripes on the ground)
+   -------------------------------------------------------------------------- */
+.pitLaneLines {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
+.line {
+  width: 8px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-white) 0px,
+    var(--color-white) 20px,
+    transparent 20px,
+    transparent 40px
+  );
+  animation: scroll 2s linear infinite;
+}
+
+.line:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.line:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateY(-40px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Floating Tools Animation
+   -------------------------------------------------------------------------- */
+.floatingTools {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wrench,
+.tire {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.2;
+  animation: float 6s ease-in-out infinite;
+}
+
+.wrench:nth-child(1) {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.tire:nth-child(2) {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1.5s;
+}
+
+.wrench:nth-child(3) {
+  bottom: 25%;
+  left: 20%;
+  animation-delay: 3s;
+}
+
+.tire:nth-child(4) {
+  bottom: 20%;
+  right: 10%;
+  animation-delay: 4.5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(15deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Main Content
+   -------------------------------------------------------------------------- */
+.content {
+  text-align: center;
+  max-width: 600px;
+  z-index: 10;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   Car Scene - Sports car on jack stands
+   -------------------------------------------------------------------------- */
+.carScene {
+  position: relative;
+  width: 280px;
+  height: 120px;
+  margin: 0 auto var(--space-xl);
+}
+
+.car {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  animation: carBounce 3s ease-in-out infinite;
+}
+
+@keyframes carBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-3px);
+  }
+}
+
+/* Car body - sleek sports car silhouette */
+.carBody {
+  position: relative;
+  width: 160px;
+  height: 45px;
+}
+
+.carTop {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  width: 80px;
+  height: 25px;
+  background: var(--sn-primary);
+  border-radius: 20px 25px 5px 5px;
+  box-shadow: 
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.carBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 160px;
+  height: 25px;
+  background: var(--sn-primary);
+  border-radius: 8px 15px 3px 3px;
+  box-shadow: 
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.carBottom::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+  right: 5px;
+  height: 3px;
+  background: var(--sn-primary-dark);
+  border-radius: 0 0 3px 3px;
+}
+
+.window {
+  position: absolute;
+  top: 3px;
+  left: 45px;
+  width: 50px;
+  height: 18px;
+  background: linear-gradient(135deg, rgba(100, 180, 255, 0.8), rgba(60, 120, 180, 0.9));
+  border-radius: 10px 12px 3px 3px;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.headlight {
+  position: absolute;
+  right: 2px;
+  bottom: 8px;
+  width: 8px;
+  height: 6px;
+  background: #FFE066;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #FFE066;
+  animation: headlightBlink 4s ease-in-out infinite;
+}
+
+@keyframes headlightBlink {
+  0%, 90%, 100% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 0.3;
+  }
+}
+
+.taillight {
+  position: absolute;
+  left: 2px;
+  bottom: 8px;
+  width: 6px;
+  height: 6px;
+  background: #FF4444;
+  border-radius: 2px;
+  box-shadow: 0 0 6px #FF4444;
+}
+
+/* Wheels */
+.wheel {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: #222;
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 0 8px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.wheelInner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, #666, #888);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.3);
+}
+
+.wheelInner::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background: #333;
+  border-radius: 50%;
+}
+
+.wheelFront {
+  right: 15px;
+  bottom: -8px;
+}
+
+.wheelRear {
+  left: 15px;
+  bottom: -8px;
+}
+
+/* Jack stands */
+.jackStand,
+.jackStandRear {
+  position: absolute;
+  bottom: -18px;
+  width: 4px;
+  height: 15px;
+  background: linear-gradient(to bottom, #FF6B00, #CC5500);
+  border-radius: 2px;
+}
+
+.jackStand {
+  right: 45px;
+}
+
+.jackStandRear {
+  left: 45px;
+}
+
+.jackStand::before,
+.jackStandRear::before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: -4px;
+  width: 12px;
+  height: 4px;
+  background: #FF6B00;
+  border-radius: 2px;
+}
+
+/* Loose wheel rolling away */
+.looseWheel {
+  position: absolute;
+  right: 20px;
+  bottom: 5px;
+  width: 24px;
+  height: 24px;
+  background: #222;
+  border-radius: 50%;
+  animation: wheelRoll 4s ease-in-out infinite;
+  box-shadow: 
+    inset 0 0 6px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.looseWheel .wheelInner {
+  width: 12px;
+  height: 12px;
+}
+
+@keyframes wheelRoll {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(30px) rotate(360deg);
+    opacity: 0.8;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Typography
+   -------------------------------------------------------------------------- */
 .title {
   font-family: var(--font-display);
-  font-size: 120px;
+  font-size: 100px;
   font-weight: 700;
   line-height: 1;
-  color: var(--sn-primary);
-  margin-bottom: var(--space-md);
+  color: var(--color-white);
+  margin-bottom: var(--space-sm);
+  text-shadow: 
+    3px 3px 0 var(--sn-primary-dark),
+    6px 6px 0 rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.05em;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 140px;
+  }
 }
 
 .subtitle {
+  font-family: var(--font-display);
   font-size: var(--font-size-2xl);
-  color: var(--color-gray-800);
+  color: var(--sn-primary-dark);
   margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: var(--font-size-3xl);
+  }
 }
 
 .message {
-  color: var(--color-gray-600);
-  margin-bottom: var(--space-xl);
+  color: var(--color-white);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+.joke {
+  color: var(--sn-primary-dark);
+  font-style: italic;
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-xl);
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   Links / Buttons
+   -------------------------------------------------------------------------- */
 .links {
   display: flex;
   gap: var(--space-md);
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
 }
 
 .homeLink,
-.advisoryLink {
+.advisoryLink,
+.browseLink {
   padding: var(--space-sm) var(--space-lg);
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-fast);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
 }
 
 .homeLink {
   background: var(--sn-primary);
   color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .homeLink:hover {
   background: var(--sn-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .advisoryLink {
-  border: 2px solid var(--sn-primary);
+  background: var(--color-white);
   color: var(--sn-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .advisoryLink:hover {
-  background: var(--sn-primary);
-  color: var(--color-white);
+  background: var(--color-gray-100);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
+.browseLink {
+  background: transparent;
+  color: var(--color-white);
+  border: 2px solid var(--color-white);
+}
 
+.browseLink:hover {
+  background: var(--color-white);
+  color: var(--sn-primary);
+  transform: translateY(-2px);
+}
 
+/* --------------------------------------------------------------------------
+   Footer Text
+   -------------------------------------------------------------------------- */
+.footer {
+  color: var(--sn-primary-dark);
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+  font-style: italic;
+}
 
+/* --------------------------------------------------------------------------
+   Checkered Flag Corner Decoration
+   -------------------------------------------------------------------------- */
+.checkeredCorner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: 
+    repeating-conic-gradient(
+      from 0deg,
+      var(--color-white) 0deg 90deg,
+      var(--sn-primary-dark) 90deg 180deg
+    );
+  background-size: 30px 30px;
+  opacity: 0.15;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  pointer-events: none;
+}
 
+@media (min-width: 768px) {
+  .checkeredCorner {
+    width: 200px;
+    height: 200px;
+    background-size: 40px 40px;
+  }
+}
 
-
+/* --------------------------------------------------------------------------
+   Reduced Motion Support
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .line,
+  .wrench,
+  .tire,
+  .car,
+  .looseWheel,
+  .headlight {
+    animation: none;
+  }
+  
+  .looseWheel {
+    opacity: 0.8;
+  }
+}

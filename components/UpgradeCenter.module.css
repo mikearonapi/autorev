@@ -10,6 +10,8 @@
   background: linear-gradient(180deg, #0c0d0f 0%, #111214 50%, #0a0b0c 100%);
   color: #fff;
   overflow-y: auto;
+  /* Add bottom padding to account for fixed save button */
+  padding-bottom: 100px;
 }
 
 /* ===========================================
@@ -461,11 +463,17 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Force GPU layer for immediate repaints on mobile */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .pkgBtn:hover {
@@ -474,10 +482,18 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+.pkgBtn:active {
+  transform: translateZ(0) scale(0.98);
+  -webkit-transform: translateZ(0) scale(0.98);
+}
+
 .pkgBtnActive {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
   border-color: rgba(212, 175, 55, 0.4);
   color: #d4af37;
+  /* Ensure active state is immediately visible */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* Category List */
@@ -499,9 +515,15 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
   text-align: left;
   width: 100%;
+  /* Force GPU layer for immediate repaints on mobile */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .catBtn svg:first-child {
@@ -518,10 +540,18 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+.catBtn:active {
+  transform: translateZ(0) scale(0.98);
+  -webkit-transform: translateZ(0) scale(0.98);
+}
+
 .catBtnActive {
   background: rgba(var(--cat-color), 0.1);
   border-color: rgba(var(--cat-color), 0.3);
   color: #fff;
+  /* Ensure active state is immediately visible */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .catBtnActive svg:first-child {
@@ -757,34 +787,45 @@
   transform: translateY(-1px);
 }
 
-/* Save Button - Now rendered outside workspace for proper stacking */
+/* Save Button - Fixed at bottom on desktop, full-width on mobile */
 .saveBtn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 20px;
-  margin: 0 32px 24px;
+  padding: 14px 32px;
+  min-width: 200px;
   background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #000;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 100;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(212, 175, 55, 0.2);
 }
 
 .saveBtn:hover:not(:disabled) {
   background: linear-gradient(135deg, #e6c04a 0%, #d4af37 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(212, 175, 55, 0.35);
 }
 
 .saveBtn:disabled {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.3);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ===========================================
@@ -1019,6 +1060,35 @@
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 16px 0;
+}
+
+.sectionHint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -10px 0 16px 0;
+}
+
+.loginHint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin-top: 12px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.sectionSubtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: -8px 0 16px 0;
+  line-height: 1.4;
+}
+
+.partsListWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* ===========================================
@@ -1512,6 +1582,158 @@
   color: #ef4444;
 }
 
+/* Linked Community Post Notice */
+.linkedPostNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+}
+
+.linkedPostNotice svg {
+  color: #60a5fa;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.linkedPostText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.linkedPostText span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.linkedPostLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #60a5fa;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.linkedPostLink:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* Community Toggle Section */
+.communityToggleSection {
+  margin-top: 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 12px;
+}
+
+.communityToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.communityToggleInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.communityToggleInfo > svg {
+  color: #60a5fa;
+  flex-shrink: 0;
+}
+
+.communityToggleText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.communityToggleLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.communityToggleLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.communityToggleLink:hover {
+  text-decoration: underline;
+}
+
+.communityToggleHint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Toggle Switch */
+.toggleSwitch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggleSwitch:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.toggleSwitchOn {
+  background: #10b981;
+}
+
+.toggleSwitchOn:hover {
+  background: #059669;
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggleSwitchOn .toggleKnob {
+  transform: translateX(20px);
+}
+
+.communityToggleWarning {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 8px;
+}
+
 /* Actions */
 .saveModalActions {
   display: flex;
@@ -1588,16 +1810,17 @@
 @media (max-width: 640px) {
   .modalOverlay {
     padding: 16px;
-    padding-top: 80px; /* Push down slightly for better centering */
+    padding-top: 100px; /* Clear beta banner + header */
     padding-bottom: 100px; /* Space for bottom bar */
-    align-items: center;
+    align-items: flex-start; /* Start from top to avoid cutoff */
+    overflow-y: auto;
   }
   
   .saveModal {
     max-width: 100%;
     border-radius: 16px;
-    max-height: calc(100vh - 160px);
-    overflow-y: auto;
+    max-height: none; /* Allow full height, parent handles scroll */
+    margin-bottom: auto;
   }
   
   .saveModalHeader {
@@ -1919,20 +2142,24 @@
     font-size: 12px;
   }
   
-  /* Save Button - Fixed at very bottom on mobile */
+  /* Save Button - Full width at bottom on mobile */
   .saveBtn {
-    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    transform: none;
     width: 100%;
-    margin: 0;
+    min-width: unset;
     padding: 16px;
     padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
     font-size: 14px;
     border-radius: 0;
     z-index: 2147483647; /* Maximum z-index value - above everything */
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .saveBtn:hover:not(:disabled) {
+    transform: none;
   }
   
   /* Add bottom padding to workspace to account for fixed save button */

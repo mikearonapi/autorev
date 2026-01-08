@@ -156,3 +156,11 @@ async function handleGet(request) {
 
 export const GET = withErrorLogging(handleGet, { route: 'admin/content-growth', feature: 'internal' });
 
+
+
+
+
+
+
+
+
