@@ -29,7 +29,6 @@
     { "path": "/api/cron/schedule-ingestion", "schedule": "30 1 * * 0" },
     { "path": "/api/cron/refresh-recalls?concurrency=3", "schedule": "0 2 * * 0" },
     { "path": "/api/cron/refresh-complaints?concurrency=2&delay=500", "schedule": "30 2 * * 0" },
-    { "path": "/api/cron/process-scrape-jobs?max=10&delay=5000", "schedule": "0 3 * * 0" },
     { "path": "/api/cron/youtube-enrichment", "schedule": "0 4 * * 1" },
     { "path": "/api/cron/forum-scrape?mode=both&maxThreads=20&maxExtract=10", "schedule": "0 5 * * 2,5" },
     { "path": "/api/cron/al-optimization", "schedule": "0 3 * * 6" },
