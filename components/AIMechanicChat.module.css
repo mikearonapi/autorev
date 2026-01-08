@@ -327,7 +327,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 1000;
+  /* Must be above BetaBanner (z-index: 1049) so chat is never obscured */
+  z-index: 1060;
   animation: slideUp 0.25s ease;
 }
 
