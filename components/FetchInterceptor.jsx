@@ -21,7 +21,7 @@
  */
 
 import { useEffect } from 'react';
-import { ErrorLogger } from '@/lib/errorLogger';
+import { ErrorLogger, logError } from '@/lib/errorLogger';
 
 // Track if we've already patched fetch
 let isPatched = false;
@@ -79,7 +79,7 @@ function patchFetch() {
             // Common pattern: { error: "...", success: false }
             if (response.ok && data && typeof data === 'object') {
               if (data.error && !data.success) {
-                ErrorLogger.logError(new Error(data.error), {
+                logError(new Error(data.error), {
                   errorType: 'api_error_response',
                   apiRoute: url,
                   httpMethod: method,
@@ -93,7 +93,7 @@ function patchFetch() {
             return data;
           } catch (parseError) {
             // JSON parsing failed
-            ErrorLogger.logError(parseError, {
+            logError(parseError, {
               errorType: 'json_parse_error',
               apiRoute: url,
               httpMethod: method,

@@ -37,7 +37,11 @@
 */
 
 /* Keep primary content above the background */
-.headerBar,
+.headerBar {
+  position: relative;
+  z-index: 150; /* Higher than UpgradeCenter's category popup (z-index: 100) */
+}
+
 .mainContent {
   position: relative;
   z-index: 2;

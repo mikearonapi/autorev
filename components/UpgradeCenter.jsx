@@ -52,6 +52,7 @@ import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCa
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
 import ImageUploader from './ImageUploader';
+import BuildMediaGallery from './BuildMediaGallery';
 import VideoPlayer from './VideoPlayer';
 
 // Compact Icons
@@ -639,6 +640,10 @@ export default function UpgradeCenter({
   
   // Video player state
   const [selectedVideo, setSelectedVideo] = useState(null);
+  
+  // Hero image selection - 'stock' or 'uploaded'
+  const [heroSource, setHeroSource] = useState('stock');
+  const [selectedHeroImageId, setSelectedHeroImageId] = useState(null);
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
@@ -660,6 +665,17 @@ export default function UpgradeCenter({
         setSelectedParts(build.parts || build.selectedParts || []);
         setSelectedPackage('custom');
         setCurrentBuildId(initialBuildId);
+        // Load saved build name
+        if (build.name) {
+          setBuildName(build.name);
+        }
+        // Load hero image settings
+        if (build.heroSource) {
+          setHeroSource(build.heroSource);
+        }
+        if (build.heroImageId) {
+          setSelectedHeroImageId(build.heroImageId);
+        }
       }
     }
   }, [initialBuildId, getBuildById, safeCarSlug]);
@@ -675,7 +691,7 @@ export default function UpgradeCenter({
       try {
         const { data, error } = await supabase
           .from('user_uploaded_images')
-          .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height')
+          .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height, media_type, duration_seconds, video_thumbnail_url')
           .eq('user_build_id', currentBuildId)
           .order('is_primary', { ascending: false })
           .order('display_order', { ascending: true })
@@ -939,6 +955,9 @@ export default function UpgradeCenter({
         // Include factory configuration and wheel fitment from props
         factoryConfig: factoryConfig || null,
         wheelFitment: selectedWheelFitment || null,
+        // Hero image settings
+        heroSource: heroSource,
+        heroImageId: selectedHeroImageId,
       };
       
       const result = currentBuildId 
@@ -949,6 +968,37 @@ export default function UpgradeCenter({
         setSaveError(result.error.message || 'Failed to save');
       } else {
         const savedBuildId = result.data?.id || currentBuildId;
+        
+        // Link uploaded images to the new build (if any were uploaded before saving)
+        // This ensures images uploaded on phone show up when viewing on desktop
+        if (savedBuildId && buildImages.length > 0) {
+          const unlinkedImages = buildImages.filter(img => !img.user_build_id);
+          if (unlinkedImages.length > 0) {
+            try {
+              const linkResponse = await fetch('/api/uploads', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  imageIds: unlinkedImages.map(img => img.id),
+                  buildId: savedBuildId,
+                }),
+              });
+              
+              if (linkResponse.ok) {
+                console.log(`[UpgradeCenter] Linked ${unlinkedImages.length} images to build ${savedBuildId}`);
+                // Update local state to reflect the link
+                setBuildImages(prev => prev.map(img => ({
+                  ...img,
+                  user_build_id: savedBuildId,
+                })));
+              } else {
+                console.error('[UpgradeCenter] Failed to link images to build');
+              }
+            } catch (err) {
+              console.error('[UpgradeCenter] Error linking images:', err);
+            }
+          }
+        }
         
         // If saving to garage, apply the modifications to the selected vehicle
         if (saveToGarage && selectedGarageVehicle && savedBuildId) {
@@ -1334,10 +1384,20 @@ export default function UpgradeCenter({
               Build Photos & Videos
             </h4>
             <p className={styles.sectionHint}>
-              Add photos and videos of your build. The first photo will be your hero image when sharing.
+              Add photos and videos of your build. Choose which image to feature as your hero.
             </p>
+            
+            {/* Upload Component */}
             <ImageUploader
-              onUploadComplete={(media) => setBuildImages(media)}
+              onUploadComplete={(media) => {
+                setBuildImages(media);
+                // If this is the first uploaded image, auto-select it as hero
+                const images = media.filter(m => m.media_type !== 'video');
+                if (images.length === 1 && heroSource === 'stock') {
+                  setHeroSource('uploaded');
+                  setSelectedHeroImageId(images[0].id);
+                }
+              }}
               onUploadError={(err) => console.error('[UpgradeCenter] Media upload error:', err)}
               onVideoClick={(video) => setSelectedVideo(video)}
               maxFiles={10}
@@ -1345,6 +1405,41 @@ export default function UpgradeCenter({
               existingImages={buildImages}
               disabled={!user}
             />
+            
+            {/* Hero Selection & Gallery */}
+            {(buildImages.length > 0 || user) && (
+              <BuildMediaGallery
+                car={car}
+                media={buildImages}
+                heroSource={heroSource}
+                selectedHeroImageId={selectedHeroImageId}
+                onHeroSourceChange={setHeroSource}
+                onHeroImageSelect={setSelectedHeroImageId}
+                onVideoClick={(video) => setSelectedVideo(video)}
+                onSetPrimary={async (imageId) => {
+                  // Update primary in database
+                  try {
+                    const response = await fetch('/api/uploads', {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ imageId, isPrimary: true }),
+                    });
+                    if (response.ok) {
+                      // Update local state
+                      setBuildImages(prev => prev.map(img => ({
+                        ...img,
+                        is_primary: img.id === imageId,
+                      })));
+                    }
+                  } catch (err) {
+                    console.error('[UpgradeCenter] Error setting primary image:', err);
+                  }
+                }}
+                showHeroSelector={buildImages.filter(m => m.media_type !== 'video').length > 0}
+                readOnly={!user}
+              />
+            )}
+            
             {!user && (
               <p className={styles.loginHint}>
                 Sign in to upload photos and videos of your build
@@ -1370,7 +1465,13 @@ export default function UpgradeCenter({
       {/* Save Build Button - Outside workspace for proper fixed positioning on mobile */}
       <button
         className={styles.saveBtn}
-        onClick={() => { setBuildName(`${car.name} Build`); setShowSaveModal(true); }}
+        onClick={() => { 
+          // Use existing build name if editing, otherwise default to car name
+          if (!buildName) {
+            setBuildName(`${car.name} Build`);
+          }
+          setShowSaveModal(true); 
+        }}
         disabled={!showUpgrade}
       >
         <Icons.save size={16} />

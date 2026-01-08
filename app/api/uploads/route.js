@@ -179,6 +179,129 @@ export async function POST(request) {
 }
 
 /**
+ * PATCH /api/uploads
+ * Link images to a build or update image properties
+ * Body: { imageIds: string[], buildId: string } or { imageId: string, isPrimary: boolean }
+ */
+export async function PATCH(request) {
+  try {
+    // Verify authentication
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { imageIds, buildId, imageId, isPrimary } = body;
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    // Handle linking multiple images to a build
+    if (imageIds && buildId) {
+      if (!Array.isArray(imageIds) || imageIds.length === 0) {
+        return NextResponse.json({ error: 'imageIds must be a non-empty array' }, { status: 400 });
+      }
+
+      // Verify user owns the build
+      const { data: build, error: buildError } = await supabase
+        .from('user_projects')
+        .select('id, user_id')
+        .eq('id', buildId)
+        .single();
+
+      if (buildError || !build) {
+        return NextResponse.json({ error: 'Build not found' }, { status: 404 });
+      }
+
+      if (build.user_id !== user.id) {
+        return NextResponse.json({ error: 'Unauthorized - not your build' }, { status: 403 });
+      }
+
+      // Verify user owns all the images
+      const { data: images, error: imagesError } = await supabase
+        .from('user_uploaded_images')
+        .select('id, user_id')
+        .in('id', imageIds);
+
+      if (imagesError) {
+        console.error('[Uploads API] Error fetching images:', imagesError);
+        return NextResponse.json({ error: 'Failed to verify images' }, { status: 500 });
+      }
+
+      // Check ownership
+      const unauthorizedImages = images?.filter(img => img.user_id !== user.id) || [];
+      if (unauthorizedImages.length > 0) {
+        return NextResponse.json({ error: 'Unauthorized - some images not yours' }, { status: 403 });
+      }
+
+      // Update images to link to build
+      const { error: updateError } = await supabase
+        .from('user_uploaded_images')
+        .update({ user_build_id: buildId })
+        .in('id', imageIds)
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        console.error('[Uploads API] Error linking images:', updateError);
+        return NextResponse.json({ error: 'Failed to link images' }, { status: 500 });
+      }
+
+      console.log(`[Uploads API] Linked ${imageIds.length} images to build ${buildId}`);
+      return NextResponse.json({ success: true, linkedCount: imageIds.length });
+    }
+
+    // Handle setting primary image
+    if (imageId && typeof isPrimary === 'boolean') {
+      // Verify user owns the image
+      const { data: image, error: fetchError } = await supabase
+        .from('user_uploaded_images')
+        .select('id, user_id, user_build_id')
+        .eq('id', imageId)
+        .single();
+
+      if (fetchError || !image) {
+        return NextResponse.json({ error: 'Image not found' }, { status: 404 });
+      }
+
+      if (image.user_id !== user.id) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+
+      // If setting as primary and image is part of a build, unset other primaries first
+      if (isPrimary && image.user_build_id) {
+        await supabase
+          .from('user_uploaded_images')
+          .update({ is_primary: false })
+          .eq('user_build_id', image.user_build_id)
+          .eq('user_id', user.id);
+      }
+
+      // Update the image
+      const { error: updateError } = await supabase
+        .from('user_uploaded_images')
+        .update({ is_primary: isPrimary })
+        .eq('id', imageId);
+
+      if (updateError) {
+        console.error('[Uploads API] Error updating primary:', updateError);
+        return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+
+  } catch (error) {
+    console.error('[Uploads API] PATCH Error:', error);
+    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+  }
+}
+
+/**
  * DELETE /api/uploads?id=xxx
  * Delete an image
  */

@@ -48,6 +48,9 @@ CREATE INDEX IF NOT EXISTS idx_user_uploaded_images_videos_by_build
 -- UPDATE get_community_posts TO INCLUDE MEDIA TYPE
 -- ============================================================================
 
+-- Drop existing function first to allow return type change
+DROP FUNCTION IF EXISTS get_community_posts(TEXT, TEXT, INTEGER, INTEGER);
+
 CREATE OR REPLACE FUNCTION get_community_posts(
   p_post_type TEXT DEFAULT NULL,
   p_car_slug TEXT DEFAULT NULL,
