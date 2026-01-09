@@ -915,7 +915,7 @@ AutoRev uses PostgreSQL functions for complex queries. These are called via `sup
 | `search_cars_semantic(query_embedding, threshold, count)` | Vector similarity search | Semantic car search |
 | `search_cars_advanced(search_query, filters, sort_by, ...)` | Complex filtered search | Browse cars page |
 | `find_cars_by_criteria(p_budget_min, p_budget_max, ...)` | Criteria-based car finder | Car selector |
-| `get_similar_cars(p_slug, match_count)` | Find similar cars | Car detail page |
+| `get_similar_cars(p_slug, match_count)` | Find similar cars via embeddings | Not yet integrated (future: car detail page) |
 
 ### Data Functions
 

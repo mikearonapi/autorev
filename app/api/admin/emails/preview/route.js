@@ -51,7 +51,7 @@ function generateInactivity7dHtml(vars, baseUrl) {
   const userName = rawName.split(' ')[0];
   const alUrl = `${baseUrl}/al`;
   const year = new Date().getFullYear();
-  const carCount = vars.car_count || 188;
+  const carCount = vars.car_count || 192; // Updated: actual count ~192 cars
   
   return `
 <!DOCTYPE html>
@@ -470,7 +470,7 @@ function generateReferralInviteHtml(vars, baseUrl) {
   const referrerName = vars.referrer_name || 'Your friend';
   const bonusCredits = vars.bonus_credits || 200;
   const referralLink = vars.referral_link || baseUrl;
-  const carCount = vars.car_count || 188;
+  const carCount = vars.car_count || 192; // Updated: actual count ~192 cars
   const year = new Date().getFullYear();
   
   return `<!DOCTYPE html>
@@ -819,8 +819,8 @@ export async function GET(request) {
       friend_name: 'Jordan',
       credits_earned: 200,
       total_credits: 400,
-      car_count: carCount || 188,
-      event_count: eventCount || 940,
+      car_count: carCount || 192,  // Updated: actual count ~192 cars
+      event_count: eventCount || 8000,  // Updated: actual count ~8,256 events
       // For referral-invite template
       referrer_name: 'Sarah',
       bonus_credits: 200,

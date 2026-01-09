@@ -67,7 +67,8 @@ const AlIcon = ({ size = 18 }) => (
 );
 
 // Car count for display
-const CAR_COUNT = '100+';
+// NOTE: Update this when car database grows significantly (current: ~192 cars)
+const CAR_COUNT = '190+';
 
 // Detailed feature breakdown - audited 2024-12-15 for 100% accuracy
 const featureCategories = [

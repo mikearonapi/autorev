@@ -212,7 +212,7 @@ export default function ConnectFeaturePage() {
           
           <div className={styles.statsRow}>
             <div className={styles.stat}>
-              <p className={styles.statValue}>500+</p>
+              <p className={styles.statValue}>8,000+</p>
               <p className={styles.statLabel}>Events Listed</p>
             </div>
             <div className={styles.stat}>

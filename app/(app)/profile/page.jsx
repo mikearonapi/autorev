@@ -185,8 +185,9 @@ const Icons = {
   ),
 };
 
-// Car count for display (actual count from database via stats hook)
-const CAR_COUNT = '100+';
+// Car count for display
+// NOTE: Update this when car database grows significantly (current: ~192 cars)
+const CAR_COUNT = '190+';
 
 // Subscription plans configuration - matches join page
 const PLANS = {

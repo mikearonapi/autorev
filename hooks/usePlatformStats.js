@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
+/**
+ * Hook to fetch platform-wide statistics
+ * 
+ * @returns {{ stats: Object|null, loading: boolean, error: string|null }}
+ */
 export function usePlatformStats() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +35,43 @@ export function usePlatformStats() {
   }, []);
 
   return { stats, loading, error };
+}
+
+/**
+ * Hook to get the current car count from platform stats
+ * Returns a formatted string like "190+" for display
+ * 
+ * @returns {{ carCount: string, loading: boolean }}
+ */
+export function useCarCount() {
+  const { stats, loading } = usePlatformStats();
+  // Round down to nearest 10 and add "+" for marketing-friendly display
+  const count = stats?.cars || 190;
+  const roundedCount = Math.floor(count / 10) * 10;
+  return { 
+    carCount: `${roundedCount}+`,
+    exactCount: count,
+    loading 
+  };
+}
+
+/**
+ * Hook to get the current event count from platform stats
+ * 
+ * @returns {{ eventCount: string, loading: boolean }}
+ */
+export function useEventCount() {
+  const { stats, loading } = usePlatformStats();
+  const count = stats?.events || 8000;
+  // Round to nearest thousand for large numbers
+  const roundedCount = count >= 1000 
+    ? `${Math.floor(count / 1000).toLocaleString()},000+`
+    : `${count}+`;
+  return { 
+    eventCount: roundedCount,
+    exactCount: count,
+    loading 
+  };
 }
 
 

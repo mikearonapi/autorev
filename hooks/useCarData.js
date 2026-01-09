@@ -13,6 +13,23 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 
 // =============================================================================
+// CACHING STRATEGY
+// =============================================================================
+// Standardized stale times for consistent data freshness across the app.
+// These values balance freshness against API load.
+
+export const CACHE_TIMES = {
+  // Dynamic data that changes frequently (car list as new cars are added)
+  FAST: 5 * 60 * 1000,           // 5 minutes
+  
+  // Standard data (individual car enriched data, reviews)
+  STANDARD: 10 * 60 * 1000,      // 10 minutes
+  
+  // Slow-changing data (recalls, maintenance specs, safety ratings)
+  SLOW: 30 * 60 * 1000,          // 30 minutes
+};
+
+// =============================================================================
 // QUERY KEY FACTORIES
 // =============================================================================
 
@@ -163,7 +180,7 @@ export function useCarsList(options = {}) {
   return useQuery({
     queryKey: carKeys.lists(),
     queryFn: fetchCarsList,
-    staleTime: 60 * 1000, // Cars list fresh for 1 minute (faster updates)
+    staleTime: CACHE_TIMES.FAST, // 5 min - car list updates when new cars are added
     ...options,
   });
 }
@@ -312,7 +329,7 @@ export function useCarRecalls(slug, options = {}) {
     queryKey: carKeys.recalls(slug),
     queryFn: () => fetchRecalls(slug),
     enabled: !!slug,
-    staleTime: 60 * 60 * 1000, // Recalls fresh for 1 hour
+    staleTime: CACHE_TIMES.SLOW, // 30 min - recalls rarely change
     ...options,
   });
 }
@@ -329,18 +346,25 @@ export function useCarMaintenance(slug, options = {}) {
     queryKey: carKeys.maintenance(slug),
     queryFn: () => fetchMaintenance(slug),
     enabled: !!slug,
-    staleTime: 60 * 60 * 1000, // Maintenance fresh for 1 hour
+    staleTime: CACHE_TIMES.SLOW, // 30 min - maintenance specs rarely change
     ...options,
   });
 }
 
 /**
  * Hook to fetch all enriched data for a car in parallel
- * This is the recommended hook for car detail pages.
+ * 
+ * @deprecated Prefer `useCarEnrichedBundle` which makes 1 API request instead of 4.
+ * This hook is kept for backwards compatibility but new code should use the bundle.
  * 
  * @param {string} slug - Car slug
  * @example
+ * // OLD (4 requests):
  * const { efficiency, safety, priceByYear, parts, isLoading } = useCarEnrichedData('porsche-911-gt3');
+ * 
+ * // PREFERRED (1 request):
+ * const { data, isLoading } = useCarEnrichedBundle('porsche-911-gt3');
+ * const { efficiency, safety, priceByYear, popularParts } = data || {};
  */
 export function useCarEnrichedData(slug) {
   const results = useQueries({
@@ -396,11 +420,19 @@ export function useCarEnrichedData(slug) {
 
 /**
  * Hook to fetch all enriched data via the bundled endpoint
- * This is more efficient than useCarEnrichedData as it makes 1 request instead of 4
+ * 
+ * RECOMMENDED: This is the preferred hook for car detail pages.
+ * Makes 1 API request instead of 4, reducing latency and server load.
+ * 
+ * Returns: { efficiency, safety, priceByYear, popularParts, recalls, maintenance }
  * 
  * @param {string} slug - Car slug
+ * @param {Object} options - React Query options
  * @example
- * const { data, isLoading } = useCarEnrichedBundle('porsche-911-gt3');
+ * const { data, isLoading, error } = useCarEnrichedBundle('porsche-911-gt3');
+ * if (data) {
+ *   const { efficiency, safety, priceByYear, popularParts } = data;
+ * }
  */
 export function useCarEnrichedBundle(slug, options = {}) {
   return useQuery({
@@ -411,7 +443,7 @@ export function useCarEnrichedBundle(slug, options = {}) {
       return res.json();
     },
     enabled: !!slug,
-    staleTime: 10 * 60 * 1000, // 10 minutes (longer since it's bundled)
+    staleTime: CACHE_TIMES.STANDARD, // 10 min - bundled enriched data
     ...options,
   });
 }

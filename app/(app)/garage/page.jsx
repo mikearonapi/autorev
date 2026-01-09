@@ -30,7 +30,7 @@ import BuildDetailView from '@/components/BuildDetailView';
 import ServiceLogModal from '@/components/ServiceLogModal';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
 import { fetchCars } from '@/lib/carsClient';
-import { calculateWeightedScore } from '@/lib/scoring';
+import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateServiceLog, deleteServiceLog } from '@/lib/maintenanceService';
 import { decodeVIN } from '@/lib/vinDecoder';
@@ -2457,18 +2457,8 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
 function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Default weights for scoring
-  const defaultWeights = {
-    powerAccel: 1.5,
-    gripCornering: 1.5,
-    braking: 1.2,
-    trackPace: 1.5,
-    drivability: 1.0,
-    reliabilityHeat: 1.0,
-    soundEmotion: 1.2,
-  };
-  
   // Filter and sort cars (from database via allCars prop)
+  // Uses ENTHUSIAST_WEIGHTS from lib/scoring.js for consistent scoring across the app
   const filteredCars = React.useMemo(() => {
     let results = allCars;
     
@@ -2485,7 +2475,7 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars 
     return results
       .map(car => ({
         car,
-        score: calculateWeightedScore(car, defaultWeights),
+        score: calculateWeightedScore(car, ENTHUSIAST_WEIGHTS),
         buildCount: existingBuilds.filter(b => b.carSlug === car.slug).length
       }))
       .sort((a, b) => b.score - a.score)
