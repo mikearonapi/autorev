@@ -4,7 +4,8 @@
  * Google Analytics 4 (GA4) Component
  * 
  * Loads the GA4 gtag.js script and initializes tracking.
- * Uses Next.js Script component with afterInteractive strategy.
+ * Uses Next.js Script component with lazyOnload strategy for better LCP.
+ * This delays loading until after hydration and idle time.
  * 
  * Environment variable: NEXT_PUBLIC_GA_MEASUREMENT_ID
  * 
@@ -23,16 +24,16 @@ export default function GoogleAnalytics() {
 
   return (
     <>
-      {/* Load gtag.js script */}
+      {/* Load gtag.js script - lazyOnload for better LCP */}
       <Script
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
       
       {/* Initialize gtag */}
       <Script
         id="google-analytics"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];

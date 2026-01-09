@@ -292,9 +292,9 @@ function CarCatalogContent() {
             alt="Enthusiast sports cars on track"
             fill
             priority
-            quality={85}
+            quality={70}
             className={styles.heroImage}
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1400px"
           />
         </div>
         <div className={styles.heroOverlay} />
@@ -413,9 +413,8 @@ function CarCatalogContent() {
                   <div className={styles.cardImage}>
                     <CarImage 
                       car={car}
-                      priority={false}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      variant="card"
+                      lazy={true}
                     />
                     {car.tier && (
                       <span 
@@ -548,9 +547,9 @@ export default function CarCatalog() {
               alt="Enthusiast sports cars on track"
               fill
               priority
-              quality={85}
+              quality={70}
               className={styles.heroImage}
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1400px"
             />
           </div>
           <div className={styles.heroOverlay} />

@@ -164,13 +164,15 @@ export default function CarImage({
           // Use blur placeholder for instant visual feedback
           placeholder="blur"
           blurDataURL={blurDataURL}
-          // Mobile-optimized sizes: load smaller images on smaller screens
+          // Mobile-optimized sizes: load appropriately sized images
           sizes={
-            variant === 'hero' || variant === 'garage'
-              ? '(max-width: 480px) 100vw, (max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw'
+            variant === 'hero' 
+              ? '(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px'
+              : variant === 'garage'
+                ? '(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 800px'
               : variant === 'card' 
-                ? '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 400px'
-                : '(max-width: 480px) 50vw, (max-width: 768px) 33vw, 200px'
+                ? '(max-width: 480px) 90vw, (max-width: 768px) 45vw, 400px'
+                : '(max-width: 480px) 45vw, (max-width: 768px) 30vw, 200px'
           }
           quality={variant === 'garage' ? 90 : 75}
           style={{ objectFit: 'cover' }}

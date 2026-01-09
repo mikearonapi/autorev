@@ -90,9 +90,10 @@ export default function LandingHero({
                           src={phoneSrc}
                           alt={phoneAlt || 'App screenshot'}
                           fill
-                          sizes="280px"
+                          sizes="(max-width: 640px) 240px, 280px"
                           style={{ objectFit: 'cover', objectPosition: 'top' }}
                           priority
+                          quality={75}
                         />
                       )}
                       <video
@@ -103,7 +104,7 @@ export default function LandingHero({
                         muted
                         loop
                         playsInline
-                        preload="metadata"
+                        preload="auto"
                         webkit-playsinline="true"
                         onError={handleVideoError}
                         onCanPlay={handleVideoCanPlay}
@@ -115,9 +116,10 @@ export default function LandingHero({
                       src={phoneSrc}
                       alt={phoneAlt || 'App screenshot'}
                       fill
-                      sizes="280px"
+                      sizes="(max-width: 640px) 240px, 280px"
                       style={{ objectFit: 'cover', objectPosition: 'top' }}
                       priority
+                      quality={75}
                     />
                   ) : null}
                 </div>

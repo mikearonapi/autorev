@@ -64,6 +64,8 @@ export default async function CommunityBuildsPage({ searchParams }) {
               fill
               className={styles.heroBackgroundImage}
               priority
+              sizes="100vw"
+              quality={60}
             />
           )}
           <div className={styles.heroOverlay} />
@@ -105,8 +107,8 @@ export default async function CommunityBuildsPage({ searchParams }) {
               </div>
               <div className={styles.carousel}>
                 <div className={styles.carouselTrack}>
-                  {latestBuilds.map(build => (
-                    <BuildCard key={build.id} build={build} />
+                  {latestBuilds.map((build, index) => (
+                    <BuildCard key={build.id} build={build} eager={index < 3} />
                   ))}
                 </div>
               </div>
@@ -124,8 +126,8 @@ export default async function CommunityBuildsPage({ searchParams }) {
               </div>
               <div className={styles.carousel}>
                 <div className={styles.carouselTrack}>
-                  {mostViewedBuilds.map(build => (
-                    <BuildCard key={build.id} build={build} />
+                  {mostViewedBuilds.map((build, index) => (
+                    <BuildCard key={build.id} build={build} eager={index < 2} />
                   ))}
                 </div>
               </div>
@@ -193,11 +195,12 @@ export default async function CommunityBuildsPage({ searchParams }) {
   );
 }
 
-function BuildCard({ build, featured = false }) {
+function BuildCard({ build, featured = false, eager = false }) {
   // Handle both nested and flat image structures
   const primaryImage = build.primary_image || build.images?.find(img => img.is_primary) || build.images?.[0];
   // Use user uploaded image, or fall back to car's default hero image
-  const imageUrl = primaryImage?.blob_url || primaryImage?.thumbnail_url || build.car_image_url;
+  // Prefer thumbnail for faster loading
+  const imageUrl = primaryImage?.thumbnail_url || primaryImage?.blob_url || build.car_image_url;
   
   return (
     <Link 
@@ -212,6 +215,8 @@ function BuildCard({ build, featured = false }) {
             fill
             className={styles.image}
             sizes="(max-width: 640px) 280px, 320px"
+            loading={eager ? 'eager' : 'lazy'}
+            quality={70}
           />
         ) : (
           <div className={styles.placeholderImage}>
