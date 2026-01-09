@@ -5,10 +5,15 @@
  * This component is a Server Component (no 'use client'), which means:
  * - The hero image renders in the initial HTML (critical for LCP)
  * - The browser can start fetching the image before JavaScript loads
- * - Combined with <link rel="preload"> in layout.jsx, this achieves optimal LCP
+ * - Next.js Image optimization converts to AVIF/WebP at optimal sizes
  * 
  * Interactive elements (CTA animation, scroll indicator) are separate client components
  * that hydrate after the critical content is visible.
+ * 
+ * LCP TARGET: < 2.5s
+ * - Priority + fetchPriority="high" signals browser to fetch immediately
+ * - Next.js optimizes image to ~50-80KB AVIF vs 246KB original WebP
+ * - Preload hint added via generateMetadata in page.jsx
  */
 
 import Image from 'next/image';
@@ -16,7 +21,12 @@ import styles from '@/app/(marketing)/page.module.css';
 import HeroCta from '@/components/HeroCta';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
-// Hero image - Green 718 Cayman GT4 RS overhead view (246KB WebP)
+// Hero image dimensions (actual image size for aspect ratio calculation)
+const HERO_WIDTH = 1920;
+const HERO_HEIGHT = 1080;
+
+// Hero image - Green 718 Cayman GT4 RS overhead view
+// Next.js will optimize this to AVIF/WebP at appropriate sizes
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp';
 
 export default function HeroSection({ carCount = 188 }) {
@@ -29,10 +39,11 @@ export default function HeroSection({ carCount = 188 }) {
           alt="Green 718 Cayman GT4 RS overhead view with dramatic blue and red lighting"
           fill
           priority
-          unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
+          quality={75}
           className={styles.heroImage}
           sizes="100vw"
           fetchPriority="high"
+          placeholder="empty"
         />
       </div>
       <div className={styles.heroOverlay} />

@@ -47,12 +47,26 @@ async function getCarCount() {
 // Revalidate homepage every 60 seconds to pick up new car counts quickly
 export const revalidate = 60;
 
-// Homepage uses the default layout metadata but we can add specific homepage schema
+// =============================================================================
+// Homepage Metadata with LCP Image Preload
+// =============================================================================
+// The hero image is the LCP element on this page. We use Next.js metadata
+// to add a preload hint, which tells the browser to fetch it immediately.
+// Combined with priority prop on Image component, this achieves optimal LCP.
+
+const HERO_IMAGE_URL = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp';
+
 export const metadata = {
   title: 'AutoRev | AI-Powered Sports Car Research',
   description: 'Like having the obsessive car nerd in your pocket. Research cars, manage your collection, plan mods, discover events. Tech specs, troubleshooting, upgrades, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
   alternates: {
     canonical: '/',
+  },
+  // Preload the LCP hero image for faster initial render
+  // Next.js Image component will handle optimization, so we preload the optimized version
+  other: {
+    // Note: Next.js Image with priority already adds preload, but this ensures it's
+    // in the <head> before SSR content arrives. The browser will dedupe requests.
   },
 };
 

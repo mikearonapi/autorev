@@ -78,14 +78,42 @@ export async function POST(request) {
     } = body;
 
     // Validate required fields
-    if (!blobUrl || !blobPathname) {
-      return NextResponse.json({ error: 'Missing blob URL or pathname' }, { status: 400 });
+    if (!blobUrl) {
+      return NextResponse.json({ error: 'Missing blob URL' }, { status: 400 });
+    }
+
+    // Extract pathname from blob URL if not provided or contains placeholder
+    // The client upload() may return the original pathname with __USER__ placeholder
+    // but the actual blob URL contains the correct path with the real user ID
+    let validatedPathname = blobPathname;
+    
+    // Try to extract pathname from blob URL
+    // URLs look like: https://xxxxx.public.blob.vercel-storage.com/user-uploads/userId/timestamp.jpg
+    try {
+      const url = new URL(blobUrl);
+      const urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
+      
+      // If provided pathname has __USER__ placeholder or is missing, use extracted pathname
+      if (!blobPathname || blobPathname.includes('__USER__')) {
+        console.log(`[SaveMetadata] Pathname has placeholder or missing, using URL path: ${urlPathname}`);
+        validatedPathname = urlPathname;
+      }
+      
+      // Also validate that the URL itself contains the user's ID for security
+      // This catches cases where pathname validation might be bypassed
+      if (!blobUrl.includes(user.id)) {
+        console.error(`[SaveMetadata] Blob URL does not contain user ID. URL: ${blobUrl}, User: ${user.id}`);
+        return NextResponse.json({ error: 'Invalid blob URL ownership' }, { status: 403 });
+      }
+    } catch (urlError) {
+      console.warn(`[SaveMetadata] Failed to parse blob URL: ${blobUrl}`, urlError.message);
     }
 
     // Verify the blob pathname belongs to this user
     const expectedPrefix = `user-uploads/${user.id}/`;
     const videoPrefix = `user-videos/${user.id}/`;
-    if (!blobPathname.startsWith(expectedPrefix) && !blobPathname.startsWith(videoPrefix)) {
+    if (!validatedPathname || (!validatedPathname.startsWith(expectedPrefix) && !validatedPathname.startsWith(videoPrefix))) {
+      console.error(`[SaveMetadata] Invalid pathname: ${validatedPathname}, expected prefix: ${expectedPrefix} or ${videoPrefix}`);
       return NextResponse.json({ error: 'Invalid blob pathname' }, { status: 403 });
     }
 
@@ -93,7 +121,7 @@ export async function POST(request) {
     
     // Track sizes for logging
     let finalBlobUrl = blobUrl;
-    let finalBlobPathname = blobPathname;
+    let finalBlobPathname = validatedPathname;
     let finalFileSize = fileSize;
     let compressionApplied = false;
     let compressionSavings = 0;
@@ -120,7 +148,7 @@ export async function POST(request) {
         
         if (compressed) {
           // Upload compressed version to a new path
-          const compressedPathname = blobPathname.replace(/(\.[^.]+)$/, '-compressed$1');
+          const compressedPathname = validatedPathname.replace(/(\.[^.]+)$/, '-compressed$1');
           
           const compressedBlob = await put(compressedPathname, compressed.buffer, {
             access: 'public',
@@ -131,7 +159,7 @@ export async function POST(request) {
             // Delete the original uncompressed blob
             try {
               await del(blobUrl);
-              console.log(`[SaveMetadata] Deleted original: ${blobPathname}`);
+              console.log(`[SaveMetadata] Deleted original: ${validatedPathname}`);
             } catch (delError) {
               console.warn(`[SaveMetadata] Failed to delete original: ${delError.message}`);
             }

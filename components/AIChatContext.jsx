@@ -138,7 +138,7 @@ export function AIChatHost() {
         data-ai-chat-hydrated={isHydrated ? 'true' : 'false'}
         data-ai-chat-open={isOpen ? 'true' : 'false'}
       >
-        <Image className={styles.icon} src={UI_IMAGES.alMascot} alt="" width={36} height={36} unoptimized />
+        <Image className={styles.icon} src={UI_IMAGES.alMascot} alt="" width={36} height={36} loading="lazy" />
       </button>
 
       {hasLoadedChat && (

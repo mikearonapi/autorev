@@ -59,10 +59,10 @@ const AlIcon = ({ size = 18 }) => (
   <Image
     src={UI_IMAGES.alMascot}
     alt="AL"
-    unoptimized
     width={size}
     height={size}
     className={styles.alTableIcon}
+    loading="lazy"
   />
 );
 

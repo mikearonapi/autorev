@@ -55,10 +55,12 @@ export async function POST(request) {
         
         // Client sends: user-uploads/__USER__/filename.jpg or user-videos/__USER__/filename.jpg
         // We transform __USER__ to actual userId
+        console.log(`[ClientUpload] Requested pathname: ${pathname}`);
         
         // Extract folder and filename
         const parts = pathname.split('/');
         if (parts.length !== 3) {
+          console.error(`[ClientUpload] Invalid path format: ${pathname}`);
           throw new Error('Invalid upload path format');
         }
         
@@ -66,16 +68,19 @@ export async function POST(request) {
         
         // Validate folder
         if (folder !== 'user-uploads' && folder !== 'user-videos') {
+          console.error(`[ClientUpload] Invalid folder: ${folder}`);
           throw new Error('Invalid upload folder');
         }
         
         // Validate placeholder
         if (placeholder !== '__USER__') {
+          console.error(`[ClientUpload] Invalid placeholder: ${placeholder}`);
           throw new Error('Invalid upload path');
         }
         
         // Replace placeholder with actual user ID
         const validatedPathname = `${folder}/${user.id}/${filename}`;
+        console.log(`[ClientUpload] Validated pathname: ${validatedPathname}`);
 
         return {
           allowedContentTypes: [
@@ -98,7 +103,7 @@ export async function POST(request) {
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // Called after successful upload
         // Log for debugging - actual DB save happens in the client callback
-        console.log('[ClientUpload] Completed:', blob.pathname);
+        console.log(`[ClientUpload] Completed: pathname=${blob.pathname}, url=${blob.url}`);
         
         // Note: We don't save to DB here because we can't return data to client
         // The client will call /api/uploads/save-metadata to save metadata

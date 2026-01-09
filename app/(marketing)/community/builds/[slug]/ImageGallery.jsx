@@ -117,15 +117,16 @@ export default function ImageGallery({ images = [], title = 'Gallery', heroImage
             {lightboxIndex + 1} / {images.length}
           </div>
 
-          {/* Main Image */}
+          {/* Main Image - Full screen */}
           <div className={styles.imageContainer} onClick={(e) => e.stopPropagation()}>
             <Image
               src={currentImage.blob_url}
               alt={currentImage.caption || `Image ${lightboxIndex + 1}`}
               fill
               className={styles.lightboxImage}
-              sizes="90vw"
+              sizes="100vw"
               priority
+              quality={90}
             />
           </div>
 
