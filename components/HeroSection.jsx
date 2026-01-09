@@ -16,8 +16,8 @@ import styles from '@/app/(marketing)/page.module.css';
 import HeroCta from '@/components/HeroCta';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
-// Hero image - Compressed blob version (238KB vs 2.4MB local)
-const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp';
+// Hero image - Green 718 Cayman GT4 RS overhead view (246KB WebP)
+const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp';
 
 export default function HeroSection({ carCount = 188 }) {
   return (
@@ -26,7 +26,7 @@ export default function HeroSection({ carCount = 188 }) {
       <div className={styles.heroImageWrapper}>
         <Image
           src={heroImageUrl}
-          alt="718 Cayman GT4 RS rear view with glowing taillights in dramatic studio lighting"
+          alt="Green 718 Cayman GT4 RS overhead view with dramatic blue and red lighting"
           fill
           priority
           unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG

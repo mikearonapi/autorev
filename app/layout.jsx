@@ -282,7 +282,7 @@ export default function RootLayout({ children }) {
         {/* Homepage hero - most critical LCP element */}
         <link 
           rel="preload" 
-          href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp" 
+          href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp" 
           as="image" 
           type="image/webp"
           fetchPriority="high"

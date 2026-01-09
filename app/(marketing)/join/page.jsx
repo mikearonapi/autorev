@@ -203,8 +203,8 @@ const valueProps = [
 // Brand suffixes for the animated REV text (full words since REV is separate)
 const brandSuffixes = ['IVAL', 'ELATION', 'OLUTION'];
 
-// Hero image - Using compressed blob version (175KB vs 2.3MB local)
-const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp';
+// Hero image - 911 GT3 RS rear with glowing taillights (63KB WebP)
+const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/join/hero-v2.webp';
 
 export default function JoinPage() {
   const { user, isLoading } = useAuth();
@@ -264,7 +264,7 @@ export default function JoinPage() {
         <div className={styles.heroImageWrapper}>
           <Image
             src={heroImageUrl}
-            alt="718 Cayman GT4 RS rear view with glowing taillights in dramatic studio lighting"
+            alt="911 GT3 RS rear view with glowing red taillight bar in dramatic darkness"
             fill
             priority
             unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
