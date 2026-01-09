@@ -1,59 +1,43 @@
-'use client';
+/**
+ * HeroSection - Server Component for homepage hero
+ * 
+ * PERFORMANCE OPTIMIZATION:
+ * This component is a Server Component (no 'use client'), which means:
+ * - The hero image renders in the initial HTML (critical for LCP)
+ * - The browser can start fetching the image before JavaScript loads
+ * - Combined with <link rel="preload"> in layout.jsx, this achieves optimal LCP
+ * 
+ * Interactive elements (CTA animation, scroll indicator) are separate client components
+ * that hydrate after the critical content is visible.
+ */
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/app/(marketing)/page.module.css';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import HeroCta from '@/components/HeroCta';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
 // Hero image - Compressed blob version (238KB vs 2.4MB local)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp';
 
-// Brand suffix rotation: Revival → Revelation → Revolution
-const brandSuffixes = ['ival', 'elation', 'olution'];
-
 export default function HeroSection({ carCount = 188 }) {
-  const [suffixIndex, setSuffixIndex] = useState(0);
-  const [suffixVisible, setSuffixVisible] = useState(true);
-  
-  // Auth modal (for potential future use)
-  const authModal = useAuthModal();
-
-  // Cycle through brand suffixes every 1.5 seconds
-  useEffect(() => {
-    const suffixInterval = setInterval(() => {
-      setSuffixVisible(false);
-      setTimeout(() => {
-        setSuffixIndex((prev) => (prev + 1) % brandSuffixes.length);
-        setSuffixVisible(true);
-      }, 300);
-    }, 1500);
-
-    return () => clearInterval(suffixInterval);
-  }, []);
-
-  // Handle CTA button click
-  const handleCtaClick = (e) => {
-    e.preventDefault();
-    window.location.href = '/join';
-  };
-
   return (
     <section className={styles.hero}>
+      {/* Hero background image - Server rendered for optimal LCP */}
       <div className={styles.heroImageWrapper}>
         <Image
           src={heroImageUrl}
           alt="718 Cayman GT4 RS rear view with glowing taillights in dramatic studio lighting"
           fill
           priority
-          quality={75}
+          unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
           className={styles.heroImage}
           sizes="100vw"
           fetchPriority="high"
         />
       </div>
       <div className={styles.heroOverlay} />
-      {/* Main headline + subtitle - centered on car */}
+      
+      {/* Main headline + subtitle - Server rendered static content */}
       <div className={styles.heroHeadlines}>
         <h1 className={styles.heroTitle}>
           Find What <span className={styles.heroAccent}>Drives You</span>
@@ -66,33 +50,18 @@ export default function HeroSection({ carCount = 188 }) {
         </p>
       </div>
       
-      {/* CTA button - positioned in shadow below car */}
-      <div className={styles.heroCta}>
-        <button onClick={handleCtaClick} className={styles.heroJoinButton}>
-          Join the auto
-          <span className={styles.heroRevText}>rev</span>
-          <span className={`${styles.heroJoinSuffix} ${suffixVisible ? styles.heroJoinSuffixVisible : ''}`}>
-            {brandSuffixes[suffixIndex]}
-          </span>
-        </button>
-      </div>
+      {/* CTA button - Client component for animation */}
+      <HeroCta />
       
-      {/* Tagline - positioned at 85% */}
+      {/* Tagline - Server rendered static content */}
       <div className={styles.heroBottom}>
         <p className={styles.heroTagline}>
           Research. Own. Build. Connect. Learn. — {carCount || 188} cars and counting.
         </p>
       </div>
       
-      {/* Scroll Indicator - positioned at 90% */}
+      {/* Scroll Indicator - Client component */}
       <ScrollIndicator className={styles.heroScrollIndicator} />
-      
-      {/* Auth Modal */}
-      <AuthModal 
-        isOpen={authModal.isOpen}
-        onClose={authModal.close}
-        defaultMode={authModal.defaultMode}
-      />
     </section>
   );
 }

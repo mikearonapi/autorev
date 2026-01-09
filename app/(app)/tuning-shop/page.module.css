@@ -56,6 +56,8 @@
   bottom: 0;
   z-index: 0 !important;
   pointer-events: none;
+  /* CLS Prevention: Contain the background so it doesn't affect layout */
+  contain: strict;
 }
 
 

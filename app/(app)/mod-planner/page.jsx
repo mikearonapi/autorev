@@ -251,7 +251,7 @@ function PerformanceContent() {
             alt="Performance car engine"
             fill
             priority
-            quality={85}
+            unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
             className={styles.heroImage}
             sizes="100vw"
           />
@@ -468,7 +468,7 @@ function PerformanceLoading() {
             alt="Performance car on track"
             fill
             priority
-            quality={85}
+            unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
             className={styles.heroImage}
             sizes="100vw"
           />

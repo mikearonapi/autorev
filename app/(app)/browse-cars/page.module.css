@@ -17,6 +17,8 @@
   text-align: center;
   overflow: hidden;
   background: var(--color-gray-900);
+  /* CLS Prevention: Isolate hero from layout shifts in other content */
+  contain: layout style paint;
 }
 
 @media (min-width: 768px) {

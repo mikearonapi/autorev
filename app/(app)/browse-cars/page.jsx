@@ -292,7 +292,7 @@ function CarCatalogContent() {
             alt="Enthusiast sports cars on track"
             fill
             priority
-            quality={70}
+            unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
             className={styles.heroImage}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1400px"
           />
@@ -547,7 +547,7 @@ export default function CarCatalog() {
               alt="Enthusiast sports cars on track"
               fill
               priority
-              quality={70}
+              unoptimized // Skip Next.js Image Optimization - blob images are pre-compressed via TinyPNG
               className={styles.heroImage}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1400px"
             />

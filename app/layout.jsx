@@ -46,17 +46,9 @@ import BetaBanner from '@/components/BetaBanner';
 // These components are not critical for initial render and can load after hydration
 // =============================================================================
 
-// AI Chat - Large component (2100+ lines), loads on user interaction
-const AIMechanicProvider = dynamic(
-  () => import('@/components/AIMechanicChat').then(mod => ({ default: mod.AIMechanicProvider })),
-  { ssr: false }
-);
-
-// Feedback Widget - Not needed for initial render
-const FeedbackProvider = dynamic(
-  () => import('@/components/FeedbackWidget').then(mod => ({ default: mod.FeedbackProvider })),
-  { ssr: false }
-);
+// Deferred Providers - Heavy providers (AIMechanic, Feedback) load after first paint
+// This reduces Total Blocking Time (TBT) by deferring 2100+ lines of code
+import DeferredProviders from '@/components/providers/DeferredProviders';
 
 // Compare Bar - Only shows when user adds cars to compare
 const CompareBar = dynamic(() => import('@/components/CompareBar'), { ssr: false });
@@ -278,6 +270,23 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" />
         
+        {/* =============================================================================
+            LCP IMAGE PRELOAD HINTS
+            These preload hints tell the browser to fetch hero images IMMEDIATELY,
+            before JavaScript hydrates. This is critical for LCP performance.
+            
+            Without preload: Browser discovers image after React hydrates (~5-10s)
+            With preload: Browser fetches image in parallel with JS (~instant)
+            ============================================================================= */}
+        {/* Homepage hero - most critical LCP element */}
+        <link 
+          rel="preload" 
+          href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp" 
+          as="image" 
+          type="image/webp"
+          fetchPriority="high"
+        />
+        
         {/* Favicons - static files for maximum compatibility */}
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -323,47 +332,47 @@ export default function RootLayout({ children }) {
                   <LoadingProgressProvider>
                     <AuthProvider>
                       <AppConfigProvider>
-                        <FeedbackProvider>
-                          <CarSelectionProvider>
-                            <FavoritesProvider>
-                              <CompareProvider>
-                                <SavedBuildsProvider>
-                                  <OwnedVehiclesProvider>
-                                    <AIMechanicProvider>
-                                      <BannerProvider>
-                                        {/* Scroll to top on route change + Analytics tracking */}
-                                        <Suspense fallback={null}>
-                                          <ScrollToTop />
-                                          <PageViewTracker />
-                                        </Suspense>
-                                        <Header />
-                                        
-                                        {/* Beta banner - shown during beta period */}
-                                        <BetaBanner />
-                                        
-                                        {/* Feedback corner - discreet top-right feedback icon */}
-                                        <FeedbackCorner />
-                                        
-                                        <main>
-                                          {children}
-                                        </main>
-                                        <Footer />
-                                        
-                                        {/* Floating Compare Bar - shows when cars added to compare */}
-                                        <Suspense fallback={null}>
-                                          <CompareBar />
-                                        </Suspense>
-                                        
-                                        {/* Mobile sticky CTA bar - shows on scroll */}
-                                        <MobileBottomCta />
-                                      </BannerProvider>
-                                    </AIMechanicProvider>
-                                  </OwnedVehiclesProvider>
-                                </SavedBuildsProvider>
-                              </CompareProvider>
-                            </FavoritesProvider>
-                          </CarSelectionProvider>
-                        </FeedbackProvider>
+                        <CarSelectionProvider>
+                          <FavoritesProvider>
+                            <CompareProvider>
+                              <SavedBuildsProvider>
+                                <OwnedVehiclesProvider>
+                                  <BannerProvider>
+                                    {/* Scroll to top on route change + Analytics tracking */}
+                                    <Suspense fallback={null}>
+                                      <ScrollToTop />
+                                      <PageViewTracker />
+                                    </Suspense>
+                                    <Header />
+                                    
+                                    {/* Beta banner - shown during beta period */}
+                                    <BetaBanner />
+                                    
+                                    {/* Deferred Providers - AI Chat & Feedback load after first paint */}
+                                    <DeferredProviders>
+                                      {/* Feedback corner - discreet top-right feedback icon */}
+                                      <FeedbackCorner />
+                                      
+                                      <main>
+                                        {children}
+                                      </main>
+                                    </DeferredProviders>
+                                    
+                                    <Footer />
+                                    
+                                    {/* Floating Compare Bar - shows when cars added to compare */}
+                                    <Suspense fallback={null}>
+                                      <CompareBar />
+                                    </Suspense>
+                                    
+                                    {/* Mobile sticky CTA bar - shows on scroll */}
+                                    <MobileBottomCta />
+                                  </BannerProvider>
+                                </OwnedVehiclesProvider>
+                              </SavedBuildsProvider>
+                            </CompareProvider>
+                          </FavoritesProvider>
+                        </CarSelectionProvider>
                       </AppConfigProvider>
                     </AuthProvider>
                   </LoadingProgressProvider>

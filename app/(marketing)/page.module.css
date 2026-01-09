@@ -32,6 +32,8 @@
   max-height: 900px;
   background: var(--color-gray-900);
   overflow: hidden;
+  /* CLS Prevention: Isolate hero from layout shifts in other content */
+  contain: layout style paint;
 }
 
 @media (min-width: 768px) {
