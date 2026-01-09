@@ -220,7 +220,7 @@ export async function POST(request) {
       content_type: contentType,
       caption: caption || null,
       is_primary: isPrimary || false,
-      upload_source: 'web-client',
+      upload_source: 'web',
       media_type: mediaType,
     };
 

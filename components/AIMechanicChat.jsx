@@ -223,9 +223,10 @@ const PAGE_CONTEXT_CONFIG = {
 };
 
 // AL Mascot Avatar - The AutoRev AI Assistant
-const ALMascot = ({ size = 24, className = '' }) => (
+// useFull: use high-res image for larger displays (avoids light background ring at small sizes)
+const ALMascot = ({ size = 24, className = '', useFull = false }) => (
   <img 
-    src={UI_IMAGES.alMascot}
+    src={useFull ? UI_IMAGES.alMascotFull : UI_IMAGES.alMascot}
     alt="AL - AutoRev AI"
     width={size} 
     height={size}
@@ -1446,7 +1447,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           aria-label="Chat with AI AL"
         >
           <span className={styles.glowRing}></span>
-          <ALMascot size={56} className={styles.floatingIcon} />
+          <ALMascot size={56} className={styles.floatingIcon} useFull />
           <span className={styles.tooltip}>Chat with AI AL</span>
         </button>
       )}

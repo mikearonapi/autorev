@@ -70,6 +70,7 @@ function EventsContent() {
 
   // Filters state
   const [filters, setFilters] = useState({
+    query: searchParams.get('q') || '',
     location: searchParams.get('location') || '',
     radius: parseInt(searchParams.get('radius'), 10) || 50,
     type: searchParams.get('type') || '',
@@ -152,6 +153,9 @@ function EventsContent() {
       try {
         const params = new URLSearchParams();
         
+        // Text search for event names
+        if (filters.query) params.set('query', filters.query);
+        
         // Add filters to params - use 'location' param for flexible ZIP/city search
         if (filters.location) params.set('location', filters.location);
         
@@ -233,6 +237,7 @@ function EventsContent() {
     const mergedFilters = { ...filters, ...newFilters };
     
     // Only include user-facing filter params in URL
+    if (mergedFilters.query) params.set('q', mergedFilters.query);
     if (mergedFilters.location) params.set('location', mergedFilters.location);
     if (mergedFilters.radius && mergedFilters.radius !== 50) params.set('radius', mergedFilters.radius.toString());
     if (mergedFilters.type) params.set('type', mergedFilters.type);
@@ -294,6 +299,7 @@ function EventsContent() {
             onFilterChange={handleFilterChange}
             eventTypes={eventTypes}
             showCategoryPills
+            showSearchBar
             showLocationInput
             showDateRange
             showCarFilters={isAuthenticated}
@@ -367,7 +373,7 @@ function EventsContent() {
               <div className={styles.emptyStateActions}>
                 <button 
                   onClick={() => handleFilterChange({ 
-                    location: '', type: '', start_date: '', end_date: '', 
+                    query: '', location: '', type: '', start_date: '', end_date: '', 
                     is_track_event: false, is_free: false, brand: '', for_my_cars: false 
                   })}
                   className={styles.submitBtn}

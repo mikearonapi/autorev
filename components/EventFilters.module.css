@@ -90,6 +90,45 @@
   align-items: center;
 }
 
+/* Search Input */
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.searchInputWrapper svg {
+  position: absolute;
+  left: var(--space-sm);
+  color: var(--color-gray-400);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  padding-left: calc(var(--space-sm) + 26px);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
+  transition: border-color var(--transition-fast);
+}
+
+.searchInput::placeholder {
+  color: var(--color-gray-500);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--sn-primary);
+}
+
 /* Location Autocomplete */
 .locationAutocomplete {
   flex: 1;
@@ -478,6 +517,18 @@
 }
 
 /* Style filter elements inside drawer */
+.filterDrawerContent .searchInputWrapper {
+  max-width: 100%;
+  width: 100%;
+}
+
+.filterDrawerContent .searchInput {
+  width: 100%;
+  min-height: 48px;
+  font-size: 16px; /* Prevent iOS Safari auto-zoom on focus */
+  box-sizing: border-box;
+}
+
 .filterDrawerContent .locationAutocomplete {
   max-width: 100%;
   width: 100%;

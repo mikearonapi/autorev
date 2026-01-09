@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import styles from './EventFilters.module.css';
 import EventCategoryPill from './EventCategoryPill';
@@ -138,6 +139,7 @@ export default function EventFilters({
   showDateRange = false,
   showCarFilters = false,
   showViewToggle = false,
+  showSearchBar = false,
   currentView = 'list',
   onViewChange,
   garageBrands = [],
@@ -151,10 +153,18 @@ export default function EventFilters({
   // Mobile filter drawer state
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const isMobile = useIsMobile();
+  // Portal mount state for SSR safety
+  const [portalMounted, setPortalMounted] = useState(false);
+  
+  // Mount portal after hydration to avoid SSR mismatch
+  useEffect(() => {
+    setPortalMounted(true);
+  }, []);
 
   // Calculate active filter count for mobile badge
   const activeFilterCount = useCallback(() => {
     let count = 0;
+    if (filters.query) count++;
     if (filters.location) count++;
     if (filters.region) count++;
     if (filters.start_date || filters.end_date) count++;
@@ -200,6 +210,7 @@ export default function EventFilters({
 
   const handleClear = () => {
     const cleared = {
+      query: '',
       location: '',
       radius: 50, // Reset to default
       type: '',
@@ -271,6 +282,20 @@ export default function EventFilters({
   // MOBILE: Compact filter inputs (no date range, radius+region on same row)
   const renderMobileFilterInputs = () => (
     <>
+      {/* Event Name Search */}
+      {showSearchBar && (
+        <div className={styles.searchInputWrapper}>
+          <Icons.search size={16} />
+          <input
+            type="text"
+            value={filters.query || ''}
+            onChange={(e) => handleChange('query', e.target.value)}
+            placeholder="Search events..."
+            className={styles.searchInput}
+          />
+        </div>
+      )}
+
       {/* Location Search */}
       {showLocationInput && (
         <LocationAutocomplete
@@ -292,6 +317,20 @@ export default function EventFilters({
   // DESKTOP: Full filter inputs (includes date range)
   const renderDesktopFilterInputs = () => (
     <>
+      {/* Event Name Search */}
+      {showSearchBar && (
+        <div className={styles.searchInputWrapper}>
+          <Icons.search size={16} />
+          <input
+            type="text"
+            value={filters.query || ''}
+            onChange={(e) => handleChange('query', e.target.value)}
+            placeholder="Search events..."
+            className={styles.searchInput}
+          />
+        </div>
+      )}
+
       {/* Location Search with Autocomplete */}
       {showLocationInput && (
         <LocationAutocomplete
@@ -439,8 +478,8 @@ export default function EventFilters({
         </Link>
       </div>
 
-      {/* MOBILE: Filter Drawer/Bottom Sheet */}
-      {mobileFiltersOpen && (
+      {/* MOBILE: Filter Drawer/Bottom Sheet - rendered via Portal to escape stacking context */}
+      {mobileFiltersOpen && portalMounted && createPortal(
         <div 
           className={styles.filterDrawerOverlay}
           onClick={() => setMobileFiltersOpen(false)}
@@ -492,7 +531,8 @@ export default function EventFilters({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* DESKTOP: Full filter bar (hidden on mobile) */}

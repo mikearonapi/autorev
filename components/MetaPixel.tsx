@@ -66,19 +66,27 @@ export default function MetaPixel() {
 
   return (
     <>
-      {/* Load Meta Pixel base script - lazyOnload for performance */}
-      <Script
-        id="meta-pixel-script"
-        src="https://connect.facebook.net/en_US/fbevents.js"
-        strategy="lazyOnload"
-      />
-      
-      {/* Initialize Meta Pixel - separate script ensures single execution */}
+      {/* 
+        Meta Pixel initialization with queue pattern.
+        Sets up fbq as a queue function BEFORE loading the script,
+        so calls to fbq() are queued and processed when the script loads.
+        This prevents "fbq is not defined" errors.
+      */}
       <Script
         id="meta-pixel-init"
         strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
+            if (!window.fbq) {
+              var n = window.fbq = function() {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+              };
+              if (!window._fbq) window._fbq = n;
+              n.push = n;
+              n.loaded = false;
+              n.version = '2.0';
+              n.queue = [];
+            }
             if (!window._fbq_initialized) {
               window._fbq_initialized = true;
               fbq('init', '${META_PIXEL_ID}');
@@ -86,6 +94,13 @@ export default function MetaPixel() {
             }
           `,
         }}
+      />
+      
+      {/* Load Meta Pixel base script after queue is set up */}
+      <Script
+        id="meta-pixel-script"
+        src="https://connect.facebook.net/en_US/fbevents.js"
+        strategy="lazyOnload"
       />
       
       {/* Noscript fallback for tracking without JavaScript */}

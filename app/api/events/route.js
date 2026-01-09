@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
  * Public endpoint - no auth required.
  * 
  * Query params:
+ *   - query: Text search for event name (case-insensitive, partial match)
  *   - location: Flexible location input - accepts ZIP code (e.g., "20175") or "City, State" (e.g., "Leesburg, VA")
  *   - zip: ZIP code for location filtering (legacy, prefer location)
  *   - lat: Direct latitude (from Google Places, skips server-side geocoding)
@@ -52,6 +53,7 @@ async function handleGet(request) {
   
   // Build params from query string
   const params = {
+    query: searchParams.get('query'),
     location: searchParams.get('location'),
     zip: searchParams.get('zip'),
     lat: searchParams.get('lat'),

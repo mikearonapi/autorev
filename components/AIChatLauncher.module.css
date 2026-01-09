@@ -1,23 +1,24 @@
+/* Floating AL launcher - styled to match /al page hero mascot */
 .launcher {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 9999px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 8px 24px rgba(0, 0, 0, 0.1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--sn-primary, #1a4d6e);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   /* Must be above in-page media/carousels to remain clickable */
   z-index: 1100;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition: transform 0.2s ease;
+}
+
+.launcher:hover {
+  transform: scale(1.05);
 }
 
 .launcher:active {
@@ -25,26 +26,40 @@
 }
 
 .launcherOpen {
-  border-color: rgba(26, 77, 110, 0.4);
+  /* No change needed when open */
 }
 
+/* Icon styled like /al page heroMascot with thin yellow border */
 .icon {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--sn-gold, #d4a04a);
+  box-shadow:
+    0 0 0 2px rgba(212, 175, 55, 0.25),
+    0 6px 20px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #1a2634 0%, #2d3a47 100%);
+  transition: all 0.2s ease;
+}
+
+.launcher:hover .icon {
+  border-color: #e6b84d;
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 480px) {
   .launcher {
     right: 20px;
     bottom: 20px;
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
   }
   .icon {
-    width: 32px;
-    height: 32px;
+    width: 52px;
+    height: 52px;
   }
 }
 
