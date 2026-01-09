@@ -721,6 +721,14 @@ const PREVIEW_TEMPLATES = {
     render: (vars, imageBaseUrl) => generateReferralInviteHtml(vars, imageBaseUrl), 
     subject: 'Your friend thinks you\'d love AutoRev 🏎️' 
   },
+  'feedback-response': { 
+    render: (vars, imageBaseUrl) => {
+      // Use canonical template from lib/email.js
+      const template = EMAIL_TEMPLATES['feedback-response'];
+      return template.render({ ...vars, imageBaseUrl }).html;
+    }, 
+    subject: 'Thanks for your feedback — We listened! 🎉' 
+  },
 };
 
 /**
@@ -817,6 +825,11 @@ export async function GET(request) {
       referrer_name: 'Sarah',
       bonus_credits: 200,
       referral_link: `${imageBaseUrl}/?ref=SAMPLE123`,
+      // For feedback-response template
+      feedback_type: 'car_request', // Shows full car request preview
+      car_name: '2024 BMW M3 CS',
+      car_slug: 'bmw-m3-cs-2024',
+      original_feedback: 'I would love to see the BMW M3 CS added to the database!',
     };
 
     const html = template.render(sampleVars, imageBaseUrl);

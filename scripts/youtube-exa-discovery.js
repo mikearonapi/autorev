@@ -165,6 +165,40 @@ async function searchYouTubeVideosWithExa(carName) {
 }
 
 // ============================================================================
+// YouTube oEmbed for Channel Info
+// ============================================================================
+
+/**
+ * Fetch video metadata (including channel name) using YouTube oEmbed API
+ * This API doesn't require authentication or quota
+ * @param {string} videoId - YouTube video ID
+ * @returns {Promise<Object|null>} Video metadata or null
+ */
+async function fetchVideoMetadataViaOembed(videoId) {
+  const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+  
+  try {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      logVerbose(`  oEmbed failed: ${response.status}`);
+      return null;
+    }
+    
+    const data = await response.json();
+    return {
+      title: data.title || null,
+      channelName: data.author_name || null,
+      channelUrl: data.author_url || null,
+      thumbnailUrl: data.thumbnail_url || null,
+    };
+  } catch (err) {
+    logVerbose(`  oEmbed error: ${err.message}`);
+    return null;
+  }
+}
+
+// ============================================================================
 // Supadata Transcript Fetching
 // ============================================================================
 
@@ -367,11 +401,27 @@ async function saveVideoToDatabase(supabase, video, carSlug, transcript, aiInsig
     summary = `${sentimentText}${recommendedText}`.trim() || null;
   }
 
+  // Fetch channel name via YouTube oEmbed API (doesn't require quota)
+  let channelName = video.channelName || null;
+  if (!channelName) {
+    logVerbose(`  Fetching channel info via oEmbed...`);
+    const metadata = await fetchVideoMetadataViaOembed(video.videoId);
+    if (metadata?.channelName) {
+      channelName = metadata.channelName;
+      logVerbose(`  ✓ Channel: ${channelName}`);
+    } else {
+      // Fallback to "Unknown Channel" if we can't get the name
+      channelName = 'Unknown Channel';
+      logVerbose(`  ⚠️ Could not fetch channel name, using fallback`);
+    }
+  }
+
   // Upsert video record - use only columns that exist in the schema
   const videoRecord = {
     video_id: video.videoId,
     url: video.url,
     title: video.title,
+    channel_name: channelName,
     thumbnail_url: `https://i.ytimg.com/vi/${video.videoId}/maxresdefault.jpg`,
     transcript_text: transcript?.text || null,
     transcript_language: transcript?.language || null,
@@ -569,7 +619,7 @@ async function main() {
 }
 
 // Export for use in other scripts
-export { searchYouTubeVideosWithExa, fetchTranscriptViaSupadata, processTranscriptWithAI };
+export { searchYouTubeVideosWithExa, fetchTranscriptViaSupadata, processTranscriptWithAI, fetchVideoMetadataViaOembed };
 
 // Run if called directly
 main().catch(error => {

@@ -3,7 +3,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { 
-  signInWithGoogle, 
+  signInWithGoogle,
+  signInWithFacebook, 
   signInWithEmail, 
   signUpWithEmail, 
   signOut as authSignOut,
@@ -1309,6 +1310,19 @@ export function AuthProvider({ children }) {
     return { error: null };
   }, []);
 
+  // Sign in with Facebook
+  const loginWithFacebook = useCallback(async (redirectTo) => {
+    // Set login intent signal BEFORE redirect so we can detect fresh login on return
+    setLoginIntent();
+    setState(prev => ({ ...prev, isLoading: true }));
+    const { error } = await signInWithFacebook(redirectTo);
+    if (error) {
+      setState(prev => ({ ...prev, isLoading: false }));
+      return { error };
+    }
+    return { error: null };
+  }, []);
+
   // Sign in with email
   const loginWithEmail = useCallback(async (email, password) => {
     // Set login intent signal for fresh login detection
@@ -1669,6 +1683,7 @@ export function AuthProvider({ children }) {
     
     // Methods
     loginWithGoogle,
+    loginWithFacebook,
     loginWithEmail,
     signUp,
     logout,
@@ -1687,6 +1702,7 @@ export function AuthProvider({ children }) {
     onboardingState.showOnboarding,
     onboardingState.onboardingDismissed,
     loginWithGoogle,
+    loginWithFacebook,
     loginWithEmail,
     signUp,
     logout,

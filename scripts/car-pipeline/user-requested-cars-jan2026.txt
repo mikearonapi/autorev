@@ -1,0 +1,14 @@
+# User Requested Cars - January 2026
+# From user_feedback table - unactioned requests
+#
+# Source feedback IDs:
+# - Volkswagen GTI MK6: b09fcd24, 01ccce4b (2 requests!)
+# - Audi A3 1.8: 0cd68e6f
+# - Cadillac Blackwings: 33e25f71
+# - Honda Prelude 2026: 29eba551
+
+Volkswagen GTI (Mk6)
+Audi A3 1.8T (8V)
+Cadillac CT4-V Blackwing
+Cadillac CT5-V Blackwing
+Honda Prelude (2026)

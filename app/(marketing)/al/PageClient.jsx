@@ -391,7 +391,7 @@ export default function PageClient() {
           <div className={styles.heroCard}>
             <div className={styles.heroMascotWrapper}>
               <Image
-                src={UI_IMAGES.alMascot}
+                src={UI_IMAGES.alMascotFull}
                 alt="AL - AutoRev AI Assistant"
                 unoptimized
                 width={180}
