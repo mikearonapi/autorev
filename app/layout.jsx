@@ -281,20 +281,13 @@ export default function RootLayout({ children }) {
         
         {/* =============================================================================
             LCP IMAGE PRELOAD HINTS
-            These preload hints tell the browser to fetch hero images IMMEDIATELY,
-            before JavaScript hydrates. This is critical for LCP performance.
+            REMOVED from root layout - each page should handle its own LCP preload
+            The homepage hero was being preloaded on ALL pages (246 KiB wasted)
             
-            Without preload: Browser discovers image after React hydrates (~5-10s)
-            With preload: Browser fetches image in parallel with JS (~instant)
+            Page-specific preloads should be added via:
+            - Homepage: app/(app)/page.jsx metadata or generateMetadata
+            - Landing pages: handled by Next.js Image priority prop
             ============================================================================= */}
-        {/* Homepage hero - most critical LCP element */}
-        <link 
-          rel="preload" 
-          href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp" 
-          as="image" 
-          type="image/webp"
-          fetchPriority="high"
-        />
         
         {/* Favicons - static files for maximum compatibility */}
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
