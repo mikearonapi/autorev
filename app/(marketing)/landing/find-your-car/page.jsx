@@ -3,8 +3,14 @@ import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 // LCP Preload: The hero image path for this landing page
-// Must match the phoneSrc passed to LandingHero
-const HERO_IMAGE_PATH = '/images/onboarding/car-selector-02-results.png';
+// Must match the phoneSrc passed to LandingHero (WebP for 86% size reduction)
+const HERO_IMAGE_PATH = '/images/onboarding/car-selector-02-results.webp';
+
+// Video poster images for instant visual feedback before video loads
+const VIDEO_POSTERS = {
+  hero: '/videos/find-your-car-poster.jpg',
+  al: '/videos/al-find-your-car-poster.jpg',
+};
 
 const siteUrl = 'https://autorev.app';
 const pageUrl = `${siteUrl}/landing/find-your-car`;
@@ -199,7 +205,7 @@ export default function FindYourCarLandingPage() {
         rel="preload" 
         href={HERO_IMAGE_PATH}
         as="image"
-        type="image/png"
+        type="image/webp"
         fetchPriority="high"
       />
       
@@ -220,6 +226,7 @@ export default function FindYourCarLandingPage() {
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
         videoSrc="/videos/find-your-car-demo.mp4"
+        videoPoster={VIDEO_POSTERS.hero}
         phoneSrc={ONBOARDING_IMAGES.carSelectorResults}
         phoneAlt="AutoRev Car Selector showing matched cars"
       />
@@ -290,6 +297,7 @@ export default function FindYourCarLandingPage() {
           "Compare the Supra vs 370Z vs Cayman for canyon driving",
         ]}
         videoSrc="/videos/al-find-your-car-demo.mp4"
+        videoPoster={VIDEO_POSTERS.al}
         imageSrc={ONBOARDING_IMAGES.aiAlResponseAnalysis}
       />
 

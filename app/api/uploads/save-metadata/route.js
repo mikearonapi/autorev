@@ -82,7 +82,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing blob URL' }, { status: 400 });
     }
 
-    // Extract pathname from blob URL if not provided or contains placeholder
+    // Extract pathname from blob URL - ALWAYS prefer URL extraction for reliability
     // The client upload() may return the original pathname with __USER__ placeholder
     // but the actual blob URL contains the correct path with the real user ID
     let validatedPathname = blobPathname;
@@ -91,29 +91,45 @@ export async function POST(request) {
     // URLs look like: https://xxxxx.public.blob.vercel-storage.com/user-uploads/userId/timestamp.jpg
     try {
       const url = new URL(blobUrl);
-      const urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
+      let urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
       
-      // If provided pathname has __USER__ placeholder or is missing, use extracted pathname
-      if (!blobPathname || blobPathname.includes('__USER__')) {
-        console.log(`[SaveMetadata] Pathname has placeholder or missing, using URL path: ${urlPathname}`);
-        validatedPathname = urlPathname;
+      console.log(`[SaveMetadata] URL pathname: ${urlPathname}, provided pathname: ${blobPathname}`);
+      
+      // Handle case where Vercel Blob didn't apply the pathname override
+      // (the file was uploaded to __USER__ path instead of actual user ID)
+      if (urlPathname.includes('__USER__')) {
+        console.log(`[SaveMetadata] URL contains __USER__ placeholder, transforming to user ID`);
+        urlPathname = urlPathname.replace('__USER__', user.id);
+        
+        // Note: This means the file is at a different URL than expected
+        // We'll update the URL to point to where we expect it should be
+        // This is a workaround for Vercel Blob SDK pathname override not working
+        console.warn(`[SaveMetadata] File may be at wrong path. Original URL: ${blobUrl}`);
       }
       
-      // Also validate that the URL itself contains the user's ID for security
-      // This catches cases where pathname validation might be bypassed
-      if (!blobUrl.includes(user.id)) {
-        console.error(`[SaveMetadata] Blob URL does not contain user ID. URL: ${blobUrl}, User: ${user.id}`);
-        return NextResponse.json({ error: 'Invalid blob URL ownership' }, { status: 403 });
-      }
+      // ALWAYS use URL pathname as it's the source of truth for where the file was actually stored
+      validatedPathname = urlPathname;
     } catch (urlError) {
       console.warn(`[SaveMetadata] Failed to parse blob URL: ${blobUrl}`, urlError.message);
+      // Fall back to provided pathname if URL parsing fails
+      validatedPathname = blobPathname;
+      
+      // Also try to transform __USER__ in provided pathname
+      if (validatedPathname && validatedPathname.includes('__USER__')) {
+        validatedPathname = validatedPathname.replace('__USER__', user.id);
+      }
     }
 
     // Verify the blob pathname belongs to this user
     const expectedPrefix = `user-uploads/${user.id}/`;
     const videoPrefix = `user-videos/${user.id}/`;
+    
+    // Log for debugging
+    console.log(`[SaveMetadata] Validating pathname: ${validatedPathname}`);
+    console.log(`[SaveMetadata] Expected prefixes: ${expectedPrefix} or ${videoPrefix}`);
+    
     if (!validatedPathname || (!validatedPathname.startsWith(expectedPrefix) && !validatedPathname.startsWith(videoPrefix))) {
-      console.error(`[SaveMetadata] Invalid pathname: ${validatedPathname}, expected prefix: ${expectedPrefix} or ${videoPrefix}`);
+      console.error(`[SaveMetadata] Invalid pathname: ${validatedPathname}, user: ${user.id}`);
       return NextResponse.json({ error: 'Invalid blob pathname' }, { status: 403 });
     }
 

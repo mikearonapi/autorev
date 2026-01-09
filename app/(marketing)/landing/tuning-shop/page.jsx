@@ -4,7 +4,8 @@ import styles from './page.module.css';
 
 // LCP Preload: The hero image path for this landing page
 // Must match the phoneSrc passed to LandingHero
-const HERO_IMAGE_PATH = '/images/onboarding/tuning-shop-01-overview.png';
+// PERF: Using WebP format (18KB vs 147KB PNG = 88% smaller)
+const HERO_IMAGE_PATH = '/images/onboarding/tuning-shop-01-overview.webp';
 
 const siteUrl = 'https://autorev.app';
 const pageUrl = `${siteUrl}/landing/tuning-shop`;
@@ -207,12 +208,17 @@ const TESTIMONIALS = [
 export default function TuningShopLandingPage() {
   return (
     <>
-      {/* PERF: Preload LCP image - critical for landing page performance */}
+      {/* =============================================================================
+          PERFORMANCE OPTIMIZATIONS
+          LCP target: <2.5s - Hero image is the LCP element
+          ============================================================================= */}
+      
+      {/* PERF: Preload LCP image - WebP format (18KB vs 147KB PNG = 88% smaller) */}
       <link 
         rel="preload" 
         href={HERO_IMAGE_PATH}
         as="image"
-        type="image/png"
+        type="image/webp"
         fetchPriority="high"
       />
       
@@ -233,6 +239,7 @@ export default function TuningShopLandingPage() {
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
         videoSrc="/videos/tuning-shop-demo.mp4"
+        videoPoster="/videos/tuning-shop-poster.webp"
         phoneSrc={ONBOARDING_IMAGES.tuningShopOverview}
         phoneAlt="AutoRev Tuning Shop overview"
       />
@@ -348,6 +355,7 @@ export default function TuningShopLandingPage() {
           "What's a good 400whp build for a 370Z on a $5k budget?",
         ]}
         videoSrc="/videos/al-tuning-shop-demo.mp4"
+        videoPoster="/videos/al-tuning-shop-poster.webp"
         imageSrc={ONBOARDING_IMAGES.aiAlResponseMods}
       />
 

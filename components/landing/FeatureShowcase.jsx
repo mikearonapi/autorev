@@ -79,6 +79,7 @@ export default function FeatureShowcase({
                     sizes="(max-width: 768px) 280px, 320px"
                     style={{ objectFit: 'cover', objectPosition: 'top' }}
                     loading="lazy"
+                    quality={75}
                   />
                 </div>
               </IPhoneFrame>

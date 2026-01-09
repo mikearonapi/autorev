@@ -28,6 +28,7 @@ export default function LandingHero({
   badgeText,
   // Video or phone mockup
   videoSrc,
+  videoPoster, // PERF: Poster image shown while video loads
   phoneSrc,
   phoneAlt,
 }) {
@@ -37,14 +38,15 @@ export default function LandingHero({
   const videoRef = useRef(null);
   const sectionRef = useRef(null);
 
-  // PERF: Lazy load video only after initial paint to prevent blocking LCP
-  // Video files can be 30-60MB which would severely impact page load
+  // PERF: Lazy load video only after LCP completes to prevent blocking
+  // Video files consume bandwidth that competes with LCP image loading
   useEffect(() => {
-    // Delay video loading until after first paint + small buffer
-    // This ensures LCP (usually the phone image) renders first
+    // Delay video loading until well after LCP completes
+    // LCP target is <2.5s, so we wait 2.5s to ensure LCP is done
+    // This prioritizes the static hero image which is the LCP element
     const timer = setTimeout(() => {
       setShouldLoadVideo(true);
-    }, 100); // 100ms delay - enough for LCP but fast enough to feel instant
+    }, 2500); // 2500ms delay - ensures LCP completes before video loads
     
     return () => clearTimeout(timer);
   }, []);
@@ -111,12 +113,13 @@ export default function LandingHero({
                           quality={75}
                         />
                       )}
-                      {/* Only render video element after initial paint to not block LCP */}
+                      {/* Only render video element after LCP completes to not block it */}
                       {shouldLoadVideo && (
                         <video
                           ref={videoRef}
                           className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
                           src={videoSrc}
+                          poster={videoPoster}
                           autoPlay
                           muted
                           loop

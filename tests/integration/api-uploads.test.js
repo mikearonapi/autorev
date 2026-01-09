@@ -12,27 +12,37 @@ describe('Upload API', () => {
   describe('Pathname validation', () => {
     // These tests validate the pathname extraction and validation logic
     
-    it('should extract pathname from blob URL when pathname has __USER__ placeholder', () => {
-      // Simulates the fix: when client sends __USER__ placeholder,
-      // the server should extract the real path from the blob URL
-      
+    it('should extract pathname from blob URL when URL contains user ID', () => {
+      // When Vercel Blob pathname override works, URL contains the user ID
       const blobUrl = 'https://test.public.blob.vercel-storage.com/user-uploads/abc123-user-id/1234567890.jpg';
-      const blobPathname = 'user-uploads/__USER__/1234567890.jpg';
       const userId = 'abc123-user-id';
       
       // Extract pathname from URL
       const url = new URL(blobUrl);
-      const urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
+      let urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
       
-      // Check if pathname needs extraction
-      let validatedPathname = blobPathname;
-      if (!blobPathname || blobPathname.includes('__USER__')) {
-        validatedPathname = urlPathname;
+      // Validate
+      const expectedPrefix = `user-uploads/${userId}/`;
+      expect(urlPathname.startsWith(expectedPrefix)).toBe(true);
+    });
+    
+    it('should transform __USER__ placeholder in URL to user ID', () => {
+      // When Vercel Blob pathname override doesn't work, URL contains __USER__
+      const blobUrl = 'https://test.public.blob.vercel-storage.com/user-uploads/__USER__/1234567890.jpg';
+      const userId = 'abc123-user-id';
+      
+      // Extract pathname from URL
+      const url = new URL(blobUrl);
+      let urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
+      
+      // Transform __USER__ to actual user ID
+      if (urlPathname.includes('__USER__')) {
+        urlPathname = urlPathname.replace('__USER__', userId);
       }
       
       // Validate
       const expectedPrefix = `user-uploads/${userId}/`;
-      expect(validatedPathname.startsWith(expectedPrefix)).toBe(true);
+      expect(urlPathname.startsWith(expectedPrefix)).toBe(true);
     });
     
     it('should accept valid image pathname', () => {

@@ -19,6 +19,7 @@ export default function LandingAL({
   description,
   exampleQuestions = [],
   videoSrc,
+  videoPoster, // PERF: Poster image shown while video loads
   imageSrc = ONBOARDING_IMAGES.aiAlResponseAnalysis,
   imageAlt = 'AL - AutoRev AI Assistant',
 }) {
@@ -112,6 +113,7 @@ export default function LandingAL({
                         ref={videoRef}
                         className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
                         src={videoSrc}
+                        poster={videoPoster}
                         autoPlay
                         muted
                         loop

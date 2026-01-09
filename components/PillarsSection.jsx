@@ -113,6 +113,7 @@ export default function PillarsSection({ carCount = 100 }) {
             <Link 
               key={index} 
               href={pillar.href}
+              prefetch={false}
               className={`${styles.pillarCard} ${styles[pillar.accent]}`}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >

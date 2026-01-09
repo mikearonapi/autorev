@@ -6,19 +6,28 @@ import HeroSection from '@/components/HeroSection';
 import styles from './page.module.css';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
-// Dynamic imports for below-the-fold components (reduces initial JS bundle)
+// =============================================================================
+// DYNAMIC IMPORTS - Below-the-fold components with deferred loading
+// =============================================================================
+// Performance optimization: Setting ssr: false for below-fold components
+// eliminates their JS from the initial bundle, reducing TBT significantly.
+// These components hydrate after the hero section is visible.
+
 const CarCarousel = dynamic(() => import('@/components/CarCarousel'), {
   loading: () => <div className={styles.carouselPlaceholder} />,
-  ssr: true,
+  ssr: false, // Deferred - not visible on initial viewport
 });
 const FeaturePhoneShowcase = dynamic(() => import('@/components/FeaturePhoneShowcase'), {
-  ssr: true,
+  loading: () => <div className={styles.phoneShowcasePlaceholder} />,
+  ssr: false, // Deferred - below hero section
 });
 const PillarsSection = dynamic(() => import('@/components/PillarsSection'), {
-  ssr: true,
+  loading: () => <div className={styles.pillarsSectionPlaceholder} />,
+  ssr: false, // Deferred - well below fold
 });
 const FeatureBreakdown = dynamic(() => import('@/components/FeatureBreakdown'), {
-  ssr: true,
+  loading: () => <div className={styles.featureBreakdownPlaceholder} />,
+  ssr: false, // Deferred - at bottom of page
 });
 
 // Fetch car count directly from database (server-side, no caching layers)

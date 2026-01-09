@@ -265,9 +265,12 @@ export default function RootLayout({ children }) {
         {/* Vercel Blob - crossOrigin="anonymous" for public image assets */}
         <link rel="preconnect" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" />
-        {/* Google Analytics / Tag Manager - loaded via script */}
+        {/* Google Analytics / Tag Manager - loaded via script (deferred until interaction) */}
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        {/* Facebook Pixel - loaded via script (deferred until interaction) */}
+        <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
         
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />

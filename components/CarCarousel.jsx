@@ -159,6 +159,7 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
           key={`${car.slug}-${rowIndex}-${index}`}
           href={`/browse-cars/${car.slug}`}
           className={styles.carCard}
+          prefetch={false}
         >
           <div className={styles.imageWrapper}>
             <Image
@@ -168,6 +169,7 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
               sizes="(max-width: 480px) 160px, (max-width: 768px) 200px, 240px"
               className={styles.carImage}
               style={{ objectFit: 'cover' }}
+              loading="lazy"
             />
             <div className={styles.imageOverlay} />
           </div>
