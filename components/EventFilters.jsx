@@ -467,7 +467,7 @@ export default function EventFilters({
           aria-expanded={mobileFiltersOpen}
         >
           <Icons.sliders size={16} />
-          <span>Filters</span>
+          <span>Search &amp; Filters</span>
           {filterCount > 0 && (
             <span className={styles.filterBadge}>{filterCount}</span>
           )}
@@ -490,7 +490,7 @@ export default function EventFilters({
           >
             <div className={styles.filterDrawerHeader}>
               <div className={styles.filterDrawerDragHandle} />
-              <h3 className={styles.filterDrawerTitle}>Filters</h3>
+              <h3 className={styles.filterDrawerTitle}>Search &amp; Filters</h3>
               <button 
                 className={styles.filterDrawerClose}
                 onClick={() => setMobileFiltersOpen(false)}
