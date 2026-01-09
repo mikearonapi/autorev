@@ -522,14 +522,16 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
           {/* Social buttons - icon only */}
           {isSupabaseConfigured && (
             <div className={styles.socialRow}>
-              <button 
-                className={styles.socialBtn}
-                onClick={handleFacebookSignIn}
-                disabled={isSubmitting}
-                aria-label="Sign up with Facebook"
-              >
-                <Icons.facebook size={22} />
-              </button>
+              <div className={styles.socialBtnWrapper}>
+                <button 
+                  className={`${styles.socialBtn} ${styles.socialBtnDisabled}`}
+                  disabled
+                  aria-label="Sign up with Facebook - Coming Soon"
+                >
+                  <Icons.facebook size={22} />
+                </button>
+                <span className={styles.comingSoon}>Coming Soon</span>
+              </div>
               <button 
                 className={styles.socialBtn}
                 onClick={handleGoogleSignIn}
@@ -623,14 +625,16 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
         {/* Social buttons - icon only */}
         {isSupabaseConfigured && (
           <div className={styles.socialRow}>
-            <button 
-              className={styles.socialBtn}
-              onClick={handleFacebookSignIn}
-              disabled={isSubmitting}
-              aria-label="Log in with Facebook"
-            >
-              <Icons.facebook size={22} />
-            </button>
+            <div className={styles.socialBtnWrapper}>
+              <button 
+                className={`${styles.socialBtn} ${styles.socialBtnDisabled}`}
+                disabled
+                aria-label="Log in with Facebook - Coming Soon"
+              >
+                <Icons.facebook size={22} />
+              </button>
+              <span className={styles.comingSoon}>Coming Soon</span>
+            </div>
             <button 
               className={styles.socialBtn}
               onClick={handleGoogleSignIn}
