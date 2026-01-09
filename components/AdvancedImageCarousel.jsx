@@ -5,9 +5,13 @@
  * Each image shows for its specified duration, THEN transitions.
  * 
  * Performance optimizations:
- * - Only renders current + next image (not all)
+ * - Only renders prev + current + next image (not all)
  * - Uses IntersectionObserver to start timer only when visible
  * - Preloads next image before transition
+ * 
+ * Crossfade implementation:
+ * - Previous image fades OUT while current fades IN simultaneously
+ * - This prevents the "flash to black" that occurs when only rendering 2 images
  */
 
 'use client';
@@ -34,6 +38,7 @@ export default function AdvancedImageCarousel({
   transitionDuration = 3000
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);
 
@@ -65,7 +70,10 @@ export default function AdvancedImageCarousel({
     const totalTime = currentDuration + transitionDuration;
 
     const timer = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCurrentIndex((prev) => {
+        setPrevIndex(prev); // Track previous for crossfade
+        return (prev + 1) % images.length;
+      });
     }, totalTime);
 
     return () => clearTimeout(timer);
@@ -74,11 +82,11 @@ export default function AdvancedImageCarousel({
   // Preload next image before transition
   useEffect(() => {
     if (images.length <= 1) return;
-    const nextIndex = (currentIndex + 1) % images.length;
+    const nextIdx = (currentIndex + 1) % images.length;
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'image';
-    link.href = images[nextIndex];
+    link.href = images[nextIdx];
     document.head.appendChild(link);
     return () => link.parentNode?.removeChild(link);
   }, [currentIndex, images]);
@@ -87,34 +95,42 @@ export default function AdvancedImageCarousel({
     return null;
   }
 
-  // Only render current and next images for performance
-  const nextIndex = (currentIndex + 1) % images.length;
-  const indicesToRender = images.length > 1 ? [currentIndex, nextIndex] : [0];
+  // Render prev (fading out) + current (fading in) + next (preloaded)
+  // This ensures smooth crossfade: old image fades out while new fades in
+  const nextIdx = (currentIndex + 1) % images.length;
+  const indicesToRender = new Set([currentIndex, nextIdx]);
+  if (prevIndex !== null && prevIndex !== currentIndex) {
+    indicesToRender.add(prevIndex);
+  }
 
   return (
     <div className={styles.carousel} ref={containerRef}>
-      {indicesToRender.map((idx, renderOrder) => (
-        <div
-          key={images[idx]}
-          className={`${styles.imageWrapper} ${
-            idx === currentIndex ? styles.active : styles.inactive
-          }`}
-          style={{
-            transition: `opacity ${transitionDuration / 1000}s ease-in-out`
-          }}
-        >
-          <Image
-            src={images[idx]}
-            alt={`${alt} - Image ${idx + 1}`}
-            fill
-            sizes="390px"
-            className={styles.image}
-            // Only first image on initial render gets priority
-            priority={renderOrder === 0 && currentIndex === 0}
-            loading={renderOrder === 0 ? 'eager' : 'lazy'}
-          />
-        </div>
-      ))}
+      {[...indicesToRender].map((idx) => {
+        const isActive = idx === currentIndex;
+        
+        return (
+          <div
+            key={images[idx]}
+            className={`${styles.imageWrapper} ${
+              isActive ? styles.active : styles.inactive
+            }`}
+            style={{
+              transition: `opacity ${transitionDuration / 1000}s ease-in-out`
+            }}
+          >
+            <Image
+              src={images[idx]}
+              alt={`${alt} - Image ${idx + 1}`}
+              fill
+              sizes="390px"
+              className={styles.image}
+              // Only first image on initial render gets priority
+              priority={isActive && currentIndex === 0 && prevIndex === null}
+              loading={isActive ? 'eager' : 'lazy'}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

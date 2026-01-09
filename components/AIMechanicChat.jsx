@@ -1446,7 +1446,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           aria-label="Chat with AI AL"
         >
           <span className={styles.glowRing}></span>
-          <ALMascot size={44} className={styles.floatingIcon} />
+          <ALMascot size={56} className={styles.floatingIcon} />
           <span className={styles.tooltip}>Chat with AI AL</span>
         </button>
       )}

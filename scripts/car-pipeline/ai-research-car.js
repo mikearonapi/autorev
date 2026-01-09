@@ -36,6 +36,7 @@ import { spawn } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../../lib/backendAiLogger.js';
+import { sendFeedbackResponseEmail } from '../../lib/email.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1242,7 +1243,7 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     return { success: true, dryRun: true };
   }
   
-  // Check if car already exists
+  // Check if car already exists (exact match)
   const { data: existing } = await supabase
     .from('cars')
     .select('id, slug')
@@ -1251,6 +1252,25 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
   
   if (existing) {
     throw new Error(`Car already exists: ${carData.slug} (ID: ${existing.id})`);
+  }
+  
+  // Check for similar slugs to prevent near-duplicates (e.g., audi-a3-1.8t vs audi-a3-1-8t)
+  const slugPattern = carData.slug.replace(/[.-]/g, '%'); // Replace dots and hyphens with wildcards
+  const { data: similarCars } = await supabase
+    .from('cars')
+    .select('id, slug, name')
+    .ilike('slug', `%${slugPattern}%`)
+    .limit(5);
+  
+  if (similarCars && similarCars.length > 0) {
+    const exactMatch = similarCars.find(c => c.slug === carData.slug);
+    if (!exactMatch) {
+      // Found similar but not exact - warn and list them
+      log(`⚠️  Found ${similarCars.length} similar car(s) in database:`, 'warn');
+      similarCars.forEach(c => log(`   - ${c.slug} (${c.name})`, 'warn'));
+      log(`   Proceeding with new slug: ${carData.slug}`, 'info');
+      log(`   If this is a duplicate, delete the old entry first.`, 'info');
+    }
   }
   
   // Normalize drivetrain to valid values (RWD, AWD, FWD)
@@ -1397,6 +1417,144 @@ async function updatePipelineStatus(carSlug, updates) {
 }
 
 // =============================================================================
+// PHASE 9: USER FEEDBACK RESOLUTION & NOTIFICATION
+// =============================================================================
+
+/**
+ * Find matching user feedback requests and resolve them, sending notification emails
+ * @param {Object} carData - The car data object with name, slug, brand, etc.
+ * @param {string} imageUrl - The hero image URL for the email
+ * @returns {Object} - Results of feedback resolution
+ */
+async function resolveUserFeedbackAndNotify(carData, imageUrl) {
+  log('Phase 9: Resolving user feedback & sending notifications...', 'phase');
+  
+  const results = {
+    feedbackResolved: 0,
+    emailsSent: 0,
+    emailsFailed: 0,
+    details: [],
+  };
+  
+  try {
+    // Build search terms from car data
+    const searchTerms = [
+      carData.name,
+      carData.slug.replace(/-/g, ' '),
+      `${carData.brand} ${carData.name.replace(carData.brand, '').trim()}`,
+    ].filter(Boolean);
+    
+    // Find matching unresolved feedback (car_request or feature type)
+    // Use fuzzy matching on brand + key terms
+    const brandLower = carData.brand.toLowerCase();
+    const nameParts = carData.name.toLowerCase().split(/[\s-]+/);
+    
+    const { data: feedbackItems, error } = await supabase
+      .from('user_feedback')
+      .select('id, email, message, feedback_type, status')
+      .in('feedback_type', ['car_request', 'feature'])
+      .in('status', ['new', 'in_progress', 'pending'])
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      log(`Error fetching feedback: ${error.message}`, 'warn');
+      return results;
+    }
+    
+    // Filter to matching feedback using fuzzy matching
+    const matchingFeedback = feedbackItems.filter(fb => {
+      const msgLower = fb.message.toLowerCase();
+      // Must mention the brand
+      if (!msgLower.includes(brandLower)) return false;
+      // Must match at least one significant name part (excluding common words)
+      const significantParts = nameParts.filter(p => p.length > 2 && !['the', 'and', 'for'].includes(p));
+      return significantParts.some(part => msgLower.includes(part));
+    });
+    
+    if (matchingFeedback.length === 0) {
+      log('No matching user feedback found for this car', 'info');
+      return results;
+    }
+    
+    log(`Found ${matchingFeedback.length} matching feedback request(s)`, 'success');
+    
+    for (const feedback of matchingFeedback) {
+      // Update feedback status to resolved
+      const { error: updateError } = await supabase
+        .from('user_feedback')
+        .update({
+          status: 'resolved',
+          resolved_at: new Date().toISOString(),
+          internal_notes: supabase.rpc ? undefined : 
+            `[${new Date().toISOString().split('T')[0]}] Car added to database via AI pipeline. Auto-resolved.`,
+        })
+        .eq('id', feedback.id);
+      
+      if (updateError) {
+        log(`Failed to update feedback ${feedback.id}: ${updateError.message}`, 'warn');
+        continue;
+      }
+      
+      // Append to internal notes using raw SQL since Supabase JS doesn't support string concatenation
+      await supabase.rpc('append_feedback_notes', {
+        feedback_id: feedback.id,
+        notes: ` [${new Date().toISOString().split('T')[0]}] Car added to database via AI pipeline. Auto-resolved.`
+      }).catch(() => {
+        // RPC might not exist, that's okay - the status update is the important part
+      });
+      
+      results.feedbackResolved++;
+      
+      // Send email if user provided email address
+      if (feedback.email) {
+        try {
+          const emailResult = await sendFeedbackResponseEmail({
+            to: feedback.email,
+            feedbackType: 'car_request',
+            carName: carData.name,
+            carSlug: carData.slug,
+            carImageUrl: imageUrl,
+            originalFeedback: feedback.message,
+          });
+          
+          if (emailResult.success) {
+            results.emailsSent++;
+            log(`✉️  Email sent to ${feedback.email.replace(/(.{3}).*@/, '$1***@')}`, 'success');
+            
+            // Update responded_at timestamp
+            await supabase
+              .from('user_feedback')
+              .update({ responded_at: new Date().toISOString() })
+              .eq('id', feedback.id);
+          } else {
+            results.emailsFailed++;
+            log(`Failed to send email to ${feedback.email}: ${emailResult.error}`, 'warn');
+          }
+        } catch (emailErr) {
+          results.emailsFailed++;
+          log(`Email error: ${emailErr.message}`, 'warn');
+        }
+      }
+      
+      results.details.push({
+        id: feedback.id,
+        email: feedback.email,
+        message: feedback.message,
+        resolved: true,
+        emailSent: feedback.email ? results.emailsSent > 0 : null,
+      });
+    }
+    
+    log(`Resolved ${results.feedbackResolved} feedback items, sent ${results.emailsSent} emails`, 'success');
+    
+  } catch (err) {
+    log(`Error in feedback resolution: ${err.message}`, 'warn');
+  }
+  
+  return results;
+}
+
+// =============================================================================
 // MAIN EXECUTION
 // =============================================================================
 
@@ -1524,6 +1682,17 @@ async function main() {
     });
     
     // =========================================================================
+    // PHASE 9: User Feedback Resolution & Email Notifications
+    // =========================================================================
+    const feedbackResult = await resolveUserFeedbackAndNotify(carData, heroUrl);
+    
+    await updatePipelineStatus(carData.slug, { 
+      phase9_feedback_resolved: feedbackResult.feedbackResolved > 0,
+      phase9_emails_sent: feedbackResult.emailsSent,
+      phase9_completed_at: new Date().toISOString(),
+    });
+    
+    // =========================================================================
     // SUMMARY
     // =========================================================================
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -1555,6 +1724,14 @@ async function main() {
     console.log('───────────────────────────────────────────────────────────────────');
     console.log(`Status:        ${validationResult.critical === 0 ? '✅ PASSED' : '❌ BLOCKED'}`);
     console.log(`Checks:        ${validationResult.passed} passed, ${validationResult.warnings} warnings, ${validationResult.critical} critical`);
+    console.log('');
+    console.log('📧 USER FEEDBACK');
+    console.log('───────────────────────────────────────────────────────────────────');
+    console.log(`Resolved:      ${feedbackResult.feedbackResolved} feedback request(s)`);
+    console.log(`Emails Sent:   ${feedbackResult.emailsSent} notification(s)`);
+    if (feedbackResult.emailsFailed > 0) {
+      console.log(`Emails Failed: ${feedbackResult.emailsFailed}`);
+    }
     console.log('');
     console.log(`⏱️  Duration:      ${duration}s`);
     console.log('');

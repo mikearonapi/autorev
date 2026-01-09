@@ -1,13 +1,17 @@
 /**
  * ImageCarousel Component
  * 
- * Auto-rotating image carousel with smooth dissolve transitions.
+ * Auto-rotating image carousel with smooth crossfade/dissolve transitions.
  * Default: 2s display + 0.8s fade transition.
  * 
  * Performance optimizations:
- * - Only renders current + next image (not all)
+ * - Only renders prev + current + next image (not all)
  * - Uses IntersectionObserver to start timer only when visible
  * - Preloads next image before transition
+ * 
+ * Crossfade implementation:
+ * - Previous image fades OUT while current fades IN simultaneously
+ * - This prevents the "flash to black" that occurs when only rendering 2 images
  */
 
 'use client';
@@ -32,6 +36,7 @@ export default function ImageCarousel({
   interval = 2800 // 2.8 seconds total: 2s visible + 0.8s transition
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);
 
@@ -56,7 +61,10 @@ export default function ImageCarousel({
     if (images.length <= 1 || !isVisible) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCurrentIndex((prev) => {
+        setPrevIndex(prev); // Track previous for crossfade
+        return (prev + 1) % images.length;
+      });
     }, interval);
 
     return () => clearInterval(timer);
@@ -65,11 +73,11 @@ export default function ImageCarousel({
   // Preload next image before transition
   useEffect(() => {
     if (images.length <= 1) return;
-    const nextIndex = (currentIndex + 1) % images.length;
+    const nextIdx = (currentIndex + 1) % images.length;
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'image';
-    link.href = images[nextIndex];
+    link.href = images[nextIdx];
     document.head.appendChild(link);
     return () => link.parentNode?.removeChild(link);
   }, [currentIndex, images]);
@@ -78,32 +86,40 @@ export default function ImageCarousel({
     return null;
   }
 
-  // Only render current and next images for performance
-  const nextIndex = (currentIndex + 1) % images.length;
-  const indicesToRender = images.length > 1 ? [currentIndex, nextIndex] : [0];
+  // Render prev (fading out) + current (fading in) + next (preloaded)
+  // This ensures smooth crossfade: old image fades out while new fades in
+  const nextIdx = (currentIndex + 1) % images.length;
+  const indicesToRender = new Set([currentIndex, nextIdx]);
+  if (prevIndex !== null && prevIndex !== currentIndex) {
+    indicesToRender.add(prevIndex);
+  }
 
   return (
     <div className={styles.carousel} ref={containerRef}>
-      {indicesToRender.map((idx, renderOrder) => (
-        <div
-          key={images[idx]}
-          className={`${styles.imageWrapper} ${
-            idx === currentIndex ? styles.active : styles.inactive
-          }`}
-        >
-          <Image
-            src={images[idx]}
-            alt={`${alt} - Image ${idx + 1}`}
-            fill
-            // Responsive sizes: phone frames are ~200px on mobile, ~300px on desktop
-            sizes="(max-width: 768px) 200px, 300px"
-            className={styles.image}
-            // Only first image on initial render gets priority
-            priority={renderOrder === 0 && currentIndex === 0}
-            loading={renderOrder === 0 ? 'eager' : 'lazy'}
-          />
-        </div>
-      ))}
+      {[...indicesToRender].map((idx) => {
+        const isActive = idx === currentIndex;
+        
+        return (
+          <div
+            key={images[idx]}
+            className={`${styles.imageWrapper} ${
+              isActive ? styles.active : styles.inactive
+            }`}
+          >
+            <Image
+              src={images[idx]}
+              alt={`${alt} - Image ${idx + 1}`}
+              fill
+              // Responsive sizes: phone frames are ~200px on mobile, ~300px on desktop
+              sizes="(max-width: 768px) 200px, 300px"
+              className={styles.image}
+              // Only first image on initial render gets priority
+              priority={isActive && currentIndex === 0 && prevIndex === null}
+              loading={isActive ? 'eager' : 'lazy'}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
