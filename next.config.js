@@ -3,6 +3,52 @@ const nextConfig = {
   // Enable React strict mode for better development experience
   reactStrictMode: true,
 
+  // Experimental features for better performance
+  experimental: {
+    // Enable optimized package imports for smaller bundles
+    optimizePackageImports: [
+      '@supabase/supabase-js',
+      '@supabase/ssr',
+      'recharts',
+      'date-fns',
+    ],
+  },
+
+  // Webpack configuration for better chunking
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Split large vendor chunks
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        cacheGroups: {
+          ...config.optimization.splitChunks?.cacheGroups,
+          // Separate Supabase into its own chunk
+          supabase: {
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            name: 'supabase',
+            chunks: 'all',
+            priority: 30,
+          },
+          // Separate React Query
+          reactQuery: {
+            test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+            name: 'react-query',
+            chunks: 'all',
+            priority: 25,
+          },
+          // Large utility libraries
+          utils: {
+            test: /[\\/]node_modules[\\/](date-fns|lodash|uuid)[\\/]/,
+            name: 'utils',
+            chunks: 'all',
+            priority: 20,
+          },
+        },
+      };
+    }
+    return config;
+  },
+
   // Image optimization configuration
   images: {
     // Enable modern image formats for better compression

@@ -14,6 +14,7 @@
  */
 
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { Analytics } from '@vercel/analytics/next';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import MetaPixel from '@/components/MetaPixel';
@@ -30,8 +31,6 @@ import { CompareProvider } from '@/components/providers/CompareProvider';
 import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
 import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
 import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
-import { FeedbackProvider } from '@/components/FeedbackWidget';
-import { AIMechanicProvider } from '@/components/AIMechanicChat';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
@@ -41,9 +40,32 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import ScrollToTop from '@/components/ScrollToTop';
 import PageViewTracker from '@/components/PageViewTracker';
 import BetaBanner from '@/components/BetaBanner';
-import CompareBar from '@/components/CompareBar';
-import MobileBottomCta from '@/components/MobileBottomCta';
-import FeedbackCorner from '@/components/FeedbackCorner';
+
+// =============================================================================
+// LAZY-LOADED COMPONENTS (Deferred for better LCP)
+// These components are not critical for initial render and can load after hydration
+// =============================================================================
+
+// AI Chat - Large component (2100+ lines), loads on user interaction
+const AIMechanicProvider = dynamic(
+  () => import('@/components/AIMechanicChat').then(mod => ({ default: mod.AIMechanicProvider })),
+  { ssr: false }
+);
+
+// Feedback Widget - Not needed for initial render
+const FeedbackProvider = dynamic(
+  () => import('@/components/FeedbackWidget').then(mod => ({ default: mod.FeedbackProvider })),
+  { ssr: false }
+);
+
+// Compare Bar - Only shows when user adds cars to compare
+const CompareBar = dynamic(() => import('@/components/CompareBar'), { ssr: false });
+
+// Mobile CTA - Only shows on scroll
+const MobileBottomCta = dynamic(() => import('@/components/MobileBottomCta'), { ssr: false });
+
+// Feedback Corner - Non-critical UI element
+const FeedbackCorner = dynamic(() => import('@/components/FeedbackCorner'), { ssr: false });
 
 const siteUrl = 'https://autorev.app';
 

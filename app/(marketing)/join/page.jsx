@@ -202,8 +202,8 @@ const valueProps = [
 // Brand suffixes for the animated REV text (full words since REV is separate)
 const brandSuffixes = ['IVAL', 'ELATION', 'OLUTION'];
 
-// Hero image - 718 Cayman GT4 RS dramatic rear shot
-const heroImageUrl = '/images/pages/join-hero.jpg';
+// Hero image - Using compressed blob version (175KB vs 2.3MB local)
+const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp';
 
 export default function JoinPage() {
   const { user, isLoading } = useAuth();

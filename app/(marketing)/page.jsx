@@ -1,13 +1,25 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import Button from '@/components/Button';
-import CarCarousel from '@/components/CarCarousel';
 import HeroSection from '@/components/HeroSection';
-import PillarsSection from '@/components/PillarsSection';
-import FeatureBreakdown from '@/components/FeatureBreakdown';
-import FeaturePhoneShowcase from '@/components/FeaturePhoneShowcase';
 import styles from './page.module.css';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+
+// Dynamic imports for below-the-fold components (reduces initial JS bundle)
+const CarCarousel = dynamic(() => import('@/components/CarCarousel'), {
+  loading: () => <div className={styles.carouselPlaceholder} />,
+  ssr: true,
+});
+const FeaturePhoneShowcase = dynamic(() => import('@/components/FeaturePhoneShowcase'), {
+  ssr: true,
+});
+const PillarsSection = dynamic(() => import('@/components/PillarsSection'), {
+  ssr: true,
+});
+const FeatureBreakdown = dynamic(() => import('@/components/FeatureBreakdown'), {
+  ssr: true,
+});
 
 // Fetch car count directly from database (server-side, no caching layers)
 async function getCarCount() {

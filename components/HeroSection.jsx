@@ -6,8 +6,8 @@ import styles from '@/app/(marketing)/page.module.css';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
-// Hero image - Dodge Viper overhead shot
-const heroImageUrl = '/images/pages/home-hero.jpg';
+// Hero image - Compressed blob version (238KB vs 2.4MB local)
+const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero.webp';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -46,9 +46,10 @@ export default function HeroSection({ carCount = 188 }) {
           alt="718 Cayman GT4 RS rear view with glowing taillights in dramatic studio lighting"
           fill
           priority
-          quality={90}
+          quality={75}
           className={styles.heroImage}
           sizes="100vw"
+          fetchPriority="high"
         />
       </div>
       <div className={styles.heroOverlay} />

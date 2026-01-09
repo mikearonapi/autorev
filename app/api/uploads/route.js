@@ -14,6 +14,7 @@ import { put, del } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { compressFile, isCompressible } from '@/lib/tinify';
 
 // File size limits
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB for images
@@ -106,8 +107,29 @@ export async function POST(request) {
     const folder = mediaType === 'video' ? 'user-videos' : 'user-uploads';
     const filename = `${folder}/${user.id}/${timestamp}.${ext}`;
 
-    // Upload to Vercel Blob
-    const blob = await put(filename, file, {
+    // Compress image with TinyPNG before uploading (skip for videos)
+    let fileToUpload = file;
+    let originalFileSize = file.size;
+    let compressionApplied = false;
+    let compressionSavings = 0;
+
+    if (mediaType === 'image' && isCompressible(file.type)) {
+      try {
+        const compressed = await compressFile(file);
+        if (compressed) {
+          fileToUpload = compressed.blob;
+          compressionApplied = true;
+          compressionSavings = compressed.savings;
+          console.log(`[Uploads API] Compressed: ${(originalFileSize / 1024).toFixed(0)}KB → ${(compressed.compressedSize / 1024).toFixed(0)}KB (-${(compressionSavings * 100).toFixed(1)}%)`);
+        }
+      } catch (compressError) {
+        // Log but don't fail - upload original if compression fails
+        console.warn('[Uploads API] Compression failed, uploading original:', compressError.message);
+      }
+    }
+
+    // Upload to Vercel Blob (compressed or original)
+    const blob = await put(filename, fileToUpload, {
       access: 'public',
       contentType: file.type,
     });
@@ -131,7 +153,8 @@ export async function POST(request) {
       blob_url: blob.url,
       blob_pathname: blob.pathname,
       file_name: file.name || `upload-${timestamp}`,
-      file_size: file.size,
+      file_size: fileToUpload.size, // Store compressed size
+      original_file_size: originalFileSize, // Store original size for analytics
       content_type: file.type,
       caption: caption || null,
       is_primary: isPrimary,

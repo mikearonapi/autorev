@@ -941,19 +941,17 @@ function TuningShopContent() {
 
   return (
     <div className={styles.page} data-no-main-offset>
-      {/* Optimized Background Image */}
-      <div className={styles.backgroundImageWrapper}>
-        <Image
-          src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp"
-          alt="Tuning Shop Background"
-          fill
-          priority={false}
-          loading="lazy"
-          quality={50}
-          sizes="100vw"
-          style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.4 }}
-        />
-      </div>
+      {/* Background Image - CSS background for better LCP */}
+      <div 
+        className={styles.backgroundImageWrapper}
+        style={{ 
+          backgroundImage: 'url(https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.4 
+        }}
+        aria-hidden="true"
+      />
 
       {/* Header Bar - Matches Garage Layout */}
       <div className={styles.headerBar}>

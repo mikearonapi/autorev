@@ -872,3 +872,39 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   display: none !important;
 }
 
+
+/* --------------------------------------------------------------------------
+   Performance Optimization: Content Visibility
+   -------------------------------------------------------------------------- 
+   Enables browser to skip rendering of off-screen sections until needed.
+   This significantly reduces initial render time and improves LCP.
+   -------------------------------------------------------------------------- */
+
+/* Apply to major page sections that are below the fold */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+/* Sections that should defer rendering until visible */
+section:not(:first-child) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Feature sections commonly below fold */
+[class*="featureSection"],
+[class*="showcase"],
+[class*="testimonial"],
+[class*="carShowcase"],
+[class*="valueProps"],
+[class*="pillars"] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+/* Car grid items - defer rendering for items not initially visible */
+[class*="carGrid"] > *:nth-child(n+13) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 350px;
+}
