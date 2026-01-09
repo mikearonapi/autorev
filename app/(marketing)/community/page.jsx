@@ -1,10 +1,16 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import EventCard from '@/components/EventCard';
-import { useState, useEffect } from 'react';
+import { fetchMostViewedBuilds } from '@/lib/communityService';
+import { getPublicClient, isConfigured } from '@/lib/supabaseServer';
+
+export const revalidate = 60; // Revalidate every minute for fresh content
+
+export const metadata = {
+  title: 'Community Hub | Events, Resources & Enthusiast Network | AutoRev',
+  description: 'Connect with fellow car enthusiasts. Explore community builds, discover local events, and share your projects.',
+};
 
 // Icons (Lucide style) - color prop for explicit stroke color
 const Icons = {
@@ -40,10 +46,84 @@ const Icons = {
   ),
 };
 
+// Server-side function to fetch featured events
+async function fetchFeaturedEvents(limit = 4) {
+  const supabase = getPublicClient();
+  if (!isConfigured || !supabase) {
+    return [];
+  }
+
+  try {
+    const { data: events, error } = await supabase
+      .from('events')
+      .select(`
+        id,
+        slug,
+        name,
+        description,
+        start_date,
+        end_date,
+        start_time,
+        end_time,
+        venue_name,
+        city,
+        state,
+        image_url,
+        is_free,
+        cost_text,
+        featured,
+        event_types (
+          slug,
+          name,
+          icon,
+          is_track_event
+        )
+      `)
+      .eq('status', 'approved')
+      .eq('featured', true)
+      .gte('start_date', new Date().toISOString().split('T')[0])
+      .order('start_date', { ascending: true })
+      .limit(limit);
+
+    if (error) {
+      console.error('[CommunityPage] Error fetching events:', error);
+      return [];
+    }
+
+    // Transform to response shape
+    return (events || []).map(event => ({
+      id: event.id,
+      slug: event.slug,
+      name: event.name,
+      description: event.description,
+      start_date: event.start_date,
+      end_date: event.end_date,
+      start_time: event.start_time,
+      end_time: event.end_time,
+      venue_name: event.venue_name,
+      city: event.city,
+      state: event.state,
+      image_url: event.image_url,
+      is_free: event.is_free,
+      cost_text: event.cost_text,
+      featured: event.featured,
+      event_type: event.event_types ? {
+        slug: event.event_types.slug,
+        name: event.event_types.name,
+        icon: event.event_types.icon,
+        is_track_event: event.event_types.is_track_event,
+      } : null,
+    }));
+  } catch (err) {
+    console.error('[CommunityPage] Error fetching events:', err);
+    return [];
+  }
+}
+
 // Build Card component for displaying community builds
 function BuildCard({ build }) {
   const primaryImage = build.primary_image || build.images?.find(img => img.is_primary) || build.images?.[0];
-  const imageUrl = primaryImage?.blob_url || primaryImage?.thumbnail_url || build.car_image_url;
+  const imageUrl = primaryImage?.thumbnail_url || primaryImage?.blob_url || build.car_image_url;
   
   return (
     <Link href={`/community/builds/${build.slug}`} className={styles.buildCard}>
@@ -101,52 +181,15 @@ function BuildCard({ build }) {
   );
 }
 
-export default function CommunityPage() {
-  const [featuredEvents, setFeaturedEvents] = useState([]);
-  const [popularBuilds, setPopularBuilds] = useState([]);
-  const [loadingEvents, setLoadingEvents] = useState(true);
-  const [loadingBuilds, setLoadingBuilds] = useState(true);
-
-  useEffect(() => {
-    // Fetch featured events
-    async function fetchEvents() {
-      try {
-        const res = await fetch('/api/events/featured?limit=4', {
-          cache: 'no-store',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setFeaturedEvents(data.events || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch featured events:', err);
-      } finally {
-        setLoadingEvents(false);
-      }
-    }
-
-    // Fetch most viewed builds
-    async function fetchBuilds() {
-      try {
-        const res = await fetch('/api/community/builds?limit=12&sort=popular', {
-          cache: 'no-store',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const builds = data.builds || [];
-          // Take top 6 most viewed
-          setPopularBuilds(builds.slice(0, 6));
-        }
-      } catch (err) {
-        console.error('Failed to fetch builds:', err);
-      } finally {
-        setLoadingBuilds(false);
-      }
-    }
-
-    fetchEvents();
-    fetchBuilds();
-  }, []);
+export default async function CommunityPage() {
+  // Fetch data server-side in parallel (same pattern as /community/builds)
+  const [
+    featuredEvents,
+    { data: popularBuilds }
+  ] = await Promise.all([
+    fetchFeaturedEvents(4),
+    fetchMostViewedBuilds({ limit: 6 }),
+  ]);
 
   return (
     <div className={styles.page} data-no-main-offset>
@@ -226,12 +269,7 @@ export default function CommunityPage() {
             </Link>
           </div>
 
-          {loadingBuilds ? (
-            <div className={styles.loadingState}>
-              <div className={styles.spinner} />
-              <p>Loading builds...</p>
-            </div>
-          ) : popularBuilds.length > 0 ? (
+          {popularBuilds && popularBuilds.length > 0 ? (
             <div className={styles.buildsCarousel}>
               <div className={styles.buildsTrack}>
                 {popularBuilds.map(build => (
@@ -263,12 +301,7 @@ export default function CommunityPage() {
             </Link>
           </div>
 
-          {loadingEvents ? (
-            <div className={styles.loadingState}>
-              <div className={styles.spinner} />
-              <p>Loading events...</p>
-            </div>
-          ) : featuredEvents.length > 0 ? (
+          {featuredEvents && featuredEvents.length > 0 ? (
             <div className={styles.eventsGrid}>
               {featuredEvents.map(event => (
                 <EventCard 
