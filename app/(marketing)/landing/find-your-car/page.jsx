@@ -2,6 +2,10 @@ import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, La
 import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
+// LCP Preload: The hero image path for this landing page
+// Must match the phoneSrc passed to LandingHero
+const HERO_IMAGE_PATH = '/images/onboarding/car-selector-02-results.png';
+
 const siteUrl = 'https://autorev.app';
 const pageUrl = `${siteUrl}/landing/find-your-car`;
 
@@ -188,13 +192,24 @@ const TESTIMONIALS = [
 
 export default function FindYourCarLandingPage() {
   return (
-    <div className={styles.page}>
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+    <>
+      {/* PERF: Preload LCP image - critical for landing page performance */}
+      {/* This tells the browser to fetch the hero image IMMEDIATELY */}
+      <link 
+        rel="preload" 
+        href={HERO_IMAGE_PATH}
+        as="image"
+        type="image/png"
+        fetchPriority="high"
       />
-      <LandingTracking pageId="find-your-car" />
+      
+      <div className={styles.page}>
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <LandingTracking pageId="find-your-car" />
 
       <LandingHero
         pageId="find-your-car"
@@ -288,6 +303,7 @@ export default function FindYourCarLandingPage() {
         primaryCtaHref="/car-selector"
         note="Start free today — create an account to save your results"
       />
-    </div>
+      </div>
+    </>
   );
 }

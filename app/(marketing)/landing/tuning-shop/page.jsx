@@ -2,6 +2,10 @@ import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, La
 import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
+// LCP Preload: The hero image path for this landing page
+// Must match the phoneSrc passed to LandingHero
+const HERO_IMAGE_PATH = '/images/onboarding/tuning-shop-01-overview.png';
+
 const siteUrl = 'https://autorev.app';
 const pageUrl = `${siteUrl}/landing/tuning-shop`;
 
@@ -202,13 +206,23 @@ const TESTIMONIALS = [
 
 export default function TuningShopLandingPage() {
   return (
-    <div className={styles.page}>
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+    <>
+      {/* PERF: Preload LCP image - critical for landing page performance */}
+      <link 
+        rel="preload" 
+        href={HERO_IMAGE_PATH}
+        as="image"
+        type="image/png"
+        fetchPriority="high"
       />
-      <LandingTracking pageId="tuning-shop" />
+      
+      <div className={styles.page}>
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <LandingTracking pageId="tuning-shop" />
 
       <LandingHero
         pageId="tuning-shop"
@@ -347,6 +361,7 @@ export default function TuningShopLandingPage() {
         primaryCtaHref="/tuning-shop"
         note="Start free — explore builds and save them with a free account"
       />
-    </div>
+      </div>
+    </>
   );
 }

@@ -2,6 +2,10 @@ import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, La
 import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
+// LCP Preload: The hero image path for this landing page
+// Must match the phoneSrc passed to LandingHero
+const HERO_IMAGE_PATH = '/images/onboarding/garage-02-details.png';
+
 const siteUrl = 'https://autorev.app';
 const pageUrl = `${siteUrl}/landing/your-garage`;
 
@@ -188,13 +192,23 @@ const TESTIMONIALS = [
 
 export default function YourGarageLandingPage() {
   return (
-    <div className={styles.page}>
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+    <>
+      {/* PERF: Preload LCP image - critical for landing page performance */}
+      <link 
+        rel="preload" 
+        href={HERO_IMAGE_PATH}
+        as="image"
+        type="image/png"
+        fetchPriority="high"
       />
-      <LandingTracking pageId="your-garage" />
+      
+      <div className={styles.page}>
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <LandingTracking pageId="your-garage" />
 
       <LandingHero
         pageId="your-garage"
@@ -321,6 +335,7 @@ export default function YourGarageLandingPage() {
         primaryCtaHref="/garage"
         note="Start free — add your cars and explore. Upgrade anytime for full features."
       />
-    </div>
+      </div>
+    </>
   );
 }
