@@ -11,7 +11,7 @@
  * - Videos: MP4, WebM, MOV (up to 50MB)
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { upload } from '@vercel/blob/client';
 import styles from './ImageUploader.module.css';
@@ -73,6 +73,14 @@ export default function ImageUploader({
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Sync internal state when existingImages prop changes (e.g., loaded from database)
+  useEffect(() => {
+    // Only sync if we're not currently uploading (avoid overwriting in-progress uploads)
+    if (!uploading) {
+      setUploads(existingImages);
+    }
+  }, [existingImages, uploading]);
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
