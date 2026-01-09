@@ -4,22 +4,20 @@
  * Intercepts all auth-related emails (confirmation, recovery, magic link)
  * and sends them via Resend with beautiful branded templates.
  * 
- * This replaces the default Supabase email templates with our polished designs.
- * 
  * Required secrets (set via Supabase Dashboard > Edge Functions > Secrets):
  * - RESEND_API_KEY: Your Resend API key
- * 
- * To enable this hook, go to:
- * Supabase Dashboard > Authentication > Hooks > Send Email
- * Set the URI to: https://<project-ref>.supabase.co/functions/v1/send-auth-email
  */
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const SITE_URL = Deno.env.get("SITE_URL") || "https://autorev.app";
 
-// Email configuration matching lib/email.js
+// IMPORTANT: Always use the app URL, not Supabase's URL
+const SITE_URL = "https://autorev.app";
+
+// Logo URL - using a publicly hosted version for email reliability
+const LOGO_URL = "https://autorev.app/images/autorev-logo-trimmed.png";
+
 const EMAIL_CONFIG = {
   from: "AutoRev <hello@autorev.app>",
   replyTo: "support@autorev.app",
@@ -32,6 +30,7 @@ interface AuthEmailPayload {
     user_metadata?: {
       full_name?: string;
       name?: string;
+      display_name?: string;
     };
   };
   email_data: {
@@ -46,13 +45,12 @@ interface AuthEmailPayload {
 }
 
 /**
- * Build the action URL that Supabase auth expects
+ * Build the action URL - ALWAYS use our app URL, never Supabase's
  */
 function buildActionUrl(payload: AuthEmailPayload): string {
-  const { email_data, user } = payload;
-  const { token_hash, redirect_to, email_action_type, site_url } = email_data;
+  const { email_data } = payload;
+  const { token_hash, redirect_to, email_action_type } = email_data;
   
-  // Determine the correct type parameter for the verify endpoint
   const typeMap: Record<string, string> = {
     signup: "signup",
     recovery: "recovery",
@@ -63,15 +61,15 @@ function buildActionUrl(payload: AuthEmailPayload): string {
   
   const type = typeMap[email_action_type] || email_action_type;
   
-  // Build the verification URL
-  // Format: {site_url}/auth/confirm?token_hash={hash}&type={type}&next={redirect}
-  const confirmUrl = new URL("/auth/confirm", site_url || SITE_URL);
+  // ALWAYS use SITE_URL (our app), not the payload's site_url (Supabase)
+  const confirmUrl = new URL("/auth/confirm", SITE_URL);
   confirmUrl.searchParams.set("token_hash", token_hash);
   confirmUrl.searchParams.set("type", type);
   if (redirect_to) {
     confirmUrl.searchParams.set("next", redirect_to);
   }
   
+  console.log(`[Auth Email] Built confirmation URL: ${confirmUrl.toString()}`);
   return confirmUrl.toString();
 }
 
@@ -79,7 +77,12 @@ function buildActionUrl(payload: AuthEmailPayload): string {
  * Get user's display name from metadata
  */
 function getUserName(user: AuthEmailPayload["user"]): string {
-  return user.user_metadata?.full_name || user.user_metadata?.name || "there";
+  const name = user.user_metadata?.display_name || 
+               user.user_metadata?.full_name || 
+               user.user_metadata?.name || 
+               "there";
+  console.log(`[Auth Email] User name resolved to: ${name}`);
+  return name;
 }
 
 /**
@@ -114,7 +117,6 @@ function generateConfirmationHtml(userName: string, confirmUrl: string): string 
   
   <div style="display: none; max-height: 0; overflow: hidden;">
     One click to confirm your email and join the AutoRev community.
-    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
   
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
@@ -125,7 +127,7 @@ function generateConfirmationHtml(userName: string, confirmUrl: string): string 
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${SITE_URL}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Confirm Your Email</p>
             </td>
           </tr>
@@ -231,7 +233,6 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
   
   <div style="display: none; max-height: 0; overflow: hidden;">
     Reset your AutoRev password. This link expires in 24 hours.
-    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
   
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
@@ -242,7 +243,7 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${SITE_URL}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Password Reset</p>
             </td>
           </tr>
@@ -348,7 +349,6 @@ function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
   
   <div style="display: none; max-height: 0; overflow: hidden;">
     Your one-click login link for AutoRev. Expires in 1 hour.
-    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
   
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
@@ -359,7 +359,7 @@ function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${SITE_URL}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Your Login Link</p>
             </td>
           </tr>
@@ -437,52 +437,11 @@ function generatePlainText(type: string, userName: string, actionUrl: string): s
   const year = new Date().getFullYear();
   
   const templates: Record<string, string> = {
-    signup: `AUTOREV — Confirm Your Email
-================================
-
-Hey ${firstName}! 👋
-
-Thanks for signing up for AutoRev! Just one quick step—confirm your email address to unlock your account.
-
-→ CONFIRM YOUR EMAIL: ${actionUrl}
-
----
-
-🔒 This link expires in 24 hours. If you didn't create an account, you can safely ignore this email.
-
-© ${year} AutoRev`,
+    signup: `AUTOREV — Confirm Your Email\n================================\n\nHey ${firstName}!\n\nThanks for signing up for AutoRev! Just one quick step—confirm your email address to unlock your account.\n\n→ CONFIRM YOUR EMAIL: ${actionUrl}\n\n---\n\nThis link expires in 24 hours. If you didn't create an account, you can safely ignore this email.\n\n© ${year} AutoRev`,
     
-    recovery: `AUTOREV — Reset Your Password
-================================
-
-Hey ${firstName},
-
-We received a request to reset your AutoRev password. Click the link below to create a new password.
-
-→ RESET PASSWORD: ${actionUrl}
-
-If you didn't request this, you can safely ignore this email—your password will remain unchanged.
-
----
-
-⚠️ This link expires in 24 hours. Never share this link with anyone.
-
-© ${year} AutoRev`,
+    recovery: `AUTOREV — Reset Your Password\n================================\n\nHey ${firstName},\n\nWe received a request to reset your AutoRev password. Click the link below to create a new password.\n\n→ RESET PASSWORD: ${actionUrl}\n\nIf you didn't request this, you can safely ignore this email—your password will remain unchanged.\n\n---\n\nThis link expires in 24 hours. Never share this link with anyone.\n\n© ${year} AutoRev`,
     
-    magiclink: `AUTOREV — Your Login Link
-================================
-
-Hey ${firstName}! 👋
-
-Here's your magic login link. Click below to sign in instantly—no password needed.
-
-→ LOG IN: ${actionUrl}
-
----
-
-🔒 This link expires in 1 hour and can only be used once. If you didn't request this, you can safely ignore it.
-
-© ${year} AutoRev`,
+    magiclink: `AUTOREV — Your Login Link\n================================\n\nHey ${firstName}!\n\nHere's your magic login link. Click below to sign in instantly—no password needed.\n\n→ LOG IN: ${actionUrl}\n\n---\n\nThis link expires in 1 hour and can only be used once. If you didn't request this, you can safely ignore it.\n\n© ${year} AutoRev`,
   };
   
   return templates[type] || templates.signup;
@@ -539,7 +498,6 @@ async function sendEmail(
  * Main handler for the Auth Email Hook
  */
 Deno.serve(async (req: Request) => {
-  // Only accept POST requests
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
@@ -551,12 +509,13 @@ Deno.serve(async (req: Request) => {
     const payload: AuthEmailPayload = await req.json();
     const { user, email_data } = payload;
     
-    console.log(`[Auth Email] Processing ${email_data.email_action_type} for ${user.email.slice(0, 3)}***`);
+    console.log(`[Auth Email] Processing ${email_data.email_action_type} for ${user.email}`);
+    console.log(`[Auth Email] Payload site_url: ${email_data.site_url}`);
+    console.log(`[Auth Email] Using SITE_URL: ${SITE_URL}`);
     
     const userName = getUserName(user);
     const actionUrl = buildActionUrl(payload);
     
-    // Select template based on email type
     let subject: string;
     let html: string;
     let textType: string;
@@ -596,7 +555,6 @@ Deno.serve(async (req: Request) => {
     
     const text = generatePlainText(textType, userName, actionUrl);
     
-    // Send the email
     const result = await sendEmail(user.email, subject, html, text);
     
     if (!result.success) {
