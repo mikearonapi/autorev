@@ -18,7 +18,7 @@ import CarActionMenu from './CarActionMenu';
 import ScoringInfo from './ScoringInfo';
 import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
 import { trackCarSelectorComplete } from '@/lib/ga4';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
 
 /**
  * Extract the low price from a price range string

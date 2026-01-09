@@ -1,4 +1,5 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 const siteUrl = 'https://autorev.app';
@@ -204,7 +205,7 @@ export default function FindYourCarLandingPage() {
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
         videoSrc="/videos/find-your-car-demo.mp4"
-        phoneSrc="/images/onboarding/car-selector-02-results.png"
+        phoneSrc={ONBOARDING_IMAGES.carSelectorResults}
         phoneAlt="AutoRev Car Selector showing matched cars"
       />
 
@@ -244,7 +245,7 @@ export default function FindYourCarLandingPage() {
           'Drag sliders to match your preferences',
           'Takes about 2 minutes',
         ]}
-        imageSrc="/images/onboarding/car-selector-01-preferences.png"
+        imageSrc={ONBOARDING_IMAGES.carSelectorPreferences}
         imageAlt="AutoRev Car Selector priority sliders"
         imageCaption="Priority Sliders"
       />
@@ -259,7 +260,7 @@ export default function FindYourCarLandingPage() {
           'See the score breakdown for each car',
           'Filter by price range and body style',
         ]}
-        imageSrc="/images/onboarding/car-selector-02-results.png"
+        imageSrc={ONBOARDING_IMAGES.carSelectorResults}
         imageAlt="AutoRev Car Selector results"
         imageCaption="Your Matches"
       />
@@ -274,7 +275,7 @@ export default function FindYourCarLandingPage() {
           "Compare the Supra vs 370Z vs Cayman for canyon driving",
         ]}
         videoSrc="/videos/al-find-your-car-demo.mp4"
-        imageSrc="/images/onboarding/ai-al-05-response-analysis.png"
+        imageSrc={ONBOARDING_IMAGES.aiAlResponseAnalysis}
       />
 
       <LandingTestimonial testimonials={TESTIMONIALS} />

@@ -14,6 +14,7 @@ import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } fr
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -39,7 +40,7 @@ import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
 import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
 import AskALButton from '@/components/AskALButton';
 import VehicleHealthCard from '@/components/garage/VehicleHealthCard';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Icon wrapper to prevent browser extension DOM conflicts
@@ -3071,7 +3072,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                     title="Analyze All Vehicles with AL"
                   >
                     <img 
-                      src="/images/al-mascot.png" 
+                      src={UI_IMAGES.alMascot}
                       alt=""
                       width={16}
                       height={16}

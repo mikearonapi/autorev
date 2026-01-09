@@ -7,13 +7,14 @@
  * When clicked, opens the AI chat with a prefilled prompt about the component.
  */
 
-import { useAIChat } from './AIMechanicChat';
+import { useAIChat } from './AIChatContext';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './AskALButton.module.css';
 
 // Small AL icon for the button
 const ALIcon = ({ size = 16 }) => (
   <img 
-    src="/images/al-mascot.png" 
+    src={UI_IMAGES.alMascot}
     alt=""
     width={size} 
     height={size}

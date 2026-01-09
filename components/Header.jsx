@@ -6,10 +6,11 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 import AuthModal, { useAuthModal } from './AuthModal';
-import { useAIChat } from './AIMechanicChat';
+import { useAIChat } from './AIChatContext';
 import { useAuth } from './providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { prefetchForRoute } from '@/lib/prefetch';
+import { UI_IMAGES } from '@/lib/images';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -75,7 +76,7 @@ const navLinks = [
 // AL Mascot Avatar for mobile menu
 const ALMascotIcon = ({ size = 20 }) => (
   <img 
-    src="/images/al-mascot.png" 
+    src={UI_IMAGES.alMascot}
     alt="AL"
     width={size} 
     height={size}
@@ -251,12 +252,12 @@ export default function Header() {
           <Link href="/" className={styles.logo}>
             <div className={styles.logoIcon}>
               <Image 
-                src="/images/autorev-logo-trimmed.png" 
+                src={UI_IMAGES.logoTrimmed}
                 alt="AutoRev Logo" 
                 width={36} 
                 height={36}
-                priority
                 unoptimized
+                priority
               />
             </div>
             <div className={styles.logoText}>

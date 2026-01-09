@@ -15,6 +15,7 @@ import { useCarSelection } from './providers/CarSelectionProvider';
 import { useCompare } from './providers/CompareProvider';
 import AuthModal, { useAuthModal } from './AuthModal';
 import { fetchCars } from '@/lib/carsClient';
+import { UI_IMAGES } from '@/lib/images';
 import { 
   loadALPreferences, 
   saveALPreferences, 
@@ -224,7 +225,7 @@ const PAGE_CONTEXT_CONFIG = {
 // AL Mascot Avatar - The AutoRev AI Assistant
 const ALMascot = ({ size = 24, className = '' }) => (
   <img 
-    src="/images/al-mascot.png" 
+    src={UI_IMAGES.alMascot}
     alt="AL - AutoRev AI"
     width={size} 
     height={size}

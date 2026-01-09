@@ -17,7 +17,7 @@ import { useCompare } from '@/components/providers/CompareProvider';
 import { getCarHeroImage } from '@/lib/images';
 import { fetchCars } from '@/lib/carsClient';
 import CompareModal from './CompareModal';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
 
 // Icons
 const Icons = {

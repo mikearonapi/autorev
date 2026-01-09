@@ -10,7 +10,7 @@ import EventMap from '@/components/EventMap';
 import EventCalendarView from '@/components/EventCalendarView';
 import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
 
 // Icons
 const Icons = {

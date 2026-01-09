@@ -48,7 +48,8 @@ import BetaBanner from '@/components/BetaBanner';
 
 // Deferred Providers - Heavy providers (AIMechanic, Feedback) load after first paint
 // This reduces Total Blocking Time (TBT) by deferring 2100+ lines of code
-import DeferredProviders from '@/components/providers/DeferredProviders';
+import { AIChatHost } from '@/components/AIChatContext';
+import { FeedbackHost } from '@/components/FeedbackContext';
 
 // Compare Bar - Only shows when user adds cars to compare
 const CompareBar = dynamic(() => import('@/components/CompareBar'), { ssr: false });
@@ -252,7 +253,7 @@ const softwareAppSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={fontVariables}>
+    <html lang="en" className={fontVariables} data-has-banner="true">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />
@@ -348,15 +349,16 @@ export default function RootLayout({ children }) {
                                     {/* Beta banner - shown during beta period */}
                                     <BetaBanner />
                                     
-                                    {/* Deferred Providers - AI Chat & Feedback load after first paint */}
-                                    <DeferredProviders>
-                                      {/* Feedback corner - discreet top-right feedback icon */}
-                                      <FeedbackCorner />
-                                      
-                                      <main>
-                                        {children}
-                                      </main>
-                                    </DeferredProviders>
+                                    {/* Feedback corner - discreet top-right feedback icon */}
+                                    <FeedbackCorner />
+
+                                    {/* On-demand heavy UI (does NOT wrap the whole app) */}
+                                    <FeedbackHost />
+                                    <AIChatHost />
+                                    
+                                    <main>
+                                      {children}
+                                    </main>
                                     
                                     <Footer />
                                     

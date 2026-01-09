@@ -78,10 +78,18 @@ export function BannerProvider({ children }) {
     const root = document.documentElement;
     
     // Set a data attribute for CSS targeting
+    // IMPORTANT (performance/CLS):
+    // The site uses `main { padding-top: var(--content-offset-*) }` and
+    // `html:not([data-has-banner]) { --content-offset-* = header-only }`.
+    //
+    // Toggling `data-has-banner` AFTER hydration causes a full-page reflow and
+    // large CLS spikes in Lighthouse/PageSpeed.
+    //
+    // We keep `data-has-banner="true"` set from the server (`app/layout.jsx`)
+    // and never remove it on the client. This reserves space for the banner
+    // even if it is hidden on certain routes, avoiding layout shifts.
     if (hasBanner) {
       root.setAttribute('data-has-banner', 'true');
-    } else {
-      root.removeAttribute('data-has-banner');
     }
     
     // Set specific banner type attributes

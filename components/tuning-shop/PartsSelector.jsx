@@ -17,7 +17,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { getUpgradeByKey } from '@/lib/upgrades';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './PartsSelector.module.css';
 
 // Icons
@@ -66,8 +67,9 @@ const Icons = {
 function ALAvatar({ size = 24 }) {
   return (
     <Image 
-      src="/images/al-mascot.png" 
+      src={UI_IMAGES.alMascot}
       alt="AL"
+      unoptimized
       width={size} 
       height={size}
       className={styles.alAvatar}

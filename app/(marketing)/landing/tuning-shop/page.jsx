@@ -1,4 +1,5 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 const siteUrl = 'https://autorev.app';
@@ -218,7 +219,7 @@ export default function TuningShopLandingPage() {
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
         videoSrc="/videos/tuning-shop-demo.mp4"
-        phoneSrc="/images/onboarding/tuning-shop-01-overview.png"
+        phoneSrc={ONBOARDING_IMAGES.tuningShopOverview}
         phoneAlt="AutoRev Tuning Shop overview"
       />
 
@@ -258,7 +259,7 @@ export default function TuningShopLandingPage() {
           'See factory horsepower and torque',
           'Understand what upgrades are available',
         ]}
-        imageSrc="/images/onboarding/tuning-shop-01-overview.png"
+        imageSrc={ONBOARDING_IMAGES.tuningShopOverview}
         imageAlt="AutoRev Tuning Shop car selection"
         imageCaption="Select Your Car"
       />
@@ -274,7 +275,7 @@ export default function TuningShopLandingPage() {
           'Running total of projected output',
           'Track estimated cost as you build',
         ]}
-        imageSrc="/images/onboarding/tuning-shop-04-power-list.png"
+        imageSrc={ONBOARDING_IMAGES.tuningShopPowerList}
         imageAlt="AutoRev Tuning Shop upgrade configuration"
         imageCaption="Configure Upgrades"
       />
@@ -288,7 +289,7 @@ export default function TuningShopLandingPage() {
           'See how different setups look',
           'Understand size and offset impacts',
         ]}
-        imageSrc="/images/onboarding/tuning-shop-02-config-wheels.png"
+        imageSrc={ONBOARDING_IMAGES.tuningShopWheels}
         imageAlt="AutoRev Tuning Shop wheel configuration"
         imageCaption="Wheels &amp; Tires"
       />
@@ -303,7 +304,7 @@ export default function TuningShopLandingPage() {
           'Compare stock vs. modified specs',
           'See the complete build summary',
         ]}
-        imageSrc="/images/onboarding/tuning-shop-06-metrics.png"
+        imageSrc={ONBOARDING_IMAGES.tuningShopMetrics}
         imageAlt="AutoRev Tuning Shop performance visualization"
         imageCaption="Performance Metrics"
       />
@@ -318,7 +319,7 @@ export default function TuningShopLandingPage() {
           'Share builds with friends',
           'Free to explore, save with account',
         ]}
-        imageSrc="/images/onboarding/tuning-shop-03-presets.png"
+        imageSrc={ONBOARDING_IMAGES.tuningShopPresets}
         imageAlt="AutoRev Tuning Shop saved builds"
         imageCaption="Saved Builds"
       />
@@ -333,7 +334,7 @@ export default function TuningShopLandingPage() {
           "What's a good 400whp build for a 370Z on a $5k budget?",
         ]}
         videoSrc="/videos/al-tuning-shop-demo.mp4"
-        imageSrc="/images/onboarding/ai-al-04-response-specs.png"
+        imageSrc={ONBOARDING_IMAGES.aiAlResponseMods}
       />
 
       <LandingTestimonial testimonials={TESTIMONIALS} />

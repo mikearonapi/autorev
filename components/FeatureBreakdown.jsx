@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './FeatureBreakdown.module.css';
 
 // Icons
@@ -56,8 +57,9 @@ const Icons = {
 
 const AlIcon = ({ size = 18 }) => (
   <Image
-    src="/images/al-mascot.png"
+    src={UI_IMAGES.alMascot}
     alt="AL"
+    unoptimized
     width={size}
     height={size}
     className={styles.alTableIcon}

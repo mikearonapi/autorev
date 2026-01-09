@@ -1,4 +1,5 @@
 import { FeatureShowcase, LandingAL, LandingCTA, LandingHero, LandingProblem, LandingTestimonial, LandingTracking } from '@/components/landing';
+import { ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 const siteUrl = 'https://autorev.app';
@@ -204,7 +205,7 @@ export default function YourGarageLandingPage() {
         secondaryCtaLabel="See How It Works"
         secondaryCtaHref="#features"
         videoSrc="/videos/your-garage-demo.mp4"
-        phoneSrc="/images/onboarding/garage-02-details.png"
+        phoneSrc={ONBOARDING_IMAGES.garageDetails}
         phoneAlt="AutoRev My Garage showing car details"
       />
 
@@ -245,7 +246,7 @@ export default function YourGarageLandingPage() {
           'See specs, variants, and trim details',
           'Track your entire collection in one spot',
         ]}
-        imageSrc="/images/onboarding/garage-02-details.png"
+        imageSrc={ONBOARDING_IMAGES.garageDetails}
         imageAlt="AutoRev My Collection showing car details"
         imageCaption="My Collection"
       />
@@ -261,7 +262,7 @@ export default function YourGarageLandingPage() {
           'Service intervals',
           'Enthusiast+ tier unlocks full reference',
         ]}
-        imageSrc="/images/onboarding/garage-03-reference.png"
+        imageSrc={ONBOARDING_IMAGES.garageReference}
         imageAlt="AutoRev Owner Reference"
         imageCaption="Owner Reference"
       />
@@ -276,7 +277,7 @@ export default function YourGarageLandingPage() {
           'Rollover risk assessment',
           'Included free for all users',
         ]}
-        imageSrc="/images/onboarding/garage-04-safety.png"
+        imageSrc={ONBOARDING_IMAGES.garageSafety}
         imageAlt="AutoRev Safety Ratings"
         imageCaption="Safety &amp; Ratings"
       />
@@ -292,7 +293,7 @@ export default function YourGarageLandingPage() {
           'Know what to inspect and when',
           'Enthusiast+ tier unlocks detailed issues',
         ]}
-        imageSrc="/images/onboarding/garage-05-health.png"
+        imageSrc={ONBOARDING_IMAGES.garageHealth}
         imageAlt="AutoRev Known Issues"
         imageCaption="Vehicle Health"
       />
@@ -307,7 +308,7 @@ export default function YourGarageLandingPage() {
           "How often should I change the diff fluid on my 996?",
         ]}
         videoSrc="/videos/al-your-garage-demo.mp4"
-        imageSrc="/images/onboarding/ai-al-03-context.png"
+        imageSrc={ONBOARDING_IMAGES.aiAlThinking}
       />
 
       <LandingTestimonial testimonials={TESTIMONIALS} />

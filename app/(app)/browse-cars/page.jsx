@@ -14,10 +14,10 @@ import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CarActionMenu from '@/components/CarActionMenu';
-import { useFeedback } from '@/components/FeedbackWidget';
+import { useFeedback } from '@/components/FeedbackContext';
 import { useCarsList } from '@/hooks/useCarData';
 import { usePrefetchCar } from '@/components/PrefetchCarLink';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';

@@ -5,6 +5,7 @@ import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
 import Image from 'next/image';
 import { trackEvent } from '@/lib/ga4';
+import { UI_IMAGES, ONBOARDING_IMAGES } from '@/lib/images';
 import styles from './LandingAL.module.css';
 
 /**
@@ -18,7 +19,7 @@ export default function LandingAL({
   description,
   exampleQuestions = [],
   videoSrc,
-  imageSrc = '/images/onboarding/ai-al-05-response-analysis.png',
+  imageSrc = ONBOARDING_IMAGES.aiAlResponseAnalysis,
   imageAlt = 'AL - AutoRev AI Assistant',
 }) {
   const [videoFailed, setVideoFailed] = useState(false);
@@ -141,8 +142,9 @@ export default function LandingAL({
           <div className={styles.content}>
             <div className={styles.badge}>
               <Image
-                src="/images/al-mascot.png"
+                src={UI_IMAGES.alMascot}
                 alt="AL"
+                unoptimized
                 width={24}
                 height={24}
                 className={styles.alAvatar}

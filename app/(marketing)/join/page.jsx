@@ -7,6 +7,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import FeatureBreakdown from '@/components/FeatureBreakdown';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 import { IS_BETA } from '@/lib/tierAccess';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -341,7 +342,7 @@ export default function JoinPage() {
                 <div className={styles.alCompact}>
                   <div className={styles.alCompactHeader}>
                     <img 
-                      src="/images/al-mascot.png" 
+                      src={UI_IMAGES.alMascot}
                       alt="AL" 
                       className={styles.alAvatar}
                       width={24} 

@@ -6,7 +6,8 @@ import Image from 'next/image';
 import Button from '@/components/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { useAIChat } from '@/components/AIMechanicChat';
+import { useAIChat } from '@/components/AIChatContext';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 // SVG Icons (Lucide style) - matches brand patterns
@@ -390,8 +391,9 @@ export default function PageClient() {
           <div className={styles.heroCard}>
             <div className={styles.heroMascotWrapper}>
               <Image
-                src="/images/al-mascot.png"
+                src={UI_IMAGES.alMascot}
                 alt="AL - AutoRev AI Assistant"
+                unoptimized
                 width={180}
                 height={180}
                 className={styles.heroMascot}

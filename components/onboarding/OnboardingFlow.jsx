@@ -9,19 +9,21 @@ import IntentStep from './steps/IntentStep';
 import FeatureSlide from './steps/FeatureSlide';
 import FinalStep from './steps/FinalStep';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { ONBOARDING_IMAGES } from '@/lib/images';
 
 
 // Feature slides configuration - each becomes its own step
 // Now supports multiple images per feature with auto-rotation
+// Images served from Vercel Blob CDN for optimal performance
 const FEATURE_SLIDES = [
   {
     id: 'browse',
     title: 'Browse & Research',
     description: 'Explore sports cars with detailed specs, buying guides, and expert insights.',
     images: [
-      { src: '/images/onboarding/browse-cars-01-hero.png', alt: 'Car detail hero page' },
-      { src: '/images/onboarding/browse-cars-02-overview.png', alt: 'Car overview with quick take' },
-      { src: '/images/onboarding/browse-cars-03-buying-guide.png', alt: 'Buying guide with best years' },
+      { src: ONBOARDING_IMAGES.browseCarsHero, alt: 'Car detail hero page' },
+      { src: ONBOARDING_IMAGES.browseCarsOverview, alt: 'Car overview with quick take' },
+      { src: ONBOARDING_IMAGES.browseCarsBuyingGuide, alt: 'Buying guide with best years' },
     ],
   },
   {
@@ -29,8 +31,8 @@ const FEATURE_SLIDES = [
     title: 'Find Your Match',
     description: 'Tell us what matters most and get personalized car recommendations.',
     images: [
-      { src: '/images/onboarding/car-selector-01-preferences.png', alt: 'Preference sliders' },
-      { src: '/images/onboarding/car-selector-02-results.png', alt: 'Personalized recommendations' },
+      { src: ONBOARDING_IMAGES.carSelectorPreferences, alt: 'Preference sliders' },
+      { src: ONBOARDING_IMAGES.carSelectorResults, alt: 'Personalized recommendations' },
     ],
   },
   {
@@ -38,11 +40,11 @@ const FEATURE_SLIDES = [
     title: 'Your Garage',
     description: 'Track your cars, maintenance, recalls, and build progress all in one place.',
     images: [
-      { src: '/images/onboarding/garage-01-hero.png', alt: 'Modified GT-R with performance stats' },
-      { src: '/images/onboarding/garage-02-details.png', alt: 'Performance details and specs' },
-      { src: '/images/onboarding/garage-03-reference.png', alt: 'VIN decoder and fluid specs' },
-      { src: '/images/onboarding/garage-04-safety.png', alt: 'Recalls and safety info' },
-      { src: '/images/onboarding/garage-05-health.png', alt: 'Maintenance tracking' },
+      { src: ONBOARDING_IMAGES.garageHero, alt: 'Modified GT-R with performance stats' },
+      { src: ONBOARDING_IMAGES.garageDetails, alt: 'Performance details and specs' },
+      { src: ONBOARDING_IMAGES.garageReference, alt: 'VIN decoder and fluid specs' },
+      { src: ONBOARDING_IMAGES.garageSafety, alt: 'Recalls and safety info' },
+      { src: ONBOARDING_IMAGES.garageHealth, alt: 'Maintenance tracking' },
     ],
   },
   {
@@ -50,12 +52,12 @@ const FEATURE_SLIDES = [
     title: 'Tuning Shop',
     description: 'Plan your build with upgrade guides, compatibility checks, and performance estimates.',
     images: [
-      { src: '/images/onboarding/tuning-shop-01-overview.png', alt: 'Tunability score overview' },
-      { src: '/images/onboarding/tuning-shop-02-config-wheels.png', alt: 'Wheels and tires config' },
-      { src: '/images/onboarding/tuning-shop-03-presets.png', alt: 'Build presets' },
-      { src: '/images/onboarding/tuning-shop-04-power-list.png', alt: 'Power upgrades list' },
-      { src: '/images/onboarding/tuning-shop-05-part-detail.png', alt: 'Part details' },
-      { src: '/images/onboarding/tuning-shop-06-metrics.png', alt: 'Performance metrics' },
+      { src: ONBOARDING_IMAGES.tuningShopOverview, alt: 'Tunability score overview' },
+      { src: ONBOARDING_IMAGES.tuningShopWheels, alt: 'Wheels and tires config' },
+      { src: ONBOARDING_IMAGES.tuningShopPresets, alt: 'Build presets' },
+      { src: ONBOARDING_IMAGES.tuningShopPowerList, alt: 'Power upgrades list' },
+      { src: ONBOARDING_IMAGES.tuningShopPartDetail, alt: 'Part details' },
+      { src: ONBOARDING_IMAGES.tuningShopMetrics, alt: 'Performance metrics' },
     ],
   },
   {
@@ -63,8 +65,8 @@ const FEATURE_SLIDES = [
     title: 'Community',
     description: 'Discover car events, meets, and shows happening near you.',
     images: [
-      { src: '/images/onboarding/community-01-events-list.png', alt: 'Events list' },
-      { src: '/images/onboarding/community-02-event-detail.png', alt: 'Event details' },
+      { src: ONBOARDING_IMAGES.communityEventsList, alt: 'Events list' },
+      { src: ONBOARDING_IMAGES.communityEventDetail, alt: 'Event details' },
     ],
   },
   {
@@ -72,10 +74,10 @@ const FEATURE_SLIDES = [
     title: 'Ask AL',
     description: 'Get instant answers from our AI assistant trained on real car data.',
     images: [
-      { src: '/images/onboarding/ai-al-01-intro.png', alt: 'AL introduction' },
-      { src: '/images/onboarding/ai-al-03-thinking.png', alt: 'AL thinking' },
-      { src: '/images/onboarding/ai-al-04-response-mods.png', alt: 'AL modification response' },
-      { src: '/images/onboarding/ai-al-05-response-analysis.png', alt: 'AL analysis response' },
+      { src: ONBOARDING_IMAGES.aiAlIntro, alt: 'AL introduction' },
+      { src: ONBOARDING_IMAGES.aiAlThinking, alt: 'AL thinking' },
+      { src: ONBOARDING_IMAGES.aiAlResponseMods, alt: 'AL modification response' },
+      { src: ONBOARDING_IMAGES.aiAlResponseAnalysis, alt: 'AL analysis response' },
     ],
   },
 ];

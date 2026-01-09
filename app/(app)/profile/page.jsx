@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { UI_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
@@ -738,7 +739,7 @@ export default function ProfilePage() {
           </Link>
           <div className={styles.statCard} data-highlight>
             <div className={styles.statIconAl}>
-              <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+              <img src={UI_IMAGES.alMascot} alt="AL" className={styles.alIconMedium} />
             </div>
             <div className={styles.statContent}>
               <span className={styles.statValue}>{formatFuel(alBalance.fuel)}</span>
@@ -759,7 +760,7 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab(tab.id)}
                 >
                   {tab.icon === 'al-mascot' ? (
-                    <img src="/images/al-mascot.png" alt="AL" className={styles.tabAlIcon} />
+                    <img src={UI_IMAGES.alMascot} alt="AL" className={styles.tabAlIcon} />
                   ) : (
                     <TabIcon size={18} />
                   )}
@@ -1016,7 +1017,7 @@ export default function ProfilePage() {
           {activeTab === 'al' && (
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                <img src="/images/al-mascot.png" alt="AL" className={styles.alIconSmall} />
+                <img src={UI_IMAGES.alMascot} alt="AL" className={styles.alIconSmall} />
                 AL Fuel
               </h2>
               
@@ -1028,7 +1029,7 @@ export default function ProfilePage() {
               <div className={styles.gasTankContainer}>
                 <div className={styles.gasTankCard}>
                   <div className={styles.gasTankHeader}>
-                    <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+                    <img src={UI_IMAGES.alMascot} alt="AL" className={styles.alIconMedium} />
                     <span>{alBalance.tank?.label || 'Your Tank'}</span>
                   </div>
                   
@@ -1145,7 +1146,7 @@ export default function ProfilePage() {
               {/* Plan Upgrade Prompt - Hide for unlimited users */}
               {currentPlan === 'free' && !alBalance.isUnlimited && (
                 <div className={styles.upgradePrompt}>
-                  <img src="/images/al-mascot.png" alt="AL" className={styles.alIconMedium} />
+                  <img src={UI_IMAGES.alMascot} alt="AL" className={styles.alIconMedium} />
                   <div>
                     <h4>Want More Monthly Fuel?</h4>
                     <p>Upgrade for 4x or 10x more fuel each month.</p>

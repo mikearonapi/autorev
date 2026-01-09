@@ -174,4 +174,49 @@ test.describe('performance regression tests', () => {
       expect(strategy, 'Meta Pixel should use lazyOnload strategy').toBe('lazyOnload');
     }
   });
+
+  test('home page main offset is stable (prevents CLS from banner toggles)', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Capture initial padding-top applied by globals.css banner-aware layout system
+    const initialPaddingTop = await page.evaluate(() => {
+      const main = document.querySelector('main');
+      if (!main) return null;
+      return getComputedStyle(main).paddingTop;
+    });
+
+    // Wait past hydration + delayed effects (this used to change when BannerProvider toggled data-has-banner)
+    await page.waitForTimeout(2500);
+
+    const laterPaddingTop = await page.evaluate(() => {
+      const main = document.querySelector('main');
+      if (!main) return null;
+      return getComputedStyle(main).paddingTop;
+    });
+
+    expect(initialPaddingTop, 'main padding-top should be measurable').not.toBeNull();
+    expect(laterPaddingTop, 'main padding-top should be measurable after hydration').not.toBeNull();
+    expect(laterPaddingTop, 'main padding-top should not change after hydration').toBe(initialPaddingTop);
+  });
+
+  test('Ask AL launcher opens chat on demand (without preloading heavy chat)', async ({ page }) => {
+    // Use full load here to ensure hydration has attached click handlers
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForTimeout(250);
+
+    // Chat should not be present before interaction (we lazy-load it)
+    await expect(page.getByText('Meet AL, Your')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Get Started' })).toHaveCount(0);
+
+    // Open via lightweight launcher (aria-label exact match)
+    const launcher = page.locator('button[aria-label="Ask AL"]');
+    await expect(launcher, 'Ask AL launcher should be visible').toBeVisible();
+    await expect(launcher, 'Ask AL launcher should be hydrated').toHaveAttribute('data-ai-chat-hydrated', 'true');
+    await launcher.click();
+    await expect(launcher, 'Ask AL launcher click should open chat state').toHaveAttribute('data-ai-chat-open', 'true');
+
+    // First open shows the intro in a fresh profile (or sign-in if intro already dismissed)
+    // One of these should show once the panel opens (intro OR sign-in screen)
+    await expect(page.getByText(/Meet AL, Your|Sign In to Chat with AL|Chat with AL/i)).toBeVisible({ timeout: 20000 });
+  });
 });
