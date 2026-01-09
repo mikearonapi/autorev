@@ -3,8 +3,16 @@
  * 
  * Handles user image and video uploads via Vercel Blob.
  * 
- * POST /api/uploads - Upload a new image or video
+ * NOTE: For files larger than 4.5MB, use the client upload flow instead:
+ *   1. Client calls /api/uploads/client-token to get upload token
+ *   2. Client uploads directly to Vercel Blob (bypasses serverless limit)
+ *   3. Client calls /api/uploads/save-metadata to save metadata
+ * 
+ * This endpoint is kept for backwards compatibility and small files.
+ * 
+ * POST /api/uploads - Upload a new image or video (small files only)
  * DELETE /api/uploads?id=xxx - Delete a media file
+ * PATCH /api/uploads - Link images to builds or set primary
  * 
  * @route /api/uploads
  */
@@ -17,8 +25,10 @@ import { createServerClient } from '@supabase/ssr';
 import { compressFile, isCompressible } from '@/lib/tinify';
 
 // File size limits
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB for images
-const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB for videos
+// NOTE: Vercel serverless has 4.5MB body limit, so this route can't handle large files
+// Use client upload flow for files > 4MB (see /api/uploads/client-token)
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB advertised (but 4.5MB effective)
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB (requires client upload)
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];

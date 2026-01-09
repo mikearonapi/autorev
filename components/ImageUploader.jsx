@@ -4,20 +4,21 @@
  * Media Uploader Component
  * 
  * Drag-and-drop image and video upload with preview.
- * Uploads to /api/uploads endpoint.
+ * Uses Vercel Blob client uploads to bypass serverless function size limits.
  * 
  * Supports:
- * - Images: JPEG, PNG, WebP, GIF (up to 10MB)
- * - Videos: MP4, WebM, MOV (up to 500MB)
+ * - Images: JPEG, PNG, WebP, GIF (up to 25MB)
+ * - Videos: MP4, WebM, MOV (up to 50MB)
  */
 
 import React, { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { upload } from '@vercel/blob/client';
 import styles from './ImageUploader.module.css';
 
-// File size limits
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;  // 10MB for images
-const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB for videos
+// File size limits - can be larger now with client uploads
+const MAX_IMAGE_SIZE = 25 * 1024 * 1024;  // 25MB for images
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;  // 50MB for videos
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -98,56 +99,67 @@ export default function ImageUploader({
     return null;
   };
 
+  /**
+   * Upload file using Vercel Blob client upload
+   * This bypasses the 4.5MB serverless function limit
+   */
   const uploadFile = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    if (vehicleId) formData.append('vehicleId', vehicleId);
-    if (buildId) formData.append('buildId', buildId);
-    
-    // Only set isPrimary for images (first image becomes hero)
-    // Videos should not be primary
     const isVideo = isVideoFile(file);
-    const existingImages = uploads.filter(u => u.media_type !== 'video');
-    formData.append('isPrimary', (!isVideo && existingImages.length === 0) ? 'true' : 'false');
-
-    // Get video duration if it's a video
-    if (isVideo) {
-      const duration = await getVideoDuration(file);
-      if (duration) formData.append('duration', duration.toString());
-    }
-
-    const response = await fetch('/api/uploads', {
-      method: 'POST',
-      body: formData,
+    const timestamp = Date.now();
+    
+    // Determine extension
+    let ext = file.type.split('/')[1];
+    if (ext === 'jpeg') ext = 'jpg';
+    if (ext === 'quicktime') ext = 'mov';
+    
+    // Build pathname for the blob (user folder is enforced server-side)
+    const folder = isVideo ? 'user-videos' : 'user-uploads';
+    // Note: userId will be added by the server token handler
+    const filename = `${timestamp}.${ext}`;
+    
+    // Upload directly to Vercel Blob (bypasses serverless function limit)
+    const blob = await upload(`${folder}/__USER__/${filename}`, file, {
+      access: 'public',
+      handleUploadUrl: '/api/uploads/client-token',
     });
 
-    if (!response.ok) {
-      // Handle non-JSON error responses (e.g., Vercel "Request Entity Too Large")
-      let errorMessage = 'Upload failed';
-      try {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
-          errorMessage = data.error || errorMessage;
-        } else {
-          // Plain text error from Vercel/server
-          const text = await response.text();
-          if (text.includes('Request Entity Too Large') || response.status === 413) {
-            errorMessage = 'File too large. Please try a smaller file.';
-          } else if (text) {
-            errorMessage = text.length > 100 ? `${text.substring(0, 100)}...` : text;
-          }
-        }
-      } catch (e) {
-        // If parsing fails, use status code
-        if (response.status === 413) {
-          errorMessage = 'File too large. Please try a smaller file.';
-        }
-      }
-      throw new Error(errorMessage);
+    if (!blob.url) {
+      throw new Error('Upload failed - no URL returned');
     }
 
-    const data = await response.json();
+    // Get video duration if applicable
+    let duration = null;
+    if (isVideo) {
+      duration = await getVideoDuration(file);
+    }
+
+    // Determine if this should be primary
+    const existingImages = uploads.filter(u => u.media_type !== 'video');
+    const shouldBePrimary = !isVideo && existingImages.length === 0;
+
+    // Save metadata to database via separate endpoint
+    const metadataResponse = await fetch('/api/uploads/save-metadata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        blobUrl: blob.url,
+        blobPathname: blob.pathname,
+        fileName: file.name || filename,
+        fileSize: file.size,
+        contentType: file.type,
+        vehicleId: vehicleId || null,
+        buildId: buildId || null,
+        isPrimary: shouldBePrimary,
+        duration: duration,
+      }),
+    });
+
+    if (!metadataResponse.ok) {
+      const errorData = await metadataResponse.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to save upload metadata');
+    }
+
+    const data = await metadataResponse.json();
     return data.image;
   };
 
@@ -297,10 +309,10 @@ export default function ImageUploader({
               {dragActive ? 'Drop files here' : 'Drag & drop images or videos, or click to browse'}
             </span>
             <span className={styles.dropHint}>
-              JPEG, PNG, WebP, GIF • Max 10 images • 10MB each
+              JPEG, PNG, WebP, GIF • Max 10 images • 25MB each
             </span>
             <span className={styles.dropHint}>
-              MP4, WebM, MOV • Max 500MB per video
+              MP4, WebM, MOV • Max 50MB per video
             </span>
           </div>
         )}
