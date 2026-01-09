@@ -255,6 +255,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={fontVariables} data-has-banner="true">
       <head>
+        {/* =============================================================================
+            CRITICAL: Preconnects MUST be first in <head> for maximum effectiveness
+            These establish TCP/TLS connections before the browser discovers resources
+            ============================================================================= */}
+        {/* Supabase - no crossOrigin for credentialed requests (API calls with auth) */}
+        <link rel="preconnect" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
+        <link rel="dns-prefetch" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
+        {/* Vercel Blob - crossOrigin="anonymous" for public image assets */}
+        <link rel="preconnect" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" />
+        {/* Google Analytics / Tag Manager - loaded via script */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#0a1628" media="(prefers-color-scheme: light)" />
@@ -264,12 +278,6 @@ export default function RootLayout({ children }) {
         
         {/* Facebook Domain Verification */}
         <meta name="facebook-domain-verification" content="vu8n45bve2gdnsxj7x3leq648aci5e" />
-        
-        {/* Preconnect to external domains for faster resource loading */}
-        <link rel="preconnect" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
-        <link rel="preconnect" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" />
         
         {/* =============================================================================
             LCP IMAGE PRELOAD HINTS

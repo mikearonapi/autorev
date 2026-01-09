@@ -47,7 +47,12 @@ export async function GET(request) {
 
     if (error) {
       console.error('[CommunityBuilds API] Error:', error);
-      return NextResponse.json({ error: 'Failed to fetch builds' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to fetch builds' }, { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      });
     }
 
     let builds = data || [];
@@ -86,10 +91,21 @@ export async function GET(request) {
       builds: enrichedBuilds,
       count: enrichedBuilds.length,
       hasMore: builds.length === limit,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
 
   } catch (error) {
     console.error('[CommunityBuilds API] Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Server error' }, { 
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   }
 }

@@ -73,6 +73,7 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
+    "critters": "^0.0.23",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.35",
     "image-size": "^2.0.2",

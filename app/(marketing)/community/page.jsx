@@ -111,7 +111,9 @@ export default function CommunityPage() {
     // Fetch featured events
     async function fetchEvents() {
       try {
-        const res = await fetch('/api/events/featured?limit=4');
+        const res = await fetch('/api/events/featured?limit=4', {
+          cache: 'no-store',
+        });
         if (res.ok) {
           const data = await res.json();
           setFeaturedEvents(data.events || []);
@@ -126,7 +128,9 @@ export default function CommunityPage() {
     // Fetch most viewed builds
     async function fetchBuilds() {
       try {
-        const res = await fetch('/api/community/builds?limit=12&sort=popular');
+        const res = await fetch('/api/community/builds?limit=12&sort=popular', {
+          cache: 'no-store',
+        });
         if (res.ok) {
           const data = await res.json();
           const builds = data.builds || [];

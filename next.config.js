@@ -11,7 +11,19 @@ const nextConfig = {
       '@supabase/ssr',
       'recharts',
       'date-fns',
+      'openai',
+      '@anthropic-ai/sdk',
     ],
+    // Enable CSS optimization for reduced render-blocking
+    optimizeCss: true,
+  },
+  
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
   },
 
   // Webpack configuration for better chunking

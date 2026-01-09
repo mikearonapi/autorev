@@ -95,7 +95,8 @@ export default function ImageCarousel({
             src={images[idx]}
             alt={`${alt} - Image ${idx + 1}`}
             fill
-            sizes="390px"
+            // Responsive sizes: phone frames are ~200px on mobile, ~300px on desktop
+            sizes="(max-width: 768px) 200px, 300px"
             className={styles.image}
             // Only first image on initial render gets priority
             priority={renderOrder === 0 && currentIndex === 0}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
 import Image from 'next/image';
@@ -33,7 +33,21 @@ export default function LandingHero({
 }) {
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const videoRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  // PERF: Lazy load video only after initial paint to prevent blocking LCP
+  // Video files can be 30-60MB which would severely impact page load
+  useEffect(() => {
+    // Delay video loading until after first paint + small buffer
+    // This ensures LCP (usually the phone image) renders first
+    const timer = setTimeout(() => {
+      setShouldLoadVideo(true);
+    }, 100); // 100ms delay - enough for LCP but fast enough to feel instant
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const trackCta = (ctaLabel, destination) => {
     try {
@@ -84,8 +98,9 @@ export default function LandingHero({
                 <div className={styles.phoneContent}>
                   {hasVideo ? (
                     <>
-                      {/* Show static image until video is ready to prevent flash */}
-                      {!videoReady && hasPhone && (
+                      {/* PERF: Always show static image first for fast LCP */}
+                      {/* Video loads after initial paint via shouldLoadVideo */}
+                      {(!videoReady || !shouldLoadVideo) && hasPhone && (
                         <Image
                           src={phoneSrc}
                           alt={phoneAlt || 'App screenshot'}
@@ -96,20 +111,23 @@ export default function LandingHero({
                           quality={75}
                         />
                       )}
-                      <video
-                        ref={videoRef}
-                        className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
-                        src={videoSrc}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        webkit-playsinline="true"
-                        onError={handleVideoError}
-                        onCanPlay={handleVideoCanPlay}
-                        onLoadedData={handleVideoCanPlay}
-                      />
+                      {/* Only render video element after initial paint to not block LCP */}
+                      {shouldLoadVideo && (
+                        <video
+                          ref={videoRef}
+                          className={`${styles.video} ${videoReady ? styles.videoReady : styles.videoLoading}`}
+                          src={videoSrc}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="none"
+                          webkit-playsinline="true"
+                          onError={handleVideoError}
+                          onCanPlay={handleVideoCanPlay}
+                          onLoadedData={handleVideoCanPlay}
+                        />
+                      )}
                     </>
                   ) : hasPhone ? (
                     <Image

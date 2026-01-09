@@ -109,9 +109,15 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
     const baseSpeed = isMobile ? 40 : 60;
     const scrollSpeed = direction === 'left' ? baseSpeed : baseSpeed * 0.85;
     
+    // PERF: Cache scrollWidth outside animation loop to avoid forced reflow
+    // scrollWidth doesn't change during animation, so read it once
+    const totalWidth = scrollContainer.scrollWidth;
+    const oneThirdWidth = totalWidth / 3;
+    const oneSixthWidth = totalWidth / 6;
+    
     // Start second row at different position for visual variety
     if (direction === 'right' && scrollContainer.scrollLeft === 0) {
-      scrollContainer.scrollLeft = scrollContainer.scrollWidth / 6;
+      scrollContainer.scrollLeft = oneSixthWidth;
     }
     
     const animate = () => {
@@ -122,14 +128,15 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
       if (!isPausedRef.current && scrollContainer) {
         if (direction === 'left') {
           scrollContainer.scrollLeft += scrollSpeed * deltaTime;
-          const oneThirdWidth = scrollContainer.scrollWidth / 3;
+          // Use cached value instead of reading scrollWidth
           if (scrollContainer.scrollLeft >= oneThirdWidth) {
             scrollContainer.scrollLeft = 0;
           }
         } else {
           scrollContainer.scrollLeft -= scrollSpeed * deltaTime;
           if (scrollContainer.scrollLeft <= 0) {
-            scrollContainer.scrollLeft = scrollContainer.scrollWidth / 3;
+            // Use cached value instead of reading scrollWidth
+            scrollContainer.scrollLeft = oneThirdWidth;
           }
         }
       }

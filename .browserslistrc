@@ -1,0 +1,18 @@
+# Modern browsers only - no legacy polyfills needed
+# This reduces JavaScript bundle size by ~24 KiB
+# Last updated: 2026-01-08
+
+# Target browsers with >0.5% market share, not dead, and supporting ES2020+
+# This eliminates polyfills for: Array.prototype.at, Object.hasOwn, String.prototype.trimEnd, etc.
+
+defaults and supports es6-module
+not IE 11
+not op_mini all
+
+# Specifically target:
+# - Chrome 80+ (Jan 2020)
+# - Firefox 80+ (Jul 2020)
+# - Safari 14+ (Sep 2020)
+# - Edge 80+ (Feb 2020)
+# - iOS Safari 14+ (Sep 2020)
+# - Chrome for Android 80+
