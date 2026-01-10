@@ -67,6 +67,7 @@ export default function ImageUploader({
   buildId,
   existingImages = [],
   disabled = false,
+  showPreviews = true, // Set to false when using a separate gallery component
 }) {
   const [uploads, setUploads] = useState(existingImages);
   const [uploading, setUploading] = useState(false);
@@ -333,8 +334,8 @@ export default function ImageUploader({
         </div>
       )}
 
-      {/* Media Previews */}
-      {uploads.length > 0 && (
+      {/* Media Previews - only show if showPreviews is true */}
+      {showPreviews && uploads.length > 0 && (
         <div className={styles.previews}>
           {uploads.map((media, index) => {
             const isVideo = media.media_type === 'video';

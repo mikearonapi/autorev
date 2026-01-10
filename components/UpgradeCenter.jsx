@@ -1417,7 +1417,7 @@ export default function UpgradeCenter({
               Add photos and videos of your build. Choose which image to feature as your hero.
             </p>
             
-            {/* Upload Component */}
+            {/* Upload Component - previews disabled since BuildMediaGallery handles display */}
             <ImageUploader
               onUploadComplete={async (media) => {
                 setBuildImages(media);
@@ -1449,6 +1449,7 @@ export default function UpgradeCenter({
               buildId={currentBuildId}
               existingImages={buildImages}
               disabled={!user}
+              showPreviews={false}
             />
             
             {/* Gallery with Hero Selection - tap any image to make it the hero */}
