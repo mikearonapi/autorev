@@ -12,7 +12,7 @@ import { resolveCarId } from '@/lib/carResolver';
  * Updated 2026-01-11: Uses car_id for fallback queries (car_slug column removed from car_track_lap_times)
  */
 async function handleGet(request, { params }) {
-  const { slug } = params;
+  const { slug } = await params;
   
   if (!slug) {
     return NextResponse.json(

@@ -238,6 +238,8 @@ export function OwnedVehiclesProvider({ children }) {
       const vehicles = prefetchedVehicles.map(transformVehicle);
       dispatch({ type: ActionTypes.SET, payload: vehicles });
       syncedRef.current = true;
+      // Clear localStorage - server data is source of truth for authenticated users
+      saveLocalVehicles([]);
       markComplete('vehicles');
       setIsLoading(false);
       return;
@@ -285,9 +287,14 @@ export function OwnedVehiclesProvider({ children }) {
       
       if (data) {
         const vehicles = data.map(transformVehicle);
-        console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles');
+        console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles from server');
         dispatch({ type: ActionTypes.SET, payload: vehicles });
         syncedRef.current = true;
+        
+        // CRITICAL: Clear localStorage when authenticated to prevent stale data on refresh
+        // Server data is the source of truth for authenticated users
+        saveLocalVehicles([]);
+        console.log('[OwnedVehiclesProvider] Cleared localStorage (server is source of truth)');
       }
       
       // Mark as complete on success

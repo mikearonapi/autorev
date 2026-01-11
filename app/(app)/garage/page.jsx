@@ -2758,20 +2758,31 @@ function GarageContent() {
   };
 
   // Confirm and execute removal
-  const handleConfirmRemove = () => {
+  const handleConfirmRemove = async () => {
     const { index, item } = confirmModal;
     if (!item) return;
     
+    // Close modal immediately for better UX
+    setConfirmModal({ isOpen: false, index: null, item: null });
+    
+    let result = { error: null };
+    
     switch (activeTab) {
       case 'mycars':
-        removeVehicle(item.vehicle.id);
+        result = await removeVehicle(item.vehicle.id);
         break;
       case 'favorites':
-        removeFavorite(item.slug);
+        result = await removeFavorite(item.slug);
         break;
       case 'projects':
-        deleteBuild(item.id);
+        result = await deleteBuild(item.id);
         break;
+    }
+
+    if (result?.error) {
+      console.error('[Garage] Removal failed:', result.error);
+      // Could add toast notification here
+      return;
     }
 
     // Adjust selection if needed
@@ -2780,9 +2791,6 @@ function GarageContent() {
     } else if (index === selectedIndex && currentItems.length === 1) {
       setSelectedIndex(0);
     }
-    
-    // Close modal
-    setConfirmModal({ isOpen: false, index: null, item: null });
   };
 
   // Close confirmation modal

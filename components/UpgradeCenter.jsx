@@ -369,9 +369,9 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
     watchOuts = knownIssues.slice(0, 1);
   }
   
-  // Get focus area label
+  // Get focus area from tier recommendations if available
   let focusArea = null;
-  if (dbRecs?.primaryFocus) {
+  if (tierRecs?.primaryFocus) {
     const focusLabels = {
       cooling: 'Heat Management',
       handling: 'Chassis & Handling',
@@ -379,7 +379,7 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
       power: 'Power & Engine',
       sound: 'Sound & Exhaust',
     };
-    focusArea = focusLabels[dbRecs.primaryFocus] || dbRecs.primaryFocus;
+    focusArea = focusLabels[tierRecs.primaryFocus] || tierRecs.primaryFocus;
   }
   
   return {
@@ -387,8 +387,8 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
     focusArea,
     platformInsights,
     watchOuts,
-    hasDetailedData: !!(carRecs || dbRecs),
-    source: dbRecs ? 'cars.upgradeRecommendations' : 'static_file',
+    hasDetailedData: !!carRecs,
+    source: 'static_file',
   };
 }
 

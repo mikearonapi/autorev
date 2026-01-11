@@ -41,6 +41,7 @@ jest.mock('../PerformanceData', () => ({
 
 // Mock car data
 const mockCar = {
+  id: 'test-car-uuid-12345',
   slug: 'toyota-gr86-2023',
   name: '2023 Toyota GR86',
   hp: 228,
