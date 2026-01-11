@@ -129,13 +129,19 @@ async function enrichCar(slug) {
     results.safety = 'error';
   }
   
-  // Recalls - check existing
+  // Recalls - check existing (NOTE: car_slug column was removed 2026-01-11, use car_id)
   try {
-    const { data } = await supabase
-      .from('car_recalls')
-      .select('id')
-      .eq('car_slug', slug);
-    results.recalls = `${data?.length || 0} found`;
+    // First resolve slug to car_id
+    const { data: car } = await supabase.from('cars').select('id').eq('slug', slug).single();
+    if (car?.id) {
+      const { data } = await supabase
+        .from('car_recalls')
+        .select('id')
+        .eq('car_id', car.id);
+      results.recalls = `${data?.length || 0} found`;
+    } else {
+      results.recalls = '0 found (no car_id)';
+    }
   } catch (err) {
     results.recalls = 'error';
   }

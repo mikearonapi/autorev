@@ -418,13 +418,25 @@ export function OwnedVehiclesProvider({ children }) {
    * Add a new vehicle
    */
   const addVehicle = useCallback(async (vehicle) => {
+    console.log('[OwnedVehiclesProvider] addVehicle called:', {
+      isAuthenticated,
+      hasUserId: !!user?.id,
+      vehicle: { year: vehicle.year, make: vehicle.make, model: vehicle.model, matchedCarSlug: vehicle.matchedCarSlug },
+    });
+    
     // If authenticated, save to Supabase
     if (isAuthenticated && user?.id) {
       setIsLoading(true);
+      console.log('[OwnedVehiclesProvider] Saving vehicle to Supabase for user:', user.id?.slice(0, 8) + '...');
       const { data, error } = await addUserVehicle(user.id, vehicle);
       setIsLoading(false);
 
+      if (error) {
+        console.error('[OwnedVehiclesProvider] Error saving vehicle to Supabase:', error);
+      }
+
       if (!error && data) {
+        console.log('[OwnedVehiclesProvider] Vehicle saved successfully:', data.id);
         const transformed = transformVehicle(data);
         dispatch({ type: ActionTypes.ADD, payload: transformed });
 

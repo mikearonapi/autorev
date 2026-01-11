@@ -509,14 +509,31 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       if (type !== 'mycars') return;
       if (panelState !== 'expanded' && panelState !== 'details') return;
       
+      // NOTE: car_slug column was removed from wheel_tire_fitment_options (2026-01-11)
+      // Use car_id from matched car, or resolve from slug
+      const carId = item?.matchedCar?.id || item?.vehicle?.matchedCarId;
       const carSlug = item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug;
-      if (!carSlug) return;
+      
+      if (!carId && !carSlug) return;
       
       try {
+        // If we have carId, use it directly; otherwise resolve from slug
+        let resolvedCarId = carId;
+        if (!resolvedCarId && carSlug) {
+          const { data: carData } = await supabase
+            .from('cars')
+            .select('id')
+            .eq('slug', carSlug)
+            .single();
+          resolvedCarId = carData?.id;
+        }
+        
+        if (!resolvedCarId) return;
+        
         const { data, error } = await supabase
           .from('wheel_tire_fitment_options')
           .select('*')
-          .eq('car_slug', carSlug)
+          .eq('car_id', resolvedCarId)
           .order('fitment_type', { ascending: true });
         
         if (!error && data) {
@@ -531,7 +548,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     };
     
     loadFitmentOptions();
-  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
+  }, [type, panelState, item?.matchedCar?.id, item?.matchedCar?.slug, item?.vehicle?.matchedCarId, item?.vehicle?.matchedCarSlug]);
   
   // Fetch safety data when vehicle info is available
   useEffect(() => {
@@ -2822,10 +2839,19 @@ function GarageContent() {
   ];
 
   const handleAddVehicle = async (vehicleData) => {
-    const { error } = await addVehicle(vehicleData);
-    if (error) {
-      console.error('Failed to add vehicle:', error);
-      throw error;
+    const result = await addVehicle(vehicleData);
+    
+    // Handle both { error } pattern and direct errors
+    if (result?.error) {
+      const errorMsg = result.error?.message || result.error || 'Failed to add vehicle';
+      console.error('Failed to add vehicle:', errorMsg);
+      throw new Error(errorMsg);
+    }
+    
+    // Also check for unexpected null data (silent failure)
+    if (!result?.data && !result?.error) {
+      console.error('Failed to add vehicle: No data or error returned');
+      throw new Error('Failed to save vehicle. Please try signing in again.');
     }
   };
 

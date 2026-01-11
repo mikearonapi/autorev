@@ -64,13 +64,21 @@ export async function GET(request) {
     const carSlug = searchParams.get('carSlug') || null;
     const limit = Math.max(1, Math.min(Number(searchParams.get('limit') || 80), 300));
 
+    // NOTE: car_slug column was removed from car_track_lap_times (2026-01-11)
+    // Now using car_id with join to cars table for slug
     let q = supabase
       .from('car_track_lap_times')
-      .select('id,car_slug,lap_time_ms,lap_time_text,session_date,is_stock,tires,conditions,modifications,notes,source_url,confidence,verified,track_venues(slug,name),track_layouts(layout_key,name)')
+      .select('id,car_id,cars(slug),lap_time_ms,lap_time_text,session_date,is_stock,tires,conditions,modifications,notes,source_url,confidence,verified,track_venues(slug,name),track_layouts(layout_key,name)')
       .order('lap_time_ms', { ascending: true })
       .limit(limit);
 
-    if (carSlug) q = q.eq('car_slug', carSlug);
+    // Filter by car_id if carSlug provided
+    if (carSlug) {
+      const { data: carRow } = await supabase.from('cars').select('id').eq('slug', carSlug).single();
+      if (carRow?.id) {
+        q = q.eq('car_id', carRow.id);
+      }
+    }
     const { data, error } = await q;
     if (error) throw error;
 
@@ -173,11 +181,11 @@ export async function POST(request) {
 
     const lap_time_text = typeof lapTime === 'string' ? lapTime : null;
 
+    // NOTE: car_slug column was removed from car_track_lap_times (2026-01-11)
     const { data: inserted, error: insErr } = await supabase
       .from('car_track_lap_times')
       .insert({
         car_id: carRow.id,
-        car_slug: carSlug,
         track_id: trackRow.id,
         track_layout_id,
         lap_time_ms,
@@ -192,7 +200,7 @@ export async function POST(request) {
         confidence: c,
         verified: false,
       })
-      .select('id,car_slug,lap_time_ms,lap_time_text,session_date,is_stock,tires,source_url,confidence,verified,created_at')
+      .select('id,car_id,lap_time_ms,lap_time_text,session_date,is_stock,tires,source_url,confidence,verified,created_at')
       .single();
 
     if (insErr) throw insErr;

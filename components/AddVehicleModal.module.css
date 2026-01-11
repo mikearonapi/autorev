@@ -732,3 +732,37 @@
 .spinning {
   animation: spin 1s linear infinite;
 }
+
+/* ============================================
+   DATABASE ADD ERROR (performance cars tab)
+   ============================================ */
+.dbAddError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 0 0 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.errorDismiss {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.errorDismiss:hover {
+  opacity: 1;
+}

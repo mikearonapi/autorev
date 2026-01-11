@@ -217,9 +217,14 @@ export function FavoritesProvider({ children }) {
           addedAt: new Date(f.created_at).getTime(),
         }));
         
-        console.log('[FavoritesProvider] Fetched', favorites.length, 'favorites');
+        console.log('[FavoritesProvider] Fetched', favorites.length, 'favorites from server');
         dispatch({ type: FavoriteActionTypes.SET, payload: favorites });
         syncedRef.current = true;
+        
+        // CRITICAL: Clear localStorage when authenticated to prevent stale data on refresh
+        // Server data is the source of truth for authenticated users
+        saveFavorites({ favorites: [], version: STORAGE_VERSION });
+        console.log('[FavoritesProvider] Cleared localStorage (server is source of truth)');
       }
       
       // Mark as complete on success

@@ -179,11 +179,16 @@ async function enrichRecalls(slug, car) {
   }
   
   try {
-    // For recalls, we query directly since there's no dedicated single-car endpoint
+    // NOTE: car_slug column was removed from car_recalls (2026-01-11), use car_id
+    if (!car?.id) {
+      log('No car_id available', 'error');
+      return { success: false, error: 'No car_id available' };
+    }
+    
     const { data: existingRecalls } = await supabase
       .from('car_recalls')
       .select('id')
-      .eq('car_slug', slug);
+      .eq('car_id', car.id);
     
     const recallCount = existingRecalls?.length || 0;
     

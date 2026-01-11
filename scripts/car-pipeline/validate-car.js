@@ -275,11 +275,15 @@ const CHECKS = [
     name: 'Fuel Economy Data',
     category: 'enrichment',
     severity: 'warning',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from car_fuel_economy (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('car_fuel_economy')
-        .select('car_slug, city_mpg, highway_mpg, combined_mpg')
-        .eq('car_slug', slug)
+        .select('car_id, city_mpg, highway_mpg, combined_mpg')
+        .eq('car_id', carId)
         .single();
       
       if (error || !data) {
@@ -295,11 +299,15 @@ const CHECKS = [
     name: 'Safety Data',
     category: 'enrichment',
     severity: 'warning',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from car_safety_data (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('car_safety_data')
-        .select('car_slug, nhtsa_overall_rating, safety_score')
-        .eq('car_slug', slug)
+        .select('car_id, nhtsa_overall_rating, safety_score')
+        .eq('car_id', carId)
         .single();
       
       if (error || !data) {
@@ -315,11 +323,15 @@ const CHECKS = [
     name: 'Maintenance Specs',
     category: 'research',
     severity: 'warning',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from vehicle_maintenance_specs (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('vehicle_maintenance_specs')
-        .select('car_slug, oil_type, oil_viscosity, oil_capacity_liters')
-        .eq('car_slug', slug)
+        .select('car_id, oil_type, oil_viscosity, oil_capacity_liters')
+        .eq('car_id', carId)
         .single();
       
       if (error || !data) {
@@ -335,11 +347,15 @@ const CHECKS = [
     name: 'Known Issues (min 3)',
     category: 'research',
     severity: 'warning',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from car_issues (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('car_issues')
         .select('id, title')
-        .eq('car_slug', slug);
+        .eq('car_id', carId);
       
       if (error) {
         return { pass: false, message: 'Could not fetch issues' };
@@ -359,11 +375,15 @@ const CHECKS = [
     name: 'Service Intervals (min 5)',
     category: 'research',
     severity: 'warning',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from vehicle_service_intervals (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('vehicle_service_intervals')
         .select('id, service_name')
-        .eq('car_slug', slug);
+        .eq('car_id', carId);
       
       if (error) {
         return { pass: false, message: 'Could not fetch intervals' };
@@ -383,11 +403,15 @@ const CHECKS = [
     name: 'YouTube Videos',
     category: 'content',
     severity: 'info',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from youtube_video_car_links (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('youtube_video_car_links')
         .select('id, video_id')
-        .eq('car_slug', slug);
+        .eq('car_id', carId);
       
       if (error) {
         return { pass: false, message: 'Could not fetch video links' };
@@ -407,23 +431,18 @@ const CHECKS = [
     name: 'YouTube Video Relevance',
     category: 'content',
     severity: 'warning',
-    async check(slug) {
-      // Get car name for comparison
-      const { data: car } = await supabase
-        .from('cars')
-        .select('name, brand')
-        .eq('slug', slug)
-        .single();
-      
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from youtube_video_car_links (2026-01-11), use car_id
+      const car = context.car_exists?.data;
       if (!car) {
         return { pass: false, message: 'Car not found' };
       }
       
-      // Get linked videos
+      // Get linked videos using car_id
       const { data: links } = await supabase
         .from('youtube_video_car_links')
         .select('video_id')
-        .eq('car_slug', slug);
+        .eq('car_id', car.id);
       
       if (!links || links.length === 0) {
         return { pass: true, message: 'No videos to check' };
@@ -479,11 +498,15 @@ const CHECKS = [
     name: 'YouTube Transcripts',
     category: 'content',
     severity: 'info',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from youtube_video_car_links (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data: links } = await supabase
         .from('youtube_video_car_links')
         .select('video_id')
-        .eq('car_slug', slug);
+        .eq('car_id', carId);
       
       if (!links || links.length === 0) {
         return { pass: false, message: 'No videos linked' };
@@ -518,11 +541,15 @@ const CHECKS = [
     name: 'Recalls Data',
     category: 'enrichment',
     severity: 'info',
-    async check(slug) {
+    async check(slug, context) {
+      // NOTE: car_slug column was removed from car_recalls (2026-01-11), use car_id
+      const carId = context.car_exists?.data?.id;
+      if (!carId) return { pass: false, message: 'No car_id available' };
+      
       const { data, error } = await supabase
         .from('car_recalls')
-        .select('id, campaign_number')
-        .eq('car_slug', slug);
+        .select('id, recall_campaign_number')
+        .eq('car_id', carId);
       
       // It's OK if there are no recalls - many cars don't have any
       if (error) {

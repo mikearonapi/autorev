@@ -208,6 +208,8 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
     if (!cancelledRef.current) {
       setBuilds(transformedBuilds);
       syncedRef.current = true;
+      // Clear localStorage - server data is source of truth for authenticated users
+      saveLocalBuilds([]);
       markComplete('builds');
       setIsLoading(false);
     }
@@ -325,11 +327,15 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
         };
       });
       
-      console.log('[SavedBuildsProvider] Fetched', transformedBuilds.length, 'builds');
+      console.log('[SavedBuildsProvider] Fetched', transformedBuilds.length, 'builds from server');
       
       if (!cancelledRef.current) {
         setBuilds(transformedBuilds);
         syncedRef.current = true;
+        // CRITICAL: Clear localStorage when authenticated to prevent stale data on refresh
+        // Server data is the source of truth for authenticated users
+        saveLocalBuilds([]);
+        console.log('[SavedBuildsProvider] Cleared localStorage (server is source of truth)');
         // Mark as complete on success
         markComplete('builds');
       }

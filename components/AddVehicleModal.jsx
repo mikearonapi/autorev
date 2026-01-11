@@ -98,6 +98,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
   const [addingSlug, setAddingSlug] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
   const [allCars, setAllCars] = useState([]);
+  const [dbAddError, setDbAddError] = useState(null); // Error when adding from database tab
 
   // VIN decode state
   const [vinInput, setVinInput] = useState('');
@@ -170,6 +171,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
     if (isOwned(car.slug) || addingSlug) return;
     
     setAddingSlug(car.slug);
+    setDbAddError(null); // Clear any previous error
     
     try {
       // Parse year from car data
@@ -201,6 +203,8 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
       setRecentlyAdded(prev => new Set([...prev, car.slug]));
     } catch (err) {
       console.error('Error adding vehicle:', err);
+      // Show user-friendly error message
+      setDbAddError(err.message || 'Failed to add vehicle. Please try again or sign in.');
     } finally {
       setAddingSlug(null);
     }
@@ -301,6 +305,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
     setManualNickname('');
     setAddError(null);
     setAddSuccess(false);
+    setDbAddError(null); // Clear database tab error
     onClose();
   };
 
@@ -369,6 +374,20 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
                 <p className={styles.searchHint}>
                   Search our database of {allCars.length}+ enthusiast vehicles
                 </p>
+              )}
+
+              {/* Error message for database tab */}
+              {dbAddError && (
+                <div className={styles.dbAddError}>
+                  <span>⚠️ {dbAddError}</span>
+                  <button 
+                    onClick={() => setDbAddError(null)} 
+                    className={styles.errorDismiss}
+                    type="button"
+                  >
+                    ×
+                  </button>
+                </div>
               )}
 
               {/* Car List */}
