@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/lap-times
  * 
  * Fetches track lap time data for a specific car.
  * Uses the get_car_track_lap_times RPC function.
+ * 
+ * Updated 2026-01-11: Uses car_id for fallback queries (car_slug column removed from car_track_lap_times)
  */
 async function handleGet(request, { params }) {
   const { slug } = params;
@@ -34,6 +37,12 @@ async function handleGet(request, { params }) {
     if (error) {
       console.error('[API/lap-times] RPC error:', error);
       
+      // Resolve car_id for fallback queries (car_slug column no longer exists)
+      const carId = await resolveCarId(slug);
+      if (!carId) {
+        return NextResponse.json({ lapTimes: [] });
+      }
+      
       // Fallback to direct query with joins if RPC doesn't exist
       const { data: directData, error: directError } = await supabase
         .from('car_track_lap_times')
@@ -49,7 +58,7 @@ async function handleGet(request, { params }) {
             )
           )
         `)
-        .eq('car_slug', slug)
+        .eq('car_id', carId)
         .order('lap_time_seconds', { ascending: true });
       
       if (directError) {
@@ -57,7 +66,7 @@ async function handleGet(request, { params }) {
         const { data: simpleData, error: simpleError } = await supabase
           .from('car_track_lap_times')
           .select('*')
-          .eq('car_slug', slug)
+          .eq('car_id', carId)
           .order('lap_time_seconds', { ascending: true });
         
         if (simpleError) {

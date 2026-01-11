@@ -8,15 +8,15 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     
     const {
       sessionId,
@@ -63,10 +63,7 @@ export async function POST(request) {
     }
     
     return Response.json({ success: true });
-    
-  } catch (error) {
-    console.error('[Search API] Error:', error);
-    return Response.json({ error: 'Internal error' }, { status: 500 });
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'analytics/search', feature: 'analytics' });
 

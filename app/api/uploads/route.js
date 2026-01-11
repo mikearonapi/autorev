@@ -23,6 +23,7 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { compressFile, isCompressible } from '@/lib/tinify';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // File size limits
 // NOTE: Vercel serverless has 4.5MB body limit, so this route can't handle large files
@@ -69,8 +70,7 @@ async function getAuthenticatedUser() {
  * POST /api/uploads
  * Upload a new image
  */
-export async function POST(request) {
-  try {
+async function handlePost(request) {
     // Verify authentication
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -204,11 +204,6 @@ export async function POST(request) {
       image: imageRecord,
       mediaType: mediaType,
     });
-
-  } catch (error) {
-    console.error('[Uploads API] Error:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
-  }
 }
 
 /**
@@ -216,8 +211,7 @@ export async function POST(request) {
  * Link images to a build or update image properties
  * Body: { imageIds: string[], buildId: string } or { imageId: string, isPrimary: boolean }
  */
-export async function PATCH(request) {
-  try {
+async function handlePatch(request) {
     // Verify authentication
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -327,19 +321,13 @@ export async function PATCH(request) {
     }
 
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
-
-  } catch (error) {
-    console.error('[Uploads API] PATCH Error:', error);
-    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
-  }
 }
 
 /**
  * DELETE /api/uploads?id=xxx
  * Delete an image
  */
-export async function DELETE(request) {
-  try {
+async function handleDelete(request) {
     // Verify authentication
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -395,10 +383,10 @@ export async function DELETE(request) {
     }
 
     return NextResponse.json({ success: true });
-
-  } catch (error) {
-    console.error('[Uploads API] Error:', error);
-    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
-  }
 }
+
+// Export wrapped handlers with error logging
+export const POST = withErrorLogging(handlePost, { route: 'uploads', feature: 'uploads' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'uploads', feature: 'uploads' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'uploads', feature: 'uploads' });
 

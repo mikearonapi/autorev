@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -25,9 +26,8 @@ const supabase = createClient(
  *     updatedAt: string       // ISO timestamp
  *   }
  */
-export async function GET() {
-  try {
-    // Run all counts in parallel for performance
+async function handleGet() {
+  // Run all counts in parallel for performance
     const [
       carsResult,
       insightsResult,
@@ -66,14 +66,9 @@ export async function GET() {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
     });
-  } catch (err) {
-    console.error('[API/al/stats] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch AL stats', code: 'AL_STATS_ERROR' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'al/stats', feature: 'al' });
 
 
 

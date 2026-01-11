@@ -13,6 +13,7 @@ import { NextResponse } from 'next/server';
 import { handleUpload } from '@vercel/blob/client';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Get authenticated user from request
@@ -36,12 +37,11 @@ async function getAuthenticatedUser() {
   return user;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   const body = await request.json();
 
-  try {
-    // Verify user is authenticated
-    const user = await getAuthenticatedUser();
+  // Verify user is authenticated
+  const user = await getAuthenticatedUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -111,11 +111,7 @@ export async function POST(request) {
     });
 
     return NextResponse.json(jsonResponse);
-  } catch (error) {
-    console.error('[ClientUpload] Error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Upload failed' },
-      { status: 400 }
-    );
-  }
 }
+
+// Export wrapped handler with error logging
+export const POST = withErrorLogging(handlePost, { route: 'uploads/client-token', feature: 'uploads' });

@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/cars/[slug]/expert-consensus
  * 
  * Returns aggregated expert consensus data for a specific car.
  * Includes category sentiments, strength/weakness tags, and review count.
+ * 
+ * Updated 2026-01-11: Uses car_id for youtube_video_car_links query (car_slug column removed)
  */
-export async function GET(request, { params }) {
-  try {
-    const { slug } = await params;
+async function handleGet(request, { params }) {
+  const { slug } = await params;
 
     if (!slug) {
       return NextResponse.json(
@@ -25,10 +27,11 @@ export async function GET(request, { params }) {
       });
     }
 
-    // Fetch car's consensus data
+    // Fetch car's consensus data (also gets car.id for subsequent queries)
     const { data: car, error: carError } = await supabase
       .from('cars')
       .select(`
+        id,
         slug,
         name,
         expert_review_count,
@@ -45,7 +48,7 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Fetch aggregated data from video links
+    // Fetch aggregated data from video links using car_id (car_slug column no longer exists)
     const { data: links, error: linksError } = await supabase
       .from('youtube_video_car_links')
       .select(`
@@ -60,7 +63,7 @@ export async function GET(request, { params }) {
         stock_strength_tags,
         stock_weakness_tags
       `)
-      .eq('car_slug', slug);
+      .eq('car_id', car.id);
 
     if (linksError) {
       console.error('[expert-consensus] Error fetching links:', linksError);
@@ -117,13 +120,7 @@ export async function GET(request, { params }) {
         ...(car.external_consensus || {})
       }
     });
-
-  } catch (error) {
-    console.error('[expert-consensus] Error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/expert-consensus', feature: 'browse-cars' });
 

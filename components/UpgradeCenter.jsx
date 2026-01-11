@@ -44,6 +44,18 @@ import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { supabase } from '@/lib/supabase';
+import { 
+  useTuningProfile, 
+  getFormattedStages, 
+  getFormattedPlatforms, 
+  getFormattedPowerLimits, 
+  getFormattedBrands,
+  getUpgradesByObjective,
+  getPlatformInsights,
+  getDataQualityInfo,
+  getTotalUpgradeCount,
+  hasObjectiveData
+} from '@/hooks/useTuningProfile';
 // Import shared upgrade category definitions (single source of truth)
 import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCategories.js';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
@@ -250,8 +262,13 @@ const UPGRADE_CATEGORIES = SHARED_UPGRADE_CATEGORIES.map(cat => ({
 /**
  * Generate detailed AI recommendation based on car characteristics and database data
  * Returns an object with title and detailed content
+ * 
+ * Data source priority:
+ * 1. car_tuning_profiles (via tuningProfile param) - SOURCE OF TRUTH
+ * 2. cars.upgradeRecommendations - DEPRECATED as of 2026-01-15
+ * 3. data/carUpgradeRecommendations.js - DEPRECATED (legacy fallback)
  */
-function generateDetailedRecommendation(car, stockMetrics, selectedPackage) {
+function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuningProfile = null) {
   // Defensive: handle missing car gracefully
   if (!car || !car.slug) {
     return {
@@ -265,13 +282,61 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage) {
   
   const carSlug = car.slug;
   
-  // Try to get car-specific recommendations from our data file
+  // Priority 1: Use car_tuning_profiles data (source of truth)
+  if (tuningProfile) {
+    const platformInsightsData = getPlatformInsights(tuningProfile);
+    const strengths = platformInsightsData.strengths || [];
+    const weaknesses = platformInsightsData.weaknesses || [];
+    
+    // Build primary recommendation from tuning profile
+    let primaryRecommendation = '';
+    if (tuningProfile.tuning_community_notes) {
+      primaryRecommendation = tuningProfile.tuning_community_notes;
+    } else if (strengths.length > 0) {
+      primaryRecommendation = `This ${car.name.split(' ').slice(-2).join(' ')} platform excels at ${strengths[0].toLowerCase()}. ${strengths.length > 1 ? `It also features ${strengths[1].toLowerCase()}.` : ''}`;
+    } else {
+      primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
+    }
+    
+    // Determine focus area from upgrades_by_objective
+    let focusArea = null;
+    if (hasObjectiveData(tuningProfile)) {
+      const objectives = getUpgradesByObjective(tuningProfile);
+      // Find the objective with the most upgrades
+      const objectiveCounts = Object.entries(objectives)
+        .map(([key, upgrades]) => ({ key, count: upgrades?.length || 0 }))
+        .filter(o => o.count > 0)
+        .sort((a, b) => b.count - a.count);
+      
+      if (objectiveCounts.length > 0) {
+        const focusLabels = {
+          power: 'Power & Engine',
+          handling: 'Chassis & Handling',
+          braking: 'Braking',
+          cooling: 'Heat Management',
+          sound: 'Sound & Exhaust',
+          aero: 'Aerodynamics',
+        };
+        focusArea = focusLabels[objectiveCounts[0].key] || objectiveCounts[0].key;
+      }
+    }
+    
+    return {
+      primaryText: primaryRecommendation,
+      focusArea,
+      platformInsights: strengths.slice(0, 2),
+      watchOuts: weaknesses.slice(0, 2),
+      hasDetailedData: true,
+      source: 'car_tuning_profiles',
+    };
+  }
+  
+  // Fallback: Legacy data sources (used when car_tuning_profiles not available)
+  // NOTE: These static file sources are DEPRECATED as of 2026-01-15
+  // cars.upgrade_recommendations column has been REMOVED from the database
   const carRecs = getRecommendationsForCar(carSlug);
   const platformNotes = getPlatformNotes(carSlug);
   const knownIssues = getKnownIssues(carSlug);
-  
-  // Also check for database upgrade_recommendations field
-  const dbRecs = car.upgradeRecommendations;
   
   // Determine the tier to get narrative from
   let tierKey = selectedPackage;
@@ -285,30 +350,22 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage) {
   let platformInsights = [];
   let watchOuts = [];
   
-  // Priority 1: Use database focusReason if available (most specific)
-  if (dbRecs?.focusReason) {
-    primaryRecommendation = dbRecs.focusReason;
-  } 
-  // Priority 2: Use tier-specific narrative from carUpgradeRecommendations
-  else if (tierRecs?.narrative) {
+  // Use tier-specific narrative from static carUpgradeRecommendations (legacy fallback)
+  if (tierRecs?.narrative) {
     primaryRecommendation = tierRecs.narrative;
   }
-  // Priority 3: Generate from car specs (fallback)
+  // Generate from car specs if no narrative available
   else {
     primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
   }
   
-  // Gather platform strengths
-  if (dbRecs?.platformStrengths?.length > 0) {
-    platformInsights = dbRecs.platformStrengths.slice(0, 2);
-  } else if (platformNotes?.length > 0) {
+  // Gather platform strengths from static data
+  if (platformNotes?.length > 0) {
     platformInsights = platformNotes.slice(0, 2);
   }
   
-  // Gather watch-outs / known issues
-  if (dbRecs?.watchOuts?.length > 0) {
-    watchOuts = dbRecs.watchOuts.slice(0, 2);
-  } else if (knownIssues?.length > 0) {
+  // Gather watch-outs / known issues from static data
+  if (knownIssues?.length > 0) {
     watchOuts = knownIssues.slice(0, 1);
   }
   
@@ -331,6 +388,7 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage) {
     platformInsights,
     watchOuts,
     hasDetailedData: !!(carRecs || dbRecs),
+    source: dbRecs ? 'cars.upgradeRecommendations' : 'static_file',
   };
 }
 
@@ -612,6 +670,9 @@ export default function UpgradeCenter({
   const { vehicles, applyModifications, addVehicle } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
   
+  // Vehicle-specific tuning profile (safe additive enhancement)
+  const { profile: tuningProfile, hasProfile: hasTuningProfile, loading: tuningProfileLoading } = useTuningProfile(car);
+  
   // All useState hooks must be called unconditionally (before any early returns)
   const [selectedPackage, setSelectedPackage] = useState('stock');
   const [selectedModules, setSelectedModules] = useState([]);
@@ -830,8 +891,9 @@ export default function UpgradeCenter({
   }, [car]);
   
   const detailedRecommendation = useMemo(() => {
-    return generateDetailedRecommendation(car, profile.stockMetrics, selectedPackage);
-  }, [car, profile.stockMetrics, selectedPackage]);
+    // Pass tuningProfile as the preferred data source (car_tuning_profiles is source of truth)
+    return generateDetailedRecommendation(car, profile.stockMetrics, selectedPackage, tuningProfile);
+  }, [car, profile.stockMetrics, selectedPackage, tuningProfile]);
   
   const upgradesByCategory = useMemo(() => {
     const result = {};
@@ -1255,6 +1317,228 @@ export default function UpgradeCenter({
           </div>
         </div>
       </div>
+      
+      {/* Vehicle-Specific Tuning Insights - Shows consolidated data when available */}
+      {hasTuningProfile && tuningProfile && (
+        <div className={styles.tuningInsightsSection}>
+          <div className={styles.tuningInsightsHeader}>
+            <div className={styles.tuningInsightsTitle}>
+              <Icons.turbo size={20} />
+              <span>Vehicle-Specific Tuning Data</span>
+              {tuningProfile.engine_family && (
+                <span className={styles.tuningEngineBadge}>{tuningProfile.engine_family}</span>
+              )}
+              {/* Data Quality Badge */}
+              {tuningProfile.data_quality_tier && tuningProfile.data_quality_tier !== 'unknown' && (
+                <span 
+                  className={styles.dataQualityBadge}
+                  style={{ '--quality-color': getDataQualityInfo(tuningProfile).color }}
+                  title={getDataQualityInfo(tuningProfile).description}
+                >
+                  {getDataQualityInfo(tuningProfile).label}
+                </span>
+              )}
+            </div>
+            {tuningProfile.stock_whp && (
+              <div className={styles.tuningStockPower}>
+                Stock: <strong>{tuningProfile.stock_whp} WHP</strong>
+                {tuningProfile.stock_wtq && <span> / {tuningProfile.stock_wtq} WTQ</span>}
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.tuningInsightsGrid}>
+            {/* NEW: Objective-Based Upgrades (preferred) */}
+            {hasObjectiveData(tuningProfile) && (() => {
+              const objectives = getUpgradesByObjective(tuningProfile);
+              const objectiveLabels = {
+                power: { label: 'Power Upgrades', icon: Icons.bolt, color: '#ef4444' },
+                handling: { label: 'Handling', icon: Icons.car, color: '#3b82f6' },
+                braking: { label: 'Braking', icon: Icons.shield, color: '#f59e0b' },
+                cooling: { label: 'Cooling', icon: Icons.thermometer, color: '#06b6d4' },
+                sound: { label: 'Sound/Exhaust', icon: Icons.volume, color: '#8b5cf6' },
+                aero: { label: 'Aero', icon: Icons.wind, color: '#10b981' }
+              };
+              
+              return Object.entries(objectives)
+                .filter(([, upgrades]) => upgrades?.length > 0)
+                .slice(0, 4) // Show max 4 objectives
+                .map(([key, upgrades]) => {
+                  const config = objectiveLabels[key] || { label: key, icon: Icons.settings, color: '#6b7280' };
+                  const IconComponent = config.icon;
+                  
+                  return (
+                    <div key={key} className={styles.tuningCard}>
+                      <div className={styles.tuningCardHeader} style={{ borderColor: config.color }}>
+                        <IconComponent size={16} style={{ color: config.color }} />
+                        <span>{config.label}</span>
+                        <span className={styles.upgradeCount}>{upgrades.length}</span>
+                      </div>
+                      <div className={styles.upgradeList}>
+                        {upgrades.slice(0, 4).map((upgrade, idx) => (
+                          <div key={idx} className={styles.upgradeItem}>
+                            <span className={styles.upgradeName}>{upgrade.name}</span>
+                            {upgrade.gains?.hp && (
+                              <span className={styles.upgradeGain}>
+                                +{upgrade.gains.hp.low}-{upgrade.gains.hp.high} HP
+                              </span>
+                            )}
+                            {upgrade.cost && (
+                              <span className={styles.upgradeCost}>
+                                ${upgrade.cost.low?.toLocaleString()}-${upgrade.cost.high?.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {upgrades.length > 4 && (
+                          <div className={styles.upgradeMore}>
+                            +{upgrades.length - 4} more upgrades
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                });
+            })()}
+            
+            {/* FALLBACK: Stage Progressions (legacy data) */}
+            {!hasObjectiveData(tuningProfile) && tuningProfile.stage_progressions?.length > 0 && (
+              <div className={styles.tuningCard}>
+                <div className={styles.tuningCardHeader}>
+                  <Icons.bolt size={16} />
+                  <span>Stage Progressions</span>
+                </div>
+                <div className={styles.stageList}>
+                  {getFormattedStages(tuningProfile).map((stage, idx) => (
+                    <div key={idx} className={styles.stageItem}>
+                      <div className={styles.stageHeader}>
+                        <span className={styles.stageName}>{stage.stage}</span>
+                        {stage.hpGainLow !== undefined && stage.hpGainHigh !== undefined && stage.hpGainHigh > 0 && (
+                          <span className={styles.stageGain}>+{stage.hpGainLow}-{stage.hpGainHigh} HP</span>
+                        )}
+                      </div>
+                      <div className={styles.stageComponents}>
+                        {stage.components?.slice(0, 3).join(' • ')}
+                        {stage.components?.length > 3 && ` +${stage.components.length - 3} more`}
+                      </div>
+                      <div className={styles.stageMeta}>
+                        {stage.costLow !== undefined && stage.costHigh !== undefined && (
+                          <span className={styles.stageCost}>${stage.costLow.toLocaleString()} - ${stage.costHigh.toLocaleString()}</span>
+                        )}
+                        {tuningProfile.stock_whp && stage.hpGainHigh > 0 && (
+                          <span className={styles.stageTotalHp}>→ {tuningProfile.stock_whp + stage.hpGainHigh} WHP</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Platform Insights (from consolidated data) */}
+            {(() => {
+              const insights = getPlatformInsights(tuningProfile);
+              const hasInsights = (insights.strengths?.length > 0 || insights.weaknesses?.length > 0);
+              
+              if (!hasInsights) return null;
+              
+              return (
+                <div className={styles.tuningCard}>
+                  <div className={styles.tuningCardHeader}>
+                    <Icons.info size={16} />
+                    <span>Platform Insights</span>
+                  </div>
+                  <div className={styles.insightsList}>
+                    {insights.strengths?.slice(0, 3).map((strength, idx) => (
+                      <div key={`s-${idx}`} className={styles.insightStrength}>
+                        <Icons.check size={12} />
+                        <span>{strength}</span>
+                      </div>
+                    ))}
+                    {insights.weaknesses?.slice(0, 2).map((weakness, idx) => (
+                      <div key={`w-${idx}`} className={styles.insightWeakness}>
+                        <Icons.alertTriangle size={12} />
+                        <span>{weakness}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+            
+            {/* Tuning Platforms (fallback) */}
+            {!hasObjectiveData(tuningProfile) && tuningProfile.tuning_platforms?.length > 0 && (
+              <div className={styles.tuningCard}>
+                <div className={styles.tuningCardHeader}>
+                  <Icons.settings size={16} />
+                  <span>Tuning Platforms</span>
+                </div>
+                <div className={styles.platformList}>
+                  {getFormattedPlatforms(tuningProfile).map((platform, idx) => (
+                    <div key={idx} className={styles.platformItem}>
+                      <span className={styles.platformName}>{platform.name}</span>
+                      {platform.priceLow && platform.priceHigh && (
+                        <span className={styles.platformPrice}>${platform.priceLow} - ${platform.priceHigh}</span>
+                      )}
+                      {platform.notes && (
+                        <span className={styles.platformNotes}>{platform.notes}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Power Limits */}
+            {tuningProfile.power_limits && Object.keys(tuningProfile.power_limits).length > 0 && (
+              <div className={styles.tuningCard}>
+                <div className={styles.tuningCardHeader}>
+                  <Icons.alertTriangle size={16} />
+                  <span>Power Limits</span>
+                </div>
+                <div className={styles.limitsList}>
+                  {getFormattedPowerLimits(tuningProfile).map((limit, idx) => (
+                    <div key={idx} className={styles.limitItem}>
+                      <span className={styles.limitName}>{limit.name}</span>
+                      <span className={styles.limitValue}>{limit.value}</span>
+                      {limit.notes && <span className={styles.limitNotes}>{limit.notes}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Brand Recommendations (fallback) */}
+            {!hasObjectiveData(tuningProfile) && tuningProfile.brand_recommendations && Object.keys(tuningProfile.brand_recommendations).length > 0 && (
+              <div className={styles.tuningCard}>
+                <div className={styles.tuningCardHeader}>
+                  <Icons.check size={16} />
+                  <span>Recommended Brands</span>
+                </div>
+                <div className={styles.brandsList}>
+                  {getFormattedBrands(tuningProfile).slice(0, 4).map((cat, idx) => (
+                    <div key={idx} className={styles.brandCategory}>
+                      <span className={styles.brandCategoryName}>{cat.name}</span>
+                      <span className={styles.brandNames}>{cat.brands.slice(0, 4).join(', ')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Data source indicator */}
+          <div className={styles.tuningDataSource}>
+            <span>Data from AutoRev Tuning Database</span>
+            {tuningProfile.platform_insights?.youtube_insights?.youtube_video_count > 0 && (
+              <span> • Informed by {tuningProfile.platform_insights.youtube_insights.youtube_video_count} YouTube reviews</span>
+            )}
+            {getTotalUpgradeCount(tuningProfile) > 0 && (
+              <span> • {getTotalUpgradeCount(tuningProfile)} upgrades tracked</span>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* Vehicle Configuration Section - Factory Config & Wheels */}
       <div className={styles.configSection}>

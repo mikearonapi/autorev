@@ -12,12 +12,14 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import * as enrichedDataService from '@/lib/enrichedDataService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/manual-data
  * Get manual data entries for a car
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -27,25 +29,17 @@ export async function GET(request, { params }) {
     );
   }
   
-  try {
-    const { searchParams } = new URL(request.url);
-    const dataType = searchParams.get('type'); // Optional filter
-    
-    const manualData = await enrichedDataService.getManualData(slug, dataType);
-    
-    return NextResponse.json({
-      success: true,
-      slug,
-      count: manualData.length,
-      entries: manualData,
-    });
-  } catch (err) {
-    console.error('[Manual Data API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch manual data', message: err.message },
-      { status: 500 }
-    );
-  }
+  const { searchParams } = new URL(request.url);
+  const dataType = searchParams.get('type'); // Optional filter
+  
+  const manualData = await enrichedDataService.getManualData(slug, dataType);
+  
+  return NextResponse.json({
+    success: true,
+    slug,
+    count: manualData.length,
+    entries: manualData,
+  });
 }
 
 /**
@@ -62,7 +56,7 @@ export async function GET(request, { params }) {
  *   enteredBy: 'user@example.com'
  * }
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
   const { slug } = params;
   
   if (!slug) {
@@ -79,8 +73,7 @@ export async function POST(request, { params }) {
     );
   }
   
-  try {
-    const body = await request.json();
+  const body = await request.json();
     
     // Validate required fields
     if (!body.dataType) {
@@ -138,14 +131,10 @@ export async function POST(request, { params }) {
       slug,
       entry: result.data,
     });
-  } catch (err) {
-    console.error('[Manual Data API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to save manual data', message: err.message },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/manual-data', feature: 'browse-cars' });
+export const POST = withErrorLogging(handlePost, { route: 'cars/manual-data', feature: 'browse-cars' });
 
 /**
  * Update pricing aggregate from manual entry
@@ -159,15 +148,22 @@ async function updatePricingFromManualEntry(slug, entry) {
   // more sophisticated handling
   
   if (entry.data.price && entry.source) {
+    // Resolve car_id (car_slug column no longer exists on car_price_history)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      console.warn('[manual-data] Cannot save price history: car_id not resolved for slug:', slug);
+      return;
+    }
+    
     // Save to price history
     await supabase
       .from('car_price_history')
       .upsert({
-        car_slug: slug,
+        car_id: carId,
         source: `manual_${entry.source.toLowerCase().replace(/\s+/g, '_')}`,
         price: entry.data.price,
         recorded_at: new Date().toISOString().split('T')[0],
-      }, { onConflict: 'car_slug,source,recorded_at' });
+      }, { onConflict: 'car_id,source,recorded_at' });
   }
 }
 

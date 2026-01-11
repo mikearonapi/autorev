@@ -1,0 +1,21 @@
+# Truck & SUV Variants - Gap Fill Round 2
+# Generated: January 11, 2026
+
+# Ram variants
+Ram 1500 Rebel (2019-2024)
+Ram Power Wagon (2017-2024)
+
+# Ford variants
+Ford F-150 Lightning (2022-2024)
+Ford Ranger Raptor (2024)
+
+# Jeep Gladiator variants
+Jeep Gladiator Rubicon (2020-2024)
+Jeep Gladiator Mojave (2020-2024)
+
+# Other trucks/SUVs
+GMC Hummer EV Pickup (2022-2024)
+Rivian R1S (2022-2024)
+Toyota Sequoia TRD Pro (2023-2024)
+Lexus GX 550 (2024)
+Toyota Tacoma (2024)

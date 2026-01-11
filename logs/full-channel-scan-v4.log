@@ -1,0 +1,348 @@
+[fetch-all] ========================================
+[fetch-all] YouTube Full Channel Video Fetcher
+[fetch-all] ========================================
+[fetch-all] Mode: LIVE
+[fetch-all] Max videos per channel: 500
+[fetch-all] 
+[fetch-all] Processing 11 channels
+[fetch-all] Loaded 309 car slugs
+[fetch-all] 
+[fetch-all] 
+========================================
+[fetch-all] Channel: throtl (@throtl)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @throtl
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Total videos fetched: 390
+[fetch-all]   Analyzing 390 videos for car relevance...
+[fetch-all]     Batch 1/10...
+[fetch-all:verbose]       Found 29 matches in batch
+[fetch-all]     Batch 2/10...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 3/10...
+[fetch-all:verbose]       Found 34 matches in batch
+[fetch-all]     Batch 4/10...
+[fetch-all:verbose]       Found 32 matches in batch
+[fetch-all]     Batch 5/10...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 6/10...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 7/10...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 8/10...
+[fetch-all:verbose]       Found 37 matches in batch
+[fetch-all]     Batch 9/10...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 10/10...
+[fetch-all:verbose]       Found 23 matches in batch
+[fetch-all]   Found 325 car-specific videos
+[fetch-all]   Queueing 325 relevant videos...
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: new row for relation "youtube_ingestion_queue" violates check constraint "youtube_ingestion_queue_discovered_via_check"
+[fetch-all:verbose]     - Skip (error): undefined

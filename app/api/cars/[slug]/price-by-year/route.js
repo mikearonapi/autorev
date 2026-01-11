@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/price-by-year
@@ -20,6 +21,12 @@ async function handleGet(request, { params }) {
   }
   
   try {
+    // Resolve car_id from slug (car_slug column no longer exists on these tables)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ pricesByYear: [], priceHistory: [] }, { status: 200 });
+    }
+    
     // Get year-by-year pricing
     const { data: yearData, error: yearError } = await supabase
       .from('car_market_pricing_years')
@@ -33,7 +40,7 @@ async function handleGet(request, { params }) {
         source,
         fetched_at
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .order('model_year', { ascending: false });
     
     if (yearError) {
@@ -51,7 +58,7 @@ async function handleGet(request, { params }) {
         sample_size,
         source
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .order('recorded_at', { ascending: true });
     
     if (historyError) {

@@ -109,9 +109,10 @@ export async function GET(request) {
     // =========================================================================
     // Data Pipeline Status
     // =========================================================================
+    // Note: car_slug column no longer exists on scrape_jobs, use car_id
     const { data: recentJobs } = await supabase
       .from('scrape_jobs')
-      .select('id, job_type, status, car_slug, created_at, completed_at, error_message')
+      .select('id, job_type, status, car_id, created_at, completed_at, error_message')
       .gte('created_at', last24h.toISOString())
       .order('created_at', { ascending: false })
       .limit(20);
@@ -253,7 +254,7 @@ export async function GET(request) {
             id: j.id,
             type: j.job_type,
             status: j.status,
-            car: j.car_slug,
+            car_id: j.car_id,
             error: j.error_message,
           })),
         },

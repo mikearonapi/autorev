@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/recalls
@@ -24,6 +25,12 @@ async function handleGet(request, { params }) {
   }
 
   try {
+    // Resolve car_id from slug (car_slug column no longer exists on car_recalls)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ recalls: [], count: 0 }, { status: 200 });
+    }
+    
     const { searchParams } = new URL(request.url);
     const limitRaw = Number(searchParams.get('limit') || 50);
     const limit = Math.max(1, Math.min(Number.isFinite(limitRaw) ? limitRaw : 50, 200));
@@ -47,7 +54,7 @@ async function handleGet(request, { params }) {
           is_incomplete
         `
       )
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .order('recall_date', { ascending: false, nullsFirst: false })
       .order('report_received_date', { ascending: false, nullsFirst: false })
       .limit(limit);

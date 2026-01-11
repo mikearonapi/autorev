@@ -9,14 +9,14 @@
 
 import { NextResponse } from 'next/server';
 import { getServiceClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * POST /api/ai-mechanic/feedback
  * Submit feedback for an AL response
  */
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     const {
       conversationId,
       messageIndex,
@@ -103,21 +103,13 @@ export async function POST(request) {
       success: true,
       feedbackId: data?.id,
     });
-
-  } catch (err) {
-    console.error('[AL Feedback] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to process feedback' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * GET /api/ai-mechanic/feedback
  * Get feedback stats (admin only, future use)
  */
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const conversationId = searchParams.get('conversationId');
 
@@ -153,6 +145,9 @@ export async function GET(request) {
     feedback: data || [],
   });
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'ai-mechanic/feedback', feature: 'al' });
+export const GET = withErrorLogging(handleGet, { route: 'ai-mechanic/feedback', feature: 'al' });
 
 
 

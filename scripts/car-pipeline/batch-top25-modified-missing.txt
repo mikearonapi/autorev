@@ -1,0 +1,71 @@
+# Top 25 Most Modified Cars - Missing Vehicles
+# Generated: January 10, 2026
+# These cars were identified as missing from the AutoRev database
+# based on the "Top 25 Most Modified Cars" list
+
+# ============================================
+# COMPLETELY MISSING (High Priority)
+# ============================================
+
+# Hyundai Veloster N - Popular modern hot hatch with huge mod community
+Hyundai Veloster N (2019-2023)
+
+# Kia Stinger GT - 365hp twin-turbo V6, active tuning scene
+Kia Stinger GT (2018-2023)
+
+# ============================================
+# PARTIALLY MISSING - Ford Focus ST
+# (We have Focus RS, but not ST)
+# ============================================
+
+# Ford Focus ST - Popular FWD sports car with huge aftermarket
+Ford Focus ST Mk3 (2013-2018)
+
+# ============================================
+# PARTIALLY MISSING - Infiniti G37
+# (We have G35, but not G37)
+# ============================================
+
+# Infiniti G37 Coupe - VQ37 is extremely popular for mods
+Infiniti G37 Coupe (2008-2013)
+
+# Infiniti G37 Sedan - VQ37 sedan variant
+Infiniti G37 Sedan (2009-2013)
+
+# ============================================
+# PARTIALLY MISSING - Audi S4/S5
+# (We have S4 B5 and RS5, but missing newer S4 and all S5)
+# ============================================
+
+# Audi S4 B6/B7 - 4.2L V8 era
+Audi S4 B6 (2004-2005)
+Audi S4 B7 (2005-2008)
+
+# Audi S4 B8/B8.5 - 3.0T supercharged V6
+Audi S4 B8 (2010-2016)
+
+# Audi S4 B9 - 3.0T turbo V6
+Audi S4 B9 (2017-2024)
+
+# Audi S5 B8/B8.5 - Coupe with 4.2L V8 then 3.0T
+Audi S5 B8 (2008-2016)
+
+# Audi S5 B9 - Modern 3.0T turbo
+Audi S5 B9 (2017-2024)
+
+# ============================================
+# PARTIALLY MISSING - Porsche Boxster
+# (We have Cayman variants, but no Boxster)
+# ============================================
+
+# Porsche Boxster 986 - First generation, IMS bearing concerns
+Porsche Boxster S 986 (1997-2004)
+
+# Porsche Boxster 987 - Second generation, improved IMS
+Porsche Boxster S 987 (2005-2012)
+
+# Porsche Boxster 981 - Flat-6 NA, shared with 981 Cayman
+Porsche Boxster S 981 (2012-2016)
+
+# Porsche 718 Boxster GTS 4.0 - NA flat-6 revival
+Porsche 718 Boxster GTS 4.0 (2020-2024)

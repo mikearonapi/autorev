@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 // Tier 1 channels - highest trust
 const TIER_1_CHANNELS = [
@@ -23,6 +24,8 @@ const TIER_1_CHANNELS = [
  * - role: Filter by role (primary, comparison, mention)
  * - min_confidence: Minimum match confidence (0-1)
  * - tier1_only: Only return Tier 1 channel videos
+ * 
+ * Updated 2026-01-11: Uses car_id for queries (car_slug column removed from youtube_video_car_links)
  */
 async function handleGet(request, { params }) {
   try {
@@ -50,7 +53,13 @@ async function handleGet(request, { params }) {
       });
     }
 
-    // Build query
+    // Resolve car_id for efficient query (car_slug column no longer exists)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ videos: [], count: 0, total: 0 });
+    }
+
+    // Build query using car_id
     let query = supabase
       .from('youtube_video_car_links')
       .select(`
@@ -88,7 +97,7 @@ async function handleGet(request, { params }) {
           processing_status
         )
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .eq('youtube_videos.processing_status', 'processed')
       .gte('match_confidence', minConfidence);
 

@@ -1,0 +1,101 @@
+# Phase 1: Sports & Performance Vehicles (Aligns with AutoRev Focus)
+# From Top 100 US Modifications Market Analysis
+# Generated: January 10, 2026
+# Total: 45 vehicles
+
+# ============================================
+# P1: CRITICAL - High Market Volume
+# ============================================
+
+# BMW Non-M Performance (Massive tuning market)
+BMW 335i E90 (2007-2013)
+BMW 340i F30 (2016-2019)
+BMW M340i G20 (2019-2024)
+
+# Hot Hatches & Compacts
+Acura RSX Type-S (2002-2006)
+MINI Cooper S R53 (2002-2006)
+MINI Cooper S R56 (2007-2013)
+MINI John Cooper Works F56 (2014-2024)
+Toyota GR Corolla (2023-2024)
+Mazdaspeed6 (2006-2007)
+
+# Korean Performance
+Hyundai Elantra N (2022-2024)
+Genesis G70 3.3T (2019-2024)
+Kia K5 GT (2021-2024)
+Hyundai Kona N (2022-2024)
+
+# Infiniti Performance
+Infiniti Q50 Red Sport 400 (2016-2024)
+Infiniti Q60 Red Sport 400 (2017-2024)
+
+# ============================================
+# P2: HIGH PRIORITY - Strong Communities
+# ============================================
+
+# Cadillac Performance
+Cadillac CTS-V Gen 1 (2004-2007)
+Cadillac ATS-V (2016-2019)
+
+# GM Performance Sedans
+Chevrolet SS (2014-2017)
+Pontiac G8 GT (2008-2009)
+Pontiac G8 GXP (2009)
+
+# Ford Performance Sedans
+Ford Taurus SHO (2010-2019)
+Ford Fusion Sport (2017-2019)
+
+# Lexus Performance
+Lexus IS350 (2006-2013)
+Lexus IS350 F Sport (2014-2020)
+Lexus IS-F (2008-2014)
+Lexus GS350 (2013-2020)
+Lexus GS-F (2016-2020)
+
+# Honda/Acura
+Acura TSX (2004-2008)
+Acura TSX (2009-2014)
+Honda Accord 2.0T Sport (2018-2022)
+Acura TL Type-S (2007-2008)
+Acura Integra Type S (2024-present)
+
+# Mazda
+Mazda 3 2.5 Turbo (2021-2024)
+Mazda 6 2.5 Turbo (2018-2021)
+
+# Mercedes
+Mercedes-AMG CLA 45 (2014-2019)
+Mercedes-AMG CLA 45 S (2020-2024)
+
+# ============================================
+# P3: MEDIUM PRIORITY - Niche but Strong
+# ============================================
+
+# Audi
+Audi A4 2.0T B8 (2009-2012)
+Audi A4 2.0T B8.5 (2013-2016)
+Audi RS6 Avant C8 (2020-2024)
+
+# BMW Classic
+BMW M3 E30 (1988-1991)
+
+# Porsche
+Porsche Panamera Turbo 971 (2017-2024)
+
+# Mitsubishi
+Mitsubishi Lancer Ralliart (2009-2015)
+
+# Dodge
+Dodge SRT-4 (2003-2005)
+
+# VW
+Volkswagen Jetta GLI Mk6 (2012-2018)
+Volkswagen Jetta GLI Mk7 (2019-2024)
+
+# Nissan
+Nissan Maxima (2016-2023)
+
+# Jaguar
+Jaguar XE S (2017-2024)

@@ -33,16 +33,12 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
-import { createClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
-import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '../../lib/backendAiLogger.js';
-import { sendFeedbackResponseEmail } from '../../lib/email.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 
-// Load environment variables from .env.local
+// Load environment variables from .env.local BEFORE importing modules that need them
 function loadEnv() {
   const envPath = path.join(PROJECT_ROOT, '.env.local');
   if (fs.existsSync(envPath)) {
@@ -64,6 +60,7 @@ function loadEnv() {
   }
 }
 
+// Load env FIRST before any dynamic imports
 loadEnv();
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -80,6 +77,12 @@ if (missingEnvVars.length > 0) {
   console.error('❌ Missing required environment variables:', missingEnvVars.join(', '));
   process.exit(1);
 }
+
+// Dynamic imports AFTER env is loaded to avoid top-level Supabase init issues
+const { createClient } = await import('@supabase/supabase-js');
+const { default: Anthropic } = await import('@anthropic-ai/sdk');
+const { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } = await import('../../lib/backendAiLogger.js');
+const { sendFeedbackResponseEmail } = await import('../../lib/email.js');
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });

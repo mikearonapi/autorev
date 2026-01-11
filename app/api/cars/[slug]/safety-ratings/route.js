@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/safety-ratings
  * 
  * Fetches safety ratings (NHTSA/IIHS) for a specific car.
  * FREE tier - part of buying research, not ownership.
+ * 
+ * Updated 2026-01-11: Uses car_id for query (car_slug column removed from car_safety_data)
  */
 async function handleGet(request, { params }) {
   const { slug } = params;
@@ -20,6 +23,12 @@ async function handleGet(request, { params }) {
   }
   
   try {
+    // Resolve car_id for efficient query (car_slug column no longer exists)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ safety: null }, { status: 200 });
+    }
+    
     const { data, error } = await supabase
       .from('car_safety_data')
       .select(`
@@ -48,7 +57,7 @@ async function handleGet(request, { params }) {
         nhtsa_fetched_at,
         iihs_fetched_at
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .maybeSingle();
     
     if (error) {

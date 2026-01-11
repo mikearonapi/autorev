@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPublicClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,9 +14,8 @@ function uniq(arr) {
  *
  * Public endpoint (RLS-safe) to retrieve relationship edges for a set of parts.
  */
-export async function POST(request) {
-  try {
-    const client = getPublicClient();
+async function handlePost(request) {
+  const client = getPublicClient();
     if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const body = await request.json().catch(() => ({}));
@@ -77,11 +77,9 @@ export async function POST(request) {
     }));
 
     return NextResponse.json({ edges: hydrated });
-  } catch (err) {
-    console.error('[api/parts/relationships] Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'parts/relationships', feature: 'tuning-shop' });
 
 
 

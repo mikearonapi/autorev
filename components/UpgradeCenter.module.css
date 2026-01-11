@@ -2293,6 +2293,377 @@
 }
 
 /* ===========================================
+   VEHICLE-SPECIFIC TUNING INSIGHTS
+   Shows real tuning data for priority vehicles
+   =========================================== */
+
+.tuningInsightsSection {
+  padding: 24px 32px;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.02) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tuningInsightsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tuningInsightsTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.tuningEngineBadge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tuningStockPower {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tuningStockPower strong {
+  color: #fff;
+}
+
+.tuningInsightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.tuningCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.tuningCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tuningCardHeader svg {
+  color: #d4af37;
+}
+
+/* Stage Progressions */
+.stageList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stageItem {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.stageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.stageName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.stageGain {
+  font-size: 12px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.stageComponents {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.stageMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stageCost {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.stageTotalHp {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4af37;
+}
+
+/* Tuning Platforms */
+.platformList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.platformItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.platformName {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.platformPrice {
+  font-size: 12px;
+  color: #10b981;
+  text-align: right;
+}
+
+.platformNotes {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Power Limits */
+.limitsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.limitItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.limitName {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.limitValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ef4444;
+  text-align: right;
+}
+
+.limitNotes {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Brand Recommendations */
+.brandsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.brandCategory {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.brandCategoryName {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #d4af37;
+}
+
+.brandNames {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Data Source */
+.tuningDataSource {
+  max-width: 1400px;
+  margin: 16px auto 0;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Data Quality Badge */
+.dataQualityBadge {
+  background: var(--quality-color, #6b7280);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: help;
+}
+
+/* Upgrade Count Badge */
+.upgradeCount {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-left: auto;
+}
+
+/* Objective-Based Upgrade List */
+.upgradeList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upgradeItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.upgradeName {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.upgradeGain {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.upgradeCost {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.upgradeMore {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+}
+
+/* Platform Insights List */
+.insightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insightStrength,
+.insightWeakness {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.insightStrength {
+  background: rgba(16, 185, 129, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.insightStrength svg {
+  color: #10b981;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.insightWeakness {
+  background: rgba(245, 158, 11, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.insightWeakness svg {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .tuningInsightsSection {
+    padding: 20px 16px;
+  }
+  
+  .tuningInsightsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .tuningInsightsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================================
    LEGACY SUPPORT (keeping old classes for compatibility)
    =========================================== */
 

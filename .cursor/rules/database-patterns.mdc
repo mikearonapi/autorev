@@ -1,0 +1,178 @@
+---
+alwaysApply: true
+---
+# Database Patterns & Standards
+
+ALWAYS follow these patterns when writing code that interacts with the database.
+
+## Cardinal Rules
+
+1. **NEVER create new tables without checking if one exists** - Search DATABASE.md and run `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'` first
+2. **NEVER use car_slug for database queries** - Always resolve to car_id first using `lib/carResolver.js`
+3. **NEVER duplicate data that exists elsewhere** - Check source of truth matrix below
+4. **ALWAYS use existing RPC functions** when available instead of writing raw queries
+
+## Identifier Pattern
+
+```javascript
+// ✅ CORRECT: Resolve slug once, use car_id everywhere
+import { resolveCarId } from '@/lib/carResolver';
+
+const carId = await resolveCarId(carSlug);
+if (!carId) return { error: 'Car not found' };
+
+const { data } = await supabase
+  .from('car_issues')
+  .select('*')
+  .eq('car_id', carId);  // Use car_id
+```
+
+```javascript
+// ❌ WRONG: Direct car_slug query
+const { data } = await supabase
+  .from('car_issues')
+  .select('*')
+  .eq('car_slug', carSlug);  // Don't do this
+
+// ❌ WRONG: OR clause (destroys index performance)
+.or(`car_id.eq.${carId},car_slug.eq.${carSlug}`)
+```
+
+## Source of Truth Matrix
+
+Before adding data to a table, verify you're using the RIGHT table:
+
+| Data Type | ✅ Use This Table | ❌ NOT These |
+|-----------|------------------|--------------|
+| Known Issues | `car_issues` | `vehicle_known_issues` (deprecated) |
+| Upgrade Recommendations | `car_tuning_profiles.upgrades_by_objective` | `cars.upgrade_recommendations` (deprecated) |
+| Track Mods | `car_tuning_profiles.upgrades_by_objective` | `cars.popular_track_mods` (deprecated) |
+| Maintenance Specs | `vehicle_maintenance_specs` | - |
+| Service Intervals | `vehicle_service_intervals` | - |
+| Dyno Runs | `car_dyno_runs` | - |
+| Lap Times | `car_track_lap_times` | - |
+| Car Base Data | `cars` | - |
+| Car Variants | `car_variants` | - |
+| Tuning Data | `car_tuning_profiles` | - |
+| Parts | `parts` + `part_fitments` | - |
+| YouTube Videos | `youtube_videos` + `youtube_video_car_links` | - |
+| User Vehicles | `user_vehicles` | - |
+| User Projects | `user_projects` | - |
+| User Favorites | `user_favorites` | - |
+| Community Posts | `community_posts` | - |
+| Community Insights | `community_insights` | - |
+| AL Conversations | `al_conversations` + `al_messages` | - |
+| Analytics | `page_views`, `click_events`, `user_events` | - |
+
+## Before Creating a New Table
+
+**STOP and check:**
+
+1. Does a table already exist for this data?
+   ```sql
+   SELECT table_name FROM information_schema.tables 
+   WHERE table_schema = 'public' AND table_name ILIKE '%keyword%';
+   ```
+
+2. Can an existing table be extended with a new column?
+
+3. Is there a JSONB column in an existing table that could store this?
+
+4. Check DATABASE.md for existing schema
+
+**If you must create a new table:**
+- Include `car_id UUID REFERENCES cars(id)` if it relates to cars
+- Include `user_id UUID REFERENCES auth.users(id)` if it relates to users
+- Add `created_at TIMESTAMPTZ DEFAULT NOW()`
+- Add `updated_at TIMESTAMPTZ DEFAULT NOW()`
+- Create an index on `car_id` and/or `user_id`
+- Add the auto-populate trigger if using car_slug:
+  ```sql
+  CREATE TRIGGER auto_car_id_tablename
+  BEFORE INSERT OR UPDATE ON tablename
+  FOR EACH ROW EXECUTE FUNCTION resolve_car_id_from_slug();
+  ```
+- Update DATABASE.md with the new table
+
+## RPC Functions to Use
+
+Always prefer these optimized RPCs over raw queries:
+
+| Need | Use This RPC |
+|------|--------------|
+| Full car context for AL | `get_car_ai_context_v2(car_slug)` |
+| Tuning/parts data | `get_car_tuning_context(car_slug)` |
+| Maintenance summary | `get_car_maintenance_summary(car_slug)` |
+| Slug → ID resolution | `resolve_car_id_from_slug()` (trigger function) |
+
+```javascript
+// ✅ CORRECT: Use RPC for complex data
+const { data } = await supabase.rpc('get_car_ai_context_v2', { 
+  p_car_slug: carSlug 
+});
+
+// ❌ WRONG: Multiple separate queries
+const car = await supabase.from('cars').select('*').eq('slug', carSlug);
+const issues = await supabase.from('car_issues').select('*').eq('car_slug', carSlug);
+const dyno = await supabase.from('car_dyno_runs').select('*').eq('car_slug', carSlug);
+// ... N+1 query problem
+```
+
+## File Locations
+
+- **Car ID Resolution**: `lib/carResolver.js` - Use `resolveCarId()` or `resolveCarIds()`
+- **Maintenance Data**: `lib/maintenanceService.js`
+- **Enriched Data**: `lib/enrichedDataService.js`
+- **AL Tools**: `lib/alTools.js`
+- **YouTube Data**: `lib/youtubeClient.js`
+
+## Common Mistakes to Avoid
+
+### ❌ Creating a new "issues" table
+```sql
+-- DON'T create another issues table
+CREATE TABLE my_new_issues_table (...);
+-- USE car_issues instead
+```
+
+### ❌ Storing car reference by slug only
+```sql
+-- DON'T do this
+CREATE TABLE my_table (
+  car_slug TEXT  -- Missing car_id!
+);
+-- DO this instead
+CREATE TABLE my_table (
+  car_id UUID REFERENCES cars(id),
+  car_slug TEXT  -- Optional, for display only
+);
+```
+
+### ❌ Querying without car_id index
+```javascript
+// DON'T query large tables by slug
+.eq('car_slug', slug)  // Full table scan!
+
+// DO resolve to car_id first
+const carId = await resolveCarId(slug);
+.eq('car_id', carId)  // Uses index
+```
+
+### ❌ Duplicating data across tables
+```javascript
+// DON'T store the same data in multiple places
+// If tuning data exists in car_tuning_profiles, don't also put it in cars.tuning_data
+```
+
+## Quick Reference Commands
+
+```bash
+# Check if table exists
+supabase mcp execute_sql "SELECT table_name FROM information_schema.tables WHERE table_name ILIKE '%search%'"
+
+# Check table columns
+supabase mcp execute_sql "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'tablename'"
+
+# Check for duplicates
+supabase mcp execute_sql "SELECT car_id, COUNT(*) FROM tablename GROUP BY car_id HAVING COUNT(*) > 1"
+```

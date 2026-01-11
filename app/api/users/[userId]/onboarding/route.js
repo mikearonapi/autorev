@@ -11,6 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Valid enum values - must match options in components/onboarding/steps/ReferralStep.jsx
 const VALID_REFERRAL_SOURCES = [
@@ -23,9 +24,8 @@ const VALID_USER_INTENTS = ['owner', 'shopping', 'learning'];
  * GET /api/users/[userId]/onboarding
  * Get onboarding status and partial data for resume
  */
-export async function GET(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handleGet(request, { params }) {
+  const { userId } = await params;
     
     if (!userId) {
       return NextResponse.json(
@@ -109,23 +109,14 @@ export async function GET(request, { params }) {
         email_opt_in_events: profile?.email_opt_in_events || false,
       },
     });
-
-  } catch (err) {
-    console.error('[API/users/onboarding] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * PATCH /api/users/[userId]/onboarding
  * Save onboarding progress (partial update)
  */
-export async function PATCH(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handlePatch(request, { params }) {
+  const { userId } = await params;
     
     if (!userId) {
       return NextResponse.json(
@@ -232,23 +223,14 @@ export async function PATCH(request, { params }) {
       success: true,
       currentStep: data?.onboarding_step || step,
     });
-
-  } catch (err) {
-    console.error('[API/users/onboarding] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * POST /api/users/[userId]/onboarding
  * Complete onboarding (sets completion timestamp)
  */
-export async function POST(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handlePost(request, { params }) {
+  const { userId } = await params;
     
     if (!userId) {
       return NextResponse.json(
@@ -346,13 +328,9 @@ export async function POST(request, { params }) {
       completedAt: data?.onboarding_completed_at,
       userIntent: data?.user_intent,
     });
-
-  } catch (err) {
-    console.error('[API/users/onboarding] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/onboarding', feature: 'onboarding' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'users/onboarding', feature: 'onboarding' });
+export const POST = withErrorLogging(handlePost, { route: 'users/onboarding', feature: 'onboarding' });
 

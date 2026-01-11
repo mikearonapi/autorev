@@ -5,6 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Simple ZIP code to city/state mapping for common US ZIPs
 // In production, could use a full database or external API
@@ -759,7 +760,7 @@ function lookupZip(zip) {
  * GET /api/user/location?zip=12345
  * Lookup city/state from ZIP code
  */
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const zip = searchParams.get('zip');
   
@@ -786,9 +787,8 @@ export async function GET(request) {
  * POST /api/user/location
  * Save user location to profile
  */
-export async function POST(request) {
-  try {
-    const supabase = await createServerSupabaseClient();
+async function handlePost(request) {
+  const supabase = await createServerSupabaseClient();
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -849,23 +849,14 @@ export async function POST(request) {
         state: data.location_state,
       },
     });
-    
-  } catch (err) {
-    console.error('[Location] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * DELETE /api/user/location
  * Clear user location from profile
  */
-export async function DELETE(request) {
-  try {
-    const supabase = await createServerSupabaseClient();
+async function handleDelete(request) {
+  const supabase = await createServerSupabaseClient();
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -897,13 +888,9 @@ export async function DELETE(request) {
     }
     
     return NextResponse.json({ success: true });
-    
-  } catch (err) {
-    console.error('[Location] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'user/location', feature: 'events' });
+export const POST = withErrorLogging(handlePost, { route: 'user/location', feature: 'events' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'user/location', feature: 'events' });
 

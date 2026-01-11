@@ -10,13 +10,13 @@
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * POST - Save an event
  */
-export async function POST(request, { params }) {
-  try {
-    const { slug } = await params;
+async function handlePost(request, { params }) {
+  const { slug } = await params;
     
     console.log('[API/events/save] POST request for slug:', slug);
     
@@ -122,21 +122,13 @@ export async function POST(request, { params }) {
       saved: true,
       alreadySaved: false,
     });
-  } catch (err) {
-    console.error('[API/events/save] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * DELETE - Unsave an event
  */
-export async function DELETE(request, { params }) {
-  try {
-    const { slug } = await params;
+async function handleDelete(request, { params }) {
+  const { slug } = await params;
     
     console.log('[API/events/save] DELETE request for slug:', slug);
     
@@ -201,12 +193,7 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({
       saved: false,
     });
-  } catch (err) {
-    console.error('[API/events/save] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
-  }
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'events/save', feature: 'events' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'events/save', feature: 'events' });

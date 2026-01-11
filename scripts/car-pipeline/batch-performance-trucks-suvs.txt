@@ -1,0 +1,23 @@
+# Performance Trucks & SUVs - Gap Fill
+# Generated: January 11, 2026
+
+# Ford F-150 Raptor variants
+Ford F-150 Raptor (2017-2020)
+Ford F-150 Raptor (2021-2024)
+Ford F-150 Raptor R (2023-2024)
+
+# Ram TRX
+Ram 1500 TRX (2021-2024)
+
+# Toyota TRD Pro variants
+Toyota Tacoma TRD Pro (2016-2023)
+Toyota Tundra TRD Pro (2022-2024)
+
+# GM Off-Road variants
+Chevrolet Silverado ZR2 (2022-2024)
+GMC Sierra AT4X (2022-2024)
+
+# Performance SUVs
+Ford Bronco Raptor (2022-2024)
+Jeep Wrangler Rubicon 392 (2021-2024)
+Jeep Grand Cherokee Trackhawk (2018-2021)

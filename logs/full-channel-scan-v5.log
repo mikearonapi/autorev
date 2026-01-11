@@ -1,0 +1,3168 @@
+[fetch-all] ========================================
+[fetch-all] YouTube Full Channel Video Fetcher
+[fetch-all] ========================================
+[fetch-all] Mode: LIVE
+[fetch-all] Max videos per channel: 500
+[fetch-all] 
+[fetch-all] Processing 11 channels
+[fetch-all] Loaded 309 car slugs
+[fetch-all] 
+[fetch-all] 
+========================================
+[fetch-all] Channel: throtl (@throtl)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @throtl
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 34 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 32 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 36 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 37 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 31 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 33 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 34 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]   Found 420 car-specific videos
+[fetch-all]   Queueing 420 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Hoonigan (@TheHoonigans)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @TheHoonigans
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 28 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:error] JSON parse error in batch: Expected ',' or '}' after property value in JSON a
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 49 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 60 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 46 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 51 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 44 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 51 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 37 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 46 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 36 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 39 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]   Found 505 car-specific videos
+[fetch-all]   Queueing 505 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Cleetus McFarland (@CleetusM)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @CleetusM
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 8 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 8 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 11 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 8 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 5 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 3 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 4 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 9 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 22 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 15 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 15 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 14 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 10 matches in batch
+[fetch-all]   Found 132 car-specific videos
+[fetch-all]   Queueing 132 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Mighty Car Mods (@mightycarmods)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @mightycarmods
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 27 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 21 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 20 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 25 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 27 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 13 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 28 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 15 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 20 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 31 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 10 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 17 matches in batch
+[fetch-all]   Found 284 car-specific videos
+[fetch-all]   Queueing 284 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Superfast Matt (@SuperfastMatt)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @SuperfastMatt
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +27 videos (total: 177)
+[fetch-all]   Total videos fetched: 177
+[fetch-all]   Analyzing 177 videos for car relevance...
+[fetch-all]     Batch 1/5...
+[fetch-all:verbose]       Found 8 matches in batch
+[fetch-all]     Batch 2/5...
+[fetch-all:verbose]       Found 11 matches in batch
+[fetch-all]     Batch 3/5...
+[fetch-all:verbose]       Found 6 matches in batch
+[fetch-all]     Batch 4/5...
+[fetch-all:verbose]       Found 12 matches in batch
+[fetch-all]     Batch 5/5...
+[fetch-all:verbose]       Found 3 matches in batch
+[fetch-all]   Found 40 car-specific videos
+[fetch-all]   Queueing 40 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Gingium (@_Gingium_)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @_Gingium_
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 16 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 7 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 19 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 17 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 20 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 16 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 31 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 23 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 24 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 19 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 16 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 2 matches in batch
+[fetch-all]   Found 228 car-specific videos
+[fetch-all]   Queueing 228 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Jimmy Oakes (@JimmyOakes)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @JimmyOakes
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 21 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 9 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 12 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 14 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 14 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 15 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 16 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 25 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 28 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 10 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 22 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 3 matches in batch
+[fetch-all]   Found 207 car-specific videos
+[fetch-all]   Queueing 207 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: M539 Restorations (@M539Restorations)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @M539Restorations
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Total videos fetched: 30
+[fetch-all]   Analyzing 30 videos for car relevance...
+[fetch-all]     Batch 1/1...
+[fetch-all:verbose]       Found 24 matches in batch
+[fetch-all]   Found 24 car-specific videos
+[fetch-all]   Queueing 24 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: Vice Grip Garage (@ViceGripGarage)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @ViceGripGarage
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 28 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 32 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 23 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 22 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 24 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 17 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 25 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 23 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 21 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 13 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 22 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 15 matches in batch
+[fetch-all]   Found 283 car-specific videos
+[fetch-all]   Queueing 283 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     - Skip (already_queued): undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: ChrisFix (@chrisfix)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @chrisfix
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +20 videos (total: 380)
+[fetch-all]   Total videos fetched: 380
+[fetch-all]   Analyzing 380 videos for car relevance...
+[fetch-all]     Batch 1/10...
+[fetch-all:verbose]       Found 4 matches in batch
+[fetch-all]     Batch 2/10...
+[fetch-all:verbose]       Found 2 matches in batch
+[fetch-all]     Batch 3/10...
+[fetch-all:verbose]       Found 1 matches in batch
+[fetch-all]     Batch 4/10...
+[fetch-all:verbose]       Found 1 matches in batch
+[fetch-all]     Batch 5/10...
+[fetch-all:verbose]       Found 2 matches in batch
+[fetch-all]     Batch 6/10...
+[fetch-all:error] JSON parse error in batch: Unexpected non-whitespace character after JSON at 
+[fetch-all]     Batch 7/10...
+[fetch-all:verbose]       Found 2 matches in batch
+[fetch-all]     Batch 8/10...
+[fetch-all:verbose]       Found 5 matches in batch
+[fetch-all]     Batch 9/10...
+[fetch-all:verbose]       Found 10 matches in batch
+[fetch-all]     Batch 10/10...
+[fetch-all:verbose]       Found 9 matches in batch
+[fetch-all]   Found 36 car-specific videos
+[fetch-all]   Queueing 36 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+  Waiting before next channel...
+[fetch-all] 
+========================================
+[fetch-all] Channel: South Main Auto Repair (@SouthMainAuto)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @SouthMainAuto
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 26 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 25 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 24 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 26 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 23 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 25 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 30 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 26 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 17 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 17 matches in batch
+[fetch-all]   Found 334 car-specific videos
+[fetch-all]   Queueing 334 relevant videos...
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all:verbose]     + undefined
+[fetch-all] 
+========================================
+[fetch-all] COMPLETE
+[fetch-all] ========================================
+[fetch-all] Channels processed:  11
+[fetch-all] Total videos found:  4587
+[fetch-all] Car-specific videos: 2493
+[fetch-all] Videos queued:       2299
+[fetch-all] Videos skipped:      187
+[fetch-all] 
+Next: Process the queue with Supadata:
+[fetch-all]   node scripts/youtube-diy-processor.js --queue --limit 100

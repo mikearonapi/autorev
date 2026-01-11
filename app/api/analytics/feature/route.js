@@ -8,6 +8,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -47,9 +48,8 @@ const FEATURE_CATEGORIES = {
   'daily_dose': 'discovery'
 };
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     
     const {
       sessionId,
@@ -114,10 +114,7 @@ export async function POST(request) {
     }
     
     return Response.json({ success: true });
-    
-  } catch (error) {
-    console.error('[Feature API] Error:', error);
-    return Response.json({ error: 'Internal error' }, { status: 500 });
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'analytics/feature', feature: 'analytics' });
 

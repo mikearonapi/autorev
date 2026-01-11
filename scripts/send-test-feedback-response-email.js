@@ -12,25 +12,22 @@
  *   node scripts/send-test-feedback-response-email.js email@example.com --type=feature_request
  */
 
-import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Load env vars
+// Load env vars (required for lib/email.js which uses Supabase and Resend)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '..', '.env.local') });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app';
-
 /**
- * Import the canonical feedback response email template generator
+ * Import the canonical feedback response email function
+ * This function fetches car image from database automatically
  */
-async function getEmailTemplate() {
-  const { EMAIL_TEMPLATES, EMAIL_CONFIG } = await import('../lib/email.js');
-  return { EMAIL_TEMPLATES, EMAIL_CONFIG };
+async function getEmailFunction() {
+  const { sendFeedbackResponseEmail } = await import('../lib/email.js');
+  return { sendFeedbackResponseEmail };
 }
 
 /**
@@ -65,53 +62,40 @@ function parseArgs(args) {
   return result;
 }
 
-async function sendFeedbackResponseEmail(to, options) {
+async function sendTestFeedbackEmail(to, options) {
   console.log(`\nPreparing feedback response email for ${to}...`);
   console.log(`  Type: ${options.type}`);
   
-  // Get template
-  const { EMAIL_TEMPLATES, EMAIL_CONFIG } = await getEmailTemplate();
-  const template = EMAIL_TEMPLATES['feedback-response'];
-  
-  if (!template) {
-    console.error('❌ Template not found: feedback-response');
-    process.exit(1);
-  }
-
-  const templateVars = {
-    user_name: options.userName,
-    feedback_type: options.type,
-    car_name: options.type === 'car_request' ? options.carName : null,
-    car_slug: options.type === 'car_request' ? options.carSlug : null,
-    original_feedback: options.feedback,
-  };
-
   if (options.type === 'car_request') {
     console.log(`  Car: ${options.carName}`);
     console.log(`  Slug: ${options.carSlug}`);
+    console.log(`  (Hero image will be fetched from database)`);
   }
-  
-  const { html, text } = template.render(templateVars);
-  const subject = template.subject;
 
+  // Use the canonical sendFeedbackResponseEmail function which:
+  // - Validates the car slug exists
+  // - Fetches the hero image URL from the database
+  // - Logs the email to the database
+  const { sendFeedbackResponseEmail } = await getEmailFunction();
+  
   console.log(`  Sending email...`);
 
-  const { data, error } = await resend.emails.send({
-    from: 'AutoRev <hello@autorev.app>',
-    to: [to],
-    replyTo: 'support@autorev.app',
-    subject,
-    html,
-    text,
+  const result = await sendFeedbackResponseEmail({
+    to,
+    userName: options.userName,
+    feedbackType: options.type,
+    carName: options.type === 'car_request' ? options.carName : null,
+    carSlug: options.type === 'car_request' ? options.carSlug : null,
+    originalFeedback: options.feedback,
   });
 
-  if (error) {
-    console.error(`  ❌ Failed to send: ${error.message}`);
-    return { success: false, error };
+  if (!result.success) {
+    console.error(`  ❌ Failed to send: ${result.error}`);
+    return result;
   }
 
-  console.log(`  ✅ Sent! ID: ${data.id}`);
-  return { success: true, id: data.id };
+  console.log(`  ✅ Sent! ID: ${result.id}`);
+  return result;
 }
 
 // Main
@@ -152,8 +136,9 @@ if (!process.env.RESEND_API_KEY) {
 
 console.log('🚀 AutoRev Feedback Response Email Sender');
 console.log('==========================================');
-console.log('📧 Using canonical template from lib/email.js');
+console.log('📧 Using sendFeedbackResponseEmail from lib/email.js');
+console.log('📷 Car hero images fetched automatically from database');
 
-await sendFeedbackResponseEmail(options.email, options);
+await sendTestFeedbackEmail(options.email, options);
 
 console.log('\n✨ Done!');

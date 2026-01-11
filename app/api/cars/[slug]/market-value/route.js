@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/market-value
@@ -38,6 +39,12 @@ async function handleGet(request, { params }) {
   }
   
   try {
+    // Resolve car_id from slug (car_slug column no longer exists)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ marketValue: null }, { status: 200 });
+    }
+    
     // Fetch market pricing data
     const { data, error } = await supabase
       .from('car_market_pricing')
@@ -55,7 +62,7 @@ async function handleGet(request, { params }) {
         data_quality,
         updated_at
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .maybeSingle();
     
     if (error) {

@@ -1,0 +1,729 @@
+[fetch-all] ========================================
+[fetch-all] YouTube Full Channel Video Fetcher
+[fetch-all] ========================================
+[fetch-all] Mode: LIVE
+[fetch-all] Max videos per channel: 500
+[fetch-all] 
+[fetch-all] Processing 11 channels
+[fetch-all] Loaded 309 car slugs
+[fetch-all] 
+[fetch-all] 
+========================================
+[fetch-all] Channel: throtl (@throtl)
+[fetch-all] ========================================
+[fetch-all]   Fetching channel page: @throtl
+[fetch-all]   Initial batch: 30 videos
+[fetch-all:verbose]   Fetching page 2...
+[fetch-all]   Page 2: +30 videos (total: 60)
+[fetch-all:verbose]   Fetching page 3...
+[fetch-all]   Page 3: +30 videos (total: 90)
+[fetch-all:verbose]   Fetching page 4...
+[fetch-all]   Page 4: +30 videos (total: 120)
+[fetch-all:verbose]   Fetching page 5...
+[fetch-all]   Page 5: +30 videos (total: 150)
+[fetch-all:verbose]   Fetching page 6...
+[fetch-all]   Page 6: +30 videos (total: 180)
+[fetch-all:verbose]   Fetching page 7...
+[fetch-all]   Page 7: +30 videos (total: 210)
+[fetch-all:verbose]   Fetching page 8...
+[fetch-all]   Page 8: +30 videos (total: 240)
+[fetch-all:verbose]   Fetching page 9...
+[fetch-all]   Page 9: +30 videos (total: 270)
+[fetch-all:verbose]   Fetching page 10...
+[fetch-all]   Page 10: +30 videos (total: 300)
+[fetch-all:verbose]   Fetching page 11...
+[fetch-all]   Page 11: +30 videos (total: 330)
+[fetch-all:verbose]   Fetching page 12...
+[fetch-all]   Page 12: +30 videos (total: 360)
+[fetch-all:verbose]   Fetching page 13...
+[fetch-all]   Page 13: +30 videos (total: 390)
+[fetch-all:verbose]   Fetching page 14...
+[fetch-all]   Page 14: +30 videos (total: 420)
+[fetch-all:verbose]   Fetching page 15...
+[fetch-all]   Page 15: +30 videos (total: 450)
+[fetch-all:verbose]   Fetching page 16...
+[fetch-all]   Page 16: +30 videos (total: 480)
+[fetch-all:verbose]   Fetching page 17...
+[fetch-all]   Page 17: +30 videos (total: 510)
+[fetch-all]   Total videos fetched: 500
+[fetch-all]   Analyzing 500 videos for car relevance...
+[fetch-all]     Batch 1/13...
+[fetch-all:verbose]       Found 28 matches in batch
+[fetch-all]     Batch 2/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 3/13...
+[fetch-all:verbose]       Found 34 matches in batch
+[fetch-all]     Batch 4/13...
+[fetch-all:verbose]       Found 32 matches in batch
+[fetch-all]     Batch 5/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 6/13...
+[fetch-all:verbose]       Found 29 matches in batch
+[fetch-all]     Batch 7/13...
+[fetch-all:verbose]       Found 36 matches in batch
+[fetch-all]     Batch 8/13...
+[fetch-all:verbose]       Found 37 matches in batch
+[fetch-all]     Batch 9/13...
+[fetch-all:verbose]       Found 35 matches in batch
+[fetch-all]     Batch 10/13...
+[fetch-all:verbose]       Found 31 matches in batch
+[fetch-all]     Batch 11/13...
+[fetch-all:verbose]       Found 33 matches in batch
+[fetch-all]     Batch 12/13...
+[fetch-all:verbose]       Found 34 matches in batch
+[fetch-all]     Batch 13/13...
+[fetch-all:verbose]       Found 18 matches in batch
+[fetch-all]   Found 417 car-specific videos
+[fetch-all]   Queueing 417 relevant videos...
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined
+[fetch-all:error] Queue insert error: null value in column "video_id" of relation "youtube_ingestion_queue" violates not-null constraint
+[fetch-all:verbose]     - Skip (error): undefined

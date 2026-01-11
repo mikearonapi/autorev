@@ -9,6 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -25,9 +26,8 @@ function getDeviceType(ua) {
   return 'Desktop';
 }
 
-export async function POST(request) {
-  try {
-    const headersList = await headers();
+async function handlePost(request) {
+  const headersList = await headers();
     const body = await request.json();
     
     const {
@@ -106,10 +106,7 @@ export async function POST(request) {
     }
     
     return Response.json({ success: true });
-    
-  } catch (error) {
-    console.error('[Attribution] Error:', error);
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'analytics/attribution', feature: 'analytics' });
 

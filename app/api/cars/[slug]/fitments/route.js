@@ -16,6 +16,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * Fitment type priority for sorting
@@ -134,11 +135,25 @@ async function handleGet(request, { params }) {
   }
 
   try {
+    // Resolve car_id from slug (car_slug column no longer exists on these tables)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          carSlug: slug,
+          oem: null,
+          options: [],
+        },
+        message: 'Car not found',
+      });
+    }
+    
     // Fetch all fitment options for this car
     const { data: fitmentRows, error: fitmentError } = await supabase
       .from('wheel_tire_fitment_options')
       .select('*')
-      .eq('car_slug', slug);
+      .eq('car_id', carId);
 
     if (fitmentError) {
       console.error('[Fitments API] Database error:', fitmentError);
@@ -150,11 +165,11 @@ async function handleGet(request, { params }) {
 
     // If no fitment data, try to get OEM specs from maintenance specs
     if (!fitmentRows || fitmentRows.length === 0) {
-      // Fall back to vehicle_maintenance_specs for basic OEM tire info
+      // Fall back to vehicle_maintenance_specs for basic OEM tire info (using car_id)
       const { data: maintenanceSpecs } = await supabase
         .from('vehicle_maintenance_specs')
         .select('tire_size_front, tire_size_rear, wheel_size_front, wheel_size_rear, wheel_bolt_pattern')
-        .eq('car_slug', slug)
+        .eq('car_id', carId)
         .single();
 
       if (maintenanceSpecs) {

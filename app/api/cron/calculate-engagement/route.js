@@ -13,6 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 // Use service role for admin operations
 const supabase = createClient(
@@ -118,6 +119,7 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('[EngagementCron] Fatal error:', error);
+    await logCronError('calculate-engagement', error, { phase: 'engagement-calculation', results });
     
     return NextResponse.json({
       success: false,

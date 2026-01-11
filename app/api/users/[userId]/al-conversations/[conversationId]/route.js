@@ -19,10 +19,10 @@ import {
   archiveConversation,
   pinConversation,
 } from '@/lib/alConversationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
-  try {
-    const { userId, conversationId } = await params;
+async function handleGet(request, { params }) {
+  const { userId, conversationId } = await params;
     
     if (!userId || !conversationId) {
       return NextResponse.json(
@@ -53,18 +53,10 @@ export async function GET(request, { params }) {
       messages: result.messages,
       success: true,
     });
-  } catch (err) {
-    console.error('[AL Conversation API] GET Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch conversation' },
-      { status: 500 }
-    );
-  }
 }
 
-export async function DELETE(request, { params }) {
-  try {
-    const { userId, conversationId } = await params;
+async function handleDelete(request, { params }) {
+  const { userId, conversationId } = await params;
     
     if (!userId || !conversationId) {
       return NextResponse.json(
@@ -92,18 +84,10 @@ export async function DELETE(request, { params }) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error('[AL Conversation API] DELETE Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to delete conversation' },
-      { status: 500 }
-    );
-  }
 }
 
-export async function PATCH(request, { params }) {
-  try {
-    const { userId, conversationId } = await params;
+async function handlePatch(request, { params }) {
+  const { userId, conversationId } = await params;
     const body = await request.json();
     
     if (!userId || !conversationId) {
@@ -145,14 +129,11 @@ export async function PATCH(request, { params }) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error('[AL Conversation API] PATCH Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to update conversation' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/al-conversations/[id]', feature: 'al' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users/al-conversations/[id]', feature: 'al' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'users/al-conversations/[id]', feature: 'al' });
 
 
 

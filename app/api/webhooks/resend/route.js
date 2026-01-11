@@ -14,6 +14,7 @@
 import { NextResponse } from 'next/server';
 import { handleResendWebhook } from '@/lib/email';
 import crypto from 'crypto';
+import { logServerError } from '@/lib/serverErrorLogger';
 
 // Resend webhook signing secret (set in Resend dashboard)
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
@@ -62,6 +63,12 @@ export async function POST(request) {
 
   } catch (err) {
     console.error('[Resend Webhook] Error:', err);
+    await logServerError(err, request, {
+      route: 'webhooks/resend',
+      feature: 'email',
+      errorSource: 'webhook',
+      errorType: 'webhook_processing_failed',
+    });
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

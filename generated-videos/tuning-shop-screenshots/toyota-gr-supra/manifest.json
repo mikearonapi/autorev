@@ -1,0 +1,90 @@
+{
+  "carSlug": "toyota-gr-supra",
+  "capturedAt": "2026-01-10T21:08:09.182Z",
+  "baseUrl": "http://localhost:3000",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "deviceScaleFactor": 3,
+  "topOffsetPx": 160,
+  "totalScreenshots": 19,
+  "screenshots": [
+    {
+      "filename": "01-hero.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/01-hero.png"
+    },
+    {
+      "filename": "02-config-and-wheels.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/02-config-and-wheels.png"
+    },
+    {
+      "filename": "03-preset-and-categories-stock.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/03-preset-and-categories-stock.png"
+    },
+    {
+      "filename": "04-preset-and-categories-streetSport.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/04-preset-and-categories-streetSport.png"
+    },
+    {
+      "filename": "05-preset-and-categories-trackPack.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/05-preset-and-categories-trackPack.png"
+    },
+    {
+      "filename": "06-preset-and-categories-timeAttack.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/06-preset-and-categories-timeAttack.png"
+    },
+    {
+      "filename": "07-preset-and-categories-ultimatePower.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/07-preset-and-categories-ultimatePower.png"
+    },
+    {
+      "filename": "08-metrics-and-experience-stock.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/08-metrics-and-experience-stock.png"
+    },
+    {
+      "filename": "09-metrics-and-experience-streetSport.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/09-metrics-and-experience-streetSport.png"
+    },
+    {
+      "filename": "10-metrics-and-experience-trackPack.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/10-metrics-and-experience-trackPack.png"
+    },
+    {
+      "filename": "11-metrics-and-experience-timeAttack.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/11-metrics-and-experience-timeAttack.png"
+    },
+    {
+      "filename": "12-metrics-and-experience-ultimatePower.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/12-metrics-and-experience-ultimatePower.png"
+    },
+    {
+      "filename": "13-category-power.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/13-category-power.png"
+    },
+    {
+      "filename": "14-upgrade-detail.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/14-upgrade-detail.png"
+    },
+    {
+      "filename": "15-category-forcedInduction.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/15-category-forcedInduction.png"
+    },
+    {
+      "filename": "16-category-chassis.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/16-category-chassis.png"
+    },
+    {
+      "filename": "17-category-brakes.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/17-category-brakes.png"
+    },
+    {
+      "filename": "18-category-cooling.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/18-category-cooling.png"
+    },
+    {
+      "filename": "19-category-aero.png",
+      "path": "/Volumes/10TB External HD/01. Apps - WORKING/AutoRev/generated-videos/tuning-shop-screenshots/toyota-gr-supra/19-category-aero.png"
+    }
+  ]
+}

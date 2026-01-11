@@ -17,6 +17,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { sendFeedbackResponseEmail } from '@/lib/email';
+import { resolveCarId } from '@/lib/carResolver';
 
 export const dynamic = 'force-dynamic';
 
@@ -102,6 +103,9 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Feedback not found' }, { status: 404 });
     }
 
+    // Resolve car_id from slug if provided (car_slug column no longer exists on user_feedback)
+    const carId = carSlug ? await resolveCarId(carSlug) : null;
+    
     // Update feedback status to resolved
     const { data: updatedFeedback, error: updateError } = await supabaseAdmin
       .from('user_feedback')
@@ -113,7 +117,7 @@ export async function POST(request) {
           ? `${feedback.internal_notes}\n\n[Resolved ${new Date().toISOString()}]${resolutionNotes ? `: ${resolutionNotes}` : ''}`
           : resolutionNotes || `Resolved at ${new Date().toISOString()}`,
         // Store the car info if provided (for car_request feedback)
-        ...(carSlug && { car_slug: carSlug }),
+        ...(carId && { car_id: carId }),
       })
       .eq('id', feedbackId)
       .select()
@@ -130,8 +134,8 @@ export async function POST(request) {
     if (sendEmail && feedback.email) {
       const emailFeedbackType = mapFeedbackType(feedback.feedback_type, feedback.category);
       
-      // For car_request, use the carSlug/carName provided, or fall back to stored car_slug
-      const finalCarSlug = carSlug || feedback.car_slug;
+      // For car_request, use the carSlug/carName provided (car_slug no longer stored in table)
+      const finalCarSlug = carSlug || null;
       const finalCarName = carName || null;
 
       try {
@@ -192,7 +196,7 @@ export async function GET(request) {
 
     const { data: feedback, error } = await supabaseAdmin
       .from('user_feedback')
-      .select('id, status, resolved_at, resolved_by, feedback_type, category, email, car_slug, message')
+      .select('id, status, resolved_at, resolved_by, feedback_type, category, email, car_id, message')
       .eq('id', feedbackId)
       .single();
 

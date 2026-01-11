@@ -21,6 +21,7 @@ import { YoutubeTranscript } from 'youtube-transcript';
 import Anthropic from '@anthropic-ai/sdk';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '@/lib/backendAiLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -135,9 +136,10 @@ async function discoverVideos() {
   }
 
   // Get cars to search for - prioritize cars with fewer videos
+  // Include id for efficient youtube_video_car_links upserts
   const { data: cars } = await supabase
     .from('cars')
-    .select('slug, name, brand, generation_years, expert_review_count')
+    .select('id, slug, name, brand, generation_years, expert_review_count')
     .order('expert_review_count', { ascending: true, nullsFirst: true })
     .limit(50);
 
@@ -178,14 +180,14 @@ async function discoverVideos() {
             stats.videosAdded++;
             console.log(`   + Added: ${video.title.substring(0, 50)}...`);
 
-            // Create preliminary car link
+            // Create preliminary car link using car_id (car_slug column no longer exists)
             await supabase.from('youtube_video_car_links').upsert({
               video_id: video.videoId,
-              car_slug: car.slug,
+              car_id: car.id,
               role: 'primary',
               match_confidence: 0.6, // Preliminary - will be refined by AI
               match_method: 'exa_search',
-            }, { onConflict: 'video_id,car_slug' });
+            }, { onConflict: 'video_id,car_id' });
           }
         }
 
@@ -540,24 +542,29 @@ async function processWithAI() {
           })
           .eq('video_id', video.video_id);
 
-        // Create car links
+        // Create car links (resolve car_slug to car_id as car_slug column no longer exists)
         if (aiOutput.primary_car_slug) {
-          await supabase.from('youtube_video_car_links').upsert({
-            video_id: video.video_id,
-            car_slug: aiOutput.primary_car_slug,
-            role: 'primary',
-            match_confidence: aiOutput.match_confidence || 0.8,
-            match_method: 'transcript_extract',
-            overall_sentiment: aiOutput.overall_sentiment,
-            sentiment_sound: aiOutput.sentiments?.sound,
-            sentiment_track: aiOutput.sentiments?.track,
-            sentiment_value: aiOutput.sentiments?.value,
-            sentiment_reliability: aiOutput.sentiments?.reliability,
-            sentiment_interior: aiOutput.sentiments?.interior,
-            sentiment_driver_fun: aiOutput.sentiments?.driver_fun,
-            stock_strength_tags: aiOutput.strengths || [],
-            stock_weakness_tags: aiOutput.weaknesses || [],
-          }, { onConflict: 'video_id,car_slug' });
+          const resolvedCarId = await resolveCarId(aiOutput.primary_car_slug);
+          if (resolvedCarId) {
+            await supabase.from('youtube_video_car_links').upsert({
+              video_id: video.video_id,
+              car_id: resolvedCarId,
+              role: 'primary',
+              match_confidence: aiOutput.match_confidence || 0.8,
+              match_method: 'transcript_extract',
+              overall_sentiment: aiOutput.overall_sentiment,
+              sentiment_sound: aiOutput.sentiments?.sound,
+              sentiment_track: aiOutput.sentiments?.track,
+              sentiment_value: aiOutput.sentiments?.value,
+              sentiment_reliability: aiOutput.sentiments?.reliability,
+              sentiment_interior: aiOutput.sentiments?.interior,
+              sentiment_driver_fun: aiOutput.sentiments?.driver_fun,
+              stock_strength_tags: aiOutput.strengths || [],
+              stock_weakness_tags: aiOutput.weaknesses || [],
+            }, { onConflict: 'video_id,car_id' });
+          } else {
+            console.warn(`   ⚠️ Could not resolve car_id for slug: ${aiOutput.primary_car_slug}`);
+          }
         }
 
         stats.success++;
@@ -630,19 +637,19 @@ Return ONLY valid JSON, no other text.`;
 async function aggregateConsensus() {
   const stats = { carsUpdated: 0 };
 
-  // Get cars with linked videos
+  // Get cars with linked videos (uses car_id - car_slug column no longer exists)
   const { data: carLinks } = await supabase
     .from('youtube_video_car_links')
-    .select('car_slug')
+    .select('car_id')
     .eq('role', 'primary');
 
-  const uniqueSlugs = [...new Set(carLinks?.map(l => l.car_slug) || [])];
+  const uniqueCarIds = [...new Set(carLinks?.map(l => l.car_id).filter(Boolean) || [])];
 
-  for (const slug of uniqueSlugs) {
+  for (const carId of uniqueCarIds) {
     const { data: links } = await supabase
       .from('youtube_video_car_links')
       .select('*')
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .eq('role', 'primary');
 
     if (!links?.length) continue;
@@ -661,6 +668,7 @@ async function aggregateConsensus() {
       weaknesses: aggregateTags(links.flatMap(l => l.stock_weakness_tags || [])),
     };
 
+    // Update using car_id (more efficient than slug lookup)
     await supabase
       .from('cars')
       .update({
@@ -668,7 +676,7 @@ async function aggregateConsensus() {
         expert_review_count: links.length,
         updated_at: new Date().toISOString(),
       })
-      .eq('slug', slug);
+      .eq('id', carId);
 
     stats.carsUpdated++;
   }

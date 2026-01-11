@@ -21,6 +21,7 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { sendReferralInviteEmail } from '@/lib/email';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -74,8 +75,7 @@ async function createSupabaseClient() {
  * 
  * Get user's referral code, stats, milestone progress, and list of referrals
  */
-export async function GET(request) {
-  try {
+async function handleGet(request) {
     const supabase = await createSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
@@ -151,11 +151,6 @@ export async function GET(request) {
         is_lifetime: profile.referral_tier_lifetime,
       } : null,
     });
-
-  } catch (err) {
-    console.error('[Referrals] Error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
 
 /**
@@ -166,8 +161,7 @@ export async function GET(request) {
  * Body:
  * - email: Friend's email address
  */
-export async function POST(request) {
-  try {
+async function handlePost(request) {
     const supabase = await createSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
@@ -264,11 +258,6 @@ export async function POST(request) {
       referral_link: referralLink,
       referral_id: referral.id,
     });
-
-  } catch (err) {
-    console.error('[Referrals] Error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
 
 /**
@@ -279,8 +268,7 @@ export async function POST(request) {
  * Body:
  * - referral_id: ID of the referral to resend
  */
-export async function PATCH(request) {
-  try {
+async function handlePatch(request) {
     const supabase = await createSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
@@ -337,9 +325,9 @@ export async function PATCH(request) {
       success: true,
       message: 'Invite resent!',
     });
-
-  } catch (err) {
-    console.error('[Referrals] Error resending:', err);
-    return NextResponse.json({ error: 'Failed to resend invite' }, { status: 500 });
-  }
 }
+
+// Export wrapped handlers with error logging
+export const GET = withErrorLogging(handleGet, { route: 'referrals', feature: 'referrals' });
+export const POST = withErrorLogging(handlePost, { route: 'referrals', feature: 'referrals' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'referrals', feature: 'referrals' });

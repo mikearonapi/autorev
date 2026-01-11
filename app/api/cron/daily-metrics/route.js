@@ -10,6 +10,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { notifyBetaMetrics } from '@/lib/discord';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -106,6 +107,7 @@ export async function GET(request) {
     
   } catch (err) {
     console.error('[daily-metrics] Unexpected error:', err);
+    await logCronError('daily-metrics', err, { phase: 'snapshot-generation' });
     return NextResponse.json({ 
       success: false, 
       error: err.message 

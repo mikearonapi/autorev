@@ -12,10 +12,10 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function POST(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handlePost(request, { params }) {
+  const { userId } = await params;
     
     console.log('[API/users/clear-data] POST request for userId:', userId);
     
@@ -245,15 +245,9 @@ export async function POST(request, { params }) {
       scope,
       message: `Successfully cleared: ${cleared.join(', ')}`
     });
-    
-  } catch (err) {
-    console.error('[API/users/clear-data] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred', details: err.message },
-      { status: 500 }
-    );
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'users/clear-data', feature: 'account' });
 
 
 

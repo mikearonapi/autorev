@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/efficiency
@@ -20,6 +21,12 @@ async function handleGet(request, { params }) {
   }
   
   try {
+    // Resolve car_id from slug (car_slug column no longer exists on car_fuel_economy)
+    const carId = await resolveCarId(slug);
+    if (!carId) {
+      return NextResponse.json({ efficiency: null }, { status: 200 });
+    }
+    
     const { data, error } = await supabase
       .from('car_fuel_economy')
       .select(`
@@ -36,7 +43,7 @@ async function handleGet(request, { params }) {
         source,
         fetched_at
       `)
-      .eq('car_slug', slug)
+      .eq('car_id', carId)
       .maybeSingle();
     
     if (error) {

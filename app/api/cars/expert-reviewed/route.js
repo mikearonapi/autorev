@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering since this route uses request.url for query params
 export const dynamic = 'force-dynamic';
@@ -12,9 +13,8 @@ export const dynamic = 'force-dynamic';
  * Query params:
  * - limit: Max cars to return (default: 8)
  */
-export async function GET(request) {
-  try {
-    const { searchParams } = new URL(request.url);
+async function handleGet(request) {
+  const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '8'), 20);
 
     if (!isSupabaseConfigured) {
@@ -24,10 +24,11 @@ export async function GET(request) {
       });
     }
 
-    // Fetch cars with expert review data
+    // Fetch cars with expert review data (include id for efficient video link queries)
     const { data: cars, error } = await supabase
       .from('cars')
       .select(`
+        id,
         slug,
         name,
         years,
@@ -57,7 +58,7 @@ export async function GET(request) {
       );
     }
 
-    // For each car, fetch a sample quote from videos
+    // For each car, fetch a sample quote from videos (uses car_id - car_slug column removed)
     const carsWithQuotes = await Promise.all(
       (cars || []).map(async (car) => {
         // Get a notable quote for this car
@@ -72,7 +73,7 @@ export async function GET(request) {
                 notable_quotes
               )
             `)
-            .eq('car_slug', car.slug)
+            .eq('car_id', car.id)
             .limit(1)
             .single();
 
@@ -110,13 +111,7 @@ export async function GET(request) {
       cars: carsWithQuotes,
       count: carsWithQuotes.length
     });
-
-  } catch (error) {
-    console.error('[expert-reviewed] Error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cars/expert-reviewed', feature: 'browse-cars' });
 

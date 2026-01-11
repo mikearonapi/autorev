@@ -1,0 +1,154 @@
+# Complete Coverage: All Missing Vehicles from Top 100 Lists
+# From Top 100 US Modifications Market + Top 100 Sports Sedans Analysis
+# Generated: January 10, 2026
+# Total: 80 vehicles
+# Estimated Runtime: ~6-7 hours
+
+# ============================================
+# PHASE 1: SPORTS & PERFORMANCE (45 vehicles)
+# ============================================
+
+# BMW Non-M Performance (Massive tuning market)
+BMW 335i E90 (2007-2013)
+BMW 340i F30 (2016-2019)
+BMW M340i G20 (2019-2024)
+
+# Hot Hatches & Compacts
+Acura RSX Type-S (2002-2006)
+MINI Cooper S R53 (2002-2006)
+MINI Cooper S R56 (2007-2013)
+MINI John Cooper Works F56 (2014-2024)
+Toyota GR Corolla (2023-2024)
+Mazdaspeed6 (2006-2007)
+
+# Korean Performance
+Hyundai Elantra N (2022-2024)
+Genesis G70 3.3T (2019-2024)
+Kia K5 GT (2021-2024)
+Hyundai Kona N (2022-2024)
+
+# Infiniti Performance
+Infiniti Q50 Red Sport 400 (2016-2024)
+Infiniti Q60 Red Sport 400 (2017-2024)
+
+# Cadillac Performance
+Cadillac CTS-V Gen 1 (2004-2007)
+Cadillac ATS-V (2016-2019)
+
+# GM Performance Sedans
+Chevrolet SS (2014-2017)
+Pontiac G8 GT (2008-2009)
+Pontiac G8 GXP (2009)
+
+# Ford Performance Sedans
+Ford Taurus SHO (2010-2019)
+Ford Fusion Sport (2017-2019)
+
+# Lexus Performance
+Lexus IS350 (2006-2013)
+Lexus IS350 F Sport (2014-2020)
+Lexus IS-F (2008-2014)
+Lexus GS350 (2013-2020)
+Lexus GS-F (2016-2020)
+
+# Honda/Acura
+Acura TSX (2004-2008)
+Acura TSX (2009-2014)
+Honda Accord 2.0T Sport (2018-2022)
+Acura TL Type-S (2007-2008)
+Acura Integra Type S (2024-present)
+
+# Mazda
+Mazda 3 2.5 Turbo (2021-2024)
+Mazda 6 2.5 Turbo (2018-2021)
+
+# Mercedes
+Mercedes-AMG CLA 45 (2014-2019)
+Mercedes-AMG CLA 45 S (2020-2024)
+
+# Audi
+Audi A4 2.0T B8 (2009-2012)
+Audi A4 2.0T B8.5 (2013-2016)
+Audi RS6 Avant C8 (2020-2024)
+
+# BMW Classic
+BMW M3 E30 (1988-1991)
+
+# Porsche
+Porsche Panamera Turbo 971 (2017-2024)
+
+# Mitsubishi
+Mitsubishi Lancer Ralliart (2009-2015)
+
+# Dodge
+Dodge SRT-4 (2003-2005)
+
+# VW
+Volkswagen Jetta GLI Mk6 (2012-2018)
+Volkswagen Jetta GLI Mk7 (2019-2024)
+
+# Nissan
+Nissan Maxima (2016-2023)
+
+# Jaguar
+Jaguar XE S (2017-2024)
+
+# ============================================
+# PHASE 2: TRUCKS & SUVS (26 vehicles)
+# ============================================
+
+# Full-Size Trucks
+Ford F-150 (2015-2020)
+Ford F-150 (2021-2024)
+Chevrolet Silverado 1500 (2019-2024)
+GMC Sierra 1500 (2019-2024)
+Ram 1500 (2019-2024)
+Toyota Tundra (2022-2024)
+
+# Mid-Size Trucks
+Toyota Tacoma (2016-2023)
+Ford Ranger (2019-2024)
+Chevrolet Colorado ZR2 (2017-2024)
+GMC Canyon AT4 (2017-2024)
+
+# Heavy-Duty Diesel
+Ram 2500 Cummins (2019-2024)
+Ford F-250 Power Stroke (2017-2024)
+
+# Off-Road SUVs
+Jeep Wrangler JL (2018-2024)
+Jeep Wrangler JK (2007-2018)
+Jeep Gladiator (2020-2024)
+Ford Bronco (2021-2024)
+
+# Overlanding/Off-Road
+Toyota 4Runner TRD Pro (2010-2024)
+Jeep Grand Cherokee (2011-2024)
+Toyota Land Cruiser (2008-2021)
+
+# Compact
+Nissan Frontier (2022-2024)
+Ford Maverick (2022-2024)
+Subaru Crosstrek (2018-2024)
+
+# ============================================
+# PHASE 3: CLASSICS & EVS (9 vehicles)
+# ============================================
+
+# Classic Camaro
+Chevrolet Camaro SS (1969)
+Chevrolet Camaro Z28 (1970-1973)
+
+# Classic Mustang
+Ford Mustang Fastback (1967-1968)
+
+# Rotary
+Mazda RX-8 (2004-2012)
+
+# Original Supercar
+Acura NSX NA1 (1991-2005)
+
+# Electric Vehicles
+Tesla Model Y Performance (2020-2024)
+Rivian R1T (2022-2024)
+BMW i4 M50 (2022-2024)

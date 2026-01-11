@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // US State name to abbreviation mapping
 const STATE_ABBREVIATIONS = {
@@ -71,7 +72,7 @@ function parseDisplayName(displayName, addressParts) {
   return { city, stateAbbrev };
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q')?.trim();
   const limit = Math.min(parseInt(searchParams.get('limit') || '5', 10), 10);
@@ -87,8 +88,6 @@ export async function GET(request) {
     await new Promise(resolve => setTimeout(resolve, MIN_INTERVAL_MS - timeSinceLastRequest));
   }
   lastRequestTime = Date.now();
-  
-  try {
     // Build Nominatim search query
     const nominatimParams = new URLSearchParams({
       format: 'json',
@@ -150,12 +149,9 @@ export async function GET(request) {
     }
     
     return formatSuggestions(data);
-    
-  } catch (err) {
-    console.error('[LocationSearch] Error:', err);
-    return NextResponse.json({ suggestions: [], error: 'Search failed' }, { status: 500 });
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'locations/search', feature: 'events' });
 
 function formatSuggestions(data) {
   // Dedupe by city + state combination

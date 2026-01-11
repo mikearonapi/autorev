@@ -6,9 +6,13 @@
 # - Audi A3 1.8: 0cd68e6f
 # - Cadillac Blackwings: 33e25f71
 # - Honda Prelude 2026: 29eba551
+# - Volkswagen GTI MK5: 84da1b03 (Jan 9, 2026)
+# - Volkswagen Golf TSI MK7: c911d483 (Jan 10, 2026)
 
 Volkswagen GTI (Mk6)
 Audi A3 1.8T (8V)
 Cadillac CT4-V Blackwing
 Cadillac CT5-V Blackwing
 Honda Prelude (2026)
+Volkswagen GTI (Mk5)
+Volkswagen Golf TSI (Mk7)

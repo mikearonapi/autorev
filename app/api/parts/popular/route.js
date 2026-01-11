@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPublicClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,9 +18,8 @@ function clampInt(v, min, max, fallback) {
  * - highest confidence first
  * - includes latest pricing per part when available
  */
-export async function GET(request) {
-  try {
-    const client = getPublicClient();
+async function handleGet(request) {
+  const client = getPublicClient();
     if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const { searchParams } = new URL(request.url);
@@ -112,11 +112,9 @@ export async function GET(request) {
       .filter(Boolean);
 
     return NextResponse.json({ carSlug, count: results.length, results });
-  } catch (err) {
-    console.error('[api/parts/popular] Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'parts/popular', feature: 'tuning-shop' });
 
 
 

@@ -14,6 +14,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendEmail } from '@/lib/email';
+import { logCronError } from '@/lib/serverErrorLogger';
 
 // Use service role for admin operations
 const supabase = createClient(
@@ -217,6 +218,7 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('[RetentionCron] Fatal error:', error);
+    await logCronError('retention-alerts', error, { phase: 'retention-processing', results });
     
     return NextResponse.json({
       success: false,

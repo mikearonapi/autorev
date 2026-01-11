@@ -1,0 +1,15 @@
+[fetch-videos] ========================================
+[fetch-videos] YouTube Channel Video Fetcher
+[fetch-videos] ========================================
+[fetch-videos] Mode: LIVE
+[fetch-videos] Max videos per channel: 50
+[fetch-videos] 
+[fetch-videos] Found 11 DIY channels to process
+[fetch-videos] Loaded 309 car slugs for matching
+[fetch-videos] 
+[fetch-videos] 
+--- Channel: throtl (@throtl) ---
+[fetch-videos]   Fetching videos from @throtl...
+[fetch-videos]   Found 30 videos
+[fetch-videos]   Analyzing batch 1/1...
+[fetch-videos]   Analyzing 30 videos for car relevance...

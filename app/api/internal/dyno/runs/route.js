@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+import { resolveCarId } from '@/lib/carResolver';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,14 +26,23 @@ export async function GET(request) {
     const carSlug = searchParams.get('carSlug') || null;
     const limit = Math.max(1, Math.min(Number(searchParams.get('limit') || 80), 300));
 
+    // Note: car_slug column no longer exists on car_dyno_runs, use car_id
     let q = supabase
       .from('car_dyno_runs')
-      .select('id,car_slug,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_hp,peak_tq,peak_whp,peak_wtq,boost_psi_max,conditions,modifications,notes,curve,source_url,confidence,verified,created_at')
+      .select('id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_hp,peak_tq,peak_whp,peak_wtq,boost_psi_max,conditions,modifications,notes,curve,source_url,confidence,verified,created_at')
       .order('recorded_at', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (carSlug) q = q.eq('car_slug', carSlug);
+    if (carSlug) {
+      // Resolve car_id from slug for filtering
+      const carId = await resolveCarId(carSlug);
+      if (carId) {
+        q = q.eq('car_id', carId);
+      } else {
+        return NextResponse.json({ count: 0, rows: [] });
+      }
+    }
     const { data, error } = await q;
     if (error) throw error;
 
@@ -114,9 +124,9 @@ export async function POST(request) {
 
     const safeNum = (v) => (v === null || v === undefined || v === '' ? null : Number(v));
 
+    // Note: car_slug column no longer exists on car_dyno_runs
     const payload = {
       car_id: carRow.id,
-      car_slug: carSlug,
       run_kind: rk,
       recorded_at: recordedAt || null,
       dyno_type: dynoType || null,
@@ -143,7 +153,7 @@ export async function POST(request) {
     const { data: inserted, error: insErr } = await supabase
       .from('car_dyno_runs')
       .insert(payload)
-      .select('id,car_slug,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_whp,peak_wtq,peak_hp,peak_tq,boost_psi_max,source_url,confidence,verified,created_at')
+      .select('id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_whp,peak_wtq,peak_hp,peak_tq,boost_psi_max,source_url,confidence,verified,created_at')
       .single();
 
     if (insErr) throw insErr;

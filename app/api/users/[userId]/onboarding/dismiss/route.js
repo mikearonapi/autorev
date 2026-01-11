@@ -9,6 +9,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const MAX_DISMISSALS = 3;
 
@@ -16,9 +17,8 @@ const MAX_DISMISSALS = 3;
  * POST /api/users/[userId]/onboarding/dismiss
  * Track a dismissal and optionally opt out permanently
  */
-export async function POST(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handlePost(request, { params }) {
+  const { userId } = await params;
     
     if (!userId) {
       return NextResponse.json(
@@ -129,15 +129,9 @@ export async function POST(request, { params }) {
       dismissedCount: data?.onboarding_dismissed_count || newCount,
       optedOut: data?.onboarding_opted_out || false,
     });
-
-  } catch (err) {
-    console.error('[API/onboarding/dismiss] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'users/onboarding/dismiss', feature: 'onboarding' });
 
 
 

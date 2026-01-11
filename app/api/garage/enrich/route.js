@@ -30,6 +30,7 @@ import {
 } from '@/lib/dailyDriverEnrichmentService';
 import { deductUsage, getUserBalance } from '@/lib/alUsageService';
 import { calculateTokenCost } from '@/lib/alConfig';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Service role client for database operations
 function getServiceClient() {
@@ -55,9 +56,8 @@ async function getAuthClient() {
   );
 }
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     const { vehicleId } = body;
 
     if (!vehicleId) {
@@ -199,14 +199,6 @@ export async function POST(request) {
       source: result.source,
       message: 'Vehicle enrichment completed',
     });
-
-  } catch (err) {
-    console.error('[API/garage/enrich] Error:', err);
-    return NextResponse.json(
-      { success: false, error: err.message || 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
@@ -214,8 +206,7 @@ export async function POST(request) {
  * 
  * Check enrichment status for a vehicle
  */
-export async function GET(request) {
-  try {
+async function handleGet(request) {
     const { searchParams } = new URL(request.url);
     const vehicleId = searchParams.get('vehicleId');
 
@@ -289,13 +280,9 @@ export async function GET(request) {
       sharedEnrichmentAvailable: !!sharedEnrichment,
       hasMatchedCar: false, // Daily drivers don't have matched cars
     });
-
-  } catch (err) {
-    console.error('[API/garage/enrich] GET Error:', err);
-    return NextResponse.json(
-      { success: false, error: err.message || 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+// Export wrapped handlers with error logging
+export const POST = withErrorLogging(handlePost, { route: 'garage/enrich', feature: 'garage' });
+export const GET = withErrorLogging(handleGet, { route: 'garage/enrich', feature: 'garage' });
 

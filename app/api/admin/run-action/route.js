@@ -83,10 +83,10 @@ const ALLOWED_ACTIONS = {
   'run-scrape': {
     description: 'Process pending scrape jobs',
     handler: async (supabase) => {
-      // Get pending jobs
+      // Get pending jobs (car_slug column no longer exists, use car_id)
       const { data: pendingJobs, error } = await supabase
         .from('scrape_jobs')
-        .select('id, job_type, status, car_slug')
+        .select('id, job_type, status, car_id')
         .eq('status', 'pending')
         .order('priority', { ascending: false })
         .order('created_at', { ascending: true })

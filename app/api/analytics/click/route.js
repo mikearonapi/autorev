@@ -9,6 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -24,9 +25,8 @@ function getDeviceType(userAgent) {
   return 'desktop';
 }
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
+async function handlePost(request) {
+  const body = await request.json();
     const headersList = await headers();
     const userAgent = headersList.get('user-agent');
     
@@ -74,10 +74,7 @@ export async function POST(request) {
     }
     
     return Response.json({ success: true });
-    
-  } catch (error) {
-    console.error('[Click API] Error:', error);
-    return Response.json({ error: 'Internal error' }, { status: 500 });
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'analytics/click', feature: 'analytics' });
 

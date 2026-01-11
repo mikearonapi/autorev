@@ -8,6 +8,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -22,9 +23,8 @@ const supabaseAdmin = createClient(
  * - email: User's email address
  * - type: 'all' | 'features' | 'events'
  */
-export async function POST(request) {
-  try {
-    const { email, type = 'all' } = await request.json();
+async function handlePost(request) {
+  const { email, type = 'all' } = await request.json();
     
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
@@ -85,11 +85,6 @@ export async function POST(request) {
       success: true, 
       message: `Successfully unsubscribed from ${type === 'all' ? 'all emails' : type + ' emails'}` 
     });
-
-  } catch (err) {
-    console.error('[Unsubscribe] Error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
 
 /**
@@ -97,7 +92,7 @@ export async function POST(request) {
  * 
  * Redirects to unsubscribe page with email parameter
  */
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const email = searchParams.get('email');
   
@@ -108,3 +103,5 @@ export async function GET(request) {
   return NextResponse.redirect(redirectUrl);
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'email/unsubscribe', feature: 'email' });
+export const GET = withErrorLogging(handleGet, { route: 'email/unsubscribe', feature: 'email' });

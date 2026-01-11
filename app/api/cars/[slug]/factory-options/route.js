@@ -69,11 +69,11 @@ async function handleGet(request, { params }) {
       .eq('car_id', car.id)
       .order('model_year_start', { ascending: false });
 
-    // Fetch OEM wheel packages from fitment options
+    // Fetch OEM wheel packages from fitment options (using car_id - car_slug column removed)
     const { data: wheelPackages } = await supabase
       .from('wheel_tire_fitment_options')
       .select('id, fitment_type, wheel_diameter_inches, wheel_width_front, wheel_width_rear, tire_size_front, tire_size_rear, recommended_for')
-      .eq('car_slug', slug)
+      .eq('car_id', car.id)
       .in('fitment_type', ['oem', 'oem_optional'])
       .order('fitment_type', { ascending: true });
 

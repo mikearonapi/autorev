@@ -1,6 +1,7 @@
 import { getServiceClient } from '@/lib/supabaseServer';
 import { notifyFeedback } from '@/lib/discord';
 import { notifyAggregatedError } from '@/lib/discord';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * Feedback API - Handles TWO separate concerns:
@@ -138,6 +139,9 @@ export async function POST(request) {
       );
     }
 
+    // Resolve car_id from slug if provided (car_slug column no longer exists on user_feedback)
+    const carId = car_slug ? await resolveCarId(car_slug) : null;
+    
     const feedbackData = {
       feedback_type: feedbackTypeToInsert,
       category: categoryToInsert || null,
@@ -145,7 +149,7 @@ export async function POST(request) {
       email: email || null,
       page_url: page_url || pageUrl || null,
       page_title: page_title || null,
-      car_slug: car_slug || null,
+      car_id: carId,
       build_id: build_id || null,
       user_agent: userAgent,
       browser_info: browserInfoPayload,

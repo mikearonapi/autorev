@@ -1,15 +1,18 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/dyno
  * 
  * Fetches dyno run data for a specific car.
  * Uses the get_car_dyno_runs RPC function.
+ * 
+ * Updated 2026-01-15: Uses car_id for efficient fallback queries
  */
 async function handleGet(request, { params }) {
-  const { slug } = params;
+  const { slug } = await params;
   
   if (!slug) {
     return NextResponse.json(
@@ -26,7 +29,7 @@ async function handleGet(request, { params }) {
   }
   
   try {
-    // Use the RPC function to get dyno runs
+    // Use the RPC function to get dyno runs (RPC handles slug→id resolution internally)
     const { data, error } = await supabase.rpc('get_car_dyno_runs', {
       p_car_slug: slug,
     });
@@ -35,10 +38,16 @@ async function handleGet(request, { params }) {
       console.error('[API/dyno] RPC error:', error);
       
       // Fallback to direct query if RPC doesn't exist
+      // Resolve car_id (car_slug column no longer exists on car_dyno_runs)
+      const carId = await resolveCarId(slug);
+      if (!carId) {
+        return NextResponse.json({ runs: [], message: 'Car not found' }, { status: 200 });
+      }
+      
       const { data: directData, error: directError } = await supabase
         .from('car_dyno_runs')
         .select('*')
-        .eq('car_slug', slug)
+        .eq('car_id', carId)
         .order('peak_whp', { ascending: false, nullsFirst: false });
       
       if (directError) {
@@ -59,18 +68,3 @@ async function handleGet(request, { params }) {
 }
 
 export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/dyno', feature: 'browse-cars' });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -14,6 +14,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Helper to clean custom specs object - remove empty strings and nulls
@@ -45,9 +46,8 @@ function cleanCustomSpecs(specs) {
  * GET /api/users/[userId]/vehicles/[vehicleId]/custom-specs
  * Get custom specs for a vehicle
  */
-export async function GET(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handleGet(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -116,14 +116,6 @@ export async function GET(request, { params }) {
       customSpecs: data.custom_specs || {},
       hasCustomSpecs: Object.keys(data.custom_specs || {}).length > 0,
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/custom-specs] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
@@ -147,9 +139,8 @@ export async function GET(request, { params }) {
  *   }
  * }
  */
-export async function POST(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handlePost(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -241,22 +232,14 @@ export async function POST(request, { params }) {
       },
       message: 'Custom specs updated successfully',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/custom-specs] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * PUT /api/users/[userId]/vehicles/[vehicleId]/custom-specs
  * Update custom specs (alias for POST)
  */
-export async function PUT(request, context) {
-  return POST(request, context);
+async function handlePut(request, context) {
+  return handlePost(request, context);
 }
 
 /**
@@ -266,9 +249,8 @@ export async function PUT(request, context) {
  * Query params:
  * - section: (optional) Only clear a specific section (wheels, tires, etc.)
  */
-export async function DELETE(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handleDelete(request, { params }) {
+  const { userId, vehicleId } = await params;
     const { searchParams } = new URL(request.url);
     const section = searchParams.get('section');
     
@@ -380,15 +362,12 @@ export async function DELETE(request, { params }) {
         ? `Cleared ${section} custom specs` 
         : 'All custom specs cleared - showing stock values',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/custom-specs] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/vehicles/custom-specs', feature: 'garage' });
+export const POST = withErrorLogging(handlePost, { route: 'users/vehicles/custom-specs', feature: 'garage' });
+export const PUT = withErrorLogging(handlePut, { route: 'users/vehicles/custom-specs', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users/vehicles/custom-specs', feature: 'garage' });
 
 
 

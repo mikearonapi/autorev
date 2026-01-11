@@ -9,6 +9,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/users/[userId]/garage
@@ -17,9 +18,8 @@ import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken }
  * Returns:
  * - vehicles: Array of vehicle objects with make, model, year, etc.
  */
-export async function GET(request, { params }) {
-  try {
-    const { userId } = await params;
+async function handleGet(request, { params }) {
+  const { userId } = await params;
     
     if (!userId) {
       return NextResponse.json(
@@ -70,6 +70,7 @@ export async function GET(request, { params }) {
         make,
         model,
         trim,
+        matched_car_id,
         matched_car_slug,
         nickname,
         color,
@@ -122,6 +123,7 @@ export async function GET(request, { params }) {
         make: v.make,
         model: v.model,
         trim: v.trim,
+        matchedCarId: v.matched_car_id, // Include car_id for efficient downstream operations
         matchedCarSlug: v.matched_car_slug,
         nickname: v.nickname,
         color: v.color,
@@ -160,13 +162,7 @@ export async function GET(request, { params }) {
       vehicles: transformedVehicles,
       count: transformedVehicles.length,
     });
-
-  } catch (err) {
-    console.error('[API/users/garage] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users/garage', feature: 'garage' });
 

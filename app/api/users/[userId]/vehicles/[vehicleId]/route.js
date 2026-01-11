@@ -11,6 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Allowed battery_status enum values (matches DATABASE.md)
 const BATTERY_STATUS_ENUM = ['good', 'fair', 'weak', 'dead', 'unknown'];
@@ -19,8 +20,7 @@ const BATTERY_STATUS_ENUM = ['good', 'fair', 'weak', 'dead', 'unknown'];
  * GET /api/users/[userId]/vehicles/[vehicleId]
  * Fetch specific vehicle with all details
  */
-export async function GET(request, { params }) {
-  try {
+async function handleGet(request, { params }) {
     const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
@@ -128,14 +128,6 @@ export async function GET(request, { params }) {
     return NextResponse.json({
       vehicle,
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/[vehicleId]] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
@@ -167,9 +159,8 @@ export async function GET(request, { params }) {
  * Auto-computed fields:
  * - next_oil_due_mileage: Computed when last_oil_change_mileage is updated
  */
-export async function PATCH(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handlePatch(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -253,20 +244,20 @@ export async function PATCH(request, { params }) {
 
     // Auto-compute next_oil_due_mileage if oil change is being logged
     if (body.last_oil_change_mileage !== undefined) {
-      // Fetch vehicle to get matched_car_slug
+      // Fetch vehicle to get matched_car_id (car_slug column no longer exists on maintenance tables)
       const { data: vehicle } = await supabase
         .from('user_vehicles')
-        .select('matched_car_slug')
+        .select('matched_car_id')
         .eq('user_id', userId)
         .eq('id', vehicleId)
         .single();
 
-      if (vehicle?.matched_car_slug) {
-        // Get oil change interval from maintenance specs
+      if (vehicle?.matched_car_id) {
+        // Get oil change interval from maintenance specs using car_id
         const { data: maintenanceSpecs } = await supabase
           .from('vehicle_maintenance_specs')
           .select('oil_change_interval_miles')
-          .eq('car_slug', vehicle.matched_car_slug)
+          .eq('car_id', vehicle.matched_car_id)
           .single();
 
         if (maintenanceSpecs?.oil_change_interval_miles) {
@@ -353,23 +344,14 @@ export async function PATCH(request, { params }) {
       vehicle: data,
       message: 'Vehicle updated successfully',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/[vehicleId]] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * DELETE /api/users/[userId]/vehicles/[vehicleId]
  * Remove vehicle from user's garage
  */
-export async function DELETE(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handleDelete(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -429,15 +411,12 @@ export async function DELETE(request, { params }) {
       success: true,
       message: 'Vehicle deleted successfully',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/[vehicleId]] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+// Export wrapped handlers with error logging
+export const GET = withErrorLogging(handleGet, { route: 'users/vehicles/[vehicleId]', feature: 'garage' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'users/vehicles/[vehicleId]', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users/vehicles/[vehicleId]', feature: 'garage' });
 
 
 

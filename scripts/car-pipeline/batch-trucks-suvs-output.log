@@ -1,0 +1,405 @@
+
+🚗 AutoRev AI Batch Car Addition
+================================
+File: scripts/car-pipeline/batch-performance-trucks-suvs.txt
+Concurrency: 1
+Delay: 10000ms between cars
+
+[8:05:24 AM] ℹ️ Found 11 car(s) to process
+[8:05:24 AM] 📦 Processing batch 1/11 (1 cars)...
+[8:09:48 AM] ⚠️ Warnings for Ford F-150 Raptor (2017-2020): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (25c57b2b-ce7c-4c71-b180-b7ce7fa845ab, null, 2, null, 897, Ford F-150 Raptor (2017-2020), null, ai-research-car:core-data, 2026-01-11 13:05:45.496334+00, 836, 897, 1.5963, claude-sonnet-4-20250514, car_research, 1.5963, backend_script, ai-research-car:core-data, Ford F-150 Raptor (2017-2020)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d52854f1-d408-418f-bd32-b784df4801e6, null, 1, null, 550, ford-f150-raptor-second-generation, null, ai-research-car:maintenance-specs, 2026-01-11 13:05:53.707204+00, 580, 550, 0.9990, claude-sonnet-4-20250514, car_research, 0.9990, backend_script, ai-research-car:maintenance-specs, ford-f150-raptor-second-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (44a8bb59-3211-4eda-a4ac-2e86527e184d, null, 4, null, 2084, ford-f150-raptor-second-generation, null, ai-research-car:service-intervals, 2026-01-11 13:06:08.95625+00, 367, 2084, 3.2361, claude-sonnet-4-20250514, car_research, 3.2361, backend_script, ai-research-car:service-intervals, ford-f150-raptor-second-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (5018c9db-e37a-4ab6-af8b-c401bd1ac7fc, null, 3, null, 1788, ford-f150-raptor-second-generation, null, ai-research-car:known-issues, 2026-01-11 13:06:14.869603+00, 384, 1788, 2.7972, claude-sonnet-4-20250514, car_research, 2.7972, backend_script, ai-research-car:known-issues, ford-f150-raptor-second-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f9276136-75fd-4168-9648-32b66c45b20b, null, 5, null, 2489, ford-f150-raptor-second-generation, null, ai-research-car:scoring-editorial, 2026-01-11 13:06:59.535588+00, 1494, 2489, 4.1817, claude-sonnet-4-20250514, car_research, 4.1817, backend_script, ai-research-car:scoring-editorial, ford-f150-raptor-second-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:09:48 AM] ✅ Ford F-150 Raptor (2017-2020): ✅ Complete (263.7s)
+[8:09:48 AM] ℹ️ Waiting 10000ms before next batch...
+[8:09:58 AM] 📦 Processing batch 2/11 (1 cars)...
+[8:13:34 AM] ⚠️ Warnings for Ford F-150 Raptor (2021-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (e53c1e0e-26f9-4ae0-be71-b7b38f32c125, null, 2, null, 900, Ford F-150 Raptor (2021-2024), null, ai-research-car:core-data, 2026-01-11 13:10:18.188458+00, 836, 900, 1.6008, claude-sonnet-4-20250514, car_research, 1.6008, backend_script, ai-research-car:core-data, Ford F-150 Raptor (2021-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (4efb5cff-b6c8-43a2-8f41-8416e2c5cf92, null, 1, null, 549, ford-f-150-raptor-2021-2024, null, ai-research-car:maintenance-specs, 2026-01-11 13:10:25.501588+00, 580, 549, 0.9975, claude-sonnet-4-20250514, car_research, 0.9975, backend_script, ai-research-car:maintenance-specs, ford-f-150-raptor-2021-2024).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (fb9a1606-5d28-4261-919c-a474215881a9, null, 4, null, 2046, ford-f-150-raptor-2021-2024, null, ai-research-car:service-intervals, 2026-01-11 13:10:40.852565+00, 367, 2046, 3.1791, claude-sonnet-4-20250514, car_research, 3.1791, backend_script, ai-research-car:service-intervals, ford-f-150-raptor-2021-2024).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f35611f1-6330-430a-a306-1e450a0135b3, null, 3, null, 1608, ford-f-150-raptor-2021-2024, null, ai-research-car:known-issues, 2026-01-11 13:10:44.715364+00, 384, 1608, 2.5272, claude-sonnet-4-20250514, car_research, 2.5272, backend_script, ai-research-car:known-issues, ford-f-150-raptor-2021-2024).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f34155ec-8af9-4fd7-b910-faa3ec7d3454, null, 5, null, 2610, ford-f-150-raptor-2021-2024, null, ai-research-car:scoring-editorial, 2026-01-11 13:11:31.606542+00, 1494, 2610, 4.3632, claude-sonnet-4-20250514, car_research, 4.3632, backend_script, ai-research-car:scoring-editorial, ford-f-150-raptor-2021-2024).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:13:34 AM] ✅ Ford F-150 Raptor (2021-2024): ✅ Complete (216.2s)
+[8:13:34 AM] ℹ️ Waiting 10000ms before next batch...
+[8:13:44 AM] 📦 Processing batch 3/11 (1 cars)...
+[8:18:17 AM] ⚠️ Warnings for Ford F-150 Raptor R (2023-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d37f8f4b-f420-461c-b49b-2844748ce905, null, 2, null, 888, Ford F-150 Raptor R (2023-2024), null, ai-research-car:core-data, 2026-01-11 13:14:04.063912+00, 837, 888, 1.5831, claude-sonnet-4-20250514, car_research, 1.5831, backend_script, ai-research-car:core-data, Ford F-150 Raptor R (2023-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (210ccf90-0e81-4bbe-bd1c-407139929e2d, null, 2, null, 557, ford-f150-raptor-r-third-generation, null, ai-research-car:maintenance-specs, 2026-01-11 13:14:11.772475+00, 581, 557, 1.0098, claude-sonnet-4-20250514, car_research, 1.0098, backend_script, ai-research-car:maintenance-specs, ford-f150-raptor-r-third-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c9967371-a8bc-46f8-9f4c-4105ef1412fa, null, 4, null, 2014, ford-f150-raptor-r-third-generation, null, ai-research-car:service-intervals, 2026-01-11 13:14:26.329078+00, 368, 2014, 3.1314, claude-sonnet-4-20250514, car_research, 3.1314, backend_script, ai-research-car:service-intervals, ford-f150-raptor-r-third-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (18656d42-cadb-4713-97d8-c4aa011971ee, null, 3, null, 1617, ford-f150-raptor-r-third-generation, null, ai-research-car:known-issues, 2026-01-11 13:14:30.817218+00, 385, 1617, 2.5410, claude-sonnet-4-20250514, car_research, 2.5410, backend_script, ai-research-car:known-issues, ford-f150-raptor-r-third-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d4096f78-a82e-4064-ac74-985fe3365a54, null, 5, null, 2547, ford-f150-raptor-r-third-generation, null, ai-research-car:scoring-editorial, 2026-01-11 13:15:20.058357+00, 1495, 2547, 4.2690, claude-sonnet-4-20250514, car_research, 4.2690, backend_script, ai-research-car:scoring-editorial, ford-f150-raptor-r-third-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:18:17 AM] ✅ Ford F-150 Raptor R (2023-2024): ✅ Complete (273.4s)
+[8:18:17 AM] ℹ️ Waiting 10000ms before next batch...
+[8:18:27 AM] 📦 Processing batch 4/11 (1 cars)...
+[8:23:03 AM] ⚠️ Warnings for Ram 1500 TRX (2021-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (3b7560cb-dbdd-481d-861a-435021f80151, null, 2, null, 856, Ram 1500 TRX (2021-2024), null, ai-research-car:core-data, 2026-01-11 13:18:47.095037+00, 836, 856, 1.5348, claude-sonnet-4-20250514, car_research, 1.5348, backend_script, ai-research-car:core-data, Ram 1500 TRX (2021-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b7b3c4c1-8b89-4614-ade2-13cc96b63e38, null, 1, null, 520, ram-1500-trx-dt, null, ai-research-car:maintenance-specs, 2026-01-11 13:18:54.056788+00, 580, 520, 0.9540, claude-sonnet-4-20250514, car_research, 0.9540, backend_script, ai-research-car:maintenance-specs, ram-1500-trx-dt).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (50d5dd7b-a923-40ea-b7a5-aebf292f789e, null, 4, null, 2072, ram-1500-trx-dt, null, ai-research-car:service-intervals, 2026-01-11 13:19:11.217741+00, 367, 2072, 3.2181, claude-sonnet-4-20250514, car_research, 3.2181, backend_script, ai-research-car:service-intervals, ram-1500-trx-dt).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (ba1287a6-c50b-44ba-b859-199f5d3ef7cc, null, 3, null, 1626, ram-1500-trx-dt, null, ai-research-car:known-issues, 2026-01-11 13:19:13.624817+00, 384, 1626, 2.5542, claude-sonnet-4-20250514, car_research, 2.5542, backend_script, ai-research-car:known-issues, ram-1500-trx-dt).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c3cd1e23-c148-4f29-87c3-9940e32db16b, null, 4, null, 2179, ram-1500-trx-dt, null, ai-research-car:scoring-editorial, 2026-01-11 13:19:53.340738+00, 1494, 2179, 3.7167, claude-sonnet-4-20250514, car_research, 3.7167, backend_script, ai-research-car:scoring-editorial, ram-1500-trx-dt).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:23:03 AM] ✅ Ram 1500 TRX (2021-2024): ✅ Complete (275.2s)
+[8:23:03 AM] ℹ️ Waiting 10000ms before next batch...
+[8:23:13 AM] 📦 Processing batch 5/11 (1 cars)...
+[8:27:09 AM] ⚠️ Warnings for Toyota Tacoma TRD Pro (2016-2023): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (e5980d4e-2ad8-4d4e-b1a5-001986c511f1, null, 2, null, 908, Toyota Tacoma TRD Pro (2016-2023), null, ai-research-car:core-data, 2026-01-11 13:23:32.255253+00, 836, 908, 1.6128, claude-sonnet-4-20250514, car_research, 1.6128, backend_script, ai-research-car:core-data, Toyota Tacoma TRD Pro (2016-2023)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (26381fb5-91e3-4840-b5c9-65d81dd0da49, null, 1, null, 529, toyota-tacoma-trd-pro-3rd-gen, null, ai-research-car:maintenance-specs, 2026-01-11 13:23:39.253523+00, 580, 529, 0.9675, claude-sonnet-4-20250514, car_research, 0.9675, backend_script, ai-research-car:maintenance-specs, toyota-tacoma-trd-pro-3rd-gen).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (74022128-8f39-4c38-ae8f-5129db6dae1a, null, 4, null, 2045, toyota-tacoma-trd-pro-3rd-gen, null, ai-research-car:service-intervals, 2026-01-11 13:23:54.688347+00, 367, 2045, 3.1776, claude-sonnet-4-20250514, car_research, 3.1776, backend_script, ai-research-car:service-intervals, toyota-tacoma-trd-pro-3rd-gen).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (ede12992-67a1-4e7b-a4a2-7dced7ea8c17, null, 3, null, 1508, toyota-tacoma-trd-pro-3rd-gen, null, ai-research-car:known-issues, 2026-01-11 13:23:55.68848+00, 384, 1508, 2.3772, claude-sonnet-4-20250514, car_research, 2.3772, backend_script, ai-research-car:known-issues, toyota-tacoma-trd-pro-3rd-gen).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (5570a078-7cc0-4a14-ae30-1219941b7215, null, 4, null, 2013, toyota-tacoma-trd-pro-3rd-gen, null, ai-research-car:scoring-editorial, 2026-01-11 13:24:32.0945+00, 1494, 2013, 3.4677, claude-sonnet-4-20250514, car_research, 3.4677, backend_script, ai-research-car:scoring-editorial, toyota-tacoma-trd-pro-3rd-gen).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:27:09 AM] ✅ Toyota Tacoma TRD Pro (2016-2023): ✅ Complete (236.1s)
+[8:27:09 AM] ℹ️ Waiting 10000ms before next batch...
+[8:27:19 AM] 📦 Processing batch 6/11 (1 cars)...
+[8:31:50 AM] ⚠️ Warnings for Toyota Tundra TRD Pro (2022-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b0b5e098-f207-4f56-929f-551e36d4e1b3, null, 2, null, 959, Toyota Tundra TRD Pro (2022-2024), null, ai-research-car:core-data, 2026-01-11 13:27:40.155802+00, 837, 959, 1.6896, claude-sonnet-4-20250514, car_research, 1.6896, backend_script, ai-research-car:core-data, Toyota Tundra TRD Pro (2022-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (bbf04ac4-57b6-4ad9-b315-8996948abbce, null, 2, null, 556, toyota-tundra-trd-pro-xk70, null, ai-research-car:maintenance-specs, 2026-01-11 13:27:48.736437+00, 581, 556, 1.0083, claude-sonnet-4-20250514, car_research, 1.0083, backend_script, ai-research-car:maintenance-specs, toyota-tundra-trd-pro-xk70).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (6bc4eb82-ff73-4bf7-8398-979d59716d66, null, 4, null, 2067, toyota-tundra-trd-pro-xk70, null, ai-research-car:service-intervals, 2026-01-11 13:28:03.362545+00, 368, 2067, 3.2109, claude-sonnet-4-20250514, car_research, 3.2109, backend_script, ai-research-car:service-intervals, toyota-tundra-trd-pro-xk70).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (1b6edf68-b989-4689-9767-3699217e7574, null, 3, null, 1527, toyota-tundra-trd-pro-xk70, null, ai-research-car:known-issues, 2026-01-11 13:28:04.604121+00, 385, 1527, 2.4060, claude-sonnet-4-20250514, car_research, 2.4060, backend_script, ai-research-car:known-issues, toyota-tundra-trd-pro-xk70).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (ee52549c-61da-43cf-8664-b244324729ed, null, 5, null, 2460, toyota-tundra-trd-pro-xk70, null, ai-research-car:scoring-editorial, 2026-01-11 13:28:49.373453+00, 1495, 2460, 4.1385, claude-sonnet-4-20250514, car_research, 4.1385, backend_script, ai-research-car:scoring-editorial, toyota-tundra-trd-pro-xk70).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:31:50 AM] ✅ Toyota Tundra TRD Pro (2022-2024): ✅ Complete (271.3s)
+[8:31:50 AM] ℹ️ Waiting 10000ms before next batch...
+[8:32:00 AM] 📦 Processing batch 7/11 (1 cars)...
+[8:36:30 AM] ⚠️ Warnings for Chevrolet Silverado ZR2 (2022-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a45dcc34-d0d1-4bb6-a5bb-647679d5349b, null, 2, null, 871, Chevrolet Silverado ZR2 (2022-2024), null, ai-research-car:core-data, 2026-01-11 13:32:17.725529+00, 839, 871, 1.5582, claude-sonnet-4-20250514, car_research, 1.5582, backend_script, ai-research-car:core-data, Chevrolet Silverado ZR2 (2022-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f068e83d-6f55-4508-9c0a-3de788b15787, null, 1, null, 531, chevrolet-silverado-zr2-t1xx, null, ai-research-car:maintenance-specs, 2026-01-11 13:32:24.61664+00, 583, 531, 0.9714, claude-sonnet-4-20250514, car_research, 0.9714, backend_script, ai-research-car:maintenance-specs, chevrolet-silverado-zr2-t1xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (8baebf20-c8a3-4a4c-aebd-9e27eb552e55, null, 4, null, 2037, chevrolet-silverado-zr2-t1xx, null, ai-research-car:service-intervals, 2026-01-11 13:32:40.136073+00, 370, 2037, 3.1665, claude-sonnet-4-20250514, car_research, 3.1665, backend_script, ai-research-car:service-intervals, chevrolet-silverado-zr2-t1xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c6ff2f45-7587-49a9-850e-134038fd8c67, null, 3, null, 1574, chevrolet-silverado-zr2-t1xx, null, ai-research-car:known-issues, 2026-01-11 13:32:44.558202+00, 387, 1574, 2.4771, claude-sonnet-4-20250514, car_research, 2.4771, backend_script, ai-research-car:known-issues, chevrolet-silverado-zr2-t1xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (9f28ce8b-6d0f-4ac6-adaa-0474d5e7805f, null, 5, null, 2449, chevrolet-silverado-zr2-t1xx, null, ai-research-car:scoring-editorial, 2026-01-11 13:33:28.581802+00, 1497, 2449, 4.1226, claude-sonnet-4-20250514, car_research, 4.1226, backend_script, ai-research-car:scoring-editorial, chevrolet-silverado-zr2-t1xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:36:31 AM] ✅ Chevrolet Silverado ZR2 (2022-2024): ✅ Complete (269.9s)
+[8:36:31 AM] ℹ️ Waiting 10000ms before next batch...
+[8:36:41 AM] 📦 Processing batch 8/11 (1 cars)...
+[8:41:00 AM] ⚠️ Warnings for GMC Sierra AT4X (2022-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7ae47ca9-1d3a-45cf-8e47-63337f002cc8, null, 2, null, 914, GMC Sierra AT4X (2022-2024), null, ai-research-car:core-data, 2026-01-11 13:37:00.218474+00, 834, 914, 1.6212, claude-sonnet-4-20250514, car_research, 1.6212, backend_script, ai-research-car:core-data, GMC Sierra AT4X (2022-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f40c306d-eea5-4898-9437-1c1c5b968fdf, null, 1, null, 525, gmc-sierra-at4x-k2xx, null, ai-research-car:maintenance-specs, 2026-01-11 13:37:07.485177+00, 578, 525, 0.9609, claude-sonnet-4-20250514, car_research, 0.9609, backend_script, ai-research-car:maintenance-specs, gmc-sierra-at4x-k2xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (9423fe19-b8c0-437c-b1d1-9ea127469e31, null, 4, null, 2042, gmc-sierra-at4x-k2xx, null, ai-research-car:service-intervals, 2026-01-11 13:37:22.982486+00, 365, 2042, 3.1725, claude-sonnet-4-20250514, car_research, 3.1725, backend_script, ai-research-car:service-intervals, gmc-sierra-at4x-k2xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (5ee97c2e-0e42-4b34-af98-25c31d58cef6, null, 3, null, 1637, gmc-sierra-at4x-k2xx, null, ai-research-car:known-issues, 2026-01-11 13:37:30.731374+00, 382, 1637, 2.5701, claude-sonnet-4-20250514, car_research, 2.5701, backend_script, ai-research-car:known-issues, gmc-sierra-at4x-k2xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (1d3c0076-11ae-4d30-95de-fb94ef0d7cd3, null, 4, null, 2320, gmc-sierra-at4x-k2xx, null, ai-research-car:scoring-editorial, 2026-01-11 13:38:13.982057+00, 1492, 2320, 3.9276, claude-sonnet-4-20250514, car_research, 3.9276, backend_script, ai-research-car:scoring-editorial, gmc-sierra-at4x-k2xx).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:41:00 AM] ✅ GMC Sierra AT4X (2022-2024): ✅ Complete (259.1s)
+[8:41:00 AM] ℹ️ Waiting 10000ms before next batch...
+[8:41:10 AM] 📦 Processing batch 9/11 (1 cars)...
+[8:45:17 AM] ⚠️ Warnings for Ford Bronco Raptor (2022-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (78929185-4ca4-4f38-a85e-d45b483e32c7, null, 2, null, 878, Ford Bronco Raptor (2022-2024), null, ai-research-car:core-data, 2026-01-11 13:41:28.038563+00, 835, 878, 1.5675, claude-sonnet-4-20250514, car_research, 1.5675, backend_script, ai-research-car:core-data, Ford Bronco Raptor (2022-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (95aa2fa9-db4e-4e06-a0a8-952e3acaeb3a, null, 1, null, 550, ford-bronco-raptor-sixth-generation, null, ai-research-car:maintenance-specs, 2026-01-11 13:41:36.024536+00, 579, 550, 0.9987, claude-sonnet-4-20250514, car_research, 0.9987, backend_script, ai-research-car:maintenance-specs, ford-bronco-raptor-sixth-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a27b7625-8163-44a3-a4cd-fa5716f560bc, null, 4, null, 2018, ford-bronco-raptor-sixth-generation, null, ai-research-car:service-intervals, 2026-01-11 13:41:50.05224+00, 366, 2018, 3.1368, claude-sonnet-4-20250514, car_research, 3.1368, backend_script, ai-research-car:service-intervals, ford-bronco-raptor-sixth-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (e9eb0844-be58-4a89-ac85-7cdc1d044532, null, 3, null, 1672, ford-bronco-raptor-sixth-generation, null, ai-research-car:known-issues, 2026-01-11 13:41:56.43974+00, 383, 1672, 2.6229, claude-sonnet-4-20250514, car_research, 2.6229, backend_script, ai-research-car:known-issues, ford-bronco-raptor-sixth-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (95603b9f-8f0f-49de-856a-d69731c066d6, null, 4, null, 2188, ford-bronco-raptor-sixth-generation, null, ai-research-car:scoring-editorial, 2026-01-11 13:42:36.043157+00, 1493, 2188, 3.7299, claude-sonnet-4-20250514, car_research, 3.7299, backend_script, ai-research-car:scoring-editorial, ford-bronco-raptor-sixth-generation).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:45:17 AM] ✅ Ford Bronco Raptor (2022-2024): ✅ Complete (247.6s)
+[8:45:17 AM] ℹ️ Waiting 10000ms before next batch...
+[8:45:27 AM] 📦 Processing batch 10/11 (1 cars)...
+[8:49:48 AM] ⚠️ Warnings for Jeep Wrangler Rubicon 392 (2021-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (0f007ecd-5aa4-4f16-94f5-5f1b1fb734f9, null, 2, null, 984, Jeep Wrangler Rubicon 392 (2021-2024), null, ai-research-car:core-data, 2026-01-11 13:45:50.073934+00, 841, 984, 1.7283, claude-sonnet-4-20250514, car_research, 1.7283, backend_script, ai-research-car:core-data, Jeep Wrangler Rubicon 392 (2021-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (8f1f01e3-2f78-44f8-a4e6-ccb7a415cc67, null, 1, null, 515, jeep-wrangler-rubicon-392-jl, null, ai-research-car:maintenance-specs, 2026-01-11 13:45:57.905945+00, 585, 515, 0.9480, claude-sonnet-4-20250514, car_research, 0.9480, backend_script, ai-research-car:maintenance-specs, jeep-wrangler-rubicon-392-jl).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (da2fa8a0-623d-47b1-a473-0a5a3068965c, null, 4, null, 2037, jeep-wrangler-rubicon-392-jl, null, ai-research-car:service-intervals, 2026-01-11 13:46:13.01865+00, 372, 2037, 3.1671, claude-sonnet-4-20250514, car_research, 3.1671, backend_script, ai-research-car:service-intervals, jeep-wrangler-rubicon-392-jl).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (41582451-2b48-4c3d-8629-68a5ec5fc567, null, 3, null, 1712, jeep-wrangler-rubicon-392-jl, null, ai-research-car:known-issues, 2026-01-11 13:46:20.695221+00, 389, 1712, 2.6847, claude-sonnet-4-20250514, car_research, 2.6847, backend_script, ai-research-car:known-issues, jeep-wrangler-rubicon-392-jl).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (bb312e51-af2e-47a0-8965-a86e0d5677d3, null, 5, null, 2635, jeep-wrangler-rubicon-392-jl, null, ai-research-car:scoring-editorial, 2026-01-11 13:47:08.462195+00, 1499, 2635, 4.4022, claude-sonnet-4-20250514, car_research, 4.4022, backend_script, ai-research-car:scoring-editorial, jeep-wrangler-rubicon-392-jl).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:49:48 AM] ✅ Jeep Wrangler Rubicon 392 (2021-2024): ✅ Complete (261.1s)
+[8:49:48 AM] ℹ️ Waiting 10000ms before next batch...
+[8:49:58 AM] 📦 Processing batch 11/11 (1 cars)...
+[8:54:10 AM] ⚠️ Warnings for Jeep Grand Cherokee Trackhawk (2018-2021): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7f40ec4d-ba74-41ea-9b9e-ecb65b7c405b, null, 2, null, 977, Jeep Grand Cherokee Trackhawk (2018-2021), null, ai-research-car:core-data, 2026-01-11 13:50:18.675157+00, 837, 977, 1.7166, claude-sonnet-4-20250514, car_research, 1.7166, backend_script, ai-research-car:core-data, Jeep Grand Cherokee Trackhawk (2018-2021)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d7b81ee7-51ae-4275-bbfd-54db8a1787d5, null, 1, null, 536, jeep-grand-cherokee-trackhawk-wk2, null, ai-research-car:maintenance-specs, 2026-01-11 13:50:25.920962+00, 581, 536, 0.9783, claude-sonnet-4-20250514, car_research, 0.9783, backend_script, ai-research-car:maintenance-specs, jeep-grand-cherokee-trackhawk-wk2).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (aa0253b9-d95c-4c59-8eec-9bf33cf91738, null, 4, null, 2107, jeep-grand-cherokee-trackhawk-wk2, null, ai-research-car:service-intervals, 2026-01-11 13:50:42.69589+00, 368, 2107, 3.2709, claude-sonnet-4-20250514, car_research, 3.2709, backend_script, ai-research-car:service-intervals, jeep-grand-cherokee-trackhawk-wk2).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (5e8b03ac-9923-4837-913b-2e914874fa22, null, 3, null, 1672, jeep-grand-cherokee-trackhawk-wk2, null, ai-research-car:known-issues, 2026-01-11 13:50:47.960384+00, 385, 1672, 2.6235, claude-sonnet-4-20250514, car_research, 2.6235, backend_script, ai-research-car:known-issues, jeep-grand-cherokee-trackhawk-wk2).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d98ed47e-64a1-4196-813f-74efb124c999, null, 5, null, 2511, jeep-grand-cherokee-trackhawk-wk2, null, ai-research-car:scoring-editorial, 2026-01-11 13:51:33.797849+00, 1495, 2511, 4.2150, claude-sonnet-4-20250514, car_research, 4.2150, backend_script, ai-research-car:scoring-editorial, jeep-grand-cherokee-trackhawk-wk2).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:54:10 AM] ✅ Jeep Grand Cherokee Trackhawk (2018-2021): ✅ Complete (252.1s)
+
+📊 Batch Processing Summary
+==========================
+Total Cars:   11
+Successful:   11 ✅
+Failed:       0 ❌
+Total Time:   2926.3s
+Avg Per Car:  256.9s
+
+✅ Successfully Added:
+  - Ford F-150 Raptor (2017-2020)
+  - Ford F-150 Raptor (2021-2024)
+  - Ford F-150 Raptor R (2023-2024)
+  - Ram 1500 TRX (2021-2024)
+  - Toyota Tacoma TRD Pro (2016-2023)
+  - Toyota Tundra TRD Pro (2022-2024)
+  - Chevrolet Silverado ZR2 (2022-2024)
+  - GMC Sierra AT4X (2022-2024)
+  - Ford Bronco Raptor (2022-2024)
+  - Jeep Wrangler Rubicon 392 (2021-2024)
+  - Jeep Grand Cherokee Trackhawk (2018-2021)
+
+🎉 Cars are now available in AutoRev!
+📋 Check the pipeline dashboard: /internal/car-pipeline

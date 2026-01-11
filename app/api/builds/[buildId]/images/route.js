@@ -7,10 +7,10 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request, { params }) {
-  try {
-    const { buildId } = await params;
+async function handleGet(request, { params }) {
+  const { buildId } = await params;
     
     if (!buildId) {
       return NextResponse.json({ error: 'Build ID required' }, { status: 400 });
@@ -53,9 +53,6 @@ export async function GET(request, { params }) {
     }
     
     return NextResponse.json({ images: images || [] });
-    
-  } catch (err) {
-    console.error('[API/builds/images] Error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'builds/images', feature: 'tuning-shop' });

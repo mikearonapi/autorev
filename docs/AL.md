@@ -504,6 +504,8 @@ Expensive tools are cached to reduce costs:
 
 ## Database Tables
 
+### AL System Tables
+
 | Table | Purpose |
 |-------|---------|
 | `al_conversations` | Chat session metadata |
@@ -511,6 +513,53 @@ Expensive tools are cached to reduce costs:
 | `al_user_credits` | User balance in cents |
 | `al_usage_logs` | Detailed usage tracking |
 | `al_credit_purchases` | Purchase history (future) |
+
+### Tool → Database Table Mapping
+
+> **Last Updated:** January 15, 2026
+
+| Tool | Primary RPC/Tables | Source of Truth |
+|------|-------------------|-----------------|
+| `get_car_ai_context` | `get_car_ai_context_v2` RPC → `cars`, `car_fuel_economy`, `car_safety_data`, `car_market_pricing`, `car_recalls`, `car_tuning_profiles`, `youtube_video_car_links` | ✅ Optimized in v2 |
+| `search_cars` | `search_cars_fts` RPC → `cars` | — |
+| `get_car_details` | `cars` + various enrichment tables | — |
+| `get_known_issues` | `car_issues` | ✅ Source of truth (~~`vehicle_known_issues`~~ deprecated) |
+| `get_expert_reviews` | `youtube_video_car_links` + `youtube_videos` | — |
+| `get_maintenance_schedule` | `get_car_maintenance_summary` RPC → `vehicle_maintenance_specs`, `vehicle_service_intervals` | — |
+| `search_parts` | `parts`, `part_fitments`, `part_pricing_snapshots` | — |
+| `recommend_build` | `get_car_tuning_context` RPC → `car_tuning_profiles`, `part_fitments`, `parts`, `car_dyno_runs`, `upgrade_packages` | ✅ New optimized RPC |
+| `search_knowledge` | `search_document_chunks` RPC → `document_chunks` | — |
+| `get_track_lap_times` | `get_car_track_lap_times` RPC → `car_track_lap_times`, `tracks`, `track_layouts` | — |
+| `get_dyno_runs` | `get_car_dyno_runs` RPC → `car_dyno_runs` | — |
+| `search_community_insights` | `search_community_insights` RPC → `community_insights` | — |
+| `search_events` | `events`, `event_types`, `event_car_affinities` | — |
+| `analyze_vehicle_health` | `analyze_vehicle_health_data` RPC → `user_vehicles`, `vehicle_maintenance_specs`, `car_issues`, `user_service_logs` | — |
+| `compare_cars` | `cars` (local in-memory) | — |
+| `search_encyclopedia` | `search_document_chunks` RPC (filtered to encyclopedia) | — |
+| `get_upgrade_info` | Static files: `data/upgradeEducation.js` | — |
+
+### RPC Functions Used by AL
+
+| RPC Function | Primary Table(s) | Notes |
+|--------------|-----------------|-------|
+| `get_car_ai_context_v2` | 8+ tables | **Optimized** - resolves slug→id once, uses car_id for all queries |
+| `get_car_tuning_context` | 5 tables | **NEW** - tuning-focused data for recommend_build |
+| `get_car_maintenance_summary` | 2 tables | Maintenance specs aggregation |
+| `search_document_chunks` | `document_chunks` | Vector similarity search |
+| `search_community_insights` | `community_insights` | Semantic forum search |
+| `get_car_dyno_runs` | `car_dyno_runs` | Dyno data with optional curve |
+| `get_car_track_lap_times` | `car_track_lap_times`, `tracks` | Track times with venue info |
+| `analyze_vehicle_health_data` | Multiple user/car tables | Vehicle health analysis |
+
+### Cache TTLs by Tool
+
+| Tool | Cache TTL | Reason |
+|------|----------|--------|
+| `get_car_ai_context` | 2 min | Car data changes rarely |
+| `search_knowledge` | 5 min | Document chunks are stable |
+| `get_track_lap_times` | 10 min | Track data is semi-static |
+| `get_dyno_runs` | 10 min | Dyno data is semi-static |
+| `search_community_insights` | 5 min | Forum insights update periodically |
 
 ---
 

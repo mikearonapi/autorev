@@ -15,6 +15,8 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -47,8 +49,7 @@ async function getAuthenticatedUser() {
  * GET /api/community/posts
  * List community posts with optional filters
  */
-export async function GET(request) {
-  try {
+async function handleGet(request) {
     const { searchParams } = new URL(request.url);
     const postType = searchParams.get('type');
     const carSlug = searchParams.get('car');
@@ -80,19 +81,13 @@ export async function GET(request) {
       count: results.length,
       hasMore: results.length === limit,
     });
-
-  } catch (error) {
-    console.error('[CommunityPosts API] Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  }
 }
 
 /**
  * POST /api/community/posts
  * Create a new community post
  */
-export async function POST(request) {
-  try {
+async function handlePost(request) {
     // Verify authentication
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -137,6 +132,9 @@ export async function POST(request) {
 
     const slug = slugResult || `post-${Date.now()}`;
 
+    // Resolve car_id from slug if provided (car_slug column no longer exists on community_posts)
+    const carId = carSlug ? await resolveCarId(carSlug) : null;
+    
     // Create post
     const { data: post, error: postError } = await supabaseAdmin
       .from('community_posts')
@@ -147,7 +145,7 @@ export async function POST(request) {
         description: description || null,
         user_vehicle_id: vehicleId || null,
         user_build_id: buildId || null,
-        car_slug: carSlug || null,
+        car_id: carId,
         car_name: carName || null,
         slug,
         is_published: true,
@@ -195,19 +193,13 @@ export async function POST(request) {
       post,
       shareUrl: `${process.env.NEXT_PUBLIC_APP_URL}/community/builds/${slug}`,
     });
-
-  } catch (error) {
-    console.error('[CommunityPosts API] Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  }
 }
 
 /**
  * PATCH /api/community/posts
  * Update a community post (publish/unpublish)
  */
-export async function PATCH(request) {
-  try {
+async function handlePatch(request) {
     // Verify authentication
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -252,10 +244,6 @@ export async function PATCH(request) {
     try {
       revalidatePath('/community/builds');
       revalidatePath('/community');
-      if (post.car_slug) {
-        const brand = post.car_slug.split('-')[0];
-        revalidatePath(`/community/builds?brand=${brand}`);
-      }
       // Also revalidate the specific post page
       revalidatePath(`/community/builds/${post.slug}`);
       console.log('[CommunityPosts API] Cache revalidated for post update');
@@ -267,10 +255,10 @@ export async function PATCH(request) {
       success: true,
       post,
     });
-
-  } catch (error) {
-    console.error('[CommunityPosts API] PATCH Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  }
 }
+
+// Export wrapped handlers with error logging
+export const GET = withErrorLogging(handleGet, { route: 'community/posts', feature: 'community-builds' });
+export const POST = withErrorLogging(handlePost, { route: 'community/posts', feature: 'community-builds' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'community/posts', feature: 'community-builds' });
 

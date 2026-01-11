@@ -1,8 +1,17 @@
 /**
  * AutoRev - Car-Specific Upgrade Recommendations
  * 
- * This file maps each car to its recommended upgrade packages, must-have modules,
- * nice-to-have modules, and platform-specific notes for each tier.
+ * @deprecated As of 2026-01-15, this file is a LEGACY FALLBACK only.
+ * 
+ * SOURCE OF TRUTH: Use car_tuning_profiles table via useTuningProfile hook instead.
+ * - Upgrade recommendations: car_tuning_profiles.upgrades_by_objective
+ * - Platform strengths/weaknesses: car_tuning_profiles.platform_strengths, platform_weaknesses
+ * 
+ * This static file is used as a fallback in UpgradeCenter.jsx only when:
+ * - car_tuning_profiles data is not yet available for a specific car
+ * - The useTuningProfile hook returns no profile
+ * 
+ * New car data should be added to car_tuning_profiles table, not this file.
  * 
  * Structure per car:
  * - defaultTier: Which package tier to show by default

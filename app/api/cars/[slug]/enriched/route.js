@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { resolveCarId } from '@/lib/carResolver';
 
 /**
  * GET /api/cars/[slug]/enriched
@@ -15,6 +16,8 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
  * - popularParts: Top parts with fitment
  * 
  * Cache: 1 hour, stale-while-revalidate for 2 hours
+ * 
+ * Updated 2026-01-11: Uses car_id for all queries (car_slug columns removed from most tables)
  */
 async function handleGet(request, { params }) {
   try {
@@ -37,35 +40,49 @@ async function handleGet(request, { params }) {
       });
     }
 
-    // Fetch all enriched data in parallel
+    // Resolve car_id once for efficient queries
+    // NOTE: All these tables use car_id ONLY (car_slug columns were removed)
+    const carId = await resolveCarId(slug);
+    
+    if (!carId) {
+      return NextResponse.json({
+        efficiency: null,
+        safety: null,
+        priceByYear: null,
+        popularParts: [],
+        message: 'Car not found',
+      });
+    }
+
+    // Fetch all enriched data in parallel using car_id
     const [
       efficiencyResult,
       safetyResult,
       priceByYearResult,
       partsResult,
     ] = await Promise.all([
-      // Fuel economy
+      // Fuel economy (uses car_id)
       supabase
         .from('car_fuel_economy')
         .select('*')
-        .eq('car_slug', slug)
+        .eq('car_id', carId)
         .single(),
       
-      // Safety ratings
+      // Safety ratings (uses car_id)
       supabase
         .from('car_safety_data')
         .select('*')
-        .eq('car_slug', slug)
+        .eq('car_id', carId)
         .single(),
       
-      // Price by year
+      // Price by year (uses car_id)
       supabase
-        .from('car_price_by_year')
+        .from('car_market_pricing_years')
         .select('*')
-        .eq('car_slug', slug)
-        .order('model_year', { ascending: false }),
+        .eq('car_id', carId)
+        .order('year', { ascending: false }),
       
-      // Popular parts with fitment
+      // Popular parts with fitment (uses car_id)
       supabase
         .from('parts')
         .select(`
@@ -88,7 +105,7 @@ async function handleGet(request, { params }) {
             fetched_at
           )
         `)
-        .eq('part_fitments.car_slug', slug)
+        .eq('part_fitments.car_id', carId)
         .order('name')
         .limit(8),
     ]);

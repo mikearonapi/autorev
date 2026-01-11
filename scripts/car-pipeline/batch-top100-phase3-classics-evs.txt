@@ -1,0 +1,31 @@
+# Phase 3: Classics & EVs
+# From Top 100 US Modifications Market Analysis
+# Generated: January 10, 2026
+# Total: 10 vehicles
+
+# ============================================
+# CLASSIC MUSCLE (Collector Market)
+# ============================================
+
+# Classic Camaro
+Chevrolet Camaro SS (1969)
+Chevrolet Camaro Z28 (1970-1973)
+
+# Classic Mustang
+Ford Mustang Fastback (1967-1968)
+Ford Mustang Boss 429 (1969-1970)
+Ford Mustang Mach 1 (1969-1973)
+
+# Rotary
+Mazda RX-8 (2004-2012)
+
+# Original Supercar
+Acura NSX NA1 (1991-2005)
+
+# ============================================
+# ELECTRIC VEHICLES (Emerging Market)
+# ============================================
+
+Tesla Model Y Performance (2020-2024)
+Rivian R1T (2022-2024)
+BMW i4 M50 (2022-2024)

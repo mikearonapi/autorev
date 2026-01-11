@@ -15,6 +15,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Mark route as dynamic since it uses request.url
 export const dynamic = 'force-dynamic';
@@ -28,8 +29,7 @@ const supabaseAdmin = createClient(
  * GET /api/community/builds
  * List community builds with optional filters
  */
-export async function GET(request) {
-  try {
+async function handleGet(request) {
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '12'), 50);
     const offset = parseInt(searchParams.get('offset') || '0');
@@ -98,14 +98,9 @@ export async function GET(request) {
         'Expires': '0',
       },
     });
-
-  } catch (error) {
-    console.error('[CommunityBuilds API] Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { 
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-      },
-    });
-  }
 }
+
+export const GET = withErrorLogging(handleGet, { 
+  route: 'community/builds', 
+  feature: 'community-builds' 
+});

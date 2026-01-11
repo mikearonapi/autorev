@@ -1,0 +1,2973 @@
+
+🚗 AutoRev AI Batch Car Addition
+================================
+File: scripts/car-pipeline/batch-top25-modified-missing.txt
+Concurrency: 1
+Delay: 10000ms between cars
+
+[8:39:29 PM] ℹ️ Found 15 car(s) to process
+
+Cars to process:
+  1. Hyundai Veloster N (2019-2023)
+  2. Kia Stinger GT (2018-2023)
+  3. Ford Focus ST Mk3 (2013-2018)
+  4. Infiniti G37 Coupe (2008-2013)
+  5. Infiniti G37 Sedan (2009-2013)
+  6. Audi S4 B6 (2004-2005)
+  7. Audi S4 B7 (2005-2008)
+  8. Audi S4 B8 (2010-2016)
+  9. Audi S4 B9 (2017-2024)
+  10. Audi S5 B8 (2008-2016)
+  11. Audi S5 B9 (2017-2024)
+  12. Porsche Boxster S 986 (1997-2004)
+  13. Porsche Boxster S 987 (2005-2012)
+  14. Porsche Boxster S 981 (2012-2016)
+  15. Porsche 718 Boxster GTS 4.0 (2020-2024)
+
+[8:39:29 PM] 📦 Processing batch 1/15 (1 cars)...
+[8:39:29 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Hyundai Veloster N (2019-2023)" --verbose
+[8:44:06 PM] ℹ️ AI research output for Hyundai Veloster N (2019-2023):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Hyundai Veloster N (2019-2023)
+
+[8:39:30 PM] 📋 Phase 1-2: AI researching core data for "Hyundai Veloster N (2019-2023)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 836 in, 845 out = $0.0152
+[8:39:47 PM] ℹ️ Generated slug: hyundai-veloster-n-js
+[8:39:47 PM] ℹ️ HP: 275, Torque: 260
+[8:39:47 PM] ℹ️ Price: $33,000 - $36,000
+[8:39:47 PM] ✅ Generated slug: hyundai-veloster-n-js
+[8:39:48 PM] 🤖 Phase 4a: AI researching known issues...
+[8:39:48 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[8:39:48 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 580 in, 536 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 367 in, 2068 out = $0.0321
+[8:40:10 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 384 in, 1533 out = $0.0241
+[8:40:11 PM] ℹ️ Found 7 known issues
+[8:40:11 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1494 in, 2122 out = $0.0363
+[8:40:51 PM] ℹ️ Scores: Sound=8, Track=9, Fun=9
+[8:40:51 PM] 📋 Phase 6a: Generating hero image...
+[8:40:51 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:41:22 PM] ✅ Saved: hyundai-veloster-n-js-hero.jpg (2662 KB)
+[8:41:23 PM] 🖼️ Uploading to blob: cars/hyundai-veloster-n-js/hero.webp...
+[8:41:24 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/hyundai-veloster-n-js/hero.webp
+[8:41:24 PM] 📋 Phase 6b: Generating industrial/garage image...
+[8:41:24 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:41:48 PM] ✅ Saved: hyundai-veloster-n-js-garage.jpg (2713 KB)
+[8:41:48 PM] 🖼️ Uploading to blob: garage/hyundai-veloster-n-js/exclusive.webp...
+[8:41:48 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/hyundai-veloster-n-js/exclusive.webp
+[8:41:49 PM] 💾 Saving to database...
+[8:41:50 PM] ✅ Car inserted: hyundai-veloster-n-js (ID: eb91e2d0-7f43-4723-a1de-a5c612f3985e)
+[8:41:50 PM] ✅ Inserted 7 known issues
+[8:41:50 PM] ✅ Inserted maintenance specs
+[8:41:51 PM] ✅ Inserted 10 service intervals
+[8:41:51 PM] 📋 Phase 3: Running automated enrichment APIs...
+[8:41:51 PM] 🌐 Calling EPA fuel economy API...
+[8:41:55 PM] ✅ EPA fuel economy enriched
+[8:41:55 PM] 🌐 Calling NHTSA safety ratings API...
+[8:41:55 PM] ✅ NHTSA safety ratings enriched
+[8:41:55 PM] 🌐 Calling recalls API...
+[8:41:56 PM] ✅ Recalls enriched
+[8:41:56 PM] ℹ️ Phase 7: Running YouTube discovery...
+[8:41:56 PM] ℹ️ Running YouTube discovery for hyundai-veloster-n-js...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "hyundai-veloster-n-js",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Hyundai Veloster N (2019-2023)
+[exa-discovery] Searching for "Hyundai Veloster N" review videos via Exa...
+[exa-discovery] Found 27 unique videos via Exa
+[exa-discovery] Processing 5 of 27 videos...
+[exa-discovery] 
+[1/5] 2022 Hyundai Veloster N DCT Review - Why It's The Most Fun ....
+[exa-discovery]   URL: https://www.youtube.com/watch?v=zgjgrZTW9L8
+[exa-discovery]   ✓ Transcript: 8596 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] EASY TO GO FAST! 2022 Hyundai Veloster N DCT Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=2DL7cAsCR6s
+[exa-discovery]   ✓ Transcript: 15515 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2020 Veloster N Review | Not Great, Not Terrible...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=DZ376LuY2gs
+[exa-discovery]   ✓ Transcript: 20636 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 6 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Four Years with Brian's Veloster N...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=6kFtWiCxQsQ
+[exa-discovery]   ✓ Transcript: 10720 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 10 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Is The 2022 Hyundai Veloster N BETTER With The 6-Speed ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=7lkeKsArF0k
+[exa-discovery]   ✓ Transcript: 17319 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 12 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       27
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[8:44:05 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 4 AI processed
+[8:44:06 PM] 📋 Phase 8: Running validation audit...
+[8:44:06 PM] ℹ️ Running validation audit for hyundai-veloster-n-js...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[8:44:06 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[8:44:06 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Hyundai Veloster N
+Slug:          hyundai-veloster-n-js
+Brand:         Hyundai
+Years:         2019-2023
+HP:            275
+Price:         $33,000 - $36,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      276.3s
+
+✅ Car ready! View at: /browse-cars/hyundai-veloster-n-js
+📋 Pipeline tracking: /internal/car-pipeline/hyundai-veloster-n-js
+
+[8:44:06 PM] ⚠️ Warnings for Hyundai Veloster N (2019-2023): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (d5c72958-e1f1-4f0d-958e-2131eb8c6d26, null, 2, null, 845, Hyundai Veloster N (2019-2023), null, ai-research-car:core-data, 2026-01-11 01:39:47.923171+00, 836, 845, 1.5183, claude-sonnet-4-20250514, car_research, 1.5183, backend_script, ai-research-car:core-data, Hyundai Veloster N (2019-2023)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (85296e01-532f-4c36-a62c-2b028047b282, null, 1, null, 536, hyundai-veloster-n-js, null, ai-research-car:maintenance-specs, 2026-01-11 01:39:54.905513+00, 580, 536, 0.9780, claude-sonnet-4-20250514, car_research, 0.9780, backend_script, ai-research-car:maintenance-specs, hyundai-veloster-n-js).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (e99c20fb-bc76-4d9f-b9f0-860fe51ecb96, null, 4, null, 2068, hyundai-veloster-n-js, null, ai-research-car:service-intervals, 2026-01-11 01:40:10.464462+00, 367, 2068, 3.2121, claude-sonnet-4-20250514, car_research, 3.2121, backend_script, ai-research-car:service-intervals, hyundai-veloster-n-js).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (bec3df40-4f8b-478e-9208-7ffa09f4fc5c, null, 3, null, 1533, hyundai-veloster-n-js, null, ai-research-car:known-issues, 2026-01-11 01:40:11.539837+00, 384, 1533, 2.4147, claude-sonnet-4-20250514, car_research, 2.4147, backend_script, ai-research-car:known-issues, hyundai-veloster-n-js).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c55f7a6a-aee7-4730-abd4-5a9c090bfa1e, null, 4, null, 2122, hyundai-veloster-n-js, null, ai-research-car:scoring-editorial, 2026-01-11 01:40:51.024827+00, 1494, 2122, 3.6312, claude-sonnet-4-20250514, car_research, 3.6312, backend_script, ai-research-car:scoring-editorial, hyundai-veloster-n-js).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:44:06 PM] ✅ Hyundai Veloster N (2019-2023): ✅ Complete (276.8s)
+[8:44:06 PM] ℹ️ Waiting 10000ms before next batch...
+[8:44:16 PM] 📦 Processing batch 2/15 (1 cars)...
+[8:44:16 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Kia Stinger GT (2018-2023)" --verbose
+[8:48:19 PM] ℹ️ AI research output for Kia Stinger GT (2018-2023):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Kia Stinger GT (2018-2023)
+
+[8:44:17 PM] 📋 Phase 1-2: AI researching core data for "Kia Stinger GT (2018-2023)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 835 in, 896 out = $0.0159
+[8:44:36 PM] ℹ️ Generated slug: kia-stinger-gt-ck
+[8:44:36 PM] ℹ️ HP: 365, Torque: 376
+[8:44:36 PM] ℹ️ Price: $40,000 - $55,000
+[8:44:36 PM] ✅ Generated slug: kia-stinger-gt-ck
+[8:44:36 PM] 🤖 Phase 4a: AI researching known issues...
+[8:44:36 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[8:44:36 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 579 in, 537 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 366 in, 2118 out = $0.0329
+[8:45:01 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 383 in, 1578 out = $0.0248
+[8:45:02 PM] ℹ️ Found 7 known issues
+[8:45:02 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1493 in, 2877 out = $0.0476
+[8:45:57 PM] ℹ️ Scores: Sound=8, Track=8, Fun=8
+[8:45:58 PM] 📋 Phase 6a: Generating hero image...
+[8:45:58 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:46:15 PM] ✅ Saved: kia-stinger-gt-ck-hero.jpg (2679 KB)
+[8:46:16 PM] 🖼️ Uploading to blob: cars/kia-stinger-gt-ck/hero.webp...
+[8:46:17 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/kia-stinger-gt-ck/hero.webp
+[8:46:17 PM] 📋 Phase 6b: Generating industrial/garage image...
+[8:46:17 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:46:34 PM] ✅ Saved: kia-stinger-gt-ck-garage.jpg (2725 KB)
+[8:46:35 PM] 🖼️ Uploading to blob: garage/kia-stinger-gt-ck/exclusive.webp...
+[8:46:35 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/kia-stinger-gt-ck/exclusive.webp
+[8:46:35 PM] 💾 Saving to database...
+[8:46:35 PM] ✅ Car inserted: kia-stinger-gt-ck (ID: 87655401-0c15-4fa0-9cf4-d35bce8e7638)
+[8:46:35 PM] ✅ Inserted 7 known issues
+[8:46:35 PM] ✅ Inserted maintenance specs
+[8:46:36 PM] ✅ Inserted 10 service intervals
+[8:46:36 PM] 📋 Phase 3: Running automated enrichment APIs...
+[8:46:36 PM] 🌐 Calling EPA fuel economy API...
+[8:46:36 PM] ✅ EPA fuel economy enriched
+[8:46:36 PM] 🌐 Calling NHTSA safety ratings API...
+[8:46:36 PM] ✅ NHTSA safety ratings enriched
+[8:46:36 PM] 🌐 Calling recalls API...
+[8:46:36 PM] ✅ Recalls enriched
+[8:46:37 PM] ℹ️ Phase 7: Running YouTube discovery...
+[8:46:37 PM] ℹ️ Running YouTube discovery for kia-stinger-gt-ck...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "kia-stinger-gt-ck",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Kia Stinger GT (2018-2023)
+[exa-discovery] Searching for "Kia Stinger GT" review videos via Exa...
+[exa-discovery] Found 28 unique videos via Exa
+[exa-discovery] Processing 5 of 28 videos...
+[exa-discovery] 
+[1/5] Kia Stinger GT Review: Don't Buy an Audi S5!...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=T3jcHjQaMZc
+[exa-discovery]   ✓ Transcript: 11964 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] Kia Stinger GT Review - Better Than The Germans For Half ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=jRN85yj-LO4
+[exa-discovery]   ✓ Transcript: 5011 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 3 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Should You Buy A Kia Stinger GT? Test Drive & Review (2022)...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=paQrwYzllQg
+[exa-discovery]   ✓ Transcript: 10639 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 15 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] UPDATED! 2022 Kia Stinger GT Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=TIwqPkud148
+[exa-discovery]   ✓ Transcript: 15201 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 13 pros, 10 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Here's how well the Kia Stinger GT is holding up after 10000...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=zJvKY3lUdH0
+[exa-discovery]   ✓ Transcript: 14414 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       28
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[8:48:18 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[8:48:18 PM] 📋 Phase 8: Running validation audit...
+[8:48:18 PM] ℹ️ Running validation audit for kia-stinger-gt-ck...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[8:48:19 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[8:48:19 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Kia Stinger GT
+Slug:          kia-stinger-gt-ck
+Brand:         Kia
+Years:         2018-2023
+HP:            365
+Price:         $40,000 - $55,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      241.6s
+
+✅ Car ready! View at: /browse-cars/kia-stinger-gt-ck
+📋 Pipeline tracking: /internal/car-pipeline/kia-stinger-gt-ck
+
+[8:48:19 PM] ⚠️ Warnings for Kia Stinger GT (2018-2023): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (793d3223-6d54-4b5e-904e-dbfd56f1b7bc, null, 2, null, 896, Kia Stinger GT (2018-2023), null, ai-research-car:core-data, 2026-01-11 01:44:36.857462+00, 835, 896, 1.5945, claude-sonnet-4-20250514, car_research, 1.5945, backend_script, ai-research-car:core-data, Kia Stinger GT (2018-2023)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (34c5c50e-fa03-4d68-bd43-734dba6d063a, null, 1, null, 537, kia-stinger-gt-ck, null, ai-research-car:maintenance-specs, 2026-01-11 01:44:43.949753+00, 579, 537, 0.9792, claude-sonnet-4-20250514, car_research, 0.9792, backend_script, ai-research-car:maintenance-specs, kia-stinger-gt-ck).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7f81cbbd-662e-40f5-988b-ea3f982bf922, null, 4, null, 2118, kia-stinger-gt-ck, null, ai-research-car:service-intervals, 2026-01-11 01:45:01.516044+00, 366, 2118, 3.2868, claude-sonnet-4-20250514, car_research, 3.2868, backend_script, ai-research-car:service-intervals, kia-stinger-gt-ck).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (9dad7240-5b4c-4528-b95d-c0afee36401d, null, 3, null, 1578, kia-stinger-gt-ck, null, ai-research-car:known-issues, 2026-01-11 01:45:02.07204+00, 383, 1578, 2.4819, claude-sonnet-4-20250514, car_research, 2.4819, backend_script, ai-research-car:known-issues, kia-stinger-gt-ck).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (0c63af22-727a-4e05-8d5a-546929634477, null, 5, null, 2877, kia-stinger-gt-ck, null, ai-research-car:scoring-editorial, 2026-01-11 01:45:57.941745+00, 1493, 2877, 4.7634, claude-sonnet-4-20250514, car_research, 4.7634, backend_script, ai-research-car:scoring-editorial, kia-stinger-gt-ck).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:48:19 PM] ✅ Kia Stinger GT (2018-2023): ✅ Complete (242.7s)
+[8:48:19 PM] ℹ️ Waiting 10000ms before next batch...
+[8:48:29 PM] 📦 Processing batch 3/15 (1 cars)...
+[8:48:29 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Ford Focus ST Mk3 (2013-2018)" --verbose
+[8:52:52 PM] ℹ️ AI research output for Ford Focus ST Mk3 (2013-2018):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Ford Focus ST Mk3 (2013-2018)
+
+[8:48:30 PM] 📋 Phase 1-2: AI researching core data for "Ford Focus ST Mk3 (2013-2018)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 835 in, 901 out = $0.0160
+[8:48:47 PM] ℹ️ Generated slug: ford-focus-st-mk3
+[8:48:47 PM] ℹ️ HP: 252, Torque: 270
+[8:48:47 PM] ℹ️ Price: $23,700 - $26,000
+[8:48:47 PM] ✅ Generated slug: ford-focus-st-mk3
+[8:48:47 PM] 🤖 Phase 4a: AI researching known issues...
+[8:48:47 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[8:48:47 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 579 in, 531 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 366 in, 2040 out = $0.0317
+[8:49:10 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 383 in, 1803 out = $0.0282
+[8:49:17 PM] ℹ️ Found 8 known issues
+[8:49:17 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1493 in, 2864 out = $0.0474
+[8:50:10 PM] ℹ️ Scores: Sound=7, Track=7, Fun=8
+[8:50:10 PM] 📋 Phase 6a: Generating hero image...
+[8:50:10 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:50:32 PM] ✅ Saved: ford-focus-st-mk3-hero.jpg (2591 KB)
+[8:50:34 PM] 🖼️ Uploading to blob: cars/ford-focus-st-mk3/hero.webp...
+[8:50:34 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/ford-focus-st-mk3/hero.webp
+[8:50:34 PM] 📋 Phase 6b: Generating industrial/garage image...
+[8:50:34 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:50:52 PM] ✅ Saved: ford-focus-st-mk3-garage.jpg (2593 KB)
+[8:50:53 PM] 🖼️ Uploading to blob: garage/ford-focus-st-mk3/exclusive.webp...
+[8:50:53 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/ford-focus-st-mk3/exclusive.webp
+[8:50:53 PM] 💾 Saving to database...
+[8:50:53 PM] ✅ Car inserted: ford-focus-st-mk3 (ID: 33664039-94dc-48de-9a2f-042a3d78097a)
+[8:50:53 PM] ✅ Inserted 8 known issues
+[8:50:53 PM] ✅ Inserted maintenance specs
+[8:50:53 PM] ✅ Inserted 10 service intervals
+[8:50:53 PM] 📋 Phase 3: Running automated enrichment APIs...
+[8:50:53 PM] 🌐 Calling EPA fuel economy API...
+[8:50:54 PM] ✅ EPA fuel economy enriched
+[8:50:54 PM] 🌐 Calling NHTSA safety ratings API...
+[8:50:54 PM] ✅ NHTSA safety ratings enriched
+[8:50:54 PM] 🌐 Calling recalls API...
+[8:50:54 PM] ✅ Recalls enriched
+[8:50:54 PM] ℹ️ Phase 7: Running YouTube discovery...
+[8:50:54 PM] ℹ️ Running YouTube discovery for ford-focus-st-mk3...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "ford-focus-st-mk3",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Ford Focus ST Mk3 (2013-2018)
+[exa-discovery] Searching for "Ford Focus ST Mk3" review videos via Exa...
+[exa-discovery] Found 27 unique videos via Exa
+[exa-discovery] Processing 5 of 27 videos...
+[exa-discovery] 
+[1/5] The Perfect All-Rounder? Ford Focus ST MK3.5 Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=SRSTqqUuddc
+[exa-discovery]   ✓ Transcript: 12137 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] The Ford Focus ST mk3 are they good value for money?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=n4FMpwoKbAA
+[exa-discovery]   ✓ Transcript: 18932 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] THE FORD FOCUS ST ( MK 3) BUYERS GUIDE | DON'T BUY ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=a14jxZnC8GY
+[exa-discovery]   ✓ Transcript: 8982 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 6 pros, 9 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] FORD FOCUS ST3: REVISITED...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=2-UTfaAR2KA
+[exa-discovery]   ✓ Transcript: 11062 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 1 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] FORD FOCUS ST MK3 Wagon 325HP REVIEW on ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=HHqBAT9pclw
+[exa-discovery]   ✓ Transcript: 6765 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       27
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[8:52:52 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 4 AI processed
+[8:52:52 PM] 📋 Phase 8: Running validation audit...
+[8:52:52 PM] ℹ️ Running validation audit for ford-focus-st-mk3...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 8 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[8:52:52 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[8:52:52 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Ford Focus ST Mk3
+Slug:          ford-focus-st-mk3
+Brand:         Ford
+Years:         2013-2018
+HP:            252
+Price:         $23,700 - $26,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       8 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      262.9s
+
+✅ Car ready! View at: /browse-cars/ford-focus-st-mk3
+📋 Pipeline tracking: /internal/car-pipeline/ford-focus-st-mk3
+
+[8:52:52 PM] ⚠️ Warnings for Ford Focus ST Mk3 (2013-2018): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b93060fd-3634-4bc9-85bb-4ef7a70a7cbe, null, 2, null, 901, Ford Focus ST Mk3 (2013-2018), null, ai-research-car:core-data, 2026-01-11 01:48:47.89331+00, 835, 901, 1.6020, claude-sonnet-4-20250514, car_research, 1.6020, backend_script, ai-research-car:core-data, Ford Focus ST Mk3 (2013-2018)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (530bfd64-d685-4342-a235-53b03d06ad57, null, 1, null, 531, ford-focus-st-mk3, null, ai-research-car:maintenance-specs, 2026-01-11 01:48:55.177373+00, 579, 531, 0.9702, claude-sonnet-4-20250514, car_research, 0.9702, backend_script, ai-research-car:maintenance-specs, ford-focus-st-mk3).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (34a5b8ed-fbb6-4f75-9270-34ea6600b2d1, null, 4, null, 2040, ford-focus-st-mk3, null, ai-research-car:service-intervals, 2026-01-11 01:49:10.025871+00, 366, 2040, 3.1698, claude-sonnet-4-20250514, car_research, 3.1698, backend_script, ai-research-car:service-intervals, ford-focus-st-mk3).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (70033188-8e25-4a7b-ad47-ab231eaa379f, null, 3, null, 1803, ford-focus-st-mk3, null, ai-research-car:known-issues, 2026-01-11 01:49:17.516186+00, 383, 1803, 2.8194, claude-sonnet-4-20250514, car_research, 2.8194, backend_script, ai-research-car:known-issues, ford-focus-st-mk3).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c7858358-c0c6-421b-8dce-9650ce345213, null, 5, null, 2864, ford-focus-st-mk3, null, ai-research-car:scoring-editorial, 2026-01-11 01:50:10.631878+00, 1493, 2864, 4.7439, claude-sonnet-4-20250514, car_research, 4.7439, backend_script, ai-research-car:scoring-editorial, ford-focus-st-mk3).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:52:52 PM] ✅ Ford Focus ST Mk3 (2013-2018): ✅ Complete (263.8s)
+[8:52:52 PM] ℹ️ Waiting 10000ms before next batch...
+[8:53:02 PM] 📦 Processing batch 4/15 (1 cars)...
+[8:53:02 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Infiniti G37 Coupe (2008-2013)" --verbose
+[8:57:22 PM] ℹ️ AI research output for Infiniti G37 Coupe (2008-2013):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Infiniti G37 Coupe (2008-2013)
+
+[8:53:03 PM] 📋 Phase 1-2: AI researching core data for "Infiniti G37 Coupe (2008-2013)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 933 out = $0.0165
+[8:53:23 PM] ℹ️ Generated slug: infiniti-g37-coupe-cv36
+[8:53:23 PM] ℹ️ HP: 330, Torque: 270
+[8:53:23 PM] ℹ️ Price: $37,000 - $45,000
+[8:53:23 PM] ✅ Generated slug: infiniti-g37-coupe-cv36
+[8:53:23 PM] 🤖 Phase 4a: AI researching known issues...
+[8:53:23 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[8:53:23 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 534 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2056 out = $0.0319
+[8:53:46 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1564 out = $0.0246
+[8:53:51 PM] ℹ️ Found 7 known issues
+[8:53:51 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2519 out = $0.0423
+[8:54:38 PM] ℹ️ Scores: Sound=8, Track=7, Fun=8
+[8:54:38 PM] 📋 Phase 6a: Generating hero image...
+[8:54:38 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:54:58 PM] ✅ Saved: infiniti-g37-coupe-cv36-hero.jpg (2787 KB)
+[8:54:59 PM] 🖼️ Uploading to blob: cars/infiniti-g37-coupe-cv36/hero.webp...
+[8:54:59 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/infiniti-g37-coupe-cv36/hero.webp
+[8:54:59 PM] 📋 Phase 6b: Generating industrial/garage image...
+[8:54:59 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:55:17 PM] ✅ Saved: infiniti-g37-coupe-cv36-garage.jpg (2976 KB)
+[8:55:17 PM] 🖼️ Uploading to blob: garage/infiniti-g37-coupe-cv36/exclusive.webp...
+[8:55:18 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/infiniti-g37-coupe-cv36/exclusive.webp
+[8:55:18 PM] 💾 Saving to database...
+[8:55:18 PM] ✅ Car inserted: infiniti-g37-coupe-cv36 (ID: 3020ef7e-d673-41c3-a8a7-a0eb85dfa04e)
+[8:55:18 PM] ✅ Inserted 7 known issues
+[8:55:18 PM] ✅ Inserted maintenance specs
+[8:55:18 PM] ✅ Inserted 10 service intervals
+[8:55:18 PM] 📋 Phase 3: Running automated enrichment APIs...
+[8:55:18 PM] 🌐 Calling EPA fuel economy API...
+[8:55:19 PM] ✅ EPA fuel economy enriched
+[8:55:19 PM] 🌐 Calling NHTSA safety ratings API...
+[8:55:19 PM] ✅ NHTSA safety ratings enriched
+[8:55:19 PM] 🌐 Calling recalls API...
+[8:55:19 PM] ✅ Recalls enriched
+[8:55:19 PM] ℹ️ Phase 7: Running YouTube discovery...
+[8:55:19 PM] ℹ️ Running YouTube discovery for infiniti-g37-coupe-cv36...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "infiniti-g37-coupe-cv36",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Infiniti G37 Coupe (2008-2013)
+[exa-discovery] Searching for "Infiniti G37 Coupe" review videos via Exa...
+[exa-discovery] Found 24 unique videos via Exa
+[exa-discovery] Processing 5 of 24 videos...
+[exa-discovery] 
+[1/5] Review: 2010 Infiniti G37S Coupe...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=nO8wC_De7o4
+[exa-discovery]   ✓ Transcript: 16531 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 2011 Infiniti IPL G37 Coupe Review - Undervalued GT or Total...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=XJe88gEmJls
+[exa-discovery]   ✓ Transcript: 7040 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 11 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Infiniti G37 | The Good, The Bad, And The Ugly…...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=m-LqhOiooqY
+[exa-discovery]   ✓ Transcript: 25180 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 9 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Infiniti G37s Coupe | The Ultimate Used Sports Coupe?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=W9bjwfAJFvw
+[exa-discovery]   ✓ Transcript: 12654 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Motorweek 2008 Infiniti G37 Coupe Road Test...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=mKTAQfXpCWc
+[exa-discovery]   ✓ Transcript: 4259 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       24
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[8:57:22 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[8:57:22 PM] 📋 Phase 8: Running validation audit...
+[8:57:22 PM] ℹ️ Running validation audit for infiniti-g37-coupe-cv36...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[8:57:22 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[8:57:22 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Infiniti G37 Coupe
+Slug:          infiniti-g37-coupe-cv36
+Brand:         Infiniti
+Years:         2008-2013
+HP:            330
+Price:         $37,000 - $45,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      258.9s
+
+✅ Car ready! View at: /browse-cars/infiniti-g37-coupe-cv36
+📋 Pipeline tracking: /internal/car-pipeline/infiniti-g37-coupe-cv36
+
+[8:57:22 PM] ⚠️ Warnings for Infiniti G37 Coupe (2008-2013): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (fe45b610-ccae-4a42-8092-9a1353354eed, null, 2, null, 933, Infiniti G37 Coupe (2008-2013), null, ai-research-car:core-data, 2026-01-11 01:53:23.949266+00, 837, 933, 1.6506, claude-sonnet-4-20250514, car_research, 1.6506, backend_script, ai-research-car:core-data, Infiniti G37 Coupe (2008-2013)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (01f18e9f-baa3-4767-9518-929dcf12c508, null, 1, null, 534, infiniti-g37-coupe-cv36, null, ai-research-car:maintenance-specs, 2026-01-11 01:53:31.057193+00, 581, 534, 0.9753, claude-sonnet-4-20250514, car_research, 0.9753, backend_script, ai-research-car:maintenance-specs, infiniti-g37-coupe-cv36).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (fec86bfd-fe63-43b7-848c-69430552ca17, null, 4, null, 2056, infiniti-g37-coupe-cv36, null, ai-research-car:service-intervals, 2026-01-11 01:53:46.926316+00, 368, 2056, 3.1944, claude-sonnet-4-20250514, car_research, 3.1944, backend_script, ai-research-car:service-intervals, infiniti-g37-coupe-cv36).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (89107131-7931-4b1c-bee4-c5d00acae03a, null, 3, null, 1564, infiniti-g37-coupe-cv36, null, ai-research-car:known-issues, 2026-01-11 01:53:51.706436+00, 385, 1564, 2.4615, claude-sonnet-4-20250514, car_research, 2.4615, backend_script, ai-research-car:known-issues, infiniti-g37-coupe-cv36).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a4f3d06a-0fb5-4bbf-85bf-56f17de70294, null, 5, null, 2519, infiniti-g37-coupe-cv36, null, ai-research-car:scoring-editorial, 2026-01-11 01:54:38.107859+00, 1495, 2519, 4.2270, claude-sonnet-4-20250514, car_research, 4.2270, backend_script, ai-research-car:scoring-editorial, infiniti-g37-coupe-cv36).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[8:57:22 PM] ✅ Infiniti G37 Coupe (2008-2013): ✅ Complete (259.9s)
+[8:57:22 PM] ℹ️ Waiting 10000ms before next batch...
+[8:57:32 PM] 📦 Processing batch 5/15 (1 cars)...
+[8:57:32 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Infiniti G37 Sedan (2009-2013)" --verbose
+[9:01:20 PM] ℹ️ AI research output for Infiniti G37 Sedan (2009-2013):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Infiniti G37 Sedan (2009-2013)
+
+[8:57:33 PM] 📋 Phase 1-2: AI researching core data for "Infiniti G37 Sedan (2009-2013)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 836 in, 882 out = $0.0157
+[8:57:50 PM] ℹ️ Generated slug: infiniti-g37-sedan
+[8:57:50 PM] ℹ️ HP: 328, Torque: 269
+[8:57:50 PM] ℹ️ Price: $32,000 - $42,000
+[8:57:50 PM] ✅ Generated slug: infiniti-g37-sedan
+[8:57:50 PM] 🤖 Phase 4a: AI researching known issues...
+[8:57:50 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[8:57:50 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 580 in, 531 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 367 in, 2073 out = $0.0322
+[8:58:14 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 384 in, 1765 out = $0.0276
+[8:58:20 PM] ℹ️ Found 8 known issues
+[8:58:20 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1494 in, 2188 out = $0.0373
+[8:58:58 PM] ℹ️ Scores: Sound=8, Track=7, Fun=8
+[8:58:58 PM] 📋 Phase 6a: Generating hero image...
+[8:58:58 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:59:24 PM] ✅ Saved: infiniti-g37-sedan-hero.jpg (2588 KB)
+[8:59:24 PM] 🖼️ Uploading to blob: cars/infiniti-g37-sedan/hero.webp...
+[8:59:25 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/infiniti-g37-sedan/hero.webp
+[8:59:25 PM] 📋 Phase 6b: Generating industrial/garage image...
+[8:59:25 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[8:59:43 PM] ✅ Saved: infiniti-g37-sedan-garage.jpg (2971 KB)
+[8:59:43 PM] 🖼️ Uploading to blob: garage/infiniti-g37-sedan/exclusive.webp...
+[8:59:43 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/infiniti-g37-sedan/exclusive.webp
+[8:59:43 PM] 💾 Saving to database...
+[8:59:44 PM] ✅ Car inserted: infiniti-g37-sedan (ID: 41ac8d5d-0124-45e5-aa63-0ccf6daad420)
+[8:59:44 PM] ✅ Inserted 8 known issues
+[8:59:44 PM] ✅ Inserted maintenance specs
+[8:59:44 PM] ✅ Inserted 10 service intervals
+[8:59:44 PM] 📋 Phase 3: Running automated enrichment APIs...
+[8:59:44 PM] 🌐 Calling EPA fuel economy API...
+[8:59:44 PM] ✅ EPA fuel economy enriched
+[8:59:44 PM] 🌐 Calling NHTSA safety ratings API...
+[8:59:45 PM] ✅ NHTSA safety ratings enriched
+[8:59:45 PM] 🌐 Calling recalls API...
+[8:59:45 PM] ✅ Recalls enriched
+[8:59:45 PM] ℹ️ Phase 7: Running YouTube discovery...
+[8:59:45 PM] ℹ️ Running YouTube discovery for infiniti-g37-sedan...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "infiniti-g37-sedan",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Infiniti G37 Sedan (2009-2013)
+[exa-discovery] Searching for "Infiniti G37 Sedan" review videos via Exa...
+[exa-discovery] Found 21 unique videos via Exa
+[exa-discovery] Processing 5 of 21 videos...
+[exa-discovery] 
+[1/5] 2013 Infiniti G37 - Sedan | New Car Review | AutoTrader...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=gElSOOQ9fwY
+[exa-discovery]   ✓ Transcript: 2774 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 2 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 2010 Infiniti G37 Sedan 4k 60fps...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=NxXK8_JbV7w
+[exa-discovery]   ✓ Transcript: 3565 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 1 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2012 Infiniti G37 Sedan...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=cVVW_NKinfY
+[exa-discovery]   ✓ Transcript: 6516 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 6 pros, 7 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Infiniti G37 Sedan review, start up, exhaust - SEDUCTIVE in ...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=Pigjbf2mTfQ
+[exa-discovery]   ✓ Transcript: 5301 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 1 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Common Issues With The Infiniti G37 (WATCH BEFORE YOU ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=ec-960f4HFk
+[exa-discovery]   ✓ Transcript: 11616 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 2 pros, 13 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       21
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:01:19 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:01:19 PM] 📋 Phase 8: Running validation audit...
+[9:01:19 PM] ℹ️ Running validation audit for infiniti-g37-sedan...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 8 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:01:20 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:01:20 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Infiniti G37 Sedan
+Slug:          infiniti-g37-sedan
+Brand:         Infiniti
+Years:         2009-2013
+HP:            328
+Price:         $32,000 - $42,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       8 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      226.8s
+
+✅ Car ready! View at: /browse-cars/infiniti-g37-sedan
+📋 Pipeline tracking: /internal/car-pipeline/infiniti-g37-sedan
+
+[9:01:20 PM] ⚠️ Warnings for Infiniti G37 Sedan (2009-2013): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a391fb69-9d1e-4373-b8ce-44692151cff3, null, 2, null, 882, Infiniti G37 Sedan (2009-2013), null, ai-research-car:core-data, 2026-01-11 01:57:50.443603+00, 836, 882, 1.5738, claude-sonnet-4-20250514, car_research, 1.5738, backend_script, ai-research-car:core-data, Infiniti G37 Sedan (2009-2013)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (1e0a6e72-ceec-4396-b75f-ce6c80ef89c1, null, 1, null, 531, infiniti-g37-sedan, null, ai-research-car:maintenance-specs, 2026-01-11 01:57:57.409276+00, 580, 531, 0.9705, claude-sonnet-4-20250514, car_research, 0.9705, backend_script, ai-research-car:maintenance-specs, infiniti-g37-sedan).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2dad194b-531a-42b3-ae2c-bd3fa49d1442, null, 4, null, 2073, infiniti-g37-sedan, null, ai-research-car:service-intervals, 2026-01-11 01:58:14.180574+00, 367, 2073, 3.2196, claude-sonnet-4-20250514, car_research, 3.2196, backend_script, ai-research-car:service-intervals, infiniti-g37-sedan).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (fcfc0544-cf97-42aa-98b0-c98cf3ead51c, null, 3, null, 1765, infiniti-g37-sedan, null, ai-research-car:known-issues, 2026-01-11 01:58:20.178371+00, 384, 1765, 2.7627, claude-sonnet-4-20250514, car_research, 2.7627, backend_script, ai-research-car:known-issues, infiniti-g37-sedan).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (1fe14ed7-d37a-40e7-b663-32e108297121, null, 4, null, 2188, infiniti-g37-sedan, null, ai-research-car:scoring-editorial, 2026-01-11 01:58:58.525241+00, 1494, 2188, 3.7302, claude-sonnet-4-20250514, car_research, 3.7302, backend_script, ai-research-car:scoring-editorial, infiniti-g37-sedan).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:01:20 PM] ✅ Infiniti G37 Sedan (2009-2013): ✅ Complete (227.5s)
+[9:01:20 PM] ℹ️ Waiting 10000ms before next batch...
+[9:01:30 PM] 📦 Processing batch 6/15 (1 cars)...
+[9:01:30 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S4 B6 (2004-2005)" --verbose
+[9:05:17 PM] ℹ️ AI research output for Audi S4 B6 (2004-2005):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S4 B6 (2004-2005)
+
+[9:01:31 PM] 📋 Phase 1-2: AI researching core data for "Audi S4 B6 (2004-2005)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 895 out = $0.0159
+[9:01:48 PM] ℹ️ Generated slug: audi-s4-b6
+[9:01:48 PM] ℹ️ HP: 344, Torque: 302
+[9:01:48 PM] ℹ️ Price: $48,000 - $52,000
+[9:01:48 PM] ✅ Generated slug: audi-s4-b6
+[9:01:49 PM] 🤖 Phase 4a: AI researching known issues...
+[9:01:49 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:01:49 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 529 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2079 out = $0.0323
+[9:02:12 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1543 out = $0.0243
+[9:02:12 PM] ℹ️ Found 7 known issues
+[9:02:12 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2300 out = $0.0390
+[9:02:54 PM] ℹ️ Scores: Sound=8, Track=8, Fun=9
+[9:02:54 PM] 📋 Phase 6a: Generating hero image...
+[9:02:54 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:03:19 PM] ✅ Saved: audi-s4-b6-hero.jpg (2963 KB)
+[9:03:19 PM] 🖼️ Uploading to blob: cars/audi-s4-b6/hero.webp...
+[9:03:20 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s4-b6/hero.webp
+[9:03:20 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:03:20 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:03:39 PM] ✅ Saved: audi-s4-b6-garage.jpg (2633 KB)
+[9:03:39 PM] 🖼️ Uploading to blob: garage/audi-s4-b6/exclusive.webp...
+[9:03:39 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s4-b6/exclusive.webp
+[9:03:39 PM] 💾 Saving to database...
+[9:03:40 PM] ✅ Car inserted: audi-s4-b6 (ID: 5bf416e9-b1a9-4eb7-a157-beabe80c58a0)
+[9:03:40 PM] ✅ Inserted 7 known issues
+[9:03:40 PM] ✅ Inserted maintenance specs
+[9:03:40 PM] ✅ Inserted 10 service intervals
+[9:03:40 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:03:40 PM] 🌐 Calling EPA fuel economy API...
+[9:03:41 PM] ✅ EPA fuel economy enriched
+[9:03:41 PM] 🌐 Calling NHTSA safety ratings API...
+[9:03:41 PM] ✅ NHTSA safety ratings enriched
+[9:03:41 PM] 🌐 Calling recalls API...
+[9:03:41 PM] ✅ Recalls enriched
+[9:03:41 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:03:41 PM] ℹ️ Running YouTube discovery for audi-s4-b6...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s4-b6",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S4 B6 (2004-2005)
+[exa-discovery] Searching for "Audi S4 B6" review videos via Exa...
+[exa-discovery] Found 26 unique videos via Exa
+[exa-discovery] Processing 5 of 26 videos...
+[exa-discovery] 
+[1/5] Is the B6 Audi S4 Worth the Risk?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=8JxLXXm9fMk
+[exa-discovery]   ✓ Transcript: 5669 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 10 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] The 2005 Audi S4 B6 Was a Sport Sedan Fantasy...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=BNEEWqzc9gs
+[exa-discovery]   ✓ Transcript: 24631 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2004 Audi B6 S4 Review : AWD V8 Awesomeness...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=LivKh21bK08
+[exa-discovery]   ✓ Transcript: 3539 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 3 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Audi S4 B6 Review: Some thoughts...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=IPKNLQ9gK1s
+[exa-discovery]   ✓ Transcript: 19656 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 8 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] 2005 Audi S4 B6 4.2 V8 Cabriolet Tiptronic...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=9hfFy6koDJ0
+[exa-discovery]   ✓ Transcript: 3389 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 10 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       26
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:05:17 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:05:17 PM] 📋 Phase 8: Running validation audit...
+[9:05:17 PM] ℹ️ Running validation audit for audi-s4-b6...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:05:17 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:05:17 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S4 B6
+Slug:          audi-s4-b6
+Brand:         Audi
+Years:         2004-2005
+HP:            344
+Price:         $48,000 - $52,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      226.6s
+
+✅ Car ready! View at: /browse-cars/audi-s4-b6
+📋 Pipeline tracking: /internal/car-pipeline/audi-s4-b6
+
+[9:05:17 PM] ⚠️ Warnings for Audi S4 B6 (2004-2005): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (334e8627-d77b-4e0f-bfca-e57bb7a1eef6, null, 2, null, 895, Audi S4 B6 (2004-2005), null, ai-research-car:core-data, 2026-01-11 02:01:48.62251+00, 837, 895, 1.5936, claude-sonnet-4-20250514, car_research, 1.5936, backend_script, ai-research-car:core-data, Audi S4 B6 (2004-2005)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (46b7197c-e3b4-4923-8683-d60d2d9d41e2, null, 1, null, 529, audi-s4-b6, null, ai-research-car:maintenance-specs, 2026-01-11 02:01:55.484627+00, 581, 529, 0.9678, claude-sonnet-4-20250514, car_research, 0.9678, backend_script, ai-research-car:maintenance-specs, audi-s4-b6).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (4acecd0a-effb-4b3d-9b1c-803200c2a217, null, 4, null, 2079, audi-s4-b6, null, ai-research-car:service-intervals, 2026-01-11 02:02:12.547886+00, 368, 2079, 3.2289, claude-sonnet-4-20250514, car_research, 3.2289, backend_script, ai-research-car:service-intervals, audi-s4-b6).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b514c9b6-5242-41ed-9112-11d193a4cc38, null, 3, null, 1543, audi-s4-b6, null, ai-research-car:known-issues, 2026-01-11 02:02:12.744309+00, 385, 1543, 2.4300, claude-sonnet-4-20250514, car_research, 2.4300, backend_script, ai-research-car:known-issues, audi-s4-b6).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f5ed17eb-893f-4f86-93e6-87221bc824cf, null, 4, null, 2300, audi-s4-b6, null, ai-research-car:scoring-editorial, 2026-01-11 02:02:54.456093+00, 1495, 2300, 3.8985, claude-sonnet-4-20250514, car_research, 3.8985, backend_script, ai-research-car:scoring-editorial, audi-s4-b6).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:05:17 PM] ✅ Audi S4 B6 (2004-2005): ✅ Complete (227.3s)
+[9:05:17 PM] ℹ️ Waiting 10000ms before next batch...
+[9:05:27 PM] 📦 Processing batch 7/15 (1 cars)...
+[9:05:27 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S4 B7 (2005-2008)" --verbose
+[9:08:59 PM] ℹ️ AI research output for Audi S4 B7 (2005-2008):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S4 B7 (2005-2008)
+
+[9:05:29 PM] 📋 Phase 1-2: AI researching core data for "Audi S4 B7 (2005-2008)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 1003 out = $0.0176
+[9:05:49 PM] ℹ️ Generated slug: audi-s4-b7
+[9:05:49 PM] ℹ️ HP: 344, Torque: 302
+[9:05:49 PM] ℹ️ Price: $15,000 - $35,000
+[9:05:49 PM] ✅ Generated slug: audi-s4-b7
+[9:05:49 PM] 🤖 Phase 4a: AI researching known issues...
+[9:05:49 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:05:49 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 541 out = $0.0099
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2082 out = $0.0323
+[9:06:12 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1567 out = $0.0247
+[9:06:14 PM] ℹ️ Found 7 known issues
+[9:06:14 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2844 out = $0.0471
+[9:07:09 PM] ℹ️ Scores: Sound=8, Track=6, Fun=8
+[9:07:09 PM] 📋 Phase 6a: Generating hero image...
+[9:07:09 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:07:26 PM] ✅ Saved: audi-s4-b7-hero.jpg (2866 KB)
+[9:07:27 PM] 🖼️ Uploading to blob: cars/audi-s4-b7/hero.webp...
+[9:07:28 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s4-b7/hero.webp
+[9:07:28 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:07:28 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:08:02 PM] ✅ Saved: audi-s4-b7-garage.jpg (2812 KB)
+[9:08:02 PM] 🖼️ Uploading to blob: garage/audi-s4-b7/exclusive.webp...
+[9:08:02 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s4-b7/exclusive.webp
+[9:08:03 PM] 💾 Saving to database...
+[9:08:03 PM] ✅ Car inserted: audi-s4-b7 (ID: 6139dc0d-1b5a-482a-aa2e-fea003cece8e)
+[9:08:03 PM] ✅ Inserted 7 known issues
+[9:08:03 PM] ✅ Inserted maintenance specs
+[9:08:03 PM] ✅ Inserted 10 service intervals
+[9:08:03 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:08:03 PM] 🌐 Calling EPA fuel economy API...
+[9:08:04 PM] ✅ EPA fuel economy enriched
+[9:08:04 PM] 🌐 Calling NHTSA safety ratings API...
+[9:08:04 PM] ✅ NHTSA safety ratings enriched
+[9:08:04 PM] 🌐 Calling recalls API...
+[9:08:04 PM] ✅ Recalls enriched
+[9:08:04 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:08:04 PM] ℹ️ Running YouTube discovery for audi-s4-b7...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s4-b7",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S4 B7 (2005-2008)
+[exa-discovery] Searching for "Audi S4 B7" review videos via Exa...
+[exa-discovery] Found 25 unique videos via Exa
+[exa-discovery] Processing 5 of 25 videos...
+[exa-discovery] 
+[1/5] Audi S4 V8 Convertible REVIEW Jaguar F Type...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=fuM9olrW0qo
+[exa-discovery]   ✓ Transcript: 4887 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 5 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] Behind the Wheel of a Tuned Audi S4 B7...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=S-0h97F0Xig
+[exa-discovery]   ✗ No transcript available
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] He got a new s4 b7! (s4 b7 v8 vs b7 2.0t)...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=erY_5SY6QbA
+[exa-discovery]   ✓ Transcript: 6198 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] 2004 Audi S4 Avant 4.2 V8 Quattro (253 kW) POV Test Drive + ...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=bHL6iFvZAIc
+[exa-discovery]   ✗ No transcript available
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] 2006 Audi S4...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=33fBVViXSNg
+[exa-discovery]   ✗ No transcript available
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       25
+[exa-discovery] Transcripts:        2
+[exa-discovery] AI processed:       2
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:08:58 PM] ℹ️ YouTube discovery: 5 videos, 2 transcripts, 2 AI processed
+[9:08:58 PM] 📋 Phase 8: Running validation audit...
+[9:08:58 PM] ℹ️ Running validation audit for audi-s4-b7...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:08:58 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:08:58 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S4 B7
+Slug:          audi-s4-b7
+Brand:         Audi
+Years:         2005-2008
+HP:            344
+Price:         $15,000 - $35,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      209.6s
+
+✅ Car ready! View at: /browse-cars/audi-s4-b7
+📋 Pipeline tracking: /internal/car-pipeline/audi-s4-b7
+
+[9:08:59 PM] ⚠️ Warnings for Audi S4 B7 (2005-2008): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (df498443-8346-4849-b819-812e13fd5722, null, 2, null, 1003, Audi S4 B7 (2005-2008), null, ai-research-car:core-data, 2026-01-11 02:05:49.252712+00, 837, 1003, 1.7556, claude-sonnet-4-20250514, car_research, 1.7556, backend_script, ai-research-car:core-data, Audi S4 B7 (2005-2008)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (fc250f26-d2f0-49fd-8cbd-cc2eab18e2b0, null, 1, null, 541, audi-s4-b7, null, ai-research-car:maintenance-specs, 2026-01-11 02:05:57.045869+00, 581, 541, 0.9858, claude-sonnet-4-20250514, car_research, 0.9858, backend_script, ai-research-car:maintenance-specs, audi-s4-b7).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2ebb315e-1199-4043-bfd9-de74cc2f577b, null, 4, null, 2082, audi-s4-b7, null, ai-research-car:service-intervals, 2026-01-11 02:06:12.12047+00, 368, 2082, 3.2334, claude-sonnet-4-20250514, car_research, 3.2334, backend_script, ai-research-car:service-intervals, audi-s4-b7).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c51f4ce7-503c-49aa-91d1-659f88a58540, null, 3, null, 1567, audi-s4-b7, null, ai-research-car:known-issues, 2026-01-11 02:06:14.291538+00, 385, 1567, 2.4660, claude-sonnet-4-20250514, car_research, 2.4660, backend_script, ai-research-car:known-issues, audi-s4-b7).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (178404fa-d8b1-4af6-9dc2-8609085cb3cc, null, 5, null, 2844, audi-s4-b7, null, ai-research-car:scoring-editorial, 2026-01-11 02:07:09.073487+00, 1495, 2844, 4.7145, claude-sonnet-4-20250514, car_research, 4.7145, backend_script, ai-research-car:scoring-editorial, audi-s4-b7).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:08:59 PM] ✅ Audi S4 B7 (2005-2008): ✅ Complete (211.3s)
+[9:08:59 PM] ℹ️ Waiting 10000ms before next batch...
+[9:09:09 PM] 📦 Processing batch 8/15 (1 cars)...
+[9:09:09 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S4 B8 (2010-2016)" --verbose
+[9:13:04 PM] ℹ️ AI research output for Audi S4 B8 (2010-2016):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S4 B8 (2010-2016)
+
+[9:09:09 PM] 📋 Phase 1-2: AI researching core data for "Audi S4 B8 (2010-2016)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 899 out = $0.0160
+[9:09:27 PM] ℹ️ Generated slug: audi-s4-b8
+[9:09:27 PM] ℹ️ HP: 333, Torque: 325
+[9:09:27 PM] ℹ️ Price: $47,000 - $52,000
+[9:09:27 PM] ✅ Generated slug: audi-s4-b8
+[9:09:27 PM] 🤖 Phase 4a: AI researching known issues...
+[9:09:27 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:09:27 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 545 out = $0.0099
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1627 out = $0.0256
+[9:09:52 PM] ℹ️ Found 7 known issues
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2265 out = $0.0351
+[9:09:53 PM] ℹ️ Found 11 service intervals
+[9:09:53 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2600 out = $0.0435
+[9:10:41 PM] ℹ️ Scores: Sound=7, Track=7, Fun=8
+[9:10:41 PM] 📋 Phase 6a: Generating hero image...
+[9:10:41 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:10:59 PM] ✅ Saved: audi-s4-b8-hero.jpg (2895 KB)
+[9:10:59 PM] 🖼️ Uploading to blob: cars/audi-s4-b8/hero.webp...
+[9:11:00 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s4-b8/hero.webp
+[9:11:00 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:11:00 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:11:29 PM] ✅ Saved: audi-s4-b8-garage.jpg (2703 KB)
+[9:11:29 PM] 🖼️ Uploading to blob: garage/audi-s4-b8/exclusive.webp...
+[9:11:29 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s4-b8/exclusive.webp
+[9:11:29 PM] 💾 Saving to database...
+[9:11:30 PM] ✅ Car inserted: audi-s4-b8 (ID: db659bef-b3b7-489d-b726-441b810439f4)
+[9:11:30 PM] ✅ Inserted 7 known issues
+[9:11:30 PM] ✅ Inserted maintenance specs
+[9:11:30 PM] ✅ Inserted 11 service intervals
+[9:11:30 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:11:30 PM] 🌐 Calling EPA fuel economy API...
+[9:11:31 PM] ✅ EPA fuel economy enriched
+[9:11:31 PM] 🌐 Calling NHTSA safety ratings API...
+[9:11:31 PM] ✅ NHTSA safety ratings enriched
+[9:11:31 PM] 🌐 Calling recalls API...
+[9:11:31 PM] ✅ Recalls enriched
+[9:11:31 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:11:31 PM] ℹ️ Running YouTube discovery for audi-s4-b8...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s4-b8",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S4 B8 (2010-2016)
+[exa-discovery] Searching for "Audi S4 B8" review videos via Exa...
+[exa-discovery] Found 28 unique videos via Exa
+[exa-discovery] Processing 5 of 28 videos...
+[exa-discovery] 
+[1/5] The B8.5 Audi S4 Is a Supercharged And Underrated Daily ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=ZObyPco6Fvg
+[exa-discovery]   ✓ Transcript: 15630 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 7 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 2010 Audi S4 B8 Review | Wolf in sheep's clothing...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=GCcnrgiPvnw
+[exa-discovery]   ✓ Transcript: 16264 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 10 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Audi S4 B8 (B8.5) review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=KbFWOTn3tnc
+[exa-discovery]   ✓ Transcript: 13268 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 14 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Audi S4 B8 3.0 TFSI 2009 [REVIEW] car video by Calvin's Car ...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=uHwzmBXR2lQ
+[exa-discovery]   ✓ Transcript: 8254 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 3 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] AUDI S4 B8 - 200K MILE REVIEW /4 YEAR OWNERSHIP ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=J6EaEI10KfY
+[exa-discovery]   ✓ Transcript: 6073 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 6 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       28
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:13:03 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:13:04 PM] 📋 Phase 8: Running validation audit...
+[9:13:04 PM] ℹ️ Running validation audit for audi-s4-b8...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 11 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:13:04 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:13:04 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S4 B8
+Slug:          audi-s4-b8
+Brand:         Audi
+Years:         2010-2016
+HP:            333
+Price:         $47,000 - $52,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  11 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      234.7s
+
+✅ Car ready! View at: /browse-cars/audi-s4-b8
+📋 Pipeline tracking: /internal/car-pipeline/audi-s4-b8
+
+[9:13:04 PM] ⚠️ Warnings for Audi S4 B8 (2010-2016): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (29e193be-e938-4444-b48c-a25df4a62703, null, 2, null, 899, Audi S4 B8 (2010-2016), null, ai-research-car:core-data, 2026-01-11 02:09:27.161996+00, 837, 899, 1.5996, claude-sonnet-4-20250514, car_research, 1.5996, backend_script, ai-research-car:core-data, Audi S4 B8 (2010-2016)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2ef807f2-20dc-4700-a782-7951cfda0469, null, 1, null, 545, audi-s4-b8, null, ai-research-car:maintenance-specs, 2026-01-11 02:09:33.97421+00, 581, 545, 0.9918, claude-sonnet-4-20250514, car_research, 0.9918, backend_script, ai-research-car:maintenance-specs, audi-s4-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (87a4f9d8-c744-4551-9e76-43e73aeef31d, null, 3, null, 1627, audi-s4-b8, null, ai-research-car:known-issues, 2026-01-11 02:09:52.510401+00, 385, 1627, 2.5560, claude-sonnet-4-20250514, car_research, 2.5560, backend_script, ai-research-car:known-issues, audi-s4-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f9df225a-b5b4-4132-9be2-cc6fbe9ab86d, null, 4, null, 2265, audi-s4-b8, null, ai-research-car:service-intervals, 2026-01-11 02:09:53.058707+00, 368, 2265, 3.5079, claude-sonnet-4-20250514, car_research, 3.5079, backend_script, ai-research-car:service-intervals, audi-s4-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (31a1adfa-7ba6-40dc-8d51-d77e56b161f9, null, 5, null, 2600, audi-s4-b8, null, ai-research-car:scoring-editorial, 2026-01-11 02:10:41.29634+00, 1495, 2600, 4.3485, claude-sonnet-4-20250514, car_research, 4.3485, backend_script, ai-research-car:scoring-editorial, audi-s4-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:13:04 PM] ✅ Audi S4 B8 (2010-2016): ✅ Complete (235.5s)
+[9:13:04 PM] ℹ️ Waiting 10000ms before next batch...
+[9:13:14 PM] 📦 Processing batch 9/15 (1 cars)...
+[9:13:14 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S4 B9 (2017-2024)" --verbose
+[9:17:24 PM] ℹ️ AI research output for Audi S4 B9 (2017-2024):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S4 B9 (2017-2024)
+
+[9:13:15 PM] 📋 Phase 1-2: AI researching core data for "Audi S4 B9 (2017-2024)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 889 out = $0.0158
+[9:13:32 PM] ℹ️ Generated slug: audi-s4-b9
+[9:13:32 PM] ℹ️ HP: 354, Torque: 369
+[9:13:32 PM] ℹ️ Price: $57,000 - $65,000
+[9:13:32 PM] ✅ Generated slug: audi-s4-b9
+[9:13:32 PM] 🤖 Phase 4a: AI researching known issues...
+[9:13:32 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:13:32 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 538 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2094 out = $0.0325
+[9:13:56 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1844 out = $0.0288
+[9:14:02 PM] ℹ️ Found 8 known issues
+[9:14:02 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 3087 out = $0.0508
+[9:15:01 PM] ℹ️ Scores: Sound=7, Track=7, Fun=8
+[9:15:01 PM] 📋 Phase 6a: Generating hero image...
+[9:15:01 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:15:29 PM] ✅ Saved: audi-s4-b9-hero.jpg (2535 KB)
+[9:15:30 PM] 🖼️ Uploading to blob: cars/audi-s4-b9/hero.webp...
+[9:15:30 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s4-b9/hero.webp
+[9:15:30 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:15:30 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:15:50 PM] ✅ Saved: audi-s4-b9-garage.jpg (2970 KB)
+[9:15:50 PM] 🖼️ Uploading to blob: garage/audi-s4-b9/exclusive.webp...
+[9:15:50 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s4-b9/exclusive.webp
+[9:15:51 PM] 💾 Saving to database...
+[9:15:51 PM] ✅ Car inserted: audi-s4-b9 (ID: bfce5bb9-0af1-46d9-899a-e5ca4d4edecc)
+[9:15:51 PM] ✅ Inserted 8 known issues
+[9:15:51 PM] ✅ Inserted maintenance specs
+[9:15:51 PM] ✅ Inserted 10 service intervals
+[9:15:51 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:15:51 PM] 🌐 Calling EPA fuel economy API...
+[9:15:52 PM] ✅ EPA fuel economy enriched
+[9:15:52 PM] 🌐 Calling NHTSA safety ratings API...
+[9:15:52 PM] ✅ NHTSA safety ratings enriched
+[9:15:52 PM] 🌐 Calling recalls API...
+[9:15:52 PM] ✅ Recalls enriched
+[9:15:52 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:15:52 PM] ℹ️ Running YouTube discovery for audi-s4-b9...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s4-b9",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S4 B9 (2017-2024)
+[exa-discovery] Searching for "Audi S4 B9" review videos via Exa...
+[exa-discovery] Found 27 unique videos via Exa
+[exa-discovery] Processing 5 of 27 videos...
+[exa-discovery] 
+[1/5] After 3 months - My Honest Audi S4 B9 Avant Ownership Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=vpR61vKRhaI
+[exa-discovery]   ✓ Transcript: 14680 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 490 HP B9 Audi S4! One Year of Ownership Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=fiLDyteXCOw
+[exa-discovery]   ✓ Transcript: 10854 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2024 Audi S4 (B9.5) // Still Relevant? // Full Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=uGtxqXPV8PI
+[exa-discovery]   ✓ Transcript: 27823 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 12 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] 600HP AUDI S4 B9 // REVIEW in QUATTRO WEATHER on ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=FHZL8MTxLiE
+[exa-discovery]   ✓ Transcript: 9894 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] 2018 Audi S4 B9 Full Review! *C43'S WORST NIGHTMARE!!*...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=oMAnoZhuZWg
+[exa-discovery]   ✓ Transcript: 7817 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 13 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       27
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:17:23 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 4 AI processed
+[9:17:23 PM] 📋 Phase 8: Running validation audit...
+[9:17:23 PM] ℹ️ Running validation audit for audi-s4-b9...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 8 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:17:23 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:17:23 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S4 B9
+Slug:          audi-s4-b9
+Brand:         Audi
+Years:         2017-2024
+HP:            354
+Price:         $57,000 - $65,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       8 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      248.5s
+
+✅ Car ready! View at: /browse-cars/audi-s4-b9
+📋 Pipeline tracking: /internal/car-pipeline/audi-s4-b9
+
+[9:17:24 PM] ⚠️ Warnings for Audi S4 B9 (2017-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (462cc627-b53f-4093-9a88-b5c21c5f6009, null, 2, null, 889, Audi S4 B9 (2017-2024), null, ai-research-car:core-data, 2026-01-11 02:13:32.832472+00, 837, 889, 1.5846, claude-sonnet-4-20250514, car_research, 1.5846, backend_script, ai-research-car:core-data, Audi S4 B9 (2017-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c78f2c48-7843-43d8-8fe5-11a5b5c9c556, null, 1, null, 538, audi-s4-b9, null, ai-research-car:maintenance-specs, 2026-01-11 02:13:39.224543+00, 581, 538, 0.9813, claude-sonnet-4-20250514, car_research, 0.9813, backend_script, ai-research-car:maintenance-specs, audi-s4-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (0843929e-8d0a-4ce9-b753-989ae3f49ba9, null, 4, null, 2094, audi-s4-b9, null, ai-research-car:service-intervals, 2026-01-11 02:13:56.834506+00, 368, 2094, 3.2514, claude-sonnet-4-20250514, car_research, 3.2514, backend_script, ai-research-car:service-intervals, audi-s4-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b5dde04d-deb7-4ef4-ba23-e82d830d9c8e, null, 3, null, 1844, audi-s4-b9, null, ai-research-car:known-issues, 2026-01-11 02:14:02.886922+00, 385, 1844, 2.8815, claude-sonnet-4-20250514, car_research, 2.8815, backend_script, ai-research-car:known-issues, audi-s4-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7498a754-e7e2-49a0-a00a-986ac2a8043a, null, 6, null, 3087, audi-s4-b9, null, ai-research-car:scoring-editorial, 2026-01-11 02:15:01.427887+00, 1495, 3087, 5.0790, claude-sonnet-4-20250514, car_research, 5.0790, backend_script, ai-research-car:scoring-editorial, audi-s4-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:17:24 PM] ✅ Audi S4 B9 (2017-2024): ✅ Complete (249.5s)
+[9:17:24 PM] ℹ️ Waiting 10000ms before next batch...
+[9:17:34 PM] 📦 Processing batch 10/15 (1 cars)...
+[9:17:34 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S5 B8 (2008-2016)" --verbose
+[9:21:33 PM] ℹ️ AI research output for Audi S5 B8 (2008-2016):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S5 B8 (2008-2016)
+
+[9:17:34 PM] 📋 Phase 1-2: AI researching core data for "Audi S5 B8 (2008-2016)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 875 out = $0.0156
+[9:17:52 PM] ℹ️ Generated slug: audi-s5-b8
+[9:17:52 PM] ℹ️ HP: 333, Torque: 325
+[9:17:52 PM] ℹ️ Price: $52,200 - $65,000
+[9:17:52 PM] ✅ Generated slug: audi-s5-b8
+[9:17:52 PM] 🤖 Phase 4a: AI researching known issues...
+[9:17:52 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:17:52 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 538 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2062 out = $0.0320
+[9:18:14 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1825 out = $0.0285
+[9:18:20 PM] ℹ️ Found 8 known issues
+[9:18:20 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2643 out = $0.0441
+[9:19:08 PM] ℹ️ Scores: Sound=8, Track=7, Fun=8
+[9:19:08 PM] 📋 Phase 6a: Generating hero image...
+[9:19:08 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:19:26 PM] ✅ Saved: audi-s5-b8-hero.jpg (2709 KB)
+[9:19:27 PM] 🖼️ Uploading to blob: cars/audi-s5-b8/hero.webp...
+[9:19:27 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s5-b8/hero.webp
+[9:19:27 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:19:27 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:19:45 PM] ✅ Saved: audi-s5-b8-garage.jpg (2731 KB)
+[9:19:45 PM] 🖼️ Uploading to blob: garage/audi-s5-b8/exclusive.webp...
+[9:19:45 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s5-b8/exclusive.webp
+[9:19:45 PM] 💾 Saving to database...
+[9:19:46 PM]  ⚠️  Found 1 similar car(s) in database:
+[9:19:46 PM]     - audi-rs5-b8 (Audi RS5 B8)
+[9:19:46 PM] ℹ️    Proceeding with new slug: audi-s5-b8
+[9:19:46 PM] ℹ️    If this is a duplicate, delete the old entry first.
+[9:19:46 PM] ✅ Car inserted: audi-s5-b8 (ID: ec853d82-e647-4e4b-8d55-3ff852c04eae)
+[9:19:46 PM] ✅ Inserted 8 known issues
+[9:19:46 PM] ✅ Inserted maintenance specs
+[9:19:46 PM] ✅ Inserted 10 service intervals
+[9:19:46 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:19:46 PM] 🌐 Calling EPA fuel economy API...
+[9:19:46 PM] ✅ EPA fuel economy enriched
+[9:19:46 PM] 🌐 Calling NHTSA safety ratings API...
+[9:19:47 PM] ✅ NHTSA safety ratings enriched
+[9:19:47 PM] 🌐 Calling recalls API...
+[9:19:47 PM] ✅ Recalls enriched
+[9:19:47 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:19:47 PM] ℹ️ Running YouTube discovery for audi-s5-b8...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s5-b8",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S5 B8 (2008-2016)
+[exa-discovery] Searching for "Audi S5 B8" review videos via Exa...
+[exa-discovery] Found 23 unique videos via Exa
+[exa-discovery] Processing 5 of 23 videos...
+[exa-discovery] 
+[1/5] Is the Audi S5 B8 Worth the Risk?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=JIOl9OVYz8M
+[exa-discovery]   ✓ Transcript: 7719 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 13 pros, 7 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 2015 Audi S5 B8.5 Review - Can A 10 Year Old Car Really Be ....
+[exa-discovery]   URL: https://www.youtube.com/watch?v=oGJl_XWaH-U
+[exa-discovery]   ✓ Transcript: 16275 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Before You Buy an Audi S5 – Here's What You NEED to Know!...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=MRrlRPT1kWA
+[exa-discovery]   ✓ Transcript: 13969 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 14 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] An Audi a BMW Enthusiast Would Buy // 2017 Audi S5 B8.5 ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=yME7nTv8MeM
+[exa-discovery]   ✓ Transcript: 21420 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] What It's Like Daily Driving 100k Mile 2016 Audi S5 B8.5! PO...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=COXSI9pg5H4
+[exa-discovery]   ✓ Transcript: 16128 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 7 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       23
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:21:32 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 4 AI processed
+[9:21:32 PM] 📋 Phase 8: Running validation audit...
+[9:21:32 PM] ℹ️ Running validation audit for audi-s5-b8...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 8 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:21:33 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:21:33 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S5 B8
+Slug:          audi-s5-b8
+Brand:         Audi
+Years:         2008-2016
+HP:            333
+Price:         $52,200 - $65,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       8 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      238.5s
+
+✅ Car ready! View at: /browse-cars/audi-s5-b8
+📋 Pipeline tracking: /internal/car-pipeline/audi-s5-b8
+
+[9:21:33 PM] ⚠️ Warnings for Audi S5 B8 (2008-2016): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (b217bd1c-cd7c-439f-885a-aa9723cabf2a, null, 2, null, 875, Audi S5 B8 (2008-2016), null, ai-research-car:core-data, 2026-01-11 02:17:52.091749+00, 837, 875, 1.5636, claude-sonnet-4-20250514, car_research, 1.5636, backend_script, ai-research-car:core-data, Audi S5 B8 (2008-2016)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (6f992a09-35e8-442a-a60a-a06d202890e9, null, 1, null, 538, audi-s5-b8, null, ai-research-car:maintenance-specs, 2026-01-11 02:17:59.341193+00, 581, 538, 0.9813, claude-sonnet-4-20250514, car_research, 0.9813, backend_script, ai-research-car:maintenance-specs, audi-s5-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a248e72d-fae4-4919-ad17-c146cbb873ba, null, 4, null, 2062, audi-s5-b8, null, ai-research-car:service-intervals, 2026-01-11 02:18:14.628915+00, 368, 2062, 3.2034, claude-sonnet-4-20250514, car_research, 3.2034, backend_script, ai-research-car:service-intervals, audi-s5-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2695d044-35ca-48fa-ad4a-832eddf346cc, null, 3, null, 1825, audi-s5-b8, null, ai-research-car:known-issues, 2026-01-11 02:18:20.06826+00, 385, 1825, 2.8530, claude-sonnet-4-20250514, car_research, 2.8530, backend_script, ai-research-car:known-issues, audi-s5-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (133263e6-3efc-451f-bd58-76b854d0759f, null, 5, null, 2643, audi-s5-b8, null, ai-research-car:scoring-editorial, 2026-01-11 02:19:08.538176+00, 1495, 2643, 4.4130, claude-sonnet-4-20250514, car_research, 4.4130, backend_script, ai-research-car:scoring-editorial, audi-s5-b8).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:21:33 PM] ✅ Audi S5 B8 (2008-2016): ✅ Complete (239.3s)
+[9:21:33 PM] ℹ️ Waiting 10000ms before next batch...
+[9:21:43 PM] 📦 Processing batch 11/15 (1 cars)...
+[9:21:43 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Audi S5 B9 (2017-2024)" --verbose
+[9:25:35 PM] ℹ️ AI research output for Audi S5 B9 (2017-2024):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Audi S5 B9 (2017-2024)
+
+[9:21:43 PM] 📋 Phase 1-2: AI researching core data for "Audi S5 B9 (2017-2024)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 837 in, 915 out = $0.0162
+[9:22:02 PM] ℹ️ Generated slug: audi-s5-b9
+[9:22:02 PM] ℹ️ HP: 354, Torque: 369
+[9:22:02 PM] ℹ️ Price: $55,000 - $75,000
+[9:22:02 PM] ✅ Generated slug: audi-s5-b9
+[9:22:02 PM] 🤖 Phase 4a: AI researching known issues...
+[9:22:02 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:22:02 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 581 in, 532 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 368 in, 2112 out = $0.0328
+[9:22:25 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 385 in, 1533 out = $0.0242
+[9:22:27 PM] ℹ️ Found 7 known issues
+[9:22:27 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1495 in, 2491 out = $0.0418
+[9:23:12 PM] ℹ️ Scores: Sound=8, Track=7, Fun=8
+[9:23:13 PM] 📋 Phase 6a: Generating hero image...
+[9:23:13 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:23:37 PM] ✅ Saved: audi-s5-b9-hero.jpg (2655 KB)
+[9:23:37 PM] 🖼️ Uploading to blob: cars/audi-s5-b9/hero.webp...
+[9:23:38 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/audi-s5-b9/hero.webp
+[9:23:38 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:23:38 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:23:57 PM] ✅ Saved: audi-s5-b9-garage.jpg (3158 KB)
+[9:23:57 PM] 🖼️ Uploading to blob: garage/audi-s5-b9/exclusive.webp...
+[9:23:57 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/audi-s5-b9/exclusive.webp
+[9:23:57 PM] 💾 Saving to database...
+[9:23:58 PM]  ⚠️  Found 1 similar car(s) in database:
+[9:23:58 PM]     - audi-rs5-b9 (Audi RS5 B9)
+[9:23:58 PM] ℹ️    Proceeding with new slug: audi-s5-b9
+[9:23:58 PM] ℹ️    If this is a duplicate, delete the old entry first.
+[9:23:58 PM] ✅ Car inserted: audi-s5-b9 (ID: 098a3aa1-19aa-4087-acbf-a99659ccd6de)
+[9:23:58 PM] ✅ Inserted 7 known issues
+[9:23:59 PM] ✅ Inserted maintenance specs
+[9:23:59 PM] ✅ Inserted 10 service intervals
+[9:23:59 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:23:59 PM] 🌐 Calling EPA fuel economy API...
+[9:23:59 PM] ✅ EPA fuel economy enriched
+[9:23:59 PM] 🌐 Calling NHTSA safety ratings API...
+[9:24:00 PM] ✅ NHTSA safety ratings enriched
+[9:24:00 PM] 🌐 Calling recalls API...
+[9:24:00 PM] ✅ Recalls enriched
+[9:24:00 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:24:00 PM] ℹ️ Running YouTube discovery for audi-s5-b9...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "audi-s5-b9",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Audi S5 B9 (2017-2024)
+[exa-discovery] Searching for "Audi S5 B9" review videos via Exa...
+[exa-discovery] Found 25 unique videos via Exa
+[exa-discovery] Processing 5 of 25 videos...
+[exa-discovery] 
+[1/5] Why everyone wants the Audi S5 Sportback now?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=etyc5Cr5tDY
+[exa-discovery]   ✓ Transcript: 17982 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 10 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 2019 Audi S5 Sportback 3 Year Review!...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=fviur887WFw
+[exa-discovery]   ✓ Transcript: 4632 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 12 pros, 2 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2019 Audi S5 (B9) Coupe Review in 4K...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=6eVIi8i3UWE
+[exa-discovery]   ✓ Transcript: 13466 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] First Drive of My New Audi B9 S5!...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=t4KSOhyBDtw
+[exa-discovery]   ✓ Transcript: 7711 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Audi S5 Sportback Review.. Still The Best Daily?...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=sTUJCH-tlX4
+[exa-discovery]   ✓ Transcript: 17174 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       25
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:25:34 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 4 AI processed
+[9:25:34 PM] 📋 Phase 8: Running validation audit...
+[9:25:34 PM] ℹ️ Running validation audit for audi-s5-b9...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:25:35 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:25:35 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Audi S5 B9
+Slug:          audi-s5-b9
+Brand:         Audi
+Years:         2017-2024
+HP:            354
+Price:         $55,000 - $75,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      231.6s
+
+✅ Car ready! View at: /browse-cars/audi-s5-b9
+📋 Pipeline tracking: /internal/car-pipeline/audi-s5-b9
+
+[9:25:35 PM] ⚠️ Warnings for Audi S5 B9 (2017-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7afb8faf-ae18-4a80-afe5-2ca3a41a5f82, null, 2, null, 915, Audi S5 B9 (2017-2024), null, ai-research-car:core-data, 2026-01-11 02:22:02.327269+00, 837, 915, 1.6236, claude-sonnet-4-20250514, car_research, 1.6236, backend_script, ai-research-car:core-data, Audi S5 B9 (2017-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a0f72b84-2c24-4929-b840-0c656fe9a709, null, 1, null, 532, audi-s5-b9, null, ai-research-car:maintenance-specs, 2026-01-11 02:22:08.837606+00, 581, 532, 0.9723, claude-sonnet-4-20250514, car_research, 0.9723, backend_script, ai-research-car:maintenance-specs, audi-s5-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (247d6b22-d275-4753-838a-9e0c9c40b5ba, null, 4, null, 2112, audi-s5-b9, null, ai-research-car:service-intervals, 2026-01-11 02:22:25.663329+00, 368, 2112, 3.2784, claude-sonnet-4-20250514, car_research, 3.2784, backend_script, ai-research-car:service-intervals, audi-s5-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (8b199a0f-4b55-4b85-844c-a153b2c3ae86, null, 3, null, 1533, audi-s5-b9, null, ai-research-car:known-issues, 2026-01-11 02:22:27.216573+00, 385, 1533, 2.4150, claude-sonnet-4-20250514, car_research, 2.4150, backend_script, ai-research-car:known-issues, audi-s5-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (4abf2c86-ef20-44fd-ad00-230b7c36cffc, null, 5, null, 2491, audi-s5-b9, null, ai-research-car:scoring-editorial, 2026-01-11 02:23:12.616695+00, 1495, 2491, 4.1850, claude-sonnet-4-20250514, car_research, 4.1850, backend_script, ai-research-car:scoring-editorial, audi-s5-b9).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:25:35 PM] ✅ Audi S5 B9 (2017-2024): ✅ Complete (232.1s)
+[9:25:35 PM] ℹ️ Waiting 10000ms before next batch...
+[9:25:45 PM] 📦 Processing batch 12/15 (1 cars)...
+[9:25:45 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Porsche Boxster S 986 (1997-2004)" --verbose
+[9:30:03 PM] ℹ️ AI research output for Porsche Boxster S 986 (1997-2004):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Porsche Boxster S 986 (1997-2004)
+
+[9:25:45 PM] 📋 Phase 1-2: AI researching core data for "Porsche Boxster S 986 (1997-2004)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 838 in, 899 out = $0.0160
+[9:26:03 PM] ℹ️ Generated slug: porsche-boxster-s-986
+[9:26:03 PM] ℹ️ HP: 250, Torque: 225
+[9:26:03 PM] ℹ️ Price: $45,000 - $65,000
+[9:26:03 PM] ✅ Generated slug: porsche-boxster-s-986
+[9:26:03 PM] 🤖 Phase 4a: AI researching known issues...
+[9:26:03 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:26:03 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 582 in, 532 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 369 in, 2096 out = $0.0325
+[9:26:27 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 386 in, 1598 out = $0.0251
+[9:26:31 PM] ℹ️ Found 7 known issues
+[9:26:31 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1496 in, 2726 out = $0.0454
+[9:27:20 PM] ℹ️ Scores: Sound=8, Track=8, Fun=9
+[9:27:20 PM] 📋 Phase 6a: Generating hero image...
+[9:27:20 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:27:45 PM] ✅ Saved: porsche-boxster-s-986-hero.jpg (2862 KB)
+[9:27:45 PM] 🖼️ Uploading to blob: cars/porsche-boxster-s-986/hero.webp...
+[9:27:46 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/porsche-boxster-s-986/hero.webp
+[9:27:46 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:27:46 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:28:05 PM] ✅ Saved: porsche-boxster-s-986-garage.jpg (2761 KB)
+[9:28:05 PM] 🖼️ Uploading to blob: garage/porsche-boxster-s-986/exclusive.webp...
+[9:28:05 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/porsche-boxster-s-986/exclusive.webp
+[9:28:05 PM] 💾 Saving to database...
+[9:28:06 PM] ✅ Car inserted: porsche-boxster-s-986 (ID: 12547115-3f7c-4e22-854d-2d0b0c3ff2bd)
+[9:28:06 PM] ✅ Inserted 7 known issues
+[9:28:06 PM] ✅ Inserted maintenance specs
+[9:28:06 PM] ✅ Inserted 10 service intervals
+[9:28:06 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:28:06 PM] 🌐 Calling EPA fuel economy API...
+[9:28:06 PM] ✅ EPA fuel economy enriched
+[9:28:06 PM] 🌐 Calling NHTSA safety ratings API...
+[9:28:06 PM] ✅ NHTSA safety ratings enriched
+[9:28:06 PM] 🌐 Calling recalls API...
+[9:28:07 PM] ✅ Recalls enriched
+[9:28:07 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:28:07 PM] ℹ️ Running YouTube discovery for porsche-boxster-s-986...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "porsche-boxster-s-986",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Porsche Boxster S 986 (1997-2004)
+[exa-discovery] Searching for "Porsche Boxster S 986" review videos via Exa...
+[exa-discovery] Found 20 unique videos via Exa
+[exa-discovery] Processing 5 of 20 videos...
+[exa-discovery] 
+[1/5] 2004 Porsche Boxster S (986) Review & Test Drive! The Best ....
+[exa-discovery]   URL: https://www.youtube.com/watch?v=xoRUam3BV90
+[exa-discovery]   ✓ Transcript: 16935 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 7 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] Porsche Boxster S 986 CAR REVIEW – Modern Classic Car ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=ZUym0-FleTU
+[exa-discovery]   ✓ Transcript: 7207 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 10 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2003 Porsche Boxter S Review and test drive...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=2prPcPrz2u0
+[exa-discovery]   ✓ Transcript: 4836 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 1 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Porsche Boxster S 986 Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=gYmFtqsWQQw
+[exa-discovery]   ✓ Transcript: 8629 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 8 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Should You Buy A Porsche Boxster (986) - Part 2...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=r3vocGHZc_Q
+[exa-discovery]   ✓ Transcript: 4473 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 3 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       20
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:30:02 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:30:02 PM] 📋 Phase 8: Running validation audit...
+[9:30:02 PM] ℹ️ Running validation audit for porsche-boxster-s-986...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:30:03 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:30:03 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Porsche Boxster S 986
+Slug:          porsche-boxster-s-986
+Brand:         Porsche
+Years:         1997-2004
+HP:            250
+Price:         $45,000 - $65,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      257.5s
+
+✅ Car ready! View at: /browse-cars/porsche-boxster-s-986
+📋 Pipeline tracking: /internal/car-pipeline/porsche-boxster-s-986
+
+[9:30:03 PM] ⚠️ Warnings for Porsche Boxster S 986 (1997-2004): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c6d203fb-63e1-4f04-98f4-5b1682768f3d, null, 2, null, 899, Porsche Boxster S 986 (1997-2004), null, ai-research-car:core-data, 2026-01-11 02:26:03.67729+00, 838, 899, 1.5999, claude-sonnet-4-20250514, car_research, 1.5999, backend_script, ai-research-car:core-data, Porsche Boxster S 986 (1997-2004)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (0850905f-022d-4270-b820-0da0f878c28b, null, 1, null, 532, porsche-boxster-s-986, null, ai-research-car:maintenance-specs, 2026-01-11 02:26:10.227644+00, 582, 532, 0.9726, claude-sonnet-4-20250514, car_research, 0.9726, backend_script, ai-research-car:maintenance-specs, porsche-boxster-s-986).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2874830b-c5ad-413a-828c-57df6d2a9e88, null, 4, null, 2096, porsche-boxster-s-986, null, ai-research-car:service-intervals, 2026-01-11 02:26:27.431981+00, 369, 2096, 3.2547, claude-sonnet-4-20250514, car_research, 3.2547, backend_script, ai-research-car:service-intervals, porsche-boxster-s-986).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (ed429533-2753-4242-85d1-173944d91b0a, null, 3, null, 1598, porsche-boxster-s-986, null, ai-research-car:known-issues, 2026-01-11 02:26:31.284232+00, 386, 1598, 2.5128, claude-sonnet-4-20250514, car_research, 2.5128, backend_script, ai-research-car:known-issues, porsche-boxster-s-986).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (42a7096c-1eb8-4cc5-9883-d58f8f9292dc, null, 5, null, 2726, porsche-boxster-s-986, null, ai-research-car:scoring-editorial, 2026-01-11 02:27:20.617876+00, 1496, 2726, 4.5378, claude-sonnet-4-20250514, car_research, 4.5378, backend_script, ai-research-car:scoring-editorial, porsche-boxster-s-986).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:30:03 PM] ✅ Porsche Boxster S 986 (1997-2004): ✅ Complete (257.9s)
+[9:30:03 PM] ℹ️ Waiting 10000ms before next batch...
+[9:30:13 PM] 📦 Processing batch 13/15 (1 cars)...
+[9:30:13 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Porsche Boxster S 987 (2005-2012)" --verbose
+[9:34:25 PM] ℹ️ AI research output for Porsche Boxster S 987 (2005-2012):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Porsche Boxster S 987 (2005-2012)
+
+[9:30:14 PM] 📋 Phase 1-2: AI researching core data for "Porsche Boxster S 987 (2005-2012)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 838 in, 920 out = $0.0163
+[9:30:33 PM] ℹ️ Generated slug: porsche-boxster-s-987
+[9:30:33 PM] ℹ️ HP: 310, Torque: 266
+[9:30:33 PM] ℹ️ Price: $55,000 - $70,000
+[9:30:33 PM] ✅ Generated slug: porsche-boxster-s-987
+[9:30:33 PM] 🤖 Phase 4a: AI researching known issues...
+[9:30:33 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:30:33 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 582 in, 529 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 369 in, 2037 out = $0.0317
+[9:30:55 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 386 in, 1661 out = $0.0261
+[9:30:59 PM] ℹ️ Found 7 known issues
+[9:30:59 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1496 in, 3276 out = $0.0536
+[9:32:00 PM] ℹ️ Scores: Sound=8, Track=8, Fun=9
+[9:32:00 PM] 📋 Phase 6a: Generating hero image...
+[9:32:00 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:32:26 PM] ✅ Saved: porsche-boxster-s-987-hero.jpg (2809 KB)
+[9:32:27 PM] 🖼️ Uploading to blob: cars/porsche-boxster-s-987/hero.webp...
+[9:32:27 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/porsche-boxster-s-987/hero.webp
+[9:32:27 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:32:27 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:33:01 PM] ✅ Saved: porsche-boxster-s-987-garage.jpg (2640 KB)
+[9:33:02 PM] 🖼️ Uploading to blob: garage/porsche-boxster-s-987/exclusive.webp...
+[9:33:02 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/porsche-boxster-s-987/exclusive.webp
+[9:33:02 PM] 💾 Saving to database...
+[9:33:02 PM] ✅ Car inserted: porsche-boxster-s-987 (ID: 5a8f4cea-736f-4702-9aa5-a641ca497087)
+[9:33:02 PM] ✅ Inserted 7 known issues
+[9:33:02 PM] ✅ Inserted maintenance specs
+[9:33:02 PM] ✅ Inserted 10 service intervals
+[9:33:02 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:33:02 PM] 🌐 Calling EPA fuel economy API...
+[9:33:03 PM] ✅ EPA fuel economy enriched
+[9:33:03 PM] 🌐 Calling NHTSA safety ratings API...
+[9:33:04 PM] ✅ NHTSA safety ratings enriched
+[9:33:04 PM] 🌐 Calling recalls API...
+[9:33:04 PM] ✅ Recalls enriched
+[9:33:04 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:33:04 PM] ℹ️ Running YouTube discovery for porsche-boxster-s-987...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "porsche-boxster-s-987",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Porsche Boxster S 987 (2005-2012)
+[exa-discovery] Searching for "Porsche Boxster S 987" review videos via Exa...
+[exa-discovery] Found 21 unique videos via Exa
+[exa-discovery] Processing 5 of 21 videos...
+[exa-discovery] 
+[1/5] One Week with the Porsche Boxster S 987: Review and First .....
+[exa-discovery]   URL: https://www.youtube.com/watch?v=2pt2Q9h99bE
+[exa-discovery]   ✓ Transcript: 4182 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] I Bought My FIRST PORSCHE! *987 Boxster S*...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=WF_e28stezw
+[exa-discovery]   ✗ No transcript available
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Porsche Boxster S 987 End of Year Review...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=uMF-OAGEb-U
+[exa-discovery]   ✓ Transcript: 8020 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 4 pros, 2 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] The Best Cheap Porsche To Buy? Boxster 987 - What To ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=PDtosGpzNvc
+[exa-discovery]   ✓ Transcript: 12354 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 6 pros, 8 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Have I bought the right car? I get my Boxster S 987 inspecte...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=Gh_BBNDiIEE
+[exa-discovery]   ✓ Transcript: 2223 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 7 pros, 3 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       21
+[exa-discovery] Transcripts:        4
+[exa-discovery] AI processed:       4
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:34:25 PM] ℹ️ YouTube discovery: 5 videos, 4 transcripts, 4 AI processed
+[9:34:25 PM] 📋 Phase 8: Running validation audit...
+[9:34:25 PM] ℹ️ Running validation audit for porsche-boxster-s-987...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 3 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:34:25 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:34:25 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Porsche Boxster S 987
+Slug:          porsche-boxster-s-987
+Brand:         Porsche
+Years:         2005-2012
+HP:            310
+Price:         $55,000 - $70,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      251.6s
+
+✅ Car ready! View at: /browse-cars/porsche-boxster-s-987
+📋 Pipeline tracking: /internal/car-pipeline/porsche-boxster-s-987
+
+[9:34:25 PM] ⚠️ Warnings for Porsche Boxster S 987 (2005-2012): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (a92d1950-cbb3-49fd-97c3-507afb9862ae, null, 2, null, 920, Porsche Boxster S 987 (2005-2012), null, ai-research-car:core-data, 2026-01-11 02:30:32.985185+00, 838, 920, 1.6314, claude-sonnet-4-20250514, car_research, 1.6314, backend_script, ai-research-car:core-data, Porsche Boxster S 987 (2005-2012)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (17c18539-6cc7-4a37-8ee4-a2f3d0b5b2b9, null, 1, null, 529, porsche-boxster-s-987, null, ai-research-car:maintenance-specs, 2026-01-11 02:30:39.634507+00, 582, 529, 0.9681, claude-sonnet-4-20250514, car_research, 0.9681, backend_script, ai-research-car:maintenance-specs, porsche-boxster-s-987).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f6595052-ab7a-4959-ad1a-6a5445952965, null, 4, null, 2037, porsche-boxster-s-987, null, ai-research-car:service-intervals, 2026-01-11 02:30:55.360231+00, 369, 2037, 3.1662, claude-sonnet-4-20250514, car_research, 3.1662, backend_script, ai-research-car:service-intervals, porsche-boxster-s-987).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (bb45f1cc-6731-4276-9b8c-423edc9ca23f, null, 3, null, 1661, porsche-boxster-s-987, null, ai-research-car:known-issues, 2026-01-11 02:30:59.538854+00, 386, 1661, 2.6073, claude-sonnet-4-20250514, car_research, 2.6073, backend_script, ai-research-car:known-issues, porsche-boxster-s-987).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (f9ddde65-b43b-4d08-91f6-c44e8be3d1af, null, 6, null, 3276, porsche-boxster-s-987, null, ai-research-car:scoring-editorial, 2026-01-11 02:32:00.090331+00, 1496, 3276, 5.3628, claude-sonnet-4-20250514, car_research, 5.3628, backend_script, ai-research-car:scoring-editorial, porsche-boxster-s-987).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:34:25 PM] ✅ Porsche Boxster S 987 (2005-2012): ✅ Complete (252.5s)
+[9:34:25 PM] ℹ️ Waiting 10000ms before next batch...
+[9:34:35 PM] 📦 Processing batch 14/15 (1 cars)...
+[9:34:35 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Porsche Boxster S 981 (2012-2016)" --verbose
+[9:38:52 PM] ℹ️ AI research output for Porsche Boxster S 981 (2012-2016):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Porsche Boxster S 981 (2012-2016)
+
+[9:34:37 PM] 📋 Phase 1-2: AI researching core data for "Porsche Boxster S 981 (2012-2016)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 838 in, 1034 out = $0.0180
+[9:34:58 PM] ℹ️ Generated slug: porsche-boxster-s-981
+[9:34:58 PM] ℹ️ HP: 315, Torque: 266
+[9:34:58 PM] ℹ️ Price: $62,000 - $75,000
+[9:34:58 PM] ✅ Generated slug: porsche-boxster-s-981
+[9:34:58 PM] 🤖 Phase 4a: AI researching known issues...
+[9:34:58 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:34:58 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 582 in, 529 out = $0.0097
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 369 in, 2053 out = $0.0319
+[9:35:21 PM] ℹ️ Found 10 service intervals
+[BackendAiLogger] car_research/ai-research-car:known-issues: 386 in, 1577 out = $0.0248
+[9:35:23 PM] ℹ️ Found 7 known issues
+[9:35:23 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1496 in, 2559 out = $0.0429
+[9:36:10 PM] ℹ️ Scores: Sound=8, Track=9, Fun=9
+[9:36:10 PM] 📋 Phase 6a: Generating hero image...
+[9:36:10 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:36:36 PM] ✅ Saved: porsche-boxster-s-981-hero.jpg (2661 KB)
+[9:36:37 PM] 🖼️ Uploading to blob: cars/porsche-boxster-s-981/hero.webp...
+[9:36:37 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/porsche-boxster-s-981/hero.webp
+[9:36:37 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:36:37 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:37:06 PM] ✅ Saved: porsche-boxster-s-981-garage.jpg (2938 KB)
+[9:37:06 PM] 🖼️ Uploading to blob: garage/porsche-boxster-s-981/exclusive.webp...
+[9:37:06 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/porsche-boxster-s-981/exclusive.webp
+[9:37:06 PM] 💾 Saving to database...
+[9:37:07 PM] ✅ Car inserted: porsche-boxster-s-981 (ID: 8da18b0e-dbcd-468f-bb54-4a6afa8112de)
+[9:37:07 PM] ✅ Inserted 7 known issues
+[9:37:07 PM] ✅ Inserted maintenance specs
+[9:37:07 PM] ✅ Inserted 10 service intervals
+[9:37:07 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:37:07 PM] 🌐 Calling EPA fuel economy API...
+[9:37:07 PM] ✅ EPA fuel economy enriched
+[9:37:07 PM] 🌐 Calling NHTSA safety ratings API...
+[9:37:07 PM] ✅ NHTSA safety ratings enriched
+[9:37:07 PM] 🌐 Calling recalls API...
+[9:37:08 PM] ✅ Recalls enriched
+[9:37:08 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:37:08 PM] ℹ️ Running YouTube discovery for porsche-boxster-s-981...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "porsche-boxster-s-981",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Porsche Boxster S 981 (2012-2016)
+[exa-discovery] Searching for "Porsche Boxster S 981" review videos via Exa...
+[exa-discovery] Found 27 unique videos via Exa
+[exa-discovery] Processing 5 of 27 videos...
+[exa-discovery] 
+[1/5] Porsche Boxster S 981 In-Depth Review | Can the ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=0RzH0prEnO4
+[exa-discovery]   ✓ Transcript: 12249 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] 981 Porsche Boxster S: The Porsche Boxster Is Way Better ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=x8eoljqLReY
+[exa-discovery]   ✓ Transcript: 13492 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 14 pros, 5 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] Porsche 981 Boxster S Review: Top down, NA Flat Six ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=jgPRKpru4Oo
+[exa-discovery]   ✓ Transcript: 5545 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 11 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] Porsche Boxster S 981...You Can Have This...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=p8J7qg9HItg
+[exa-discovery]   ✓ Transcript: 22963 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 14 pros, 9 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Porsche Boxster S 981 PDK - Agate Grey...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=z6DEkq7644s
+[exa-discovery]   ✓ Transcript: 3400 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 0 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       27
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:38:52 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:38:52 PM] 📋 Phase 8: Running validation audit...
+[9:38:52 PM] ℹ️ Running validation audit for porsche-boxster-s-981...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:38:52 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:38:52 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Porsche Boxster S 981
+Slug:          porsche-boxster-s-981
+Brand:         Porsche
+Years:         2012-2016
+HP:            315
+Price:         $62,000 - $75,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      255.7s
+
+✅ Car ready! View at: /browse-cars/porsche-boxster-s-981
+📋 Pipeline tracking: /internal/car-pipeline/porsche-boxster-s-981
+
+[9:38:52 PM] ⚠️ Warnings for Porsche Boxster S 981 (2012-2016): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (35e96de8-3afc-4550-9e36-16eb6cf3c905, null, 2, null, 1034, Porsche Boxster S 981 (2012-2016), null, ai-research-car:core-data, 2026-01-11 02:34:58.441945+00, 838, 1034, 1.8024, claude-sonnet-4-20250514, car_research, 1.8024, backend_script, ai-research-car:core-data, Porsche Boxster S 981 (2012-2016)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (322a5aa1-a171-4d5b-a6e7-23bee97f3f6a, null, 1, null, 529, porsche-boxster-s-981, null, ai-research-car:maintenance-specs, 2026-01-11 02:35:05.278863+00, 582, 529, 0.9681, claude-sonnet-4-20250514, car_research, 0.9681, backend_script, ai-research-car:maintenance-specs, porsche-boxster-s-981).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (25f0463d-bb0e-4469-8e34-e6bab185dfed, null, 4, null, 2053, porsche-boxster-s-981, null, ai-research-car:service-intervals, 2026-01-11 02:35:21.651076+00, 369, 2053, 3.1902, claude-sonnet-4-20250514, car_research, 3.1902, backend_script, ai-research-car:service-intervals, porsche-boxster-s-981).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (9dc547ab-1009-4f4a-a36c-cfe56f94d561, null, 3, null, 1577, porsche-boxster-s-981, null, ai-research-car:known-issues, 2026-01-11 02:35:23.118354+00, 386, 1577, 2.4813, claude-sonnet-4-20250514, car_research, 2.4813, backend_script, ai-research-car:known-issues, porsche-boxster-s-981).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (7734c996-7db7-472a-9d99-687c5de43977, null, 5, null, 2559, porsche-boxster-s-981, null, ai-research-car:scoring-editorial, 2026-01-11 02:36:10.698312+00, 1496, 2559, 4.2873, claude-sonnet-4-20250514, car_research, 4.2873, backend_script, ai-research-car:scoring-editorial, porsche-boxster-s-981).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:38:52 PM] ✅ Porsche Boxster S 981 (2012-2016): ✅ Complete (257.0s)
+[9:38:52 PM] ℹ️ Waiting 10000ms before next batch...
+[9:39:02 PM] 📦 Processing batch 15/15 (1 cars)...
+[9:39:02 PM] 🔄 Running: node scripts/car-pipeline/ai-research-car.js "Porsche 718 Boxster GTS 4.0 (2020-2024)" --verbose
+[9:43:10 PM] ℹ️ AI research output for Porsche 718 Boxster GTS 4.0 (2020-2024):
+
+🚗 AutoRev AI Car Addition Pipeline
+====================================
+Car: Porsche 718 Boxster GTS 4.0 (2020-2024)
+
+[9:39:03 PM] 📋 Phase 1-2: AI researching core data for "Porsche 718 Boxster GTS 4.0 (2020-2024)"...
+[BackendAiLogger] car_research/ai-research-car:core-data: 844 in, 984 out = $0.0173
+[9:39:23 PM] ℹ️ Generated slug: porsche-718-boxster-gts-40-982
+[9:39:23 PM] ℹ️ HP: 394, Torque: 309
+[9:39:23 PM] ℹ️ Price: $88,000 - $105,000
+[9:39:23 PM] ✅ Generated slug: porsche-718-boxster-gts-40-982
+[9:39:23 PM] 🤖 Phase 4a: AI researching known issues...
+[9:39:23 PM] 🤖 Phase 4b: AI researching maintenance specs...
+[9:39:23 PM] 🤖 Phase 4c: AI researching service intervals...
+[BackendAiLogger] car_research/ai-research-car:maintenance-specs: 588 in, 535 out = $0.0098
+[BackendAiLogger] car_research/ai-research-car:known-issues: 392 in, 1528 out = $0.0241
+[9:39:46 PM] ℹ️ Found 7 known issues
+[BackendAiLogger] car_research/ai-research-car:service-intervals: 375 in, 2156 out = $0.0335
+[9:39:47 PM] ℹ️ Found 10 service intervals
+[9:39:47 PM] 📋 Phase 5: AI generating scores and editorial content...
+[BackendAiLogger] car_research/ai-research-car:scoring-editorial: 1502 in, 2793 out = $0.0464
+[9:40:41 PM] ℹ️ Scores: Sound=9, Track=9, Fun=9
+[9:40:41 PM] 📋 Phase 6a: Generating hero image...
+[9:40:41 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:41:00 PM] ✅ Saved: porsche-718-boxster-gts-40-982-hero.jpg (3060 KB)
+[9:41:01 PM] 🖼️ Uploading to blob: cars/porsche-718-boxster-gts-40-982/hero.webp...
+[9:41:01 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/porsche-718-boxster-gts-40-982/hero.webp
+[9:41:01 PM] 📋 Phase 6b: Generating industrial/garage image...
+[9:41:01 PM] 🖼️ 🍌 Generating with Nano Banana Pro (2K)...
+[9:41:22 PM] ✅ Saved: porsche-718-boxster-gts-40-982-garage.jpg (2546 KB)
+[9:41:22 PM] 🖼️ Uploading to blob: garage/porsche-718-boxster-gts-40-982/exclusive.webp...
+[9:41:22 PM] ✅ Blob URL: https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/garage/porsche-718-boxster-gts-40-982/exclusive.webp
+[9:41:23 PM] 💾 Saving to database...
+[9:41:24 PM] ✅ Car inserted: porsche-718-boxster-gts-40-982 (ID: 1f744bbc-4c20-4bd9-8658-105319e68f44)
+[9:41:24 PM] ✅ Inserted 7 known issues
+[9:41:24 PM] ✅ Inserted maintenance specs
+[9:41:24 PM] ✅ Inserted 10 service intervals
+[9:41:24 PM] 📋 Phase 3: Running automated enrichment APIs...
+[9:41:24 PM] 🌐 Calling EPA fuel economy API...
+[9:41:25 PM] ✅ EPA fuel economy enriched
+[9:41:25 PM] 🌐 Calling NHTSA safety ratings API...
+[9:41:25 PM] ✅ NHTSA safety ratings enriched
+[9:41:25 PM] 🌐 Calling recalls API...
+[9:41:26 PM] ✅ Recalls enriched
+[9:41:26 PM] ℹ️ Phase 7: Running YouTube discovery...
+[9:41:26 PM] ℹ️ Running YouTube discovery for porsche-718-boxster-gts-40-982...
+[exa-discovery] ========================================
+[exa-discovery] YouTube Discovery via Exa + Supadata
+[exa-discovery] ========================================
+[exa-discovery] Options: {
+  "carSlug": "porsche-718-boxster-gts-40-982",
+  "dryRun": false,
+  "verbose": false,
+  "limit": 5
+}
+[exa-discovery] Processing: Porsche 718 Boxster GTS 4.0 (2020-2024)
+[exa-discovery] Searching for "Porsche 718 Boxster GTS 4.0" review videos via Exa...
+[exa-discovery] Found 24 unique videos via Exa
+[exa-discovery] Processing 5 of 24 videos...
+[exa-discovery] 
+[1/5] Farewell to my favourite sportscar: Porsche Boxster GTS 4.0 ...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=aCJcpMAGbnY
+[exa-discovery]   ✓ Transcript: 16284 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 10 pros, 7 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[2/5] Best Sports Car in the World!? Porsche Boxster GTS 4.0 | 4k...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=q_tpnrtMZww
+[exa-discovery]   ✓ Transcript: 11532 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 10 pros, 6 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[3/5] 2024 Porsche 718 Boxster GTS 4.0 Review - Nearly Perfect ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=_KCQ16mm8-Q
+[exa-discovery]   ✓ Transcript: 7342 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 8 pros, 8 cons, sentiment: mixed
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[4/5] 2025 Porsche 718 Boxster GTS 4 0...
+[exa-discovery]   URL: https://www.youtube.com/watch?v=-x1tHdFzVD0
+[exa-discovery]   ✓ Transcript: 10288 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 4 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+[5/5] Why have we not all bought 718 GTS 4.0s before Porsche ......
+[exa-discovery]   URL: https://www.youtube.com/watch?v=pbZ_W1aEtss
+[exa-discovery]   ✓ Transcript: 13658 chars
+[exa-discovery]   🤖 Processing with AI...
+[exa-discovery]   ✓ AI: 9 pros, 2 cons, sentiment: positive
+[exa-discovery]   ✓ Saved to database
+[exa-discovery] 
+========================================
+[exa-discovery] Discovery Complete
+[exa-discovery] ========================================
+[exa-discovery] Videos found:       24
+[exa-discovery] Transcripts:        5
+[exa-discovery] AI processed:       5
+[exa-discovery] Videos saved:       5
+[exa-discovery] Errors:             0
+[9:43:10 PM] ℹ️ YouTube discovery: 5 videos, 5 transcripts, 5 AI processed
+[9:43:10 PM] 📋 Phase 8: Running validation audit...
+[9:43:10 PM] ℹ️ Running validation audit for porsche-718-boxster-gts-40-982...
+
+🔍 VALIDATION AUDIT
+===================
+✅ Core fields
+✅ Scores - 7/7 scores
+✅ Editorial arrays - 5 pros, 4 cons, 2 strengths
+✅ Hero image
+✅ Buying guide
+✅ Known issues - 7 issues
+✅ Service intervals - 10 intervals
+✅ YouTube videos - 5 videos linked
+
+Summary: Passed: 8, Warnings: 0, Critical: 0
+[9:43:10 PM] 📋 Phase 9: Resolving user feedback & sending notifications...
+[9:43:10 PM] ℹ️ No matching user feedback found for this car
+
+═══════════════════════════════════════════════════════════════════
+🎉 CAR ADDITION COMPLETE!
+═══════════════════════════════════════════════════════════════════
+
+📋 VEHICLE INFO
+───────────────────────────────────────────────────────────────────
+Name:          Porsche 718 Boxster GTS 4.0
+Slug:          porsche-718-boxster-gts-40-982
+Brand:         Porsche
+Years:         2020-2024
+HP:            394
+Price:         $88,000 - $105,000
+
+📊 DATA POPULATED
+───────────────────────────────────────────────────────────────────
+Known Issues:       7 issues
+Service Intervals:  10 intervals
+Scores:             7/7 assigned
+Hero Image:         ✅ Generated
+Garage Image:       ✅ Generated
+YouTube Videos:     5 linked
+
+✅ VALIDATION RESULT
+───────────────────────────────────────────────────────────────────
+Status:        ✅ PASSED
+Checks:        8 passed, 0 warnings, 0 critical
+
+📧 USER FEEDBACK
+───────────────────────────────────────────────────────────────────
+Resolved:      0 feedback request(s)
+Emails Sent:   0 notification(s)
+
+⏱️  Duration:      247.0s
+
+✅ Car ready! View at: /browse-cars/porsche-718-boxster-gts-40-982
+📋 Pipeline tracking: /internal/car-pipeline/porsche-718-boxster-gts-40-982
+
+[9:43:10 PM] ⚠️ Warnings for Porsche 718 Boxster GTS 4.0 (2020-2024): [BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (4d63f7b4-eb20-4a55-b1e6-e03e38b0a725, null, 2, null, 984, Porsche 718 Boxster GTS 4.0 (2020-2024), null, ai-research-car:core-data, 2026-01-11 02:39:23.026993+00, 844, 984, 1.7292, claude-sonnet-4-20250514, car_research, 1.7292, backend_script, ai-research-car:core-data, Porsche 718 Boxster GTS 4.0 (2020-2024)).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (c342d74b-e779-4a29-94b8-472416ae0b0f, null, 1, null, 535, porsche-718-boxster-gts-40-982, null, ai-research-car:maintenance-specs, 2026-01-11 02:39:29.441955+00, 588, 535, 0.9789, claude-sonnet-4-20250514, car_research, 0.9789, backend_script, ai-research-car:maintenance-specs, porsche-718-boxster-gts-40-982).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (de87f732-9e17-4b51-b84c-eea8b22d9b2e, null, 3, null, 1528, porsche-718-boxster-gts-40-982, null, ai-research-car:known-issues, 2026-01-11 02:39:46.435034+00, 392, 1528, 2.4096, claude-sonnet-4-20250514, car_research, 2.4096, backend_script, ai-research-car:known-issues, porsche-718-boxster-gts-40-982).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (58d9866d-c898-4696-a771-8a7b51aba08b, null, 4, null, 2156, porsche-718-boxster-gts-40-982, null, ai-research-car:service-intervals, 2026-01-11 02:39:47.796513+00, 375, 2156, 3.3465, claude-sonnet-4-20250514, car_research, 3.3465, backend_script, ai-research-car:service-intervals, porsche-718-boxster-gts-40-982).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+[BackendAiLogger] Failed to log usage: {
+  code: '23502',
+  details: 'Failing row contains (2273fab8-89ff-413f-bd78-34a47e26b6f0, null, 5, null, 2793, porsche-718-boxster-gts-40-982, null, ai-research-car:scoring-editorial, 2026-01-11 02:40:41.463088+00, 1502, 2793, 4.6401, claude-sonnet-4-20250514, car_research, 4.6401, backend_script, ai-research-car:scoring-editorial, porsche-718-boxster-gts-40-982).',
+  hint: null,
+  message: 'null value in column "user_id" of relation "al_usage_logs" violates not-null constraint'
+}
+
+[9:43:10 PM] ✅ Porsche 718 Boxster GTS 4.0 (2020-2024): ✅ Complete (248.0s)
+
+📊 Batch Processing Summary
+==========================
+Total Cars:   15
+Successful:   15 ✅
+Failed:       0 ❌
+Total Time:   3821.2s
+Avg Per Car:  245.4s
+
+✅ Successfully Added:
+  - Hyundai Veloster N (2019-2023)
+  - Kia Stinger GT (2018-2023)
+  - Ford Focus ST Mk3 (2013-2018)
+  - Infiniti G37 Coupe (2008-2013)
+  - Infiniti G37 Sedan (2009-2013)
+  - Audi S4 B6 (2004-2005)
+  - Audi S4 B7 (2005-2008)
+  - Audi S4 B8 (2010-2016)
+  - Audi S4 B9 (2017-2024)
+  - Audi S5 B8 (2008-2016)
+  - Audi S5 B9 (2017-2024)
+  - Porsche Boxster S 986 (1997-2004)
+  - Porsche Boxster S 987 (2005-2012)
+  - Porsche Boxster S 981 (2012-2016)
+  - Porsche 718 Boxster GTS 4.0 (2020-2024)
+
+🎉 Cars are now available in AutoRev!
+📋 Check the pipeline dashboard: /internal/car-pipeline

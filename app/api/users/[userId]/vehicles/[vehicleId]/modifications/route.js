@@ -11,6 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * POST /api/users/[userId]/vehicles/[vehicleId]/modifications
@@ -21,9 +22,8 @@ import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken }
  * - totalHpGain: number - Total HP gain from mods
  * - buildId?: string - Optional user_projects.id if applying from a build
  */
-export async function POST(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handlePost(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -129,31 +129,22 @@ export async function POST(request, { params }) {
         ? `Applied ${upgrades.length} modification(s) to vehicle`
         : 'Vehicle reset to stock',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/modifications] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * PUT /api/users/[userId]/vehicles/[vehicleId]/modifications
  * Update modifications (alias for POST)
  */
-export async function PUT(request, context) {
-  return POST(request, context);
+async function handlePut(request, context) {
+  return handlePost(request, context);
 }
 
 /**
  * DELETE /api/users/[userId]/vehicles/[vehicleId]/modifications
  * Clear all modifications from a vehicle
  */
-export async function DELETE(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handleDelete(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -228,23 +219,14 @@ export async function DELETE(request, { params }) {
       vehicle: data,
       message: 'Vehicle reset to stock configuration',
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/modifications] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
 
 /**
  * GET /api/users/[userId]/vehicles/[vehicleId]/modifications
  * Get vehicle modifications (with optional build details)
  */
-export async function GET(request, { params }) {
-  try {
-    const { userId, vehicleId } = await params;
+async function handleGet(request, { params }) {
+  const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
       return NextResponse.json(
@@ -324,15 +306,12 @@ export async function GET(request, { params }) {
       modifiedAt: data.modified_at,
       isModified: (data.installed_modifications?.length || 0) > 0,
     });
-
-  } catch (err) {
-    console.error('[API/vehicles/modifications] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'users/vehicles/modifications', feature: 'garage' });
+export const PUT = withErrorLogging(handlePut, { route: 'users/vehicles/modifications', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users/vehicles/modifications', feature: 'garage' });
+export const GET = withErrorLogging(handleGet, { route: 'users/vehicles/modifications', feature: 'garage' });
 
 
 
