@@ -311,12 +311,22 @@ export default function SportsCarComparison() {
     drivetrainFilter: 'all', // 'all', 'RWD', 'AWD', 'FWD'
     seatsFilter: 'all', // 'all', '2', '4'
     engineLayoutFilter: 'all', // 'all', 'Mid-Engine', 'Front-Engine', 'Rear-Engine'
+    vehicleTypeFilter: 'all', // 'all', 'Sports Car', 'Sports Sedan', 'Muscle Car', 'Hot Hatch', 'Wagon', 'SUV', 'Truck', 'Supercar'
     originFilter: 'all', // 'all', 'american', 'japanese', 'european'
     styleFilter: 'all', // 'all', 'purist', 'tuner', 'drift', 'stance'
     tierFilter: 'all', // 'all', 'premium', 'upper-mid', 'mid', 'budget'
     categoryFilter: 'all', // 'all', 'jdm', 'muscle', 'german', 'exotic', 'track', 'rally', 'hothatch'
   });
   
+  // Get unique vehicle types from car data (body styles: Sports Car, Sports Sedan, etc.)
+  const vehicleTypes = useMemo(() => {
+    const types = new Set();
+    carData.forEach(car => {
+      if (car.vehicleType) types.add(car.vehicleType);
+    });
+    return Array.from(types).sort();
+  }, [carData]);
+
   // Car category definitions for filtering
   const CAR_CATEGORIES = [
     { key: 'all', label: 'All Cars', icon: Icons.car },
@@ -435,6 +445,8 @@ export default function SportsCarComparison() {
         (mustHaveFilters.seatsFilter === '4' && car.seats >= 4))
       // Must-have: Engine layout filter
       .filter(car => mustHaveFilters.engineLayoutFilter === 'all' || car.category === mustHaveFilters.engineLayoutFilter)
+      // Vehicle type filter (body style: Sports Car, Sports Sedan, Wagon, etc.)
+      .filter(car => mustHaveFilters.vehicleTypeFilter === 'all' || car.vehicleType === mustHaveFilters.vehicleTypeFilter)
       // Origin filter (American Muscle vs Import)
       .filter(car => mustHaveFilters.originFilter === 'all' || getCarOrigin(car) === mustHaveFilters.originFilter)
       // Enthusiast style filter (Purist, Tuner, Drift, Stance)
@@ -725,6 +737,25 @@ export default function SportsCarComparison() {
                 <option value="Front-Engine">Front Engine</option>
                 <option value="Mid-Engine">Mid Engine</option>
                 <option value="Rear-Engine">Rear Engine</option>
+              </select>
+            </div>
+
+            {/* Vehicle Type Question */}
+            <div className={styles.requirementCard}>
+              <div className={styles.requirementQuestion}>
+                <span className={styles.requirementIconSvg}><Icons.car size={14} /></span>
+                <span className={styles.requirementLabel}>Vehicle Type</span>
+              </div>
+              <select
+                value={mustHaveFilters.vehicleTypeFilter}
+                onChange={e => setMustHaveFilters(prev => ({ ...prev, vehicleTypeFilter: e.target.value }))}
+                className={styles.requirementSelect}
+                aria-label="Vehicle type"
+              >
+                <option value="all">All Types</option>
+                {vehicleTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
               </select>
             </div>
 

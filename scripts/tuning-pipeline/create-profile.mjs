@@ -31,7 +31,7 @@ if (!supabaseUrl || !serviceKey) {
 
 const supabase = createClient(supabaseUrl, serviceKey);
 
-const PIPELINE_VERSION = '1.0.0';
+const PIPELINE_VERSION = '1.1.0'; // Updated to write upgrades_by_objective as source of truth
 
 /**
  * Research data for top 30 vehicles extracted from research document
@@ -637,6 +637,197 @@ const RESEARCH_DATA = {
 };
 
 /**
+ * Convert stage progressions to upgrades_by_objective format (source of truth)
+ * This aligns with consolidate-tuning-data.mjs and DATABASE.md requirements
+ */
+function convertStagesToUpgradesByObjective(stages, brandRecommendations = {}) {
+  const objectives = {
+    power: [],
+    handling: [],
+    braking: [],
+    cooling: [],
+    sound: [],
+    aero: []
+  };
+
+  if (!stages || !Array.isArray(stages)) return objectives;
+
+  // Component to objective mapping
+  const componentObjectiveMap = {
+    // Power
+    'tune': 'power',
+    'intake': 'power',
+    'exhaust': 'power',
+    'downpipe': 'power',
+    'intercooler': 'power',
+    'turbo': 'power',
+    'supercharger': 'power',
+    'header': 'power',
+    'fuel': 'power',
+    'ecu': 'power',
+    'pulley': 'power',
+    'cam': 'power',
+    'head': 'power',
+    'e85': 'power',
+    'meth': 'power',
+    'boost': 'power',
+    
+    // Handling
+    'suspension': 'handling',
+    'coilover': 'handling',
+    'spring': 'handling',
+    'sway': 'handling',
+    'alignment': 'handling',
+    'bushing': 'handling',
+    'arm': 'handling',
+    'strut': 'handling',
+    'shock': 'handling',
+    'lift': 'handling',
+    'wheel': 'handling',
+    'tire': 'handling',
+    
+    // Braking
+    'brake': 'braking',
+    'rotor': 'braking',
+    'caliper': 'braking',
+    'pad': 'braking',
+    'fluid': 'braking',
+    
+    // Cooling
+    'cooler': 'cooling',
+    'radiator': 'cooling',
+    'fan': 'cooling',
+    
+    // Off-road (map to handling for SUVs/trucks)
+    'bumper': 'handling',
+    'winch': 'handling',
+    'skid': 'handling',
+    'slider': 'handling',
+    'armor': 'handling',
+    'gear': 'handling',
+    'regear': 'handling',
+    'driveshaft': 'handling',
+    'axle': 'handling',
+    'locker': 'handling'
+  };
+
+  function categorizeComponent(componentName) {
+    const lower = componentName.toLowerCase();
+    for (const [keyword, objective] of Object.entries(componentObjectiveMap)) {
+      if (lower.includes(keyword)) {
+        return objective;
+      }
+    }
+    // Default to power for unrecognized components
+    return 'power';
+  }
+
+  for (const stage of stages) {
+    if (!stage.components) continue;
+
+    for (const component of stage.components) {
+      const objective = categorizeComponent(component);
+      
+      const upgrade = {
+        name: component,
+        stage_source: stage.stage || stage.key,
+        stage_key: stage.key,
+        gains: (stage.hpGainLow !== undefined && stage.hpGainHigh !== undefined) ? {
+          hp: { low: stage.hpGainLow, high: stage.hpGainHigh }
+        } : null,
+        torque_gains: (stage.torqueGainLow !== undefined && stage.torqueGainHigh !== undefined) ? {
+          tq: { low: stage.torqueGainLow, high: stage.torqueGainHigh }
+        } : null,
+        cost: (stage.costLow !== undefined && stage.costHigh !== undefined) ? {
+          low: stage.costLow,
+          high: stage.costHigh
+        } : null,
+        requirements: stage.requirements || [],
+        notes: stage.notes || null
+      };
+      
+      objectives[objective].push(upgrade);
+    }
+  }
+
+  return objectives;
+}
+
+/**
+ * Build platform_insights from research data
+ */
+function buildPlatformInsights(research, variantResearch, minedData) {
+  const insights = {
+    strengths: [],
+    weaknesses: [],
+    community_tips: [],
+    youtube_insights: {}
+  };
+
+  // Add from research data
+  if (variantResearch?.platformNotes) {
+    insights.strengths.push(...(Array.isArray(variantResearch.platformNotes) 
+      ? variantResearch.platformNotes 
+      : [variantResearch.platformNotes]));
+  }
+  
+  if (research?.issues) {
+    insights.weaknesses = research.issues.map(i => i.title);
+  }
+
+  // Add community resources
+  if (research?.communityResources) {
+    insights.community_resources = research.communityResources;
+  }
+
+  // Add from mined YouTube data
+  if (minedData?.insights) {
+    insights.youtube_insights = {
+      video_count: minedData.youtubeVideos?.length || 0,
+      common_pros: minedData.insights.commonPros?.slice(0, 5) || [],
+      common_cons: minedData.insights.commonCons?.slice(0, 5) || [],
+      avg_sentiment: minedData.insights.avgAftermarketSentiment,
+      tuner_mentions: minedData.insights.tunerMentions || [],
+      brand_mentions: minedData.insights.brandMentions || []
+    };
+    
+    // Add YouTube-derived strengths/weaknesses
+    if (minedData.insights.commonPros?.length > 0) {
+      insights.strengths.push(...minedData.insights.commonPros.slice(0, 3));
+    }
+    if (minedData.insights.commonCons?.length > 0) {
+      insights.weaknesses.push(...minedData.insights.commonCons.slice(0, 3));
+    }
+  }
+
+  // Dedupe
+  insights.strengths = [...new Set(insights.strengths)].slice(0, 10);
+  insights.weaknesses = [...new Set(insights.weaknesses)].slice(0, 10);
+
+  return insights;
+}
+
+/**
+ * Determine data quality tier based on available sources
+ */
+function determineDataQualityTier(options) {
+  const { researchData, minedData, hasStages, hasUpgrades } = options;
+  
+  const hasResearch = researchData && Object.keys(researchData).length > 0;
+  const hasYoutube = minedData?.youtubeVideos?.length > 0;
+  const hasIssues = minedData?.issues?.length > 0;
+  const hasParts = minedData?.parts?.length > 0;
+  const hasDyno = minedData?.dynoRuns?.length > 0;
+  
+  const sourceCount = [hasResearch, hasYoutube, hasIssues, hasParts, hasDyno, hasStages || hasUpgrades].filter(Boolean).length;
+  
+  if (sourceCount >= 5) return 'researched';
+  if (sourceCount >= 3) return 'enriched';
+  if (sourceCount >= 1) return 'templated';
+  return 'skeleton';
+}
+
+/**
  * Create or update a tuning profile
  */
 export async function createProfile(options) {
@@ -670,6 +861,39 @@ export async function createProfile(options) {
     console.warn('⚠️  No research data found. Profile will be created from mined data only.');
   }
 
+  // Build stage progressions (for backward compatibility)
+  const stageProgressions = variantResearch?.stageProgressions || [];
+  const tuningPlatforms = variantResearch?.tuningPlatforms || buildPlatformsFromInsights(mined.insights);
+  const powerLimits = variantResearch?.powerLimits || {};
+  const brandRecommendations = variantResearch?.brandRecommendations || buildBrandsFromMined(mined);
+
+  // Convert stages to upgrades_by_objective (SOURCE OF TRUTH per DATABASE.md)
+  const upgradesByObjective = convertStagesToUpgradesByObjective(stageProgressions, brandRecommendations);
+
+  // Build platform insights
+  const platformInsights = buildPlatformInsights(research, variantResearch, mined);
+
+  // Determine data quality tier
+  const dataQualityTier = determineDataQualityTier({
+    researchData: research,
+    minedData: mined,
+    hasStages: stageProgressions.length > 0,
+    hasUpgrades: Object.values(upgradesByObjective).some(arr => arr.length > 0)
+  });
+
+  // Track data sources
+  const dataSources = {
+    has_research_doc: !!research,
+    has_youtube: mined.youtubeVideos.length > 0,
+    has_issues: mined.issues.length > 0,
+    has_parts: mined.parts.length > 0,
+    has_dyno: mined.dynoRuns.length > 0,
+    youtube_video_count: mined.youtubeVideos.length,
+    issues_count: mined.issues.length,
+    parts_count: mined.parts.length,
+    dyno_runs_count: mined.dynoRuns.length
+  };
+
   // Build the profile
   const profile = {
     car_id: car.id,
@@ -677,17 +901,23 @@ export async function createProfile(options) {
     engine_family: engineFamily || variantResearch?.engineFamily || null,
     tuning_focus: tuningFocus,
     
-    // Core tuning data
-    stage_progressions: variantResearch?.stageProgressions || [],
-    tuning_platforms: variantResearch?.tuningPlatforms || buildPlatformsFromInsights(mined.insights),
-    power_limits: variantResearch?.powerLimits || {},
-    brand_recommendations: variantResearch?.brandRecommendations || buildBrandsFromMined(mined),
+    // SOURCE OF TRUTH: upgrades_by_objective (per DATABASE.md)
+    upgrades_by_objective: upgradesByObjective,
+    
+    // Legacy/supplemental data (for backward compatibility with existing code)
+    stage_progressions: stageProgressions,
+    tuning_platforms: tuningPlatforms,
+    power_limits: powerLimits,
+    brand_recommendations: brandRecommendations,
+    
+    // Platform-specific insights
+    platform_insights: platformInsights,
     
     // Stock baseline
     stock_whp: variantResearch?.stockWhp || estimateStockWhp(car),
     stock_wtq: variantResearch?.stockWtq || estimateStockWtq(car),
     
-    // Data sources
+    // YouTube-derived insights (legacy format for existing code)
     youtube_insights: {
       videoCount: mined.youtubeVideos.length,
       commonPros: mined.insights.commonPros?.slice(0, 5) || [],
@@ -699,15 +929,28 @@ export async function createProfile(options) {
     },
     research_sources: research ? ['Research & Articles/Top 30 US Automotive Tuning Shop Details.md'] : [],
     
-    // Quality control
+    // Data quality tracking
+    data_quality_tier: dataQualityTier,
+    data_sources: dataSources,
+    
+    // Pipeline metadata
     pipeline_version: PIPELINE_VERSION,
     pipeline_run_at: new Date().toISOString(),
     verified: false,
     notes: `Auto-generated by pipeline v${PIPELINE_VERSION}`
   };
 
+  // Count total upgrades in upgrades_by_objective
+  const totalUpgrades = Object.values(profile.upgrades_by_objective).reduce((sum, arr) => sum + arr.length, 0);
+
   console.log('\n📋 Profile Summary:');
-  console.log(`   Stages: ${profile.stage_progressions.length}`);
+  console.log(`   Data Quality Tier: ${profile.data_quality_tier}`);
+  console.log(`   Upgrades (by objective): ${totalUpgrades}`);
+  console.log(`     - Power: ${profile.upgrades_by_objective.power?.length || 0}`);
+  console.log(`     - Handling: ${profile.upgrades_by_objective.handling?.length || 0}`);
+  console.log(`     - Braking: ${profile.upgrades_by_objective.braking?.length || 0}`);
+  console.log(`     - Cooling: ${profile.upgrades_by_objective.cooling?.length || 0}`);
+  console.log(`   Stages (legacy): ${profile.stage_progressions.length}`);
   console.log(`   Platforms: ${profile.tuning_platforms.length}`);
   console.log(`   Power limits: ${Object.keys(profile.power_limits).length}`);
   console.log(`   Brand categories: ${Object.keys(profile.brand_recommendations).length}`);

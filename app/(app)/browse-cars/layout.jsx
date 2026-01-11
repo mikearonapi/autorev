@@ -1,7 +1,7 @@
 /**
- * Browse Cars Layout - SEO Metadata
+ * Browse Vehicles Layout - SEO Metadata
  * 
- * Provides metadata for the Browse Cars page (car catalog).
+ * Provides metadata for the Browse Vehicles page (vehicle catalog).
  * URL: /browse-cars
  */
 
@@ -17,13 +17,13 @@ export async function generateMetadata() {
   }
 
   return {
-    title: `Browse Cars | Explore ${carCount} Sports & Performance Vehicles`,
-    description: `Browse our collection of ${carCount} sports cars, from budget-friendly Miatas to exotic supercars. Filter by make, price tier, and category. Compare specs, find your perfect match.`,
+    title: `Browse Vehicles | Explore ${carCount} Sports & Performance Vehicles`,
+    description: `Browse our collection of ${carCount} vehicles - sports cars, sedans, hot hatches, trucks, and SUVs. Filter by make, price tier, and vehicle type. Compare specs, find your perfect match.`,
     keywords: [
       'sports cars',
-      'performance cars',
-      'car catalog',
-      'browse sports cars',
+      'performance vehicles',
+      'vehicle catalog',
+      'browse vehicles',
       'Porsche',
       'BMW M',
       'Corvette',
@@ -33,16 +33,21 @@ export async function generateMetadata() {
       'track cars',
       'muscle cars',
       'import tuners',
+      'sports sedan',
+      'hot hatch',
+      'wagon',
+      'SUV',
+      'truck',
     ],
     openGraph: {
-      title: `Browse Cars | Explore ${carCount} Sports & Performance Vehicles`,
-      description: `Browse our collection of ${carCount} sports cars. Filter by make, price, and category. Find your perfect match.`,
+      title: `Browse Vehicles | Explore ${carCount} Sports & Performance Vehicles`,
+      description: `Browse our collection of ${carCount} vehicles. Filter by make, price, and vehicle type. Find your perfect match.`,
       url: '/browse-cars',
       type: 'website',
     },
     twitter: {
-      title: `Browse Cars | Explore ${carCount} Sports & Performance Vehicles`,
-      description: `Browse ${carCount} sports cars. Filter by make, price, and category.`,
+      title: `Browse Vehicles | Explore ${carCount} Sports & Performance Vehicles`,
+      description: `Browse ${carCount} vehicles. Filter by make, price, and vehicle type.`,
     },
     alternates: {
       canonical: '/browse-cars',

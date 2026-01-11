@@ -114,9 +114,9 @@ export default function CarSelector() {
               <span className={styles.titleAccent}>Perfect Match</span>
             </h1>
             <p className={styles.subtitle}>
-              Find the car that fits your goals—not someone else&apos;s Instagram. 
+              Find the vehicle that fits your goals—not someone else&apos;s Instagram. 
               Tell us what actually matters to you, and we&apos;ll match you with 
-              the right car. Real ownership insights from drivers who walk the walk.
+              the right vehicle. Real ownership insights from drivers who walk the walk.
             </p>
             
             {/* Carousel indicator showing current car */}

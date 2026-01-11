@@ -28,7 +28,7 @@ const footerSections = [
   {
     title: 'Research',
     links: [
-      { label: 'Browse Cars', href: '/browse-cars' },
+      { label: 'Browse Vehicles', href: '/browse-cars' },
       { label: 'Car Selector', href: '/car-selector' },
       { label: 'Encyclopedia', href: '/encyclopedia' },
     ],

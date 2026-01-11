@@ -113,7 +113,7 @@ function CarCatalogContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedVehicleType, setSelectedVehicleType] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   
   // Fetch cars using React Query (cached, deduplicated)
@@ -215,7 +215,7 @@ function CarCatalogContent() {
     }
   };
 
-  const categories = useMemo(() => getUniqueCategories(cars), [cars]);
+  const vehicleTypes = useMemo(() => getUniqueVehicleTypes(cars), [cars]);
   const tiers = Object.keys(tierConfig);
 
   // Filter and sort cars
@@ -228,7 +228,7 @@ function CarCatalogContent() {
       result = result.filter(car => 
         car.name?.toLowerCase().includes(query) ||
         car.brand?.toLowerCase().includes(query) ||
-        car.category?.toLowerCase().includes(query)
+        car.vehicleType?.toLowerCase().includes(query)
       );
     }
 
@@ -245,9 +245,9 @@ function CarCatalogContent() {
       result = result.filter(car => car.tier === selectedTier);
     }
 
-    // Category filter
-    if (selectedCategory !== 'all') {
-      result = result.filter(car => car.category === selectedCategory);
+    // Vehicle type filter (body style: Sports Car, Sports Sedan, Wagon, etc.)
+    if (selectedVehicleType !== 'all') {
+      result = result.filter(car => car.vehicleType === selectedVehicleType);
     }
 
     // Sort
@@ -280,7 +280,7 @@ function CarCatalogContent() {
     }
 
     return result;
-  }, [cars, searchQuery, selectedMake, selectedTier, selectedCategory, sortBy]);
+  }, [cars, searchQuery, selectedMake, selectedTier, selectedVehicleType, sortBy]);
 
   return (
     <div className={styles.catalogPage} data-no-main-offset>
@@ -304,7 +304,7 @@ function CarCatalogContent() {
             <span className={styles.titleAccent}>Discover.</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Explore our collection of {cars.length} sports cars. Compare specs, 
+            Explore our collection of {cars.length} vehicles. Compare specs, 
             find your perfect match, and learn what makes each one special.
           </p>
         </div>
@@ -351,13 +351,13 @@ function CarCatalogContent() {
             </select>
 
             <select 
-              value={selectedCategory} 
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={selectedVehicleType} 
+              onChange={(e) => setSelectedVehicleType(e.target.value)}
               className={styles.filterSelect}
             >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              <option value="all">All Vehicle Types</option>
+              {vehicleTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
               ))}
             </select>
 
@@ -459,7 +459,7 @@ function CarCatalogContent() {
                   setSearchQuery('');
                   setSelectedMake('all');
                   setSelectedTier('all');
-                  setSelectedCategory('all');
+                  setSelectedVehicleType('all');
                 }}
                 className={styles.clearFiltersBtn}
               >
@@ -471,7 +471,7 @@ function CarCatalogContent() {
                   const filterContext = [];
                   if (selectedMake !== 'all') filterContext.push(`make: ${selectedMake}`);
                   if (selectedTier !== 'all') filterContext.push(`tier: ${selectedTier}`);
-                  if (selectedCategory !== 'all') filterContext.push(`category: ${selectedCategory}`);
+                  if (selectedVehicleType !== 'all') filterContext.push(`vehicle type: ${selectedVehicleType}`);
                   const filterText = filterContext.length > 0 ? ` My filters: ${filterContext.join(', ')}.` : '';
                   openChatWithPrompt(
                     `Help me find a sports car that matches my criteria.${searchContext}${filterText} What options would you recommend?`,

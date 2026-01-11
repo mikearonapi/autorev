@@ -122,7 +122,10 @@ function mapCarToSupabase(car) {
     cooling_capacity: car.coolingCapacity || null,
     brake_fade_resistance: car.brakeFadeResistance || null,
     recommended_track_prep: car.recommendedTrackPrep || [],
-    popular_track_mods: car.popularTrackMods || [],
+    // NOTE: popular_track_mods column is DEPRECATED as of 2026-01-15
+    // Track mods should go to car_tuning_profiles.upgrades_by_objective instead
+    // Keeping this line commented for reference:
+    // popular_track_mods: car.popularTrackMods || [],
     laptime_benchmarks: car.laptimeBenchmarks || [],
     
     // Alternatives

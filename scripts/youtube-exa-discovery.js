@@ -379,7 +379,7 @@ function detectContentType(title, transcript = '') {
 /**
  * Save video and link to car in database
  */
-async function saveVideoToDatabase(supabase, video, carSlug, transcript, aiInsights) {
+async function saveVideoToDatabase(supabase, video, carId, transcript, aiInsights) {
   // Check if video already exists
   const { data: existing } = await supabase
     .from('youtube_videos')
@@ -446,22 +446,42 @@ async function saveVideoToDatabase(supabase, video, carSlug, transcript, aiInsig
     return false;
   }
 
-  // Upsert car link
+  // Insert car link (use car_id, not car_slug)
   const linkRecord = {
     video_id: video.videoId,
-    car_slug: carSlug,
+    car_id: carId,
     role: contentType === 'comparison' ? 'comparison' : 'primary',
     match_confidence: aiInsights?.relevance_confidence || 0.7,
     match_method: 'description_match'
   };
 
-  const { error: linkError } = await supabase
+  // Check if link already exists
+  const { data: existingLink } = await supabase
     .from('youtube_video_car_links')
-    .upsert(linkRecord, { onConflict: 'video_id,car_slug' });
-
-  if (linkError) {
-    logError(`  Failed to link video to car: ${linkError.message}`);
-    return false;
+    .select('id')
+    .eq('video_id', video.videoId)
+    .eq('car_id', carId)
+    .single();
+    
+  if (existingLink) {
+    // Update existing link
+    const { error: linkError } = await supabase
+      .from('youtube_video_car_links')
+      .update(linkRecord)
+      .eq('id', existingLink.id);
+    if (linkError) {
+      logError(`  Failed to update video link: ${linkError.message}`);
+      return false;
+    }
+  } else {
+    // Insert new link
+    const { error: linkError } = await supabase
+      .from('youtube_video_car_links')
+      .insert(linkRecord);
+    if (linkError) {
+      logError(`  Failed to link video to car: ${linkError.message}`);
+      return false;
+    }
   }
 
   return true;
@@ -504,13 +524,14 @@ async function main() {
     ? null 
     : createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-  // Fetch car info
+  // Fetch car info (including car_id for linking)
   let carName = options.carSlug.replace(/-/g, ' ');
+  let carId = null;
   
   if (!options.dryRun) {
     const { data: car, error: carError } = await supabase
       .from('cars')
-      .select('name, brand, years')
+      .select('id, name, brand, years')
       .eq('slug', options.carSlug)
       .single();
 
@@ -519,6 +540,7 @@ async function main() {
       process.exit(1);
     }
 
+    carId = car.id;
     carName = car.name;
     log(`Processing: ${carName} (${car.years})`);
   } else {
@@ -583,8 +605,8 @@ async function main() {
     }
 
     // Save to database
-    if (!options.dryRun) {
-      const saved = await saveVideoToDatabase(supabase, video, options.carSlug, transcript, aiInsights);
+    if (!options.dryRun && carId) {
+      const saved = await saveVideoToDatabase(supabase, video, carId, transcript, aiInsights);
       if (saved) {
         stats.videosSaved++;
         log(`  ✓ Saved to database`);

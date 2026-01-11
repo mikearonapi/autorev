@@ -175,7 +175,8 @@ JSON SCHEMA:
   "country": "string - Country of origin",
   "generation_code": "string|null - Internal generation code",
   "tier": "string - budget|mid|premium (based on MSRP: <$50k=budget, $50k-150k=mid, >$150k=premium)",
-  "category": "string - Front-Engine|Mid-Engine|Rear-Engine (based on engine placement)",
+  "category": "string - Front-Engine|Mid-Engine|Rear-Engine|Electric (based on engine placement)",
+  "vehicle_type": "string - Sports Car|Sports Sedan|Supercar|Hot Hatch|Muscle Car|Truck|SUV|Wagon|Hypercar (based on body style)",
   "engine": "string - Engine description (e.g., 4.0L Twin-Turbo V8)",
   "hp": "number - Peak horsepower",
   "torque": "number - Peak torque (lb-ft)",
@@ -221,11 +222,29 @@ JSON SCHEMA:
   const carData = JSON.parse(jsonMatch[0]);
   
   // Validate required fields
-  const required = ['slug', 'name', 'years', 'brand', 'hp', 'torque', 'price_avg'];
+  const required = ['slug', 'name', 'years', 'brand', 'hp', 'torque', 'price_avg', 'vehicle_type'];
   for (const field of required) {
     if (!carData[field]) {
       throw new Error(`AI failed to provide required field: ${field}`);
     }
+  }
+  
+  // Validate vehicle_type is a valid value
+  const validVehicleTypes = ['Sports Car', 'Sports Sedan', 'Supercar', 'Hot Hatch', 'Muscle Car', 'Truck', 'SUV', 'Wagon', 'Hypercar'];
+  if (!validVehicleTypes.includes(carData.vehicle_type)) {
+    log(`Warning: Invalid vehicle_type "${carData.vehicle_type}", defaulting to closest match`, 'warning');
+    // Try to auto-correct common variations
+    const typeMap = {
+      'suv': 'SUV',
+      'truck': 'Truck', 
+      'pickup': 'Truck',
+      'sedan': 'Sports Sedan',
+      'coupe': 'Sports Car',
+      'hatchback': 'Hot Hatch',
+      'wagon': 'Wagon',
+    };
+    const lowerType = carData.vehicle_type.toLowerCase();
+    carData.vehicle_type = typeMap[lowerType] || 'Sports Car';
   }
   
   if (flags.verbose) {
@@ -358,10 +377,8 @@ RULES:
     log(`Found ${issues.length} known issues`, 'info');
   }
   
-  return issues.map(issue => ({
-    ...issue,
-    car_slug: carData.slug,
-  }));
+  // Return issues without car_slug - car_id will be added after car insert
+  return issues;
 }
 
 async function aiResearchMaintenanceSpecs(carData) {
@@ -424,10 +441,8 @@ Research actual specifications. Return ONLY the JSON object.`;
   
   const specs = JSON.parse(jsonMatch[0]);
   
-  return {
-    ...specs,
-    car_slug: carData.slug,
-  };
+  // Return specs without car_slug - car_id will be added after car insert
+  return specs;
 }
 
 async function aiResearchServiceIntervals(carData) {
@@ -492,10 +507,8 @@ RULES:
     log(`Found ${intervals.length} service intervals`, 'info');
   }
   
-  return intervals.map(interval => ({
-    ...interval,
-    car_slug: carData.slug,
-  }));
+  // Return intervals without car_slug - car_id will be added after car insert
+  return intervals;
 }
 
 // =============================================================================
@@ -766,15 +779,29 @@ async function uploadToBlob(localPath, blobPath) {
  * Get appropriate environment for car's hero image
  */
 function getHeroEnvironment(carData) {
-  const environments = {
+  // Use vehicle_type for environment selection, with category as fallback
+  const vehicleTypeEnvironments = {
+    'SUV': 'a rugged mountain trail with dramatic overlook views',
+    'Truck': 'a scenic dusty desert road with mountains in the background',
+    'Sports Car': 'a scenic Pacific Coast Highway with ocean backdrop',
+    'Sports Sedan': 'a winding canyon road with dramatic cliffs',
+    'Supercar': 'a dramatic coastal cliff road with ocean views',
+    'Hypercar': 'an exclusive Monaco harbor setting at golden hour',
+    'Hot Hatch': 'a twisty mountain backroad with forest scenery',
+    'Muscle Car': 'a desert highway stretching into the sunset',
+    'Wagon': 'a scenic European mountain pass with alpine views',
+  };
+  
+  // Legacy category-based environments (fallback)
+  const categoryEnvironments = {
     'Super Car': 'a dramatic coastal cliff road with ocean views',
     'Hyper Car': 'an exclusive Monaco harbor setting at golden hour',
     'GT Car': 'a winding Alpine mountain pass with dramatic peaks',
-    'Sports Car': 'a scenic Pacific Coast Highway with ocean backdrop',
-    'Hot Hatch': 'a twisty mountain backroad with forest scenery',
-    'Muscle Car': 'a desert highway stretching into the sunset',
   };
-  return environments[carData.category] || 'a beautiful mountain road with scenic views';
+  
+  return vehicleTypeEnvironments[carData.vehicle_type] 
+    || categoryEnvironments[carData.category] 
+    || 'a beautiful mountain road with scenic views';
 }
 
 /**
@@ -1187,8 +1214,10 @@ async function runValidationAudit(slug) {
     results.checks.push({ name: 'Buying guide', status: '✅' });
   }
   
-  // Check related tables
-  const { data: issuesData } = await supabase.from('car_issues').select('id').eq('car_slug', slug);
+  // Check related tables (use car_id, not car_slug)
+  const carId = car.id;
+  
+  const { data: issuesData } = await supabase.from('car_issues').select('id').eq('car_id', carId);
   const issueCount = issuesData?.length || 0;
   if (issueCount < 3) {
     results.warnings++;
@@ -1198,7 +1227,7 @@ async function runValidationAudit(slug) {
     results.checks.push({ name: 'Known issues', status: '✅', message: `${issueCount} issues` });
   }
   
-  const { data: intervalsData } = await supabase.from('vehicle_service_intervals').select('id').eq('car_slug', slug);
+  const { data: intervalsData } = await supabase.from('vehicle_service_intervals').select('id').eq('car_id', carId);
   const intervalCount = intervalsData?.length || 0;
   if (intervalCount < 5) {
     results.warnings++;
@@ -1208,7 +1237,7 @@ async function runValidationAudit(slug) {
     results.checks.push({ name: 'Service intervals', status: '✅', message: `${intervalCount} intervals` });
   }
   
-  const { data: videoLinks } = await supabase.from('youtube_video_car_links').select('id').eq('car_slug', slug);
+  const { data: videoLinks } = await supabase.from('youtube_video_car_links').select('id').eq('car_id', carId);
   const videoCount = videoLinks?.length || 0;
   if (videoCount < 2) {
     results.warnings++;
@@ -1324,7 +1353,9 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     track_readiness: editorial.track_readiness || null,
     track_readiness_notes: editorial.track_readiness_notes || null,
     recommended_track_prep: editorial.recommended_track_prep || [],
-    popular_track_mods: editorial.popular_track_mods || [],
+    // NOTE: popular_track_mods column is DEPRECATED as of 2026-01-15
+    // Track mods are now stored in car_tuning_profiles.upgrades_by_objective
+    // The AI-generated track mods will be inserted there after car creation
     laptime_benchmarks: editorial.laptime_benchmarks || [],
     
     // Buying guide content
@@ -1362,7 +1393,7 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
   
   log(`Car inserted: ${car.slug} (ID: ${car.id})`, 'success');
   
-  // Insert known issues (need car_id)
+  // Insert known issues (use car_id, not car_slug)
   if (issues.length > 0) {
     const issuesWithCarId = issues.map(issue => ({
       ...issue,
@@ -1378,26 +1409,94 @@ async function saveCarToDatabase(carData, issues, maintenanceSpecs, serviceInter
     }
   }
   
-  // Insert maintenance specs
+  // Insert maintenance specs (use car_id, not car_slug)
+  const maintenanceSpecsWithCarId = {
+    ...maintenanceSpecs,
+    car_id: car.id,
+  };
   const { error: specsError } = await supabase
     .from('vehicle_maintenance_specs')
-    .insert(maintenanceSpecs);
+    .insert(maintenanceSpecsWithCarId);
   if (specsError) {
     log(`Warning: Failed to insert maintenance specs: ${specsError.message}`, 'warning');
   } else {
     log(`Inserted maintenance specs`, 'success');
   }
   
-  // Insert service intervals
+  // Insert service intervals (use car_id, not car_slug)
   if (serviceIntervals.length > 0) {
+    const intervalsWithCarId = serviceIntervals.map(interval => ({
+      ...interval,
+      car_id: car.id,
+    }));
     const { error: intervalsError } = await supabase
       .from('vehicle_service_intervals')
-      .insert(serviceIntervals);
+      .insert(intervalsWithCarId);
     if (intervalsError) {
       log(`Warning: Failed to insert service intervals: ${intervalsError.message}`, 'warning');
     } else {
       log(`Inserted ${serviceIntervals.length} service intervals`, 'success');
     }
+  }
+  
+  // Create car_tuning_profiles entry with track mods data (source of truth for tuning data)
+  // This replaces the deprecated cars.popular_track_mods column
+  const tuningProfileData = {
+    car_id: car.id,
+    tuning_focus: 'performance',
+    data_quality_tier: 'templated', // Will be upgraded by consolidate-tuning-data.mjs
+  };
+  
+  // Convert popular_track_mods to upgrades_by_objective format if available
+  if (editorial.popular_track_mods && editorial.popular_track_mods.length > 0) {
+    const upgradesByObjective = {
+      power: [],
+      handling: [],
+      braking: [],
+      cooling: [],
+      sound: [],
+      aero: [],
+    };
+    
+    // Categorize track mods by objective
+    for (const mod of editorial.popular_track_mods) {
+      const modName = (mod.mod || mod.name || '').toLowerCase();
+      const modEntry = {
+        name: mod.mod || mod.name,
+        cost: mod.cost ? { text: mod.cost } : null,
+        purpose: mod.purpose || null,
+        source: 'ai_research',
+      };
+      
+      // Categorize based on keywords
+      if (/turbo|intake|exhaust|tune|intercooler|header|downpipe|fuel|injector/i.test(modName)) {
+        upgradesByObjective.power.push(modEntry);
+      } else if (/coilover|spring|sway|suspension|arm|bushing|alignment/i.test(modName)) {
+        upgradesByObjective.handling.push(modEntry);
+      } else if (/brake|rotor|caliper|pad|fluid|duct/i.test(modName)) {
+        upgradesByObjective.braking.push(modEntry);
+      } else if (/cooler|radiator|fan|vent|thermal/i.test(modName)) {
+        upgradesByObjective.cooling.push(modEntry);
+      } else if (/wing|splitter|diffuser|aero|spoiler/i.test(modName)) {
+        upgradesByObjective.aero.push(modEntry);
+      } else {
+        // Default to power for unrecognized mods
+        upgradesByObjective.power.push(modEntry);
+      }
+    }
+    
+    tuningProfileData.upgrades_by_objective = upgradesByObjective;
+  }
+  
+  const { error: tuningError } = await supabase
+    .from('car_tuning_profiles')
+    .insert(tuningProfileData);
+  
+  if (tuningError) {
+    log(`Warning: Failed to insert tuning profile: ${tuningError.message}`, 'warning');
+  } else {
+    const modCount = editorial.popular_track_mods?.length || 0;
+    log(`Inserted tuning profile${modCount > 0 ? ` with ${modCount} track mods` : ''}`, 'success');
   }
   
   return { success: true, car };

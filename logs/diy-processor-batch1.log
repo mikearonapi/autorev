@@ -2435,3 +2435,677 @@ Processing video: ft1EhkLHowk
 [diy-processor:verbose]   Fetching transcript for ft1EhkLHowk...
 [diy-processor]   ✓ Transcript: 16658 chars
 [diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 4 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: pPiGeFNXoeM
+[diy-processor]   Title: Building a 2023 Toyota GR Corolla - Part 2 (NEW EXHAUST!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for pPiGeFNXoeM...
+[diy-processor]   ✓ Transcript: 19207 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 2 tips, 6 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: Xnyk29kUrU8
+[diy-processor]   Title: Building a 2023 Toyota GR Corolla - Part 1 (Wheels, Tires, and Suspension)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for Xnyk29kUrU8...
+[diy-processor]   ✓ Transcript: 12970 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 3 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 7ZSIbhW9TME
+[diy-processor]   Title: Building the USA’s FIRST Liberty Walk Nissan Z for SEMA! - Part 4
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 7ZSIbhW9TME...
+[diy-processor]   ✓ Transcript: 15029 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 3 tips, 8 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: HlxaJhV3qQY
+[diy-processor]   Title: Building the USA’s FIRST Liberty Walk Nissan Z for SEMA! - Part 3
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for HlxaJhV3qQY...
+[diy-processor]   ✓ Transcript: 15473 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 2 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: w3IYmli2xBQ
+[diy-processor]   Title: Building the USA’s FIRST Liberty Walk Nissan Z for SEMA! - Part 2
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for w3IYmli2xBQ...
+[diy-processor]   ✓ Transcript: 13809 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 3 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: Fe8HaOSzVJ0
+[diy-processor]   Title: Building the USA’s FIRST Liberty Walk Nissan Z for SEMA! - Part 1
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for Fe8HaOSzVJ0...
+[diy-processor]   ✓ Transcript: 12077 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 4 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 9LSZOW3VyqA
+[diy-processor]   Title: We Turned Our Civic Into A Drift Car! (Rear Wheel Drive, Turbo, Hydro, Wide Body, New Wheels)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 9LSZOW3VyqA...
+[diy-processor]   ✓ Transcript: 14552 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 5 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: NTcxm1wbtPs
+[diy-processor]   Title: Building A 2022 Subaru BRZ - Part 5 (New Parts - Headlights & Taillights + Short Shifter)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for NTcxm1wbtPs...
+[diy-processor]   ✓ Transcript: 14876 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 3 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: f6B4aiO0bUA
+[diy-processor]   Title: Building A 2022 Subaru BRZ - Part 4 (BIG BRAKE Kit + Cusco Suspension Overhaul!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for f6B4aiO0bUA...
+[diy-processor]   ✓ Transcript: 16549 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 7 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: KzCWPCaKvFQ
+[diy-processor]   Title: Building A 2022 Subaru BRZ - Part 3 (New Exhaust + MORE Carbon Fiber & Titanium Parts!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for KzCWPCaKvFQ...
+[diy-processor]   ✓ Transcript: 15106 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 3 tips, 8 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: NJDlNBPiWJ0
+[diy-processor]   Title: Building a SR20DET Swapped Nissan 300ZX - Part 4 (New Body Kit + Install!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for NJDlNBPiWJ0...
+[diy-processor]   ✓ Transcript: 11894 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 2 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: _aNE1E41Uww
+[diy-processor]   Title: Revealing Mickey's R33 GT-R: 1998 Nissan Autech 40th Anniversary R33 GT-R!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for _aNE1E41Uww...
+[diy-processor]   ✓ Transcript: 19898 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: J20sJtWxRPM
+[diy-processor]   Title: Rebuilding Our Hellcat Swapped Dodge Viper to Make It EVEN Faster! (Adding Nitrous Oxide!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for J20sJtWxRPM...
+[diy-processor]   ✓ Transcript: 18127 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 3 tips, 5 parts, 3 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: nxAR499dwT0
+[diy-processor]   Title: Rebuilding Our Hellcat Swapped Dodge Viper to Make It EVEN Faster! (1,XXX HP)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for nxAR499dwT0...
+[diy-processor:verbose]   Empty transcript returned
+[diy-processor]   ✗ No transcript available
+[diy-processor] 
+Processing video: Povf92mABus
+[diy-processor]   Title: Building A 2022 Subaru BRZ - Part 2 (StreetHunter Designs Carbon Fiber Parts Haul!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for Povf92mABus...
+[diy-processor]   ✓ Transcript: 14388 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 2 tips, 8 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: UqRSFeu1wFI
+[diy-processor]   Title: Fast & Furious Supra runs its FASTEST pass EVER! (1,000HP 2JZ-GTE)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for UqRSFeu1wFI...
+[diy-processor]   ✓ Transcript: 6296 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 3 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: ib5mHBjKXnI
+[diy-processor]   Title: Buying a Mustang GT & Building It On the Road in 7 Days - PART 5: +1,000 mile road trip untested...
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for ib5mHBjKXnI...
+[diy-processor]   ✓ Transcript: 12566 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 2 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 5dCZBm8SJIc
+[diy-processor]   Title: Buying a Mustang GT & Building It On the Road in 7 Days - PART 4! (time is running out...)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 5dCZBm8SJIc...
+[diy-processor]   ✓ Transcript: 13146 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 8 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: GtUPUeM4dYg
+[diy-processor]   Title: Buying a Mustang GT & Building It On the Road in 7 Days - PART 3! (unexpected suprise)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for GtUPUeM4dYg...
+[diy-processor]   ✓ Transcript: 30474 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 7 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: mjfndRc2i9E
+[diy-processor]   Title: Buying a Mustang GT & Building It On the Road in 7 Days - PART 2! (gone too far...)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for mjfndRc2i9E...
+[diy-processor]   ✓ Transcript: 15588 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 2 tips, 13 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: qeB0aoMGL_4
+[diy-processor]   Title: Buying a Mustang GT & Building It On the Road in 7 Days! (not what we expected...)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for qeB0aoMGL_4...
+[diy-processor]   ✓ Transcript: 19038 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 3 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: -dxUBkFkTYU
+[diy-processor]   Title: Prepping @MotiveVideo's +1,100HP R32 GT-R For An 8 Second 1/4 mile Drag Pass!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for -dxUBkFkTYU...
+[diy-processor]   ✓ Transcript: 21692 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 4 tips, 8 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: NoNRjIlEV6U
+[diy-processor]   Title: Revealing "NO SECRETS" R33 GT-R - Abandoned to Amazing! (GT-R Festival 2023)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for NoNRjIlEV6U...
+[diy-processor]   ✓ Transcript: 13841 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 4 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 2s_K6XSysLA
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 11 - Updating the Rear End & Fuel Fest Irwindale!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 2s_K6XSysLA...
+[diy-processor]   ✓ Transcript: 14137 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 5 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 5aAd_y25laE
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 10 - New Wheels, Wing, and Hard Top!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 5aAd_y25laE...
+[diy-processor]   ✓ Transcript: 22295 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 6 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: ECr1KVFROes
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 9 - Roll Cage & Racing Shifter!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for ECr1KVFROes...
+[diy-processor]   ✓ Transcript: 15532 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 8 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: Nf8xqQicPBA
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 8 - Exhaust Install!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for Nf8xqQicPBA...
+[diy-processor]   ✓ Transcript: 15360 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 3 tips, 9 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: Bgi0aLGwE90
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 7 - Engine IN & First Start!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for Bgi0aLGwE90...
+[diy-processor]   ✓ Transcript: 18795 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 9 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: idcOIbxygek
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 6 - Suspension & Big Brake Kits!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for idcOIbxygek...
+[diy-processor]   ✓ Transcript: 11638 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 10 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: IXoVRLhn3Pc
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 5 - Dry Ice Blast & New Paint!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for IXoVRLhn3Pc...
+[diy-processor]   ✓ Transcript: 12422 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 3 tips, 4 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: KLr8dVwABcA
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 3 - Engine Out & Tear Down!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for KLr8dVwABcA...
+[diy-processor]   ✓ Transcript: 18866 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 4 issues, 3 tips, 3 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 2jCAQRW_mwY
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 2 - Spoon Sports Body Kit Install!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 2jCAQRW_mwY...
+[diy-processor]   ✓ Transcript: 16330 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 7 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: _4SIlLpYMCQ
+[diy-processor]   Title: Building an Audi S4 in 19 Minutes! (start to finish)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for _4SIlLpYMCQ...
+[diy-processor]   ✓ Transcript: 8126 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 9 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: K39OzqxmgIc
+[diy-processor]   Title: Surprising our EMPLOYEE with his DREAM TRUCK BUILD! (Full Transformation): Toyota 4Runner TRD (2021)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for K39OzqxmgIc...
+[diy-processor]   ✓ Transcript: 30073 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 2 tips, 13 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: CR1tqd6nJmE
+[diy-processor]   Title: Building A Turbocharged Honda S2000 AP2 - Part 1 - Parts Haul!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for CR1tqd6nJmE...
+[diy-processor]   ✓ Transcript: 37150 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 8 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: XLqNiKqxUPU
+[diy-processor]   Title: Surprising our SUBSCRIBER with HER DREAM CAR BUILD! (Full Transformation) : 1997 Honda Prelude!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for XLqNiKqxUPU...
+[diy-processor]   ✓ Transcript: 35993 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 4 issues, 3 tips, 11 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: X-mrX7-LCYc
+[diy-processor]   Title: Building an Audi S4 Prestige - Part 8 - MORE PARTS! P3 Gauge, Carbon Fiber + Apple Pie
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for X-mrX7-LCYc...
+[diy-processor]   ✓ Transcript: 10424 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: BFK5qWYeVAk
+[diy-processor]   Title: Removing Everything From Our $300 Nissan 300zx! (Unbelievable condition!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for BFK5qWYeVAk...
+[diy-processor]   ✓ Transcript: 12523 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 6 issues, 3 tips, 3 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 3KssFhCTvqQ
+[diy-processor]   Title: Revealing how BAD our $300 Nissan 300ZX REALLY IS! (MAJOR Surprise!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 3KssFhCTvqQ...
+[diy-processor]   ✓ Transcript: 13243 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 6 issues, 2 tips, 4 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: rrkb4l0QKCU
+[diy-processor]   Title: Building an Audi S4 Prestige - Part 7 - Performance Upgrades! (034motorsport)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for rrkb4l0QKCU...
+[diy-processor]   ✓ Transcript: 12714 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 1 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: e6OMI0sJEqY
+[diy-processor]   Title: Building an Audi S4 Prestige - Part 4 - Airlift Performance 3P - Air Suspension!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for e6OMI0sJEqY...
+[diy-processor]   ✓ Transcript: 18173 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 5 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: KIh8z30AZaA
+[diy-processor]   Title: Building a R34 GT-R in Japan! (New Parts!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for KIh8z30AZaA...
+[diy-processor]   ✓ Transcript: 15938 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 3 tips, 9 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 2OLD9y_WimI
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo - Part 19 - Hub Dyno! (+CTR Winner!)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 2OLD9y_WimI...
+[diy-processor]   ✓ Transcript: 11998 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 3 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: vxTBaxHRwqU
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo - Part 17 - Transmission is out!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for vxTBaxHRwqU...
+[diy-processor]   ✓ Transcript: 15613 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 1 tips, 9 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: aT_803wyBMs
+[diy-processor]   Title: Building and Heavily Modifying a 1989 Nissan Skyline R32 GTS-T - Part 16: Dyno Tune!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for aT_803wyBMs...
+[diy-processor]   ✓ Transcript: 11241 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 2 tips, 5 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: fJcduoqDQUk
+[diy-processor]   Title: Building the ULTIMATE 2020 Honda Civic Type R - Part 7 - Tuning & Interior!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for fJcduoqDQUk...
+[diy-processor]   ✓ Transcript: 16398 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 1 tips, 8 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: BKJO1WgVIu0
+[diy-processor]   Title: Building the ULTIMATE 2020 Honda Civic Type R - Part 5 - FIXING It's BIGGEST Issue!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for BKJO1WgVIu0...
+[diy-processor]   ✓ Transcript: 25216 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 7 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: khUujPUcD8s
+[diy-processor]   Title: Building the ULTIMATE 2020 Honda Civic Type R - Part 1 - Parts Haul!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for khUujPUcD8s...
+[diy-processor]   ✓ Transcript: 16178 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 1 tips, 14 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: xh8CA-5Zq9I
+[diy-processor]   Title: Buying a DREAM R34 GT-R V-SPEC in Japan!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for xh8CA-5Zq9I...
+[diy-processor]   ✓ Transcript: 15892 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 5 issues, 2 tips, 8 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: HR-Z9AmI1jI
+[diy-processor]   Title: People at SEMA react to our Modern Day (Fast & Furious) 1994 Toyota Supra Turbo!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for HR-Z9AmI1jI...
+[diy-processor]   ✓ Transcript: 26673 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 0 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: UYuOrRdz4d8
+[diy-processor]   Title: Unveiling the World's First Liberty Walk Electric SWAPPED 350Z! + SEMA Day 2!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for UYuOrRdz4d8...
+[diy-processor]   ✓ Transcript: 17034 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 1 tips, 6 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: -1-c1dpLGJ0
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo - Part 10 - Build Continues!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for -1-c1dpLGJ0...
+[diy-processor]   ✓ Transcript: 26508 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 9 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 3LttQvrSIfw
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo – Part 8 – NEW PARTS!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 3LttQvrSIfw...
+[diy-processor]   ✓ Transcript: 19656 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 9 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: G-kfvneyyco
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo – Part 6 – 2JZGTE Engine Tear Down!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for G-kfvneyyco...
+[diy-processor]   ✓ Transcript: 19136 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 3 tips, 4 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: LeRbkSl9wLI
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo – Part 5 – SEMA 2022!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for LeRbkSl9wLI...
+[diy-processor]   ✓ Transcript: 21032 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 2 tips, 12 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: nxwwNfcVTOk
+[diy-processor]   Title: Building a 2006 Corvette C6 Z06 in 13 minutes! ( w/  @Hoonigan  )
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for nxwwNfcVTOk...
+[diy-processor]   ✓ Transcript: 2016 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 0 tips, 0 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: i6kt-hAZhuE
+[diy-processor]   Title: Building a Supercharged Corvette Z06! (650+ HP & NEW FORGED WHEELS)
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for i6kt-hAZhuE...
+[diy-processor]   ✓ Transcript: 13161 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 2 tips, 6 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: py6Q-mNM-rE
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo - Part 2 -  Removing ALL Parts!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for py6Q-mNM-rE...
+[diy-processor]   ✓ Transcript: 15773 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 2 tips, 4 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 16R7g0EWnk0
+[diy-processor]   Title: Building a Modern Day (Fast & Furious) 1994 Toyota Supra Turbo Part 1 - Deep Inspection & Surprises
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 16R7g0EWnk0...
+[diy-processor]   ✓ Transcript: 20916 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 5 issues, 3 tips, 5 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: gPV-l5soLCo
+[diy-processor]   Title: Buying My Dream Nissan R34 GTR In Japan!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for gPV-l5soLCo...
+[diy-processor]   ✓ Transcript: 21627 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 3 tips, 6 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: iWTXyql3N8g
+[diy-processor]   Title: World's First Hellcat Redeye Swapped Dodge Viper at Roadkill Nights 2022
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for iWTXyql3N8g...
+[diy-processor:verbose]   Empty transcript returned
+[diy-processor]   ✗ No transcript available
+[diy-processor] 
+Processing video: N_49Gtk3C0U
+[diy-processor]   Title: Building a 2021 Ford Ranger XLT in 16 minutes!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for N_49Gtk3C0U...
+[diy-processor]   ✓ Transcript: 5504 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 0 issues, 0 tips, 6 parts, 0 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: zW5n-XZHDCw
+[diy-processor]   Title: Introducing our 2001 Dodge Viper RT/10 - 450HP V10 American Legend!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for zW5n-XZHDCw...
+[diy-processor]   ✓ Transcript: 12031 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 1 tips, 0 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: hDUbfZvzqFM
+[diy-processor]   Title: Rebuilding a BLOWN UP Modern Day (Fast and Furious) 1998 Mitsubishi Eclipse GSX in 30 minutes!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for hDUbfZvzqFM...
+[diy-processor]   ✓ Transcript: 12792 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 2 tips, 5 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: 9xwnJ_wU20s
+[diy-processor]   Title: Saying GOODBYE to the world's first Tesla SWAPPED Liberty Walk Nissan 350Z...
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for 9xwnJ_wU20s...
+[diy-processor]   ✓ Transcript: 8952 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 1 issues, 1 tips, 4 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: BnPXd-FCuvc
+[diy-processor]   Title: Building and Heavily Modifying a 1989 Nissan Skyline R32 GTS-T - Part 11: Engine Bay Transformation!
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for BnPXd-FCuvc...
+[diy-processor]   ✓ Transcript: 14353 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 2 issues, 3 tips, 7 parts, 1 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: JBnbNGrsjfc
+[diy-processor]   Title: Building a Rear Wheel Drive, K20 Turbocharged Honda Civic EK Hatchback Race Car! Part 17 - Track Day
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for JBnbNGrsjfc...
+[diy-processor]   ✓ Transcript: 30590 chars
+[diy-processor]   Processing with AI...
+[diy-processor]   ✓ Extracted: 3 issues, 2 tips, 4 parts, 2 troubleshooting
+[diy-processor]   ✓ Created video record
+[diy-processor:verbose]   Warning: Link failed: Could not find the 'car_slug' column of 'youtube_video_car_links' in the schema cache
+[diy-processor] 
+Processing video: PL0FkXFKKyY
+[diy-processor]   Title: Rebuilding An Abandoned 2003 Ford Focus SVT "SEMA Show Car" in 3 Days! [BUDGET TRANSFORMATION]
+[diy-processor]   Channel: throtl
+[diy-processor:verbose]   Fetching transcript for PL0FkXFKKyY...
+[diy-processor]   ✓ Transcript: 21652 chars
+[diy-processor]   Processing with AI...

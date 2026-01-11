@@ -185,14 +185,25 @@ export async function runPipeline(options) {
 
     results.success = results.validation.valid;
 
-    // Summary
+    // Summary - show upgrades_by_objective as source of truth
+    const upgradesByObj = results.profile.upgrades_by_objective || {};
+    const totalUpgrades = Object.values(upgradesByObj).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
+    
     log('\n' + '═'.repeat(60));
     log('PIPELINE COMPLETE');
     log('═'.repeat(60));
     log(`Car: ${results.car.name}`);
     log(`Profile Valid: ${results.validation.valid ? '✅ Yes' : '❌ No'}`);
     log(`Quality Score: ${results.validation.score}/100`);
-    log(`Stages: ${results.profile.stage_progressions?.length || 0}`);
+    log(`Data Quality Tier: ${results.profile.data_quality_tier || 'unknown'}`);
+    log(`Upgrades (source of truth): ${totalUpgrades}`);
+    if (totalUpgrades > 0) {
+      log(`  - Power: ${upgradesByObj.power?.length || 0}`);
+      log(`  - Handling: ${upgradesByObj.handling?.length || 0}`);
+      log(`  - Braking: ${upgradesByObj.braking?.length || 0}`);
+      log(`  - Cooling: ${upgradesByObj.cooling?.length || 0}`);
+    }
+    log(`Stages (legacy): ${results.profile.stage_progressions?.length || 0}`);
     log(`Platforms: ${results.profile.tuning_platforms?.length || 0}`);
     log(`Power Limits: ${Object.keys(results.profile.power_limits || {}).length}`);
     log('═'.repeat(60));

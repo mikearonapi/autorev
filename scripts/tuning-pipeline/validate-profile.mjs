@@ -88,16 +88,51 @@ export function validateProfile(profile) {
     result.score -= 10;
   }
 
-  // === STAGE PROGRESSIONS ===
+  // === UPGRADES BY OBJECTIVE (SOURCE OF TRUTH per DATABASE.md) ===
+  
+  const upgradesByObjective = profile.upgrades_by_objective || {};
+  const totalUpgrades = Object.values(upgradesByObjective).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
+  result.details.totalUpgrades = totalUpgrades;
+  result.details.upgradesByCategory = {
+    power: upgradesByObjective.power?.length || 0,
+    handling: upgradesByObjective.handling?.length || 0,
+    braking: upgradesByObjective.braking?.length || 0,
+    cooling: upgradesByObjective.cooling?.length || 0,
+    sound: upgradesByObjective.sound?.length || 0,
+    aero: upgradesByObjective.aero?.length || 0
+  };
+
+  if (totalUpgrades === 0) {
+    result.warnings.push({ field: 'upgrades_by_objective', message: 'No upgrades defined (source of truth column is empty)' });
+    result.score -= 20;
+  } else {
+    // Validate upgrade structure
+    for (const [category, upgrades] of Object.entries(upgradesByObjective)) {
+      if (!Array.isArray(upgrades)) continue;
+      for (let i = 0; i < upgrades.length; i++) {
+        const upgrade = upgrades[i];
+        if (!upgrade.name) {
+          result.warnings.push({ 
+            field: `upgrades_by_objective.${category}[${i}]`, 
+            message: 'Upgrade missing name' 
+          });
+          result.score -= 2;
+        }
+      }
+    }
+  }
+
+  // === STAGE PROGRESSIONS (Legacy - optional but validated if present) ===
   
   const stages = profile.stage_progressions || [];
   result.details.stagesCount = stages.length;
 
-  if (stages.length === 0) {
-    result.errors.push({ field: 'stage_progressions', message: 'No stage progressions defined' });
+  // Only warn if no stages AND no upgrades_by_objective
+  if (stages.length === 0 && totalUpgrades === 0) {
+    result.errors.push({ field: 'stage_progressions', message: 'No stage progressions AND no upgrades_by_objective defined' });
     result.valid = false;
     result.score -= 30;
-  } else {
+  } else if (stages.length > 0) {
     let prevHpHigh = 0;
     
     for (let i = 0; i < stages.length; i++) {
@@ -311,7 +346,14 @@ export function formatValidationResult(result, profileName = 'Profile') {
   lines.push(`📊 Quality Score: ${result.score}/100`);
   
   lines.push('\n📈 Data Coverage:');
-  lines.push(`   Stages:          ${result.details.stagesCount || 0}`);
+  lines.push(`   Total Upgrades:  ${result.details.totalUpgrades || 0}`);
+  if (result.details.upgradesByCategory) {
+    lines.push(`     - Power:       ${result.details.upgradesByCategory.power || 0}`);
+    lines.push(`     - Handling:    ${result.details.upgradesByCategory.handling || 0}`);
+    lines.push(`     - Braking:     ${result.details.upgradesByCategory.braking || 0}`);
+    lines.push(`     - Cooling:     ${result.details.upgradesByCategory.cooling || 0}`);
+  }
+  lines.push(`   Stages (legacy): ${result.details.stagesCount || 0}`);
   lines.push(`   Platforms:       ${result.details.platformsCount || 0}`);
   lines.push(`   Power Limits:    ${result.details.powerLimitsCount || 0}`);
   lines.push(`   Brand Categories: ${result.details.brandCategoriesCount || 0}`);

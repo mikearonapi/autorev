@@ -1,5 +1,5 @@
 /**
- * Car Selector Layout - SEO Metadata + Structured Data
+ * Vehicle Match Layout - SEO Metadata + Structured Data
  * 
  * URL: /car-selector
  */
@@ -21,18 +21,18 @@ export async function generateMetadata() {
   }
 
   return {
-    title: `Sports Car Selector | Compare ${carCount} Performance Vehicles`,
-    description: `Select your perfect sports car with our intelligent comparison tool. Compare ${carCount} vehicles from $25K-$300K based on sound, track capability, reliability, daily comfort, and value. Real owner insights included.`,
-    keywords: ['sports car selector', 'car comparison', 'track cars', 'sports car buying guide', 'Porsche comparison', 'BMW M comparison', 'Corvette comparison', 'best sports car under 100k', 'muscle cars', 'import tuners', 'drift cars'],
+    title: `Vehicle Match | Compare ${carCount} Performance Vehicles`,
+    description: `Find your perfect vehicle with our intelligent matching tool. Compare ${carCount} vehicles from $25K-$300K based on sound, track capability, reliability, daily comfort, and value. Real owner insights included.`,
+    keywords: ['vehicle match', 'car comparison', 'track cars', 'sports car buying guide', 'Porsche comparison', 'BMW M comparison', 'Corvette comparison', 'best sports car under 100k', 'muscle cars', 'import tuners', 'drift cars', 'sports sedan', 'hot hatch'],
     openGraph: {
-      title: `Sports Car Selector | Compare ${carCount} Performance Vehicles`,
-      description: `Select your perfect sports car. Compare ${carCount} vehicles based on what matters most to you.`,
+      title: `Vehicle Match | Compare ${carCount} Performance Vehicles`,
+      description: `Find your perfect vehicle. Compare ${carCount} vehicles based on what matters most to you.`,
       url: '/car-selector',
       type: 'website',
     },
     twitter: {
-      title: `Sports Car Selector | Compare ${carCount} Performance Vehicles`,
-      description: `Select your perfect sports car. Compare ${carCount} vehicles from $25K-$300K.`,
+      title: `Vehicle Match | Compare ${carCount} Performance Vehicles`,
+      description: `Find your perfect vehicle. Compare ${carCount} vehicles from $25K-$300K.`,
     },
     alternates: {
       canonical: '/car-selector',
@@ -43,12 +43,12 @@ export async function generateMetadata() {
 export default function CarSelectorLayout({ children }) {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: '/' },
-    { name: 'Car Selector', url: '/car-selector' },
+    { name: 'Vehicle Match', url: '/car-selector' },
   ]);
 
   const webAppSchema = generateWebApplicationSchema({
-    name: 'AutoRev Sports Car Selector',
-    description: 'Intelligent sports car comparison tool. Match your priorities with the perfect vehicle based on sound, track capability, reliability, daily comfort, and value.',
+    name: 'AutoRev Vehicle Match',
+    description: 'Intelligent vehicle comparison tool. Match your priorities with the perfect vehicle based on sound, track capability, reliability, daily comfort, and value.',
     path: '/car-selector',
     applicationCategory: 'AutomotiveApplication',
   });

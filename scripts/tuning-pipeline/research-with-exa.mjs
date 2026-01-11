@@ -383,28 +383,66 @@ async function researchVehicle(profile, dryRun = false) {
   // Extract tuning data
   const tuningData = extractTuningData(allResults, carName);
   
+  // Convert stages to upgrades_by_objective (SOURCE OF TRUTH)
+  const upgradesByObjective = convertStagesToUpgradesByObjective(tuningData.stages, tuningData.brands);
+  const totalUpgrades = Object.values(upgradesByObjective).reduce((sum, arr) => sum + arr.length, 0);
+  
+  // Build platform insights
+  const platformInsights = {
+    strengths: tuningData.insights.filter(i => !i.toLowerCase().includes('issue') && !i.toLowerCase().includes('problem')).slice(0, 5),
+    weaknesses: tuningData.insights.filter(i => i.toLowerCase().includes('issue') || i.toLowerCase().includes('problem')).slice(0, 5),
+    community_tips: [],
+    youtube_insights: {}
+  };
+  
+  // Determine data quality tier
+  const hasResearch = allResults.results.length > 0;
+  const hasStages = tuningData.stages.length > 0;
+  const hasUpgrades = totalUpgrades > 0;
+  const dataQualityTier = (hasResearch && hasUpgrades) ? 'researched' : hasUpgrades ? 'enriched' : 'templated';
+  
   console.log(`   Extracted:`);
-  console.log(`     - ${tuningData.stages.length} stages`);
+  console.log(`     - ${totalUpgrades} upgrades (source of truth)`);
+  if (totalUpgrades > 0) {
+    console.log(`       • Power: ${upgradesByObjective.power?.length || 0}`);
+    console.log(`       • Handling: ${upgradesByObjective.handling?.length || 0}`);
+    console.log(`       • Braking: ${upgradesByObjective.braking?.length || 0}`);
+  }
+  console.log(`     - ${tuningData.stages.length} stages (legacy)`);
   console.log(`     - ${tuningData.platforms.length} platforms`);
   console.log(`     - ${Object.keys(tuningData.powerLimits).length} power limits`);
   console.log(`     - ${Object.keys(tuningData.brands).length} brand categories`);
+  console.log(`     - Data quality tier: ${dataQualityTier}`);
   if (tuningData.stockPower) {
     console.log(`     - Stock power: ${tuningData.stockPower} HP`);
   }
   
   if (dryRun) {
     console.log(`   [DRY RUN] Would update profile with:`);
-    console.log(JSON.stringify(tuningData, null, 2).split('\n').map(l => `     ${l}`).join('\n'));
-    return { success: true, dryRun: true, data: tuningData };
+    console.log(`     upgrades_by_objective: ${totalUpgrades} total upgrades`);
+    return { success: true, dryRun: true, data: tuningData, upgradesByObjective };
   }
   
-  // Update the profile
+  // Update the profile with upgrades_by_objective as SOURCE OF TRUTH
   const updateData = {
+    // SOURCE OF TRUTH (per DATABASE.md)
+    upgrades_by_objective: upgradesByObjective,
+    platform_insights: platformInsights,
+    data_quality_tier: dataQualityTier,
+    data_sources: {
+      has_exa_research: true,
+      exa_result_count: allResults.results.length,
+      research_date: new Date().toISOString()
+    },
+    
+    // Legacy fields (for backward compatibility)
     stage_progressions: tuningData.stages,
     tuning_platforms: tuningData.platforms,
     power_limits: tuningData.powerLimits,
     brand_recommendations: tuningData.brands,
-    pipeline_version: '1.1.0-exa',
+    
+    // Metadata
+    pipeline_version: '1.2.0-exa',
     pipeline_run_at: new Date().toISOString(),
     research_sources: allResults.results.map(r => r.url).filter(Boolean).slice(0, 5)
   };
@@ -423,18 +461,67 @@ async function researchVehicle(profile, dryRun = false) {
     return { success: false, error: error.message };
   }
   
-  console.log(`   ✅ Profile updated`);
-  return { success: true, data: tuningData };
+  console.log(`   ✅ Profile updated (${totalUpgrades} upgrades)`);
+  return { success: true, data: tuningData, upgradesByObjective, totalUpgrades };
 }
 
 /**
- * Get all skeleton profiles (no stage_progressions)
+ * Convert stages to upgrades_by_objective format (aligns with create-profile.mjs)
+ */
+function convertStagesToUpgradesByObjective(stages, brandRecommendations = {}) {
+  const objectives = {
+    power: [],
+    handling: [],
+    braking: [],
+    cooling: [],
+    sound: [],
+    aero: []
+  };
+
+  if (!stages || !Array.isArray(stages)) return objectives;
+
+  const componentObjectiveMap = {
+    'tune': 'power', 'intake': 'power', 'exhaust': 'power', 'downpipe': 'power',
+    'intercooler': 'power', 'turbo': 'power', 'supercharger': 'power', 'header': 'power',
+    'fuel': 'power', 'ecu': 'power', 'cam': 'power', 'head': 'power',
+    'suspension': 'handling', 'coilover': 'handling', 'spring': 'handling', 'sway': 'handling',
+    'alignment': 'handling', 'bushing': 'handling', 'wheel': 'handling', 'tire': 'handling',
+    'brake': 'braking', 'rotor': 'braking', 'caliper': 'braking', 'pad': 'braking',
+    'cooler': 'cooling', 'radiator': 'cooling', 'fan': 'cooling',
+    'muffler': 'sound', 'resonator': 'sound'
+  };
+
+  function categorizeComponent(componentName) {
+    const lower = componentName.toLowerCase();
+    for (const [keyword, objective] of Object.entries(componentObjectiveMap)) {
+      if (lower.includes(keyword)) return objective;
+    }
+    return 'power';
+  }
+
+  for (const stage of stages) {
+    if (!stage.components) continue;
+    for (const component of stage.components) {
+      const objective = categorizeComponent(component);
+      objectives[objective].push({
+        name: component,
+        stage_source: stage.stage,
+        gains: (stage.hpGainLow && stage.hpGainHigh) ? { hp: { low: stage.hpGainLow, high: stage.hpGainHigh } } : null,
+        cost: (stage.costLow && stage.costHigh) ? { low: stage.costLow, high: stage.costHigh } : null
+      });
+    }
+  }
+
+  return objectives;
+}
+
+/**
+ * Get all skeleton profiles (no upgrades_by_objective - source of truth check)
  */
 async function getSkeletonProfiles(limit = null) {
   let query = supabase
     .from('car_tuning_profiles')
-    .select('id, car_id, tuning_focus, stage_progressions, stock_whp, cars(name, slug)')
-    .or('stage_progressions.is.null,stage_progressions.eq.[]')
+    .select('id, car_id, tuning_focus, upgrades_by_objective, stage_progressions, stock_whp, data_quality_tier, cars(name, slug)')
     .order('created_at', { ascending: true });
   
   if (limit) {
@@ -447,8 +534,13 @@ async function getSkeletonProfiles(limit = null) {
     throw new Error(`Failed to fetch profiles: ${error.message}`);
   }
   
-  // Filter to truly empty stage_progressions
-  return data.filter(p => !p.stage_progressions || p.stage_progressions.length === 0);
+  // Filter to profiles with empty upgrades_by_objective (source of truth)
+  return data.filter(p => {
+    const objectives = p.upgrades_by_objective || {};
+    const totalUpgrades = Object.values(objectives).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
+    // Also include profiles marked as skeleton or with no objective data
+    return totalUpgrades === 0 || p.data_quality_tier === 'skeleton';
+  });
 }
 
 /**
