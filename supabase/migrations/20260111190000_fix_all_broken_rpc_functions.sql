@@ -296,22 +296,22 @@ BEGIN
     IF v_car_id IS NULL THEN RETURN; END IF;
 
     RETURN QUERY
-    SELECT 'fuel_economy'::VARCHAR, f.fetched_at, EXTRACT(EPOCH FROM (NOW() - f.fetched_at))/3600, f.fetched_at < NOW() - INTERVAL '7 days'
+    SELECT 'fuel_economy'::VARCHAR, f.fetched_at, (EXTRACT(EPOCH FROM (NOW() - f.fetched_at))/3600)::double precision, f.fetched_at < NOW() - INTERVAL '7 days'
     FROM car_fuel_economy f WHERE f.car_id = v_car_id
     UNION ALL
-    SELECT 'nhtsa_safety', s.nhtsa_fetched_at, EXTRACT(EPOCH FROM (NOW() - s.nhtsa_fetched_at))/3600, s.nhtsa_fetched_at < NOW() - INTERVAL '7 days'
+    SELECT 'nhtsa_safety', s.nhtsa_fetched_at, (EXTRACT(EPOCH FROM (NOW() - s.nhtsa_fetched_at))/3600)::double precision, s.nhtsa_fetched_at < NOW() - INTERVAL '7 days'
     FROM car_safety_data s WHERE s.car_id = v_car_id
     UNION ALL
-    SELECT 'iihs_safety', s.iihs_fetched_at, EXTRACT(EPOCH FROM (NOW() - s.iihs_fetched_at))/3600, s.iihs_fetched_at < NOW() - INTERVAL '30 days'
+    SELECT 'iihs_safety', s.iihs_fetched_at, (EXTRACT(EPOCH FROM (NOW() - s.iihs_fetched_at))/3600)::double precision, s.iihs_fetched_at < NOW() - INTERVAL '30 days'
     FROM car_safety_data s WHERE s.car_id = v_car_id
     UNION ALL
-    SELECT 'bat_pricing', p.bat_fetched_at, EXTRACT(EPOCH FROM (NOW() - p.bat_fetched_at))/3600, p.bat_fetched_at < NOW() - INTERVAL '7 days'
+    SELECT 'bat_pricing', p.bat_fetched_at, (EXTRACT(EPOCH FROM (NOW() - p.bat_fetched_at))/3600)::double precision, p.bat_fetched_at < NOW() - INTERVAL '7 days'
     FROM car_market_pricing p WHERE p.car_id = v_car_id
     UNION ALL
-    SELECT 'hagerty_pricing', p.hagerty_fetched_at, EXTRACT(EPOCH FROM (NOW() - p.hagerty_fetched_at))/3600, p.hagerty_fetched_at < NOW() - INTERVAL '30 days'
+    SELECT 'hagerty_pricing', p.hagerty_fetched_at, (EXTRACT(EPOCH FROM (NOW() - p.hagerty_fetched_at))/3600)::double precision, p.hagerty_fetched_at < NOW() - INTERVAL '30 days'
     FROM car_market_pricing p WHERE p.car_id = v_car_id
     UNION ALL
-    SELECT 'carscom_pricing', p.carscom_fetched_at, EXTRACT(EPOCH FROM (NOW() - p.carscom_fetched_at))/3600, p.carscom_fetched_at < NOW() - INTERVAL '3 days'
+    SELECT 'carscom_pricing', p.carscom_fetched_at, (EXTRACT(EPOCH FROM (NOW() - p.carscom_fetched_at))/3600)::double precision, p.carscom_fetched_at < NOW() - INTERVAL '3 days'
     FROM car_market_pricing p WHERE p.car_id = v_car_id;
 END;
 $$;
@@ -498,6 +498,57 @@ BEGIN
   ) INTO v_result FROM cars c WHERE c.id = v_car_id;
 
   RETURN COALESCE(v_result, '{}'::jsonb);
+END;
+$$;
+
+-- ============================================================================
+-- 12. FIX: search_community_insights (community_insights no longer has car_slug)
+-- ============================================================================
+CREATE OR REPLACE FUNCTION search_community_insights(
+  p_query_embedding vector(1536),
+  p_car_slug TEXT DEFAULT NULL,
+  p_insight_types TEXT[] DEFAULT NULL,
+  p_min_confidence DECIMAL DEFAULT 0.5,
+  p_limit INTEGER DEFAULT 10
+)
+RETURNS TABLE(
+  id UUID,
+  car_id UUID,
+  insight_type TEXT,
+  title TEXT,
+  summary TEXT,
+  details JSONB,
+  confidence DECIMAL,
+  consensus_strength TEXT,
+  source_forum TEXT,
+  source_urls TEXT[],
+  similarity DOUBLE PRECISION
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_car_id UUID;
+BEGIN
+  -- Resolve car_slug to car_id if provided
+  IF p_car_slug IS NOT NULL THEN
+    SELECT c.id INTO v_car_id FROM cars c WHERE c.slug = p_car_slug;
+  END IF;
+
+  RETURN QUERY
+  SELECT 
+    ci.id, ci.car_id, ci.insight_type, ci.title, ci.summary,
+    ci.details, ci.confidence, ci.consensus_strength,
+    ci.source_forum, ci.source_urls,
+    1 - (ci.embedding OPERATOR(extensions.<=>) p_query_embedding) AS similarity
+  FROM public.community_insights ci
+  WHERE ci.is_active = true
+    AND ci.confidence >= p_min_confidence
+    AND (v_car_id IS NULL OR ci.car_id = v_car_id)
+    AND (p_insight_types IS NULL OR ci.insight_type = ANY(p_insight_types))
+    AND ci.embedding IS NOT NULL
+  ORDER BY ci.embedding OPERATOR(extensions.<=>) p_query_embedding
+  LIMIT p_limit;
 END;
 $$;
 
