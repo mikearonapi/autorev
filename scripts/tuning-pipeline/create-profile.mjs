@@ -1018,11 +1018,19 @@ export async function createProfile(options) {
 
 /**
  * Find research data for a car
+ * IMPORTANT: This must be strict to avoid cross-contamination of data.
+ * Only match when there's a strong semantic relationship, not just brand.
  */
 function findResearchData(carSlug, carName) {
-  // Direct match
+  // Direct slug match (most reliable)
+  if (RESEARCH_DATA[carSlug]) {
+    return RESEARCH_DATA[carSlug];
+  }
+  
+  // Exact key containment (carSlug contains the research key fully)
+  // e.g., 'ford-f150-thirteenth' contains 'ford-f150'
   for (const [key, data] of Object.entries(RESEARCH_DATA)) {
-    if (carSlug.includes(key) || key.includes(carSlug.split('-')[0])) {
+    if (carSlug.includes(key)) {
       return data;
     }
   }

@@ -2354,7 +2354,7 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, confirm
 }
 
 // Thumbnail Strip Component
-function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) {
+function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem, isEditMode, onMoveItem, isReordering }) {
   const stripRef = useRef(null);
 
   const scrollToSelected = (index) => {
@@ -2385,17 +2385,31 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) 
     }
   };
 
+  const handleMoveUp = (e, index) => {
+    e.stopPropagation();
+    if (onMoveItem && index > 0) {
+      onMoveItem(index, index - 1);
+    }
+  };
+
+  const handleMoveDown = (e, index) => {
+    e.stopPropagation();
+    if (onMoveItem && index < items.length - 1) {
+      onMoveItem(index, index + 1);
+    }
+  };
+
   if (items.length === 0) return null;
 
   return (
     <div className={styles.thumbnailContainer}>
-      {items.length > 1 && (
+      {items.length > 1 && !isEditMode && (
         <button onClick={handlePrev} className={styles.navArrow} aria-label="Previous">
           <Icons.chevronLeft size={24} />
         </button>
       )}
 
-      <div className={styles.thumbnailStrip} ref={stripRef}>
+      <div className={`${styles.thumbnailStrip} ${isEditMode ? styles.thumbnailStripEditMode : ''}`} ref={stripRef}>
         {items.map((item, index) => {
           const car = type === 'projects' ? item.car : (item.matchedCar || item);
           const isSelected = index === selectedIndex;
@@ -2410,10 +2424,35 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) 
           return (
             <div
               key={item.id || item.slug || index}
-              className={`${styles.thumbnailWrapper} ${isSelected ? styles.thumbnailWrapperSelected : ''}`}
+              className={`${styles.thumbnailWrapper} ${isSelected ? styles.thumbnailWrapperSelected : ''} ${isEditMode ? styles.thumbnailWrapperEditMode : ''}`}
             >
+              {/* Reorder controls in edit mode */}
+              {isEditMode && type === 'mycars' && (
+                <div className={styles.reorderControls}>
+                  <button 
+                    onClick={(e) => handleMoveUp(e, index)} 
+                    className={styles.reorderBtn}
+                    disabled={index === 0 || isReordering}
+                    title="Move up"
+                    aria-label="Move up"
+                  >
+                    <Icons.chevronUp size={16} />
+                  </button>
+                  <span className={styles.reorderPosition}>{index + 1}</span>
+                  <button 
+                    onClick={(e) => handleMoveDown(e, index)} 
+                    className={styles.reorderBtn}
+                    disabled={index === items.length - 1 || isReordering}
+                    title="Move down"
+                    aria-label="Move down"
+                  >
+                    <Icons.chevronDown size={16} />
+                  </button>
+                </div>
+              )}
+              
               <button
-                onClick={() => onSelect(index)}
+                onClick={() => !isEditMode && onSelect(index)}
                 className={`${styles.thumbnail} ${isSelected ? styles.thumbnailSelected : ''}`}
                 title={displayName}
               >
@@ -2424,10 +2463,10 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) 
                     <Icons.car size={24} />
                   </div>
                 )}
-                {isSelected && <div className={styles.thumbnailIndicator} />}
+                {isSelected && !isEditMode && <div className={styles.thumbnailIndicator} />}
               </button>
-              {/* Delete button on each thumbnail */}
-              {onRemoveItem && (
+              {/* Delete button on each thumbnail (hidden in edit mode) */}
+              {onRemoveItem && !isEditMode && (
                 <button 
                   onClick={(e) => handleRemoveClick(e, index)} 
                   className={styles.thumbnailDeleteBtn}
@@ -2442,7 +2481,7 @@ function ThumbnailStrip({ items, selectedIndex, onSelect, type, onRemoveItem }) 
         })}
       </div>
 
-      {items.length > 1 && (
+      {items.length > 1 && !isEditMode && (
         <button onClick={handleNext} className={styles.navArrow} aria-label="Next">
           <Icons.chevronRight size={24} />
         </button>
@@ -2568,6 +2607,14 @@ function GarageContent() {
   const [quickUpdateValues, setQuickUpdateValues] = useState({});
   const [savingQuickUpdates, setSavingQuickUpdates] = useState(false);
   
+  // Edit/reorder mode state (for My Collection tab)
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+  
+  // Swipe gesture state (for mobile navigation)
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const touchEndRef = useRef({ x: 0, y: 0 });
+  
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, index: null, item: null });
   
@@ -2575,7 +2622,7 @@ function GarageContent() {
   const authModal = useAuthModal();
   const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
   const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, updateCustomSpecs, clearCustomSpecs, isLoading: vehiclesLoading } = useOwnedVehicles();
+  const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, updateCustomSpecs, clearCustomSpecs, reorderVehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
   const { hasAccess } = usePremiumAccess();
   const { openChatWithPrompt } = useAIChat();
   
@@ -2615,9 +2662,10 @@ function GarageContent() {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
 
-  // Reset selection when tab changes
+  // Reset selection and exit edit mode when tab changes
   useEffect(() => {
     setSelectedIndex(0);
+    setIsEditMode(false);
   }, [activeTab]);
   
   // Merge favorites with full car data (from database)
@@ -3002,6 +3050,80 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
     }
   };
 
+  // ============================================================================
+  // SWIPE GESTURE HANDLERS (Mobile Navigation)
+  // ============================================================================
+  
+  const handleTouchStart = useCallback((e) => {
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+    touchEndRef.current = { x: 0, y: 0 };
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    touchEndRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (isEditMode || quickUpdateMode) return; // Disable swipe in edit mode
+    
+    const deltaX = touchStartRef.current.x - touchEndRef.current.x;
+    const deltaY = touchStartRef.current.y - touchEndRef.current.y;
+    
+    // Only process if horizontal swipe is dominant (2x greater than vertical)
+    // and meets minimum threshold of 50px
+    const minSwipeDistance = 50;
+    if (Math.abs(deltaX) < minSwipeDistance) return;
+    if (Math.abs(deltaY) > Math.abs(deltaX) / 2) return;
+    
+    if (deltaX > 0) {
+      // Swipe left → next vehicle
+      setSelectedIndex(prev => (prev < currentItems.length - 1 ? prev + 1 : 0));
+    } else {
+      // Swipe right → previous vehicle
+      setSelectedIndex(prev => (prev > 0 ? prev - 1 : currentItems.length - 1));
+    }
+  }, [isEditMode, quickUpdateMode, currentItems.length]);
+
+  // ============================================================================
+  // REORDER HANDLERS (Edit Mode)
+  // ============================================================================
+  
+  const handleMoveVehicle = useCallback(async (fromIndex, toIndex) => {
+    if (activeTab !== 'mycars') return;
+    if (toIndex < 0 || toIndex >= vehiclesWithCars.length) return;
+    
+    setIsReordering(true);
+    
+    // Create new order array
+    const newOrder = [...vehiclesWithCars];
+    const [moved] = newOrder.splice(fromIndex, 1);
+    newOrder.splice(toIndex, 0, moved);
+    
+    // Extract vehicle IDs in new order
+    const vehicleIds = newOrder.map(item => item.vehicle.id);
+    
+    const result = await reorderVehicles(vehicleIds);
+    
+    if (result.success) {
+      // Update selected index to follow the moved item
+      setSelectedIndex(toIndex);
+    } else {
+      console.error('[Garage] Reorder failed:', result.error);
+    }
+    
+    setIsReordering(false);
+  }, [activeTab, vehiclesWithCars, reorderVehicles]);
+
+  const handleToggleEditMode = useCallback(() => {
+    setIsEditMode(prev => !prev);
+  }, []);
+
   // If viewing a build detail, show that instead
   if (selectedBuild) {
     return (
@@ -3073,8 +3195,23 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                 <span className={styles.quickActionLabel}>Add Vehicle</span>
               </button>
 
+              {/* Reorder Mode Toggle - Only when you have 2+ vehicles */}
+              {vehicles.length > 1 && (
+                <button
+                  className={`${styles.quickActionBtn} ${isEditMode ? styles.quickActionBtnActive : ''}`}
+                  onClick={handleToggleEditMode}
+                  title={isEditMode ? 'Done Reordering' : 'Reorder Vehicles'}
+                  disabled={isReordering}
+                >
+                  {isEditMode ? <Icons.check size={16} /> : <Icons.settings size={16} />}
+                  <span className={styles.quickActionLabel}>
+                    {isEditMode ? 'Done' : 'Reorder'}
+                  </span>
+                </button>
+              )}
+
               {/* Quick Update Mode Toggle - Only when you have vehicles */}
-              {vehicles.length > 0 && (
+              {vehicles.length > 0 && !isEditMode && (
                 <button
                   className={`${styles.quickActionBtn} ${quickUpdateMode ? styles.quickActionBtnActive : ''}`}
                   onClick={handleToggleQuickUpdate}
@@ -3125,8 +3262,13 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className={styles.mainContent}>
+      {/* Main Content Area - with swipe support for mobile navigation */}
+      <div 
+        className={styles.mainContent}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Quick Update Mode Overlay */}
         {quickUpdateMode && activeTab === 'mycars' && (
           <div className={styles.quickUpdateOverlay}>
@@ -3218,6 +3360,9 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                 onSelect={setSelectedIndex}
                 type={activeTab}
                 onRemoveItem={handleRemoveRequest}
+                isEditMode={isEditMode && activeTab === 'mycars'}
+                onMoveItem={handleMoveVehicle}
+                isReordering={isReordering}
               />
 
               {/* Vehicle Counter */}

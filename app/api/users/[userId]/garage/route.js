@@ -90,6 +90,7 @@ async function handleGet(request, { params }) {
         custom_specs,
         enrichment_id,
         enrichment_status,
+        display_order,
         daily_driver_enrichments (
           id,
           maintenance_specs,
@@ -101,6 +102,7 @@ async function handleGet(request, { params }) {
       `)
       .eq('user_id', userId)
       .eq('ownership_status', 'owned')
+      .order('display_order', { ascending: true })
       .order('is_primary', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -144,6 +146,8 @@ async function handleGet(request, { params }) {
         // Custom specs (user-specific modification details)
         customSpecs: customSpecs,
         hasCustomSpecs: Object.keys(customSpecs).length > 0,
+        // Display order for custom garage sorting
+        displayOrder: v.display_order ?? 0,
         // Daily driver enrichment data
         enrichmentId: v.enrichment_id,
         enrichmentStatus: v.enrichment_status || 'none',

@@ -162,6 +162,8 @@ function transformVehicle(row) {
       imageUrl: enrichment.image_url,
       status: enrichment.status,
     } : null,
+    // Display order for custom garage sorting
+    displayOrder: row.display_order ?? 0,
   };
 }
 
@@ -845,6 +847,54 @@ export function OwnedVehiclesProvider({ children }) {
   }, [isAuthenticated, user?.id, state.vehicles]);
 
   /**
+   * Reorder vehicles in the garage
+   * @param {string[]} vehicleIds - Array of vehicle IDs in desired order
+   */
+  const reorderVehicles = useCallback(async (vehicleIds) => {
+    if (!isAuthenticated || !user?.id) {
+      // For guests, reorder locally
+      const reordered = vehicleIds.map((id, index) => {
+        const vehicle = state.vehicles.find(v => v.id === id);
+        return vehicle ? { ...vehicle, displayOrder: index + 1 } : null;
+      }).filter(Boolean);
+      dispatch({ type: ActionTypes.SET, payload: reordered });
+      return { success: true, error: null };
+    }
+
+    // Optimistically update the UI
+    const optimisticOrder = vehicleIds.map((id, index) => {
+      const vehicle = state.vehicles.find(v => v.id === id);
+      return vehicle ? { ...vehicle, displayOrder: index + 1 } : null;
+    }).filter(Boolean);
+    dispatch({ type: ActionTypes.SET, payload: optimisticOrder });
+
+    try {
+      const response = await fetch(`/api/users/${user.id}/vehicles/reorder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vehicleIds }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Rollback on error
+        console.error('[OwnedVehiclesProvider] Reorder failed:', result.error);
+        // Re-fetch to restore correct state
+        await fetchVehicles(user.id);
+        return { success: false, error: result.error || 'Failed to reorder vehicles' };
+      }
+
+      return { success: true, error: null };
+    } catch (err) {
+      console.error('[OwnedVehiclesProvider] Reorder error:', err);
+      // Re-fetch to restore correct state
+      await fetchVehicles(user.id);
+      return { success: false, error: err.message || 'Failed to reorder vehicles' };
+    }
+  }, [isAuthenticated, user?.id, state.vehicles, fetchVehicles]);
+
+  /**
    * Get a vehicle by ID
    * @param {string} vehicleId 
    */
@@ -873,6 +923,8 @@ export function OwnedVehiclesProvider({ children }) {
     // Primary vehicle
     getPrimaryVehicle,
     setPrimaryVehicle,
+    // Reordering
+    reorderVehicles,
     // Modification operations (upgrade keys)
     applyModifications,
     clearModifications,
