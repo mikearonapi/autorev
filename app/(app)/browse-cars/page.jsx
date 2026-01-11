@@ -95,13 +95,13 @@ function getUniqueMakes(carList) {
   return Array.from(makes).sort();
 }
 
-// Get unique categories
-function getUniqueCategories(carList) {
-  const categories = new Set();
+// Get unique vehicle types (body style: Sports Car, Sports Sedan, Wagon, etc.)
+function getUniqueVehicleTypes(carList) {
+  const types = new Set();
   carList.forEach(car => {
-    if (car.category) categories.add(car.category);
+    if (car.vehicleType) types.add(car.vehicleType);
   });
-  return Array.from(categories).sort();
+  return Array.from(types).sort();
 }
 
 function CarCatalogContent() {

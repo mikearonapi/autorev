@@ -6,12 +6,12 @@
 
 ## Overview
 
-AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 17 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, and analyze user vehicle health.
+AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 18 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, web search, and analyze user vehicle health.
 
 | Attribute | Value |
 |-----------|-------|
 | **Model** | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
-| **Tools** | 17 |
+| **Tools** | 18 |
 | **Knowledge Base** | 547 document chunks with vector embeddings |
 | **Encyclopedia** | 136 topics with semantic search (vectorized) |
 | **Community Insights** | Forum-extracted insights (Rennlist, Bimmerpost, etc.) |
@@ -57,7 +57,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 
 ---
 
-## Tools (17 Total)
+## Tools (18 Total)
 
 ### Tool Access by Tier
 
@@ -75,6 +75,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 | `search_parts` | — | ✓ | ✓ |
 | `get_maintenance_schedule` | — | ✓ | ✓ |
 | `search_knowledge` | — | ✓ | ✓ |
+| `search_web` | — | ✓ | ✓ |
 | `get_track_lap_times` | — | ✓ | ✓ |
 | `get_dyno_runs` | — | ✓ | ✓ |
 | `search_community_insights` | — | ✓ | ✓ |
@@ -321,7 +322,29 @@ Search the vector knowledge base with citations.
 
 ---
 
-### 14. `get_track_lap_times`
+### 14. `search_web` ⭐ NEW - Real-Time Web Search
+Search the web using Exa AI for real-time automotive information.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `query` | string | Yes | Search query (be specific with automotive terms) |
+| `car_context` | string | No | Car name/slug for context |
+| `limit` | number | No | Max results (default 5, max 10) |
+
+**Returns:** Web search results with title, URL, excerpt, and published date
+
+**When to Use:**
+- Recent news about a car model
+- Current market conditions or pricing trends
+- New product announcements
+- Recent recalls or issues not yet in our database
+
+**Best Practice:** Always cite the source URL when using web results. Verify critical claims against our database.
+
+---
+
+### 16. `get_track_lap_times`
 Get citeable track lap times.
 
 **Parameters:**
@@ -334,7 +357,7 @@ Get citeable track lap times.
 
 ---
 
-### 15. `get_dyno_runs`
+### 17. `get_dyno_runs`
 Get citeable dyno data.
 
 **Parameters:**
@@ -348,7 +371,7 @@ Get citeable dyno data.
 
 ---
 
-### 16. `search_community_insights` ⭐ PRIMARY FORUM TOOL
+### 18. `search_community_insights` ⭐ PRIMARY FORUM TOOL
 Search community-sourced insights extracted from enthusiast forums. **This is the primary tool for forum/community data** — returns 1,226 curated insights from major car forums.
 
 **Parameters:**
@@ -384,7 +407,7 @@ Search community-sourced insights extracted from enthusiast forums. **This is th
 
 ---
 
-### 17. `analyze_vehicle_health`
+### 19. `analyze_vehicle_health`
 Analyze a user's specific vehicle and provide personalized maintenance recommendations.
 
 **Parameters:**

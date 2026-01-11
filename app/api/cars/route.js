@@ -60,6 +60,7 @@ async function handleGet() {
         image_hero_url,
         manual_available,
         seats,
+        vehicle_type,
         daily_usability_tag,
         common_issues,
         defining_strengths,
@@ -115,6 +116,7 @@ async function handleGet() {
       // Ownership
       manualAvailable: car.manual_available,
       seats: car.seats,
+      vehicleType: car.vehicle_type,
       dailyUsabilityTag: car.daily_usability_tag,
       commonIssues: car.common_issues || [],
       definingStrengths: car.defining_strengths || [],

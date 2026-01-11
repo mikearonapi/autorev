@@ -41,7 +41,7 @@ const ChevronIcon = () => (
 
 // Navigation links - KISS principles: clear, direct names that match URLs
 // - Articles: Top-level editorial content (comparisons, enthusiast, technical)
-// - Cars: Dropdown for Browse Cars & Sports Car Match (no dedicated page)
+// - Vehicles: Dropdown for Browse Vehicles & Vehicle Match (no dedicated page)
 // - My Garage: Personal user area (collection & favorites)
 // - Tuning Shop: Mod planner & projects
 // - Community: Events, Builds, Clubs (future)
@@ -51,10 +51,10 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/articles', label: 'Articles' },
   { 
-    label: 'Cars',
+    label: 'Vehicles',
     subLinks: [
-      { href: '/browse-cars', label: 'Browse Cars' },
-      { href: '/car-selector', label: 'Your Sports Car Match' },
+      { href: '/browse-cars', label: 'Browse Vehicles' },
+      { href: '/car-selector', label: 'Your Vehicle Match' },
     ],
   },
   { href: '/garage', label: 'My Garage' },
