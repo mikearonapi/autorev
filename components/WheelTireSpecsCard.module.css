@@ -2,19 +2,19 @@
  * WheelTireSpecsCard Styles
  * 
  * Inline editing card for wheel/tire specs
+ * Matches detailBlock styling from garage page
  */
 
 .card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  overflow: hidden;
+  padding: 12px 14px;
 }
 
-/* Header */
+/* Header - matches detailBlockTitle */
 .header {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 8px;
 }
 
 .titleRow {
@@ -29,64 +29,67 @@
   justify-content: space-between;
   gap: 8px;
   margin: 0;
-  font-size: 13px;
+  font-size: 9px;
   width: 100%;
-  font-weight: 600;
-  color: var(--text-primary, #fff);
+  font-weight: 700;
+  color: var(--text-primary, #c4a564);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .customBadge {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #10b981;
   background: rgba(16, 185, 129, 0.15);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
 }
 
 .editToggle {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  font-size: 11px;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 10px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .editToggle:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .editToggle.active {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
   color: #3b82f6;
 }
 
 .editHint {
-  margin: 8px 0 0 0;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
+  margin: 6px 0 0 0;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
 }
 
-/* Specs Grid */
+/* Specs Grid - matches detailBlockItems */
 .specsGrid {
-  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .section {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .section:last-child {
@@ -95,61 +98,65 @@
 
 .sectionLabel {
   display: block;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 6px;
-  padding-bottom: 4px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 4px;
+  margin-top: 4px;
 }
 
-/* Spec Row */
+/* Spec Row - matches detailBlockItem */
 .specRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
-  font-size: 12px;
+  padding: 4px 0;
+  font-size: 11px;
   position: relative;
   transition: background 0.15s ease;
   border-radius: 4px;
-  margin: 0 -4px;
-  padding-left: 4px;
-  padding-right: 4px;
+  gap: 8px;
 }
 
 .specRow.editable {
   cursor: pointer;
+  margin: 0 -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 3px;
 }
 
 .specRow.editable:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .specRow.hasCustom {
-  padding-left: 12px;
+  padding-left: 10px;
 }
 
 .specRow.hasCustom::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 4px;
-  bottom: 4px;
-  width: 3px;
+  top: 3px;
+  bottom: 3px;
+  width: 2px;
   background: #10b981;
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 .specLabel {
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
 }
 
 .specValue {
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
+  font-weight: 600;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
   text-align: right;
   display: flex;
   align-items: center;
@@ -158,24 +165,24 @@
 
 .specValue.customValue {
   color: #10b981;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .stockHint {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
   text-decoration: line-through;
 }
 
 .rowEditBtn {
   position: absolute;
-  right: 4px;
+  right: 2px;
   opacity: 0;
-  padding: 4px;
-  background: rgba(255, 255, 255, 0.1);
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.08);
   border: none;
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -185,7 +192,7 @@
 }
 
 .rowEditBtn:hover {
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.2);
   color: #3b82f6;
 }
 
@@ -193,57 +200,59 @@
 .editContainer {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
-  max-width: 200px;
+  max-width: 160px;
 }
 
 .editInput {
   flex: 1;
-  padding: 4px 8px;
+  padding: 3px 6px;
   font-size: 16px; /* Prevents iOS zoom on focus */
   color: var(--text-primary, #fff);
   background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(59, 130, 246, 0.5);
-  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 3px;
   outline: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
 }
 
 .editInput:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
 .editInput::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 10px;
 }
 
 .editActionBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   padding: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border: none;
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .editActionBtn:first-of-type {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.15);
   color: #10b981;
 }
 
 .editActionBtn:first-of-type:hover:not(:disabled) {
-  background: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.25);
 }
 
 .editActionBtn:last-child:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
 }
 
@@ -263,50 +272,51 @@
 
 /* Empty State */
 .emptyState {
-  padding: 24px 16px;
+  padding: 16px 0;
   text-align: center;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .emptyState p {
   margin: 0 0 4px 0;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .emptyHint {
-  font-size: 11px !important;
+  font-size: 10px !important;
   color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .addSpecsBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  padding: 8px 14px;
-  font-size: 12px;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 6px 10px;
+  font-size: 10px;
   font-weight: 500;
   color: #3b82f6;
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .addSpecsBtn:hover {
-  background: rgba(59, 130, 246, 0.25);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
 /* Fitment Options */
 .fitmentToggle {
   display: block;
-  width: 100%;
-  padding: 10px 16px;
-  font-size: 12px;
+  width: calc(100% + 28px);
+  margin: 10px -14px -12px -14px;
+  padding: 8px 14px;
+  font-size: 10px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.02);
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -316,19 +326,22 @@
 }
 
 .fitmentToggle:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .fitmentList {
-  padding: 0 16px 16px;
+  margin: 8px -14px -12px -14px;
+  padding: 8px 14px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .fitmentOption {
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  margin-bottom: 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
 }
 
 .fitmentOption:last-child {
@@ -338,12 +351,12 @@
 .fitmentHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
 .fitmentType {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -351,7 +364,7 @@
 }
 
 .fitmentVerified {
-  font-size: 10px;
+  font-size: 9px;
   color: #10b981;
 }
 
@@ -359,27 +372,39 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-mono, ui-monospace, monospace);
 }
 
 .fitmentNotes {
-  margin-top: 6px;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.35);
   font-style: italic;
 }
 
 /* Mobile */
 @media (max-width: 480px) {
-  .titleRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .card {
+    padding: 10px 12px;
+  }
+  
+  .title {
+    font-size: 10px;
+  }
+  
+  .specRow {
+    font-size: 12px;
+    padding: 5px 0;
+  }
+  
+  .specValue {
+    font-size: 11px;
   }
   
   .editContainer {
-    max-width: 160px;
+    max-width: 140px;
   }
 }
 
