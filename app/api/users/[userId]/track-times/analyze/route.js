@@ -1,6 +1,5 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * POST /api/users/[userId]/track-times/analyze
@@ -9,11 +8,26 @@ import { NextResponse } from 'next/server';
  */
 export async function POST(request, { params }) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { userId } = params;
+    const { userId } = await params;
     
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -38,6 +52,13 @@ export async function POST(request, { params }) {
     const { data: trackTimes, error: fetchError } = await query;
     
     if (fetchError) {
+      // Table might not exist yet
+      if (fetchError.code === '42P01') {
+        return NextResponse.json({ 
+          error: 'Track times feature not yet enabled',
+          analysis: null 
+        }, { status: 200 });
+      }
       console.error('[TrackTimes] Error fetching for analysis:', fetchError);
       return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
     }

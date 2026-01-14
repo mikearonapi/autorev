@@ -1,6 +1,5 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * GET /api/users/[userId]/track-times
@@ -13,11 +12,26 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(request, { params }) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { userId } = params;
+    const { userId } = await params;
     
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -32,7 +46,7 @@ export async function GET(request, { params }) {
     const carSlug = searchParams.get('carSlug');
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     
-    // Use the helper function to get track history with improvements calculated
+    // Try to use the helper function first
     const { data, error } = await supabase.rpc('get_user_track_history', {
       p_user_id: userId,
       p_track_name: track || null,
@@ -42,7 +56,7 @@ export async function GET(request, { params }) {
     
     if (error) {
       // If RPC doesn't exist yet (migration not run), fall back to direct query
-      if (error.code === '42883') {
+      if (error.code === '42883' || error.message?.includes('does not exist')) {
         const query = supabase
           .from('user_track_times')
           .select(`
@@ -76,6 +90,10 @@ export async function GET(request, { params }) {
         const { data: fallbackData, error: fallbackError } = await query;
         
         if (fallbackError) {
+          // Table might not exist yet
+          if (fallbackError.code === '42P01') {
+            return NextResponse.json({ times: [], message: 'Track times feature not yet enabled' });
+          }
           console.error('[TrackTimes] Error fetching track times:', fallbackError);
           return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
         }
@@ -101,11 +119,26 @@ export async function GET(request, { params }) {
  */
 export async function POST(request, { params }) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { userId } = params;
+    const { userId } = await params;
     
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -185,6 +218,12 @@ export async function POST(request, { params }) {
       .single();
     
     if (error) {
+      // Table might not exist yet
+      if (error.code === '42P01') {
+        return NextResponse.json({ 
+          error: 'Track times feature not yet enabled. Please run database migration.' 
+        }, { status: 503 });
+      }
       console.error('[TrackTimes] Error inserting track time:', error);
       return NextResponse.json({ error: 'Failed to save track time' }, { status: 500 });
     }
@@ -203,11 +242,26 @@ export async function POST(request, { params }) {
  */
 export async function DELETE(request, { params }) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { userId } = params;
+    const { userId } = await params;
     
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
