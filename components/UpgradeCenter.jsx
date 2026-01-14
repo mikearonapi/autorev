@@ -17,6 +17,7 @@ import {
   getAvailableUpgrades,
   calculateTotalCost,
 } from '@/lib/performance.js';
+import { getPlatformDownpipeGain } from '@/data/upgradePackages.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
 import { 
@@ -444,6 +445,484 @@ function generateFallbackRecommendation(car, stockMetrics) {
 }
 
 /**
+ * Virtual Dyno Chart - Shows estimated HP/TQ curve
+ * Uses physics model to generate RPM-based power curve
+ */
+function VirtualDynoChart({ stockHp, estimatedHp, stockTorque, estimatedTq, peakRpm = 6500 }) {
+  // Generate dyno curve data points
+  // NOTE: All values are CRANK HP for consistency (database stores crank HP)
+  const generateCurve = (peakPower, peakTq, isStock = false) => {
+    const points = [];
+    const startRpm = 2000;
+    const endRpm = 7500;
+    const step = 250;
+
+    for (let rpm = startRpm; rpm <= endRpm; rpm += step) {
+      // Power curve shape (rises, peaks, falls)
+      const rpmRatio = rpm / peakRpm;
+      const powerFactor = rpmRatio < 1
+        ? Math.pow(rpmRatio, 1.8)
+        : 1 - Math.pow((rpmRatio - 1) * 2, 2) * 0.3;
+
+      // Torque peaks earlier and stays flatter
+      const torqueRpmRatio = rpm / (peakRpm * 0.75);
+      const torqueFactor = torqueRpmRatio < 1
+        ? Math.pow(torqueRpmRatio, 1.2)
+        : 1 - Math.pow((torqueRpmRatio - 1) * 1.5, 2) * 0.2;
+
+      points.push({
+        rpm,
+        hp: Math.max(0, Math.round(peakPower * Math.max(0, powerFactor))),
+        tq: Math.max(0, Math.round(peakTq * Math.max(0, torqueFactor))),
+      });
+    }
+    return points;
+  };
+
+  const stockCurve = generateCurve(stockHp, stockTorque || stockHp * 0.85, true);
+  const modCurve = generateCurve(estimatedHp, estimatedTq || estimatedHp * 0.9, false);
+
+  const maxHp = Math.max(estimatedHp, stockHp) * 1.15; // More headroom
+  const hpGain = estimatedHp - stockHp;
+  const gainPercent = ((hpGain / stockHp) * 100).toFixed(0);
+
+  return (
+    <div className={styles.virtualDynoLarge}>
+      {/* Header with clear gain summary */}
+      <div className={styles.dynoHeaderLarge}>
+        <div className={styles.dynoTitleSection}>
+          <span className={styles.dynoTitleLarge}>Virtual Dyno</span>
+          <span className={styles.dynoSubtitle}>Estimated power curve based on your modifications</span>
+        </div>
+        <div className={styles.dynoGainBadge}>
+          <span className={styles.dynoGainValue}>+{hpGain}</span>
+          <span className={styles.dynoGainUnit}>HP</span>
+          <span className={styles.dynoGainPercent}>({gainPercent}% gain)</span>
+        </div>
+      </div>
+      
+      {/* Legend */}
+      <div className={styles.dynoLegendLarge}>
+        <span className={styles.dynoLegendItemLarge}>
+          <span className={styles.dynoLegendLine} style={{ background: 'rgba(255,255,255,0.4)', borderStyle: 'dashed' }} />
+          <span>Stock: {stockHp} HP</span>
+        </span>
+        <span className={styles.dynoLegendItemLarge}>
+          <span className={styles.dynoLegendLine} style={{ background: '#10b981' }} />
+          <span>Modified: {estimatedHp} HP</span>
+        </span>
+      </div>
+
+      {/* Chart Area - Larger */}
+      <div className={styles.dynoChartLarge}>
+        {/* Y-Axis Labels */}
+        <div className={styles.dynoYAxisLarge}>
+          <span>{Math.round(maxHp)}</span>
+          <span>{Math.round(maxHp * 0.75)}</span>
+          <span>{Math.round(maxHp * 0.5)}</span>
+          <span>{Math.round(maxHp * 0.25)}</span>
+          <span>0</span>
+        </div>
+        
+        {/* Chart Area */}
+        <div className={styles.dynoChartAreaLarge}>
+          {/* Grid lines */}
+          <div className={styles.dynoGridLarge}>
+            {[0, 1, 2, 3, 4].map(i => (
+              <div key={i} className={styles.dynoGridLineLarge} style={{ bottom: `${i * 25}%` }} />
+            ))}
+          </div>
+          
+          {/* Gain area fill between curves */}
+          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.05" />
+              </linearGradient>
+            </defs>
+            {/* Fill area between curves */}
+            <path
+              d={
+                modCurve.map((p, i) => {
+                  const x = ((p.rpm - 2000) / 5500) * 100;
+                  const y = 100 - (p.hp / maxHp) * 100;
+                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ') +
+                stockCurve.slice().reverse().map((p) => {
+                  const x = ((p.rpm - 2000) / 5500) * 100;
+                  const y = 100 - (p.hp / maxHp) * 100;
+                  return `L ${x} ${y}`;
+                }).join(' ') + ' Z'
+              }
+              fill="url(#gainGradient)"
+            />
+          </svg>
+          
+          {/* Stock HP curve */}
+          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path
+              d={stockCurve.map((p, i) => {
+                const x = ((p.rpm - 2000) / 5500) * 100;
+                const y = 100 - (p.hp / maxHp) * 100;
+                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+              }).join(' ')}
+              fill="none"
+              stroke="rgba(255,255,255,0.4)"
+              strokeWidth="2"
+              strokeDasharray="6 4"
+            />
+          </svg>
+          
+          {/* Modified HP curve */}
+          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path
+              d={modCurve.map((p, i) => {
+                const x = ((p.rpm - 2000) / 5500) * 100;
+                const y = 100 - (p.hp / maxHp) * 100;
+                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+              }).join(' ')}
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="3"
+            />
+          </svg>
+          
+          {/* Stock peak marker */}
+          <div
+            className={styles.dynoPeakMarkerStock}
+            style={{
+              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              bottom: `${(stockHp / maxHp) * 100}%`
+            }}
+          >
+            <span className={styles.dynoPeakValueStock}>{stockHp}</span>
+          </div>
+          
+          {/* Modified peak marker */}
+          <div
+            className={styles.dynoPeakMarkerMod}
+            style={{
+              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              bottom: `${(estimatedHp / maxHp) * 100}%`
+            }}
+          >
+            <span className={styles.dynoPeakValueMod}>{estimatedHp}</span>
+            <span className={styles.dynoPeakLabelMod}>HP</span>
+          </div>
+
+          {/* Gain annotation line */}
+          <div
+            className={styles.dynoGainLine}
+            style={{
+              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              bottom: `${(stockHp / maxHp) * 100}%`,
+              height: `${((estimatedHp - stockHp) / maxHp) * 100}%`
+            }}
+          >
+            <span className={styles.dynoGainAnnotation}>+{hpGain}</span>
+          </div>
+        </div>
+        
+        {/* X-Axis Labels */}
+        <div className={styles.dynoXAxisLarge}>
+          <span>2,000</span>
+          <span>3,500</span>
+          <span>5,000</span>
+          <span>6,500</span>
+          <span>7,500 RPM</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Power Breakdown - Shows where HP gains come from
+ */
+function PowerBreakdown({ stockHp, specs, estimate }) {
+  const breakdown = [];
+  let runningTotal = stockHp;
+  
+  // Engine mods
+  if (specs.engine?.type !== 'stock') {
+    let engineGain = 0;
+    if (specs.engine.cams === 'stage3') engineGain += Math.round(stockHp * 0.12);
+    else if (specs.engine.cams === 'stage2') engineGain += Math.round(stockHp * 0.07);
+    else if (specs.engine.cams === 'stage1') engineGain += Math.round(stockHp * 0.04);
+    if (specs.engine.headWork) engineGain += Math.round(stockHp * 0.06);
+    if (specs.engine.type === 'stroked' && specs.engine.displacement > 2.0) {
+      engineGain += Math.round(stockHp * ((specs.engine.displacement / 2.0) - 1));
+    }
+    if (engineGain > 0) {
+      breakdown.push({ label: 'Engine Internals', gain: engineGain, color: '#f59e0b' });
+      runningTotal += engineGain;
+    }
+  }
+  
+  // Breathing mods
+  let breathingGain = 0;
+  if (specs.intake?.type !== 'stock') breathingGain += Math.round(stockHp * 0.02);
+  if (specs.exhaust?.downpipe !== 'stock') breathingGain += Math.round(stockHp * 0.03);
+  if (specs.exhaust?.headers !== 'stock') breathingGain += Math.round(stockHp * 0.03);
+  if (breathingGain > 0) {
+    breakdown.push({ label: 'Intake & Exhaust', gain: breathingGain, color: '#8b5cf6' });
+    runningTotal += breathingGain;
+  }
+  
+  // Turbo upgrade
+  if (specs.turbo?.type !== 'stock') {
+    const turboGain = Math.round((estimate?.whp || runningTotal) - runningTotal - (specs.fuel?.type === 'e85' ? stockHp * 0.15 : 0));
+    if (turboGain > 0) {
+      breakdown.push({ label: 'Turbo Upgrade', gain: turboGain, color: '#ef4444' });
+      runningTotal += turboGain;
+    }
+  }
+  
+  // Fuel
+  if (specs.fuel?.type === 'e85') {
+    const fuelGain = Math.round(stockHp * 0.15);
+    breakdown.push({ label: 'E85 Fuel', gain: fuelGain, color: '#10b981' });
+    runningTotal += fuelGain;
+  } else if (specs.fuel?.type === 'e50' || specs.fuel?.type === 'e30') {
+    const fuelGain = Math.round(stockHp * (specs.fuel.type === 'e50' ? 0.10 : 0.06));
+    breakdown.push({ label: `${specs.fuel.type.toUpperCase()} Fuel`, gain: fuelGain, color: '#10b981' });
+    runningTotal += fuelGain;
+  }
+  
+  // ECU
+  if (specs.ecu?.type !== 'stock') {
+    const ecuGain = Math.round(stockHp * 0.03);
+    breakdown.push({ label: 'ECU Tuning', gain: ecuGain, color: '#3b82f6' });
+  }
+  
+  const totalGain = (estimate?.hp || estimate?.whp || runningTotal) - stockHp;
+
+  return (
+    <div className={styles.powerBreakdown}>
+      <div className={styles.breakdownHeader}>
+        <span className={styles.breakdownTitle}>Power Breakdown</span>
+        <span className={styles.breakdownTotal}>+{totalGain} HP</span>
+      </div>
+      <div className={styles.breakdownBars}>
+        {breakdown.map((item, idx) => (
+          <div key={idx} className={styles.breakdownRow}>
+            <div className={styles.breakdownLabel}>
+              <span className={styles.breakdownDot} style={{ background: item.color }} />
+              <span>{item.label}</span>
+            </div>
+            <div className={styles.breakdownBarContainer}>
+              <div 
+                className={styles.breakdownBar} 
+                style={{ 
+                  width: `${Math.min(100, (item.gain / totalGain) * 100)}%`,
+                  background: item.color 
+                }} 
+              />
+            </div>
+            <span className={styles.breakdownGain}>+{item.gain}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Calculated Performance - Physics-based 0-60, 1/4 mile
+ */
+function CalculatedPerformance({
+  stockHp,
+  estimatedHp,
+  weight = 3500,
+  drivetrain = 'AWD',
+  tireCompound = 'summer',
+  weightMod = 0, 
+  driverWeight = 180, 
+  finalDrive = null,
+  wheelWeight = null, // lbs per wheel (stock ~25, forged ~18)
+  handlingScore = 100,
+  brakingScore = 100,
+}) {
+  // Guard against invalid inputs
+  const safeStockHp = (typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0) ? stockHp : 300;
+  const safeEstimatedHp = (typeof estimatedHp === 'number' && !isNaN(estimatedHp) && estimatedHp > 0) ? estimatedHp : safeStockHp;
+  const safeWeight = (typeof weight === 'number' && !isNaN(weight) && weight > 0) ? weight : 3500;
+  
+  // Adjust weight for modifications and driver
+  const totalWeight = safeWeight + (weightMod || 0) + (driverWeight || 180);
+  const stockTotalWeight = safeWeight + 180; // Stock with driver
+  
+  // Wheel weight affects rotational inertia (lighter wheels = faster accel)
+  // Rule of thumb: 1lb of wheel weight = 4-5lbs of static weight for acceleration
+  const stockWheelWeight = 25; // Average stock wheel
+  const currentWheelWeight = wheelWeight || stockWheelWeight;
+  const wheelWeightDiff = (stockWheelWeight - currentWheelWeight) * 4; // Effective weight savings
+  const effectiveWeight = totalWeight - wheelWeightDiff;
+  const stockEffectiveWeight = stockTotalWeight;
+  
+  // Tire grip multiplier for launch (affects 0-60 more than 1/4)
+  const tireGripMap = {
+    'all-season': 0.82,
+    'summer': 0.90,
+    'max-performance': 0.95,
+    'r-comp': 1.05,
+    'drag-radial': 1.25, // Massive launch advantage
+    'slick': 1.35,
+  };
+  const tireGrip = tireGripMap[tireCompound] || 0.90;
+  
+  // Power to weight ratio (hp per ton, where ton = 2000 lbs)
+  const powerToWeight = (safeEstimatedHp / effectiveWeight) * 2000;
+  const stockPtw = (safeStockHp / stockEffectiveWeight) * 2000;
+  
+  // ==========================================================================
+  // 0-60 MPH CALCULATION
+  // ==========================================================================
+  // Empirical formula validated against real-world data:
+  // 0-60 = sqrt(weight/hp) * k, where k varies by drivetrain
+  // AWD: k ≈ 1.2 (best launch, minimal wheelspin)
+  // RWD: k ≈ 1.35 (wheelspin limited)
+  // FWD: k ≈ 1.4 (torque steer, weight transfer issues)
+  
+  const drivetrainK = {
+    'AWD': 1.20,
+    'RWD': 1.35,
+    'FWD': 1.40,
+    '4WD': 1.25,
+  };
+  const baseK = drivetrainK[drivetrain] || 1.30;
+  
+  // Tire grip affects launch (drag radials are huge for RWD)
+  const tireKMultiplier = {
+    'all-season': 1.08,
+    'summer': 1.0,
+    'max-performance': 0.97,
+    'r-comp': 0.93,
+    'drag-radial': 0.85, // Massive launch improvement
+    'slick': 0.82,
+  };
+  const kTire = tireKMultiplier[tireCompound] || 1.0;
+  
+  // Calculate 0-60
+  const weightToHp = effectiveWeight / safeEstimatedHp;
+  const stockWeightToHp = stockEffectiveWeight / safeStockHp;
+  
+  // Minimum realistic 0-60 times (even hypercars can't beat physics)
+  const estimated060 = Math.max(2.0, Math.sqrt(weightToHp) * baseK * kTire);
+  const stock060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
+  
+  // ==========================================================================
+  // 1/4 MILE CALCULATION  
+  // ==========================================================================
+  // Classic empirical formula: ET = 5.825 * (weight/hp)^0.333
+  // This is well-validated across many vehicles
+  const tractionBonus = tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
+  const estimatedQuarter = 5.825 * Math.pow(weightToHp, 0.333) * tractionBonus;
+  const stockQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
+
+  // ==========================================================================
+  // TRAP SPEED CALCULATION
+  // ==========================================================================
+  // Formula: Trap Speed (mph) = 234 * (hp/weight)^0.333
+  // Adjusted from 224 to 234 based on modern vehicle data
+  const finalDriveFactor = finalDrive ? Math.min(1.02, 3.5 / finalDrive) : 1.0;
+  const estimatedTrap = 234 * Math.pow(safeEstimatedHp / effectiveWeight, 0.333) * finalDriveFactor;
+  const stockTrap = 234 * Math.pow(safeStockHp / stockEffectiveWeight, 0.333);
+  
+  // Braking distance (60-0) estimation
+  // Base: ~120ft for average car at 60mph
+  // Better brakes/tires reduce this
+  const stockBraking60 = 120; // feet
+  const brakingImprovement = (brakingScore - 100) / 100; // percentage improvement
+  const estimatedBraking60 = Math.round(stockBraking60 * (1 - brakingImprovement * 0.25));
+  
+  // Lateral G estimation
+  // Stock sedan ~0.85g, sport car ~0.95g
+  const baseG = 0.90;
+  const handlingImprovement = (handlingScore - 100) / 100;
+  const estimatedLateralG = (baseG * (1 + handlingImprovement * 0.3)).toFixed(2);
+  const stockLateralG = baseG.toFixed(2);
+  
+  // Safe number formatting to prevent NaN display
+  const safeFixed = (num, decimals = 1, fallback = '—') => {
+    if (typeof num !== 'number' || isNaN(num) || !isFinite(num)) return fallback;
+    return num.toFixed(decimals);
+  };
+  
+  const safeDelta = (from, to, decimals = 1) => {
+    const diff = from - to;
+    if (isNaN(diff) || !isFinite(diff)) return '0';
+    return diff.toFixed(decimals);
+  };
+
+  return (
+    <div className={styles.calcPerformance}>
+      <div className={styles.calcHeader}>
+        <span className={styles.calcTitle}>Calculated Performance</span>
+        <span className={styles.calcSubtitle}>Based on {safeWeight.toLocaleString()} lbs, {drivetrain}</span>
+      </div>
+      <div className={styles.calcGrid}>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>0-60 mph</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{safeFixed(stock060)}s</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{safeFixed(estimated060)}s</span>
+          </div>
+          <div className={styles.calcDelta}>-{safeDelta(stock060, estimated060)}s</div>
+        </div>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>1/4 Mile</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{safeFixed(stockQuarter)}s</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{safeFixed(estimatedQuarter)}s</span>
+          </div>
+          <div className={styles.calcDelta}>-{safeDelta(stockQuarter, estimatedQuarter)}s</div>
+        </div>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>Trap Speed</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{safeFixed(stockTrap, 0)}</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{safeFixed(estimatedTrap, 0)} mph</span>
+          </div>
+          <div className={styles.calcDelta}>+{safeDelta(stockTrap, estimatedTrap, 0)} mph</div>
+        </div>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>Power/Weight</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{safeFixed(stockPtw, 0)}</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{safeFixed(powerToWeight, 0)} hp/ton</span>
+          </div>
+          <div className={styles.calcDelta}>+{safeDelta(stockPtw, powerToWeight, 0)}</div>
+        </div>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>60-0 Braking</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{stockBraking60}ft</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{estimatedBraking60} ft</span>
+          </div>
+          <div className={styles.calcDelta}>{estimatedBraking60 <= stockBraking60 ? '-' : '+'}{Math.abs(stockBraking60 - estimatedBraking60)} ft</div>
+        </div>
+        <div className={styles.calcMetric}>
+          <div className={styles.calcMetricHeader}>Lateral G</div>
+          <div className={styles.calcMetricValues}>
+            <span className={styles.calcStock}>{stockLateralG}g</span>
+            <span className={styles.calcArrow}>→</span>
+            <span className={styles.calcModded}>{estimatedLateralG}g</span>
+          </div>
+          <div className={styles.calcDelta}>+{safeFixed(parseFloat(estimatedLateralG) - parseFloat(stockLateralG), 2, '0.00')}g</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Compact Metric Row
  */
 function MetricRow({ icon: Icon, label, stockValue, upgradedValue, unit, isLowerBetter = false }) {
@@ -724,6 +1203,201 @@ export default function UpgradeCenter({
   
   // Video player state
   const [selectedVideo, setSelectedVideo] = useState(null);
+  
+  // Tuner Mode: 'basic' or 'advanced' - advanced shows physics-based projections
+  const [tunerMode, setTunerMode] = useState('basic');
+  
+  // Advanced mode state - detailed build specs for physics model
+  const [advancedSpecs, setAdvancedSpecs] = useState({
+    engine: { 
+      type: 'stock', // stock, built, stroked
+      cams: 'stock', // stock, stage1, stage2, stage3
+      camDuration: null, // intake duration @ 0.050" (for advanced users)
+      headWork: false, 
+      displacement: 2.0,
+      internals: 'stock', // stock, forged
+      compression: null, // compression ratio
+      valvetrain: 'stock', // stock, upgraded, titanium
+      blockType: 'stock', // stock, closed-deck, sleeved
+    },
+    intake: {
+      type: 'stock', // stock, cold-air, short-ram
+      throttleBody: 'stock', // stock, ported, oversized
+      throttleBodyMm: null, // specific size if known
+      manifold: 'stock', // stock, ported, aftermarket
+    },
+    exhaust: {
+      headers: 'stock', // stock, equal-length, long-tube
+      downpipe: 'stock', // stock, catted, catless
+      downpipeDiameter: null, // 3", 3.5", 4" etc
+      catback: 'stock', // stock, axleback, catback, turboback
+      exhaustDiameter: null, // main exhaust diameter
+    },
+    turbo: { 
+      type: 'stock', // stock, upgraded, custom
+      modelId: null, 
+      customModel: '', 
+      inducerMm: null, 
+      exducerMm: null,
+      targetBoostPsi: null,
+      peakBoostPsi: null, // peak vs target (taper)
+      compressorAR: null, // compressor A/R
+      turbineAR: null, // turbine A/R
+      twinScroll: false,
+      ballBearing: true, // ball bearing vs journal
+      wastegate: 'stock', // stock, upgraded, external
+      wastegateSpring: null, // spring pressure in PSI
+      intercooler: 'stock', // stock, fmic, tmic, air-to-water
+      intercoolerSize: null, // core volume in liters
+      boostController: 'none', // none, manual, electronic
+    },
+    fuel: { 
+      type: '93', 
+      injectorCc: null, 
+      fuelPump: '',
+      fuelPumpLph: null, // liters per hour flow
+      fuelRails: false,
+      flexFuel: false,
+      baseFuelPressure: null, // base fuel pressure PSI
+      returnStyle: false, // return style fuel system
+    },
+    power_adders: {
+      methanol: false, // methanol/water injection
+      methanolRatio: null, // methanol percentage (50%, 100%)
+      methanolNozzleSize: null, // nozzle size
+      nitrous: false,
+      nitrousType: 'none', // none, dry, wet
+      nitrousShot: null, // shot size in HP
+    },
+    ecu: {
+      type: 'stock', // stock, flash, standalone, piggyback
+      ecuBrand: '', // Haltech, AEM, Link, MoTeC, etc.
+      tuner: '', // tuner name/company
+      dynoTuned: false,
+      flexFuelTuned: false,
+      boostByGear: false,
+      launchControl: false,
+      antiLag: false,
+    },
+    drivetrain: {
+      clutch: 'stock', // stock, stage1, stage2, stage3, twin-disc
+      flywheel: 'stock', // stock, lightweight, single-mass
+      transmission: 'stock', // stock, built, swap
+      transType: 'manual', // manual, dct, auto, cvt
+      finalDrive: null, // final drive ratio
+      differential: 'stock', // stock, lsd, upgraded
+      drivetrainLoss: null, // override drivetrain loss %
+      torqueConverter: 'stock', // for auto (stock, stall converter)
+      stallSpeed: null, // stall converter RPM
+    },
+    weight: {
+      stockWeight: null, // override stock weight
+      weightReduction: 0, // lbs removed (negative = added)
+      hasRollCage: false,
+      strippedInterior: false,
+      carbonParts: [], // hood, trunk, roof, fenders
+      driverWeight: 180, // driver weight for calcs
+    },
+    suspension: {
+      type: 'stock', // stock, lowering-springs, coilovers, air
+      rideHeightDrop: 0, // inches dropped from stock
+      springRateFront: null, // lbs/in
+      springRateRear: null, // lbs/in
+      damperAdjustable: false,
+      swayBarFront: 'stock', // stock, upgraded, adjustable
+      swayBarRear: 'stock', // stock, upgraded, adjustable, removed
+      strutBar: false, // front strut bar
+      rearStrutBar: false,
+      subframeBrace: false,
+      alignment: 'stock', // stock, street, aggressive, track
+      camberFront: null, // degrees negative
+      camberRear: null,
+    },
+    brakes: {
+      padCompound: 'stock', // stock, street-performance, track, race
+      rotorType: 'stock', // stock, slotted, drilled, slotted-drilled, 2-piece
+      rotorSizeFront: null, // diameter in mm
+      bbkFront: false, // big brake kit
+      bbkRear: false,
+      caliperPistons: null, // 4, 6, 8 piston
+      brakeLine: 'stock', // stock, stainless
+      brakeFluid: 'dot3', // dot3, dot4, dot5.1, racing
+      brakeDuct: false, // brake cooling ducts
+    },
+    aero: {
+      frontSplitter: 'none', // none, lip, splitter, splitter-rods
+      rearWing: 'none', // none, lip-spoiler, duckbill, gt-wing-low, gt-wing-high
+      diffuser: false,
+      sideSkirts: false,
+      canards: false,
+      flatBottom: false, // underbody panels
+      downforceLevel: 'stock', // stock, mild, moderate, aggressive, max
+    },
+    wheels: {
+      type: 'stock', // stock, aftermarket, forged
+      weightPerWheel: null, // lbs per wheel
+      widthFront: null, // inches
+      widthRear: null, // inches
+      diameterFront: null, // inches
+      diameterRear: null, // inches
+      offsetFront: null, // mm
+      offsetRear: null,
+      spacers: false,
+    },
+    tires: {
+      compound: 'summer', // all-season, summer, max-performance, r-comp, drag-radial, slick
+      width: null, // tire width mm
+      aspect: null, // aspect ratio
+      diameter: null, // wheel diameter
+      tirePressure: null, // hot pressure PSI
+    },
+    environment: {
+      altitude: 0, // feet above sea level
+      ambientTemp: 70, // degrees F
+      humidity: 50, // percentage
+      densityAltitude: null, // calculated or override
+    },
+    cooling: {
+      radiator: 'stock', // stock, aluminum, dual-pass
+      radiatorRows: null, // number of rows
+      oilCooler: false,
+      oilCoolerSize: null, // plate count
+      transCooler: false,
+      icSprayer: false, // intercooler sprayer
+    },
+    verified: {
+      hasDyno: false,
+      whp: null,
+      wtq: null,
+      dynoType: 'dynojet', // dynojet, mustang, hub
+      correctionFactor: 'SAE', // SAE, STD, uncorrected
+      dynoShop: '',
+      dynoDate: null,
+      quarterMile: null,
+      quarterMileTrap: null, // trap speed MPH
+      sixtyFoot: null, // 60ft time
+      zeroToSixty: null,
+      zeroToHundred: null,
+      rollRace: null, // 40-140, 60-130, etc format
+    },
+  });
+  
+  // Turbo library options (loaded from database)
+  const [turboOptions, setTurboOptions] = useState([]);
+  const [loadingTurbos, setLoadingTurbos] = useState(false);
+  
+  // Expandable detail sections in Advanced mode
+  const [expandedSections, setExpandedSections] = useState({
+    engineDetails: false,
+    turboDetails: false,
+    fuelDetails: false,
+    drivetrainDetails: false,
+    verifiedDetails: false,
+  });
+  
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   // Defensive: use safe car slug for effects - prevents crashes if car is undefined
   const safeCarSlug = car?.slug || '';
@@ -734,7 +1408,53 @@ export default function UpgradeCenter({
     setSelectedPackage('stock');
     setCurrentBuildId(null);
     setActiveCategory(null);
+    // Reset advanced specs but keep mode
+    setAdvancedSpecs({
+      engine: { type: 'stock', cams: 'stock', camDuration: null, headWork: false, displacement: 2.0, internals: 'stock', compression: null, valvetrain: 'stock', blockType: 'stock' },
+      intake: { type: 'stock', throttleBody: 'stock', throttleBodyMm: null, manifold: 'stock' },
+      exhaust: { headers: 'stock', downpipe: 'stock', downpipeDiameter: null, catback: 'stock', exhaustDiameter: null },
+      turbo: { type: 'stock', modelId: null, customModel: '', inducerMm: null, exducerMm: null, targetBoostPsi: null, peakBoostPsi: null, compressorAR: null, turbineAR: null, twinScroll: false, ballBearing: true, wastegate: 'stock', wastegateSpring: null, intercooler: 'stock', intercoolerSize: null, boostController: 'none' },
+      fuel: { type: '93', injectorCc: null, fuelPump: '', fuelPumpLph: null, fuelRails: false, flexFuel: false, baseFuelPressure: null, returnStyle: false },
+      power_adders: { methanol: false, methanolRatio: null, methanolNozzleSize: null, nitrous: false, nitrousType: 'none', nitrousShot: null },
+      ecu: { type: 'stock', ecuBrand: '', tuner: '', dynoTuned: false, flexFuelTuned: false, boostByGear: false, launchControl: false, antiLag: false },
+      drivetrain: { clutch: 'stock', flywheel: 'stock', transmission: 'stock', transType: 'manual', finalDrive: null, differential: 'stock', drivetrainLoss: null, torqueConverter: 'stock', stallSpeed: null },
+      weight: { stockWeight: null, weightReduction: 0, hasRollCage: false, strippedInterior: false, carbonParts: [], driverWeight: 180 },
+      suspension: { type: 'stock', rideHeightDrop: 0, springRateFront: null, springRateRear: null, damperAdjustable: false, swayBarFront: 'stock', swayBarRear: 'stock', strutBar: false, rearStrutBar: false, subframeBrace: false, alignment: 'stock', camberFront: null, camberRear: null },
+      brakes: { padCompound: 'stock', rotorType: 'stock', rotorSizeFront: null, bbkFront: false, bbkRear: false, caliperPistons: null, brakeLine: 'stock', brakeFluid: 'dot3', brakeDuct: false },
+      aero: { frontSplitter: 'none', rearWing: 'none', diffuser: false, sideSkirts: false, canards: false, flatBottom: false, downforceLevel: 'stock' },
+      wheels: { type: 'stock', weightPerWheel: null, widthFront: null, widthRear: null, diameterFront: null, diameterRear: null, offsetFront: null, offsetRear: null, spacers: false },
+      tires: { compound: 'summer', width: null, aspect: null, diameter: null, tirePressure: null },
+      environment: { altitude: 0, ambientTemp: 70, humidity: 50, densityAltitude: null },
+      cooling: { radiator: 'stock', radiatorRows: null, oilCooler: false, oilCoolerSize: null, transCooler: false, icSprayer: false },
+      verified: { hasDyno: false, whp: null, wtq: null, dynoType: 'dynojet', correctionFactor: 'SAE', dynoShop: '', dynoDate: null, quarterMile: null, quarterMileTrap: null, sixtyFoot: null, zeroToSixty: null, zeroToHundred: null, rollRace: null },
+    });
   }, [safeCarSlug]);
+  
+  // Load turbo options from database when advanced mode is enabled
+  useEffect(() => {
+    if (tunerMode !== 'advanced' || turboOptions.length > 0) return;
+    
+    async function loadTurboOptions() {
+      setLoadingTurbos(true);
+      try {
+        const { data, error } = await supabase
+          .from('turbo_models')
+          .select('*')
+          .order('brand')
+          .order('model');
+        
+        if (!error && data) {
+          setTurboOptions(data);
+        }
+      } catch (err) {
+        console.error('[UpgradeCenter] Error loading turbo options:', err);
+      } finally {
+        setLoadingTurbos(false);
+      }
+    }
+    
+    loadTurboOptions();
+  }, [tunerMode, turboOptions.length]);
   
   // Load initial build if provided
   useEffect(() => {
@@ -900,6 +1620,380 @@ export default function UpgradeCenter({
   const hasUpgradeEffects = selectedPackage !== 'stock' || tireGripBonus > 0;
   const showUpgrade = hasUpgradeEffects;
   const isCustomMode = selectedPackage === 'custom';
+  
+  // Calculate physics-based HP estimate for advanced mode
+  const advancedHpEstimate = useMemo(() => {
+    if (tunerMode !== 'advanced') return null;
+    
+    const stockHp = car?.hp || 300;
+    const stockBoost = 21; // Typical turbo car stock boost
+    
+    // If user has verified dyno results, use them (Tier 1)
+    if (advancedSpecs.verified?.hasDyno && advancedSpecs.verified?.whp) {
+      return {
+        whp: advancedSpecs.verified.whp,
+        gain: advancedSpecs.verified.whp - stockHp,
+        range: null,
+        confidence: 'high',
+        confidenceLabel: 'User verified dyno data',
+        tier: 1,
+      };
+    }
+    
+    // Find selected turbo data
+    const selectedTurbo = turboOptions.find(t => t.id === advancedSpecs.turbo?.modelId);
+    
+    let estimatedWhp = stockHp;
+    let range = null;
+    let confidence = 'medium';
+    let confidenceLabel = 'Physics estimate';
+    let calculations = [];
+    
+    // === ENGINE MULTIPLIER ===
+    let engineMultiplier = 1.0;
+    if (advancedSpecs.engine?.type === 'built' || advancedSpecs.engine?.type === 'stroked') {
+      // Built internals allow more power but don't add directly
+      engineMultiplier += 0.02;
+      
+      // Cams
+      if (advancedSpecs.engine.cams === 'stage3') engineMultiplier += 0.12;
+      else if (advancedSpecs.engine.cams === 'stage2') engineMultiplier += 0.07;
+      else if (advancedSpecs.engine.cams === 'stage1') engineMultiplier += 0.04;
+      
+      // Valvetrain
+      if (advancedSpecs.engine.valvetrain === 'titanium') engineMultiplier += 0.03;
+      else if (advancedSpecs.engine.valvetrain === 'upgraded') engineMultiplier += 0.01;
+      
+      // Head work
+      if (advancedSpecs.engine.headWork) engineMultiplier += 0.06;
+      
+      // Displacement (stroked)
+      if (advancedSpecs.engine.type === 'stroked' && advancedSpecs.engine.displacement) {
+        const stockDisplacement = 2.0; // Default, ideally from car data
+        engineMultiplier *= advancedSpecs.engine.displacement / stockDisplacement;
+      }
+    }
+    
+    // === INTAKE & EXHAUST MULTIPLIER ===
+    let breathingMultiplier = 1.0;
+    
+    // Intake
+    if (advancedSpecs.intake?.type === 'cold-air') breathingMultiplier += 0.02;
+    else if (advancedSpecs.intake?.type === 'short-ram') breathingMultiplier += 0.01;
+    
+    if (advancedSpecs.intake?.throttleBody === 'oversized') breathingMultiplier += 0.02;
+    else if (advancedSpecs.intake?.throttleBody === 'ported') breathingMultiplier += 0.01;
+    
+    // Exhaust - more significant for power
+    if (advancedSpecs.exhaust?.headers === 'long-tube') breathingMultiplier += 0.04;
+    else if (advancedSpecs.exhaust?.headers === 'equal-length') breathingMultiplier += 0.02;
+    
+    // Platform-specific downpipe gains (forum-validated)
+    // Some platforms (RS5 2.9T) have efficient factory DPs with minimal gain
+    // Others (B58, Evo X) have restrictive factory DPs with good gains
+    if (advancedSpecs.exhaust?.downpipe !== 'stock') {
+      const platformDpGain = getPlatformDownpipeGain(car);
+      const dpMultiplier = platformDpGain / stockHp;
+      // Catless adds ~20% more than catted
+      if (advancedSpecs.exhaust?.downpipe === 'catless') {
+        breathingMultiplier += dpMultiplier * 1.2;
+      } else {
+        breathingMultiplier += dpMultiplier;
+      }
+    }
+    
+    if (advancedSpecs.exhaust?.catback === 'turboback') breathingMultiplier += 0.02;
+    else if (advancedSpecs.exhaust?.catback === 'catback') breathingMultiplier += 0.01;
+    
+    // === FUEL MULTIPLIER ===
+    let fuelMultiplier = 1.0;
+    if (advancedSpecs.fuel?.type === 'e85') fuelMultiplier = 1.15;
+    else if (advancedSpecs.fuel?.type === 'e50') fuelMultiplier = 1.10;
+    else if (advancedSpecs.fuel?.type === 'e30') fuelMultiplier = 1.06;
+    else if (advancedSpecs.fuel?.type === '91') fuelMultiplier = 0.97;
+    
+    // Flex fuel with proper injectors enables full E85 potential
+    if (advancedSpecs.fuel?.flexFuel && advancedSpecs.fuel?.injectorCc >= 1000) {
+      fuelMultiplier *= 1.02; // Additional headroom
+    }
+    
+    // === ECU/TUNING BONUS ===
+    let tuneMultiplier = 1.0;
+    if (advancedSpecs.ecu?.type === 'standalone') tuneMultiplier += 0.05;
+    else if (advancedSpecs.ecu?.type === 'flash') tuneMultiplier += 0.02;
+    if (advancedSpecs.ecu?.dynoTuned) tuneMultiplier += 0.02;
+    if (advancedSpecs.ecu?.antiLag) tuneMultiplier += 0.02; // Better spool
+    
+    // === INTERCOOLER EFFICIENCY ===
+    let icMultiplier = 1.0;
+    if (advancedSpecs.turbo?.intercooler === 'air-to-water') icMultiplier = 1.05;
+    else if (advancedSpecs.turbo?.intercooler === 'fmic') icMultiplier = 1.03;
+    else if (advancedSpecs.turbo?.intercooler === 'tmic') icMultiplier = 1.01;
+    if (advancedSpecs.cooling?.icSprayer) icMultiplier *= 1.02; // IC sprayer bonus
+    
+    // === POWER ADDERS ===
+    let powerAdderHp = 0;
+    
+    // Methanol injection: +8-15% depending on concentration
+    if (advancedSpecs.power_adders?.methanol) {
+      const methRatio = advancedSpecs.power_adders.methanolRatio || '50';
+      if (methRatio === '100') powerAdderHp += stockHp * 0.15;
+      else if (methRatio === '50') powerAdderHp += stockHp * 0.10;
+      else if (methRatio === '30') powerAdderHp += stockHp * 0.06;
+      else powerAdderHp += stockHp * 0.03; // Water only - cooling benefit
+    }
+    
+    // Nitrous: direct HP addition
+    if (advancedSpecs.power_adders?.nitrous && advancedSpecs.power_adders.nitrousShot) {
+      powerAdderHp += advancedSpecs.power_adders.nitrousShot;
+    }
+    
+    // === ENVIRONMENT CORRECTION ===
+    let environmentMultiplier = 1.0;
+    const altitude = advancedSpecs.environment?.altitude || 0;
+    const ambientTemp = advancedSpecs.environment?.ambientTemp || 70;
+    
+    // Altitude correction: ~3% loss per 1000ft for turbo cars (less than NA)
+    // Turbo can compensate somewhat, but intercooler efficiency drops
+    if (altitude > 0) {
+      const altitudeLoss = (altitude / 1000) * 0.02; // 2% per 1000ft for turbo
+      environmentMultiplier *= (1 - altitudeLoss);
+    }
+    
+    // Temperature correction: ~1% loss per 10°F above 60°F
+    if (ambientTemp > 60) {
+      const tempLoss = ((ambientTemp - 60) / 10) * 0.01;
+      environmentMultiplier *= (1 - Math.min(tempLoss, 0.15)); // Cap at 15% loss
+    }
+    
+    // === TURBO CALCULATION ===
+    if (advancedSpecs.turbo?.type === 'upgraded' || advancedSpecs.turbo?.type === 'custom') {
+      // Method 1: Turbo library data (best)
+      if (selectedTurbo && selectedTurbo.flow_hp_min && selectedTurbo.flow_hp_max) {
+        const turboEfficiency = advancedSpecs.turbo?.ballBearing !== false ? 0.78 : 0.72; // Journal bearing less efficient
+        const allMultipliers = engineMultiplier * breathingMultiplier * fuelMultiplier * tuneMultiplier * icMultiplier * environmentMultiplier;
+        const flowMidpoint = (selectedTurbo.flow_hp_min + selectedTurbo.flow_hp_max) / 2;
+        const turboHp = Math.round((flowMidpoint * turboEfficiency * allMultipliers) + powerAdderHp);
+        
+        calculations.push({ method: 'turbo_flow', hp: turboHp, weight: 0.4 });
+        
+        range = {
+          low: Math.round((selectedTurbo.flow_hp_min * turboEfficiency * fuelMultiplier * 0.95 * environmentMultiplier) + powerAdderHp),
+          high: Math.round((selectedTurbo.flow_hp_max * turboEfficiency * allMultipliers) + powerAdderHp),
+        };
+        confidence = 'high';
+        confidenceLabel = `Based on ${selectedTurbo.model} flow`;
+      }
+      
+      // Method 2: Inducer size
+      if (advancedSpecs.turbo.inducerMm) {
+        const inducer = advancedSpecs.turbo.inducerMm;
+        const hpPotential = Math.pow(inducer / 50, 2.3) * 400;
+        const allMultipliers = engineMultiplier * breathingMultiplier * fuelMultiplier * tuneMultiplier * icMultiplier * environmentMultiplier;
+        const inducerHp = Math.round((hpPotential * allMultipliers * 0.85) + powerAdderHp);
+        calculations.push({ method: 'inducer', hp: inducerHp, weight: 0.25 });
+        
+        if (!range) {
+          range = { low: Math.round(inducerHp * 0.88), high: Math.round(inducerHp * 1.08) };
+        }
+        
+        if (confidence !== 'high') {
+          confidenceLabel = `${inducer}mm inducer estimate`;
+        }
+      }
+      
+      // Method 3: Target boost pressure ratio
+      if (advancedSpecs.turbo.targetBoostPsi) {
+        const pr = (14.7 + advancedSpecs.turbo.targetBoostPsi) / (14.7 + stockBoost);
+        const boostGain = (pr - 1) * 0.70;
+        const allMultipliers = engineMultiplier * breathingMultiplier * fuelMultiplier * tuneMultiplier * icMultiplier * environmentMultiplier;
+        const boostHp = Math.round((stockHp * (1 + boostGain) * allMultipliers) + powerAdderHp);
+        calculations.push({ method: 'boost', hp: boostHp, weight: 0.25 });
+        
+        if (confidence !== 'high') {
+          confidenceLabel = `@ ${advancedSpecs.turbo.targetBoostPsi} PSI`;
+        }
+      }
+      
+      // Generic fallback
+      if (calculations.length === 0) {
+        const genericMult = advancedSpecs.turbo.type === 'custom' ? 1.8 : 1.5;
+        const allMultipliers = engineMultiplier * breathingMultiplier * fuelMultiplier * tuneMultiplier * icMultiplier * environmentMultiplier;
+        estimatedWhp = Math.round((stockHp * genericMult * allMultipliers) + powerAdderHp);
+        confidence = 'low';
+        confidenceLabel = 'Select turbo for better estimate';
+      }
+    } else {
+      // No turbo upgrade - use actual module HP gains from selected upgrades
+      const allMultipliers = engineMultiplier * breathingMultiplier * fuelMultiplier * tuneMultiplier * environmentMultiplier;
+      
+      // Calculate actual HP gains from selected modules
+      let moduleHpGain = 0;
+      effectiveModules.forEach(moduleKey => {
+        const upgrade = getUpgradeByKey(moduleKey);
+        if (upgrade?.metricChanges?.hpGain) {
+          moduleHpGain += upgrade.metricChanges.hpGain;
+        }
+      });
+      
+      // Apply multipliers to the gains (e.g., E85 makes tune more effective)
+      const adjustedModuleGain = Math.round(moduleHpGain * allMultipliers);
+      estimatedWhp = Math.round(stockHp + adjustedModuleGain + powerAdderHp);
+      
+      if (moduleHpGain > 0) {
+        confidenceLabel = `Based on ${effectiveModules.length} modifications`;
+        confidence = 'medium';
+      } else {
+        confidenceLabel = 'Select modifications for estimate';
+        confidence = 'low';
+      }
+    }
+    
+    // Weighted average of calculations
+    if (calculations.length > 0) {
+      const totalWeight = calculations.reduce((sum, c) => sum + c.weight, 0);
+      estimatedWhp = Math.round(calculations.reduce((sum, c) => sum + c.hp * c.weight, 0) / totalWeight);
+      
+      // Improve confidence if multiple methods agree
+      if (calculations.length >= 2) {
+        const variance = Math.max(...calculations.map(c => c.hp)) - Math.min(...calculations.map(c => c.hp));
+        if (variance < estimatedWhp * 0.1) {
+          confidence = 'high';
+        }
+      }
+    }
+    
+    // Build environment context for label
+    let envNote = '';
+    if (altitude > 1000 || ambientTemp > 85) {
+      envNote = ` (${altitude > 1000 ? altitude.toLocaleString() + 'ft' : ''}${altitude > 1000 && ambientTemp > 85 ? ', ' : ''}${ambientTemp > 85 ? ambientTemp + '°F' : ''})`;
+    }
+    
+    // === HANDLING SCORE CALCULATION ===
+    let handlingScore = 100; // Base score (stock)
+    
+    // Suspension improvements
+    const suspType = advancedSpecs.suspension?.type || 'stock';
+    if (suspType === 'lowering-springs') handlingScore += 8;
+    else if (suspType === 'coilovers') handlingScore += 15;
+    else if (suspType === 'coilovers-race') handlingScore += 25;
+    
+    // Sway bars
+    if (advancedSpecs.suspension?.swayBarFront === 'upgraded') handlingScore += 3;
+    else if (advancedSpecs.suspension?.swayBarFront === 'adjustable') handlingScore += 5;
+    if (advancedSpecs.suspension?.swayBarRear === 'upgraded') handlingScore += 2;
+    else if (advancedSpecs.suspension?.swayBarRear === 'adjustable') handlingScore += 4;
+    
+    // Chassis bracing
+    if (advancedSpecs.suspension?.strutBar) handlingScore += 3;
+    if (advancedSpecs.suspension?.subframeBrace) handlingScore += 4;
+    
+    // Alignment (more camber = more grip in corners)
+    const alignment = advancedSpecs.suspension?.alignment || 'stock';
+    if (alignment === 'street') handlingScore += 5;
+    else if (alignment === 'aggressive') handlingScore += 10;
+    else if (alignment === 'track') handlingScore += 15;
+    
+    // Tires (huge impact)
+    const tireCompound = advancedSpecs.tires?.compound || 'summer';
+    const tireHandlingBonus = {
+      'all-season': -10,
+      'summer': 0,
+      'max-performance': 10,
+      'r-comp': 25,
+      'drag-radial': 5, // Good straight line, not corners
+      'slick': 35,
+    };
+    handlingScore += tireHandlingBonus[tireCompound] || 0;
+    
+    // Aero (more downforce = better cornering at speed)
+    const frontAero = advancedSpecs.aero?.frontSplitter || 'none';
+    if (frontAero === 'lip') handlingScore += 2;
+    else if (frontAero === 'splitter') handlingScore += 5;
+    else if (frontAero === 'splitter-rods') handlingScore += 8;
+    
+    const rearAero = advancedSpecs.aero?.rearWing || 'none';
+    if (rearAero === 'lip-spoiler') handlingScore += 2;
+    else if (rearAero === 'duckbill') handlingScore += 4;
+    else if (rearAero === 'gt-wing-low') handlingScore += 8;
+    else if (rearAero === 'gt-wing-high') handlingScore += 12;
+    
+    if (advancedSpecs.aero?.diffuser) handlingScore += 6;
+    if (advancedSpecs.aero?.canards) handlingScore += 3;
+    if (advancedSpecs.aero?.flatBottom) handlingScore += 4;
+    
+    // Wheels (lighter = better response)
+    const wheelType = advancedSpecs.wheels?.type || 'stock';
+    if (wheelType === 'aftermarket') handlingScore += 2;
+    else if (wheelType === 'flow-formed') handlingScore += 4;
+    else if (wheelType === 'forged') handlingScore += 7;
+    
+    // === BRAKING SCORE CALCULATION ===
+    let brakingScore = 100; // Base score (stock)
+    
+    // Pad compound
+    const padCompound = advancedSpecs.brakes?.padCompound || 'stock';
+    if (padCompound === 'street-performance') brakingScore += 10;
+    else if (padCompound === 'track') brakingScore += 20;
+    else if (padCompound === 'race') brakingScore += 30;
+    
+    // Rotors
+    const rotorType = advancedSpecs.brakes?.rotorType || 'stock';
+    if (rotorType === 'slotted' || rotorType === 'drilled') brakingScore += 5;
+    else if (rotorType === 'slotted-drilled') brakingScore += 7;
+    else if (rotorType === '2-piece') brakingScore += 12;
+    
+    // Big brake kit
+    if (advancedSpecs.brakes?.bbkFront) brakingScore += 20;
+    if (advancedSpecs.brakes?.bbkRear) brakingScore += 10;
+    
+    // Fluid & lines
+    const brakeFluid = advancedSpecs.brakes?.brakeFluid || 'dot3';
+    if (brakeFluid === 'dot4') brakingScore += 3;
+    else if (brakeFluid === 'dot5.1') brakingScore += 5;
+    else if (brakeFluid === 'racing') brakingScore += 8;
+    
+    if (advancedSpecs.brakes?.brakeLine === 'stainless') brakingScore += 5;
+    if (advancedSpecs.brakes?.brakeDuct) brakingScore += 5;
+    
+    // Tires affect braking too
+    const tireBrakingBonus = {
+      'all-season': -15,
+      'summer': 0,
+      'max-performance': 10,
+      'r-comp': 20,
+      'drag-radial': 5,
+      'slick': 25,
+    };
+    brakingScore += tireBrakingBonus[tireCompound] || 0;
+    
+    // === TOP SPEED EFFECT (Aero drag) ===
+    let topSpeedDelta = 0; // mph change from stock
+    // More aero = more drag = lower top speed (but better cornering)
+    if (frontAero === 'splitter') topSpeedDelta -= 2;
+    else if (frontAero === 'splitter-rods') topSpeedDelta -= 4;
+    if (rearAero === 'gt-wing-low') topSpeedDelta -= 5;
+    else if (rearAero === 'gt-wing-high') topSpeedDelta -= 12;
+    if (advancedSpecs.aero?.diffuser) topSpeedDelta -= 2;
+    // More power can offset
+    const powerBonus = Math.floor((estimatedWhp - stockHp) / 20);
+    topSpeedDelta += powerBonus;
+    
+    return {
+      whp: estimatedWhp,
+      gain: estimatedWhp - stockHp,
+      range,
+      confidence,
+      confidenceLabel: confidenceLabel + envNote,
+      tier: confidence === 'high' ? 2 : confidence === 'medium' ? 3 : 4,
+      powerAdderHp,
+      environmentMultiplier,
+      // New handling/braking metrics
+      handlingScore: Math.round(handlingScore),
+      brakingScore: Math.round(brakingScore),
+      topSpeedDelta,
+    };
+  }, [tunerMode, car, advancedSpecs, turboOptions, effectiveModules]);
   
   // Tunability & Recommendations (with guards for missing car)
   const tunability = useMemo(() => {
@@ -1265,28 +2359,62 @@ export default function UpgradeCenter({
               {/* Tunability Score - Top Right */}
               <div className={styles.tunabilityBadge} style={{ '--score-color': getTunabilityColor(tunability.score) }}>
                 <span className={styles.tunabilityScore}>{tunability.score}/10</span>
-                <span className={styles.tunabilityLabel}>Tunability Score</span>
+                <span className={styles.tunabilityLabel}>Tunability</span>
               </div>
             </div>
             
-            {/* Quick Stats Grid */}
+            {/* Quick Stats Grid - Shows physics estimate in advanced mode */}
             <div className={styles.heroStats}>
               <div className={styles.heroStat}>
                 <span className={styles.heroStatValue}>{car.hp || 'N/A'}</span>
                 <span className={styles.heroStatLabel}>Stock HP</span>
               </div>
-              <div className={styles.heroStat}>
-                <span className={styles.heroStatValue} style={{ color: '#10b981' }}>+{hpGain}</span>
-                <span className={styles.heroStatLabel}>HP Gain</span>
-              </div>
-              <div className={styles.heroStat}>
-                <span className={styles.heroStatValue}>{profile.upgradedMetrics.hp}</span>
-                <span className={styles.heroStatLabel}>Final HP</span>
-              </div>
-              <div className={styles.heroStat}>
-                <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
-                <span className={styles.heroStatLabel}>Est. Cost</span>
-              </div>
+              {tunerMode === 'advanced' && advancedHpEstimate ? (
+                <>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue} style={{ color: '#10b981' }}>
+                      +{advancedHpEstimate.gain}
+                    </span>
+                    <span className={styles.heroStatLabel}>HP Gain</span>
+                  </div>
+                  <div className={styles.heroStat}>
+                    {advancedHpEstimate.range ? (
+                      <>
+                        <span className={styles.heroStatValue}>
+                          {advancedHpEstimate.range.low}-{advancedHpEstimate.range.high}
+                        </span>
+                        <span className={styles.heroStatLabel}>Est. HP Range</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={styles.heroStatValue}>{advancedHpEstimate.whp}</span>
+                        <span className={styles.heroStatLabel}>Est. HP</span>
+                      </>
+                    )}
+                  </div>
+                  <div className={styles.heroStat}>
+                    <span className={`${styles.heroStatValue} ${styles[`confidence${advancedHpEstimate.confidence.charAt(0).toUpperCase() + advancedHpEstimate.confidence.slice(1)}`]}`}>
+                      Tier {advancedHpEstimate.tier}
+                    </span>
+                    <span className={styles.heroStatLabel}>{advancedHpEstimate.confidenceLabel}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue} style={{ color: '#10b981' }}>+{hpGain}</span>
+                    <span className={styles.heroStatLabel}>HP Gain</span>
+                  </div>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue}>{profile.upgradedMetrics.hp}</span>
+                    <span className={styles.heroStatLabel}>Final HP</span>
+                  </div>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
+                    <span className={styles.heroStatLabel}>Est. Cost</span>
+                  </div>
+                </>
+              )}
             </div>
             
             {/* AutoRev Recommendation - Integrated */}
@@ -1371,131 +2499,1670 @@ export default function UpgradeCenter({
         </div>
       </div>
       
+      {/* Tuning Mode Toggle - Full Width */}
+      <div className={styles.modeToggleSection}>
+        <div className={styles.modeToggleFullWidth}>
+          <button
+            className={`${styles.modeToggleBtn} ${tunerMode === 'basic' ? styles.modeToggleBtnActive : ''}`}
+            onClick={() => setTunerMode('basic')}
+          >
+            <Icons.settings size={18} />
+            <div className={styles.modeToggleBtnContent}>
+              <span className={styles.modeToggleBtnTitle}>Basic Tuning</span>
+              <span className={styles.modeToggleBtnDesc}>Presets & category-based upgrades</span>
+            </div>
+          </button>
+          <button
+            className={`${styles.modeToggleBtn} ${tunerMode === 'advanced' ? styles.modeToggleBtnActive : ''}`}
+            onClick={() => setTunerMode('advanced')}
+          >
+            <Icons.brain size={18} />
+            <div className={styles.modeToggleBtnContent}>
+              <span className={styles.modeToggleBtnTitle}>Advanced Tuning</span>
+              <span className={styles.modeToggleBtnDesc}>Physics-based with virtual dyno</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      
       {/* Modification Workspace - Build Presets, Categories & Performance */}
       <div className={styles.workspace}>
         {/* Left Sidebar - Build Configuration */}
         <div className={styles.sidebar}>
-          {/* Build Presets Card */}
-          <div className={styles.sidebarCard}>
-            <div className={styles.sidebarCardHeader}>
-              <Icons.settings size={16} />
-              <span className={styles.sidebarCardTitle}>Build Preset</span>
-            </div>
-            <div className={styles.sidebarCardContent}>
-              <div className={styles.packageGrid}>
-                {PACKAGES.map(pkg => (
-                  <button
-                    key={pkg.key}
-                    className={`${styles.pkgBtn} ${selectedPackage === pkg.key ? styles.pkgBtnActive : ''}`}
-                    onClick={() => handlePackageSelect(pkg.key)}
-                  >
-                    {pkg.label}
-                  </button>
-                ))}
+          {/* Build Presets Card - Basic Mode Only */}
+          {tunerMode === 'basic' && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.settings size={16} />
+                <span className={styles.sidebarCardTitle}>Build Preset</span>
               </div>
-            </div>
-          </div>
-          
-          {/* Upgrade Categories Card */}
-          <div className={styles.sidebarCard}>
-            <div className={styles.sidebarCardHeader}>
-              <Icons.bolt size={16} />
-              <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
-            </div>
-            <div className={styles.sidebarCardContent}>
-              <div className={styles.categoryList}>
-                {UPGRADE_CATEGORIES.filter(cat => 
-                  // Skip wheels category - its upgrade is in WheelTireConfigurator
-                  cat.key !== 'wheels' && 
-                  (upgradesByCategory[cat.key]?.length || 0) > 0
-                ).map(cat => {
-                  const Icon = cat.icon;
-                  const count = selectedByCategory[cat.key] || 0;
-                  const totalAvailable = upgradesByCategory[cat.key]?.length || 0;
-                  
-                  return (
+              <div className={styles.sidebarCardContent}>
+                <div className={styles.packageGrid}>
+                  {PACKAGES.map(pkg => (
                     <button
-                      key={cat.key}
-                      className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
-                      onClick={() => setActiveCategory(cat.key)}
-                      style={{ '--cat-color': cat.color }}
+                      key={pkg.key}
+                      className={`${styles.pkgBtn} ${selectedPackage === pkg.key ? styles.pkgBtnActive : ''}`}
+                      onClick={() => handlePackageSelect(pkg.key)}
                     >
-                      <Icon size={16} />
-                      <span>{cat.label}</span>
-                      {count > 0 && (
-                        <span className={styles.catBadge}>{count}</span>
-                      )}
-                      <Icons.chevronRight size={14} className={styles.catArrow} />
+                      {pkg.label}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          
+          {/* Upgrade Categories Card - Basic Mode */}
+          {tunerMode === 'basic' && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.bolt size={16} />
+                <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
+              </div>
+              <div className={styles.sidebarCardContent}>
+                <div className={styles.categoryList}>
+                  {UPGRADE_CATEGORIES.filter(cat => 
+                    cat.key !== 'wheels' && 
+                    (upgradesByCategory[cat.key]?.length || 0) > 0
+                  ).map(cat => {
+                    const Icon = cat.icon;
+                    const count = selectedByCategory[cat.key] || 0;
+                    
+                    return (
+                      <button
+                        key={cat.key}
+                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                        onClick={() => setActiveCategory(cat.key)}
+                        style={{ '--cat-color': cat.color }}
+                      >
+                        <Icon size={16} />
+                        <span>{cat.label}</span>
+                        {count > 0 && (
+                          <span className={styles.catBadge}>{count}</span>
+                        )}
+                        <Icons.chevronRight size={14} className={styles.catArrow} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Advanced Build Configuration - Advanced Mode */}
+          {tunerMode === 'advanced' && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.settings size={16} />
+                <span className={styles.sidebarCardTitle}>Build Configuration</span>
+              </div>
+              <div className={`${styles.sidebarCardContent} ${styles.advancedScrollable}`}>
+                
+                {/* ENGINE SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.bolt size={14} />
+                    <span>Engine</span>
+                  </div>
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Build Type</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.engine.type}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        engine: { ...prev.engine, type: e.target.value }
+                      }))}
+                    >
+                      <option value="stock">Stock Internals</option>
+                      <option value="built">Built (Forged Internals)</option>
+                      <option value="stroked">Stroked / Destroked</option>
+                    </select>
+                  </div>
+                  
+                  {(advancedSpecs.engine.type === 'built' || advancedSpecs.engine.type === 'stroked') && (
+                    <>
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Cams</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.engine.cams}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              engine: { ...prev.engine, cams: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock</option>
+                            <option value="stage1">Stage 1 (+4%)</option>
+                            <option value="stage2">Stage 2 (+7%)</option>
+                            <option value="stage3">Stage 3 (+12%)</option>
+                          </select>
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Valvetrain</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.engine.valvetrain}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              engine: { ...prev.engine, valvetrain: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock</option>
+                            <option value="upgraded">Upgraded Springs</option>
+                            <option value="titanium">Titanium Retainers</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className={styles.advancedCheckbox}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={advancedSpecs.engine.headWork}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              engine: { ...prev.engine, headWork: e.target.checked }
+                            }))}
+                          />
+                          <span>Ported Head (+6% flow)</span>
+                        </label>
+                      </div>
+                    </>
+                  )}
+                  
+                  {advancedSpecs.engine.type === 'stroked' && (
+                    <div className={styles.advancedFieldRow}>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Displacement (L)</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          value={advancedSpecs.engine.displacement}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            engine: { ...prev.engine, displacement: parseFloat(e.target.value) || 2.0 }
+                          }))}
+                          step="0.1"
+                          min="1.5"
+                          max="4.5"
+                        />
+                      </div>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Compression</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          placeholder="9.0"
+                          value={advancedSpecs.engine.compression || ''}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            engine: { ...prev.engine, compression: parseFloat(e.target.value) || null }
+                          }))}
+                          step="0.1"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* INTAKE & EXHAUST SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.wind size={14} />
+                    <span>Intake & Exhaust</span>
+                  </div>
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Intake</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.intake.type}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          intake: { ...prev.intake, type: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="cold-air">Cold Air Intake</option>
+                        <option value="short-ram">Short Ram</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Throttle Body</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.intake.throttleBody}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          intake: { ...prev.intake, throttleBody: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="ported">Ported</option>
+                        <option value="oversized">Oversized</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Headers</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.exhaust.headers}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          exhaust: { ...prev.exhaust, headers: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock / Manifold</option>
+                        <option value="equal-length">Equal Length</option>
+                        <option value="long-tube">Long Tube</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Downpipe</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.exhaust.downpipe}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          exhaust: { ...prev.exhaust, downpipe: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="catted">Catted</option>
+                        <option value="catless">Catless</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Exhaust System</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.exhaust.catback}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        exhaust: { ...prev.exhaust, catback: e.target.value }
+                      }))}
+                    >
+                      <option value="stock">Stock</option>
+                      <option value="axleback">Axle-Back</option>
+                      <option value="catback">Cat-Back</option>
+                      <option value="turboback">Turbo-Back</option>
+                    </select>
+                  </div>
+                </div>
+                
+                {/* FORCED INDUCTION SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.turbo size={14} />
+                    <span>Forced Induction</span>
+                  </div>
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Turbo Setup</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.turbo.type}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        turbo: { ...prev.turbo, type: e.target.value, modelId: null }
+                      }))}
+                    >
+                      <option value="stock">Stock Turbo</option>
+                      <option value="upgraded">Bolt-On Upgrade</option>
+                      <option value="custom">Big Turbo / Custom</option>
+                    </select>
+                  </div>
+                  
+                  {(advancedSpecs.turbo.type === 'upgraded' || advancedSpecs.turbo.type === 'custom') && (
+                    <>
+                      <div className={styles.advancedField}>
+                        <label className={styles.advancedLabel}>
+                          Turbo Model
+                          {loadingTurbos && <span className={styles.loadingDot}>...</span>}
+                        </label>
+                        <select
+                          className={styles.advancedSelect}
+                          value={advancedSpecs.turbo.modelId || ''}
+                          onChange={e => {
+                            const turboId = e.target.value || null;
+                            const turbo = turboOptions.find(t => t.id === turboId);
+                            setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { 
+                                ...prev.turbo, 
+                                modelId: turboId,
+                                customModel: turbo ? `${turbo.brand} ${turbo.model}` : '',
+                                inducerMm: turbo?.inducer_mm || prev.turbo.inducerMm,
+                              }
+                            }));
+                          }}
+                        >
+                          <option value="">Select from library...</option>
+                          {turboOptions.map(turbo => (
+                            <option key={turbo.id} value={turbo.id}>
+                              {turbo.brand} {turbo.model} ({turbo.flow_hp_min}-{turbo.flow_hp_max} HP)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      {!advancedSpecs.turbo.modelId && (
+                        <div className={styles.advancedField}>
+                          <label className={styles.advancedLabel}>Or Enter Custom</label>
+                          <input
+                            type="text"
+                            className={styles.advancedInput}
+                            placeholder="e.g., GTX3582R Gen 2"
+                            value={advancedSpecs.turbo.customModel}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { ...prev.turbo, customModel: e.target.value }
+                            }))}
+                          />
+                        </div>
+                      )}
+                      
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Inducer (mm)</label>
+                          <input
+                            type="number"
+                            className={styles.advancedInput}
+                            placeholder="58"
+                            value={advancedSpecs.turbo.inducerMm || ''}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { ...prev.turbo, inducerMm: parseFloat(e.target.value) || null }
+                            }))}
+                          />
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Target PSI</label>
+                          <input
+                            type="number"
+                            className={styles.advancedInput}
+                            placeholder="30"
+                            value={advancedSpecs.turbo.targetBoostPsi || ''}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { ...prev.turbo, targetBoostPsi: parseFloat(e.target.value) || null }
+                            }))}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Wastegate</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.turbo.wastegate}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { ...prev.turbo, wastegate: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock / Internal</option>
+                            <option value="upgraded">Upgraded IWG</option>
+                            <option value="external">External WG</option>
+                          </select>
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Intercooler</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.turbo.intercooler}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              turbo: { ...prev.turbo, intercooler: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock</option>
+                            <option value="tmic">Upgraded TMIC</option>
+                            <option value="fmic">FMIC</option>
+                            <option value="air-to-water">Air-to-Water</option>
+                          </select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                
+                {/* FUEL SYSTEM SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.thermometer size={14} />
+                    <span>Fuel System</span>
+                  </div>
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Fuel Type</label>
+                    <div className={styles.fuelTypeGrid}>
+                      {['91', '93', 'e30', 'e50', 'e85'].map(fuel => (
+                        <button
+                          key={fuel}
+                          type="button"
+                          className={`${styles.fuelTypeBtn} ${advancedSpecs.fuel.type === fuel ? styles.fuelTypeBtnActive : ''}`}
+                          onClick={() => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            fuel: { ...prev.fuel, type: fuel }
+                          }))}
+                        >
+                          {fuel.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Injectors (cc)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="1000"
+                        value={advancedSpecs.fuel.injectorCc || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          fuel: { ...prev.fuel, injectorCc: parseInt(e.target.value) || null }
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Fuel Pump</label>
+                      <input
+                        type="text"
+                        className={styles.advancedInput}
+                        placeholder="Walbro 450"
+                        value={advancedSpecs.fuel.fuelPump}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          fuel: { ...prev.fuel, fuelPump: e.target.value }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedCheckboxRow}>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.fuel.fuelRails}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          fuel: { ...prev.fuel, fuelRails: e.target.checked }
+                        }))}
+                      />
+                      <span>Fuel Rails</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.fuel.flexFuel}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          fuel: { ...prev.fuel, flexFuel: e.target.checked }
+                        }))}
+                      />
+                      <span>Flex Fuel Kit</span>
+                    </label>
+                  </div>
+                </div>
+                
+                {/* ECU / TUNING SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.brain size={14} />
+                    <span>ECU & Tuning</span>
+                  </div>
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>ECU Type</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.ecu.type}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          ecu: { ...prev.ecu, type: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock ECU</option>
+                        <option value="flash">Flash Tune</option>
+                        <option value="piggyback">Piggyback</option>
+                        <option value="standalone">Standalone</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Tuner / Brand</label>
+                      <input
+                        type="text"
+                        className={styles.advancedInput}
+                        placeholder="e.g., EcuTek, AMS"
+                        value={advancedSpecs.ecu.tuner}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          ecu: { ...prev.ecu, tuner: e.target.value }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.advancedCheckbox}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.ecu.dynoTuned}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          ecu: { ...prev.ecu, dynoTuned: e.target.checked }
+                        }))}
+                      />
+                      <span>Dyno Tuned (vs E-Tune)</span>
+                    </label>
+                  </div>
+                </div>
+                
+                {/* DRIVETRAIN SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.settings size={14} />
+                    <span>Drivetrain</span>
+                  </div>
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Clutch</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.drivetrain.clutch}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          drivetrain: { ...prev.drivetrain, clutch: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="stage1">Stage 1</option>
+                        <option value="stage2">Stage 2</option>
+                        <option value="stage3">Stage 3</option>
+                        <option value="twin-disc">Twin Disc</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Flywheel</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.drivetrain.flywheel}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          drivetrain: { ...prev.drivetrain, flywheel: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock DMF</option>
+                        <option value="lightweight">Lightweight</option>
+                        <option value="single-mass">Single Mass</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Transmission</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.drivetrain.transmission}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          drivetrain: { ...prev.drivetrain, transmission: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="built">Built / Upgraded</option>
+                        <option value="swap">Swap</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Differential</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.drivetrain.differential}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          drivetrain: { ...prev.drivetrain, differential: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock</option>
+                        <option value="lsd">LSD</option>
+                        <option value="upgraded">Upgraded LSD</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* POWER ADDERS SECTION - Critical for HP */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.bolt size={14} />
+                    <span>Power Adders</span>
+                    <span className={styles.sectionHint}>+10-300 HP</span>
+                  </div>
+                  
+                  {/* Methanol/Water Injection */}
+                  <div className={styles.advancedCheckbox}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.power_adders?.methanol || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          power_adders: { ...prev.power_adders, methanol: e.target.checked }
+                        }))}
+                      />
+                      <span>Methanol / Water Injection</span>
+                    </label>
+                  </div>
+                  
+                  {advancedSpecs.power_adders?.methanol && (
+                    <div className={styles.advancedFieldRow}>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Meth %</label>
+                        <select
+                          className={styles.advancedSelect}
+                          value={advancedSpecs.power_adders.methanolRatio || '50'}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            power_adders: { ...prev.power_adders, methanolRatio: e.target.value }
+                          }))}
+                        >
+                          <option value="water">Water Only</option>
+                          <option value="30">30% Meth</option>
+                          <option value="50">50% Meth</option>
+                          <option value="100">100% Meth</option>
+                        </select>
+                      </div>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Nozzle Size</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          placeholder="1000cc"
+                          value={advancedSpecs.power_adders.methanolNozzleSize || ''}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            power_adders: { ...prev.power_adders, methanolNozzleSize: parseInt(e.target.value) || null }
+                          }))}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Nitrous */}
+                  <div className={styles.advancedCheckbox}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.power_adders?.nitrous || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          power_adders: { ...prev.power_adders, nitrous: e.target.checked, nitrousType: e.target.checked ? 'wet' : 'none' }
+                        }))}
+                      />
+                      <span>Nitrous Oxide</span>
+                    </label>
+                  </div>
+                  
+                  {advancedSpecs.power_adders?.nitrous && (
+                    <div className={styles.advancedFieldRow}>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Type</label>
+                        <select
+                          className={styles.advancedSelect}
+                          value={advancedSpecs.power_adders.nitrousType || 'wet'}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            power_adders: { ...prev.power_adders, nitrousType: e.target.value }
+                          }))}
+                        >
+                          <option value="dry">Dry</option>
+                          <option value="wet">Wet</option>
+                          <option value="direct-port">Direct Port</option>
+                        </select>
+                      </div>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Shot Size (HP)</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          placeholder="100"
+                          value={advancedSpecs.power_adders.nitrousShot || ''}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            power_adders: { ...prev.power_adders, nitrousShot: parseInt(e.target.value) || null }
+                          }))}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* SUSPENSION SECTION - Affects handling */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.target size={14} />
+                    <span>Suspension</span>
+                    <span className={styles.sectionHint}>Handling</span>
+                  </div>
+                  
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Setup Type</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.suspension?.type || 'stock'}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        suspension: { ...prev.suspension, type: e.target.value }
+                      }))}
+                    >
+                      <option value="stock">Stock</option>
+                      <option value="lowering-springs">Lowering Springs</option>
+                      <option value="coilovers">Coilovers</option>
+                      <option value="coilovers-race">Race Coilovers</option>
+                      <option value="air">Air Suspension</option>
+                    </select>
+                  </div>
+                  
+                  {advancedSpecs.suspension?.type !== 'stock' && (
+                    <>
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Drop (inches)</label>
+                          <input
+                            type="number"
+                            className={styles.advancedInput}
+                            placeholder="1.5"
+                            step="0.25"
+                            value={advancedSpecs.suspension?.rideHeightDrop || ''}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, rideHeightDrop: parseFloat(e.target.value) || 0 }
+                            }))}
+                          />
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Alignment</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.suspension?.alignment || 'stock'}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, alignment: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock Specs</option>
+                            <option value="street">Street (-1.5° front)</option>
+                            <option value="aggressive">Aggressive (-2.5° front)</option>
+                            <option value="track">Track (-3°+ front)</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Front Sway</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.suspension?.swayBarFront || 'stock'}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, swayBarFront: e.target.value }
+                            }))}
+                          >
+                            <option value="stock">Stock</option>
+                            <option value="upgraded">Upgraded</option>
+                            <option value="adjustable">Adjustable</option>
+                          </select>
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>Rear Sway</label>
+                          <select
+                            className={styles.advancedSelect}
+                            value={advancedSpecs.suspension?.swayBarRear || 'stock'}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, swayBarRear: e.target.value }
+                            }))}
+                          >
+                            <option value="removed">Removed</option>
+                            <option value="stock">Stock</option>
+                            <option value="upgraded">Upgraded</option>
+                            <option value="adjustable">Adjustable</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className={styles.advancedCheckboxRow}>
+                        <label className={styles.advancedCheckbox}>
+                          <input
+                            type="checkbox"
+                            checked={advancedSpecs.suspension?.strutBar || false}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, strutBar: e.target.checked }
+                            }))}
+                          />
+                          <span>Front Strut Bar</span>
+                        </label>
+                        <label className={styles.advancedCheckbox}>
+                          <input
+                            type="checkbox"
+                            checked={advancedSpecs.suspension?.subframeBrace || false}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              suspension: { ...prev.suspension, subframeBrace: e.target.checked }
+                            }))}
+                          />
+                          <span>Subframe Brace</span>
+                        </label>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* BRAKES SECTION - Affects stopping */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.disc size={14} />
+                    <span>Brakes</span>
+                    <span className={styles.sectionHint}>Stopping power</span>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Pad Compound</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.brakes?.padCompound || 'stock'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, padCompound: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock/OEM</option>
+                        <option value="street-performance">Street Performance</option>
+                        <option value="track">Track Day</option>
+                        <option value="race">Race Compound</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Rotor Type</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.brakes?.rotorType || 'stock'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, rotorType: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock/Blank</option>
+                        <option value="slotted">Slotted</option>
+                        <option value="drilled">Drilled</option>
+                        <option value="slotted-drilled">Slotted & Drilled</option>
+                        <option value="2-piece">2-Piece Floating</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Brake Fluid</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.brakes?.brakeFluid || 'dot3'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, brakeFluid: e.target.value }
+                        }))}
+                      >
+                        <option value="dot3">DOT 3</option>
+                        <option value="dot4">DOT 4</option>
+                        <option value="dot5.1">DOT 5.1</option>
+                        <option value="racing">Racing (Motul RBF)</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Lines</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.brakes?.brakeLine || 'stock'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, brakeLine: e.target.value }
+                        }))}
+                      >
+                        <option value="stock">Stock Rubber</option>
+                        <option value="stainless">Stainless Braided</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedCheckboxRow}>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.brakes?.bbkFront || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, bbkFront: e.target.checked }
+                        }))}
+                      />
+                      <span>BBK Front</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.brakes?.bbkRear || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, bbkRear: e.target.checked }
+                        }))}
+                      />
+                      <span>BBK Rear</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.brakes?.brakeDuct || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          brakes: { ...prev.brakes, brakeDuct: e.target.checked }
+                        }))}
+                      />
+                      <span>Brake Ducts</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* AERO SECTION - Affects downforce & top speed */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.wind size={14} />
+                    <span>Aerodynamics</span>
+                    <span className={styles.sectionHint}>Grip vs speed</span>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Front</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.aero?.frontSplitter || 'none'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          aero: { ...prev.aero, frontSplitter: e.target.value }
+                        }))}
+                      >
+                        <option value="none">Stock</option>
+                        <option value="lip">Front Lip</option>
+                        <option value="splitter">Splitter</option>
+                        <option value="splitter-rods">Splitter + Rods</option>
+                      </select>
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Rear</label>
+                      <select
+                        className={styles.advancedSelect}
+                        value={advancedSpecs.aero?.rearWing || 'none'}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          aero: { ...prev.aero, rearWing: e.target.value }
+                        }))}
+                      >
+                        <option value="none">Stock</option>
+                        <option value="lip-spoiler">Lip Spoiler</option>
+                        <option value="duckbill">Duckbill</option>
+                        <option value="gt-wing-low">GT Wing (Low)</option>
+                        <option value="gt-wing-high">GT Wing (High)</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedCheckboxRow}>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.aero?.diffuser || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          aero: { ...prev.aero, diffuser: e.target.checked }
+                        }))}
+                      />
+                      <span>Rear Diffuser</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.aero?.canards || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          aero: { ...prev.aero, canards: e.target.checked }
+                        }))}
+                      />
+                      <span>Canards</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.aero?.flatBottom || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          aero: { ...prev.aero, flatBottom: e.target.checked }
+                        }))}
+                      />
+                      <span>Flat Underbody</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* WHEELS SECTION - Affects rotational mass */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.circle size={14} />
+                    <span>Wheels</span>
+                    <span className={styles.sectionHint}>Rotational mass</span>
+                  </div>
+                  
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Wheel Type</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.wheels?.type || 'stock'}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        wheels: { ...prev.wheels, type: e.target.value }
+                      }))}
+                    >
+                      <option value="stock">Stock (Heavy)</option>
+                      <option value="aftermarket">Aftermarket Cast</option>
+                      <option value="flow-formed">Flow Formed</option>
+                      <option value="forged">Forged (Lightest)</option>
+                    </select>
+                  </div>
+                  
+                  {advancedSpecs.wheels?.type !== 'stock' && (
+                    <div className={styles.advancedFieldRow}>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Weight/wheel (lbs)</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          placeholder="18"
+                          value={advancedSpecs.wheels?.weightPerWheel || ''}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            wheels: { ...prev.wheels, weightPerWheel: parseFloat(e.target.value) || null }
+                          }))}
+                        />
+                      </div>
+                      <div className={styles.advancedFieldHalf}>
+                        <label className={styles.advancedLabel}>Width (inches)</label>
+                        <input
+                          type="number"
+                          className={styles.advancedInput}
+                          placeholder="9.5"
+                          step="0.5"
+                          value={advancedSpecs.wheels?.widthFront || ''}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            wheels: { ...prev.wheels, widthFront: parseFloat(e.target.value) || null, widthRear: parseFloat(e.target.value) || null }
+                          }))}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* WEIGHT & TIRES SECTION - Critical for performance */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.car size={14} />
+                    <span>Weight & Tires</span>
+                    <span className={styles.sectionHint}>Affects 0-60, 1/4</span>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Weight Change (lbs)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="-150"
+                        value={advancedSpecs.weight?.weightReduction || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          weight: { ...prev.weight, weightReduction: parseInt(e.target.value) || 0 }
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Driver (lbs)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="180"
+                        value={advancedSpecs.weight?.driverWeight || 180}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          weight: { ...prev.weight, driverWeight: parseInt(e.target.value) || 180 }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={styles.advancedCheckboxRow}>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.weight?.strippedInterior || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          weight: { ...prev.weight, strippedInterior: e.target.checked, weightReduction: e.target.checked ? (prev.weight?.weightReduction || 0) - 150 : (prev.weight?.weightReduction || 0) + 150 }
+                        }))}
+                      />
+                      <span>Stripped Interior</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.weight?.hasRollCage || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          weight: { ...prev.weight, hasRollCage: e.target.checked, weightReduction: e.target.checked ? (prev.weight?.weightReduction || 0) + 80 : (prev.weight?.weightReduction || 0) - 80 }
+                        }))}
+                      />
+                      <span>Roll Cage (+80 lbs)</span>
+                    </label>
+                  </div>
+                  
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Tire Compound</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.tires?.compound || 'summer'}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        tires: { ...prev.tires, compound: e.target.value }
+                      }))}
+                    >
+                      <option value="all-season">All-Season (0.85g)</option>
+                      <option value="summer">Summer Performance (0.95g)</option>
+                      <option value="max-performance">Max Performance (1.02g)</option>
+                      <option value="r-comp">R-Compound (1.15g)</option>
+                      <option value="drag-radial">Drag Radial (1.4g launch)</option>
+                      <option value="slick">Slicks (1.5g+)</option>
+                    </select>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Tire Width (mm)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="275"
+                        value={advancedSpecs.tires?.width || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          tires: { ...prev.tires, width: parseInt(e.target.value) || null }
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Final Drive</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="3.73"
+                        step="0.01"
+                        value={advancedSpecs.drivetrain?.finalDrive || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          drivetrain: { ...prev.drivetrain, finalDrive: parseFloat(e.target.value) || null }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* ENVIRONMENT SECTION - Critical for accuracy */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.wind size={14} />
+                    <span>Environment</span>
+                    <span className={styles.sectionHint}>Affects power</span>
+                  </div>
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Altitude (ft)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="0"
+                        value={advancedSpecs.environment?.altitude || 0}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          environment: { ...prev.environment, altitude: parseInt(e.target.value) || 0 }
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>Temp (°F)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="70"
+                        value={advancedSpecs.environment?.ambientTemp || 70}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          environment: { ...prev.environment, ambientTemp: parseInt(e.target.value) || 70 }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                  <p className={styles.advancedHint}>
+                    At 5,000ft & 90°F, expect ~15% power loss vs sea level
+                  </p>
+                </div>
+                
+                {/* COOLING SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.thermometer size={14} />
+                    <span>Cooling</span>
+                  </div>
+                  <div className={styles.advancedField}>
+                    <label className={styles.advancedLabel}>Radiator</label>
+                    <select
+                      className={styles.advancedSelect}
+                      value={advancedSpecs.cooling?.radiator || 'stock'}
+                      onChange={e => setAdvancedSpecs(prev => ({
+                        ...prev,
+                        cooling: { ...prev.cooling, radiator: e.target.value }
+                      }))}
+                    >
+                      <option value="stock">Stock</option>
+                      <option value="aluminum">Aluminum Upgrade</option>
+                      <option value="dual-pass">Dual Pass</option>
+                    </select>
+                  </div>
+                  <div className={styles.advancedCheckboxRow}>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.cooling?.oilCooler || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          cooling: { ...prev.cooling, oilCooler: e.target.checked }
+                        }))}
+                      />
+                      <span>Oil Cooler</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.cooling?.transCooler || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          cooling: { ...prev.cooling, transCooler: e.target.checked }
+                        }))}
+                      />
+                      <span>Trans Cooler</span>
+                    </label>
+                    <label className={styles.advancedCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.cooling?.icSprayer || false}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          cooling: { ...prev.cooling, icSprayer: e.target.checked }
+                        }))}
+                      />
+                      <span>IC Sprayer</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* VERIFIED RESULTS SECTION */}
+                <div className={styles.advancedSection}>
+                  <div className={styles.advancedSectionHeader}>
+                    <Icons.check size={14} />
+                    <span>Verified Results</span>
+                    <span className={styles.sectionHint}>Tier 1 data</span>
+                  </div>
+                  <div className={styles.advancedCheckbox}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={advancedSpecs.verified.hasDyno}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          verified: { ...prev.verified, hasDyno: e.target.checked }
+                        }))}
+                      />
+                      <span>I have dyno results</span>
+                    </label>
+                  </div>
+                  
+                  {advancedSpecs.verified.hasDyno && (
+                    <>
+                      <div className={styles.advancedFieldRow}>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>WHP</label>
+                          <input
+                            type="number"
+                            className={styles.advancedInput}
+                            placeholder="450"
+                            value={advancedSpecs.verified.whp || ''}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              verified: { ...prev.verified, whp: parseInt(e.target.value) || null }
+                            }))}
+                          />
+                        </div>
+                        <div className={styles.advancedFieldHalf}>
+                          <label className={styles.advancedLabel}>WTQ</label>
+                          <input
+                            type="number"
+                            className={styles.advancedInput}
+                            placeholder="400"
+                            value={advancedSpecs.verified.wtq || ''}
+                            onChange={e => setAdvancedSpecs(prev => ({
+                              ...prev,
+                              verified: { ...prev.verified, wtq: parseInt(e.target.value) || null }
+                            }))}
+                          />
+                        </div>
+                      </div>
+                      <div className={styles.advancedField}>
+                        <label className={styles.advancedLabel}>Dyno Shop</label>
+                        <input
+                          type="text"
+                          className={styles.advancedInput}
+                          placeholder="Shop name & location"
+                          value={advancedSpecs.verified.dynoShop}
+                          onChange={e => setAdvancedSpecs(prev => ({
+                            ...prev,
+                            verified: { ...prev.verified, dynoShop: e.target.value }
+                          }))}
+                        />
+                      </div>
+                    </>
+                  )}
+                  
+                  <div className={styles.advancedFieldRow}>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>1/4 Mile (sec)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="11.5"
+                        step="0.1"
+                        value={advancedSpecs.verified.quarterMile || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          verified: { ...prev.verified, quarterMile: parseFloat(e.target.value) || null }
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.advancedFieldHalf}>
+                      <label className={styles.advancedLabel}>0-60 (sec)</label>
+                      <input
+                        type="number"
+                        className={styles.advancedInput}
+                        placeholder="4.2"
+                        step="0.1"
+                        value={advancedSpecs.verified.zeroToSixty || ''}
+                        onChange={e => setAdvancedSpecs(prev => ({
+                          ...prev,
+                          verified: { ...prev.verified, zeroToSixty: parseFloat(e.target.value) || null }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* PHYSICS ESTIMATE SUMMARY */}
+                {advancedHpEstimate && (
+                  <div className={styles.physicsEstimate}>
+                    <div className={styles.physicsEstimateHeader}>
+                      <Icons.brain size={14} />
+                      <span>Best Estimate</span>
+                      <span className={`${styles.tierBadge} ${styles[`tier${advancedHpEstimate.tier}`]}`}>
+                        Tier {advancedHpEstimate.tier}
+                      </span>
+                    </div>
+                    <div className={styles.physicsEstimateValue}>
+                      {advancedSpecs.verified.hasDyno && advancedSpecs.verified.whp ? (
+                        <span className={styles.hpSingle}>
+                          {advancedSpecs.verified.whp} <span className={styles.hpUnit}>WHP (Verified)</span>
+                        </span>
+                      ) : advancedHpEstimate.range ? (
+                        <span className={styles.hpRange}>
+                          {advancedHpEstimate.range.low} - {advancedHpEstimate.range.high} <span className={styles.hpUnit}>HP</span>
+                        </span>
+                      ) : (
+                        <span className={styles.hpSingle}>
+                          {advancedHpEstimate.whp} <span className={styles.hpUnit}>HP</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.physicsEstimateLabel}>
+                      {advancedSpecs.verified.hasDyno && advancedSpecs.verified.whp 
+                        ? 'User verified dyno data'
+                        : advancedHpEstimate.confidenceLabel
+                      }
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* Upgrade Categories - Also show in Advanced mode for part selection */}
+          {tunerMode === 'advanced' && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.bolt size={16} />
+                <span className={styles.sidebarCardTitle}>Add Upgrades</span>
+              </div>
+              <div className={styles.sidebarCardContent}>
+                <div className={styles.categoryList}>
+                  {UPGRADE_CATEGORIES.filter(cat => 
+                    cat.key !== 'wheels' && 
+                    (upgradesByCategory[cat.key]?.length || 0) > 0
+                  ).map(cat => {
+                    const Icon = cat.icon;
+                    const count = selectedByCategory[cat.key] || 0;
+                    
+                    return (
+                      <button
+                        key={cat.key}
+                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                        onClick={() => setActiveCategory(cat.key)}
+                        style={{ '--cat-color': cat.color }}
+                      >
+                        <Icon size={16} />
+                        <span>{cat.label}</span>
+                        {count > 0 && (
+                          <span className={styles.catBadge}>{count}</span>
+                        )}
+                        <Icons.chevronRight size={14} className={styles.catArrow} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
           
         </div>
         
         {/* Main Panel - Performance Metrics */}
         <div className={styles.mainPanel}>
-          {/* Performance Card */}
-          <div className={styles.performanceCard}>
-            <div className={styles.performanceHeader}>
-              <h3 className={styles.performanceTitle}>
-                <Icons.bolt size={18} />
-                Performance Metrics
-              </h3>
-              {showUpgrade && (
-                <div className={styles.buildStats}>
-                  <span 
-                    className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
-                    title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
-                  >
-                    ${(totalCost.low || 0).toLocaleString()}
-                  </span>
+          
+          {/* === BASIC MODE: Simple Performance Card === */}
+          {tunerMode === 'basic' && (
+            <>
+              <div className={styles.performanceCard}>
+                <div className={styles.performanceHeader}>
+                  <h3 className={styles.performanceTitle}>
+                    <Icons.bolt size={18} />
+                    Performance Metrics
+                  </h3>
+                  {showUpgrade && (
+                    <div className={styles.buildStats}>
+                      <span 
+                        className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
+                        title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
+                      >
+                        ${(totalCost.low || 0).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className={styles.performanceMetrics}>
+                  <MetricRow 
+                    icon={Icons.bolt} 
+                    label="HP" 
+                    stockValue={profile.stockMetrics.hp} 
+                    upgradedValue={profile.upgradedMetrics.hp} 
+                    unit=" hp" 
+                  />
+                  <MetricRow 
+                    icon={Icons.stopwatch} 
+                    label="0-60" 
+                    stockValue={profile.stockMetrics.zeroToSixty} 
+                    upgradedValue={profile.upgradedMetrics.zeroToSixty} 
+                    unit="s" 
+                    isLowerBetter 
+                  />
+                  <MetricRow 
+                    icon={Icons.disc} 
+                    label="Braking" 
+                    stockValue={profile.stockMetrics.braking60To0} 
+                    upgradedValue={profile.upgradedMetrics.braking60To0} 
+                    unit="ft" 
+                    isLowerBetter 
+                  />
+                  <MetricRow 
+                    icon={Icons.target} 
+                    label="Grip" 
+                    stockValue={profile.stockMetrics.lateralG} 
+                    upgradedValue={profile.upgradedMetrics.lateralG} 
+                    unit="g" 
+                  />
+                </div>
+              </div>
+              
+              {/* Experience Scores - Basic Mode */}
+              <div className={styles.section}>
+                <h4 className={styles.sectionTitle}>Experience Scores</h4>
+                <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
+                <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
+                <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
+              </div>
+            </>
+          )}
+          
+          {/* === ADVANCED MODE: Virtual Dyno & Physics-Based Metrics === */}
+          {tunerMode === 'advanced' && (
+            <>
+              {/* Virtual Dyno Chart */}
+              {/* NOTE: All values are CRANK HP for apples-to-apples comparison */}
+              <VirtualDynoChart
+                stockHp={car?.hp || profile.stockMetrics.hp || 300}
+                estimatedHp={(() => {
+                  const stock = car?.hp || profile.stockMetrics.hp || 300;
+                  const gain = advancedHpEstimate?.gain;
+                  const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
+                  return stock + validGain;
+                })()}
+                stockTorque={car?.torque || Math.round((car?.hp || 300) * 0.85)}
+                estimatedTq={advancedHpEstimate?.whp ? Math.round(advancedHpEstimate.whp * 0.9) : null}
+                peakRpm={car?.redline || 6500}
+              />
+              
+              {/* Power Breakdown */}
+              <PowerBreakdown
+                stockHp={car?.hp || profile.stockMetrics.hp}
+                specs={advancedSpecs}
+                estimate={advancedHpEstimate}
+              />
+              
+              {/* Calculated Performance (0-60, 1/4 mile, braking, handling) */}
+              <CalculatedPerformance
+                stockHp={car?.hp || profile.stockMetrics.hp || 300}
+                estimatedHp={(() => {
+                  const stock = car?.hp || profile.stockMetrics.hp || 300;
+                  const gain = advancedHpEstimate?.gain;
+                  // Guard against NaN - use hpGain as fallback
+                  const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
+                  return stock + validGain;
+                })()}
+                weight={car?.curb_weight || car?.weight || 3500}
+                drivetrain={car?.drivetrain || 'AWD'}
+                tireCompound={advancedSpecs.tires?.compound || 'summer'}
+                weightMod={advancedSpecs.weight?.weightReduction || 0}
+                driverWeight={advancedSpecs.weight?.driverWeight || 180}
+                finalDrive={advancedSpecs.drivetrain?.finalDrive}
+                wheelWeight={advancedSpecs.wheels?.weightPerWheel}
+                handlingScore={advancedHpEstimate?.handlingScore || 100}
+                brakingScore={advancedHpEstimate?.brakingScore || 100}
+              />
+              
+              {/* Physics Estimate Summary Card */}
+              {/* Power Summary Card - replaces Physics-Based Estimate */}
+              {advancedHpEstimate && (
+                <div className={styles.powerSummaryCard}>
+                  <div className={styles.powerSummaryHeader}>
+                    <div className={styles.powerSummaryTitleRow}>
+                      <Icons.bolt size={18} />
+                      <span>Estimated Power</span>
+                    </div>
+                    {advancedSpecs.verified?.hasDyno && (
+                      <span className={styles.verifiedBadge}>✓ Dyno Verified</span>
+                    )}
+                  </div>
+                  <div className={styles.powerSummaryBody}>
+                    <div className={styles.powerSummaryMain}>
+                      {advancedSpecs.verified?.hasDyno && advancedSpecs.verified?.whp ? (
+                        <>
+                          <span className={styles.powerSummaryValue}>{advancedSpecs.verified.whp}</span>
+                          <span className={styles.powerSummaryUnit}>WHP (Verified)</span>
+                        </>
+                      ) : advancedHpEstimate.range ? (
+                        <>
+                          <span className={styles.powerSummaryValue}>
+                            {advancedHpEstimate.range.low}-{advancedHpEstimate.range.high}
+                          </span>
+                          <span className={styles.powerSummaryUnit}>HP</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className={styles.powerSummaryValue}>{advancedHpEstimate.whp}</span>
+                          <span className={styles.powerSummaryUnit}>HP</span>
+                        </>
+                      )}
+                    </div>
+                    <div className={styles.powerSummaryDetail}>
+                      <span className={styles.powerSummaryGain}>
+                        +{advancedHpEstimate.gain} from stock
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
-            <div className={styles.performanceMetrics}>
-              <MetricRow 
-                icon={Icons.bolt} 
-                label="HP" 
-                stockValue={profile.stockMetrics.hp} 
-                upgradedValue={profile.upgradedMetrics.hp} 
-                unit=" hp" 
-              />
-              <MetricRow 
-                icon={Icons.stopwatch} 
-                label="0-60" 
-                stockValue={profile.stockMetrics.zeroToSixty} 
-                upgradedValue={profile.upgradedMetrics.zeroToSixty} 
-                unit="s" 
-                isLowerBetter 
-              />
-              <MetricRow 
-                icon={Icons.disc} 
-                label="Braking" 
-                stockValue={profile.stockMetrics.braking60To0} 
-                upgradedValue={profile.upgradedMetrics.braking60To0} 
-                unit="ft" 
-                isLowerBetter 
-              />
-              <MetricRow 
-                icon={Icons.target} 
-                label="Grip" 
-                stockValue={profile.stockMetrics.lateralG} 
-                upgradedValue={profile.upgradedMetrics.lateralG} 
-                unit="g" 
-              />
-            </div>
-          </div>
-          
-          {/* Experience Scores */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Experience Scores</h4>
-            <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
-            <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
-            <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
-          </div>
+            </>
+          )}
           
           {/* Build Photos & Videos Section */}
           <div className={styles.section}>

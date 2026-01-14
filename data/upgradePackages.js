@@ -317,16 +317,18 @@ export const upgradeModules = [
     type: 'module',
     category: 'power',
     tier: 'streetSport',
-    description: 'Increased airflow with improved induction sound. Brands: K&N, AEM, Injen.',
+    description: 'Increased airflow with improved induction sound. Brands: K&N, AEM, Injen, Eventuri.',
     estimatedCost: '$300 - $600',
     estimatedCostLow: 300,
     estimatedCostHigh: 600,
     deltas: {
-      powerAccel: 0.3,
+      powerAccel: 0.4,
       soundEmotion: 0.5,
     },
     metricChanges: {
-      hpGain: 8,
+      // Forum-validated: APR shows +19 AWHP on RS5 2.9T, +10-20 WHP typical for twin-turbo
+      // NA cars see +5-8 WHP, but turbo cars benefit more from improved airflow
+      hpGain: 15,
     },
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -529,6 +531,11 @@ export const upgradeModules = [
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   // Downpipe - Essential for Stage 2
+  // NOTE: Gains are HIGHLY platform-specific. Forum research shows:
+  // - BMW B58, Evo X 4B11: +15-25 HP (restrictive factory downpipes)
+  // - Audi 2.9T (RS5/RS4): +0-10 HP (factory DP already efficient, mainly for sound)
+  // - VW/Audi EA888: +10-20 HP
+  // Using +15 HP as moderate cross-platform average
   {
     key: 'downpipe',
     name: 'Downpipe (Turbo Cars)',
@@ -541,13 +548,15 @@ export const upgradeModules = [
     estimatedCostLow: 600,
     estimatedCostHigh: 1500,
     deltas: {
-      powerAccel: 0.8,
-      soundEmotion: 1.0,
-      trackPace: 0.3,
+      powerAccel: 0.6,
+      soundEmotion: 1.2, // Primary benefit is sound for many platforms
+      trackPace: 0.2,
     },
     metricChanges: {
-      hpGain: 20,
-      torqueGain: 30,
+      // Forum-validated: Varies by platform from +5 to +25 HP
+      // Some platforms (RS5 2.9T) see minimal gains due to efficient factory DP
+      hpGain: 15,
+      torqueGain: 25,
     },
     carSlug: null,
     applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
@@ -1555,18 +1564,30 @@ export function getHpGainMultiplier(car, upgrade) {
   
   // For NA bolt-ons, scale by engine type
   if (upgrade.category === 'power' && !upgrade.key.includes('forged')) {
+    // Stage tunes (stage1, stage2, stage3) are already calibrated for their engine types
+    // Do NOT apply the turbo multiplier to them - their HP gains are accurate as-is
+    const isPreCalibratedTune = upgrade.key?.includes('stage1') || 
+                                 upgrade.key?.includes('stage2') || 
+                                 upgrade.key?.includes('stage3') ||
+                                 upgrade.key?.includes('piggyback');
+    
+    if (isPreCalibratedTune) {
+      return 1.0; // Stage tunes already have accurate gains for turbo/SC cars
+    }
+    
     // NA V8s respond well to bolt-ons
     if (engineType === 'NA V8') return 1.0;
-    // Turbo cars get big gains from simple mods
-    if (engineType.includes('Turbo')) return 1.3;
+    // Turbo cars get gains from intake/exhaust due to boost increase potential
+    // But gains are modest for individual bolt-ons (intake ~8HP, downpipe ~20HP)
+    if (engineType.includes('Turbo')) return 1.0; // Changed from 1.3 - values already calibrated
     // SC cars get moderate gains
-    if (engineType.includes('SC')) return 1.1;
+    if (engineType.includes('SC')) return 1.0; // Changed from 1.1 - values already calibrated
     // Smaller engines get proportionally less
-    if (engineType.includes('V6')) return 0.75;
-    if (engineType.includes('I4')) return 0.6;
-    if (engineType.includes('Flat-6')) return 0.8;
+    if (engineType.includes('V6')) return 0.85;
+    if (engineType.includes('I4')) return 0.7;
+    if (engineType.includes('Flat-6')) return 0.9;
   }
-  
+
   return 1.0;
 }
 
@@ -1671,6 +1692,43 @@ export function getModulesByCategory(category) {
 }
 
 /**
+ * Platform-specific downpipe gain overrides
+ * Based on forum research: some platforms have efficient factory downpipes
+ * that provide minimal power gains from aftermarket replacements
+ * @param {Object} car - Car object with slug and engine
+ * @returns {number} - Adjusted HP gain for downpipe (default 15)
+ */
+export function getPlatformDownpipeGain(car) {
+  const slug = car?.slug?.toLowerCase() || '';
+  const engine = car?.engine?.toLowerCase() || '';
+  
+  // Audi 2.9T EA839 (RS5, RS4, RS6, RS7): Factory DP already efficient
+  // IE Engineering confirms Stage 2 ≈ Stage 1 power on this platform
+  if (engine.includes('2.9') && (slug.includes('rs5') || slug.includes('rs4') || 
+      slug.includes('rs6') || slug.includes('rs7'))) {
+    return 8; // Mainly for sound, minimal power
+  }
+  
+  // Porsche turbos: Generally well-optimized from factory
+  if (slug.includes('911') && engine.includes('turbo')) {
+    return 10;
+  }
+  
+  // BMW B58 (M340i, Supra): Known to be restrictive
+  if (engine.includes('b58') || slug.includes('m340') || slug.includes('supra')) {
+    return 20; // Good gains from downpipe
+  }
+  
+  // Evo X 4B11: Very restrictive factory downpipe
+  if (slug.includes('evo') && (slug.includes('x') || slug.includes('10'))) {
+    return 25;
+  }
+  
+  // Default: Use standard value
+  return 15;
+}
+
+/**
  * Calculate realistic HP gains for a car with specific upgrades
  * @param {Object} car - Car object
  * @param {Object[]} upgrades - Array of upgrade objects
@@ -1683,8 +1741,13 @@ export function calculateRealisticHpGain(car, upgrades) {
   upgrades.forEach(upgrade => {
     if (!upgrade.metricChanges?.hpGain) return;
     
-    const baseGain = upgrade.metricChanges.hpGain;
+    let baseGain = upgrade.metricChanges.hpGain;
     const multiplier = getHpGainMultiplier(car, upgrade);
+    
+    // Platform-specific downpipe adjustment
+    if (upgrade.key === 'downpipe') {
+      baseGain = getPlatformDownpipeGain(car);
+    }
     
     // For supercharger on GT350 Voodoo, we should see ~250-300 HP
     // The Voodoo is particularly receptive to forced induction
