@@ -1369,6 +1369,7 @@ function LapTimeEstimator({
     improvements.brakes = brakeLevel * track.brakeGainMax;
 
     // 5. AERO - High-speed stability and downforce
+    let aeroLevel = 0;
     if (aeroSetup?.rearWing === 'lip-spoiler') aeroLevel += 0.15;
     if (aeroSetup?.rearWing === 'ducktail') aeroLevel += 0.25;
     if (aeroSetup?.rearWing === 'gt-wing-low') aeroLevel += 0.60;
