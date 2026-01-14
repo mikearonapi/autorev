@@ -258,6 +258,11 @@ const Icons = {
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   ),
+  zap: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
 };
 
 // Package configs
@@ -1907,6 +1912,8 @@ export default function UpgradeCenter({
   }, [initialBuildId, getBuildById, safeCarSlug]);
   
   // Load build images when build ID changes
+  // Also attempts to load images by car_slug for sharing between garage and tuning shop
+  // (car_slug sharing requires migration 089_shared_car_images.sql to be run)
   useEffect(() => {
     async function loadBuildImages() {
       if (!currentBuildId || !supabase) {
@@ -1915,7 +1922,8 @@ export default function UpgradeCenter({
       }
       
       try {
-        const { data, error } = await supabase
+        // Fetch images linked to this build (original query - always works)
+        const { data: buildData, error: buildError } = await supabase
           .from('user_uploaded_images')
           .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height, media_type, duration_seconds, video_thumbnail_url')
           .eq('user_build_id', currentBuildId)
@@ -1923,19 +1931,58 @@ export default function UpgradeCenter({
           .order('display_order', { ascending: true })
           .order('created_at', { ascending: true });
         
-        if (error) {
-          console.error('[UpgradeCenter] Error loading build images:', error);
+        if (buildError) {
+          console.error('[UpgradeCenter] Error loading build images:', buildError);
+          setBuildImages([]);
           return;
         }
         
-        setBuildImages(data || []);
+        let allImages = buildData || [];
+        const imageIds = new Set(allImages.map(img => img.id));
+        
+        // Try to also fetch images linked by car_slug (for cross-feature sharing with garage)
+        // This query may fail if the migration hasn't been run yet - that's OK
+        if (safeCarSlug && user?.id) {
+          try {
+            const { data: carSlugData, error: carSlugError } = await supabase
+              .from('user_uploaded_images')
+              .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height, media_type, duration_seconds, video_thumbnail_url')
+              .eq('user_id', user.id)
+              .eq('car_slug', safeCarSlug)
+              .order('is_primary', { ascending: false })
+              .order('display_order', { ascending: true })
+              .order('created_at', { ascending: true });
+            
+            // Only add images not already in the list (avoid duplicates)
+            if (!carSlugError && carSlugData) {
+              carSlugData.forEach(img => {
+                if (!imageIds.has(img.id)) {
+                  allImages.push(img);
+                  imageIds.add(img.id);
+                }
+              });
+            }
+          } catch (carSlugErr) {
+            // car_slug column may not exist yet - migration not run, ignore
+            console.log('[UpgradeCenter] car_slug query skipped (migration not run)');
+          }
+        }
+        
+        // Sort by is_primary DESC, then display_order ASC
+        allImages.sort((a, b) => {
+          if (a.is_primary && !b.is_primary) return -1;
+          if (!a.is_primary && b.is_primary) return 1;
+          return (a.display_order || 0) - (b.display_order || 0);
+        });
+        
+        setBuildImages(allImages);
       } catch (err) {
         console.error('[UpgradeCenter] Error loading build images:', err);
       }
     }
     
     loadBuildImages();
-  }, [currentBuildId]);
+  }, [currentBuildId, safeCarSlug, user?.id]);
 
   // Check if current build has a linked community post
   useEffect(() => {
@@ -4524,25 +4571,153 @@ export default function UpgradeCenter({
                 </div>
               )}
               
-              {/* Calculated Performance - 0-60, 1/4 mile (what users care about most) */}
-              <CalculatedPerformance
-                stockHp={car?.hp || profile.stockMetrics.hp || 300}
-                estimatedHp={(() => {
-                  const stock = car?.hp || profile.stockMetrics.hp || 300;
-                  const gain = advancedHpEstimate?.gain;
-                  const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
-                  return stock + validGain;
-                })()}
-                weight={car?.curb_weight || car?.weight || 3500}
-                drivetrain={car?.drivetrain || 'AWD'}
-                tireCompound={advancedSpecs.tires?.compound || 'summer'}
-                weightMod={advancedSpecs.weight?.weightReduction || 0}
-                driverWeight={advancedSpecs.weight?.driverWeight || 180}
-                finalDrive={advancedSpecs.drivetrain?.finalDrive}
-                wheelWeight={advancedSpecs.wheels?.weightPerWheel}
-                handlingScore={advancedHpEstimate?.handlingScore || 100}
-                brakingScore={advancedHpEstimate?.brakingScore || 100}
-              />
+              {/* Performance Metrics - Same visual style as Basic Mode */}
+              {(() => {
+                // Calculate physics-based values for Advanced Mode
+                const stockHp = car?.hp || profile.stockMetrics.hp || 300;
+                const advGain = advancedHpEstimate?.gain;
+                const validGain = (typeof advGain === 'number' && !isNaN(advGain)) ? advGain : (hpGain || 0);
+                const estimatedHp = stockHp + validGain;
+                const weight = car?.curb_weight || car?.weight || 3500;
+                const drivetrain = car?.drivetrain || 'AWD';
+                const tireCompound = advancedSpecs.tires?.compound || 'summer';
+                const weightMod = advancedSpecs.weight?.weightReduction || 0;
+                const driverWeight = advancedSpecs.weight?.driverWeight || 180;
+                
+                // Physics calculations (same as CalculatedPerformance)
+                const totalWeight = weight + (weightMod || 0) + (driverWeight || 180);
+                const stockTotalWeight = weight + 180;
+                const stockWheelWeight = 25;
+                const currentWheelWeight = advancedSpecs.wheels?.weightPerWheel || stockWheelWeight;
+                const wheelWeightDiff = (stockWheelWeight - currentWheelWeight) * 4;
+                const effectiveWeight = totalWeight - wheelWeightDiff;
+                const stockEffectiveWeight = stockTotalWeight;
+                
+                // Drivetrain factor for 0-60
+                const drivetrainK = { 'AWD': 1.20, 'RWD': 1.35, 'FWD': 1.40, '4WD': 1.25 };
+                const baseK = drivetrainK[drivetrain] || 1.30;
+                const tireKMultiplier = { 'all-season': 1.08, 'summer': 1.0, 'max-performance': 0.97, 'r-comp': 0.93, 'drag-radial': 0.85, 'slick': 0.82 };
+                const kTire = tireKMultiplier[tireCompound] || 1.0;
+                
+                // 0-60 times
+                const weightToHp = effectiveWeight / estimatedHp;
+                const stockWeightToHp = stockEffectiveWeight / stockHp;
+                const estimated060 = Math.max(2.0, Math.sqrt(weightToHp) * baseK * kTire);
+                const stock060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
+                
+                // Braking (60-0)
+                const stockBraking60 = profile.stockMetrics.braking60To0 || 120;
+                const brakingScore = advancedHpEstimate?.brakingScore || 100;
+                const brakingImprovement = (brakingScore - 100) / 100;
+                const estimatedBraking60 = Math.round(stockBraking60 * (1 - brakingImprovement * 0.25));
+                
+                // Lateral G
+                const baseG = profile.stockMetrics.lateralG || 0.90;
+                const handlingScore = advancedHpEstimate?.handlingScore || 100;
+                const handlingImprovement = (handlingScore - 100) / 100;
+                const estimatedLateralG = parseFloat((baseG * (1 + handlingImprovement * 0.3)).toFixed(2));
+                
+                // 1/4 Mile (Advanced-only metric)
+                const tractionBonus = tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
+                const estimatedQuarter = 5.825 * Math.pow(weightToHp, 0.333) * tractionBonus;
+                const stockQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
+                
+                // Trap Speed (Advanced-only metric)
+                const finalDriveFactor = advancedSpecs.drivetrain?.finalDrive ? Math.min(1.02, 3.5 / advancedSpecs.drivetrain.finalDrive) : 1.0;
+                const estimatedTrap = 234 * Math.pow(estimatedHp / effectiveWeight, 0.333) * finalDriveFactor;
+                const stockTrap = 234 * Math.pow(stockHp / stockEffectiveWeight, 0.333);
+                
+                // Power/Weight Ratio (Advanced-only metric)
+                const powerToWeight = Math.round((estimatedHp / effectiveWeight) * 2000);
+                const stockPtw = Math.round((stockHp / stockEffectiveWeight) * 2000);
+                
+                // Build cost
+                const buildCost = totalCost?.low || 0;
+                
+                return (
+                  <div className={styles.performanceCard}>
+                    <div className={styles.performanceHeader}>
+                      <h3 className={styles.performanceTitle}>
+                        <Icons.bolt size={18} />
+                        Performance Metrics
+                      </h3>
+                      {buildCost > 0 && (
+                        <div className={styles.buildStats}>
+                          <span 
+                            className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
+                            title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
+                          >
+                            ${buildCost.toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles.performanceMetrics}>
+                      <MetricRow 
+                        icon={Icons.bolt} 
+                        label="HP" 
+                        stockValue={stockHp} 
+                        upgradedValue={estimatedHp} 
+                        unit=" hp" 
+                      />
+                      <MetricRow 
+                        icon={Icons.stopwatch} 
+                        label="0-60" 
+                        stockValue={parseFloat(stock060.toFixed(1))} 
+                        upgradedValue={parseFloat(estimated060.toFixed(1))} 
+                        unit="s" 
+                        isLowerBetter 
+                      />
+                      <MetricRow 
+                        icon={Icons.disc} 
+                        label="Braking" 
+                        stockValue={stockBraking60} 
+                        upgradedValue={estimatedBraking60} 
+                        unit="ft" 
+                        isLowerBetter 
+                      />
+                      <MetricRow 
+                        icon={Icons.target} 
+                        label="Grip" 
+                        stockValue={baseG} 
+                        upgradedValue={estimatedLateralG} 
+                        unit="g" 
+                      />
+                      {/* Advanced-only metrics */}
+                      <MetricRow 
+                        icon={Icons.chevronsRight} 
+                        label="1/4 Mile" 
+                        stockValue={parseFloat(stockQuarter.toFixed(1))} 
+                        upgradedValue={parseFloat(estimatedQuarter.toFixed(1))} 
+                        unit="s" 
+                        isLowerBetter 
+                      />
+                      <MetricRow 
+                        icon={Icons.flag} 
+                        label="Trap Speed" 
+                        stockValue={Math.round(stockTrap)} 
+                        upgradedValue={Math.round(estimatedTrap)} 
+                        unit=" mph" 
+                      />
+                      <MetricRow 
+                        icon={Icons.zap} 
+                        label="Power/Weight" 
+                        stockValue={stockPtw} 
+                        upgradedValue={powerToWeight} 
+                        unit=" hp/ton" 
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
+              
+              {/* Experience Scores - Same as Basic Mode */}
+              <div className={styles.section}>
+                <h4 className={styles.sectionTitle}>Experience Scores</h4>
+                <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
+                <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
+                <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
+              </div>
               
               {/* ═══════════════════════════════════════════════════════════════
                   TIER 2: POWER DETAILS - Deep dive into power gains
@@ -4672,53 +4847,71 @@ export default function UpgradeCenter({
               onVideoClick={(video) => setSelectedVideo(video)}
               maxFiles={10}
               buildId={currentBuildId}
+              carSlug={car.slug}
               existingImages={buildImages}
               disabled={!user}
               showPreviews={false}
             />
             
             {/* Gallery with Hero Selection - tap any image to make it the hero */}
+            {/* Uses car_slug-based API for syncing hero across garage and tuning shop */}
             <BuildMediaGallery
               car={car}
               media={buildImages}
               onVideoClick={(video) => setSelectedVideo(video)}
               onSetPrimary={async (imageId) => {
-                // Update primary in database - this sets is_primary = true for selected, false for others
+                // Set hero image by car_slug - this syncs across garage and tuning shop
+                if (!user?.id || !safeCarSlug) {
+                  console.warn('[UpgradeCenter] Cannot set hero: missing user or car slug');
+                  return;
+                }
+                
+                // Optimistic update
+                setBuildImages(prev => prev.map(img => ({
+                  ...img,
+                  is_primary: img.id === imageId,
+                })));
+                
                 try {
-                  const response = await fetch('/api/uploads', {
-                    method: 'PATCH',
+                  const response = await fetch(`/api/users/${user.id}/car-images`, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageId, isPrimary: true }),
+                    body: JSON.stringify({ carSlug: safeCarSlug, imageId }),
                   });
-                  if (response.ok) {
-                    // Update local state - the selected image becomes hero, shown at top
-                    setBuildImages(prev => prev.map(img => ({
-                      ...img,
-                      is_primary: img.id === imageId,
-                    })));
+                  
+                  if (!response.ok) {
+                    // Revert on failure - reload images
+                    console.error('[UpgradeCenter] Failed to set hero image');
                   }
                 } catch (err) {
                   console.error('[UpgradeCenter] Error setting hero image:', err);
                 }
               }}
               onSetStockHero={async () => {
-                // Clear is_primary on all images to revert to stock hero
+                // Clear hero image by car_slug - reverts to stock across all features
+                if (!user?.id || !safeCarSlug) {
+                  console.warn('[UpgradeCenter] Cannot clear hero: missing user or car slug');
+                  return;
+                }
+                
+                // Optimistic update
+                setBuildImages(prev => prev.map(img => ({
+                  ...img,
+                  is_primary: false,
+                })));
+                
                 try {
-                  // Clear primary on all images for this build
-                  for (const img of buildImages.filter(i => i.is_primary)) {
-                    await fetch('/api/uploads', {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ imageId: img.id, isPrimary: false }),
-                    });
+                  const response = await fetch(`/api/users/${user.id}/car-images`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ carSlug: safeCarSlug, imageId: null }),
+                  });
+                  
+                  if (!response.ok) {
+                    console.error('[UpgradeCenter] Failed to clear hero image');
                   }
-                  // Update local state
-                  setBuildImages(prev => prev.map(img => ({
-                    ...img,
-                    is_primary: false,
-                  })));
                 } catch (err) {
-                  console.error('[UpgradeCenter] Error setting stock hero:', err);
+                  console.error('[UpgradeCenter] Error clearing hero image:', err);
                 }
               }}
               readOnly={!user}
