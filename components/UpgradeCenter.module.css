@@ -3059,6 +3059,654 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
+/* Lap Time Info Button */
+.lapTimeInfoBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.lapTimeInfoBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Info Panel */
+.lapTimeInfoPanel {
+  background: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.lapTimeInfoPanel h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #34c759;
+}
+
+.lapTimeInfoPanel p {
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.lapTimeInfoPanel ul {
+  margin: 0 0 12px 0;
+  padding-left: 18px;
+}
+
+.lapTimeInfoPanel li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.lapTimeInfoHighlight {
+  background: rgba(255, 204, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0;
+  font-weight: 500;
+  color: #ffcc00;
+}
+
+/* Driver Skill Selector */
+.skillSelector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.skillLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+
+.skillBtns {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.skillBtn {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skillBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.skillBtnActive {
+  background: rgba(52, 199, 89, 0.15);
+  border-color: rgba(52, 199, 89, 0.4);
+  color: #34c759;
+}
+
+/* Lap Time Good Improvement */
+.lapTimeGood {
+  color: #34c759 !important;
+}
+
+/* Lap Time Breakdown */
+.lapTimeBreakdown {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lapTimeBreakdownRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.lapTimeBreakdownRow:last-child {
+  border-bottom: none;
+}
+
+.lapTimeTheoretical {
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'SF Mono', 'Monaco', monospace;
+}
+
+.lapTimeRealized {
+  color: #34c759;
+  font-weight: 600;
+  font-family: 'SF Mono', 'Monaco', monospace;
+}
+
+.lapTimeUnrealized {
+  color: #ff9500;
+  font-family: 'SF Mono', 'Monaco', monospace;
+}
+
+/* Lap Time Category Breakdown */
+.lapTimeCategoryBreakdown {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lapTimeCategoryTitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lapTimeCategoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.lapTimeCategoryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 6px;
+  background: rgba(52, 199, 89, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(52, 199, 89, 0.15);
+}
+
+.lapTimeCategoryLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
+}
+
+.lapTimeCategoryValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #34c759;
+  font-family: 'SF Mono', 'Monaco', monospace;
+}
+
+/* Lap Time Tip */
+.lapTimeTip {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(255, 204, 0, 0.06);
+  border: 1px solid rgba(255, 204, 0, 0.15);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(255, 204, 0, 0.9);
+  line-height: 1.4;
+}
+
+/* Lap Time Insight (when leaving gains on table) */
+.lapTimeInsight {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(52, 199, 89, 0.06);
+  border: 1px solid rgba(52, 199, 89, 0.15);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(52, 199, 89, 0.9);
+  line-height: 1.4;
+}
+
+.lapTimeInsight svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ===========================================
+   TRACK TIME LOGGING
+   =========================================== */
+
+.trackTimeLogging {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trackTimeActions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.trackTimeBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trackTimeBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.trackTimeBtnActive {
+  background: rgba(52, 199, 89, 0.12);
+  border-color: rgba(52, 199, 89, 0.3);
+  color: #34c759;
+}
+
+/* Log Time Form */
+.logTimeForm {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.logTimeHeader {
+  margin-bottom: 16px;
+}
+
+.logTimeHeader h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.logTimeHeader p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.logTimeFields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logTimeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.logTimeLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logTimeInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logTimeInput {
+  width: 70px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  text-align: center;
+}
+
+.logTimeInput:focus {
+  outline: none;
+  border-color: rgba(52, 199, 89, 0.5);
+}
+
+.logTimeInputLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.logTimeDateInput,
+.logTimeSelect {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.logTimeDateInput:focus,
+.logTimeSelect:focus {
+  outline: none;
+  border-color: rgba(52, 199, 89, 0.5);
+}
+
+.logTimeTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.logTimeTextarea:focus {
+  outline: none;
+  border-color: rgba(52, 199, 89, 0.5);
+}
+
+.logTimeTextarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.logTimeCompare {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.logTimeCompareItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logTimeCompareLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.logTimeCompareValue {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  color: #34c759;
+}
+
+.logTimeSaveBtn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #34c759, #30b350);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logTimeSaveBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+}
+
+.logTimeSaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Track History Panel */
+.trackHistoryPanel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.trackHistoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.trackHistoryHeader h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.trackAnalyzeBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(175, 82, 222, 0.15);
+  border: 1px solid rgba(175, 82, 222, 0.3);
+  border-radius: 8px;
+  color: #af52de;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trackAnalyzeBtn:hover:not(:disabled) {
+  background: rgba(175, 82, 222, 0.25);
+}
+
+.trackAnalyzeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trackHistoryLoading,
+.trackHistoryEmpty {
+  text-align: center;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+}
+
+.trackHistoryEmpty p {
+  margin: 4px 0;
+}
+
+.trackHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trackHistoryItem {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.trackHistoryItemMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.trackHistoryTrack {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.trackHistoryTime {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  color: #34c759;
+}
+
+.trackHistoryItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trackHistoryCondition {
+  padding: 2px 6px;
+  background: rgba(255, 149, 0, 0.15);
+  border-radius: 4px;
+  color: #ff9500;
+  text-transform: capitalize;
+}
+
+.trackHistoryImprovement {
+  color: #34c759;
+  font-weight: 600;
+}
+
+.trackHistoryNotes {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* AL Analysis */
+.trackAnalysis {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(175, 82, 222, 0.08);
+  border: 1px solid rgba(175, 82, 222, 0.2);
+  border-radius: 12px;
+}
+
+.trackAnalysisHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #af52de;
+}
+
+.trackAnalysisSection {
+  margin-bottom: 16px;
+}
+
+.trackAnalysisSection:last-child {
+  margin-bottom: 0;
+}
+
+.trackAnalysisSection h5 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trackAnalysisItem {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.trackAnalysisprogress {
+  border-left: 3px solid #34c759;
+}
+
+.trackAnalysisregression {
+  border-left: 3px solid #ff3b30;
+}
+
+.trackAnalysispattern {
+  border-left: 3px solid #ff9500;
+}
+
+.trackAnalysisconsistency {
+  border-left: 3px solid #5ac8fa;
+}
+
+.trackAnalysisRec {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.trackAnalysisRec strong {
+  display: block;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.trackAnalysisRec p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+}
+
+.trackAnalysisSuggestion {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(52, 199, 89, 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #34c759;
+}
+
 /* ===========================================
    HANDLING BALANCE INDICATOR
    =========================================== */
@@ -4878,6 +5526,154 @@
   .upgradeCount {
     font-size: 10px;
     padding: 2px 5px;
+  }
+  
+  /* Lap Time Estimator - Mobile */
+  .skillSelector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .skillBtns {
+    width: 100%;
+  }
+  
+  .skillBtn {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+  
+  .lapTimeInfoPanel {
+    padding: 14px;
+    font-size: 12px;
+  }
+  
+  .lapTimeInfoPanel h4 {
+    font-size: 13px;
+  }
+  
+  .lapTimeInfoPanel ul {
+    padding-left: 14px;
+  }
+  
+  .lapTimeInfoHighlight {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  
+  .lapTimeBreakdown {
+    padding: 10px 12px;
+  }
+  
+  .lapTimeBreakdownRow {
+    font-size: 11px;
+    padding: 5px 0;
+  }
+  
+  .lapTimeTip {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+  
+  .lapTimeCategoryBreakdown {
+    padding: 10px;
+  }
+  
+  .lapTimeCategoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  
+  .lapTimeCategoryItem {
+    padding: 6px;
+  }
+  
+  .lapTimeCategoryLabel {
+    font-size: 9px;
+  }
+  
+  .lapTimeCategoryValue {
+    font-size: 12px;
+  }
+  
+  .lapTimeInsight {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+  
+  /* Track Time Logging - Mobile */
+  .trackTimeLogging {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+  
+  .trackTimeActions {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .trackTimeBtn {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .logTimeForm {
+    padding: 14px;
+  }
+  
+  .logTimeHeader h4 {
+    font-size: 14px;
+  }
+  
+  .logTimeInput {
+    width: 60px;
+    padding: 8px 10px;
+    font-size: 15px;
+  }
+  
+  .logTimeCompare {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .trackHistoryPanel {
+    padding: 14px;
+  }
+  
+  .trackHistoryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .trackAnalyzeBtn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .trackHistoryItemMain {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .trackHistoryTime {
+    font-size: 18px;
+  }
+  
+  .trackHistoryItemMeta {
+    flex-wrap: wrap;
+  }
+  
+  .trackAnalysis {
+    padding: 14px;
+  }
+  
+  .trackAnalysisItem,
+  .trackAnalysisRec {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }
 
