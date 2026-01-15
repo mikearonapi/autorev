@@ -135,6 +135,229 @@ export const upgradeDetails = {
   // ============================================================================
   // POWER & ENGINE
   // ============================================================================
+  
+  // 'intake' is the key used by upgradePackages.js for Cold Air Intake selection
+  'intake': {
+    key: 'intake',
+    name: 'Cold Air Intake',
+    category: 'power',
+    tier: 'streetSport',
+    shortDescription: 'Replaces restrictive factory airbox with free-flowing intake',
+    fullDescription: `A cold air intake replaces your car's stock airbox with a larger, less restrictive system that draws cooler air from outside the engine bay.`,
+    expectedGains: {
+      hp: '5-15 hp',
+      torque: '5-10 lb-ft',
+      note: 'Gains vary significantly by car. Turbocharged cars often see larger gains.',
+    },
+    cost: { range: '$200 - $600', low: 200, high: 600 },
+    // Inline configuration options
+    configOptions: {
+      type: {
+        label: 'Intake Type',
+        description: 'Different designs affect airflow and heat soak',
+        type: 'radio',
+        default: 'coldAir',
+        options: [
+          {
+            value: 'shortRam',
+            label: 'Short Ram Intake',
+            hpModifier: -3,
+            description: 'Easier install, but draws warmer air',
+            note: 'May lose power in hot weather due to heat soak',
+          },
+          {
+            value: 'coldAir',
+            label: 'Cold Air Intake',
+            hpModifier: 0,
+            description: 'Routes intake to cooler air source',
+            note: 'Best all-around choice',
+          },
+          {
+            value: 'carbonFiber',
+            label: 'Carbon Fiber Intake',
+            hpModifier: 2,
+            costModifier: 200,
+            description: 'Premium materials, heat-resistant',
+            note: 'Lighter weight + better heat insulation',
+          },
+        ],
+      },
+    },
+  },
+
+  // ============================================================================
+  // ECU TUNES - Critical for power calculations
+  // ============================================================================
+  
+  'tune-street': {
+    key: 'tune-street',
+    name: 'Street ECU Tune',
+    category: 'power',
+    tier: 'streetSport',
+    shortDescription: 'Conservative tune for daily driving reliability',
+    expectedGains: { hp: '10-25 hp' },
+    cost: { range: '$400 - $800', low: 400, high: 800 },
+    configOptions: {
+      fuel: {
+        label: 'Fuel Type',
+        description: 'Higher octane = more aggressive timing',
+        type: 'radio',
+        default: '93',
+        options: [
+          { value: '91', label: '91 Octane', hpModifier: -5, description: 'Most conservative' },
+          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Standard premium' },
+        ],
+      },
+    },
+  },
+
+  'tune-track': {
+    key: 'tune-track',
+    name: 'Track ECU Tune',
+    category: 'power',
+    tier: 'trackPack',
+    shortDescription: 'Aggressive tune for track use',
+    expectedGains: { hp: '20-40 hp' },
+    cost: { range: '$500 - $1,000', low: 500, high: 1000 },
+    configOptions: {
+      fuel: {
+        label: 'Fuel Type',
+        description: 'Higher octane allows more aggressive tuning',
+        type: 'radio',
+        default: '93',
+        options: [
+          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Premium pump gas' },
+          { value: 'e30', label: 'E30 Blend', hpModifier: 10, description: '30% ethanol mix', note: 'Requires flex fuel or manual mixing' },
+        ],
+      },
+    },
+  },
+
+  'stage1-tune': {
+    key: 'stage1-tune',
+    name: 'Stage 1 ECU Tune',
+    category: 'power',
+    tier: 'streetSport',
+    shortDescription: 'Bolt-on friendly tune, no hardware required',
+    expectedGains: { hp: '30-70 hp (turbo cars)' },
+    cost: { range: '$500 - $900', low: 500, high: 900 },
+    configOptions: {
+      fuel: {
+        label: 'Fuel Grade',
+        description: 'Tune calibration depends on fuel',
+        type: 'radio',
+        default: '93',
+        options: [
+          { value: '91', label: '91 Octane', hpModifier: -10, description: 'Lower boost/timing for 91' },
+          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Standard Stage 1 map' },
+          { value: 'e30', label: 'E30 Blend', hpModifier: 15, description: 'More boost with ethanol', note: 'Requires ethanol content sensor or careful mixing' },
+        ],
+      },
+      tuneType: {
+        label: 'Tune Delivery',
+        description: 'How the tune is applied',
+        type: 'radio',
+        default: 'flash',
+        options: [
+          { value: 'flash', label: 'ECU Flash', description: 'Direct ECU reprogram', note: 'Most power, may show in dealer scan' },
+          { value: 'piggyback', label: 'Piggyback (JB4 etc)', description: 'Plug-in tuner', note: 'Removable, slightly less power' },
+        ],
+      },
+    },
+  },
+
+  'stage2-tune': {
+    key: 'stage2-tune',
+    name: 'Stage 2 ECU Tune',
+    category: 'power',
+    tier: 'trackPack',
+    shortDescription: 'Requires downpipe and intake for full gains',
+    expectedGains: { hp: '60-120 hp (turbo cars)' },
+    cost: { range: '$600 - $1,200', low: 600, high: 1200 },
+    configOptions: {
+      fuel: {
+        label: 'Fuel Grade',
+        description: 'Stage 2 benefits greatly from ethanol',
+        type: 'radio',
+        default: '93',
+        options: [
+          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Pump gas Stage 2' },
+          { value: 'e30', label: 'E30 Blend', hpModifier: 20, description: 'Popular enthusiast choice', note: 'Good power/reliability balance' },
+          { value: 'e50', label: 'E50 Blend', hpModifier: 35, description: 'Serious power increase', warning: 'May require fuel system upgrades' },
+        ],
+      },
+      boost: {
+        label: 'Boost Level',
+        description: 'Higher boost = more power but more stress',
+        type: 'radio',
+        default: 'moderate',
+        options: [
+          { value: 'conservative', label: 'Conservative', hpModifier: -15, description: 'Lower boost for reliability' },
+          { value: 'moderate', label: 'Moderate', hpModifier: 0, description: 'Standard Stage 2 boost' },
+          { value: 'aggressive', label: 'Aggressive', hpModifier: 15, description: 'Maximum safe boost', warning: 'Monitor knock closely' },
+        ],
+      },
+    },
+  },
+
+  'stage3-tune': {
+    key: 'stage3-tune',
+    name: 'Stage 3+ Tune',
+    category: 'power',
+    tier: 'ultimatePower',
+    shortDescription: 'Big turbo or built engine territory',
+    expectedGains: { hp: '150-300+ hp' },
+    cost: { range: '$1,000 - $3,000', low: 1000, high: 3000 },
+    configOptions: {
+      fuel: {
+        label: 'Fuel System',
+        description: 'Stage 3 typically requires ethanol',
+        type: 'radio',
+        default: 'e50',
+        options: [
+          { value: '93', label: '93 Octane Only', hpModifier: -30, description: 'Limited by fuel', warning: 'Not recommended for Stage 3' },
+          { value: 'e50', label: 'E50 Blend', hpModifier: 0, description: 'Common Stage 3 fuel' },
+          { value: 'e85', label: 'Full E85', hpModifier: 25, description: 'Maximum power potential', note: 'Requires upgraded fuel system' },
+        ],
+      },
+      turbo: {
+        label: 'Turbo Setup',
+        description: 'What turbo configuration',
+        type: 'radio',
+        default: 'hybrid',
+        options: [
+          { value: 'stockFrame', label: 'Stock Frame Turbo', hpModifier: -20, description: 'Upgraded internals, stock housing' },
+          { value: 'hybrid', label: 'Hybrid Turbo', hpModifier: 0, description: 'Larger compressor, stock location' },
+          { value: 'bigTurbo', label: 'Big Turbo Kit', hpModifier: 40, description: 'Full turbo upgrade', note: 'May require custom tune' },
+        ],
+      },
+    },
+  },
+
+  'piggyback-tuner': {
+    key: 'piggyback-tuner',
+    name: 'Piggyback Tuner (JB4)',
+    category: 'power',
+    tier: 'streetSport',
+    shortDescription: 'Plug-and-play tuning solution',
+    expectedGains: { hp: '30-60 hp' },
+    cost: { range: '$400 - $600', low: 400, high: 600 },
+    configOptions: {
+      map: {
+        label: 'Tune Map',
+        description: 'Aggressiveness of the tune',
+        type: 'radio',
+        default: 'map2',
+        options: [
+          { value: 'map1', label: 'Map 1 - Conservative', hpModifier: -15, description: 'Safe for stock hardware' },
+          { value: 'map2', label: 'Map 2 - Moderate', hpModifier: 0, description: 'Best balance' },
+          { value: 'map5', label: 'Map 5 - Aggressive', hpModifier: 15, description: 'With supporting mods', warning: 'Requires intake + downpipe' },
+          { value: 'map6', label: 'Map 6 - E85', hpModifier: 30, description: 'Ethanol map', note: 'Requires ethanol content sensor' },
+        ],
+      },
+    },
+  },
+
   'cold-air-intake': {
     key: 'cold-air-intake',
     name: 'Cold Air Intake (CAI)',
@@ -155,6 +378,39 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'street-legal',
     riskLevel: 'low',
+    // Inline configuration options
+    configOptions: {
+      type: {
+        label: 'Intake Type',
+        description: 'Different designs affect airflow and heat soak',
+        type: 'radio',
+        default: 'coldAir',
+        options: [
+          {
+            value: 'shortRam',
+            label: 'Short Ram Intake',
+            hpModifier: -3,
+            description: 'Easier install, but draws warmer air',
+            note: 'May lose power in hot weather due to heat soak',
+          },
+          {
+            value: 'coldAir',
+            label: 'Cold Air Intake',
+            hpModifier: 0,
+            description: 'Routes intake to cooler air source',
+            note: 'Best all-around choice',
+          },
+          {
+            value: 'carbonFiber',
+            label: 'Carbon Fiber Intake',
+            hpModifier: 2,
+            costModifier: 200,
+            description: 'Premium materials, heat-resistant',
+            note: 'Lighter weight + better heat insulation',
+          },
+        ],
+      },
+    },
     pros: [
       'Improved throttle response',
       'Better engine sound (more intake growl)',
@@ -623,6 +879,62 @@ export const upgradeDetails = {
   // ============================================================================
   // EXHAUST & SOUND
   // ============================================================================
+  
+  // 'exhaust-catback' is the key used by upgradePackages.js
+  'exhaust-catback': {
+    key: 'exhaust-catback',
+    name: 'Cat-Back Exhaust',
+    category: 'exhaust',
+    tier: 'streetSport',
+    shortDescription: 'Complete exhaust from catalytic converter back',
+    expectedGains: {
+      hp: '5-20 hp',
+      torque: '5-15 lb-ft',
+    },
+    cost: { range: '$500 - $2,500', low: 500, high: 2500 },
+    configOptions: {
+      soundLevel: {
+        label: 'Sound Level',
+        description: 'How loud do you want it?',
+        type: 'radio',
+        default: 'moderate',
+        options: [
+          {
+            value: 'touring',
+            label: 'Touring / Quiet',
+            hpModifier: 0,
+            description: 'Subtle improvement, daily driver friendly',
+            icon: 'volume-low',
+          },
+          {
+            value: 'moderate',
+            label: 'Sport / Moderate',
+            hpModifier: 0,
+            description: 'Noticeable upgrade, some highway drone',
+            icon: 'volume-medium',
+          },
+          {
+            value: 'aggressive',
+            label: 'Race / Loud',
+            hpModifier: 3,
+            description: 'Very loud, potential drone, track-focused',
+            icon: 'volume-high',
+            warning: 'May be too loud for daily driving.',
+          },
+        ],
+      },
+      valved: {
+        label: 'Valved Exhaust',
+        description: 'Electronically adjustable sound',
+        type: 'checkbox',
+        default: false,
+        hpModifier: 0,
+        costModifier: 800,
+        note: 'Switch between quiet and loud modes with a button.',
+      },
+    },
+  },
+
   'cat-back-exhaust': {
     key: 'cat-back-exhaust',
     name: 'Cat-Back Exhaust System',
@@ -643,6 +955,49 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'street-legal',
     riskLevel: 'low',
+    // Inline configuration options
+    configOptions: {
+      soundLevel: {
+        label: 'Sound Level',
+        description: 'How loud do you want it?',
+        type: 'radio',
+        default: 'moderate',
+        options: [
+          { 
+            value: 'touring', 
+            label: 'Touring / Quiet', 
+            hpModifier: 0,
+            description: 'Subtle improvement, daily driver friendly',
+            icon: 'volume-low',
+          },
+          { 
+            value: 'moderate', 
+            label: 'Sport / Moderate', 
+            hpModifier: 0,
+            description: 'Noticeable upgrade, some highway drone',
+            icon: 'volume-medium',
+          },
+          { 
+            value: 'aggressive', 
+            label: 'Race / Loud', 
+            hpModifier: 3,  // Slightly more flow from less restriction
+            description: 'Very loud, potential drone, track-focused',
+            icon: 'volume-high',
+            warning: 'May be too loud for daily driving. Check local noise ordinances.',
+          },
+        ],
+      },
+      valved: {
+        label: 'Valved Exhaust',
+        description: 'Electronically adjustable sound',
+        type: 'checkbox',
+        default: false,
+        hpModifier: 0,
+        costModifier: 800,  // Adds to base cost
+        description: 'Switch between quiet and loud modes with a button',
+        note: 'Best of both worlds - quiet when you want, loud when you want.',
+      },
+    },
     pros: [
       'Significant sound improvement',
       'Legal in all 50 states (keeps catalytic converter)',
@@ -680,6 +1035,48 @@ export const upgradeDetails = {
     requiresProInstall: true,
     streetLegal: 'varies-by-region',
     riskLevel: 'medium',
+    // Inline configuration options
+    configOptions: {
+      type: {
+        label: 'Header Type',
+        description: 'Longer = more power, but harder install',
+        type: 'radio',
+        default: 'longTube',
+        options: [
+          {
+            value: 'shorty',
+            label: 'Shorty Headers',
+            hpModifier: -15,
+            description: 'Easier install, maintains cats',
+            note: 'Best for emissions compliance',
+          },
+          {
+            value: 'midLength',
+            label: 'Mid-Length Headers',
+            hpModifier: -5,
+            description: 'Balance of gains and install difficulty',
+            note: 'Good compromise for street cars',
+          },
+          {
+            value: 'longTube',
+            label: 'Long-Tube Headers',
+            hpModifier: 0,
+            description: 'Maximum power gains',
+            note: 'Best for track and performance builds',
+            warning: 'Complex install. May require exhaust system modifications.',
+          },
+        ],
+      },
+      coating: {
+        label: 'Ceramic Coating',
+        description: 'Reduces underhood heat',
+        type: 'checkbox',
+        default: false,
+        hpModifier: 0,
+        costModifier: 300,
+        note: 'Recommended for turbo cars and track use',
+      },
+    },
     pros: [
       'Significant power gains',
       'Improved exhaust note',
@@ -718,6 +1115,39 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'varies-by-region',
     riskLevel: 'medium',
+    // Inline configuration options - shown when upgrade is selected
+    configOptions: {
+      type: {
+        label: 'Catalyst Type',
+        description: 'Choose based on your intended use',
+        type: 'radio',
+        default: 'catted',
+        options: [
+          { 
+            value: 'catted', 
+            label: 'High-Flow Catted', 
+            hpModifier: 0,  // Base HP gain (25-50hp range)
+            description: 'Street legal, passes emissions',
+            icon: 'check',
+          },
+          { 
+            value: 'catless', 
+            label: 'Catless', 
+            hpModifier: 15,  // Additional HP on top of base
+            description: 'Track only - not street legal',
+            icon: 'warning',
+            warning: 'Not street legal. Will trigger check engine light without tune.',
+          },
+        ],
+        dependencies: {
+          // When catless is selected, recommend these upgrades
+          catless: {
+            recommended: ['ecu-tune', 'stage2-tune'],
+            warning: 'Catless downpipe requires a tune to prevent check engine lights and realize full gains.',
+          },
+        },
+      },
+    },
     pros: [
       'Significant power gains on turbo cars',
       'Faster turbo spool',
@@ -1060,6 +1490,39 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'street-legal',
     riskLevel: 'low',
+    // Inline configuration options
+    configOptions: {
+      type: {
+        label: 'Intercooler Type',
+        description: 'Bigger = better cooling but more lag',
+        type: 'radio',
+        default: 'upgraded',
+        options: [
+          { 
+            value: 'stockPlus', 
+            label: 'Stock+ / OEM Upgrade', 
+            hpModifier: 0,
+            description: 'Direct OEM replacement, slightly better',
+            note: 'Easiest install, modest improvement',
+          },
+          { 
+            value: 'upgraded', 
+            label: 'Upgraded Bar & Plate', 
+            hpModifier: 5,
+            description: 'Larger core, significantly better cooling',
+            note: 'Best balance of cooling and response',
+          },
+          { 
+            value: 'fmic', 
+            label: 'Front-Mount IC (FMIC)', 
+            hpModifier: 10,
+            description: 'Maximum cooling capacity',
+            note: 'Best for high-power builds and track use',
+            warning: 'May require bumper modification. Slight increase in turbo lag.',
+          },
+        ],
+      },
+    },
     pros: [
       'Consistent power on hot days',
       'Eliminates heat soak between runs',
@@ -1114,6 +1577,123 @@ export const upgradeDetails = {
   // ============================================================================
   // SUSPENSION & CHASSIS
   // ============================================================================
+  
+  // 'coilovers-street' is the key used by upgradePackages.js for street coilovers
+  'coilovers-street': {
+    key: 'coilovers-street',
+    name: 'Street Coilovers',
+    category: 'suspension',
+    tier: 'streetSport',
+    shortDescription: 'Adjustable coilovers optimized for street driving',
+    expectedGains: {
+      handling: 'Improved cornering and adjustability',
+    },
+    cost: { range: '$1,000 - $2,500', low: 1000, high: 2500 },
+    configOptions: {
+      springRate: {
+        label: 'Spring Rate Focus',
+        description: 'Stiffer = better handling, worse comfort',
+        type: 'radio',
+        default: 'street',
+        options: [
+          {
+            value: 'comfort',
+            label: 'Comfort / OEM+',
+            handlingModifier: 0.9,
+            description: 'Close to stock comfort with adjustability',
+            note: 'Best for daily drivers',
+          },
+          {
+            value: 'street',
+            label: 'Street / Spirited',
+            handlingModifier: 1.0,
+            description: 'Firmer than stock, still comfortable',
+            note: 'Good balance for enthusiasts',
+          },
+          {
+            value: 'aggressive',
+            label: 'Aggressive / Sport',
+            handlingModifier: 1.15,
+            description: 'Noticeably stiffer, occasional track use',
+            warning: 'May be harsh on rough roads',
+          },
+        ],
+      },
+    },
+  },
+
+  // 'coilovers-track' is the key used by upgradePackages.js for track coilovers
+  'coilovers-track': {
+    key: 'coilovers-track',
+    name: 'Track Coilovers',
+    category: 'suspension',
+    tier: 'trackPack',
+    shortDescription: 'Competition-grade coilovers for serious track use',
+    expectedGains: {
+      handling: 'Maximum cornering performance',
+    },
+    cost: { range: '$2,500 - $6,000', low: 2500, high: 6000 },
+    configOptions: {
+      springRate: {
+        label: 'Spring Rate',
+        description: 'Track-focused spring rates',
+        type: 'radio',
+        default: 'track',
+        options: [
+          {
+            value: 'dual',
+            label: 'Dual-Purpose',
+            handlingModifier: 1.2,
+            description: 'Track capable, street tolerable',
+            note: 'For occasional track days',
+          },
+          {
+            value: 'track',
+            label: 'Track Focused',
+            handlingModifier: 1.35,
+            description: 'Optimized for grip and response',
+            note: 'Harsh on street, excellent on track',
+          },
+          {
+            value: 'race',
+            label: 'Race / Time Attack',
+            handlingModifier: 1.5,
+            description: 'Maximum stiffness for competition',
+            warning: 'Not recommended for street driving',
+          },
+        ],
+      },
+      adjustability: {
+        label: 'Adjustability Level',
+        description: 'More adjustment = more tuning options',
+        type: 'radio',
+        default: 'double',
+        options: [
+          {
+            value: 'single',
+            label: 'Single Adjustable',
+            costModifier: 0,
+            description: 'Rebound OR compression adjustment',
+          },
+          {
+            value: 'double',
+            label: 'Double Adjustable',
+            costModifier: 500,
+            description: 'Rebound AND compression adjustment',
+            note: 'Recommended for serious track use',
+          },
+          {
+            value: 'triple',
+            label: 'Triple Adjustable',
+            costModifier: 1500,
+            description: 'Full adjustment including high/low speed',
+            note: 'Professional-level tunability',
+          },
+        ],
+      },
+    },
+  },
+
   'coilovers': {
     key: 'coilovers',
     name: 'Coilover Suspension',
@@ -1134,6 +1714,65 @@ export const upgradeDetails = {
     requiresProInstall: true,
     streetLegal: 'street-legal',
     riskLevel: 'medium',
+    // Inline configuration options
+    configOptions: {
+      springRate: {
+        label: 'Spring Rate Focus',
+        description: 'Stiffer = better handling, worse comfort',
+        type: 'radio',
+        default: 'street',
+        options: [
+          { 
+            value: 'street', 
+            label: 'Street / Comfort', 
+            handlingModifier: 1.0,
+            description: 'Softer springs, daily driver friendly',
+            note: 'Good handling without sacrificing comfort',
+          },
+          { 
+            value: 'sport', 
+            label: 'Sport / Spirited', 
+            handlingModifier: 1.15,
+            description: 'Stiffer springs, still livable daily',
+            note: 'Best balance for enthusiast daily drivers',
+          },
+          { 
+            value: 'track', 
+            label: 'Track / Race', 
+            handlingModifier: 1.3,
+            description: 'Very stiff, track-focused',
+            warning: 'Not recommended for daily driving. May be harsh on public roads.',
+          },
+        ],
+      },
+      adjustability: {
+        label: 'Damping Adjustability',
+        description: 'More adjustability = more tuning options',
+        type: 'radio',
+        default: 'single',
+        options: [
+          { 
+            value: 'fixed', 
+            label: 'Non-Adjustable', 
+            costModifier: -300,
+            description: 'Set and forget, simplest option',
+          },
+          { 
+            value: 'single', 
+            label: 'Single Adjustable', 
+            costModifier: 0,
+            description: 'One knob controls compression + rebound together',
+          },
+          { 
+            value: 'double', 
+            label: 'Double Adjustable', 
+            costModifier: 800,
+            description: 'Separate compression and rebound adjustment',
+            note: 'Recommended for serious track use',
+          },
+        ],
+      },
+    },
     pros: [
       'Dramatically improved handling',
       'Adjustable ride height',
@@ -1172,6 +1811,29 @@ export const upgradeDetails = {
     requiresProInstall: true,
     streetLegal: 'street-legal',
     riskLevel: 'low',
+    configOptions: {
+      drop: {
+        label: 'Drop Amount',
+        description: 'How much to lower the car',
+        type: 'radio',
+        default: 'moderate',
+        options: [
+          { value: 'mild', label: '0.75" - 1.0" Drop', handlingModifier: 0.9, description: 'Subtle drop, maintains ride quality' },
+          { value: 'moderate', label: '1.0" - 1.5" Drop', handlingModifier: 1.0, description: 'Noticeable drop, good balance' },
+          { value: 'aggressive', label: '1.5" - 2.0" Drop', handlingModifier: 1.1, description: 'Aggressive stance', warning: 'May require adjustable end links' },
+        ],
+      },
+      stiffness: {
+        label: 'Spring Rate',
+        description: 'Stiffer = better handling, harsher ride',
+        type: 'radio',
+        default: 'progressive',
+        options: [
+          { value: 'progressive', label: 'Progressive Rate', description: 'Comfortable daily, firms up under load' },
+          { value: 'linear', label: 'Linear Rate', description: 'Consistent feel, more track-focused', note: 'Better for spirited driving' },
+        ],
+      },
+    },
     pros: [
       'Affordable handling improvement',
       'Better appearance',
@@ -1208,6 +1870,27 @@ export const upgradeDetails = {
     installTime: '2-4 hours',
     requiresTune: false,
     requiresProInstall: false,
+    configOptions: {
+      position: {
+        label: 'Which Sway Bars',
+        description: 'Front, rear, or both affect handling balance',
+        type: 'radio',
+        default: 'both',
+        options: [
+          { value: 'front', label: 'Front Only', description: 'Reduces understeer', note: 'Good for FWD cars' },
+          { value: 'rear', label: 'Rear Only', description: 'Adds rotation/oversteer', note: 'Good for RWD cars' },
+          { value: 'both', label: 'Front & Rear', description: 'Best overall balance', note: 'Recommended for most builds' },
+        ],
+      },
+      adjustability: {
+        label: 'Adjustability',
+        description: 'Adjustable bars allow fine-tuning',
+        type: 'checkbox',
+        default: true,
+        costModifier: 100,
+        note: 'Multiple stiffness settings for different conditions',
+      },
+    },
     streetLegal: 'street-legal',
     riskLevel: 'low',
     pros: [
@@ -1416,6 +2099,139 @@ export const upgradeDetails = {
   // ============================================================================
   // BRAKES
   // ============================================================================
+  
+  // 'brake-pads-street' is the key used by upgradePackages.js
+  'brake-pads-street': {
+    key: 'brake-pads-street',
+    name: 'Performance Pads',
+    category: 'brakes',
+    tier: 'streetSport',
+    shortDescription: 'High-friction pads for better stopping',
+    expectedGains: {
+      braking: '10-20% shorter stopping distance',
+    },
+    cost: { range: '$100 - $300', low: 100, high: 300 },
+    configOptions: {
+      compound: {
+        label: 'Pad Compound',
+        description: 'Different compounds for different uses',
+        type: 'radio',
+        default: 'streetPerformance',
+        options: [
+          {
+            value: 'oemPlus',
+            label: 'OEM+ / Low Dust',
+            description: 'Better than stock, minimal dust',
+            note: 'Best for daily drivers who want clean wheels',
+          },
+          {
+            value: 'streetPerformance',
+            label: 'Street Performance',
+            description: 'Good bite, moderate dust',
+            note: 'Best all-around street choice',
+          },
+          {
+            value: 'aggressive',
+            label: 'Aggressive Street',
+            description: 'Strong bite, more dust and noise',
+            warning: 'May squeal when cold. More rotor wear.',
+          },
+        ],
+      },
+    },
+  },
+
+  // 'brake-pads-track' is the key used by upgradePackages.js
+  'brake-pads-track': {
+    key: 'brake-pads-track',
+    name: 'Track Brake Pads',
+    category: 'brakes',
+    tier: 'trackPack',
+    shortDescription: 'Race compound pads for fade-free stopping',
+    expectedGains: {
+      braking: 'Maximum fade resistance at high temps',
+    },
+    cost: { range: '$200 - $500', low: 200, high: 500 },
+    configOptions: {
+      compound: {
+        label: 'Racing Compound',
+        description: 'Different temp ranges for different uses',
+        type: 'radio',
+        default: 'endurance',
+        options: [
+          {
+            value: 'sprint',
+            label: 'Sprint / Autocross',
+            description: 'Works well from cold, shorter sessions',
+            note: 'Good initial bite, usable on street',
+          },
+          {
+            value: 'endurance',
+            label: 'Endurance / Track Day',
+            description: 'Best for sustained high-speed braking',
+            note: 'Needs heat to work. Standard track day choice.',
+          },
+          {
+            value: 'fullRace',
+            label: 'Full Race',
+            description: 'Maximum stopping power at extreme temps',
+            warning: 'Poor cold bite. Not street safe.',
+          },
+        ],
+      },
+    },
+  },
+
+  // 'brake-fluid-lines' is the key used by upgradePackages.js
+  'brake-fluid-lines': {
+    key: 'brake-fluid-lines',
+    name: 'Brake Fluid & SS Lines',
+    category: 'brakes',
+    tier: 'streetSport',
+    shortDescription: 'High-temp fluid and braided stainless lines',
+    expectedGains: {
+      pedal: 'Firmer pedal feel',
+      fade: 'Better heat resistance',
+    },
+    cost: { range: '$150 - $400', low: 150, high: 400 },
+    configOptions: {
+      fluid: {
+        label: 'Brake Fluid Type',
+        description: 'Higher boiling point = better fade resistance',
+        type: 'radio',
+        default: 'dot4Plus',
+        options: [
+          {
+            value: 'dot4',
+            label: 'DOT 4',
+            description: 'Standard upgrade from DOT 3',
+            note: 'Good for street use',
+          },
+          {
+            value: 'dot4Plus',
+            label: 'DOT 4+ / Super',
+            description: 'Higher boiling point',
+            note: 'Best for spirited driving and light track use',
+          },
+          {
+            value: 'racing',
+            label: 'Racing Fluid (DOT 4 Racing)',
+            description: 'Highest boiling point',
+            warning: 'Requires more frequent changes. Absorbs moisture quickly.',
+          },
+        ],
+      },
+      lines: {
+        label: 'Brake Lines',
+        description: 'SS lines eliminate rubber flex',
+        type: 'checkbox',
+        default: true,
+        costModifier: 100,
+        note: 'Stainless steel braided lines improve pedal feel',
+      },
+    },
+  },
+
   'brake-pads-performance': {
     key: 'brake-pads-performance',
     name: 'Performance Brake Pads',
@@ -1451,6 +2267,43 @@ export const upgradeDetails = {
     worksWellWith: ['Performance rotors', 'Braided lines', 'High-temp fluid'],
     considerations: 'For street driving, choose a compound with good cold bite. For track, prioritize fade resistance. Some pads offer a good compromise.',
     brands: ['Hawk', 'StopTech', 'PFC', 'Carbotech', 'Ferodo', 'EBC'],
+  },
+
+  // 'slotted-rotors' is the key used by upgradePackages.js
+  'slotted-rotors': {
+    key: 'slotted-rotors',
+    name: 'Slotted/Drilled Rotors',
+    category: 'brakes',
+    tier: 'streetSport',
+    shortDescription: 'Performance rotors for better heat management',
+    expectedGains: {
+      braking: 'More consistent under heat',
+    },
+    cost: { range: '$300 - $800', low: 300, high: 800 },
+    configOptions: {
+      style: {
+        label: 'Rotor Style',
+        description: 'Each has trade-offs for heat and durability',
+        type: 'radio',
+        default: 'slotted',
+        options: [
+          { value: 'slotted', label: 'Slotted', description: 'Grooves for gas venting', note: 'Best for track use - won\'t crack' },
+          { value: 'drilled', label: 'Cross-Drilled', description: 'Holes for cooling', warning: 'Can crack under extreme heat' },
+          { value: 'both', label: 'Slotted & Drilled', description: 'Maximum cooling', note: 'Good for street/light track' },
+          { value: 'blank', label: 'Blank (Plain)', description: 'No slots or holes', note: 'Best for endurance racing' },
+        ],
+      },
+      construction: {
+        label: 'Construction',
+        description: 'Two-piece saves weight',
+        type: 'radio',
+        default: 'onepiece',
+        options: [
+          { value: 'onepiece', label: 'One-Piece', description: 'Standard construction' },
+          { value: 'twopiece', label: 'Two-Piece (Floating)', costModifier: 400, description: 'Aluminum hat reduces weight', note: 'Reduces unsprung weight' },
+        ],
+      },
+    },
   },
 
   'brake-rotors': {
@@ -1510,6 +2363,40 @@ export const upgradeDetails = {
     requiresProInstall: true,
     streetLegal: 'street-legal',
     riskLevel: 'low',
+    configOptions: {
+      size: {
+        label: 'Rotor Size',
+        description: 'Larger rotors = more heat capacity',
+        type: 'radio',
+        default: 'medium',
+        options: [
+          { value: 'small', label: 'Small Upgrade (+1")', brakingModifier: 1.1, description: 'Fits stock wheels', note: 'Good for street/light track' },
+          { value: 'medium', label: 'Medium Upgrade (+2")', brakingModifier: 1.2, description: 'May need 18"+ wheels', note: 'Best balance for track use' },
+          { value: 'large', label: 'Large Upgrade (+3")', brakingModifier: 1.35, description: 'Requires 19"+ wheels', note: 'Serious track/racing use' },
+        ],
+      },
+      pistons: {
+        label: 'Caliper Pistons',
+        description: 'More pistons = more even pad wear',
+        type: 'radio',
+        default: '4piston',
+        options: [
+          { value: '4piston', label: '4-Piston', description: 'Good for most applications' },
+          { value: '6piston', label: '6-Piston', costModifier: 500, description: 'Better pad coverage', note: 'Recommended for heavy cars' },
+          { value: '8piston', label: '8-Piston', costModifier: 1000, description: 'Maximum braking force', note: 'Racing applications' },
+        ],
+      },
+      position: {
+        label: 'Axles',
+        description: 'Front, rear, or both',
+        type: 'radio',
+        default: 'front',
+        options: [
+          { value: 'front', label: 'Front Only', description: 'Where most braking happens' },
+          { value: 'both', label: 'Front & Rear', costModifier: 2000, description: 'Complete upgrade', note: 'Recommended for high-power cars' },
+        ],
+      },
+    },
     pros: [
       'Dramatically improved stopping power',
       'Massive heat capacity increase',

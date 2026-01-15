@@ -160,22 +160,96 @@ export function getFormattedPlatforms(profile) {
 export function getFormattedPowerLimits(profile) {
   if (!profile?.power_limits) return [];
 
+  // Map for both camelCase and snake_case keys
   const nameMap = {
+    // camelCase keys
     stockTurbo: 'Stock Turbo',
     stockFuelSystem: 'Stock Fuel System',
     stockTransmission: 'Transmission',
     stockInternals: 'Stock Internals',
     is38Turbo: 'IS38 Turbo (R)',
     stockDSG: 'Stock DSG',
-    stockEngine: 'Stock Engine'
+    stockEngine: 'Stock Engine',
+    stockAxles: 'Stock Axles',
+    stockClutch: 'Stock Clutch',
+    stockRods: 'Stock Rods',
+    stockPistons: 'Stock Pistons',
+    stockHeadGasket: 'Stock Head Gasket',
+    stockValvetrain: 'Stock Valvetrain',
+    stockOilPump: 'Stock Oil Pump',
+    stockDifferential: 'Stock Differential',
+    // snake_case keys (from database/AI)
+    stock_turbo: 'Stock Turbo',
+    stock_turbo_whp: 'Stock Turbo',
+    stock_fuel_system: 'Stock Fuel System',
+    stock_fuel_system_hp: 'Stock Fuel System',
+    stock_transmission: 'Transmission',
+    stock_transmission_tq: 'Transmission',
+    stock_internals: 'Stock Internals',
+    stock_internals_hp: 'Stock Internals',
+    stock_internals_whp: 'Stock Internals',
+    is38_turbo: 'IS38 Turbo (R)',
+    stock_dsg: 'Stock DSG',
+    stock_dsg_tq: 'Stock DSG',
+    stock_engine: 'Stock Engine',
+    stock_axles: 'Stock Axles',
+    stock_axles_tq: 'Stock Axles',
+    stock_clutch: 'Stock Clutch',
+    stock_clutch_tq: 'Stock Clutch',
+    stock_rods: 'Stock Rods',
+    stock_rods_hp: 'Stock Rods',
+    stock_pistons: 'Stock Pistons',
+    stock_pistons_hp: 'Stock Pistons',
+    stock_head_gasket: 'Stock Head Gasket',
+    stock_valvetrain: 'Stock Valvetrain',
+    stock_oil_pump: 'Stock Oil Pump',
+    stock_differential: 'Stock Differential',
+    stock_differential_tq: 'Stock Differential'
   };
 
-  return Object.entries(profile.power_limits).map(([key, limit]) => ({
-    key,
-    name: nameMap[key] || key.replace(/([A-Z])/g, ' $1').trim(),
-    value: limit.whp ? `${limit.whp} WHP` : limit.hp ? `${limit.hp} HP` : limit.tq ? `${limit.tq} TQ` : 'N/A',
-    notes: limit.notes || null
-  }));
+  /**
+   * Format a snake_case or camelCase key to human-readable title
+   */
+  const formatKey = (key) => {
+    if (nameMap[key]) return nameMap[key];
+    
+    // Handle snake_case: stock_internals_hp -> Stock Internals HP
+    if (key.includes('_')) {
+      return key
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ')
+        .replace(/\b(Hp|Whp|Tq)\b/gi, (match) => match.toUpperCase()); // Keep HP, WHP, TQ uppercase
+    }
+    
+    // Handle camelCase: stockInternals -> Stock Internals
+    return key.replace(/([A-Z])/g, ' $1').trim();
+  };
+
+  return Object.entries(profile.power_limits).map(([key, limit]) => {
+    // Extract numeric value from the limit object
+    let value = 'N/A';
+    if (typeof limit === 'object' && limit !== null) {
+      if (limit.whp) value = `${limit.whp} WHP`;
+      else if (limit.hp) value = `${limit.hp} HP`;
+      else if (limit.tq) value = `${limit.tq} TQ`;
+      else if (limit.value) value = limit.value; // Direct value
+    } else if (typeof limit === 'number') {
+      // If limit is just a number, infer unit from key
+      const unit = key.toLowerCase().includes('tq') ? 'TQ' : 
+                   key.toLowerCase().includes('whp') ? 'WHP' : 'HP';
+      value = `${limit} ${unit}`;
+    } else if (typeof limit === 'string') {
+      value = limit;
+    }
+
+    return {
+      key,
+      name: formatKey(key),
+      value,
+      notes: (typeof limit === 'object' && limit?.notes) || null
+    };
+  });
 }
 
 /**

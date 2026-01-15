@@ -1,0 +1,149 @@
+'use client';
+
+/**
+ * DynamicBuildConfig Component
+ * 
+ * Clean, flat design for configuring selected upgrades.
+ * Uses spacing and typography instead of nested boxes.
+ */
+
+import { useMemo } from 'react';
+import UpgradeConfigPanel, { getDefaultConfig } from './UpgradeConfigPanel';
+import { getUpgradeDetail } from '@/data/upgradeEducation';
+import styles from './DynamicBuildConfig.module.css';
+
+// Icons
+const Icons = {
+  check: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  info: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  ),
+};
+
+/**
+ * Get upgrade data by key using the upgradeEducation lookup
+ */
+function getUpgradeByKey(upgradeKey) {
+  return getUpgradeDetail(upgradeKey);
+}
+
+/**
+ * DynamicBuildConfig Component
+ */
+export default function DynamicBuildConfig({
+  selectedUpgrades = [],
+  upgradeConfigs = {},
+  onConfigChange,
+}) {
+  // Get all selected upgrades with their data
+  const allSelectedUpgrades = useMemo(() => {
+    return selectedUpgrades.map(upgradeKey => {
+      const upgrade = getUpgradeByKey(upgradeKey);
+      if (upgrade) {
+        const hasConfig = upgrade.configOptions && Object.keys(upgrade.configOptions).length > 0;
+        return {
+          key: upgradeKey,
+          name: upgrade.name,
+          configOptions: upgrade.configOptions,
+          hasConfig,
+        };
+      }
+      // Fallback for upgrades not in upgradeEducation
+      return {
+        key: upgradeKey,
+        name: upgradeKey.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        configOptions: null,
+        hasConfig: false,
+      };
+    });
+  }, [selectedUpgrades]);
+
+  // Count how many have configuration options
+  const configurableCount = allSelectedUpgrades.filter(u => u.hasConfig).length;
+
+  // If no upgrades selected, show helpful message
+  if (allSelectedUpgrades.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <Icons.info size={18} />
+        <div className={styles.emptyStateContent}>
+          <span className={styles.emptyStateTitle}>No Upgrades Selected</span>
+          <span className={styles.emptyStateText}>
+            Select upgrades from the categories above to start building.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.dynamicConfigContainer}>
+      {/* Simple summary line */}
+      <div className={styles.configSummary}>
+        <span className={styles.configSummaryText}>
+          {allSelectedUpgrades.length} upgrade{allSelectedUpgrades.length !== 1 ? 's' : ''}
+        </span>
+        {configurableCount > 0 && (
+          <span className={styles.configSummaryCount}>
+            {configurableCount} to configure
+          </span>
+        )}
+      </div>
+      
+      <div className={styles.configList}>
+        {allSelectedUpgrades.map(upgrade => {
+          if (upgrade.hasConfig) {
+            const currentConfig = upgradeConfigs[upgrade.key] || getDefaultConfig(upgrade.configOptions);
+            
+            return (
+              <div key={upgrade.key} className={styles.upgradeItem}>
+                <div className={styles.upgradeHeader}>
+                  <span className={styles.upgradeName}>{upgrade.name}</span>
+                  <span className={styles.upgradeCheck}>
+                    <Icons.check size={14} />
+                  </span>
+                </div>
+                
+                <div className={styles.upgradeConfig}>
+                  <UpgradeConfigPanel
+                    upgradeKey={upgrade.key}
+                    configOptions={upgrade.configOptions}
+                    currentConfig={currentConfig}
+                    onChange={onConfigChange}
+                    selectedUpgrades={selectedUpgrades}
+                    compact={true}
+                  />
+                </div>
+              </div>
+            );
+          } else {
+            // Upgrade without configuration options
+            return (
+              <div key={upgrade.key} className={styles.upgradeSimpleCard}>
+                <span className={styles.upgradeName}>{upgrade.name}</span>
+                <span className={styles.selectedBadge}>
+                  <Icons.check size={12} />
+                </span>
+              </div>
+            );
+          }
+        })}
+      </div>
+      
+      {configurableCount > 0 && (
+        <div className={styles.configFooter}>
+          <Icons.info size={14} />
+          <span>Configure options for more accurate estimates.</span>
+        </div>
+      )}
+    </div>
+  );
+}

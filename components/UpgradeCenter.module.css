@@ -177,7 +177,7 @@
 .modeToggleSection {
   padding: 0 24px 24px;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 12px auto 0;
   width: 100%;
 }
 
@@ -311,6 +311,36 @@
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 12px;
+}
+
+/* Compact version for sidebar placement */
+.recommendationBannerCompact {
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.03) 100%);
+  border-radius: 8px;
+}
+
+.recommendationBannerCompact .recommendationTitle {
+  font-size: 11px;
+}
+
+.recommendationBannerCompact .recommendationText {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.recommendationBannerCompact .insightsGrid {
+  gap: 8px;
+}
+
+.recommendationBannerCompact .insightsCard,
+.recommendationBannerCompact .watchOutsCard {
+  padding: 10px;
+}
+
+.recommendationBannerCompact .insightsCardList,
+.recommendationBannerCompact .watchOutsCardList {
+  font-size: 12px;
 }
 
 .recommendationHeader {
@@ -548,6 +578,44 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Collapsible header for Advanced Tuning section */
+.sidebarCardHeaderCollapsible {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebarCardHeaderCollapsible:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.advancedTuningHint {
+  flex: 1;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: right;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.collapseChevron {
+  transition: transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.collapseChevronExpanded {
+  transform: rotate(90deg);
+}
+
 .sidebarCardContent {
   padding: 12px;
 }
@@ -619,6 +687,31 @@
 .advancedSelect option {
   background: #1a1b1e;
   color: #fff;
+}
+
+/* Disabled/controlled select state - used when config comes from Add Upgrades */
+.advancedSelectDisabled {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 6px;
+  color: var(--color-gold, #d4af37);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Badge showing config is controlled elsewhere */
+.configuredBadge {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--color-gold, #d4af37);
+  margin-left: 6px;
+  padding: 1px 4px;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 3px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .advancedCheckbox {
@@ -1689,8 +1782,8 @@
 
 .upgradeRow {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 0;
   padding: 10px 12px;
   margin-bottom: 6px;
   background: rgba(255, 255, 255, 0.03);
@@ -1714,6 +1807,14 @@
 
 .upgradeRowConflict {
   border-color: rgba(251, 191, 36, 0.4);
+}
+
+/* Main row containing checkbox, name, hp gain, and learn more button */
+.upgradeMainRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .upgradeToggle {
@@ -1767,6 +1868,21 @@
   color: #10b981;
   border-radius: 3px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* HP gain boosted by config options */
+.upgradeGainBoosted {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+/* Asterisk indicator for config-modified gains */
+.configBoost {
+  font-size: 10px;
+  line-height: 1;
 }
 
 .conflictBadge {
@@ -2934,43 +3050,263 @@
   color: #10b981;
 }
 
-.trackSelector {
+/* Track Selector */
+.trackSelectorWrapper {
+  position: relative;
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trackSelectedBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.trackSelectedBtn:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.trackSelectedBtn svg {
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.trackSelectedInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.trackSelectedName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackSelectedMeta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Track Details */
+.trackDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.trackDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.trackDetailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trackDetailLabel {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trackDetailValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.trackTags {
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
-.trackBtn {
+.trackTag {
+  padding: 3px 8px;
+  background: rgba(212, 175, 55, 0.12);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #d4af37;
+  text-transform: capitalize;
+}
+
+/* Track Dropdown */
+.trackDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(20, 20, 25, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 12px;
+  z-index: 100;
+  max-height: 400px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.trackSearchContainer {
+  display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
+}
+
+.trackSearchContainer svg {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.trackSearchInput {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+}
+
+.trackSearchInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trackClearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.trackBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.8);
+.trackClearBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
-.trackBtnActive {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.4);
-  color: #10b981;
+/* Quick Picks */
+.trackQuickPicks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.trackIcon {
-  font-size: 16px;
+.trackQuickLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
 }
 
-.trackName {
+/* Results Section */
+.trackResultsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.trackResultsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  max-height: 220px;
+}
+
+.trackResultItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.trackResultItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.trackResultItemActive {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.trackResultInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.trackResultName {
+  font-size: 13px;
   font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackResultMeta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.trackNoResults {
+  padding: 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
 }
 
 .lapTimeBody {
@@ -4234,6 +4570,7 @@
   /* Mode Toggle Section - Mobile */
   .modeToggleSection {
     padding: 0 16px 16px;
+    margin-top: 8px;
   }
 
   .modeToggleFullWidth {
@@ -4892,12 +5229,55 @@
     justify-content: space-between;
   }
   
-  .trackBtn {
-    padding: 6px 8px;
+  /* Track Selector - Mobile */
+  .trackSelectedBtn {
+    padding: 8px 10px;
   }
   
-  .trackName {
+  .trackSelectedName {
+    font-size: 13px;
+  }
+  
+  .trackDetails {
+    padding: 8px 10px;
+  }
+  
+  .trackDetailGrid {
+    gap: 6px;
+  }
+  
+  .trackDetailLabel {
     font-size: 9px;
+  }
+  
+  .trackDetailValue {
+    font-size: 11px;
+  }
+  
+  .trackTag {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+  
+  .trackDropdown {
+    max-height: 350px;
+    padding: 10px;
+  }
+  
+  .trackSearchInput {
+    font-size: 13px;
+  }
+  
+  .trackResultItem {
+    padding: 8px;
+  }
+  
+  .trackResultName {
+    font-size: 12px;
+  }
+  
+  .trackResultMeta {
+    font-size: 10px;
   }
   
   .lapTimeBody {

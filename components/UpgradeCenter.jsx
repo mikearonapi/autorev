@@ -65,6 +65,11 @@ import PartsSelector from './tuning-shop/PartsSelector';
 import ImageUploader from './ImageUploader';
 import BuildMediaGallery from './BuildMediaGallery';
 import VideoPlayer from './VideoPlayer';
+import UpgradeConfigPanel, { 
+  calculateConfigHpModifier, 
+  getDefaultConfig 
+} from './UpgradeConfigPanel';
+import DynamicBuildConfig from './DynamicBuildConfig';
 
 // Compact Icons
 const Icons = {
@@ -130,6 +135,12 @@ const Icons = {
   check: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
+  search: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
     </svg>
   ),
   x: ({ size = 16 }) => (
@@ -211,6 +222,11 @@ const Icons = {
   chevronRight: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  ),
+  chevronDown: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
     </svg>
   ),
   alertTriangle: ({ size = 16 }) => (
@@ -1049,12 +1065,16 @@ function LapTimeEstimator({
   suspensionSetup, brakeSetup, aeroSetup, weightMod = 0, driverWeight = 180,
   user, carSlug, modsSummary
 }) {
-  const [selectedTrack, setSelectedTrack] = useState('laguna_seca');
+  const [selectedTrackSlug, setSelectedTrackSlug] = useState('laguna-seca');
   const [driverSkill, setDriverSkill] = useState('intermediate');
   const [showInfo, setShowInfo] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showTrackSelector, setShowTrackSelector] = useState(false);
+  const [trackSearch, setTrackSearch] = useState('');
   const [trackHistory, setTrackHistory] = useState([]);
+  const [allTracks, setAllTracks] = useState([]);
+  const [tracksLoading, setTracksLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [analysis, setAnalysis] = useState(null);
@@ -1067,6 +1087,24 @@ function LapTimeEstimator({
     conditions: 'dry',
     notes: ''
   });
+  
+  // Fetch tracks from database on mount
+  useEffect(() => {
+    async function fetchTracks() {
+      try {
+        const res = await fetch('/api/tracks');
+        if (res.ok) {
+          const data = await res.json();
+          setAllTracks(data.tracks || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch tracks:', err);
+      } finally {
+        setTracksLoading(false);
+      }
+    }
+    fetchTracks();
+  }, []);
   
   // Fetch track history when history panel is opened
   useEffect(() => {
@@ -1109,8 +1147,9 @@ function LapTimeEstimator({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          trackName: TRACKS[selectedTrack].name,
-          trackLengthMiles: TRACKS[selectedTrack].length,
+          trackName: selectedTrack.name,
+          trackSlug: selectedTrack.slug,
+          trackLengthMiles: selectedTrack.length,
           lapTimeSeconds: totalSeconds,
           sessionDate: logForm.sessionDate,
           conditions: logForm.conditions,
@@ -1179,78 +1218,56 @@ function LapTimeEstimator({
   // Based on real-world lap time data from street cars (300-500hp sports cars)
   // Reference: A skilled driver in a ~400hp RWD sports car on summer tires
   // ==========================================================================
-  const TRACKS = {
-    laguna_seca: { 
-      name: 'Laguna Seca', 
-      length: 2.238, 
-      corners: 11, 
-      icon: '🏁',
-      // Real reference: Mustang GT ~1:38-1:42, C7 Corvette ~1:33-1:37
-      proTime: 95,  // Professional driver time (seconds) - theoretical best
-      // How much each mod category can improve time (seconds at max)
-      powerGainMax: 4.0,    // Max seconds from +200hp (medium straights)
-      gripGainMax: 5.0,     // Max seconds from slicks (technical corners)
-      suspGainMax: 3.5,     // Max from race coilovers (Corkscrew, elevation)
-      brakeGainMax: 2.5,    // Max from full brake kit (heavy braking zones)
-      aeroGainMax: 2.0,     // Max from full aero (Turn 6, Turn 9 high-speed)
-      weightGainMax: 2.0,   // Max from -200lbs (helps everywhere)
-      // How much driver skill affects lap time
-      beginnerPenalty: 25,  // Seconds slower than pro (learning lines, hesitant)
-      intermediatePenalty: 10, // Getting there but not at limit
-      advancedPenalty: 3,   // Near the limit
+  // Fallback tracks if API fails (same structure as API response)
+  const FALLBACK_TRACKS = [
+    {
+      slug: 'laguna-seca', name: 'Laguna Seca', shortName: 'Laguna',
+      length: 2.238, corners: 11, icon: '🏁', state: 'CA', country: 'USA',
+      proTime: 95, powerGainMax: 4.0, gripGainMax: 5.0, suspGainMax: 3.5,
+      brakeGainMax: 2.5, aeroGainMax: 2.0, weightGainMax: 2.0,
+      beginnerPenalty: 25, intermediatePenalty: 10, advancedPenalty: 3, isPopular: true,
     },
-    nurburgring_gp: { 
-      name: 'Nürburgring GP', 
-      length: 3.199, 
-      corners: 15, 
-      icon: '🇩🇪',
-      // Real reference: M3 ~2:00-2:05, 911 GT3 ~1:54-1:58
-      proTime: 118,
-      powerGainMax: 6.0,    // Long straights reward power
-      gripGainMax: 5.5,     // Technical sections need grip
-      suspGainMax: 4.0,     // Elevation changes, curbs
-      brakeGainMax: 3.0,    // Heavy braking into chicanes
-      aeroGainMax: 3.5,     // High-speed sections benefit from downforce
-      weightGainMax: 2.5,
-      beginnerPenalty: 30,  // Technical track punishes beginners more
-      intermediatePenalty: 12,
-      advancedPenalty: 4,
+    {
+      slug: 'road-atlanta', name: 'Road Atlanta', shortName: 'Road Atlanta',
+      length: 2.54, corners: 12, icon: '🍑', state: 'GA', country: 'USA',
+      proTime: 98, powerGainMax: 6.0, gripGainMax: 4.5, suspGainMax: 3.5,
+      brakeGainMax: 3.0, aeroGainMax: 3.0, weightGainMax: 2.0,
+      beginnerPenalty: 30, intermediatePenalty: 12, advancedPenalty: 4, isPopular: true,
     },
-    spa: { 
-      name: 'Spa', 
-      length: 4.352, 
-      corners: 19, 
-      icon: '🇧🇪',
-      // Real reference: C7 Z06 ~2:35-2:40, GT3 RS ~2:28-2:32
-      proTime: 152,
-      powerGainMax: 10.0,   // Kemmel straight, Blanchimont - POWER IS KING
-      gripGainMax: 4.0,     // Less critical than power here
-      suspGainMax: 3.0,     // Eau Rouge needs confidence, not stiffness
-      brakeGainMax: 3.5,    // Bus Stop, La Source
-      aeroGainMax: 5.0,     // High-speed corners love downforce
-      weightGainMax: 3.0,
-      beginnerPenalty: 35,  // High speeds = bigger mistakes = more time lost
-      intermediatePenalty: 14,
-      advancedPenalty: 5,
+    {
+      slug: 'cota', name: 'Circuit of the Americas', shortName: 'COTA',
+      length: 3.426, corners: 20, icon: '⭐', state: 'TX', country: 'USA',
+      proTime: 135, powerGainMax: 8.0, gripGainMax: 5.0, suspGainMax: 4.0,
+      brakeGainMax: 3.5, aeroGainMax: 4.0, weightGainMax: 2.5,
+      beginnerPenalty: 40, intermediatePenalty: 16, advancedPenalty: 5, isPopular: true,
     },
-    autocross: { 
-      name: 'Autocross', 
-      length: 0.5, 
-      corners: 20, 
-      icon: '🔀',
-      // Typical course: 45-65 seconds depending on layout
-      proTime: 48,
-      powerGainMax: 0.5,    // Can barely use power - always in a corner
-      gripGainMax: 4.0,     // GRIP IS EVERYTHING - every cone matters
-      suspGainMax: 2.5,     // Quick transitions need good suspension
-      brakeGainMax: 1.5,    // Light braking, more about rotation
-      aeroGainMax: 0.3,     // Too slow for aero to matter
-      weightGainMax: 1.5,   // Light car = quick direction changes
-      beginnerPenalty: 15,  // Skill gap is huge but times are short
-      intermediatePenalty: 6,
-      advancedPenalty: 2,
+    {
+      slug: 'autocross-standard', name: 'Autocross', shortName: 'Autocross',
+      length: 0.5, corners: 20, icon: '🔀', state: null, country: 'USA',
+      proTime: 48, powerGainMax: 0.5, gripGainMax: 4.0, suspGainMax: 2.5,
+      brakeGainMax: 1.5, aeroGainMax: 0.3, weightGainMax: 1.5,
+      beginnerPenalty: 15, intermediatePenalty: 6, advancedPenalty: 2, isPopular: true,
     },
-  };
+  ];
+  
+  // Use database tracks or fallback
+  const tracks = allTracks.length > 0 ? allTracks : FALLBACK_TRACKS;
+  const popularTracks = tracks.filter(t => t.isPopular).slice(0, 6);
+  
+  // Get currently selected track data
+  const selectedTrack = tracks.find(t => t.slug === selectedTrackSlug) || tracks[0];
+  
+  // Filter tracks for search
+  const filteredTracks = useMemo(() => {
+    if (!trackSearch.trim()) return tracks;
+    const search = trackSearch.toLowerCase();
+    return tracks.filter(t => 
+      t.name.toLowerCase().includes(search) ||
+      t.shortName?.toLowerCase().includes(search) ||
+      t.state?.toLowerCase().includes(search) ||
+      t.city?.toLowerCase().includes(search)
+    );
+  }, [tracks, trackSearch]);
 
   // ==========================================================================
   // DRIVER SKILL DEFINITIONS
@@ -1328,7 +1345,7 @@ function LapTimeEstimator({
   // This is what a PROFESSIONAL driver would gain - the ceiling
   // ==========================================================================
   const calculateModImprovement = () => {
-    const track = TRACKS[selectedTrack];
+    const track = selectedTrack;
     const improvements = { power: 0, grip: 0, suspension: 0, brakes: 0, aero: 0, weight: 0 };
 
     // 1. POWER GAINS - More HP = faster on straights
@@ -1391,7 +1408,7 @@ function LapTimeEstimator({
   // ==========================================================================
   // CALCULATE LAP TIMES
   // ==========================================================================
-  const track = TRACKS[selectedTrack];
+  const track = selectedTrack;
   const skill = DRIVER_SKILLS[driverSkill];
   
   // Get the theoretical improvements (what a pro would gain)
@@ -1412,13 +1429,21 @@ function LapTimeEstimator({
   };
   const realizedTotal = Object.values(realizedByCategory).reduce((sum, val) => sum + val, 0);
   
-  // Stock lap time: Pro time + skill penalty
-  // Scaled slightly for car power (faster cars = faster times)
-  const powerScale = Math.max(0.85, Math.min(1.15, 400 / (stockHp || 400)));
-  const skillPenalty = track[`${driverSkill}Penalty`] || track.intermediatePenalty;
-  const stockLapTime = (track.proTime * powerScale) + skillPenalty;
+  // Stock lap time calculation:
+  // Pro reference time assumes a ~400hp car. Adjust for actual stock power.
+  // Power difference affects time in an additive way (not multiplicative).
+  // Real-world: ~0.02-0.03 sec per hp difference on a 3mi track
+  const hpDifference = 400 - (stockHp || 400);
+  const trackLengthFactor = (track.length || 3.0) / 3.0; // Scale for track length
+  const powerPenalty = hpDifference * 0.025 * trackLengthFactor; // ~2.5 sec per 100hp difference
   
-  // Modified lap time = stock - realized improvements
+  // Skill penalty from database (how much slower than a pro)
+  const skillPenalty = track[`${driverSkill}Penalty`] || track.intermediatePenalty;
+  
+  // Stock lap time = pro reference + power adjustment + skill penalty
+  const stockLapTime = track.proTime + powerPenalty + skillPenalty;
+  
+  // Modified lap time = stock - realized improvements from mods
   const moddedLapTime = stockLapTime - realizedTotal;
   
   // What they're leaving on the table
@@ -1491,18 +1516,130 @@ function LapTimeEstimator({
       </div>
 
       {/* Track Selector */}
-      <div className={styles.trackSelector}>
-        {Object.entries(TRACKS).map(([key, trackDef]) => (
-          <button
-            key={key}
-            className={`${styles.trackBtn} ${selectedTrack === key ? styles.trackBtnActive : ''}`}
-            onClick={() => setSelectedTrack(key)}
-            title={trackDef.name}
-          >
-            <span className={styles.trackIcon}>{trackDef.icon}</span>
-            <span className={styles.trackName}>{trackDef.name.split(' ')[0]}</span>
-          </button>
-        ))}
+      <div className={styles.trackSelectorWrapper}>
+        <button 
+          className={styles.trackSelectedBtn}
+          onClick={() => setShowTrackSelector(!showTrackSelector)}
+        >
+          <div className={styles.trackSelectedInfo}>
+            <span className={styles.trackSelectedName}>{selectedTrack?.name || 'Select Track'}</span>
+            <span className={styles.trackSelectedMeta}>
+              {selectedTrack?.city && selectedTrack?.state 
+                ? `${selectedTrack.city}, ${selectedTrack.state}` 
+                : selectedTrack?.state || selectedTrack?.country}
+              {selectedTrack?.length && ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
+            </span>
+          </div>
+          <Icons.chevronDown size={16} />
+        </button>
+        
+        {/* Track Details - Always visible when track selected */}
+        {selectedTrack && (
+          <div className={styles.trackDetails}>
+            <div className={styles.trackDetailGrid}>
+              {selectedTrack.longestStraight && (
+                <div className={styles.trackDetailItem}>
+                  <span className={styles.trackDetailLabel}>Straight</span>
+                  <span className={styles.trackDetailValue}>{selectedTrack.longestStraight.toLocaleString()} ft</span>
+                </div>
+              )}
+              {selectedTrack.elevationChange && (
+                <div className={styles.trackDetailItem}>
+                  <span className={styles.trackDetailLabel}>Elevation</span>
+                  <span className={styles.trackDetailValue}>{selectedTrack.elevationChange} ft</span>
+                </div>
+              )}
+              {selectedTrack.surfaceType && (
+                <div className={styles.trackDetailItem}>
+                  <span className={styles.trackDetailLabel}>Surface</span>
+                  <span className={styles.trackDetailValue}>{selectedTrack.surfaceType}</span>
+                </div>
+              )}
+            </div>
+            {selectedTrack.characterTags?.length > 0 && (
+              <div className={styles.trackTags}>
+                {selectedTrack.characterTags.slice(0, 4).map(tag => (
+                  <span key={tag} className={styles.trackTag}>{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Dropdown */}
+        {showTrackSelector && (
+          <div className={styles.trackDropdown}>
+            <div className={styles.trackSearchContainer}>
+              <Icons.search size={14} />
+              <input
+                type="text"
+                className={styles.trackSearchInput}
+                placeholder="Search 100 tracks..."
+                value={trackSearch}
+                onChange={(e) => setTrackSearch(e.target.value)}
+                autoFocus
+              />
+              {trackSearch && (
+                <button 
+                  className={styles.trackClearBtn}
+                  onClick={() => setTrackSearch('')}
+                >
+                  <Icons.x size={12} />
+                </button>
+              )}
+            </div>
+            
+            {/* Popular tracks when no search */}
+            {!trackSearch && (
+              <div className={styles.trackQuickPicks}>
+                <span className={styles.trackQuickLabel}>Popular Tracks</span>
+                {popularTracks.slice(0, 6).map((t) => (
+                  <button
+                    key={t.slug}
+                    className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
+                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); }}
+                  >
+                    <div className={styles.trackResultInfo}>
+                      <span className={styles.trackResultName}>{t.name}</span>
+                      <span className={styles.trackResultMeta}>
+                        {t.city && t.state ? `${t.city}, ${t.state}` : t.state}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {/* All tracks / Search results */}
+            <div className={styles.trackResultsSection}>
+              <span className={styles.trackQuickLabel}>
+                {trackSearch ? `Results for "${trackSearch}"` : 'All Tracks'}
+              </span>
+              <div className={styles.trackResultsList}>
+                {(trackSearch ? filteredTracks : tracks).slice(0, 20).map((t) => (
+                  <button
+                    key={t.slug}
+                    className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
+                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); setTrackSearch(''); }}
+                  >
+                    <div className={styles.trackResultInfo}>
+                      <span className={styles.trackResultName}>{t.name}</span>
+                      <span className={styles.trackResultMeta}>
+                        {t.city && t.state ? `${t.city}, ${t.state}` : t.state || t.country}
+                        {t.length && ` • ${t.length} mi`}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+                {trackSearch && filteredTracks.length === 0 && (
+                  <div className={styles.trackNoResults}>
+                    No tracks found for "{trackSearch}"
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Lap Time Comparison */}
@@ -1635,7 +1772,7 @@ function LapTimeEstimator({
           {showLogForm && (
             <div className={styles.logTimeForm}>
               <div className={styles.logTimeHeader}>
-                <h4>Log Track Time at {TRACKS[selectedTrack].name}</h4>
+                <h4>Log Track Time at {selectedTrack.name}</h4>
                 <p>Record your actual lap time to compare with estimates</p>
               </div>
               
@@ -2017,6 +2154,9 @@ function AeroBalanceChart({ aeroSetup, weight }) {
 
 /**
  * Power Limits Advisory - Shows component limits from database
+ * 
+ * CONFIDENCE: This is community-reported data, NOT OEM engineering specs.
+ * Should be treated as rough estimates based on enthusiast experience.
  */
 function PowerLimitsAdvisory({ powerLimits, currentHp }) {
   if (!powerLimits || Object.keys(powerLimits).length === 0) return null;
@@ -2029,25 +2169,64 @@ function PowerLimitsAdvisory({ powerLimits, currentHp }) {
   
   if (sortedLimits.length === 0) return null;
   
+  // User-friendly labels for component limits
+  // Maps both snake_case keys and their _hp/_tq/_whp variants
   const limitLabels = {
-    stock_transmission: 'Stock Transmission',
-    stock_clutch: 'Stock Clutch',
-    stock_driveshaft: 'Stock Driveshaft',
-    stock_axles: 'Stock Axles',
-    stock_rods: 'Stock Connecting Rods',
-    stock_pistons: 'Stock Pistons',
-    stock_turbo: 'Stock Turbo',
-    stock_fuel_system: 'Stock Fuel System',
-    internals: 'Internal Components',
+    // Drivetrain
+    stock_transmission: 'Transmission',
+    stock_transmission_tq: 'Transmission',
+    stock_dsg: 'DSG Gearbox',
+    stock_dsg_tq: 'DSG Gearbox',
+    stock_clutch: 'Clutch',
+    stock_clutch_tq: 'Clutch',
+    stock_driveshaft: 'Driveshaft',
+    stock_driveshaft_tq: 'Driveshaft',
+    stock_axles: 'Axles (CV Shafts)',
+    stock_axles_tq: 'Axles (CV Shafts)',
+    stock_differential: 'Differential',
+    stock_differential_tq: 'Differential',
+    // Engine internals
+    stock_internals: 'Engine Internals',
+    stock_internals_hp: 'Engine Internals',
+    stock_internals_whp: 'Engine Internals',
+    stock_rods: 'Connecting Rods',
+    stock_rods_hp: 'Connecting Rods',
+    stock_pistons: 'Pistons',
+    stock_pistons_hp: 'Pistons',
+    stock_head_gasket: 'Head Gasket',
+    stock_valvetrain: 'Valvetrain',
+    stock_block: 'Engine Block',
     block: 'Engine Block',
+    internals: 'Engine Internals',
+    // Forced induction
+    stock_turbo: 'Stock Turbo',
+    stock_turbo_whp: 'Stock Turbo',
+    is38_turbo: 'IS38 Turbo',
+    // Fuel system
+    stock_fuel_system: 'Fuel System',
+    stock_fuel_system_hp: 'Fuel System',
+    stock_injectors: 'Fuel Injectors',
+    stock_fuel_pump: 'Fuel Pump',
+  };
+  
+  // Get clean label for a key
+  const getLabel = (key) => {
+    if (limitLabels[key]) return limitLabels[key];
+    // Fallback: clean up key for display
+    return key
+      .replace(/^stock_/, '')
+      .replace(/_(hp|tq|whp)$/, '')
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   };
   
   return (
     <div className={styles.powerLimits}>
       <div className={styles.powerLimitsHeader}>
         <Icons.alertTriangle size={16} />
-        <span>Component Limits</span>
-        <span className={styles.powerLimitsDisclaimer}>Community data</span>
+        <span>Estimated Component Limits</span>
+        <span className={styles.powerLimitsDisclaimer}>Community estimates</span>
       </div>
       
       <div className={styles.powerLimitsList}>
@@ -2061,7 +2240,7 @@ function PowerLimitsAdvisory({ powerLimits, currentHp }) {
               className={`${styles.powerLimitItem} ${isOverLimit ? styles.overLimit : isAtRisk ? styles.atRisk : ''}`}
             >
               <span className={styles.powerLimitLabel}>
-                {limitLabels[key] || key.replace(/_/g, ' ')}
+                {getLabel(key)}
               </span>
               <div className={styles.powerLimitBar}>
                 <div 
@@ -2070,7 +2249,7 @@ function PowerLimitsAdvisory({ powerLimits, currentHp }) {
                 />
               </div>
               <span className={styles.powerLimitValue}>
-                {limit} hp
+                ~{limit} hp
                 {isOverLimit && <Icons.alertTriangle size={12} />}
               </span>
             </div>
@@ -2080,7 +2259,7 @@ function PowerLimitsAdvisory({ powerLimits, currentHp }) {
       
       <div className={styles.powerLimitsFooter}>
         <Icons.info size={12} />
-        Limits are approximate. Actual reliability depends on tune quality, driving style, and supporting mods.
+        Based on community reports. Actual limits vary by driving style, tune quality, and supporting mods.
       </div>
     </div>
   );
@@ -2160,8 +2339,20 @@ function ConflictNotification({ message, onDismiss, replacedUpgrade }) {
 /**
  * Category Popup Modal
  * Now allows toggling upgrades regardless of package - auto-switches to Custom mode
+ * Shows inline configuration panel for upgrades with configOptions
  */
-function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose, onInfoClick, isCustomMode, allUpgrades }) {
+function CategoryPopup({ 
+  category, 
+  upgrades, 
+  selectedModules, 
+  onToggle, 
+  onClose, 
+  onInfoClick, 
+  isCustomMode, 
+  allUpgrades,
+  upgradeConfigs,       // Config state for all upgrades
+  onConfigChange,       // Handler for config changes
+}) {
   const popupRef = useRef(null);
   
   useEffect(() => {
@@ -2221,41 +2412,66 @@ function CategoryPopup({ category, upgrades, selectedModules, onToggle, onClose,
             const isSelected = selectedModules.includes(upgrade.key);
             const replacementInfo = !isSelected ? getReplacementInfo(upgrade.key) : null;
             const hasConflict = replacementInfo !== null;
+            const hasConfigOptions = upgrade.configOptions && Object.keys(upgrade.configOptions).length > 0;
+            const currentConfig = upgradeConfigs?.[upgrade.key] || {};
+            
+            // Calculate HP modifier from config
+            const configHpMod = isSelected && hasConfigOptions 
+              ? calculateConfigHpModifier(upgrade.configOptions, currentConfig)
+              : 0;
+            const baseHpGain = upgrade.metricChanges?.hpGain || 0;
+            const totalHpGain = baseHpGain + configHpMod;
             
             return (
               <div 
                 key={upgrade.key} 
                 className={`${styles.upgradeRow} ${isSelected ? styles.upgradeRowSelected : ''} ${hasConflict ? styles.upgradeRowConflict : ''}`}
               >
-                <button
-                  type="button"
-                  className={styles.upgradeToggle}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Always allow toggle - handleModuleToggle will auto-switch to Custom mode
-                    onToggle(upgrade.key, upgrade.name, replacementInfo);
-                  }}
-                  aria-label={`${isSelected ? 'Deselect' : 'Select'} ${upgrade.name}`}
-                  aria-checked={isSelected}
-                  role="checkbox"
-                >
-                  <span className={styles.checkbox} aria-hidden="true">
-                    {isSelected && <Icons.check size={10} />}
-                  </span>
-                  <span className={styles.upgradeName}>{upgrade.name}</span>
-                  {upgrade.metricChanges?.hpGain > 0 && (
-                    <span className={styles.upgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
+                <div className={styles.upgradeMainRow}>
+                  <button
+                    type="button"
+                    className={styles.upgradeToggle}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Pass the full upgrade object so we can check for configOptions
+                      onToggle(upgrade.key, upgrade.name, replacementInfo, upgrade);
+                    }}
+                    aria-label={`${isSelected ? 'Deselect' : 'Select'} ${upgrade.name}`}
+                    aria-checked={isSelected}
+                    role="checkbox"
+                  >
+                    <span className={styles.checkbox} aria-hidden="true">
+                      {isSelected && <Icons.check size={10} />}
+                    </span>
+                    <span className={styles.upgradeName}>{upgrade.name}</span>
+                    {totalHpGain > 0 && (
+                      <span className={`${styles.upgradeGain} ${configHpMod > 0 ? styles.upgradeGainBoosted : ''}`}>
+                        +{totalHpGain}hp
+                        {configHpMod > 0 && <span className={styles.configBoost}>*</span>}
+                      </span>
+                    )}
+                  </button>
+                  {hasConflict && (
+                    <span className={styles.conflictBadge} title={`Replaces: ${replacementInfo.names.join(', ')}`}>
+                      <Icons.swap size={10} />
+                    </span>
                   )}
-                </button>
-                {hasConflict && (
-                  <span className={styles.conflictBadge} title={`Replaces: ${replacementInfo.names.join(', ')}`}>
-                    <Icons.swap size={10} />
-                  </span>
+                  <button type="button" className={styles.learnMoreBtn} onClick={() => onInfoClick(upgrade)} aria-label={`Learn more about ${upgrade.name}`}>
+                    <span>Learn more</span>
+                  </button>
+                </div>
+                
+                {/* Inline config panel - shows when upgrade is selected and has configOptions */}
+                {isSelected && hasConfigOptions && (
+                  <UpgradeConfigPanel
+                    upgradeKey={upgrade.key}
+                    configOptions={upgrade.configOptions}
+                    currentConfig={currentConfig}
+                    onChange={onConfigChange}
+                    selectedUpgrades={selectedModules}
+                  />
                 )}
-                <button type="button" className={styles.learnMoreBtn} onClick={() => onInfoClick(upgrade)} aria-label={`Learn more about ${upgrade.name}`}>
-                  <span>Learn more</span>
-                </button>
               </div>
             );
           })}
@@ -2307,6 +2523,10 @@ export default function UpgradeCenter({
   // Selected parts for builds (loaded from saved builds, UI removed)
   const [selectedParts, setSelectedParts] = useState([]);
   
+  // Upgrade configurations - stores config for upgrades with configOptions
+  // e.g., { 'downpipe': { type: 'catless' }, 'coilovers': { springRate: 'sport' } }
+  const [upgradeConfigs, setUpgradeConfigs] = useState({});
+  
   // Build photos - stored separately and linked to build ID
   const [buildImages, setBuildImages] = useState([]);
   
@@ -2326,6 +2546,9 @@ export default function UpgradeCenter({
   // Tuner Mode: 'basic' or 'advanced' - advanced shows physics-based projections
   const [tunerMode, setTunerMode] = useState('basic');
   
+  // Advanced Tuning section collapsed state (for power users who want deep customization)
+  const [advancedTuningExpanded, setAdvancedTuningExpanded] = useState(false);
+
   // Advanced mode state - detailed build specs for physics model
   const [advancedSpecs, setAdvancedSpecs] = useState({
     engine: { 
@@ -2588,6 +2811,10 @@ export default function UpgradeCenter({
         if (build.name) {
           setBuildName(build.name);
         }
+        // Load upgrade configurations (e.g., catless downpipe, coilover spring rates)
+        if (build.upgradeConfigs) {
+          setUpgradeConfigs(build.upgradeConfigs);
+        }
       }
     }
   }, [initialBuildId, getBuildById, safeCarSlug]);
@@ -2750,6 +2977,23 @@ export default function UpgradeCenter({
     }
     const baseProfile = getPerformanceProfile(car, effectiveModules);
     
+    // Calculate HP bonus from upgrade configurations (e.g., catless downpipe vs catted)
+    let configHpBonus = 0;
+    effectiveModules.forEach(moduleKey => {
+      const upgrade = getUpgradeByKey(moduleKey);
+      if (upgrade?.configOptions && upgradeConfigs[moduleKey]) {
+        configHpBonus += calculateConfigHpModifier(upgrade.configOptions, upgradeConfigs[moduleKey]);
+      }
+    });
+    
+    // Apply config HP bonus to upgraded metrics
+    if (configHpBonus > 0) {
+      baseProfile.upgradedMetrics = {
+        ...baseProfile.upgradedMetrics,
+        hp: (baseProfile.upgradedMetrics.hp || 0) + configHpBonus,
+      };
+    }
+    
     // Apply tire compound grip bonus to lateralG
     const tireGripBonus = selectedWheelFitment?.gripBonus || 0;
     if (tireGripBonus > 0 && baseProfile.upgradedMetrics.lateralG) {
@@ -2768,7 +3012,7 @@ export default function UpgradeCenter({
     }
     
     return baseProfile;
-  }, [car, effectiveModules, selectedWheelFitment]);
+  }, [car, effectiveModules, selectedWheelFitment, upgradeConfigs]);
   
   const totalCost = useMemo(() => {
     if (!car) return { low: 0, high: 0, confidence: 'estimated', confidencePercent: 0 };
@@ -3002,10 +3246,10 @@ export default function UpgradeCenter({
       estimatedWhp = Math.round(stockHp + adjustedModuleGain + powerAdderHp);
       
       if (moduleHpGain > 0) {
-        confidenceLabel = `Based on ${effectiveModules.length} modifications`;
+        confidenceLabel = `${effectiveModules.length} mods selected`;
         confidence = 'medium';
       } else {
-        confidenceLabel = 'Select modifications for estimate';
+        confidenceLabel = 'Select mods';
         confidence = 'low';
       }
     }
@@ -3241,7 +3485,7 @@ export default function UpgradeCenter({
     if (pkgKey !== 'custom') setSelectedModules([]);
   };
   
-  const handleModuleToggle = useCallback((moduleKey, moduleName, replacementInfo) => {
+  const handleModuleToggle = useCallback((moduleKey, moduleName, replacementInfo, upgrade) => {
     // When switching from a package to Custom, preserve the package's upgrades
     const switchingToCustom = !isCustomMode;
     
@@ -3253,6 +3497,12 @@ export default function UpgradeCenter({
       
       // If already selected, remove it
       if (baseModules.includes(moduleKey)) {
+        // Also clear the config for this upgrade
+        setUpgradeConfigs(prevConfigs => {
+          const newConfigs = { ...prevConfigs };
+          delete newConfigs[moduleKey];
+          return newConfigs;
+        });
         return baseModules.filter(k => k !== moduleKey);
       }
       
@@ -3269,6 +3519,24 @@ export default function UpgradeCenter({
         // Remove conflicting upgrades and add the new one
         const conflictingKeys = replacementInfo.conflictingUpgrades || [];
         baseModules = baseModules.filter(k => !conflictingKeys.includes(k));
+        
+        // Also clear configs for conflicting upgrades
+        setUpgradeConfigs(prevConfigs => {
+          const newConfigs = { ...prevConfigs };
+          conflictingKeys.forEach(key => delete newConfigs[key]);
+          return newConfigs;
+        });
+      }
+      
+      // If the upgrade has configOptions, initialize with defaults
+      if (upgrade?.configOptions) {
+        const defaultConfig = getDefaultConfig(upgrade.configOptions);
+        if (Object.keys(defaultConfig).length > 0) {
+          setUpgradeConfigs(prevConfigs => ({
+            ...prevConfigs,
+            [moduleKey]: defaultConfig,
+          }));
+        }
       }
       
       return [...baseModules, moduleKey];
@@ -3279,6 +3547,14 @@ export default function UpgradeCenter({
       setSelectedPackage('custom');
     }
   }, [isCustomMode, packageUpgrades]);
+  
+  // Handler for upgrade configuration changes
+  const handleUpgradeConfigChange = useCallback((upgradeKey, config) => {
+    setUpgradeConfigs(prev => ({
+      ...prev,
+      [upgradeKey]: config,
+    }));
+  }, []);
   
   const handleSaveBuild = async () => {
     if (!canSave) { setSaveError('Please sign in'); return; }
@@ -3298,6 +3574,7 @@ export default function UpgradeCenter({
         name: buildName.trim(),
         selectedUpgrades: effectiveModules,
         selectedParts,
+        upgradeConfigs: upgradeConfigs,  // Include upgrade configurations (catless, etc.)
         totalHpGain: hpGain,
         totalCostLow: totalCost.low,
         totalCostHigh: totalCost.high,
@@ -3554,10 +3831,8 @@ export default function UpgradeCenter({
                     )}
                   </div>
                   <div className={styles.heroStat}>
-                    <span className={`${styles.heroStatValue} ${styles[`confidence${advancedHpEstimate.confidence.charAt(0).toUpperCase() + advancedHpEstimate.confidence.slice(1)}`]}`}>
-                      Tier {advancedHpEstimate.tier}
-                    </span>
-                    <span className={styles.heroStatLabel}>{advancedHpEstimate.confidenceLabel}</span>
+                    <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
+                    <span className={styles.heroStatLabel}>Est. Cost</span>
                   </div>
                 </>
               ) : (
@@ -3618,6 +3893,55 @@ export default function UpgradeCenter({
         <div className={styles.sidebar}>
           
           {/* ═══════════════════════════════════════════════════════════════
+              AUTOREV RECOMMENDATION - Platform insights at the top
+              ═══════════════════════════════════════════════════════════════ */}
+          {showUpgrade && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.recommendationBannerCompact}>
+                <div className={styles.recommendationHeader}>
+                  <span className={styles.recommendationTitle}>AutoRev Recommendation</span>
+                  {detailedRecommendation.focusArea && (
+                    <span className={styles.focusTag}>Focus: {detailedRecommendation.focusArea}</span>
+                  )}
+                </div>
+                <p className={styles.recommendationText}>{detailedRecommendation.primaryText}</p>
+                
+                {/* Platform Insights & Watch Outs */}
+                {(detailedRecommendation.platformInsights.length > 0 || detailedRecommendation.watchOuts.length > 0) && (
+                  <div className={styles.insightsGrid}>
+                    {detailedRecommendation.platformInsights.length > 0 && (
+                      <div className={styles.insightsCard}>
+                        <div className={styles.insightsCardHeader}>
+                          <Icons.info size={14} />
+                          <span>Platform Insights</span>
+                        </div>
+                        <ul className={styles.insightsCardList}>
+                          {detailedRecommendation.platformInsights.map((insight, idx) => (
+                            <li key={idx}>{insight}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {detailedRecommendation.watchOuts.length > 0 && (
+                      <div className={styles.watchOutsCard}>
+                        <div className={styles.watchOutsCardHeader}>
+                          <Icons.alertTriangle size={14} />
+                          <span>Watch Out</span>
+                        </div>
+                        <ul className={styles.watchOutsCardList}>
+                          {detailedRecommendation.watchOuts.map((watchOut, idx) => (
+                            <li key={idx}>{watchOut}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* ═══════════════════════════════════════════════════════════════
               VEHICLE SETUP - Always visible (both modes)
               ═══════════════════════════════════════════════════════════════ */}
           
@@ -3645,6 +3969,64 @@ export default function UpgradeCenter({
               onUpgradeToggle={(key) => handleModuleToggle(key, 'Lightweight Wheels', null)}
             />
           </div>
+          
+          {/* ═══════════════════════════════════════════════════════════════
+              ADVANCED MODE - Add Upgrades FIRST, then Configure
+              ═══════════════════════════════════════════════════════════════ */}
+          
+          {/* Step 1: Add Upgrades - Advanced Mode (MOVED UP - users select first) */}
+          {tunerMode === 'advanced' && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.bolt size={16} />
+                <span className={styles.sidebarCardTitle}>Add Upgrades</span>
+              </div>
+              <div className={styles.sidebarCardContent}>
+                <div className={styles.categoryList}>
+                  {UPGRADE_CATEGORIES.filter(cat => 
+                    cat.key !== 'wheels' && 
+                    (upgradesByCategory[cat.key]?.length || 0) > 0
+                  ).map(cat => {
+                    const Icon = cat.icon;
+                    const count = selectedByCategory[cat.key] || 0;
+                    
+                    return (
+                      <button
+                        key={cat.key}
+                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                        onClick={() => setActiveCategory(cat.key)}
+                        style={{ '--cat-color': cat.color }}
+                      >
+                        <Icon size={16} />
+                        <span>{cat.label}</span>
+                        {count > 0 && (
+                          <span className={styles.catBadge}>{count}</span>
+                        )}
+                        <Icons.chevronRight size={14} className={styles.catArrow} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Step 2: Configure Selected Upgrades - Advanced Mode (Dynamic based on selections) */}
+          {tunerMode === 'advanced' && effectiveModules.length > 0 && (
+            <div className={styles.sidebarCard}>
+              <div className={styles.sidebarCardHeader}>
+                <Icons.settings size={16} />
+                <span className={styles.sidebarCardTitle}>Configure Upgrades</span>
+              </div>
+              <div className={styles.sidebarCardContent}>
+                <DynamicBuildConfig
+                  selectedUpgrades={effectiveModules}
+                  upgradeConfigs={upgradeConfigs}
+                  onConfigChange={handleUpgradeConfigChange}
+                />
+              </div>
+            </div>
+          )}
           
           {/* ═══════════════════════════════════════════════════════════════
               BASIC MODE - Presets & Categories
@@ -3710,13 +4092,22 @@ export default function UpgradeCenter({
             </div>
           )}
           
-          {/* Advanced Build Configuration - Advanced Mode */}
+          {/* Advanced Tuning - Collapsible deep-dive options for power users */}
           {tunerMode === 'advanced' && (
             <div className={styles.sidebarCard}>
-              <div className={styles.sidebarCardHeader}>
-                <Icons.settings size={16} />
-                <span className={styles.sidebarCardTitle}>Build Configuration</span>
-              </div>
+              <button 
+                className={styles.sidebarCardHeaderCollapsible}
+                onClick={() => setAdvancedTuningExpanded(!advancedTuningExpanded)}
+              >
+                <Icons.brain size={16} />
+                <span className={styles.sidebarCardTitle}>Advanced Tuning</span>
+                <span className={styles.advancedTuningHint}>Engine builds, turbo sizing, fuel...</span>
+                <Icons.chevronRight 
+                  size={14} 
+                  className={`${styles.collapseChevron} ${advancedTuningExpanded ? styles.collapseChevronExpanded : ''}`} 
+                />
+              </button>
+              {advancedTuningExpanded && (
               <div className={`${styles.sidebarCardContent} ${styles.advancedScrollable}`}>
                 
                 {/* ENGINE SECTION */}
@@ -3965,93 +4356,8 @@ export default function UpgradeCenter({
                   )}
                 </div>
                 
-                {/* INTAKE & EXHAUST SECTION - Breathing mods */}
-                <div className={styles.advancedSection}>
-                  <div className={styles.advancedSectionHeader}>
-                    <Icons.wind size={14} />
-                    <span>Intake & Exhaust</span>
-                  </div>
-                  <div className={styles.advancedFieldRow}>
-                    <div className={styles.advancedFieldHalf}>
-                      <label className={styles.advancedLabel}>Intake</label>
-                      <select
-                        className={styles.advancedSelect}
-                        value={advancedSpecs.intake.type}
-                        onChange={e => setAdvancedSpecs(prev => ({
-                          ...prev,
-                          intake: { ...prev.intake, type: e.target.value }
-                        }))}
-                      >
-                        <option value="stock">Stock</option>
-                        <option value="cold-air">Cold Air Intake</option>
-                        <option value="short-ram">Short Ram</option>
-                      </select>
-                    </div>
-                    <div className={styles.advancedFieldHalf}>
-                      <label className={styles.advancedLabel}>Throttle Body</label>
-                      <select
-                        className={styles.advancedSelect}
-                        value={advancedSpecs.intake.throttleBody}
-                        onChange={e => setAdvancedSpecs(prev => ({
-                          ...prev,
-                          intake: { ...prev.intake, throttleBody: e.target.value }
-                        }))}
-                      >
-                        <option value="stock">Stock</option>
-                        <option value="ported">Ported</option>
-                        <option value="oversized">Oversized</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className={styles.advancedFieldRow}>
-                    <div className={styles.advancedFieldHalf}>
-                      <label className={styles.advancedLabel}>Headers</label>
-                      <select
-                        className={styles.advancedSelect}
-                        value={advancedSpecs.exhaust.headers}
-                        onChange={e => setAdvancedSpecs(prev => ({
-                          ...prev,
-                          exhaust: { ...prev.exhaust, headers: e.target.value }
-                        }))}
-                      >
-                        <option value="stock">Stock / Manifold</option>
-                        <option value="equal-length">Equal Length</option>
-                        <option value="long-tube">Long Tube</option>
-                      </select>
-                    </div>
-                    <div className={styles.advancedFieldHalf}>
-                      <label className={styles.advancedLabel}>Downpipe</label>
-                      <select
-                        className={styles.advancedSelect}
-                        value={advancedSpecs.exhaust.downpipe}
-                        onChange={e => setAdvancedSpecs(prev => ({
-                          ...prev,
-                          exhaust: { ...prev.exhaust, downpipe: e.target.value }
-                        }))}
-                      >
-                        <option value="stock">Stock</option>
-                        <option value="catted">Catted</option>
-                        <option value="catless">Catless</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className={styles.advancedField}>
-                    <label className={styles.advancedLabel}>Exhaust System</label>
-                    <select
-                      className={styles.advancedSelect}
-                      value={advancedSpecs.exhaust.catback}
-                      onChange={e => setAdvancedSpecs(prev => ({
-                        ...prev,
-                        exhaust: { ...prev.exhaust, catback: e.target.value }
-                      }))}
-                    >
-                      <option value="stock">Stock</option>
-                      <option value="axleback">Axle-Back</option>
-                      <option value="catback">Cat-Back</option>
-                      <option value="turboback">Turbo-Back</option>
-                    </select>
-                  </div>
-                </div>
+                {/* INTAKE & EXHAUST - Now configured in "Configure Upgrades" section above */}
+                {/* Removed to eliminate duplicate configuration options */}
                 
                 {/* FUEL SYSTEM SECTION */}
                 <div className={styles.advancedSection}>
@@ -5093,43 +5399,7 @@ export default function UpgradeCenter({
                   </div>
                 )}
               </div>
-            </div>
-          )}
-          
-          {/* Upgrade Categories - Also show in Advanced mode for part selection */}
-          {tunerMode === 'advanced' && (
-            <div className={styles.sidebarCard}>
-              <div className={styles.sidebarCardHeader}>
-                <Icons.bolt size={16} />
-                <span className={styles.sidebarCardTitle}>Add Upgrades</span>
-              </div>
-              <div className={styles.sidebarCardContent}>
-                <div className={styles.categoryList}>
-                  {UPGRADE_CATEGORIES.filter(cat => 
-                    cat.key !== 'wheels' && 
-                    (upgradesByCategory[cat.key]?.length || 0) > 0
-                  ).map(cat => {
-                    const Icon = cat.icon;
-                    const count = selectedByCategory[cat.key] || 0;
-                    
-                    return (
-                      <button
-                        key={cat.key}
-                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
-                        onClick={() => setActiveCategory(cat.key)}
-                        style={{ '--cat-color': cat.color }}
-                      >
-                        <Icon size={16} />
-                        <span>{cat.label}</span>
-                        {count > 0 && (
-                          <span className={styles.catBadge}>{count}</span>
-                        )}
-                        <Icons.chevronRight size={14} className={styles.catArrow} />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              )}
             </div>
           )}
           
@@ -5206,52 +5476,6 @@ export default function UpgradeCenter({
           {/* OUTPUT ORDER: Headline → Performance → Details → Track → Recommendations */}
           {tunerMode === 'advanced' && (
             <>
-              {/* ═══════════════════════════════════════════════════════════════
-                  TIER 1: HEADLINE RESULTS - What users want to see first
-                  ═══════════════════════════════════════════════════════════════ */}
-              
-              {/* Power Summary - THE headline number */}
-              {advancedHpEstimate && (
-                <div className={styles.powerSummaryCard}>
-                  <div className={styles.powerSummaryHeader}>
-                    <div className={styles.powerSummaryTitleRow}>
-                      <Icons.bolt size={18} />
-                      <span>Estimated Power</span>
-                    </div>
-                    {advancedSpecs.verified?.hasDyno && (
-                      <span className={styles.verifiedBadge}>✓ Dyno Verified</span>
-                    )}
-                  </div>
-                  <div className={styles.powerSummaryBody}>
-                    <div className={styles.powerSummaryMain}>
-                      {advancedSpecs.verified?.hasDyno && advancedSpecs.verified?.whp ? (
-                        <>
-                          <span className={styles.powerSummaryValue}>{advancedSpecs.verified.whp}</span>
-                          <span className={styles.powerSummaryUnit}>WHP (Verified)</span>
-                        </>
-                      ) : advancedHpEstimate.range ? (
-                        <>
-                          <span className={styles.powerSummaryValue}>
-                            {advancedHpEstimate.range.low}-{advancedHpEstimate.range.high}
-                          </span>
-                          <span className={styles.powerSummaryUnit}>HP</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className={styles.powerSummaryValue}>{advancedHpEstimate.whp}</span>
-                          <span className={styles.powerSummaryUnit}>HP</span>
-                        </>
-                      )}
-                    </div>
-                    <div className={styles.powerSummaryDetail}>
-                      <span className={styles.powerSummaryGain}>
-                        +{advancedHpEstimate.gain} from stock
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
               {/* Performance Metrics - Same visual style as Basic Mode */}
               {(() => {
                 // Calculate physics-based values for Advanced Mode
@@ -5416,13 +5640,6 @@ export default function UpgradeCenter({
                 stockTorque={car?.torque || Math.round((car?.hp || 300) * 0.85)}
                 estimatedTq={advancedHpEstimate?.whp ? Math.round(advancedHpEstimate.whp * 0.9) : null}
                 peakRpm={car?.redline || 6500}
-              />
-              
-              {/* Power Breakdown - Where gains come from */}
-              <PowerBreakdown
-                stockHp={car?.hp || profile.stockMetrics.hp}
-                specs={advancedSpecs}
-                estimate={advancedHpEstimate}
               />
               
               {/* Power Limits Advisory - Warnings about component limits */}
@@ -5623,55 +5840,6 @@ export default function UpgradeCenter({
         </div>
       </div>
       
-      {/* ═══════════════════════════════════════════════════════════════════════
-          RECOMMENDATIONS - Contextual advice based on user's configuration
-          ═══════════════════════════════════════════════════════════════════════ */}
-      {showUpgrade && (
-        <div className={styles.recommendationsSection}>
-          <div className={styles.recommendationBanner}>
-            <div className={styles.recommendationHeader}>
-              <span className={styles.recommendationTitle}>AutoRev Recommendation</span>
-              {detailedRecommendation.focusArea && (
-                <span className={styles.focusTag}>Focus: {detailedRecommendation.focusArea}</span>
-              )}
-            </div>
-            <p className={styles.recommendationText}>{detailedRecommendation.primaryText}</p>
-            
-            {/* Platform Insights & Watch Outs - Side by Side */}
-            {(detailedRecommendation.platformInsights.length > 0 || detailedRecommendation.watchOuts.length > 0) && (
-              <div className={styles.insightsGrid}>
-                {detailedRecommendation.platformInsights.length > 0 && (
-                  <div className={styles.insightsCard}>
-                    <div className={styles.insightsCardHeader}>
-                      <Icons.info size={14} />
-                      <span>Platform Insights</span>
-                    </div>
-                    <ul className={styles.insightsCardList}>
-                      {detailedRecommendation.platformInsights.map((insight, idx) => (
-                        <li key={idx}>{insight}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {detailedRecommendation.watchOuts.length > 0 && (
-                  <div className={styles.watchOutsCard}>
-                    <div className={styles.watchOutsCardHeader}>
-                      <Icons.alertTriangle size={14} />
-                      <span>Watch Out</span>
-                    </div>
-                    <ul className={styles.watchOutsCardList}>
-                      {detailedRecommendation.watchOuts.map((watchOut, idx) => (
-                        <li key={idx}>{watchOut}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Save Build Button - Outside workspace for proper fixed positioning on mobile */}
       <button
         className={styles.saveBtn}
@@ -5699,6 +5867,8 @@ export default function UpgradeCenter({
           onInfoClick={(u) => setSelectedUpgradeForModal(getUpgradeByKey(u.key) || u)}
           isCustomMode={isCustomMode}
           allUpgrades={allUpgradesFlat}
+          upgradeConfigs={upgradeConfigs}
+          onConfigChange={handleUpgradeConfigChange}
         />
       )}
       
