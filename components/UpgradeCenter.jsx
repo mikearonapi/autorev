@@ -1438,7 +1438,10 @@ function LapTimeEstimator({
   const powerPenalty = hpDifference * 0.025 * trackLengthFactor; // ~2.5 sec per 100hp difference
   
   // Skill penalty from database (how much slower than a pro)
-  const skillPenalty = track[`${driverSkill}Penalty`] || track.intermediatePenalty;
+  // Pro drivers have 0 penalty (they ARE the reference), others add time
+  const skillPenalty = driverSkill === 'pro' 
+    ? 0 
+    : (track[`${driverSkill}Penalty`] || track.intermediatePenalty);
   
   // Stock lap time = pro reference + power adjustment + skill penalty
   const stockLapTime = track.proTime + powerPenalty + skillPenalty;
