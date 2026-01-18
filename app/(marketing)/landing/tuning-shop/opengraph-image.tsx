@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-export const alt = 'AutoRev Tuning Shop - Build Smarter, Not Random';
+export const alt = 'AutoRev Tuning Shop - Plan Your Perfect Build';
 export const size = {
   width: 1200,
   height: 630,
@@ -10,14 +10,14 @@ export const size = {
 export const contentType = 'image/png';
 export const revalidate = 3600;
 
-// Brand Colors
+// Build Pivot Brand Colors - Performance-focused dark theme
 const BRAND = {
-  primary: '#1a4d6e',
-  primaryLight: '#2a6d94',
-  primaryDark: '#0f3347',
-  gold: '#D4AF37',
-  goldLight: '#E6C54A',
-  goldDark: '#B8973A',
+  primary: '#0a0a0a',
+  secondary: '#161616',
+  accent: '#ff4d00', // Performance orange
+  accentLight: '#ff6620',
+  accentDark: '#cc3d00',
+  teal: '#00d4ff', // Tech blue accent
 };
 
 export default async function Image() {
@@ -38,11 +38,11 @@ export default async function Image() {
           position: 'relative',
           overflow: 'hidden',
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: `linear-gradient(135deg, ${BRAND.primaryDark} 0%, ${BRAND.primary} 50%, ${BRAND.primaryLight} 100%)`,
+          background: BRAND.primary,
         }}
       >
 
-        {/* Left accent stripe */}
+        {/* Left accent stripe - Performance orange */}
         <div
           style={{
             position: 'absolute',
@@ -50,7 +50,7 @@ export default async function Image() {
             left: 0,
             width: '6px',
             height: '100%',
-            background: `linear-gradient(180deg, ${BRAND.gold} 0%, ${BRAND.goldLight} 50%, ${BRAND.goldDark} 100%)`,
+            background: `linear-gradient(180deg, ${BRAND.accent} 0%, ${BRAND.accentLight} 50%, ${BRAND.accentDark} 100%)`,
             display: 'flex',
           }}
         />
@@ -107,21 +107,21 @@ export default async function Image() {
               gap: '24px',
             }}
           >
-            {/* Feature badge wrapper - flex row prevents horizontal stretch */}
+            {/* Feature badge wrapper */}
             <div style={{ display: 'flex' }}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  background: 'rgba(212,175,55,0.2)',
-                  border: `2px solid ${BRAND.gold}`,
+                  background: 'rgba(255,77,0,0.2)',
+                  border: `2px solid ${BRAND.accent}`,
                   borderRadius: '50px',
                   padding: '8px 18px',
                 }}
               >
-                <span style={{ color: BRAND.goldLight, fontSize: '16px', fontWeight: 600 }}>
-                  🔧 Tuning Shop
+                <span style={{ color: BRAND.accentLight, fontSize: '16px', fontWeight: 600 }}>
+                  🔧 Build Planner
                 </span>
               </div>
             </div>
@@ -137,10 +137,8 @@ export default async function Image() {
                 letterSpacing: '-2px',
               }}
             >
-              Build{' '}
-              <span style={{ color: BRAND.gold }}>Smarter</span>,
-              <br />
-              Not Random
+              Plan Your{' '}
+              <span style={{ color: BRAND.accent }}>Perfect Build</span>
             </h1>
 
             {/* Subheadline */}
@@ -152,7 +150,7 @@ export default async function Image() {
                 lineHeight: 1.5,
               }}
             >
-              Configure upgrades, see estimated power gains, and plan your complete build — before spending a dollar.
+              Configure upgrades, see estimated power gains, track costs, and plan your complete build — before spending a dollar.
             </p>
 
             {/* Stats row */}
@@ -285,11 +283,11 @@ export default async function Image() {
               fontWeight: 600,
             }}
           >
-            autorev.app/landing/tuning-shop
+            autorev.app/tuning-shop
           </span>
         </div>
 
-        {/* Bottom accent bar */}
+        {/* Bottom accent bar - Performance orange */}
         <div
           style={{
             position: 'absolute',
@@ -297,7 +295,7 @@ export default async function Image() {
             left: 0,
             right: 0,
             height: '4px',
-            background: `linear-gradient(90deg, ${BRAND.goldDark}, ${BRAND.gold}, ${BRAND.goldLight}, ${BRAND.gold}, ${BRAND.goldDark})`,
+            background: `linear-gradient(90deg, ${BRAND.accentDark}, ${BRAND.accent}, ${BRAND.accentLight}, ${BRAND.accent}, ${BRAND.accentDark})`,
             display: 'flex',
           }}
         />
@@ -308,4 +306,3 @@ export default async function Image() {
     }
   );
 }
-

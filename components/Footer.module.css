@@ -3,10 +3,27 @@
    ========================================================================== */
 
 .footer {
-  background: var(--color-gray-900);
-  color: var(--color-gray-400);
+  background: var(--bg-primary, var(--color-gray-900));
+  color: var(--text-secondary, var(--color-gray-400));
   margin-top: auto;
   padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* ==========================================================================
+   App Page Footer - Hidden on mobile (tab bar replaces navigation)
+   GRAVL-inspired: Native apps don't show footer when tab bar is present
+   ========================================================================== */
+
+.footerAppPage {
+  /* Hidden on mobile when tab bar is shown */
+  display: none;
+}
+
+/* Show footer on tablet and desktop for app pages */
+@media (min-width: 1024px) {
+  .footerAppPage {
+    display: block;
+  }
 }
 
 .container {

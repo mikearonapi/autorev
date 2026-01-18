@@ -2762,3 +2762,164 @@
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
+/* ===========================================
+   GRAVL-INSPIRED START BUILD HERO
+   Premium, focused CTA section
+   =========================================== */
+
+.startBuildHero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 24px);
+  padding: var(--space-xl, 32px);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.08) 0%, rgba(0, 212, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 77, 0, 0.15);
+  border-radius: 20px;
+  margin-bottom: var(--space-xl, 32px);
+}
+
+.startBuildContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 12px);
+}
+
+.startBuildTitle {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.startBuildSubtitle {
+  font-size: 16px;
+  color: var(--text-secondary, #a0a0a0);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 400px;
+}
+
+.startBuildButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00) 0%, #ff6a2a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--space-sm, 12px);
+  align-self: flex-start;
+}
+
+.startBuildButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 77, 0, 0.3);
+}
+
+.startBuildButton:active {
+  transform: translateY(0);
+}
+
+.startBuildVisual {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.startBuildStats {
+  display: flex;
+  gap: var(--space-xl, 32px);
+}
+
+.startBuildStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.startBuildStat .statValue {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+}
+
+.startBuildStat .statLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary, #666666);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (min-width: 768px) {
+  .startBuildHero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2xl, 48px);
+  }
+  
+  .startBuildTitle {
+    font-size: 36px;
+  }
+  
+  .startBuildSubtitle {
+    font-size: 18px;
+  }
+  
+  .startBuildStat .statValue {
+    font-size: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .startBuildTitle {
+    font-size: 40px;
+  }
+  
+  .startBuildStats {
+    gap: var(--space-2xl, 48px);
+  }
+  
+  .startBuildStat .statValue {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 479px) {
+  .startBuildHero {
+    padding: var(--space-lg, 24px);
+    margin-bottom: var(--space-lg, 24px);
+  }
+  
+  .startBuildTitle {
+    font-size: 24px;
+  }
+  
+  .startBuildSubtitle {
+    font-size: 14px;
+  }
+  
+  .startBuildButton {
+    width: 100%;
+    padding: 14px 24px;
+  }
+  
+  .startBuildStats {
+    gap: var(--space-lg, 24px);
+  }
+  
+  .startBuildStat .statValue {
+    font-size: 20px;
+  }
+}

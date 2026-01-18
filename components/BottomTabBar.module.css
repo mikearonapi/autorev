@@ -1,0 +1,214 @@
+/* ==========================================================================
+   BottomTabBar - Native iOS/Android Style Tab Navigation
+   
+   GRAVL-Inspired Design:
+   - Clean, minimal icons
+   - Generous touch targets (56px)
+   - Subtle active state with accent color
+   - Safe area support for notched devices
+   - Smooth transitions
+   ========================================================================== */
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  
+  /* Premium dark background with subtle blur */
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  /* Top border for definition */
+  border-top: 1px solid var(--border-subtle, #1a1a1a);
+  
+  /* Safe area for notched devices */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tabContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  
+  /* Generous touch target - 56px minimum */
+  min-width: 56px;
+  min-height: 56px;
+  padding: 8px 12px;
+  
+  /* Reset */
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  
+  /* Default state */
+  color: var(--text-tertiary, #666666);
+  transition: color 0.2s ease, transform 0.15s ease;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* Touch feedback */
+  -webkit-tap-highlight-color: transparent;
+  
+  position: relative;
+}
+
+.tab:active {
+  transform: scale(0.95);
+}
+
+.tabActive {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.tabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.tabIcon svg {
+  width: 24px;
+  height: 24px;
+  transition: stroke-width 0.15s ease;
+}
+
+.tabLabel {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.tabActive .tabLabel {
+  font-weight: 600;
+}
+
+/* Active indicator dot */
+.activeIndicator {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-primary, #ff4d00);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* Hover state for non-touch devices */
+@media (hover: hover) {
+  .tab:hover:not(.tabActive) {
+    color: var(--text-secondary, #a0a0a0);
+  }
+}
+
+/* Hide on desktop - use header nav instead */
+@media (min-width: 1024px) {
+  .tabBar {
+    display: none;
+  }
+}
+
+/* Tablet: slightly larger touch targets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tabContainer {
+    max-width: 600px;
+    padding: 10px 0;
+  }
+  
+  .tab {
+    min-width: 72px;
+    min-height: 60px;
+    gap: 6px;
+  }
+  
+  .tabIcon svg {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .tabLabel {
+    font-size: 11px;
+  }
+}
+
+/* Small phones: tighter layout */
+@media (max-width: 374px) {
+  .tabContainer {
+    padding: 6px 0;
+  }
+  
+  .tab {
+    min-width: 48px;
+    padding: 6px 8px;
+    gap: 2px;
+  }
+  
+  .tabIcon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .tabLabel {
+    font-size: 9px;
+  }
+}
+
+/* Landscape orientation: horizontal layout */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tabBar {
+    padding-bottom: 0;
+  }
+  
+  .tabContainer {
+    padding: 4px 0;
+  }
+  
+  .tab {
+    flex-direction: row;
+    gap: 6px;
+    min-height: 44px;
+    padding: 6px 16px;
+  }
+  
+  .tabLabel {
+    font-size: 11px;
+  }
+  
+  .activeIndicator {
+    top: auto;
+    bottom: 2px;
+  }
+}

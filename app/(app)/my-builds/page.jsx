@@ -12,8 +12,9 @@
  * - Saved/favorite cars (tertiary)
  */
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
@@ -22,6 +23,8 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import BuildDetailView from '@/components/BuildDetailView';
+import SlideUpPanel from '@/components/SlideUpPanel';
+import BuildWizard from '@/components/BuildWizard';
 import styles from './page.module.css';
 
 // Icons
@@ -59,14 +62,17 @@ const ChevronRightIcon = () => (
 );
 
 function MyBuildsContent() {
+  const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { builds, isLoading: buildsLoading, refreshBuilds } = useSavedBuilds();
+  const { builds, isLoading: buildsLoading, refreshBuilds, deleteBuild } = useSavedBuilds();
   const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
   const { favorites, isLoading: favoritesLoading } = useFavorites();
   const authModal = useAuthModal();
   
   const [activeTab, setActiveTab] = useState('builds'); // Default to builds
   const [selectedBuild, setSelectedBuild] = useState(null);
+  const [showBuildWizard, setShowBuildWizard] = useState(false);
+  const [showBuildDetail, setShowBuildDetail] = useState(false);
   
   // Refresh builds on mount
   useEffect(() => {
@@ -111,23 +117,39 @@ function MyBuildsContent() {
     );
   }
 
-  // Build detail view
-  if (selectedBuild) {
-    return (
-      <div className={styles.container}>
-        <button 
-          className={styles.backBtn}
-          onClick={() => setSelectedBuild(null)}
-        >
-          ← Back to My Builds
-        </button>
-        <BuildDetailView 
-          build={selectedBuild} 
-          onClose={() => setSelectedBuild(null)}
-        />
-      </div>
-    );
-  }
+  // Handle build selection - open slide-up panel
+  const handleSelectBuild = useCallback((build) => {
+    setSelectedBuild(build);
+    setShowBuildDetail(true);
+  }, []);
+  
+  // Handle closing build detail
+  const handleCloseBuildDetail = useCallback(() => {
+    setShowBuildDetail(false);
+    // Delay clearing selection for animation
+    setTimeout(() => setSelectedBuild(null), 300);
+  }, []);
+  
+  // Handle build wizard completion
+  const handleBuildWizardComplete = useCallback((buildData) => {
+    if (buildData?.car?.slug) {
+      router.push(`/tuning-shop?plan=${buildData.car.slug}`);
+    }
+  }, [router]);
+  
+  // Handle edit build
+  const handleEditBuild = useCallback((build) => {
+    handleCloseBuildDetail();
+    router.push(`/tuning-shop?build=${build.id}`);
+  }, [handleCloseBuildDetail, router]);
+  
+  // Handle delete build
+  const handleDeleteBuild = useCallback(async (build) => {
+    if (confirm('Are you sure you want to delete this build?')) {
+      await deleteBuild(build.id);
+      handleCloseBuildDetail();
+    }
+  }, [deleteBuild, handleCloseBuildDetail]);
 
   const tabs = [
     { id: 'builds', label: 'Build Projects', icon: <WrenchIcon />, count: builds?.length || 0 },
@@ -138,11 +160,19 @@ function MyBuildsContent() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>My Builds</h1>
+        <div className={styles.headerTop}>
+          <h1 className={styles.title}>My Builds</h1>
+          <button 
+            className={styles.newBuildBtn}
+            onClick={() => setShowBuildWizard(true)}
+          >
+            <PlusIcon /> New Build
+          </button>
+        </div>
         <p className={styles.subtitle}>Manage your build projects and tracked vehicles</p>
       </header>
 
-      {/* Tab Navigation */}
+      {/* Tab Navigation - GRAVL-style */}
       <div className={styles.tabs}>
         {tabs.map(tab => (
           <button
@@ -152,7 +182,7 @@ function MyBuildsContent() {
           >
             {tab.icon}
             <span>{tab.label}</span>
-            <span className={styles.tabCount}>{tab.count}</span>
+            {tab.count > 0 && <span className={styles.tabCount}>{tab.count}</span>}
           </button>
         ))}
       </div>
@@ -162,7 +192,8 @@ function MyBuildsContent() {
         {activeTab === 'builds' && (
           <BuildsTab 
             builds={builds} 
-            onSelectBuild={setSelectedBuild}
+            onSelectBuild={handleSelectBuild}
+            onNewBuild={() => setShowBuildWizard(true)}
           />
         )}
         {activeTab === 'vehicles' && (
@@ -172,63 +203,122 @@ function MyBuildsContent() {
           <SavedTab favorites={favorites} />
         )}
       </div>
+      
+      {/* Build Detail Slide-Up Panel */}
+      <SlideUpPanel
+        isOpen={showBuildDetail}
+        onClose={handleCloseBuildDetail}
+        title={selectedBuild?.name || 'Build Details'}
+        height="full"
+      >
+        {selectedBuild && (
+          <div className={styles.buildDetailContent}>
+            <div className={styles.buildDetailHeader}>
+              <h2>{selectedBuild.name || 'Untitled Build'}</h2>
+              <p className={styles.buildDetailCar}>
+                {selectedBuild.car_year} {selectedBuild.car_make} {selectedBuild.car_model}
+              </p>
+            </div>
+            
+            <div className={styles.buildDetailStats}>
+              <div className={styles.buildDetailStat}>
+                <span className={styles.statValue}>+{selectedBuild.hp_gain || 0}</span>
+                <span className={styles.statLabel}>HP Gain</span>
+              </div>
+              <div className={styles.buildDetailStat}>
+                <span className={styles.statValue}>{selectedBuild.parts_count || 0}</span>
+                <span className={styles.statLabel}>Parts</span>
+              </div>
+              <div className={styles.buildDetailStat}>
+                <span className={styles.statValue}>
+                  ${((selectedBuild.total_cost || 0) / 1000).toFixed(1)}k
+                </span>
+                <span className={styles.statLabel}>Est. Cost</span>
+              </div>
+            </div>
+            
+            <div className={styles.buildDetailActions}>
+              <button 
+                className={styles.editBuildBtn}
+                onClick={() => handleEditBuild(selectedBuild)}
+              >
+                Continue Building
+              </button>
+              <button 
+                className={styles.deleteBuildBtn}
+                onClick={() => handleDeleteBuild(selectedBuild)}
+              >
+                Delete Build
+              </button>
+            </div>
+          </div>
+        )}
+      </SlideUpPanel>
+      
+      {/* Build Wizard */}
+      <BuildWizard
+        isOpen={showBuildWizard}
+        onClose={() => setShowBuildWizard(false)}
+        onComplete={handleBuildWizardComplete}
+      />
     </div>
   );
 }
 
-// Builds Tab
-function BuildsTab({ builds, onSelectBuild }) {
+// Builds Tab - GRAVL-inspired card design
+function BuildsTab({ builds, onSelectBuild, onNewBuild }) {
   if (!builds || builds.length === 0) {
     return (
       <div className={styles.emptyTabState}>
-        <WrenchIcon />
+        <div className={styles.emptyIcon}>
+          <WrenchIcon />
+        </div>
         <h3>No build projects yet</h3>
-        <p>Start planning your first build in the Tuning Shop</p>
-        <Link href="/tuning-shop" className={styles.primaryBtn}>
-          <PlusIcon /> Start a New Build
-        </Link>
+        <p>Start planning your first build to see it here</p>
+        <button className={styles.primaryBtn} onClick={onNewBuild}>
+          <PlusIcon /> Start Your First Build
+        </button>
       </div>
     );
   }
 
   return (
     <div className={styles.buildGrid}>
-      {/* New Build Card */}
-      <Link href="/tuning-shop" className={styles.newBuildCard}>
-        <PlusIcon />
-        <span>New Build</span>
-      </Link>
-      
       {builds.map(build => (
-        <div 
+        <button 
           key={build.id} 
           className={styles.buildCard}
           onClick={() => onSelectBuild(build)}
         >
-          <div className={styles.buildCardHeader}>
-            <h3>{build.name || `${build.car_year} ${build.car_make} ${build.car_model}`}</h3>
+          <div className={styles.buildCardImage}>
+            {/* Placeholder - could add car image */}
+            <div className={styles.buildCardImagePlaceholder}>
+              <WrenchIcon />
+            </div>
             <span className={styles.buildStatus}>
               {build.status === 'completed' ? 'Complete' : 'In Progress'}
             </span>
           </div>
-          <div className={styles.buildCardBody}>
+          <div className={styles.buildCardContent}>
+            <h3 className={styles.buildName}>
+              {build.name || `${build.car_year} ${build.car_make} ${build.car_model}`}
+            </h3>
             <p className={styles.buildCarName}>
               {build.car_year} {build.car_make} {build.car_model}
             </p>
-            <div className={styles.buildStats}>
-              <span className={styles.buildStat}>
-                <strong>{build.parts_count || 0}</strong> parts
-              </span>
-              <span className={styles.buildStat}>
-                <strong>+{build.hp_gain || 0}</strong> HP
-              </span>
-            </div>
           </div>
-          <div className={styles.buildCardFooter}>
-            <span>View Details</span>
-            <ChevronRightIcon />
+          <div className={styles.buildCardStats}>
+            <span className={styles.buildStat}>
+              <strong>+{build.hp_gain || 0}</strong>
+              <span>HP</span>
+            </span>
+            <span className={styles.buildStatDivider} />
+            <span className={styles.buildStat}>
+              <strong>{build.parts_count || 0}</strong>
+              <span>Parts</span>
+            </span>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );

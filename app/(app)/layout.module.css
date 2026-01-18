@@ -1,0 +1,38 @@
+/* ==========================================================================
+   App Layout - Native App-Like Experience
+   
+   GRAVL-Inspired Design:
+   - Full-height layouts
+   - Bottom tab bar navigation on mobile
+   - Extra padding at bottom for tab bar
+   ========================================================================== */
+
+.appLayout {
+  /* Ensure full height */
+  min-height: 100vh;
+  min-height: 100dvh;
+  
+  /* Account for bottom tab bar on mobile */
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Desktop: No bottom padding needed (no tab bar) */
+@media (min-width: 1024px) {
+  .appLayout {
+    padding-bottom: 0;
+  }
+}
+
+/* Tablet: Slightly more padding for larger tab bar */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .appLayout {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Landscape orientation: Less padding */
+@media (max-height: 500px) and (orientation: landscape) {
+  .appLayout {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+}

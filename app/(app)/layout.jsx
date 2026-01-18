@@ -1,23 +1,28 @@
 /**
  * App Layout
  * 
- * Wrapper for interactive app pages. Currently passes through to root layout.
- * Routes: /browse-cars/*, /garage/*, /tuning-shop, /profile, /mod-planner
+ * Wrapper for interactive app pages with native app-like experience.
+ * Routes: /tuning-shop, /my-builds, /garage, /parts, /profile, /encyclopedia, /community/*
  * 
- * This layout will contain app-specific providers once all routes are migrated:
- * - FavoritesProvider
- * - CompareProvider
- * - SavedBuildsProvider
- * - OwnedVehiclesProvider
- * - CarSelectionProvider
- * - FeedbackProvider + FeedbackCorner
- * - CompareBar
+ * Features:
+ * - Bottom tab bar navigation (mobile)
+ * - Hides footer on mobile (tab bar replaces it)
+ * - App-specific padding for tab bar
  * 
- * For now, this is a pass-through while we migrate routes gradually.
+ * Design inspiration: GRAVL fitness app
+ * - Native iOS/Android feel
+ * - Bottom tab navigation
+ * - Full-height layouts
  */
 
+import BottomTabBar from '@/components/BottomTabBar';
+import styles from './layout.module.css';
+
 export default function AppLayout({ children }) {
-  // Root layout handles all providers and UI elements during migration
-  // This layout exists to mark which routes belong to the app group
-  return children;
+  return (
+    <div className={styles.appLayout} data-app-layout="true">
+      {children}
+      <BottomTabBar />
+    </div>
+  );
 }

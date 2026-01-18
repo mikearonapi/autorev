@@ -59,6 +59,18 @@ const navLinks = [
   { href: '/al', label: 'AL' },
 ];
 
+// App routes where tab bar is shown (header should be minimal on mobile)
+const APP_ROUTES = [
+  '/tuning-shop',
+  '/my-builds',
+  '/garage',
+  '/parts',
+  '/community',
+  '/al',
+  '/encyclopedia',
+  '/profile',
+];
+
 // AL Mascot Avatar for mobile menu
 const ALMascotIcon = ({ size = 20 }) => (
   <img 
@@ -127,6 +139,11 @@ export default function Header() {
   const isAdmin = useMemo(() => {
     return user?.email && isAdminEmail(user.email);
   }, [user?.email]);
+  
+  // Check if on an app page (where bottom tab bar is shown)
+  const isAppPage = useMemo(() => {
+    return APP_ROUTES.some(route => pathname?.startsWith(route));
+  }, [pathname]);
   
   // Handle sign out - redirects to home page after logout
   const handleSignOut = async () => {
@@ -232,7 +249,7 @@ export default function Header() {
 
   return (
     <>
-      <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+      <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''} ${isAppPage ? styles.headerAppPage : ''}`}>
         <div className={styles.container}>
           {/* Logo */}
           <Link href="/" className={styles.logo}>

@@ -1,0 +1,299 @@
+/* ==========================================================================
+   SlideUpPanel - Native iOS/Android Style Slide-Up Panel
+   
+   GRAVL-Inspired Design:
+   - Full-height slide-up animation
+   - Drag handle for swipe-to-dismiss
+   - Backdrop blur
+   - Smooth transitions
+   ========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  
+  /* Backdrop */
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  
+  /* Transition */
+  transition: opacity 0.3s ease, visibility 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.overlayOpen {
+  opacity: 1;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  
+  /* Premium dark background */
+  background: var(--bg-elevated, #1f1f1f);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  
+  /* Border for definition */
+  border: 1px solid var(--border-subtle, #1a1a1a);
+  border-bottom: none;
+  
+  /* Shadow for depth */
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+  
+  /* Hidden state - slide down */
+  transform: translateY(100%);
+  
+  /* Transition */
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  
+  /* Safe area padding */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panelOpen {
+  transform: translateY(0);
+}
+
+/* Height variants */
+.heightFull {
+  /* Leave room for status bar */
+  top: env(safe-area-inset-top, 20px);
+  max-height: calc(100vh - env(safe-area-inset-top, 20px));
+  max-height: calc(100dvh - env(safe-area-inset-top, 20px));
+}
+
+.heightHalf {
+  max-height: 60vh;
+  max-height: 60dvh;
+}
+
+.heightAuto {
+  max-height: 80vh;
+  max-height: 80dvh;
+}
+
+/* Drag Handle */
+.handleArea {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 8px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.handleArea:active {
+  cursor: grabbing;
+}
+
+.handle {
+  width: 36px;
+  height: 5px;
+  background: var(--border-default, #252525);
+  border-radius: 3px;
+  transition: background 0.15s ease;
+}
+
+.handleArea:hover .handle {
+  background: var(--border-hover, #333333);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-lg, 24px);
+  padding-bottom: var(--space-md, 16px);
+  border-bottom: 1px solid var(--border-subtle, #1a1a1a);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary, #a0a0a0);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  margin-right: -8px; /* Optical alignment */
+}
+
+.closeButton:hover {
+  background: var(--bg-card, #161616);
+  color: var(--text-primary, #ffffff);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-lg, 24px);
+  
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default, #252525) transparent;
+}
+
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--border-default, #252525);
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover, #333333);
+}
+
+/* Tablet: Slightly larger panel */
+@media (min-width: 768px) {
+  .panel {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(100%);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .panelOpen {
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .header {
+    padding: 0 var(--space-xl, 32px);
+    padding-bottom: var(--space-lg, 24px);
+  }
+  
+  .content {
+    padding: var(--space-xl, 32px);
+  }
+  
+  .title {
+    font-size: 24px;
+  }
+}
+
+/* Desktop: Side panel instead of bottom sheet */
+@media (min-width: 1024px) {
+  .overlay {
+    /* Keep backdrop */
+  }
+  
+  .panel {
+    position: fixed;
+    top: 0;
+    left: auto;
+    right: 0;
+    bottom: 0;
+    width: 480px;
+    max-width: 40vw;
+    max-height: none;
+    border-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-left: 1px solid var(--border-subtle, #1a1a1a);
+    border-top: none;
+    transform: translateX(100%);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+  }
+  
+  .panelOpen {
+    transform: translateX(0);
+  }
+  
+  .heightFull,
+  .heightHalf,
+  .heightAuto {
+    top: 0;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+  
+  /* Hide drag handle on desktop */
+  .handleArea {
+    display: none;
+  }
+  
+  .header {
+    padding-top: var(--space-lg, 24px);
+    padding-bottom: var(--space-lg, 24px);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel,
+  .closeButton,
+  .handle {
+    transition: none;
+  }
+  
+  .panel {
+    transform: translateY(100%);
+  }
+  
+  .panelOpen {
+    transform: translateY(0);
+  }
+}
+
+/* Small phones */
+@media (max-width: 374px) {
+  .header {
+    padding: 0 var(--space-md, 16px);
+    padding-bottom: var(--space-sm, 12px);
+  }
+  
+  .content {
+    padding: var(--space-md, 16px);
+  }
+  
+  .title {
+    font-size: 18px;
+  }
+}

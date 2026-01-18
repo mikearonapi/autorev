@@ -33,6 +33,121 @@
   */
 }
 
+/* ==========================================================================
+   App Page Header - Dark theme to match GRAVL-inspired design
+   On mobile, this creates a more native app-like experience
+   ========================================================================== */
+
+.headerAppPage {
+  background: var(--bg-primary, #0a0a0a);
+  border-bottom: 1px solid var(--border-subtle, #1a1a1a);
+  box-shadow: none;
+}
+
+.headerAppPage.scrolled {
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.headerAppPage .logoName {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .navLink {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.headerAppPage .navLink:hover {
+  color: var(--text-primary, #ffffff);
+  background: var(--bg-card, #161616);
+}
+
+.headerAppPage .navLinkActive {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.headerAppPage .menuToggle {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .menuToggle:active {
+  background: var(--bg-card, #161616);
+}
+
+.headerAppPage .profileGreeting {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .mobileGreetingText {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .mobileUserGreeting {
+  background: var(--bg-card, #161616);
+}
+
+.headerAppPage .mobileUserGreeting:active {
+  background: var(--bg-card-hover, #1c1c1c);
+}
+
+.headerAppPage .loginLink {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.headerAppPage .loginLink:hover {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .dropdownMenu {
+  background: var(--bg-elevated, #1f1f1f);
+  border-color: var(--border-default, #252525);
+}
+
+.headerAppPage .dropdownItem {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.headerAppPage .dropdownItem:hover {
+  background: var(--bg-card, #161616);
+  color: var(--accent-primary, #ff4d00);
+}
+
+.headerAppPage .profileDropdown {
+  background: var(--bg-elevated, #1f1f1f);
+  border-color: var(--border-default, #252525);
+}
+
+.headerAppPage .profileDropdownName {
+  color: var(--text-primary, #ffffff);
+}
+
+.headerAppPage .profileDropdownEmail {
+  color: var(--text-tertiary, #666666);
+}
+
+.headerAppPage .profileDropdownDivider {
+  background: var(--border-subtle, #1a1a1a);
+}
+
+.headerAppPage .profileDropdownItem {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.headerAppPage .profileDropdownItem:hover {
+  background: var(--bg-card, #161616);
+  color: var(--accent-primary, #ff4d00);
+}
+
+.headerAppPage .profileLink {
+  background: var(--bg-card, #161616);
+}
+
+.headerAppPage .profileLink:hover {
+  background: var(--bg-card-hover, #1c1c1c);
+}
+
 .container {
   max-width: var(--container-max);
   margin: 0 auto;

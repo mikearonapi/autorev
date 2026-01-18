@@ -4,7 +4,7 @@ import { join } from 'path';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Using Node.js runtime to avoid Edge Function size limit (images exceed 2MB)
-export const alt = 'AutoRev - AI-Powered Sports Car Research';
+export const alt = 'AutoRev - Plan Your Perfect Build';
 export const size = {
   width: 1200,
   height: 630,
@@ -14,14 +14,16 @@ export const contentType = 'image/png';
 // Revalidate every 5 minutes to pick up new car counts
 export const revalidate = 300;
 
-// Brand Colors (from globals.css)
+// Build Pivot Brand Colors - Performance-focused dark theme
 const BRAND = {
-  primary: '#1a4d6e',
-  primaryLight: '#2a6d94',
-  primaryDark: '#0f3347',
-  gold: '#D4AF37',
-  goldLight: '#E6C54A',
-  goldDark: '#B8973A',
+  primary: '#0a0a0a',
+  secondary: '#161616',
+  accent: '#ff4d00', // Performance orange
+  accentLight: '#ff6620',
+  accentDark: '#cc3d00',
+  teal: '#00d4ff', // Tech blue accent
+  text: '#ffffff',
+  textSecondary: '#a0a0a0',
 };
 
 // Fetch car count from database
@@ -49,8 +51,7 @@ async function getCarCount(): Promise<number> {
 
 /**
  * Open Graph Image for social sharing
- * Features the dramatic hero car image with branded overlay
- * Brand-aligned: teal primary + gold accent
+ * Build Pivot: Performance-focused dark theme with orange accent
  */
 export default async function Image() {
   // Fetch car count dynamically
@@ -74,6 +75,7 @@ export default async function Image() {
           position: 'relative',
           overflow: 'hidden',
           fontFamily: 'system-ui, -apple-system, sans-serif',
+          backgroundColor: BRAND.primary,
         }}
       >
         {/* Background car image */}
@@ -87,10 +89,11 @@ export default async function Image() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            opacity: 0.4,
           }}
         />
 
-        {/* Lighter gradient overlay - mostly transparent, just enough for text readability */}
+        {/* Dark gradient overlay for Build-focused aesthetic */}
         <div
           style={{
             position: 'absolute',
@@ -98,25 +101,12 @@ export default async function Image() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: `linear-gradient(135deg, rgba(15,51,71,0.7) 0%, rgba(26,77,110,0.3) 30%, transparent 50%, rgba(15,51,71,0.4) 100%)`,
+            background: `linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 40%, rgba(10,10,10,0.8) 100%)`,
             display: 'flex',
           }}
         />
 
-        {/* Bottom fade for text area - keeps text readable */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '280px',
-            background: `linear-gradient(to top, rgba(15,51,71,0.95) 0%, rgba(15,51,71,0.7) 40%, transparent 100%)`,
-            display: 'flex',
-          }}
-        />
-
-        {/* Left accent stripe - gold gradient */}
+        {/* Left accent stripe - Performance orange */}
         <div
           style={{
             position: 'absolute',
@@ -124,7 +114,7 @@ export default async function Image() {
             left: 0,
             width: '6px',
             height: '100%',
-            background: `linear-gradient(180deg, ${BRAND.gold} 0%, ${BRAND.goldLight} 50%, ${BRAND.goldDark} 100%)`,
+            background: `linear-gradient(180deg, ${BRAND.accent} 0%, ${BRAND.accentLight} 50%, ${BRAND.accentDark} 100%)`,
             display: 'flex',
           }}
         />
@@ -174,7 +164,7 @@ export default async function Image() {
             gap: '14px',
           }}
         >
-          {/* Main headline with space between What and Drives */}
+          {/* Main headline - Build focused */}
           <h1
             style={{
               fontSize: '72px',
@@ -186,8 +176,8 @@ export default async function Image() {
               letterSpacing: '-2px',
             }}
           >
-            Find What{' '}
-            <span style={{ color: BRAND.gold, marginLeft: '8px' }}>Drives You</span>
+            Plan Your{' '}
+            <span style={{ color: BRAND.accent }}>Perfect Build</span>
           </h1>
 
           {/* Subheadline - value proposition */}
@@ -203,13 +193,13 @@ export default async function Image() {
             }}
           >
             <span>{carCount} Sports Cars</span>
-            <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>
-            <span>$25K – $300K</span>
-            <span style={{ color: BRAND.gold, fontSize: '18px' }}>•</span>
-            <span>Miatas to GT3s</span>
+            <span style={{ color: BRAND.accent, fontSize: '18px' }}>•</span>
+            <span>500+ Verified Parts</span>
+            <span style={{ color: BRAND.accent, fontSize: '18px' }}>•</span>
+            <span>Real Dyno Data</span>
           </p>
 
-          {/* Feature pills - actual site features */}
+          {/* Feature pills - Build focused */}
           <div
             style={{
               display: 'flex',
@@ -218,23 +208,23 @@ export default async function Image() {
             }}
           >
             {[
-              { label: 'Meet AL — Your AI Car Expert', highlight: true },
-              { label: 'Research', highlight: false },
-              { label: 'My Garage', highlight: false },
-              { label: 'Tuning Shop', highlight: false },
+              { label: 'Build Planner', highlight: true },
+              { label: 'Parts Database', highlight: false },
+              { label: 'Cost Tracker', highlight: false },
+              { label: 'Community Builds', highlight: false },
             ].map((feature) => (
               <div
                 key={feature.label}
                 style={{
                   padding: '10px 18px',
                   background: feature.highlight 
-                    ? `rgba(212,175,55,0.25)` 
+                    ? `rgba(255,77,0,0.25)` 
                     : `rgba(255,255,255,0.08)`,
                   borderRadius: '50px',
                   border: feature.highlight 
-                    ? `2px solid ${BRAND.gold}` 
+                    ? `2px solid ${BRAND.accent}` 
                     : '1.5px solid rgba(255,255,255,0.2)',
-                  color: feature.highlight ? BRAND.goldLight : '#ffffff',
+                  color: feature.highlight ? BRAND.accentLight : '#ffffff',
                   fontSize: '15px',
                   fontWeight: 600,
                 }}
@@ -245,7 +235,7 @@ export default async function Image() {
           </div>
         </div>
 
-        {/* Domain in bottom right - clean, no dot */}
+        {/* Domain in bottom right */}
         <div
           style={{
             position: 'absolute',
@@ -267,7 +257,7 @@ export default async function Image() {
           </span>
         </div>
 
-        {/* Bottom accent bar - gold gradient */}
+        {/* Bottom accent bar - Performance orange gradient */}
         <div
           style={{
             position: 'absolute',
@@ -275,7 +265,7 @@ export default async function Image() {
             left: 0,
             right: 0,
             height: '4px',
-            background: `linear-gradient(90deg, ${BRAND.goldDark}, ${BRAND.gold}, ${BRAND.goldLight}, ${BRAND.gold}, ${BRAND.goldDark})`,
+            background: `linear-gradient(90deg, ${BRAND.accentDark}, ${BRAND.accent}, ${BRAND.accentLight}, ${BRAND.accent}, ${BRAND.accentDark})`,
             display: 'flex',
           }}
         />

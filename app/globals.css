@@ -132,16 +132,16 @@
   
   /* =======================================================================
      MOBILE-FIRST SPACING SCALE
-     Compact by default, grows on larger screens
+     GRAVL-inspired: More generous spacing for premium feel
      ======================================================================= */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 24px;
-  --space-2xl: 32px;
-  --space-3xl: 48px;
-  --space-4xl: 64px;
+  --space-xs: 8px;     /* Was 4px - GRAVL uses more breathing room */
+  --space-sm: 12px;    /* Was 8px */
+  --space-md: 16px;    /* Was 12px */
+  --space-lg: 24px;    /* Was 16px */
+  --space-xl: 32px;    /* Was 24px */
+  --space-2xl: 48px;   /* Was 32px */
+  --space-3xl: 64px;   /* Was 48px */
+  --space-4xl: 96px;   /* Was 64px */
   
   /* =======================================================================
      FLUID TYPOGRAPHY (Mobile-First with Clamp)
@@ -240,15 +240,15 @@
   --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
-/* Tablet breakpoint: increase spacing */
+/* Tablet breakpoint: increase spacing - GRAVL-inspired generous scale */
 @media (min-width: 768px) {
   :root {
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-    --space-2xl: 48px;
-    --space-3xl: 64px;
-    --space-4xl: 96px;
+    --space-md: 20px;
+    --space-lg: 28px;
+    --space-xl: 40px;
+    --space-2xl: 56px;
+    --space-3xl: 80px;
+    --space-4xl: 120px;
   }
 }
 

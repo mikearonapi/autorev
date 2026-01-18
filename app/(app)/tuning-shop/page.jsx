@@ -26,6 +26,8 @@ import CarImage from '@/components/CarImage';
 import CarActionMenu from '@/components/CarActionMenu';
 import UpgradeCenter from '@/components/UpgradeCenter';
 import OnboardingPopup, { tuningShopOnboardingSteps } from '@/components/OnboardingPopup';
+import BuildWizard from '@/components/BuildWizard';
+import CarPickerFullscreen from '@/components/CarPickerFullscreen';
 import { fetchCars } from '@/lib/carsClient';
 
 // New mobile-first tuning shop components
@@ -214,77 +216,7 @@ const Icons = {
   ),
 };
 
-// Car Picker Modal for searching/selecting cars
-function CarPickerModal({ isOpen, onClose, onSelect, existingCars = [], cars = [] }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const filteredCars = useMemo(() => {
-    if (!searchTerm) return cars;
-    const term = searchTerm.toLowerCase();
-    return cars.filter(car => 
-      car.name.toLowerCase().includes(term) ||
-      car.brand?.toLowerCase().includes(term) ||
-      car.category?.toLowerCase().includes(term)
-    );
-  }, [searchTerm, cars]);
-  
-  if (!isOpen) return null;
-  
-  return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h2>Select a Car to Mod</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
-            <Icons.x size={20} />
-          </button>
-        </div>
-        
-        <div className={styles.searchBox}>
-          <Icons.search size={18} />
-          <input
-            type="text"
-            placeholder="Search vehicles..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
-          />
-        </div>
-        <p className={styles.searchHint}>Search by make, model, category, or year • Tap to select</p>
-        
-        <div className={styles.carList}>
-          {filteredCars.map(car => (
-            <div
-              key={car.slug}
-              className={styles.carListItem}
-            >
-              <div 
-                className={styles.carListClickable} 
-                onClick={() => {
-                  onSelect(car);
-                  onClose();
-                }}
-              >
-                <div className={styles.carListImage}>
-                  <CarImage car={car} variant="thumbnail" showName={false} />
-                </div>
-                <div className={styles.carListInfo}>
-                  <span className={styles.carListName}>{car.name}</span>
-                  <span className={styles.carListMeta}>
-                    {car.hp} hp • {car.layout || 'Sports'} • {car.priceRange}
-                  </span>
-                </div>
-              </div>
-              <div className={styles.carListActionWrapper}>
-                <CarActionMenu car={car} variant="compact" theme="dark" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+// Car Picker Modal replaced with CarPickerFullscreen component (imported above)
 
 // Empty State Component
 function EmptyState({ icon: IconComponent, title, description, actionLabel, onAction }) {
@@ -607,6 +539,9 @@ function TuningShopContent() {
   // Flag to open save modal when loading a build for sharing
   const [openSaveModalOnLoad, setOpenSaveModalOnLoad] = useState(false);
   
+  // Build Wizard state (GRAVL-inspired full-screen onboarding)
+  const [showBuildWizard, setShowBuildWizard] = useState(false);
+  
   // New tuning shop state for factory config and wheel selection
   const [factoryConfig, setFactoryConfig] = useState(null);
   const { selectedFitment, selectFitment, clearSelection: clearFitmentSelection } = useWheelTireSelection();
@@ -899,6 +834,18 @@ function TuningShopContent() {
     setActiveTab('upgrades');
     window.history.pushState({}, '', `/tuning-shop?plan=${car.slug}`);
   };
+  
+  // Handle Build Wizard completion
+  const handleBuildWizardComplete = useCallback((buildData) => {
+    if (buildData?.car) {
+      // Car comes from wizard with slug property
+      const car = allCars.find(c => c.slug === buildData.car.slug) || buildData.car;
+      setSelectedCar(car);
+      setCurrentBuildId(null);
+      setActiveTab('upgrades');
+      window.history.pushState({}, '', `/tuning-shop?plan=${car.slug}`);
+    }
+  }, [allCars]);
 
   const handleLoadBuild = (build) => {
     const car = allCars.find(c => c.slug === build.carSlug);
@@ -992,10 +939,43 @@ function TuningShopContent() {
       {/* Main Content Area */}
       <div className={styles.mainContent}>
         {/* =====================================================
-            TAB 1: SELECT A CAR
+            TAB 1: SELECT A CAR (GRAVL-Inspired)
             ===================================================== */}
         {activeTab === 'select' && (
           <div className={styles.selectCarView}>
+            {/* GRAVL-Inspired Hero: Start New Build CTA */}
+            <div className={styles.startBuildHero}>
+              <div className={styles.startBuildContent}>
+                <h2 className={styles.startBuildTitle}>Plan Your Perfect Build</h2>
+                <p className={styles.startBuildSubtitle}>
+                  Configure upgrades, track costs, and see projected performance gains
+                </p>
+                <button 
+                  className={styles.startBuildButton}
+                  onClick={() => setShowBuildWizard(true)}
+                >
+                  <Icons.plus size={20} />
+                  Start New Build
+                </button>
+              </div>
+              <div className={styles.startBuildVisual}>
+                <div className={styles.startBuildStats}>
+                  <div className={styles.startBuildStat}>
+                    <span className={styles.statValue}>188</span>
+                    <span className={styles.statLabel}>Cars</span>
+                  </div>
+                  <div className={styles.startBuildStat}>
+                    <span className={styles.statValue}>500+</span>
+                    <span className={styles.statLabel}>Parts</span>
+                  </div>
+                  <div className={styles.startBuildStat}>
+                    <span className={styles.statValue}>{buildsWithCars.length}</span>
+                    <span className={styles.statLabel}>Your Builds</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             {/* Quick Start from Projects */}
             {buildsWithCars.length > 0 && (
               <div className={styles.projectsSection}>
@@ -1326,12 +1306,13 @@ function TuningShopContent() {
         )}
       </div>
 
-      {/* Car Picker Modal */}
-      <CarPickerModal
+      {/* Car Picker - Full Screen GRAVL-style */}
+      <CarPickerFullscreen
         isOpen={showCarPicker}
         onClose={() => setShowCarPicker(false)}
         onSelect={handleSelectCar}
         cars={allCars}
+        recentCars={allUserCars.slice(0, 4)}
       />
       
       <AuthModal 
@@ -1345,6 +1326,13 @@ function TuningShopContent() {
         storageKey="autorev_tuningshop_onboarding_dismissed"
         steps={tuningShopOnboardingSteps}
         accentColor="var(--perf-power)"
+      />
+      
+      {/* Build Wizard - GRAVL-inspired full-screen onboarding */}
+      <BuildWizard
+        isOpen={showBuildWizard}
+        onClose={() => setShowBuildWizard(false)}
+        onComplete={handleBuildWizardComplete}
       />
     </div>
   );
