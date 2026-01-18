@@ -1,0 +1,421 @@
+/* ==========================================================================
+   TRACK PAGE - Track day experience and data logging
+   GRAVL-inspired minimal design
+   ========================================================================== */
+
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0 20px 100px; /* Bottom padding for tab bar */
+  background: var(--background-primary, #0a0a0a);
+}
+
+/* Header */
+.header {
+  padding: 24px 0 20px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+  margin: 0;
+}
+
+/* Quick Actions */
+.quickActions {
+  margin-bottom: 32px;
+}
+
+.primaryAction {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.05) 100%);
+  border: 1px solid rgba(255, 77, 0, 0.3);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryAction:hover {
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.1) 100%);
+  border-color: rgba(255, 77, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.primaryAction svg {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.primaryAction span {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #808080);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 16px;
+}
+
+/* Features Section */
+.features {
+  margin-bottom: 32px;
+}
+
+.featureGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.featureCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.featureCard:hover {
+  border-color: var(--border-subtle, #3a3a3a);
+  background: var(--background-secondary, #141414);
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.featureIcon svg {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.featureContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.featureContent h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 4px;
+}
+
+.featureContent p {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.featureCard > svg {
+  color: var(--text-secondary, #606060);
+  flex-shrink: 0;
+}
+
+.comingSoon {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--accent-secondary, #00d4ff);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Vehicle Section */
+.vehicleSection {
+  margin-bottom: 32px;
+}
+
+.vehicleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vehicleCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.vehicleCard:hover {
+  border-color: var(--border-subtle, #3a3a3a);
+}
+
+.vehicleSelected {
+  border-color: var(--accent-primary, #ff4d00);
+  background: rgba(255, 77, 0, 0.05);
+}
+
+.vehicleIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.vehicleIcon svg {
+  color: var(--text-secondary, #808080);
+}
+
+.vehicleSelected .vehicleIcon svg {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.vehicleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicleName {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary, #ffffff);
+}
+
+.vehicleNickname {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+}
+
+/* Tracks Section */
+.tracksSection {
+  margin-bottom: 32px;
+}
+
+.trackList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border-subtle, #2a2a2a);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.trackItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--background-card, #1a1a1a);
+}
+
+.trackInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trackName {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary, #ffffff);
+}
+
+.trackLocation {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+}
+
+.trackLength {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #606060);
+  font-family: var(--font-mono, monospace);
+}
+
+/* No Vehicles */
+.noVehicles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px dashed var(--border-subtle, #2a2a2a);
+  border-radius: 16px;
+}
+
+.noVehicles svg {
+  width: 48px;
+  height: 48px;
+  color: var(--text-secondary, #606060);
+  margin-bottom: 16px;
+}
+
+.noVehicles p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 20px;
+  max-width: 240px;
+}
+
+.addVehicleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--accent-primary, #ff4d00);
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.addVehicleBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.addVehicleBtn svg {
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 200px);
+  padding: 40px 24px;
+}
+
+.emptyState svg {
+  color: var(--accent-primary, #ff4d00);
+  margin-bottom: 24px;
+  opacity: 0.8;
+}
+
+.emptyState h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 8px;
+}
+
+.emptyState p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 24px;
+  max-width: 280px;
+}
+
+.signInBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  background: var(--accent-primary, #ff4d00);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.signInBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  gap: 16px;
+}
+
+.loadingState p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-subtle, #2a2a2a);
+  border-top-color: var(--accent-primary, #ff4d00);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 32px 100px;
+  }
+  
+  .featureGrid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .featureCard {
+    flex: 1;
+    min-width: 200px;
+  }
+}

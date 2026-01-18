@@ -39,28 +39,32 @@ const ChevronIcon = () => (
   </svg>
 );
 
-// Navigation links - Build-focused pivot (January 2026)
-// 5-Tab Structure: Garage, Build, Performance, Community, Profile
-// Primary focus: Build planning, performance tracking, community
-// All old routes redirect to new structure
+// Navigation links - Simplified 5-Tab Structure (January 2026)
+// 1. My Garage - Vehicles, Builds, Upgrades, Performance (all in one)
+// 2. Track - Track day mode, data logging
+// 3. Community - TikTok/IG style build feed
+// 4. AL - AI assistant + search
+// 5. Profile - Settings, account
 const navLinks = [
-  { href: '/garage', label: 'Garage' },
-  { href: '/build', label: 'Build' },
-  { href: '/performance', label: 'Performance' },
+  { href: '/garage', label: 'My Garage' },
+  { href: '/track', label: 'Track' },
   { href: '/community', label: 'Community' },
-  { href: '/encyclopedia', label: 'Encyclopedia' },
+  { href: '/al', label: 'AL' },
+  { href: '/encyclopedia', label: 'Encyclopedia' }, // Reference resource
 ];
 
 // App routes where tab bar is shown (header should be minimal on mobile)
 const APP_ROUTES = [
   '/garage',
-  '/build',
-  '/performance',
+  '/track',
   '/community',
   '/profile',
+  '/al',
+  // Sub-routes within Garage
+  '/build',
+  '/performance',
   '/parts',
   '/encyclopedia',
-  '/al',
   // Legacy routes (redirect but still match)
   '/tuning-shop',
   '/my-builds',

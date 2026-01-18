@@ -7,17 +7,34 @@ import styles from './BottomTabBar.module.css';
 /**
  * BottomTabBar - Native iOS/Android style tab navigation
  * 
- * 5-Tab Structure for Build-Focused Experience:
- * 1. Garage - Your vehicles & build projects
- * 2. Build - 5-step build configuration flow
- * 3. Performance - Dyno estimates, track times, logging
- * 4. Community - Browse builds, events, share
- * 5. Profile - Settings, preferences, account
+ * SIMPLIFIED 5-Tab Structure (GRAVL-inspired):
  * 
- * Design inspired by GRAVL:
- * - Clean minimal icons
- * - Active state with accent color
- * - Safe area padding for notched devices
+ * 1. My Garage - Everything about YOUR cars
+ *    - Your vehicles
+ *    - Build projects  
+ *    - Upgrade planner
+ *    - Performance estimates
+ * 
+ * 2. Track - Real-world performance
+ *    - Track day mode
+ *    - Data logging
+ *    - Telemetry upload
+ *    - Lap times
+ * 
+ * 3. Community - Social discovery (TikTok/IG style)
+ *    - Build feed
+ *    - Favorite builds
+ *    - Build details
+ * 
+ * 4. AI AL - Search + AI Assistant
+ *    - Ask anything
+ *    - Get recommendations
+ *    - Research
+ * 
+ * 5. Profile - Account management
+ *    - Settings
+ *    - Subscription
+ *    - Preferences
  */
 
 // Tab icons - clean, minimal line icons
@@ -31,36 +48,31 @@ const GarageIcon = ({ active }) => (
   </svg>
 );
 
-const BuildIcon = ({ active }) => (
+const TrackIcon = ({ active }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
     strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-  </svg>
-);
-
-const PerformanceIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2v4"/>
-    <path d="M12 18v4"/>
-    <path d="M4.93 4.93l2.83 2.83"/>
-    <path d="M16.24 16.24l2.83 2.83"/>
-    <path d="M2 12h4"/>
-    <path d="M18 12h4"/>
-    <path d="M4.93 19.07l2.83-2.83"/>
-    <path d="M16.24 7.76l2.83-2.83"/>
-    <circle cx="12" cy="12" r="4"/>
-    <path d="M12 12l2-2"/>
+    {/* Racing flag / track icon */}
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+    <line x1="4" y1="22" x2="4" y2="15"/>
   </svg>
 );
 
 const CommunityIcon = ({ active }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
     strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    {/* Grid/feed icon - more social media feel */}
+    <rect x="3" y="3" width="7" height="7" rx="1"/>
+    <rect x="14" y="3" width="7" height="7" rx="1"/>
+    <rect x="3" y="14" width="7" height="7" rx="1"/>
+    <rect x="14" y="14" width="7" height="7" rx="1"/>
+  </svg>
+);
+
+const AIIcon = ({ active }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
+    {/* Brain/sparkle icon for AI */}
+    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
   </svg>
 );
 
@@ -72,35 +84,36 @@ const ProfileIcon = ({ active }) => (
   </svg>
 );
 
-// Tab configuration - 5-tab structure
+// Tab configuration - SIMPLIFIED 5-tab structure
 const tabs = [
   { 
     id: 'garage', 
-    label: 'Garage', 
+    label: 'My Garage', 
     href: '/garage', 
     Icon: GarageIcon,
-    matchPaths: ['/garage', '/my-builds'] // Include legacy route
+    // Garage now includes build, upgrades, and performance features
+    matchPaths: ['/garage', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
   },
   { 
-    id: 'build', 
-    label: 'Build', 
-    href: '/build', 
-    Icon: BuildIcon,
-    matchPaths: ['/build', '/tuning-shop'] // Include legacy route
-  },
-  { 
-    id: 'performance', 
-    label: 'Perf', 
-    href: '/performance', 
-    Icon: PerformanceIcon,
-    matchPaths: ['/performance']
+    id: 'track', 
+    label: 'Track', 
+    href: '/track', 
+    Icon: TrackIcon,
+    matchPaths: ['/track']
   },
   { 
     id: 'community', 
     label: 'Community', 
-    href: '/community/builds', // Points to existing marketing community page
+    href: '/community', 
     Icon: CommunityIcon,
     matchPaths: ['/community']
+  },
+  { 
+    id: 'al', 
+    label: 'AL', 
+    href: '/al', 
+    Icon: AIIcon,
+    matchPaths: ['/al']
   },
   { 
     id: 'profile', 
@@ -114,16 +127,17 @@ const tabs = [
 // Pages where the tab bar should be shown (app routes)
 const APP_ROUTES = [
   '/garage',
-  '/my-builds', // Legacy - redirects to /garage
-  '/build',
-  '/tuning-shop', // Legacy - redirects to /build
-  '/performance',
+  '/my-builds', // Legacy - part of garage
+  '/build',     // Legacy - part of garage
+  '/tuning-shop', // Legacy - part of garage
+  '/performance', // Part of garage
+  '/parts',     // Part of garage (upgrade flow)
+  '/track',
   '/community',
+  '/al',
   '/profile',
   '/settings',
-  '/parts', // Accessible from Build flow
-  '/encyclopedia',
-  '/al', // AI assistant (overlay, not tab)
+  '/encyclopedia', // Reference - accessible from garage
 ];
 
 export default function BottomTabBar() {
