@@ -40,35 +40,30 @@ const ChevronIcon = () => (
 );
 
 // Navigation links - Build-focused pivot (January 2026)
-// Primary focus: Build planning, projects, parts, community builds
-// De-emphasized: Find (car browsing), Care (maintenance tracking)
-// All old routes remain accessible, just not in primary navigation
+// 5-Tab Structure: Garage, Build, Performance, Community, Profile
+// Primary focus: Build planning, performance tracking, community
+// All old routes redirect to new structure
 const navLinks = [
-  { href: '/tuning-shop', label: 'Builds' },
-  { href: '/my-builds', label: 'My Projects' },
-  { href: '/parts', label: 'Parts' },
-  { 
-    href: '/community/builds', 
-    label: 'Community',
-    subLinks: [
-      { href: '/community/builds', label: 'Community Builds' },
-      { href: '/community/events', label: 'Events' },
-    ],
-  },
+  { href: '/garage', label: 'Garage' },
+  { href: '/build', label: 'Build' },
+  { href: '/performance', label: 'Performance' },
+  { href: '/community', label: 'Community' },
   { href: '/encyclopedia', label: 'Encyclopedia' },
-  { href: '/al', label: 'AL' },
 ];
 
 // App routes where tab bar is shown (header should be minimal on mobile)
 const APP_ROUTES = [
+  '/garage',
+  '/build',
+  '/performance',
+  '/community',
+  '/profile',
+  '/parts',
+  '/encyclopedia',
+  '/al',
+  // Legacy routes (redirect but still match)
   '/tuning-shop',
   '/my-builds',
-  '/garage',
-  '/parts',
-  '/community',
-  '/al',
-  '/encyclopedia',
-  '/profile',
 ];
 
 // AL Mascot Avatar for mobile menu

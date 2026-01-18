@@ -4914,6 +4914,29 @@
 }
 
 /* Add Vehicle Button - Primary action */
+/* Primary CTA - Start Build */
+.startBuildBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00) 0%, #e64600 100%);
+  border: 1px solid var(--accent-primary, #ff4d00);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.startBuildBtn:hover {
+  background: linear-gradient(135deg, #ff6620 0%, var(--accent-primary, #ff4d00) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.3);
+}
+
 .addVehicleBtn {
   display: flex;
   align-items: center;
@@ -4937,6 +4960,16 @@
 }
 
 @media (max-width: 767px) {
+  .startBuildBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .startBuildBtn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
   .addVehicleBtn {
     padding: 6px 8px;
     font-size: 11px;

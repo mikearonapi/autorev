@@ -2932,9 +2932,12 @@ function GarageContent() {
     }
   };
   
+  // Tab configuration - Build-focused (Jan 2026)
+  // Primary: My Vehicles (with their builds)
+  // Secondary: Favorites (wishlist)
   const tabs = [
-    { id: 'mycars', label: 'My Collection', icon: Icons.car, count: vehicles.length },
-    { id: 'favorites', label: 'Favorites', icon: Icons.heart, count: favoriteCars.length },
+    { id: 'mycars', label: 'Vehicles', icon: Icons.car, count: vehicles.length },
+    { id: 'favorites', label: 'Wishlist', icon: Icons.heart, count: favoriteCars.length },
   ];
 
   const handleAddVehicle = async (vehicleData) => {
@@ -3210,7 +3213,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
       {/* Compact Header Bar */}
       <div className={styles.headerBar}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.titleCompact}>MY GARAGE</h1>
+          <h1 className={styles.titleCompact}>GARAGE</h1>
         </div>
 
         <div className={styles.headerCenter}>
@@ -3236,14 +3239,24 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
           {/* Quick Actions for My Collection tab */}
           {activeTab === 'mycars' && (
             <div className={styles.quickActions}>
-              {/* Add Vehicle Button - Always visible */}
+              {/* Start Build Button - Primary CTA */}
+              <Link
+                href="/build"
+                className={styles.startBuildBtn}
+                title="Start planning a new build"
+              >
+                <Icons.wrench size={16} />
+                <span className={styles.quickActionLabel}>Build</span>
+              </Link>
+              
+              {/* Add Vehicle Button */}
               <button
                 className={styles.addVehicleBtn}
                 onClick={() => setIsAddVehicleOpen(true)}
                 title="Add a vehicle to your garage"
               >
                 <Icons.plus size={16} />
-                <span className={styles.quickActionLabel}>Add Vehicle</span>
+                <span className={styles.quickActionLabel}>Add</span>
               </button>
 
               {/* Reorder Mode Toggle - Only when you have 2+ vehicles */}

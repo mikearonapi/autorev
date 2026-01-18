@@ -106,6 +106,18 @@ const nextConfig = {
         destination: '/articles/comparisons/:slug',
         permanent: true,
       },
+      // Build Pivot - Route restructuring
+      {
+        source: '/tuning-shop',
+        destination: '/build',
+        permanent: true,
+      },
+      {
+        source: '/my-builds',
+        destination: '/garage',
+        permanent: true,
+      },
+      // Community - keep existing routes, no redirect needed
     ];
   },
 };

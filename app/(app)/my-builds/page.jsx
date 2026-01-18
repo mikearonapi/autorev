@@ -74,6 +74,40 @@ function MyBuildsContent() {
   const [showBuildWizard, setShowBuildWizard] = useState(false);
   const [showBuildDetail, setShowBuildDetail] = useState(false);
   
+  // Handle build selection - open slide-up panel
+  const handleSelectBuild = useCallback((build) => {
+    setSelectedBuild(build);
+    setShowBuildDetail(true);
+  }, []);
+  
+  // Handle closing build detail
+  const handleCloseBuildDetail = useCallback(() => {
+    setShowBuildDetail(false);
+    // Delay clearing selection for animation
+    setTimeout(() => setSelectedBuild(null), 300);
+  }, []);
+  
+  // Handle build wizard completion
+  const handleBuildWizardComplete = useCallback((buildData) => {
+    if (buildData?.car?.slug) {
+      router.push(`/tuning-shop?plan=${buildData.car.slug}`);
+    }
+  }, [router]);
+  
+  // Handle edit build
+  const handleEditBuild = useCallback((build) => {
+    handleCloseBuildDetail();
+    router.push(`/tuning-shop?build=${build.id}`);
+  }, [handleCloseBuildDetail, router]);
+  
+  // Handle delete build
+  const handleDeleteBuild = useCallback(async (build) => {
+    if (confirm('Are you sure you want to delete this build?')) {
+      await deleteBuild(build.id);
+      handleCloseBuildDetail();
+    }
+  }, [deleteBuild, handleCloseBuildDetail]);
+  
   // Refresh builds on mount
   useEffect(() => {
     if (isAuthenticated && user?.id) {
@@ -116,40 +150,6 @@ function MyBuildsContent() {
       </div>
     );
   }
-
-  // Handle build selection - open slide-up panel
-  const handleSelectBuild = useCallback((build) => {
-    setSelectedBuild(build);
-    setShowBuildDetail(true);
-  }, []);
-  
-  // Handle closing build detail
-  const handleCloseBuildDetail = useCallback(() => {
-    setShowBuildDetail(false);
-    // Delay clearing selection for animation
-    setTimeout(() => setSelectedBuild(null), 300);
-  }, []);
-  
-  // Handle build wizard completion
-  const handleBuildWizardComplete = useCallback((buildData) => {
-    if (buildData?.car?.slug) {
-      router.push(`/tuning-shop?plan=${buildData.car.slug}`);
-    }
-  }, [router]);
-  
-  // Handle edit build
-  const handleEditBuild = useCallback((build) => {
-    handleCloseBuildDetail();
-    router.push(`/tuning-shop?build=${build.id}`);
-  }, [handleCloseBuildDetail, router]);
-  
-  // Handle delete build
-  const handleDeleteBuild = useCallback(async (build) => {
-    if (confirm('Are you sure you want to delete this build?')) {
-      await deleteBuild(build.id);
-      handleCloseBuildDetail();
-    }
-  }, [deleteBuild, handleCloseBuildDetail]);
 
   const tabs = [
     { id: 'builds', label: 'Build Projects', icon: <WrenchIcon />, count: builds?.length || 0 },
