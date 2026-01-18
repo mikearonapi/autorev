@@ -39,38 +39,24 @@ const ChevronIcon = () => (
   </svg>
 );
 
-// Navigation links - KISS principles: clear, direct names that match URLs
-// - Articles: Top-level editorial content (comparisons, enthusiast, technical)
-// - Vehicles: Dropdown for Browse Vehicles & Vehicle Match (no dedicated page)
-// - My Garage: Personal user area (collection & favorites)
-// - Tuning Shop: Mod planner & projects
-// - Community: Events, Builds, Clubs (future)
-// - Encyclopedia: Automotive Education
-// - AutoRev AI: AI-powered automotive assistant
+// Navigation links - Build-focused pivot (January 2026)
+// Primary focus: Build planning, projects, parts, community builds
+// De-emphasized: Find (car browsing), Care (maintenance tracking)
+// All old routes remain accessible, just not in primary navigation
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/articles', label: 'Articles' },
+  { href: '/tuning-shop', label: 'Builds' },
+  { href: '/my-builds', label: 'My Projects' },
+  { href: '/parts', label: 'Parts' },
   { 
-    label: 'Vehicles',
-    subLinks: [
-      { href: '/browse-cars', label: 'Browse Vehicles' },
-      { href: '/car-selector', label: 'Your Vehicle Match' },
-    ],
-  },
-  { href: '/garage', label: 'My Garage' },
-  { href: '/tuning-shop', label: 'Tuning Shop' },
-  { 
-    href: '/community', 
+    href: '/community/builds', 
     label: 'Community',
     subLinks: [
       { href: '/community/builds', label: 'Community Builds' },
       { href: '/community/events', label: 'Events' },
-      { href: '/events/saved', label: 'Saved Events' },
-      { href: '/events/submit', label: 'Submit Event' },
     ],
   },
   { href: '/encyclopedia', label: 'Encyclopedia' },
-  { href: '/al', label: 'AutoRev AI' },
+  { href: '/al', label: 'AL' },
 ];
 
 // AL Mascot Avatar for mobile menu
@@ -537,7 +523,7 @@ export default function Header() {
                 className={styles.mobileJoinBtn}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Join AutoRev
+                Join
               </Link>
             </div>
           )}

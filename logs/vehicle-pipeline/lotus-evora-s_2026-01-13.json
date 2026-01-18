@@ -1,0 +1,1446 @@
+{
+  "car_id": "5f794221-2151-48d0-8653-fc81a520440f",
+  "mode": "full",
+  "version": "2.3",
+  "started_at": "2026-01-13T01:02:22.577Z",
+  "stages": {},
+  "car_name": "Lotus Evora S",
+  "stage1": {
+    "epa": {
+      "atvType": "",
+      "barrels08": "12.935217391304349",
+      "barrelsA08": "0.0",
+      "battery": "-1",
+      "c240Dscr": "",
+      "c240bDscr": "",
+      "charge120": "0.0",
+      "charge240": "0.0",
+      "charge240b": "0.0",
+      "city08": "21",
+      "city08U": "0.0",
+      "cityA08": "0",
+      "cityA08U": "0.0",
+      "cityCD": "0.0",
+      "cityE": "0.0",
+      "cityMpk": "0",
+      "cityUF": "0.0",
+      "cityUmpk": "0.0",
+      "co2": "-1",
+      "co2A": "-1",
+      "co2TailpipeAGpm": "0.0",
+      "co2TailpipeGpm": "386.39130434782606",
+      "comb08": "23",
+      "comb08U": "0.0",
+      "combA08": "0",
+      "combA08U": "0.0",
+      "combE": "0.0",
+      "combMpk": "0",
+      "combUmpk": "0.0",
+      "combinedCD": "0.0",
+      "combinedUF": "0.0",
+      "createdOn": "2013-01-01T00:00:00-05:00",
+      "cylDeact": "",
+      "cylDeactYesNo": "No",
+      "cylinders": "4",
+      "displ": "1.8",
+      "drive": "Rear-Wheel Drive",
+      "emissionsList": {
+        "emissionsInfo": [
+          {
+            "efid": "ALTXV01.8JHB",
+            "id": "29684",
+            "salesArea": "3",
+            "score": "5.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "1",
+            "standard": "B5",
+            "stdText": "BIN 5"
+          },
+          {
+            "efid": "ALTXV01.8JHB",
+            "id": "29684",
+            "salesArea": "7",
+            "score": "5.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "1",
+            "standard": "L2",
+            "stdText": "LEV II"
+          }
+        ]
+      },
+      "engId": "1",
+      "eng_dscr": "",
+      "evMotor": "",
+      "feScore": "-1",
+      "fuelCost08": "2550",
+      "fuelCostA08": "0",
+      "fuelType": "Premium",
+      "fuelType1": "Premium Gasoline",
+      "fuelType2": "",
+      "ghgScore": "-1",
+      "ghgScoreA": "-1",
+      "guzzler": "",
+      "highway08": "27",
+      "highway08U": "0.0",
+      "highwayA08": "0",
+      "highwayA08U": "0.0",
+      "highwayCD": "0.0",
+      "highwayE": "0.0",
+      "highwayMpk": "0",
+      "highwayUF": "0.0",
+      "highwayUmpk": "0.0",
+      "hlv": "0",
+      "hpv": "0",
+      "id": "29684",
+      "lv2": "0",
+      "lv4": "0",
+      "make": "Lotus",
+      "mfrCode": "",
+      "model": "Elise/Exige",
+      "modifiedOn": "2013-01-01T00:00:00-05:00",
+      "mpgData": "N",
+      "mpgRevised": "false",
+      "phevBlended": "false",
+      "phevCity": "0",
+      "phevComb": "0",
+      "phevHwy": "0",
+      "pv2": "0",
+      "pv4": "0",
+      "range": "0",
+      "rangeA": "",
+      "rangeCity": "0.0",
+      "rangeCityA": "0.0",
+      "rangeHwy": "0.0",
+      "rangeHwyA": "0.0",
+      "startStop": "",
+      "trans_dscr": "",
+      "trany": "Manual 6-spd",
+      "UCity": "26.4646",
+      "UCityA": "0.0",
+      "UHighway": "37.62",
+      "UHighwayA": "0.0",
+      "VClass": "Two Seaters",
+      "year": "2010",
+      "youSaveSpend": "-4750",
+      "baseModel": "Elise/Exige",
+      "sCharger": "",
+      "tCharger": ""
+    },
+    "safety": null,
+    "recalls": [],
+    "complaints": [
+      {
+        "odiNumber": 10511543,
+        "manufacturer": "Lotus Cars Limited",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "05/11/2013",
+        "dateComplaintFiled": "05/12/2013",
+        "vin": "SCCLMDTU8AH",
+        "components": "AIR BAGS",
+        "summary": "AIR BAG COMES ON CONSTANTLY.  4+ TIMES IN ONE YEAR.  WILL HAVE TO TAKE BACK TO DEALER TO CHECK AGAIN.  *TR",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2010",
+            "productMake": "LOTUS",
+            "productModel": "EVORA",
+            "manufacturer": "Lotus Cars Limited"
+          }
+        ]
+      },
+      {
+        "odiNumber": 10491061,
+        "manufacturer": "Lotus Cars Limited",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "12/22/2012",
+        "dateComplaintFiled": "12/27/2012",
+        "vin": "SCCLMDTU4AH",
+        "components": "POWER TRAIN",
+        "summary": "THE CAR IS A MANUAL TRANSMISSION.  ENGINERING/DESIGN DEFECT CAUSES ENGINE HEAT TO BOIL HYDRAULIC CLUTCH FLUID, LEADING TO HYDRAULIC CLUTCH FLUID DECAY OVER TIME, LEADING TO FAILURE OF MASTER CLUTCH CYLINDER AND CLUTCH PEDAL STOCK IN DOWN POSITION WHILE DRIVING. THIS ULTIMATELY MAKES IT IMPOSSIBLE TO GET INTO NEUTRAL OR SHIFT GEARS.  IF THIS HAD HAPPENED ON THE HIGHWAY IN FOURTH GEAR, WHO KNOWS WHAT WOULD HAVE HAPPENED.  LUCKY FOR ME IT HAPPENED IN A PARKING LOT.  THE CAR WAS IN FIRST GEAR AT 5 MPH AND THE CLUTCH PEDAL WAS STUCK IN THE DOWN POSITION.  I COULD NOT SHIFT GEARS OR GET THE CAR INTO NEUTRAL.  I HAD TO STALL THE CAR TO STOP IT.  THE CAR DEALER IS REPAIRING IT NOW WITH A RETRO FIT DEVICE TO PREVENT ENGINE HEAT FROM BOILING THE BYDRAULIC CLUTHC FLUID.  I THINK A REALL IS NECESSARY BECASUE THIS PROBLEMS HAPPENS TO OTHER LOTUS EVORA OWNERS AS I HAVE HEARD FROM THE LOCAL MECHANIC AND THE OWNER BLOGS ON THE INTERNET.",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2010",
+            "productMake": "LOTUS",
+            "productModel": "EVORA",
+            "manufacturer": "Lotus Cars Limited"
+          }
+        ]
+      }
+    ]
+  },
+  "stage2": {
+    "maintenance": {
+      "oil": {
+        "oil_type": "Full Synthetic",
+        "oil_viscosity": "0W-30",
+        "oil_spec": "API SN, ACEA A3/B4",
+        "oil_capacity_liters": 6.5,
+        "oil_capacity_quarts": 6.9,
+        "oil_filter_oem_part": "A111E6083F",
+        "oil_filter_alternatives": [
+          "Mann W712/75",
+          "Mahle OC90"
+        ],
+        "oil_change_interval_miles": 10000,
+        "oil_change_interval_months": 12
+      },
+      "coolant": {
+        "coolant_type": "OAT",
+        "coolant_color": "Red/Pink",
+        "coolant_spec": "Toyota Long Life Coolant Super LLC",
+        "coolant_capacity_liters": 8.5,
+        "coolant_change_interval_miles": 100000,
+        "coolant_change_interval_years": 10
+      },
+      "brake_fluid": {
+        "brake_fluid_type": "DOT 4",
+        "brake_fluid_spec": "ISO 4925 Class 4",
+        "brake_fluid_change_interval_miles": 20000,
+        "brake_fluid_change_interval_years": 2
+      },
+      "transmission": {
+        "trans_fluid_manual": "75W-80 GL-4",
+        "trans_fluid_manual_capacity": 2,
+        "trans_fluid_auto": "N/A",
+        "trans_fluid_auto_capacity": null,
+        "trans_fluid_change_interval_miles": 36000
+      },
+      "differential": {
+        "diff_fluid_type": "75W-80 GL-5",
+        "diff_fluid_front_capacity": null,
+        "diff_fluid_rear_capacity": 1.5,
+        "diff_fluid_change_interval_miles": 36000
+      },
+      "power_steering": {
+        "power_steering_type": "Hydraulic",
+        "power_steering_fluid": "Dexron III ATF",
+        "power_steering_capacity": 1.2
+      },
+      "fuel": {
+        "fuel_type": "Gasoline",
+        "fuel_octane_minimum": 95,
+        "fuel_octane_recommended": 98,
+        "fuel_tank_capacity_gallons": 14.5,
+        "fuel_tank_capacity_liters": 55
+      },
+      "filters": {
+        "air_filter_oem_part": "17801-31120",
+        "air_filter_alternatives": [
+          "K&N 33-2300",
+          "Mann C3698/3"
+        ],
+        "air_filter_change_interval_miles": 20000,
+        "cabin_filter_oem_part": "87139-30040",
+        "cabin_filter_alternatives": [
+          "Mann CU2442",
+          "Mahle LA442"
+        ],
+        "cabin_filter_change_interval_miles": 20000,
+        "fuel_filter_oem_part": "In-tank (non-serviceable)",
+        "fuel_filter_in_tank": true,
+        "fuel_filter_change_interval_miles": null
+      },
+      "tires": {
+        "tire_size_front": "225/40R18",
+        "tire_size_rear": "255/35R19",
+        "tire_pressure_front_psi": 32,
+        "tire_pressure_rear_psi": 34,
+        "tire_pressure_spare_psi": null,
+        "tire_rotation_pattern": "Front-to-rear (directional)",
+        "tire_rotation_interval_miles": 5000,
+        "tire_oem_brand": "Pirelli P Zero Nero",
+        "tire_recommended_brands": [
+          "Pirelli P Zero",
+          "Michelin Pilot Sport",
+          "Continental SportContact"
+        ]
+      },
+      "wheels": {
+        "wheel_size_front": "18x7.5",
+        "wheel_size_rear": "19x9",
+        "wheel_bolt_pattern": "5x114.3",
+        "wheel_center_bore_mm": 64.1,
+        "wheel_lug_torque_ft_lbs": 103,
+        "wheel_lug_torque_nm": 140
+      },
+      "brakes_front": {
+        "brake_front_rotor_diameter_mm": 355,
+        "brake_front_rotor_thickness_mm": 32,
+        "brake_front_rotor_min_thickness_mm": 30,
+        "brake_front_rotor_oem_part": "A132E6002F",
+        "brake_front_pad_oem_part": "A132E6001F",
+        "brake_front_pad_wear_indicator": "Visual",
+        "brake_front_caliper_type": "4-piston Brembo"
+      },
+      "brakes_rear": {
+        "brake_rear_rotor_diameter_mm": 332,
+        "brake_rear_rotor_thickness_mm": 28,
+        "brake_rear_rotor_min_thickness_mm": 26,
+        "brake_rear_rotor_oem_part": "A132E6004F",
+        "brake_rear_pad_oem_part": "A132E6003F",
+        "brake_rear_pad_wear_indicator": "Visual",
+        "brake_rear_caliper_type": "Single-piston"
+      },
+      "spark": {
+        "spark_plug_type": "Iridium",
+        "spark_plug_gap_mm": 0.7,
+        "spark_plug_oem_part": "90919-01210",
+        "spark_plug_alternatives": [
+          "NGK ILFR6T11",
+          "Denso IK16TT"
+        ],
+        "spark_plug_change_interval_miles": 60000,
+        "spark_plug_quantity": 6
+      },
+      "timing": {
+        "timing_type": "Chain",
+        "timing_change_interval_miles": null,
+        "timing_change_interval_years": null,
+        "timing_tensioner_oem_part": "13540-31030"
+      },
+      "belts": {
+        "serpentine_belt_oem_part": "90916-02565",
+        "serpentine_belt_change_interval_miles": 60000,
+        "ac_belt_separate": false,
+        "ac_belt_oem_part": "N/A"
+      },
+      "battery": {
+        "battery_group_size": "H6",
+        "battery_cca": 600,
+        "battery_voltage": 12,
+        "battery_oem_brand": "Panasonic",
+        "battery_location": "Engine bay",
+        "battery_agm": false
+      },
+      "alternator": {
+        "alternator_output_amps": 130,
+        "alternator_oem_part": "27060-31200"
+      },
+      "wipers": {
+        "wiper_driver_size_inches": 26,
+        "wiper_passenger_size_inches": 16,
+        "wiper_rear_size_inches": null,
+        "wiper_type": "Conventional",
+        "wiper_oem_part_driver": "85212-12340",
+        "wiper_oem_part_passenger": "85222-12200",
+        "wiper_oem_part_rear": "N/A"
+      },
+      "lighting": {
+        "headlight_low_beam_type": "H7 Halogen",
+        "headlight_high_beam_type": "H7 Halogen",
+        "headlight_fog_type": "H11",
+        "turn_signal_front_type": "PY21W",
+        "turn_signal_rear_type": "PY21W",
+        "brake_light_type": "P21W",
+        "reverse_light_type": "W16W"
+      },
+      "alignment": {
+        "alignment_camber_front_degrees": "-0.5 to 0.5",
+        "alignment_camber_rear_degrees": "-1.0 to 0.0",
+        "alignment_toe_front_degrees": "0.0 to 0.2",
+        "alignment_toe_rear_degrees": "0.1 to 0.3",
+        "alignment_caster_degrees": "5.0 to 6.0"
+      },
+      "suspension": {
+        "shock_front_oem_part": "48510-12340",
+        "shock_rear_oem_part": "48530-12250",
+        "spring_front_oem_part": "48131-12340",
+        "spring_rear_oem_part": "48231-12250",
+        "sway_bar_front_diameter_mm": 24,
+        "sway_bar_rear_diameter_mm": 19
+      },
+      "confidence": 0.85,
+      "sources": [
+        "Lotus Service Manual",
+        "Toyota Parts Catalog",
+        "OEM Parts Documentation"
+      ]
+    },
+    "serviceIntervals": [
+      {
+        "service_name": "Oil Change",
+        "service_description": "Replace engine oil and filter",
+        "interval_miles": 6000,
+        "interval_months": 6,
+        "items_included": [
+          "Engine oil",
+          "Oil filter",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 120,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 80,
+        "independent_cost_high": 140,
+        "diy_cost_low": 60,
+        "diy_cost_high": 90,
+        "labor_hours_estimate": 0.75,
+        "is_critical": true,
+        "skip_consequences": "Engine wear, void warranty, potential engine damage"
+      },
+      {
+        "service_name": "Annual Service",
+        "service_description": "Comprehensive annual inspection and service",
+        "interval_miles": 6000,
+        "interval_months": 12,
+        "items_included": [
+          "Multi-point inspection",
+          "Fluid level checks",
+          "Visual inspection of belts and hoses",
+          "Battery test",
+          "Light operation check"
+        ],
+        "dealer_cost_low": 250,
+        "dealer_cost_high": 400,
+        "independent_cost_low": 180,
+        "independent_cost_high": 300,
+        "diy_cost_low": 50,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Undetected issues, potential breakdowns, warranty void"
+      },
+      {
+        "service_name": "Air Filter Replacement",
+        "service_description": "Replace engine air filter",
+        "interval_miles": 12000,
+        "interval_months": 12,
+        "items_included": [
+          "Engine air filter"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 50,
+        "independent_cost_high": 80,
+        "diy_cost_low": 25,
+        "diy_cost_high": 45,
+        "labor_hours_estimate": 0.25,
+        "is_critical": false,
+        "skip_consequences": "Reduced engine performance, increased fuel consumption"
+      },
+      {
+        "service_name": "Cabin Filter Replacement",
+        "service_description": "Replace cabin air filter",
+        "interval_miles": 12000,
+        "interval_months": 12,
+        "items_included": [
+          "Cabin air filter"
+        ],
+        "dealer_cost_low": 60,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 40,
+        "independent_cost_high": 70,
+        "diy_cost_low": 20,
+        "diy_cost_high": 35,
+        "labor_hours_estimate": 0.25,
+        "is_critical": false,
+        "skip_consequences": "Poor air quality, reduced HVAC efficiency"
+      },
+      {
+        "service_name": "Brake Fluid Flush",
+        "service_description": "Complete brake fluid replacement",
+        "interval_miles": 24000,
+        "interval_months": 24,
+        "items_included": [
+          "Brake fluid",
+          "System flush"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 30,
+        "diy_cost_high": 50,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Brake performance degradation, safety risk"
+      },
+      {
+        "service_name": "Spark Plug Replacement",
+        "service_description": "Replace spark plugs",
+        "interval_miles": 24000,
+        "interval_months": 24,
+        "items_included": [
+          "Spark plugs",
+          "Inspection of ignition system"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 150,
+        "independent_cost_high": 250,
+        "diy_cost_low": 80,
+        "diy_cost_high": 120,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Misfiring, poor performance, potential catalytic converter damage"
+      },
+      {
+        "service_name": "Coolant Flush",
+        "service_description": "Complete cooling system flush and refill",
+        "interval_miles": 48000,
+        "interval_months": 48,
+        "items_included": [
+          "Coolant",
+          "System flush",
+          "Thermostat inspection"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 140,
+        "independent_cost_high": 250,
+        "diy_cost_low": 50,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Overheating, engine damage, cooling system corrosion"
+      },
+      {
+        "service_name": "Transmission Service",
+        "service_description": "Manual transmission oil change",
+        "interval_miles": 48000,
+        "interval_months": 48,
+        "items_included": [
+          "Transmission oil",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 180,
+        "dealer_cost_high": 280,
+        "independent_cost_low": 120,
+        "independent_cost_high": 200,
+        "diy_cost_low": 60,
+        "diy_cost_high": 90,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Transmission wear, shifting problems"
+      },
+      {
+        "service_name": "Differential Service",
+        "service_description": "Differential oil change",
+        "interval_miles": 48000,
+        "interval_months": 48,
+        "items_included": [
+          "Differential oil",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 50,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Differential wear, noise, potential failure"
+      },
+      {
+        "service_name": "Timing Belt Replacement",
+        "service_description": "Replace timing belt and tensioner",
+        "interval_miles": 72000,
+        "interval_months": 72,
+        "items_included": [
+          "Timing belt",
+          "Belt tensioner",
+          "Idler pulleys",
+          "Water pump inspection"
+        ],
+        "dealer_cost_low": 800,
+        "dealer_cost_high": 1200,
+        "independent_cost_low": 600,
+        "independent_cost_high": 900,
+        "diy_cost_low": 200,
+        "diy_cost_high": 300,
+        "labor_hours_estimate": 6,
+        "is_critical": true,
+        "skip_consequences": "Catastrophic engine damage if belt breaks"
+      },
+      {
+        "service_name": "Tire Rotation",
+        "service_description": "Rotate tires and check pressure",
+        "interval_miles": 6000,
+        "interval_months": 6,
+        "items_included": [
+          "Tire rotation",
+          "Pressure check",
+          "Visual inspection"
+        ],
+        "dealer_cost_low": 40,
+        "dealer_cost_high": 80,
+        "independent_cost_low": 25,
+        "independent_cost_high": 50,
+        "diy_cost_low": 0,
+        "diy_cost_high": 5,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Uneven tire wear, reduced tire life"
+      },
+      {
+        "service_name": "Brake Inspection",
+        "service_description": "Inspect brake pads, rotors, and lines",
+        "interval_miles": 12000,
+        "interval_months": 12,
+        "items_included": [
+          "Brake pad measurement",
+          "Rotor inspection",
+          "Brake line check",
+          "Fluid level check"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 50,
+        "independent_cost_high": 90,
+        "diy_cost_low": 0,
+        "diy_cost_high": 10,
+        "labor_hours_estimate": 0.75,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety risk"
+      }
+    ],
+    "variants": [
+      {
+        "variant_key": "lotus-evora-s-base-2011-2015",
+        "display_name": "Evora S",
+        "years_text": "2011-2015",
+        "model_year_start": 2011,
+        "model_year_end": 2015,
+        "trim": "S",
+        "drivetrain": "RWD",
+        "transmission": "6-speed manual",
+        "engine": "3.5L SC V6",
+        "metadata": {
+          "hp": 345,
+          "torque": 295,
+          "msrp": 73500,
+          "curb_weight": 3100,
+          "notable_features": [
+            "Supercharged engine",
+            "Carbon fiber rear spoiler",
+            "Sport suspension",
+            "Bilstein dampers",
+            "Track-focused setup"
+          ],
+          "is_default": true
+        }
+      },
+      {
+        "variant_key": "lotus-evora-s-ips-2013-2015",
+        "display_name": "Evora S IPS",
+        "years_text": "2013-2015",
+        "model_year_start": 2013,
+        "model_year_end": 2015,
+        "trim": "S IPS",
+        "drivetrain": "RWD",
+        "transmission": "6-speed automatic",
+        "engine": "3.5L SC V6",
+        "metadata": {
+          "hp": 345,
+          "torque": 295,
+          "msrp": 78500,
+          "curb_weight": 3150,
+          "notable_features": [
+            "Intelligent Precision Shift automatic transmission",
+            "Paddle shifters",
+            "Supercharged engine",
+            "Carbon fiber rear spoiler"
+          ],
+          "is_default": false
+        }
+      }
+    ],
+    "performance": {
+      "zero_to_sixty": 4.3,
+      "zero_to_sixty_source": "Car and Driver",
+      "quarter_mile_time": 12.8,
+      "quarter_mile_speed": 112,
+      "top_speed": 162,
+      "top_speed_limited": false,
+      "braking_60_0": 103,
+      "braking_70_0": 151,
+      "lateral_g": 1.02,
+      "curb_weight": 3153,
+      "weight_distribution": "62/38",
+      "sources": [
+        {
+          "publication": "Car and Driver",
+          "date": "2011-09",
+          "url": "https://www.caranddriver.com/reviews/a15137659/2012-lotus-evora-s-test-review/"
+        },
+        {
+          "publication": "Road & Track",
+          "date": "2012-01",
+          "url": "https://www.roadandtrack.com/reviews/a12851/lotus-evora-s-road-test/"
+        },
+        {
+          "publication": "MotorTrend",
+          "date": "2011-10",
+          "url": "https://www.motortrend.com/reviews/2012-lotus-evora-s-first-test/"
+        }
+      ],
+      "confidence": 0.9
+    },
+    "tuning": {
+      "engine_family": "3.5L Supercharged V6 (2GR-FE)",
+      "stock_whp": 320,
+      "stock_wtq": 295,
+      "tuning_platforms": [
+        {
+          "name": "Komo-Tec ECU Flash",
+          "price_low": 800,
+          "price_high": 1200,
+          "notes": "European tuner specializing in Lotus ECU modifications"
+        },
+        {
+          "name": "BOE Fabrication",
+          "price_low": 900,
+          "price_high": 1400,
+          "notes": "US-based Lotus specialist with custom ECU solutions"
+        },
+        {
+          "name": "2bular",
+          "price_low": 700,
+          "price_high": 1000,
+          "notes": "UK-based Lotus tuning specialist"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 15,
+          "hp_gain_high": 25,
+          "cost_low": 1200,
+          "cost_high": 2000,
+          "components": [
+            "ECU tune",
+            "cold air intake"
+          ],
+          "notes": "Basic ECU optimization and improved airflow"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 35,
+          "hp_gain_high": 50,
+          "cost_low": 3500,
+          "cost_high": 5500,
+          "components": [
+            "ECU tune",
+            "intake",
+            "exhaust system",
+            "intercooler upgrade"
+          ],
+          "notes": "Comprehensive bolt-on modifications with supporting cooling"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 60,
+          "hp_gain_high": 80,
+          "cost_low": 6000,
+          "cost_high": 9000,
+          "components": [
+            "ECU tune",
+            "intake",
+            "exhaust",
+            "intercooler",
+            "supercharger pulley",
+            "fuel system"
+          ],
+          "notes": "Smaller supercharger pulley requiring fuel system upgrades"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 450,
+        "stock_transmission_tq": 380,
+        "stock_axles_tq": 400
+      },
+      "brand_recommendations": {
+        "intake": [
+          "2bular",
+          "Forge Motorsport",
+          "Eventuri"
+        ],
+        "exhaust": [
+          "2bular",
+          "Larini Systems",
+          "Supersprint"
+        ],
+        "tuner": [
+          "Komo-Tec",
+          "BOE Fabrication",
+          "2bular"
+        ]
+      }
+    },
+    "issues": [
+      {
+        "title": "Clutch Master Cylinder Failure",
+        "severity": "high",
+        "description": "The clutch master cylinder fails prematurely, causing loss of clutch pedal pressure and inability to shift gears. This is a common failure point on manual transmission Evora S models.",
+        "symptoms": [
+          "Clutch pedal goes to floor",
+          "Unable to shift gears",
+          "Clutch fluid leak",
+          "Soft clutch pedal feel"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 400,
+        "estimated_cost_high": 800,
+        "fix_description": "Replace clutch master cylinder and bleed clutch system",
+        "prevention": "Regular clutch fluid changes and inspection of clutch hydraulic components",
+        "source_type": "forum"
+      },
+      {
+        "title": "Throttle Position Sensor Failure",
+        "severity": "high",
+        "description": "The throttle position sensor fails, causing erratic idle, poor acceleration, and potential engine stalling. Common issue affecting drivability.",
+        "symptoms": [
+          "Rough idle",
+          "Poor acceleration",
+          "Engine stalling",
+          "Check engine light",
+          "Throttle response issues"
+        ],
+        "affected_years_text": "2010-2013",
+        "affected_year_start": 2010,
+        "affected_year_end": 2013,
+        "estimated_cost_low": 300,
+        "estimated_cost_high": 600,
+        "fix_description": "Replace throttle position sensor and perform throttle relearn procedure",
+        "prevention": "Regular maintenance and avoiding harsh throttle inputs",
+        "source_type": "forum"
+      },
+      {
+        "title": "Air Conditioning Compressor Failure",
+        "severity": "medium",
+        "description": "The A/C compressor fails prematurely, often due to clutch bearing failure or internal component wear, resulting in no cooling.",
+        "symptoms": [
+          "No cold air",
+          "A/C compressor noise",
+          "A/C clutch not engaging",
+          "Refrigerant leaks"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 1200,
+        "estimated_cost_high": 2000,
+        "fix_description": "Replace A/C compressor, receiver drier, and evacuate/recharge system",
+        "prevention": "Regular A/C system maintenance and use",
+        "source_type": "forum"
+      },
+      {
+        "title": "Fuel Pump Failure",
+        "severity": "critical",
+        "description": "The fuel pump fails without warning, causing complete loss of engine power. This is a known issue that can leave drivers stranded.",
+        "symptoms": [
+          "Engine won't start",
+          "Engine cuts out while driving",
+          "Loss of power",
+          "Fuel pump whining noise"
+        ],
+        "affected_years_text": "2010-2014",
+        "affected_year_start": 2010,
+        "affected_year_end": 2014,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 1500,
+        "fix_description": "Replace fuel pump assembly and fuel filter",
+        "prevention": "Keep fuel tank above quarter full and use quality fuel",
+        "source_type": "forum"
+      },
+      {
+        "title": "Engine Oil Cooler Line Leaks",
+        "severity": "high",
+        "description": "The engine oil cooler lines develop leaks at the fittings, causing oil loss and potential engine damage if not addressed promptly.",
+        "symptoms": [
+          "Oil spots under car",
+          "Low oil level warnings",
+          "Oil smell in cabin",
+          "Visible oil leaks"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 500,
+        "estimated_cost_high": 1000,
+        "fix_description": "Replace oil cooler lines and fittings, check oil cooler",
+        "prevention": "Regular oil changes and inspection of oil lines",
+        "source_type": "forum"
+      },
+      {
+        "title": "Door Handle Mechanism Failure",
+        "severity": "medium",
+        "description": "The door handle mechanisms break, preventing normal door opening. The plastic components in the handle assembly are prone to failure.",
+        "symptoms": [
+          "Door handle feels loose",
+          "Door won't open from outside",
+          "Handle mechanism noise",
+          "Handle breaks off"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 200,
+        "estimated_cost_high": 500,
+        "fix_description": "Replace door handle mechanism and related hardware",
+        "prevention": "Gentle operation of door handles and regular lubrication",
+        "source_type": "forum"
+      },
+      {
+        "title": "Radiator Fan Motor Failure",
+        "severity": "high",
+        "description": "The radiator cooling fan motors fail, causing engine overheating in stop-and-go traffic or at idle.",
+        "symptoms": [
+          "Engine overheating at idle",
+          "Fan not running",
+          "High coolant temperature",
+          "Fan motor noise"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 400,
+        "estimated_cost_high": 800,
+        "fix_description": "Replace radiator fan motor and check fan control relay",
+        "prevention": "Regular cooling system maintenance and inspection",
+        "source_type": "forum"
+      },
+      {
+        "title": "Gear Shift Cable Adjustment Issues",
+        "severity": "medium",
+        "description": "The gear shift cables stretch or become misadjusted, causing difficulty shifting gears and imprecise gear engagement.",
+        "symptoms": [
+          "Hard to shift gears",
+          "Gears not engaging properly",
+          "Shifter feels loose",
+          "Unable to find gears"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 300,
+        "estimated_cost_high": 600,
+        "fix_description": "Adjust or replace gear shift cables and linkage",
+        "prevention": "Gentle shifting and regular transmission service",
+        "source_type": "forum"
+      },
+      {
+        "title": "Exhaust System Corrosion",
+        "severity": "medium",
+        "description": "The exhaust system components, particularly the catalytic converters and rear silencer, suffer from premature corrosion and failure.",
+        "symptoms": [
+          "Loud exhaust noise",
+          "Rattling from exhaust",
+          "Visible rust on exhaust",
+          "Failed emissions test"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 2500,
+        "fix_description": "Replace corroded exhaust components",
+        "prevention": "Regular inspection and avoiding salt/corrosive environments",
+        "source_type": "forum"
+      },
+      {
+        "title": "Power Steering Rack Leaks",
+        "severity": "medium",
+        "description": "The power steering rack develops leaks at the seals, causing loss of power steering fluid and eventual steering assistance failure.",
+        "symptoms": [
+          "Power steering fluid leaks",
+          "Hard steering",
+          "Whining steering noise",
+          "Steering wheel vibration"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 1000,
+        "estimated_cost_high": 2000,
+        "fix_description": "Replace power steering rack and flush system",
+        "prevention": "Regular power steering fluid changes and system inspection",
+        "source_type": "forum"
+      },
+      {
+        "title": "Engine Mount Deterioration",
+        "severity": "medium",
+        "description": "The engine mounts deteriorate prematurely, causing excessive engine vibration and noise transmission into the cabin.",
+        "symptoms": [
+          "Excessive engine vibration",
+          "Clunking noise during acceleration",
+          "Engine movement visible",
+          "Rough idle"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 600,
+        "estimated_cost_high": 1200,
+        "fix_description": "Replace worn engine mounts",
+        "prevention": "Avoid hard launches and regular inspection",
+        "source_type": "forum"
+      },
+      {
+        "title": "Brake Vacuum Pump Failure",
+        "severity": "high",
+        "description": "The brake vacuum pump fails, reducing brake assist effectiveness and requiring increased pedal pressure to stop the vehicle.",
+        "symptoms": [
+          "Hard brake pedal",
+          "Increased stopping distance",
+          "Brake warning light",
+          "Vacuum pump noise"
+        ],
+        "affected_years_text": "2010-2015",
+        "affected_year_start": 2010,
+        "affected_year_end": 2015,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 1500,
+        "fix_description": "Replace brake vacuum pump and check vacuum lines",
+        "prevention": "Regular brake system inspection and maintenance",
+        "source_type": "forum"
+      }
+    ],
+    "editorial": {
+      "tagline": "Pure British sports car DNA, supercharged perfection",
+      "hero_blurb": "The Evora S represents Lotus at its absolute finest - a mid-engined masterpiece that distills decades of racing knowledge into a road-going weapon. This is the sports car purists dream about, offering uncompromising performance wrapped in stunning British craftsmanship.",
+      "essence": "The Evora S is Lotus's most complete sports car, blending their legendary chassis expertise with Toyota's bulletproof supercharged V6. It's a mid-engined marvel that delivers pure, unfiltered driving pleasure without the compromises of more exotic machinery.",
+      "heritage": "Born from Lotus's storied racing heritage and the genius of Colin Chapman, the Evora S continues the brand's tradition of lightweight, precision-engineered sports cars. It represents the evolution of Lotus's road car philosophy, building on lessons learned from the Elise and Exige while offering more daily usability.",
+      "design_philosophy": "Form follows function in purest Lotus tradition - every curve serves aerodynamic or cooling purposes while maintaining breathtaking proportions. The mid-engined layout creates perfect weight distribution, while the lightweight construction philosophy keeps mass to an absolute minimum for maximum agility.",
+      "motorsport_history": "While not directly derived from a race car, the Evora S benefits from decades of Lotus Formula 1 and sports car racing expertise. The chassis dynamics and aerodynamic principles trace their lineage directly to Lotus's competition heritage.",
+      "engine_character": "The supercharged Toyota 3.5L V6 delivers linear, progressive power with a satisfying mechanical whine from the Roots-type supercharger. It's smooth, refined, and utterly reliable, building power steadily to an exhilarating crescendo at redline.",
+      "transmission_feel": "The manual gearbox offers precise, mechanical engagement with well-defined gates and a satisfying mechanical connection. Shifts are crisp and purposeful, though the throw is slightly longer than some prefer for ultimate sporting feel.",
+      "chassis_dynamics": "Pure Lotus magic - the chassis reads the road like telepathy, offering incredible balance and composure. The suspension combines compliance for road use with razor-sharp responsiveness, allowing the car to dance through corners with supernatural grace.",
+      "steering_feel": "Unassisted hydraulic steering provides pure, unfiltered communication from the front wheels. Every texture and nuance of the road surface transmits through the wheel, offering the kind of feedback that modern cars have forgotten how to deliver.",
+      "brake_confidence": "Strong, progressive brakes with excellent pedal feel and fade resistance. The AP Racing calipers provide confidence-inspiring stopping power with the kind of precise modulation that allows for late braking and precise trail-braking techniques.",
+      "sound_signature": "A sophisticated symphony combining the supercharger's mechanical whine with the V6's smooth growl. At full throttle, it produces a purposeful, refined note that's more sophisticated than brutal - pure automotive music.",
+      "ideal_owner": "Driving purists who appreciate mechanical perfection, weekend warriors seeking the ultimate back-road weapon, and collectors who understand that the best sports cars prioritize feel over raw numbers.",
+      "not_ideal_for": "Those seeking luxury amenities, buyers who prioritize straight-line speed over handling prowess, or drivers who need practical daily transportation with significant cargo space.",
+      "buyers_summary": "Find the best examples with complete service records and verify the supercharger has been properly maintained. These are appreciating classics that reward careful ownership with unmatched driving pleasure.",
+      "pros": [
+        "Telepathic chassis and steering feel",
+        "Bulletproof Toyota powertrain reliability",
+        "Stunning exotic car looks with daily usability"
+      ],
+      "cons": [
+        "Limited interior space and storage",
+        "Higher maintenance costs than mainstream sports cars",
+        "Road noise and firm ride quality"
+      ],
+      "best_for": [
+        "Canyon carving and mountain road attacks",
+        "Track days and driving experiences"
+      ]
+    },
+    "fitment": [
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 18,
+        "wheel_width_front": 8.5,
+        "wheel_width_rear": 9.5,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 55,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+50 to +60",
+        "tire_size_front": "215/45R18",
+        "tire_size_rear": "255/40R18",
+        "tire_width_front_mm": 215,
+        "tire_width_rear_mm": 255,
+        "tire_aspect_front": 45,
+        "tire_aspect_rear": 40,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Factory fitment with optimal clearance",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [],
+        "popularity_score": 95,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "Plus Size",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 8.5,
+        "wheel_width_rear": 10,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 50,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+45 to +55",
+        "tire_size_front": "215/40R19",
+        "tire_size_rear": "255/35R19",
+        "tire_width_front_mm": 215,
+        "tire_width_rear_mm": 255,
+        "tire_aspect_front": 40,
+        "tire_aspect_rear": 35,
+        "diameter_change_percent": 1.2,
+        "speedometer_error_percent": 1.2,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Minimal clearance reduction, good fitment",
+        "known_issues": "Slightly harsher ride quality",
+        "recommended_for": [
+          "track",
+          "daily"
+        ],
+        "not_recommended_for": [
+          "rough roads"
+        ],
+        "popularity_score": 75,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.9
+      },
+      {
+        "fitment_type": "Track",
+        "wheel_diameter_inches": 18,
+        "wheel_width_front": 9,
+        "wheel_width_rear": 10.5,
+        "wheel_offset_front_mm": 40,
+        "wheel_offset_rear_mm": 45,
+        "wheel_offset_range_front": "+35 to +45",
+        "wheel_offset_range_rear": "+40 to +50",
+        "tire_size_front": "235/40R18",
+        "tire_size_rear": "275/35R18",
+        "tire_width_front_mm": 235,
+        "tire_width_rear_mm": 275,
+        "tire_aspect_front": 40,
+        "tire_aspect_rear": 35,
+        "diameter_change_percent": -1.5,
+        "speedometer_error_percent": -1.5,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-2.0",
+        "recommended_camber_rear": "-2.5",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Wider tires provide better contact patch for track use",
+        "known_issues": "May reduce wet weather performance",
+        "recommended_for": [
+          "track"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "wet conditions"
+        ],
+        "popularity_score": 60,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.8
+      }
+    ],
+    "expertReviews": null,
+    "manuals": null,
+    "images": null
+  },
+  "stage3": {
+    "passed": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "hp",
+      "torque",
+      "curb_weight"
+    ],
+    "warnings": [
+      {
+        "field": "brake_caliper",
+        "severity": "high",
+        "message": "⚠️ VERIFY: brembo brakes listed but Lotus Evora S may not come with brembo stock. This could be an aftermarket upgrade confused with OEM specs."
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"4-piston brembo\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      }
+    ],
+    "errors": []
+  },
+  "stage4": {
+    "car_fuel_economy": {
+      "car_id": "5f794221-2151-48d0-8653-fc81a520440f",
+      "epa_vehicle_id": 29684,
+      "city_mpg": 21,
+      "highway_mpg": 27,
+      "combined_mpg": 23,
+      "fuel_type": "Premium",
+      "annual_fuel_cost": 2550,
+      "co2_emissions": 386,
+      "ghg_score": -1,
+      "source": "EPA fueleconomy.gov",
+      "fetched_at": "2026-01-13T01:03:20.330Z"
+    },
+    "vehicle_maintenance_specs": 116,
+    "vehicle_service_intervals": 7,
+    "car_variants": 2,
+    "car_tuning_profiles": {
+      "car_id": "5f794221-2151-48d0-8653-fc81a520440f",
+      "car_variant_id": null,
+      "engine_family": "3.5L Supercharged V6 (2GR-FE)",
+      "tuning_focus": "performance",
+      "stock_whp": 320,
+      "stock_wtq": 295,
+      "tuning_platforms": [
+        {
+          "name": "Komo-Tec ECU Flash",
+          "price_low": 800,
+          "price_high": 1200,
+          "notes": "European tuner specializing in Lotus ECU modifications"
+        },
+        {
+          "name": "BOE Fabrication",
+          "price_low": 900,
+          "price_high": 1400,
+          "notes": "US-based Lotus specialist with custom ECU solutions"
+        },
+        {
+          "name": "2bular",
+          "price_low": 700,
+          "price_high": 1000,
+          "notes": "UK-based Lotus tuning specialist"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 15,
+          "hp_gain_high": 25,
+          "cost_low": 1200,
+          "cost_high": 2000,
+          "components": [
+            "ECU tune",
+            "cold air intake"
+          ],
+          "notes": "Basic ECU optimization and improved airflow"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 35,
+          "hp_gain_high": 50,
+          "cost_low": 3500,
+          "cost_high": 5500,
+          "components": [
+            "ECU tune",
+            "intake",
+            "exhaust system",
+            "intercooler upgrade"
+          ],
+          "notes": "Comprehensive bolt-on modifications with supporting cooling"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 60,
+          "hp_gain_high": 80,
+          "cost_low": 6000,
+          "cost_high": 9000,
+          "components": [
+            "ECU tune",
+            "intake",
+            "exhaust",
+            "intercooler",
+            "supercharger pulley",
+            "fuel system"
+          ],
+          "notes": "Smaller supercharger pulley requiring fuel system upgrades"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 450,
+        "stock_transmission_tq": 380,
+        "stock_axles_tq": 400
+      },
+      "brand_recommendations": {
+        "intake": [
+          "2bular",
+          "Forge Motorsport",
+          "Eventuri"
+        ],
+        "exhaust": [
+          "2bular",
+          "Larini Systems",
+          "Supersprint"
+        ],
+        "tuner": [
+          "Komo-Tec",
+          "BOE Fabrication",
+          "2bular"
+        ]
+      },
+      "pipeline_version": "vehicle-data-pipeline@2.2",
+      "pipeline_run_at": "2026-01-13T01:03:22.873Z",
+      "verified": false,
+      "notes": "AI-researched - requires verification"
+    },
+    "car_issues": 12,
+    "cars": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "curb_weight",
+      "tagline",
+      "hero_blurb",
+      "essence",
+      "heritage",
+      "design_philosophy",
+      "motorsport_history",
+      "engine_character",
+      "transmission_feel",
+      "chassis_dynamics",
+      "steering_feel",
+      "brake_confidence",
+      "sound_signature",
+      "ideal_owner",
+      "not_ideal_for",
+      "buyers_summary",
+      "pros",
+      "cons",
+      "best_for"
+    ],
+    "wheel_tire_fitment_options": 3
+  },
+  "stage5": {
+    "tables": {
+      "cars": {
+        "exists": true,
+        "filled": 105,
+        "total": 136,
+        "percent": 77,
+        "missing": [
+          "layout",
+          "msrp_new_low",
+          "msrp_new_high",
+          "owner_notes_long",
+          "recommendation_highlight"
+        ]
+      },
+      "vehicle_maintenance_specs": {
+        "exists": true,
+        "filled": 106,
+        "total": 126,
+        "percent": 84,
+        "missing": [
+          "trans_fluid_auto_capacity",
+          "diff_fluid_front_capacity",
+          "power_steering_type",
+          "power_steering_capacity",
+          "fuel_filter_change_interval_miles"
+        ]
+      },
+      "car_fuel_economy": {
+        "exists": true,
+        "filled": 12,
+        "total": 17,
+        "percent": 71,
+        "missing": [
+          "user_avg_mpg",
+          "user_city_mpg",
+          "user_highway_mpg",
+          "user_sample_size",
+          "ev_range"
+        ]
+      },
+      "car_safety_data": {
+        "exists": true,
+        "filled": 9,
+        "total": 24,
+        "percent": 38,
+        "missing": [
+          "nhtsa_overall_rating",
+          "nhtsa_front_crash_rating",
+          "nhtsa_side_crash_rating",
+          "nhtsa_rollover_rating",
+          "iihs_overall"
+        ]
+      },
+      "car_tuning_profiles": {
+        "exists": true,
+        "filled": 19,
+        "total": 21,
+        "percent": 90,
+        "missing": [
+          "car_variant_id",
+          "verified_by"
+        ]
+      },
+      "car_issues": {
+        "records": 20
+      },
+      "car_recalls": {
+        "records": 4
+      },
+      "vehicle_service_intervals": {
+        "records": 17
+      },
+      "car_variants": {
+        "records": 3
+      },
+      "wheel_tire_fitment_options": {
+        "records": 4
+      },
+      "car_expert_reviews": {
+        "records": 0
+      },
+      "car_manual_data": {
+        "records": 0
+      },
+      "car_images": {
+        "records": 0
+      },
+      "car_dyno_runs": {
+        "records": 0
+      },
+      "car_track_lap_times": {
+        "records": 0
+      },
+      "car_auction_results": {
+        "records": 0
+      },
+      "car_market_pricing": {
+        "records": 0
+      }
+    },
+    "overall": {
+      "filled": 251,
+      "total": 324,
+      "percent": 77
+    }
+  },
+  "completed_at": "2026-01-13T01:03:25.967Z"
+}

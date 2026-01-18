@@ -1,0 +1,1315 @@
+{
+  "car_id": "f62304a7-74eb-4e5f-af5d-fa7e77ba44d0",
+  "mode": "full",
+  "version": "2.3",
+  "started_at": "2026-01-13T00:55:16.176Z",
+  "stages": {},
+  "car_name": "Aston Martin Vantage",
+  "stage1": {
+    "epa": null,
+    "safety": null,
+    "recalls": [],
+    "complaints": []
+  },
+  "stage2": {
+    "maintenance": {
+      "oil": {
+        "oil_type": "Full Synthetic",
+        "oil_viscosity": "0W-40",
+        "oil_spec": "API SP, ACEA A3/B4",
+        "oil_capacity_liters": 8.5,
+        "oil_capacity_quarts": 9,
+        "oil_filter_oem_part": "4G43-6714-BA",
+        "oil_filter_alternatives": [
+          "Mann W 719/45",
+          "Mahle OC 295"
+        ],
+        "oil_change_interval_miles": 7500,
+        "oil_change_interval_months": 12
+      },
+      "coolant": {
+        "coolant_type": "OAT",
+        "coolant_color": "Pink/Red",
+        "coolant_spec": "WSS-M97B44-D2",
+        "coolant_capacity_liters": 14.5,
+        "coolant_change_interval_miles": 150000,
+        "coolant_change_interval_years": 10
+      },
+      "brake_fluid": {
+        "brake_fluid_type": "DOT 4",
+        "brake_fluid_spec": "ESA-M6C57-A",
+        "brake_fluid_change_interval_miles": 30000,
+        "brake_fluid_change_interval_years": 2
+      },
+      "transmission": {
+        "trans_fluid_manual": "N/A",
+        "trans_fluid_manual_capacity": null,
+        "trans_fluid_auto": "ZF Lifeguard 8",
+        "trans_fluid_auto_capacity": 8.5,
+        "trans_fluid_change_interval_miles": 80000
+      },
+      "differential": {
+        "diff_fluid_type": "75W-90 GL-5",
+        "diff_fluid_front_capacity": null,
+        "diff_fluid_rear_capacity": 1.4,
+        "diff_fluid_change_interval_miles": 60000
+      },
+      "power_steering": {
+        "power_steering_type": "Electric",
+        "power_steering_fluid": "N/A",
+        "power_steering_capacity": null
+      },
+      "fuel": {
+        "fuel_type": "Premium Gasoline",
+        "fuel_octane_minimum": 91,
+        "fuel_octane_recommended": 93,
+        "fuel_tank_capacity_gallons": 18.5,
+        "fuel_tank_capacity_liters": 70
+      },
+      "filters": {
+        "air_filter_oem_part": "4G43-9601-CA",
+        "air_filter_alternatives": [
+          "K&N 33-5064",
+          "Mann C 30 009/1"
+        ],
+        "air_filter_change_interval_miles": 15000,
+        "cabin_filter_oem_part": "4G43-19G244-AB",
+        "cabin_filter_alternatives": [
+          "Mann CU 2939",
+          "Mahle LA 440"
+        ],
+        "cabin_filter_change_interval_miles": 15000,
+        "fuel_filter_oem_part": "In-tank (non-serviceable)",
+        "fuel_filter_in_tank": true,
+        "fuel_filter_change_interval_miles": null
+      },
+      "tires": {
+        "tire_size_front": "255/35R20",
+        "tire_size_rear": "295/30R20",
+        "tire_pressure_front_psi": 33,
+        "tire_pressure_rear_psi": 36,
+        "tire_pressure_spare_psi": 36,
+        "tire_rotation_pattern": "Front-to-rear (directional)",
+        "tire_rotation_interval_miles": 5000,
+        "tire_oem_brand": "Pirelli P Zero",
+        "tire_recommended_brands": [
+          "Pirelli P Zero",
+          "Michelin Pilot Sport 4S",
+          "Continental SportContact 6"
+        ]
+      },
+      "wheels": {
+        "wheel_size_front": "20x9.5",
+        "wheel_size_rear": "20x11",
+        "wheel_bolt_pattern": "5x108",
+        "wheel_center_bore_mm": 63.4,
+        "wheel_lug_torque_ft_lbs": 103,
+        "wheel_lug_torque_nm": 140
+      },
+      "brakes_front": {
+        "brake_front_rotor_diameter_mm": 380,
+        "brake_front_rotor_thickness_mm": 36,
+        "brake_front_rotor_min_thickness_mm": 34,
+        "brake_front_rotor_oem_part": "4G43-1125-BA",
+        "brake_front_pad_oem_part": "4G43-2001-BA",
+        "brake_front_pad_wear_indicator": "Sensor",
+        "brake_front_caliper_type": "4-piston Brembo"
+      },
+      "brakes_rear": {
+        "brake_rear_rotor_diameter_mm": 360,
+        "brake_rear_rotor_thickness_mm": 28,
+        "brake_rear_rotor_min_thickness_mm": 26,
+        "brake_rear_rotor_oem_part": "4G43-1126-BA",
+        "brake_rear_pad_oem_part": "4G43-2200-BA",
+        "brake_rear_pad_wear_indicator": "Sensor",
+        "brake_rear_caliper_type": "4-piston Brembo"
+      },
+      "spark": {
+        "spark_plug_type": "Iridium",
+        "spark_plug_gap_mm": 0.7,
+        "spark_plug_oem_part": "NGK LTR7IX-11",
+        "spark_plug_alternatives": [
+          "Champion REA11MCC4",
+          "Bosch FGR7DQP+"
+        ],
+        "spark_plug_change_interval_miles": 30000,
+        "spark_plug_quantity": 8
+      },
+      "timing": {
+        "timing_type": "Chain",
+        "timing_change_interval_miles": null,
+        "timing_change_interval_years": null,
+        "timing_tensioner_oem_part": "4G43-6L266-AA"
+      },
+      "belts": {
+        "serpentine_belt_oem_part": "4G43-8620-AA",
+        "serpentine_belt_change_interval_miles": 60000,
+        "ac_belt_separate": false,
+        "ac_belt_oem_part": "N/A"
+      },
+      "battery": {
+        "battery_group_size": "H8",
+        "battery_cca": 800,
+        "battery_voltage": 12,
+        "battery_oem_brand": "Varta",
+        "battery_location": "Engine bay",
+        "battery_agm": true
+      },
+      "alternator": {
+        "alternator_output_amps": 180,
+        "alternator_oem_part": "4G43-10300-BA"
+      },
+      "wipers": {
+        "wiper_driver_size_inches": 26,
+        "wiper_passenger_size_inches": 19,
+        "wiper_rear_size_inches": null,
+        "wiper_type": "Beam",
+        "wiper_oem_part_driver": "4G43-17526-AA",
+        "wiper_oem_part_passenger": "4G43-17526-BA",
+        "wiper_oem_part_rear": "N/A"
+      },
+      "lighting": {
+        "headlight_low_beam_type": "H7 LED",
+        "headlight_high_beam_type": "H7 LED",
+        "headlight_fog_type": "H11",
+        "turn_signal_front_type": "WY21W",
+        "turn_signal_rear_type": "WY21W",
+        "brake_light_type": "W21W",
+        "reverse_light_type": "W16W"
+      },
+      "alignment": {
+        "alignment_camber_front_degrees": "-0.75 to -0.25",
+        "alignment_camber_rear_degrees": "-1.25 to -0.75",
+        "alignment_toe_front_degrees": "0.05 to 0.15",
+        "alignment_toe_rear_degrees": "0.10 to 0.30",
+        "alignment_caster_degrees": "6.5 to 7.5"
+      },
+      "suspension": {
+        "shock_front_oem_part": "4G43-18045-BA",
+        "shock_rear_oem_part": "4G43-18080-BA",
+        "spring_front_oem_part": "4G43-5560-BA",
+        "spring_rear_oem_part": "4G43-5560-CA",
+        "sway_bar_front_diameter_mm": 32,
+        "sway_bar_rear_diameter_mm": 24
+      },
+      "confidence": 0.9,
+      "sources": [
+        "Aston Martin Service Manual",
+        "OEM Parts Catalog",
+        "Technical Service Bulletins"
+      ]
+    },
+    "serviceIntervals": [
+      {
+        "service_name": "Oil Change",
+        "service_description": "Replace engine oil and filter",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Synthetic engine oil",
+          "Oil filter",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 150,
+        "independent_cost_high": 250,
+        "diy_cost_low": 100,
+        "diy_cost_high": 150,
+        "labor_hours_estimate": 0.75,
+        "is_critical": true,
+        "skip_consequences": "Engine wear, void warranty, potential catastrophic damage"
+      },
+      {
+        "service_name": "Air Filter Replacement",
+        "service_description": "Replace engine air filter element",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Air filter element"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 150,
+        "independent_cost_low": 50,
+        "independent_cost_high": 100,
+        "diy_cost_low": 30,
+        "diy_cost_high": 60,
+        "labor_hours_estimate": 0.25,
+        "is_critical": false,
+        "skip_consequences": "Reduced performance, increased fuel consumption"
+      },
+      {
+        "service_name": "Cabin Filter Replacement",
+        "service_description": "Replace cabin air filter",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Cabin air filter"
+        ],
+        "dealer_cost_low": 60,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 40,
+        "independent_cost_high": 80,
+        "diy_cost_low": 25,
+        "diy_cost_high": 50,
+        "labor_hours_estimate": 0.25,
+        "is_critical": false,
+        "skip_consequences": "Poor air quality, reduced HVAC efficiency"
+      },
+      {
+        "service_name": "Spark Plug Replacement",
+        "service_description": "Replace spark plugs",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Spark plugs (8)",
+          "Ignition coil inspection"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 700,
+        "independent_cost_low": 300,
+        "independent_cost_high": 500,
+        "diy_cost_low": 150,
+        "diy_cost_high": 250,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Misfiring, reduced performance, catalytic converter damage"
+      },
+      {
+        "service_name": "Brake Fluid Flush",
+        "service_description": "Complete brake fluid system flush and replacement",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "DOT 4 brake fluid",
+          "System flush",
+          "Brake pedal feel test"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 300,
+        "independent_cost_low": 100,
+        "independent_cost_high": 200,
+        "diy_cost_low": 40,
+        "diy_cost_high": 70,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Brake system failure, safety risk"
+      },
+      {
+        "service_name": "Coolant Flush",
+        "service_description": "Complete cooling system flush and refill",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Coolant",
+          "System flush",
+          "Thermostat inspection"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 400,
+        "independent_cost_low": 150,
+        "independent_cost_high": 300,
+        "diy_cost_low": 60,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Engine overheating, potential engine damage"
+      },
+      {
+        "service_name": "Transmission Service",
+        "service_description": "Automatic transmission fluid and filter change",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "ATF fluid",
+          "Transmission filter",
+          "Pan gasket"
+        ],
+        "dealer_cost_low": 300,
+        "dealer_cost_high": 600,
+        "independent_cost_low": 200,
+        "independent_cost_high": 400,
+        "diy_cost_low": 100,
+        "diy_cost_high": 180,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Transmission failure, costly repairs"
+      },
+      {
+        "service_name": "Differential Service",
+        "service_description": "Rear differential fluid change",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Differential fluid",
+          "Drain plug inspection"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 300,
+        "independent_cost_low": 100,
+        "independent_cost_high": 200,
+        "diy_cost_low": 50,
+        "diy_cost_high": 90,
+        "labor_hours_estimate": 0.75,
+        "is_critical": false,
+        "skip_consequences": "Differential wear, noise, potential failure"
+      },
+      {
+        "service_name": "Brake Inspection",
+        "service_description": "Comprehensive brake system inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Pad thickness check",
+          "Rotor inspection",
+          "Brake line inspection",
+          "Fluid level check"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 150,
+        "independent_cost_low": 50,
+        "independent_cost_high": 100,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety risk"
+      },
+      {
+        "service_name": "Tire Rotation",
+        "service_description": "Rotate tires for even wear",
+        "interval_miles": 5000,
+        "interval_months": 6,
+        "items_included": [
+          "Tire rotation",
+          "Pressure check",
+          "Tread depth measurement"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 70,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Uneven tire wear, reduced tire life"
+      },
+      {
+        "service_name": "Multi-point Inspection",
+        "service_description": "Comprehensive vehicle inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Fluid levels",
+          "Belt inspection",
+          "Hose inspection",
+          "Battery test",
+          "Suspension check"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 75,
+        "independent_cost_high": 150,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Potential undetected issues"
+      },
+      {
+        "service_name": "Fuel Filter Replacement",
+        "service_description": "Replace fuel filter",
+        "interval_miles": 60000,
+        "interval_months": 72,
+        "items_included": [
+          "Fuel filter",
+          "O-rings"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 300,
+        "independent_cost_low": 100,
+        "independent_cost_high": 200,
+        "diy_cost_low": 50,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Reduced fuel flow, performance issues"
+      },
+      {
+        "service_name": "Battery Service",
+        "service_description": "Battery test and terminal cleaning",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Battery test",
+          "Terminal cleaning",
+          "Corrosion protection"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 70,
+        "diy_cost_low": 10,
+        "diy_cost_high": 25,
+        "labor_hours_estimate": 0.25,
+        "is_critical": false,
+        "skip_consequences": "Starting issues, electrical problems"
+      },
+      {
+        "service_name": "Drive Belt Inspection",
+        "service_description": "Inspect and replace drive belts if needed",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Belt inspection",
+          "Tensioner check",
+          "Belt replacement if needed"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 400,
+        "independent_cost_low": 75,
+        "independent_cost_high": 300,
+        "diy_cost_low": 50,
+        "diy_cost_high": 150,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Belt failure, engine damage, stranding"
+      }
+    ],
+    "variants": [
+      {
+        "variant_key": "aston-martin-vantage-2018-2024-base-2018-2024",
+        "display_name": "Vantage Base",
+        "years_text": "2018-2024",
+        "model_year_start": 2018,
+        "model_year_end": 2024,
+        "trim": "Base",
+        "drivetrain": "RWD",
+        "transmission": "8-speed automatic",
+        "engine": "4.0L Twin-Turbo V8",
+        "metadata": {
+          "hp": 503,
+          "torque": 461,
+          "msrp": 139000,
+          "curb_weight": 3373,
+          "notable_features": [
+            "Sport exhaust",
+            "Launch control",
+            "Dynamic stability control"
+          ],
+          "is_default": true
+        }
+      },
+      {
+        "variant_key": "aston-martin-vantage-2022-2024-f1-edition-2022-2024",
+        "display_name": "Vantage F1 Edition",
+        "years_text": "2022-2024",
+        "model_year_start": 2022,
+        "model_year_end": 2024,
+        "trim": "F1 Edition",
+        "drivetrain": "RWD",
+        "transmission": "8-speed automatic",
+        "engine": "4.0L Twin-Turbo V8",
+        "metadata": {
+          "hp": 503,
+          "torque": 461,
+          "msrp": 165000,
+          "curb_weight": 3373,
+          "notable_features": [
+            "F1 safety car inspired design",
+            "Exclusive paint options",
+            "Carbon fiber accents",
+            "Special badging"
+          ],
+          "is_default": false
+        }
+      },
+      {
+        "variant_key": "aston-martin-vantage-2023-2024-roadster-2023-2024",
+        "display_name": "Vantage Roadster",
+        "years_text": "2023-2024",
+        "model_year_start": 2023,
+        "model_year_end": 2024,
+        "trim": "Roadster",
+        "drivetrain": "RWD",
+        "transmission": "8-speed automatic",
+        "engine": "4.0L Twin-Turbo V8",
+        "metadata": {
+          "hp": 503,
+          "torque": 461,
+          "msrp": 160000,
+          "curb_weight": 3560,
+          "notable_features": [
+            "Soft-top convertible",
+            "Z-fold soft top",
+            "Enhanced structural rigidity"
+          ],
+          "is_default": false
+        }
+      }
+    ],
+    "performance": {
+      "zero_to_sixty": 3.5,
+      "zero_to_sixty_source": "Car and Driver",
+      "quarter_mile_time": 11.9,
+      "quarter_mile_speed": 118,
+      "top_speed": 195,
+      "top_speed_limited": true,
+      "braking_60_0": 103,
+      "braking_70_0": 151,
+      "lateral_g": 1.02,
+      "curb_weight": 3765,
+      "weight_distribution": "50/50",
+      "sources": [
+        {
+          "publication": "Car and Driver",
+          "date": "2018-05",
+          "url": "https://www.caranddriver.com/reviews/a20747216/2019-aston-martin-vantage-test-review/"
+        },
+        {
+          "publication": "MotorTrend",
+          "date": "2018-07",
+          "url": "https://www.motortrend.com/reviews/2019-aston-martin-vantage-first-test-review/"
+        },
+        {
+          "publication": "Road & Track",
+          "date": "2018-06",
+          "url": "https://www.roadandtrack.com/new-cars/first-drives/a20747890/2019-aston-martin-vantage-first-drive-review/"
+        }
+      ],
+      "confidence": 0.92
+    },
+    "tuning": {
+      "engine_family": "4.0L Twin-Turbo V8 (Mercedes-AMG M177)",
+      "stock_whp": 465,
+      "stock_wtq": 465,
+      "tuning_platforms": [
+        {
+          "name": "Renntech",
+          "price_low": 2500,
+          "price_high": 4500,
+          "notes": "Mercedes-AMG specialist tuning"
+        },
+        {
+          "name": "Eurocharged",
+          "price_low": 2200,
+          "price_high": 4000,
+          "notes": "Remote and in-person ECU tuning"
+        },
+        {
+          "name": "RaceChip",
+          "price_low": 800,
+          "price_high": 1500,
+          "notes": "Piggyback tuning solution"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 60,
+          "hp_gain_high": 100,
+          "cost_low": 2500,
+          "cost_high": 4500,
+          "components": [
+            "ECU tune"
+          ],
+          "notes": "Software only tune for turbo pressure and timing optimization"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 100,
+          "hp_gain_high": 140,
+          "cost_low": 5000,
+          "cost_high": 8000,
+          "components": [
+            "ECU tune",
+            "cold air intake",
+            "downpipes"
+          ],
+          "notes": "Hardware modifications with supporting tune"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 150,
+          "hp_gain_high": 200,
+          "cost_low": 10000,
+          "cost_high": 15000,
+          "components": [
+            "ECU tune",
+            "intake",
+            "downpipes",
+            "intercoolers",
+            "exhaust system"
+          ],
+          "notes": "Comprehensive bolt-on modifications with turbo optimization"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 650,
+        "stock_transmission_tq": 600,
+        "stock_axles_tq": 550
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "Armytrix",
+          "Capristo"
+        ],
+        "exhaust": [
+          "Akrapovic",
+          "Capristo",
+          "Armytrix"
+        ],
+        "tuner": [
+          "Renntech",
+          "Eurocharged",
+          "RaceChip"
+        ]
+      }
+    },
+    "issues": [
+      {
+        "title": "Infotainment System Freezing and Black Screen",
+        "severity": "medium",
+        "description": "The Mercedes-based COMAND infotainment system frequently freezes, displays black screens, or becomes unresponsive, requiring system resets or software updates.",
+        "symptoms": [
+          "Black screen on startup",
+          "System freezing during operation",
+          "Loss of navigation and audio",
+          "Touchscreen unresponsive"
+        ],
+        "affected_years_text": "2018-2022",
+        "affected_year_start": 2018,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 500,
+        "estimated_cost_high": 2500,
+        "fix_description": "Software update, infotainment unit replacement, or harness repair",
+        "prevention": "Regular software updates, avoid extreme temperature exposure",
+        "source_type": "forum"
+      },
+      {
+        "title": "Transmission Jerky Shifting and Hesitation",
+        "severity": "high",
+        "description": "The ZF 8-speed automatic transmission exhibits harsh shifting, hesitation during acceleration, and delayed engagement, particularly in lower gears.",
+        "symptoms": [
+          "Hard shifts between gears",
+          "Transmission hesitation",
+          "Delayed throttle response",
+          "Clunking noise during shifts"
+        ],
+        "affected_years_text": "2018-2021",
+        "affected_year_start": 2018,
+        "affected_year_end": 2021,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Transmission software update, valve body replacement, or complete transmission rebuild",
+        "prevention": "Regular transmission fluid changes, proper warm-up procedures",
+        "source_type": "nhtsa"
+      },
+      {
+        "title": "Engine Oil Consumption Issues",
+        "severity": "high",
+        "description": "Excessive oil consumption in the AMG-sourced V8 engine, leading to low oil levels and potential engine damage if not monitored closely.",
+        "symptoms": [
+          "Frequent oil top-ups required",
+          "Low oil pressure warnings",
+          "Blue smoke from exhaust",
+          "Oil level sensor alerts"
+        ],
+        "affected_years_text": "2018-2020",
+        "affected_year_start": 2018,
+        "affected_year_end": 2020,
+        "estimated_cost_low": 3000,
+        "estimated_cost_high": 15000,
+        "fix_description": "Piston ring replacement, valve stem seal replacement, or engine rebuild",
+        "prevention": "Regular oil level checks, use specified oil grade, avoid aggressive driving when cold",
+        "source_type": "forum"
+      },
+      {
+        "title": "Door Handle Mechanism Failure",
+        "severity": "medium",
+        "description": "Electronic door handles fail to extend or retract properly, leaving occupants unable to enter or exit the vehicle.",
+        "symptoms": [
+          "Door handles won't extend",
+          "Handles stuck in retracted position",
+          "Intermittent handle operation",
+          "Door lock/unlock issues"
+        ],
+        "affected_years_text": "2018-2024",
+        "affected_year_start": 2018,
+        "affected_year_end": 2024,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 2000,
+        "fix_description": "Door handle actuator replacement, wiring harness repair, or software update",
+        "prevention": "Regular cleaning of handle mechanisms, avoid excessive force",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Adaptive Suspension Malfunction",
+        "severity": "high",
+        "description": "The adaptive damping system fails, causing ride quality issues, uneven handling, and warning lights on the dashboard.",
+        "symptoms": [
+          "Suspension warning lights",
+          "Harsh ride quality",
+          "Vehicle sitting lower on one side",
+          "Poor handling characteristics"
+        ],
+        "affected_years_text": "2019-2023",
+        "affected_year_start": 2019,
+        "affected_year_end": 2023,
+        "estimated_cost_low": 2500,
+        "estimated_cost_high": 6000,
+        "fix_description": "Shock absorber replacement, suspension control module replacement, or system recalibration",
+        "prevention": "Avoid harsh driving conditions, regular system diagnostics",
+        "source_type": "tsb"
+      },
+      {
+        "title": "Brake Disc Warping and Premature Wear",
+        "severity": "medium",
+        "description": "Front brake discs warp prematurely, causing vibration during braking and reduced braking performance, particularly on track-driven vehicles.",
+        "symptoms": [
+          "Steering wheel vibration during braking",
+          "Pulsating brake pedal",
+          "Squealing brake noise",
+          "Reduced braking effectiveness"
+        ],
+        "affected_years_text": "2018-2022",
+        "affected_year_start": 2018,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 4000,
+        "fix_description": "Brake disc and pad replacement, brake system inspection",
+        "prevention": "Proper brake cooling periods, avoid aggressive braking when discs are cold",
+        "source_type": "forum"
+      },
+      {
+        "title": "Electrical System Gremlins and Battery Drain",
+        "severity": "medium",
+        "description": "Various electrical issues including parasitic battery drain, random warning lights, and intermittent system failures affecting multiple vehicle systems.",
+        "symptoms": [
+          "Dead battery after sitting",
+          "Random warning lights",
+          "Electrical systems not functioning",
+          "High power consumption when parked"
+        ],
+        "affected_years_text": "2018-2021",
+        "affected_year_start": 2018,
+        "affected_year_end": 2021,
+        "estimated_cost_low": 500,
+        "estimated_cost_high": 3000,
+        "fix_description": "Electrical system diagnosis, module replacement, or wiring harness repair",
+        "prevention": "Regular battery health checks, proper shutdown procedures",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Carbon Fiber Body Panel Delamination",
+        "severity": "medium",
+        "description": "Carbon fiber body panels, particularly the front splitter and side skirts, experience delamination and cracking, affecting both aesthetics and aerodynamics.",
+        "symptoms": [
+          "Visible cracks in carbon fiber",
+          "Peeling clear coat",
+          "Bubbling on panel surfaces",
+          "Loose carbon fiber edges"
+        ],
+        "affected_years_text": "2018-2024",
+        "affected_year_start": 2018,
+        "affected_year_end": 2024,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Carbon fiber panel replacement, professional refinishing, or repair with specialized carbon fiber techniques",
+        "prevention": "Avoid low speed bumps, regular inspection and care of carbon components",
+        "source_type": "forum"
+      },
+      {
+        "title": "Tire Pressure Monitoring System Failure",
+        "severity": "low",
+        "description": "TPMS sensors fail frequently, causing constant warning lights and inability to monitor tire pressures accurately.",
+        "symptoms": [
+          "TPMS warning light constantly on",
+          "Incorrect pressure readings",
+          "System not detecting pressure changes",
+          "Multiple sensor failures"
+        ],
+        "affected_years_text": "2018-2023",
+        "affected_year_start": 2018,
+        "affected_year_end": 2023,
+        "estimated_cost_low": 300,
+        "estimated_cost_high": 800,
+        "fix_description": "TPMS sensor replacement, system recalibration, or control module update",
+        "prevention": "Proper tire maintenance, avoid impact damage to wheels",
+        "source_type": "nhtsa"
+      },
+      {
+        "title": "Cooling System Overheating Issues",
+        "severity": "high",
+        "description": "Engine overheating due to cooling system failures, including water pump issues, thermostat failures, and radiator problems, particularly during spirited driving.",
+        "symptoms": [
+          "Engine temperature warning",
+          "Coolant loss",
+          "Steam from engine bay",
+          "Reduced engine power"
+        ],
+        "affected_years_text": "2018-2020",
+        "affected_year_start": 2018,
+        "affected_year_end": 2020,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 5000,
+        "fix_description": "Water pump replacement, thermostat replacement, radiator repair or replacement",
+        "prevention": "Regular coolant system maintenance, avoid prolonged high-performance driving",
+        "source_type": "tsb"
+      }
+    ],
+    "editorial": {
+      "tagline": "Pure Aston Martin soul meets Mercedes-AMG muscle",
+      "hero_blurb": "The modern Vantage represents Aston Martin's most focused sports car, blending traditional British elegance with Germanic engineering precision. This is what happens when Gaydon's designers get their hands on AMG's twin-turbo V8 powerhouse.",
+      "essence": "The 2018-2024 Vantage strips away the grand touring pretense to deliver raw, visceral performance wrapped in stunning bodywork. It's Aston Martin's answer to the Porsche 911, prioritizing driver engagement over luxury appointments.",
+      "heritage": "Building on seven decades of Vantage bloodline, this generation marks a dramatic departure from naturally aspirated tradition. The model name traces back to 1951, representing Aston's most driver-focused offering throughout its evolution.",
+      "design_philosophy": "Marek Reichman's team created a predatory stance with muscular haunches and a dramatically low roofline. Every curve serves aerodynamic purpose while maintaining Aston's signature elegance through proportion rather than ornamentation.",
+      "motorsport_history": "The Vantage name dominated GT racing throughout the 2000s, with the previous generation claiming multiple Le Mans class victories. This current model competes in GT3 and GT4 categories worldwide.",
+      "engine_character": "The Mercedes-AMG sourced 4.0L twin-turbo V8 delivers explosive mid-range punch with minimal lag. It's more brutal than melodic, prioritizing savage acceleration over the symphonic wail of previous naturally aspirated units.",
+      "transmission_feel": "The ZF eight-speed automatic shifts with precision in auto mode and responds obediently to paddle inputs. Manual mode holds gears aggressively, though purists will miss a proper manual option.",
+      "chassis_dynamics": "Adaptive dampers and electronic differential create a chassis that's playful yet controlled. The rear-biased setup encourages controlled oversteer while remaining predictable at the limit.",
+      "steering_feel": "Electrically assisted steering provides good on-center feel with reasonable feedback. Weight builds progressively with speed, though it lacks the ultimate communication of hydraulic systems.",
+      "brake_confidence": "Brembo brakes deliver immense stopping power with excellent pedal feel. Initial bite is strong without being grabby, inspiring confidence during aggressive driving sessions.",
+      "sound_signature": "The AMG V8 produces a thunderous bark on startup, settling into a purposeful rumble at idle. Under load, it delivers a savage roar that's more Germanic growl than British howl.",
+      "ideal_owner": "Weekend warriors who prioritize driving thrills over daily comfort. Perfect for enthusiasts wanting exotic looks with reliable Germanic mechanicals and reasonable running costs.",
+      "not_ideal_for": "Those seeking grand touring refinement or maximum interior space. The firm ride and limited practicality make it unsuitable for daily commuting or family duties.",
+      "buyers_summary": "Focus on 2019+ models for improved infotainment and refined calibration. Manual transmission was never offered, so embrace the excellent automatic. Avoid earliest 2018 cars due to initial software bugs.",
+      "pros": [
+        "Stunning exterior design",
+        "Explosive twin-turbo performance",
+        "Relatively affordable Aston ownership"
+      ],
+      "cons": [
+        "Limited interior space",
+        "Firm ride quality",
+        "Mercedes switchgear feels incongruous"
+      ],
+      "best_for": [
+        "Weekend canyon carving",
+        "Track day events"
+      ]
+    },
+    "fitment": [
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 9,
+        "wheel_width_rear": 10.5,
+        "wheel_offset_front_mm": 52,
+        "wheel_offset_rear_mm": 40,
+        "wheel_offset_range_front": "+45 to +58",
+        "wheel_offset_range_rear": "+35 to +45",
+        "tire_size_front": "245/40R19",
+        "tire_size_rear": "285/35R19",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 285,
+        "tire_aspect_front": 40,
+        "tire_aspect_rear": 35,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "OEM fitment with no clearance issues",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 95,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 9.5,
+        "wheel_width_rear": 11,
+        "wheel_offset_front_mm": 50,
+        "wheel_offset_rear_mm": 38,
+        "wheel_offset_range_front": "+43 to +55",
+        "wheel_offset_range_rear": "+32 to +42",
+        "tire_size_front": "245/35R20",
+        "tire_size_rear": "295/30R20",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 295,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "OEM optional fitment with no clearance issues",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 85,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "Plus Size",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 35,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+30 to +40",
+        "tire_size_front": "255/35R20",
+        "tire_size_rear": "305/30R20",
+        "tire_width_front_mm": 255,
+        "tire_width_rear_mm": 305,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": 0.8,
+        "speedometer_error_percent": 0.8,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.2",
+        "recommended_camber_rear": "-1.5",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Slightly wider setup, may require careful tire selection for track use",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 75,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.8
+      },
+      {
+        "fitment_type": "Track",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 48,
+        "wheel_offset_rear_mm": 35,
+        "wheel_offset_range_front": "+42 to +52",
+        "wheel_offset_range_rear": "+30 to +40",
+        "tire_size_front": "265/35R19",
+        "tire_size_rear": "315/30R19",
+        "tire_width_front_mm": 265,
+        "tire_width_rear_mm": 315,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": -1.2,
+        "speedometer_error_percent": -1.2,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-2.0",
+        "recommended_camber_rear": "-2.5",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Wider track-focused setup, may have minor rubbing at full lock",
+        "known_issues": "Possible minor rubbing at full steering lock with wider front tires",
+        "recommended_for": [
+          "track"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "snow"
+        ],
+        "popularity_score": 65,
+        "community_verified": false,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.7
+      }
+    ],
+    "expertReviews": null,
+    "manuals": null,
+    "images": null
+  },
+  "stage3": {
+    "passed": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "hp",
+      "torque",
+      "curb_weight"
+    ],
+    "warnings": [
+      {
+        "rule": "MPG consistency",
+        "message": "City MPG should be less than highway MPG"
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "high",
+        "message": "⚠️ VERIFY: brembo brakes listed but Aston Martin Vantage may not come with brembo stock. This could be an aftermarket upgrade confused with OEM specs."
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"4-piston brembo\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      }
+    ],
+    "errors": []
+  },
+  "stage4": {
+    "vehicle_maintenance_specs": 116,
+    "vehicle_service_intervals": 8,
+    "car_variants": 3,
+    "car_tuning_profiles": {
+      "car_id": "f62304a7-74eb-4e5f-af5d-fa7e77ba44d0",
+      "car_variant_id": null,
+      "engine_family": "4.0L Twin-Turbo V8 (Mercedes-AMG M177)",
+      "tuning_focus": "performance",
+      "stock_whp": 465,
+      "stock_wtq": 465,
+      "tuning_platforms": [
+        {
+          "name": "Renntech",
+          "price_low": 2500,
+          "price_high": 4500,
+          "notes": "Mercedes-AMG specialist tuning"
+        },
+        {
+          "name": "Eurocharged",
+          "price_low": 2200,
+          "price_high": 4000,
+          "notes": "Remote and in-person ECU tuning"
+        },
+        {
+          "name": "RaceChip",
+          "price_low": 800,
+          "price_high": 1500,
+          "notes": "Piggyback tuning solution"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 60,
+          "hp_gain_high": 100,
+          "cost_low": 2500,
+          "cost_high": 4500,
+          "components": [
+            "ECU tune"
+          ],
+          "notes": "Software only tune for turbo pressure and timing optimization"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 100,
+          "hp_gain_high": 140,
+          "cost_low": 5000,
+          "cost_high": 8000,
+          "components": [
+            "ECU tune",
+            "cold air intake",
+            "downpipes"
+          ],
+          "notes": "Hardware modifications with supporting tune"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 150,
+          "hp_gain_high": 200,
+          "cost_low": 10000,
+          "cost_high": 15000,
+          "components": [
+            "ECU tune",
+            "intake",
+            "downpipes",
+            "intercoolers",
+            "exhaust system"
+          ],
+          "notes": "Comprehensive bolt-on modifications with turbo optimization"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 650,
+        "stock_transmission_tq": 600,
+        "stock_axles_tq": 550
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "Armytrix",
+          "Capristo"
+        ],
+        "exhaust": [
+          "Akrapovic",
+          "Capristo",
+          "Armytrix"
+        ],
+        "tuner": [
+          "Renntech",
+          "Eurocharged",
+          "RaceChip"
+        ]
+      },
+      "pipeline_version": "vehicle-data-pipeline@2.2",
+      "pipeline_run_at": "2026-01-13T00:56:20.884Z",
+      "verified": false,
+      "notes": "AI-researched - requires verification"
+    },
+    "car_issues": 10,
+    "cars": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "curb_weight",
+      "tagline",
+      "hero_blurb",
+      "essence",
+      "heritage",
+      "design_philosophy",
+      "motorsport_history",
+      "engine_character",
+      "transmission_feel",
+      "chassis_dynamics",
+      "steering_feel",
+      "brake_confidence",
+      "sound_signature",
+      "ideal_owner",
+      "not_ideal_for",
+      "buyers_summary",
+      "pros",
+      "cons",
+      "best_for"
+    ],
+    "wheel_tire_fitment_options": 4
+  },
+  "stage5": {
+    "tables": {
+      "cars": {
+        "exists": true,
+        "filled": 109,
+        "total": 136,
+        "percent": 80,
+        "missing": [
+          "layout",
+          "perf_power_accel",
+          "perf_grip_cornering",
+          "perf_braking",
+          "perf_track_pace"
+        ]
+      },
+      "vehicle_maintenance_specs": {
+        "exists": true,
+        "filled": 107,
+        "total": 126,
+        "percent": 85,
+        "missing": [
+          "trans_fluid_manual_capacity",
+          "diff_fluid_front_capacity",
+          "power_steering_type",
+          "power_steering_capacity",
+          "fuel_filter_change_interval_miles"
+        ]
+      },
+      "car_fuel_economy": {
+        "exists": false,
+        "percent": 0
+      },
+      "car_safety_data": {
+        "exists": false,
+        "percent": 0
+      },
+      "car_tuning_profiles": {
+        "exists": true,
+        "filled": 19,
+        "total": 21,
+        "percent": 90,
+        "missing": [
+          "car_variant_id",
+          "verified_by"
+        ]
+      },
+      "car_issues": {
+        "records": 16
+      },
+      "car_recalls": {
+        "records": 2
+      },
+      "vehicle_service_intervals": {
+        "records": 18
+      },
+      "car_variants": {
+        "records": 3
+      },
+      "wheel_tire_fitment_options": {
+        "records": 4
+      },
+      "car_expert_reviews": {
+        "records": 0
+      },
+      "car_manual_data": {
+        "records": 0
+      },
+      "car_images": {
+        "records": 0
+      },
+      "car_dyno_runs": {
+        "records": 0
+      },
+      "car_track_lap_times": {
+        "records": 0
+      },
+      "car_auction_results": {
+        "records": 0
+      },
+      "car_market_pricing": {
+        "records": 0
+      }
+    },
+    "overall": {
+      "filled": 235,
+      "total": 283,
+      "percent": 83
+    }
+  },
+  "completed_at": "2026-01-13T00:56:22.546Z"
+}

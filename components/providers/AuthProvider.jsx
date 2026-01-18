@@ -394,7 +394,12 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
   }
   
   // All attempts failed
-  console.error('[AuthProvider] All auth attempts failed:', errorCategory);
+  // Only log as error for unknown issues - expected failures (expired, revoked) are info-level
+  if (errorCategory === ErrorCategory.UNKNOWN || errorCategory === ErrorCategory.NETWORK) {
+    console.error('[AuthProvider] All auth attempts failed:', errorCategory, lastError?.message);
+  } else {
+    console.log('[AuthProvider] Auth session cleared:', errorCategory);
+  }
   await clearAuthState();
   
   return { session: null, user: null, error: lastError, sessionExpired: !!lastError, errorCategory };
@@ -441,9 +446,16 @@ function categorizeAuthError(error) {
   
   const message = error.message?.toLowerCase() || '';
   const status = error.status;
+  const code = error.code || error.__isAuthError;
   
   // Network errors
-  if (message.includes('network') || message.includes('fetch') || message.includes('timeout') || status === 0) {
+  if (message.includes('network') || 
+      message.includes('fetch') || 
+      message.includes('timeout') ||
+      message.includes('failed to fetch') ||
+      message.includes('unable to resolve') ||
+      message.includes('connection') ||
+      status === 0) {
     return ErrorCategory.NETWORK;
   }
   
@@ -451,6 +463,7 @@ function categorizeAuthError(error) {
   if (message.includes('session has been revoked') || 
       message.includes('logged out') ||
       message.includes('user session not found') ||
+      message.includes('not authenticated') ||
       (status === 401 && message.includes('session'))) {
     return ErrorCategory.SESSION_REVOKED;
   }
@@ -459,7 +472,10 @@ function categorizeAuthError(error) {
   if (message.includes('session not found') ||
       message.includes('session from session_id claim') ||
       message.includes('jwt expired') ||
-      message.includes('token expired')) {
+      message.includes('token expired') ||
+      message.includes('token is expired') ||
+      message.includes('auth session missing') ||
+      message.includes('no current session')) {
     return ErrorCategory.SESSION_EXPIRED;
   }
   
@@ -468,8 +484,16 @@ function categorizeAuthError(error) {
       message.includes('refresh_token') ||
       message.includes('malformed') ||
       message.includes('invalid jwt') ||
+      message.includes('invalid claim') ||
+      message.includes('token contains an invalid') ||
       status === 403) {
     return ErrorCategory.INVALID_TOKEN;
+  }
+  
+  // Auth error type from Supabase - treat as expired session
+  if (code === true || error.__isAuthError === true) {
+    // Generic auth error from Supabase - likely session issue
+    return ErrorCategory.SESSION_EXPIRED;
   }
   
   return ErrorCategory.UNKNOWN;

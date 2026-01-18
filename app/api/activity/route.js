@@ -96,12 +96,15 @@ async function handlePost(request) {
     const engagementType = ENGAGEMENT_ACTIVITY_MAP[event_type];
     
     // Fire and forget - don't block on engagement update
+    // Note: Supabase client returns a thenable, use .then() pattern
     supabase.rpc('increment_engagement_activity', {
       p_user_id: user_id,
       p_activity_type: engagementType,
-    }).catch((engageError) => {
-      // Log but don't fail the request
-      console.warn('[Activity API] Engagement update failed:', engageError.message);
+    }).then(({ error: engageError }) => {
+      if (engageError) {
+        // Log but don't fail the request
+        console.warn('[Activity API] Engagement update failed:', engageError.message);
+      }
     });
   }
 

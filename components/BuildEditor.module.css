@@ -1,0 +1,510 @@
+/* BuildEditor.module.css */
+
+.buildEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================================================
+   MODE TOGGLE
+   ============================================================================ */
+
+.modeToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: var(--bg-secondary, #1a1a1a);
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.modeButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--text-secondary, #888);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modeButton:hover {
+  color: var(--text-primary, #fff);
+  background: var(--bg-tertiary, #252525);
+}
+
+.modeButton.active {
+  background: var(--accent-primary, #3b82f6);
+  color: white;
+}
+
+.modeHint {
+  margin-left: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666);
+}
+
+/* ============================================================================
+   HP ESTIMATE BAR
+   ============================================================================ */
+
+.hpEstimate {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, var(--bg-secondary, #1a1a1a) 0%, var(--bg-tertiary, #252525) 100%);
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #333);
+}
+
+.hpLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary, #666);
+}
+
+.hpValue {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stockHp {
+  color: var(--text-secondary, #888);
+}
+
+.hpArrow {
+  color: var(--text-tertiary, #666);
+}
+
+.modifiedHp {
+  color: var(--accent-success, #22c55e);
+}
+
+.hpGain {
+  font-size: 0.875rem;
+  color: var(--accent-success, #22c55e);
+  opacity: 0.8;
+}
+
+.hpConfidence {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666);
+}
+
+.confidenceDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.confidenceDot.high {
+  background: var(--accent-success, #22c55e);
+}
+
+.confidenceDot.medium {
+  background: var(--accent-warning, #f59e0b);
+}
+
+.confidenceDot.low {
+  background: var(--text-tertiary, #666);
+}
+
+.tierBadge {
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.375rem;
+  background: var(--bg-tertiary, #252525);
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-tertiary, #666);
+}
+
+/* ============================================================================
+   BASIC FORM
+   ============================================================================ */
+
+.basicForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.modCategory {
+  background: var(--bg-secondary, #1a1a1a);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid var(--border-color, #333);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.categoryIcon {
+  font-size: 1rem;
+}
+
+.categoryLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.modGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.modButton {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-tertiary, #252525);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-secondary, #888);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.modButton:hover {
+  background: var(--bg-hover, #2a2a2a);
+  color: var(--text-primary, #fff);
+  border-color: var(--border-color, #333);
+}
+
+.modButton.selected {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--accent-primary, #3b82f6);
+  color: var(--accent-primary, #3b82f6);
+}
+
+.modCheck {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--bg-primary, #121212);
+  border: 1px solid var(--border-color, #333);
+  flex-shrink: 0;
+}
+
+.modButton.selected .modCheck {
+  background: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, #3b82f6);
+  color: white;
+}
+
+.modLabel {
+  flex: 1;
+}
+
+/* ============================================================================
+   ADVANCED FORM
+   ============================================================================ */
+
+.advancedForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formSection {
+  background: var(--bg-secondary, #1a1a1a);
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color, #333);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color, #333);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.sectionIcon {
+  font-size: 1.125rem;
+}
+
+.sectionHint {
+  margin-left: auto;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--text-tertiary, #666);
+}
+
+.fieldGroup {
+  margin-bottom: 1rem;
+}
+
+.fieldGroup:last-child {
+  margin-bottom: 0;
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-tertiary, #666);
+}
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--bg-tertiary, #252525);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.radioLabel:hover {
+  background: var(--bg-hover, #2a2a2a);
+}
+
+.radioLabel input {
+  display: none;
+}
+
+.radioLabel input:checked + .radioText {
+  color: var(--accent-primary, #3b82f6);
+}
+
+.radioLabel:has(input:checked) {
+  background: rgba(59, 130, 246, 0.15);
+  outline: 1px solid var(--accent-primary, #3b82f6);
+}
+
+.radioText {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #888);
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: var(--bg-tertiary, #252525);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  color: var(--text-primary, #fff);
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--accent-primary, #3b82f6);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary, #666);
+}
+
+.inputSmall {
+  composes: input;
+  width: 120px;
+}
+
+.inputRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.inputSeparator {
+  color: var(--text-tertiary, #666);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #888);
+  cursor: pointer;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-primary, #3b82f6);
+}
+
+.compactModGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.compactModLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #888);
+  cursor: pointer;
+}
+
+.compactModLabel input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent-primary, #3b82f6);
+}
+
+.compactModLabel:has(input:checked) {
+  color: var(--text-primary, #fff);
+}
+
+/* ============================================================================
+   SAVE BAR
+   ============================================================================ */
+
+.saveBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary, #1a1a1a);
+  border-radius: 12px;
+  border: 1px solid var(--accent-warning, #f59e0b);
+  position: sticky;
+  bottom: 1rem;
+}
+
+.unsavedIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--accent-warning, #f59e0b);
+}
+
+.unsavedIndicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-warning, #f59e0b);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.saveButton {
+  padding: 0.625rem 1.5rem;
+  background: var(--accent-primary, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: var(--accent-primary-hover, #2563eb);
+  transform: translateY(-1px);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .modeToggle {
+    flex-wrap: wrap;
+  }
+  
+  .modeHint {
+    width: 100%;
+    margin: 0.5rem 0 0 0;
+  }
+  
+  .hpEstimate {
+    flex-wrap: wrap;
+  }
+  
+  .hpConfidence {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .basicForm {
+    grid-template-columns: 1fr;
+  }
+  
+  .inputRow {
+    flex-wrap: wrap;
+  }
+  
+  .inputSmall {
+    width: 100%;
+  }
+  
+  .radioGroup {
+    flex-direction: column;
+  }
+  
+  .radioLabel {
+    width: 100%;
+  }
+}

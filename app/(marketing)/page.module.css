@@ -229,30 +229,70 @@
   bottom: auto !important;
 }
 
-/* Hero Join Button - White border CTA */
+/* Hero CTA container - Build Pivot: dual buttons */
+.heroCta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .heroCta {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+}
+
+/* Hero Primary Button - Build Pivot: Bold orange CTA */
 .heroJoinButton {
   display: inline-block;
-  font-size: clamp(0.75rem, 0.5rem + 0.5vw, 0.95rem);
+  font-size: clamp(0.85rem, 0.6rem + 0.5vw, 1rem);
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1;
+  padding: clamp(12px, 0.6rem + 0.5vw, 16px) clamp(24px, 1.2rem + 1vw, 40px);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary, #ff4d00);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.heroJoinButton:hover {
+  background: var(--accent-primary-hover, #ff6a2a);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 77, 0, 0.3);
+}
+
+.heroJoinButton:active {
+  transform: translateY(0);
+}
+
+/* Hero Secondary Button - Build Pivot: Ghost style */
+.heroSecondaryButton {
+  display: inline-block;
+  font-size: clamp(0.75rem, 0.5rem + 0.5vw, 0.9rem);
   color: var(--color-gray-300);
-  line-height: var(--line-height-relaxed);
-  padding: clamp(8px, 0.4rem + 0.5vw, 12px) clamp(16px, 0.8rem + 1vw, 24px);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  line-height: 1;
+  padding: clamp(10px, 0.4rem + 0.5vw, 14px) clamp(20px, 0.8rem + 1vw, 32px);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-md);
   background: transparent;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: var(--space-sm);
 }
 
-.heroJoinButton:hover {
+.heroSecondaryButton:hover {
   border-color: var(--color-white);
   background: rgba(255, 255, 255, 0.1);
   color: var(--color-white);
   transform: translateY(-2px);
 }
 
-.heroJoinButton:active {
+.heroSecondaryButton:active {
   transform: translateY(0);
 }
 

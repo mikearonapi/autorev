@@ -1,0 +1,463 @@
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║              STARTING VEHICLE ENRICHMENT                                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Processing 310 vehicles (starting at index 0)
+Mode: LIVE
+
+[1/310] ✅ 718 Cayman GT4 - Quality OK (A)
+[2/310] ✅ 718 Cayman GTS 4.0 - Quality OK (A)
+[3/310] ✅ 981 Cayman GTS - Quality OK (A)
+[4/310] ✅ 981 Cayman S - Quality OK (A)
+[5/310] ✅ 987.2 Cayman S - Quality OK (A)
+[6/310] ✅ 991.1 Carrera S - Quality OK (A)
+
+📦 997.2 Carrera S
+   Quality: A (80/100)
+   Issues: 2, Intervals: 10, Tuning: 15 upgrades
+   🔧 Needs enrichment: issues=true, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[8/310] ✅ Acura Integra Type R - Quality OK (A)
+
+📦 Acura Integra Type S
+   Quality: B (70/100)
+   Issues: 6, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura NSX NA1
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura NSX NC1
+   Quality: B (70/100)
+   Issues: 14, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura RSX Type-S
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura TL Type-S
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura TSX
+   Quality: B (70/100)
+   Issues: 7, Intervals: 12, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Acura TSX CU2
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[16/310] ✅ Alfa Romeo 4C - Quality OK (A)
+[17/310] ✅ Alfa Romeo Giulia Quadrifoglio - Quality OK (A)
+
+📦 Aston Martin DB11
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Aston Martin DB9
+   Quality: B (70/100)
+   Issues: 17, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Aston Martin DBS Superleggera
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Aston Martin V12 Vantage
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[22/310] ✅ Aston Martin V8 Vantage - Quality OK (A)
+
+📦 Aston Martin Vantage
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Audi A3 1.8 TFSI (8V)
+   Quality: A (85/100)
+   Issues: 20, Intervals: 10, Tuning: 8 upgrades
+   🔧 Needs enrichment: issues=false, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[25/310] ✅ Audi A4 2.0T B8 - Quality OK (A)
+[26/310] ✅ Audi A4 2.0T B8.5 - Quality OK (A)
+[27/310] ✅ Audi R8 V10 - Quality OK (A)
+[28/310] ✅ Audi R8 V8 - Quality OK (A)
+[29/310] ✅ Audi RS3 8V - Quality OK (A)
+[30/310] ✅ Audi RS3 8Y - Quality OK (A)
+
+📦 Audi RS5 B8
+   Quality: A (80/100)
+   Issues: 1, Intervals: 10, Tuning: 16 upgrades
+   🔧 Needs enrichment: issues=true, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[32/310] ✅ Audi RS5 B9 - Quality OK (A)
+[33/310] ✅ Audi RS6 Avant C8 - Quality OK (A)
+[34/310] ✅ Audi RS7 Sportback - Quality OK (A)
+[35/310] ✅ Audi S4 B5 - Quality OK (A)
+[36/310] ✅ Audi S4 B6 - Quality OK (A)
+[37/310] ✅ Audi S4 B7 - Quality OK (A)
+[38/310] ✅ Audi S4 B8 - Quality OK (A)
+[39/310] ✅ Audi S4 B9 - Quality OK (A)
+[40/310] ✅ Audi S5 B8 - Quality OK (A)
+[41/310] ✅ Audi S5 B9 - Quality OK (A)
+[42/310] ✅ Audi TT RS 8J - Quality OK (A)
+
+📦 Audi TT RS 8S
+   Quality: A (80/100)
+   Issues: 2, Intervals: 10, Tuning: 13 upgrades
+   🔧 Needs enrichment: issues=true, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[44/310] ✅ BMW 1 Series M Coupe - Quality OK (A)
+[45/310] ✅ BMW 135i N54 - Quality OK (A)
+[46/310] ✅ BMW 335i E90 - Quality OK (A)
+[47/310] ✅ BMW 340i F30 - Quality OK (A)
+[48/310] ✅ BMW i4 M50 - Quality OK (A)
+
+📦 BMW M2 Competition
+   Quality: A (80/100)
+   Issues: 2, Intervals: 10, Tuning: 29 upgrades
+   🔧 Needs enrichment: issues=true, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[50/310] ✅ BMW M2 G87 - Quality OK (A)
+[51/310] ✅ BMW M3 E30 - Quality OK (A)
+[52/310] ✅ BMW M3 E36 - Quality OK (A)
+[53/310] ✅ BMW M3 E46 - Quality OK (A)
+[54/310] ✅ BMW M3 E92 - Quality OK (A)
+[55/310] ✅ BMW M3 F80 - Quality OK (A)
+[56/310] ✅ BMW M3 G80 - Quality OK (A)
+[57/310] ✅ BMW M340i G20 - Quality OK (A)
+[58/310] ✅ BMW M4 CSL - Quality OK (A)
+[59/310] ✅ BMW M4 F82 - Quality OK (A)
+[60/310] ✅ BMW M5 E39 - Quality OK (A)
+[61/310] ✅ BMW M5 E60 - Quality OK (A)
+[62/310] ✅ BMW M5 F10 Competition - Quality OK (A)
+[63/310] ✅ BMW M5 F90 Competition - Quality OK (A)
+[64/310] ✅ BMW Z4 M Coupe/Roadster - Quality OK (A)
+
+📦 Buick Grand National
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[66/310] ✅ C7 Corvette Grand Sport - Quality OK (A)
+[67/310] ✅ C7 Corvette Z06 - Quality OK (A)
+[68/310] ✅ C8 Corvette Stingray - Quality OK (A)
+
+📦 Cadillac ATS-V
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Cadillac CT4-V Blackwing
+   Quality: B (70/100)
+   Issues: 13, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Cadillac CT5-V Blackwing
+   Quality: B (70/100)
+   Issues: 13, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Cadillac CTS-V Gen 1
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[73/310] ✅ Cadillac CTS-V Gen 2 - Quality OK (A)
+[74/310] ✅ Cadillac CTS-V Gen 3 - Quality OK (A)
+[75/310] ✅ Camaro SS 1LE - Quality OK (A)
+[76/310] ✅ Camaro ZL1 - Quality OK (A)
+[77/310] ✅ Chevrolet Camaro SS (1969) - Quality OK (A)
+[78/310] ✅ Chevrolet Camaro SS LS1 - Quality OK (A)
+[79/310] ✅ Chevrolet Camaro Z28 - Quality OK (A)
+[80/310] ✅ Chevrolet Colorado ZR2 - Quality OK (A)
+[81/310] ✅ Chevrolet Corvette C5 Z06 - Quality OK (A)
+[82/310] ✅ Chevrolet Corvette C6 Grand Sport - Quality OK (A)
+[83/310] ✅ Chevrolet Corvette C6 Z06 - Quality OK (A)
+[84/310] ✅ Chevrolet Corvette C8 Z06 - Quality OK (A)
+[85/310] ✅ Chevrolet Silverado 1500 - Quality OK (A)
+[86/310] ✅ Chevrolet Silverado ZR2 - Quality OK (A)
+[87/310] ✅ Chevrolet SS - Quality OK (A)
+
+📦 Chevrolet Tahoe
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 1 upgrades
+   🔧 Needs tuning: 1 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ✅ Tuning pipeline complete (10 upgrades)
+[89/310] ✅ Dodge Challenger Hellcat - Quality OK (A)
+[90/310] ✅ Dodge Challenger SRT 392 - Quality OK (A)
+[91/310] ✅ Dodge Charger Hellcat - Quality OK (A)
+[92/310] ✅ Dodge Charger SRT 392 - Quality OK (A)
+
+📦 Dodge SRT-4
+   Quality: A (85/100)
+   Issues: 7, Intervals: 10, Tuning: 8 upgrades
+   🔧 Needs enrichment: issues=false, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+[94/310] ✅ Dodge Viper - Quality OK (A)
+
+📦 Ferrari 296 GTB
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[96/310] ✅ Ferrari 458 Italia - Quality OK (A)
+
+📦 Ferrari 458 Speciale
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari 488 GTB
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari 488 Pista
+   Quality: B (70/100)
+   Issues: 6, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari 812 Superfast
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari F430
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari F8 Tributo
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari Roma
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Ferrari SF90 Stradale
+   Quality: B (70/100)
+   Issues: 7, Intervals: 11, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[105/310] ✅ Ford Bronco - Quality OK (A)
+[106/310] ✅ Ford Bronco Raptor - Quality OK (A)
+[107/310] ✅ Ford Crown Victoria - Quality OK (A)
+[108/310] ✅ Ford F-150 - Quality OK (A)
+[109/310] ✅ Ford F-150 - Quality OK (A)
+[110/310] ✅ Ford F-150 Lightning - Quality OK (A)
+[111/310] ✅ Ford F-150 Raptor - Quality OK (A)
+[112/310] ✅ Ford F-150 Raptor - Quality OK (A)
+[113/310] ✅ Ford F-150 Raptor R - Quality OK (A)
+[114/310] ✅ Ford F-250 Power Stroke - Quality OK (A)
+[115/310] ✅ Ford Focus RS - Quality OK (A)
+[116/310] ✅ Ford Focus ST Mk3 - Quality OK (A)
+[117/310] ✅ Ford Fusion Sport - Quality OK (A)
+[118/310] ✅ Ford Maverick - Quality OK (A)
+[119/310] ✅ Ford Mustang Boss 302 - Quality OK (A)
+[120/310] ✅ Ford Mustang Fastback - Quality OK (A)
+[121/310] ✅ Ford Mustang GT Fox Body - Quality OK (A)
+[122/310] ✅ Ford Mustang GT SN95 - Quality OK (A)
+[123/310] ✅ Ford Mustang Mach 1 - Quality OK (A)
+[124/310] ✅ Ford Mustang SVT Cobra - Quality OK (A)
+[125/310] ✅ Ford Mustang SVT Cobra Terminator - Quality OK (A)
+[126/310] ✅ Ford Ranger Raptor - Quality OK (A)
+[127/310] ✅ Ford Ranger T6 Facelift - Quality OK (A)
+
+📦 Ford Taurus SHO
+   Quality: A (85/100)
+   Issues: 10, Intervals: 10, Tuning: 9 upgrades
+   🔧 Needs enrichment: issues=false, intervals=false
+   Running enrichment (issues + intervals)...
+   ✅ Issues & intervals enriched
+
+📦 Genesis G70 3.3T
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 GMC Canyon AT4
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 GMC Hummer EV
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 GMC Sierra 1500
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 GMC Sierra AT4X
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+[134/310] ✅ Honda Accord 2.0T Sport - Quality OK (A)
+[135/310] ✅ Honda Civic Si EM1 - Quality OK (A)
+[136/310] ✅ Honda Civic Si EP3 - Quality OK (A)
+[137/310] ✅ Honda Civic Si FG2 - Quality OK (A)
+[138/310] ✅ Honda Civic Type R FK8 - Quality OK (A)
+[139/310] ✅ Honda Civic Type R FL5 - Quality OK (A)
+[140/310] ✅ Honda CRX Si - Quality OK (A)
+[141/310] ✅ Honda Del Sol VTEC - Quality OK (A)
+[142/310] ✅ Honda Prelude Si VTEC - Quality OK (A)
+[143/310] ✅ Honda S2000 - Quality OK (A)
+
+📦 Hyundai Elantra N
+   Quality: B (70/100)
+   Issues: 6, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Hyundai Kona N
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Hyundai Veloster N
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Infiniti G35 Coupe
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Infiniti G37 Coupe
+   Quality: B (70/100)
+   Issues: 7, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...
+   ✅ AI tuning research complete
+
+📦 Infiniti G37 Sedan
+   Quality: B (70/100)
+   Issues: 8, Intervals: 10, Tuning: 0 upgrades
+   🔧 Needs tuning: 0 upgrades (threshold: 5)
+   Running tuning pipeline...
+   ⚠️  Standard pipeline produced 0 upgrades - trying AI research...

@@ -49,15 +49,16 @@ export default function HeroSection({ carCount = 188 }) {
       <div className={styles.heroOverlay} />
       
       {/* Main headline + subtitle - Server rendered static content */}
+      {/* Build Pivot: Performance modification focus */}
       <div className={styles.heroHeadlines}>
         <h1 className={styles.heroTitle}>
-          Find What <span className={styles.heroAccent}>Drives You</span>
+          Plan Your <span className={styles.heroAccent}>Perfect Build</span>
         </h1>
         <p className={styles.heroSubtitle}>
-          The AI-powered research platform for sports car enthusiasts — like having the obsessive car nerd in your pocket who&apos;s done all the research and never forgets anything.
+          The complete platform for planning, tracking, and executing performance modifications — powered by verified parts data and real dyno results.
         </p>
         <p className={styles.heroJarvisTag}>
-          Tony Stark had Jarvis. Now you have <span className={styles.heroAccent}>AL</span>.
+          Research parts. Plan your build. Track your progress. Ask <span className={styles.heroAccent}>AL</span>.
         </p>
       </div>
       
@@ -65,9 +66,10 @@ export default function HeroSection({ carCount = 188 }) {
       <HeroCta />
       
       {/* Tagline - Server rendered static content */}
+      {/* Build Pivot: Emphasize build data */}
       <div className={styles.heroBottom}>
         <p className={styles.heroTagline}>
-          Research. Own. Build. Connect. Learn. — {carCount || 188} cars and counting.
+          700+ parts. 300+ cars. Verified fitment data. Real performance gains.
         </p>
       </div>
       

@@ -65,10 +65,10 @@ const siteUrl = 'https://autorev.app';
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'AutoRev | AI-Powered Sports Car Research Platform',
+    default: 'AutoRev | Build Planning for Performance Enthusiasts',
     template: '%s | AutoRev',
   },
-  description: 'AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls, you name it. Research cars, manage your collection, plan mods, discover events. Tony Stark had Jarvis. Now you have AL.',
+  description: 'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. The complete platform for performance modifications. Research parts, track your project, join the community.',
   keywords: [
     // Core positioning
     'car AI assistant',

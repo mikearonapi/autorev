@@ -23,30 +23,29 @@ const socialLinks = [
   },
 ];
 
-// Navigation sections
+// Navigation sections - Build-focused (January 2026)
 const footerSections = [
   {
-    title: 'Research',
+    title: 'Build',
     links: [
-      { label: 'Browse Vehicles', href: '/browse-cars' },
-      { label: 'Car Selector', href: '/car-selector' },
+      { label: 'Start Building', href: '/tuning-shop' },
+      { label: 'Parts Database', href: '/parts' },
       { label: 'Encyclopedia', href: '/encyclopedia' },
     ],
   },
   {
-    title: 'Ownership',
+    title: 'My Account',
     links: [
-      { label: 'My Garage', href: '/garage' },
-      { label: 'Tuning Shop', href: '/tuning-shop' },
-      { label: 'AutoRev AI', href: '/al' },
+      { label: 'My Projects', href: '/my-builds' },
+      { label: 'Profile', href: '/profile' },
+      { label: 'AL Assistant', href: '/al' },
     ],
   },
   {
     title: 'Community',
     links: [
+      { label: 'Community Builds', href: '/community/builds' },
       { label: 'Events', href: '/community/events' },
-      { label: 'Submit Event', href: '/events/submit' },
-      { label: 'Community Hub', href: '/community' },
     ],
   },
   {
@@ -84,10 +83,10 @@ export default function Footer() {
               </span>
             </Link>
             <p className={styles.tagline}>
-              Your AI car expert in your pocket.
+              Plan your perfect build.
             </p>
             <p className={styles.jarvisTag}>
-              Tony Stark had Jarvis. Now you have AL.
+              The complete platform for performance modifications.
             </p>
             <div className={styles.socialLinks}>
               {socialLinks.map((social) => (

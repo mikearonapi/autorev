@@ -18,6 +18,7 @@ import {
   saveFavorites,
   extractCarForFavorites,
   FavoriteActionTypes,
+  STORAGE_VERSION,
 } from '@/lib/stores/favoritesStore';
 import {
   fetchUserFavorites,

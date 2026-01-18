@@ -55,46 +55,47 @@ const BookIcon = () => (
   </svg>
 );
 
+// Build Pivot: Focus on Build features only
 export default function PillarsSection({ carCount = 100 }) {
   const pillars = useMemo(() => [
     {
-      icon: <ExploreIcon />,
-      title: 'Browse Cars',
-      description: `Explore our collection of ${carCount} sports cars. Filter by make, price, and category. Find detailed specs, ownership insights, and performance data.`,
-      cta: 'Browse Cars',
-      href: '/browse-cars',
-      accent: 'tertiary'
-    },
-    {
-      icon: <CarIcon />,
-      title: 'Your Sportscar Match',
-      description: 'Match the perfect car to your goals, budget, and driving style. Our intelligent selector helps you find what actually fits—not what\'s trending.',
-      cta: 'Find Your Match',
-      href: '/car-selector',
+      icon: <ToolIcon />,
+      title: 'Plan Your Build',
+      description: 'Select your car, explore upgrade recommendations, and see projected HP gains. Our intelligent system shows you how mods work together.',
+      cta: 'Start Building',
+      href: '/tuning-shop',
       accent: 'primary'
     },
     {
-      icon: <GarageIcon />,
-      title: 'My Garage',
-      description: 'Save your favorites, compare cars side-by-side, and track your build configurations. Your personal space to plan your automotive journey.',
-      cta: 'View Garage',
-      href: '/garage',
-      accent: 'quaternary'
-    },
-    {
-      icon: <ToolIcon />,
-      title: 'Tuning Shop',
-      description: 'Plan your build with purpose. Select your car, explore upgrade recommendations, and see how mods work together as a system.',
-      cta: 'Plan Your Build',
-      href: '/tuning-shop',
+      icon: <ExploreIcon />,
+      title: 'Research Parts',
+      description: `Browse 700+ verified parts with real fitment data. Compare prices, check compatibility, and find exactly what you need for your build.`,
+      cta: 'Browse Parts',
+      href: '/parts',
       accent: 'secondary'
     },
     {
+      icon: <GarageIcon />,
+      title: 'Track Progress',
+      description: 'Save your build projects, mark parts as installed, and track your total investment. Your personal space to manage every modification.',
+      cta: 'My Projects',
+      href: '/my-builds',
+      accent: 'tertiary'
+    },
+    {
       icon: <BookIcon />,
-      title: 'Encyclopedia',
+      title: 'Learn Everything',
       description: 'Understand the mechanics behind the mods. Learn how turbochargers, suspension geometry, and ECU tuning actually affect performance.',
-      cta: 'Learn More',
+      cta: 'Encyclopedia',
       href: '/encyclopedia',
+      accent: 'quaternary'
+    },
+    {
+      icon: <CarIcon />,
+      title: 'Join Community',
+      description: 'Share your builds, get feedback from enthusiasts, and find inspiration. See what others are building and learn from their experiences.',
+      cta: 'Community Builds',
+      href: '/community/builds',
       accent: 'primary'
     }
   ], [carCount]);
@@ -103,9 +104,9 @@ export default function PillarsSection({ carCount = 100 }) {
     <section className={styles.pillars}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>How We Help</h2>
+          <h2 className={styles.sectionTitle}>Build With Confidence</h2>
           <p className={styles.sectionSubtitle}>
-            Five tools to get more out of your driving experience
+            Everything you need to plan, execute, and track your performance build
           </p>
         </div>
         <div className={styles.pillarsGrid}>

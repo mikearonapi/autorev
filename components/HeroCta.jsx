@@ -30,20 +30,25 @@ export default function HeroCta() {
     return () => clearInterval(suffixInterval);
   }, []);
 
-  // Handle CTA button click
+  // Handle CTA button click - Build Pivot: Go to Tuning Shop
   const handleCtaClick = (e) => {
     e.preventDefault();
-    window.location.href = '/join';
+    window.location.href = '/tuning-shop';
+  };
+
+  // Handle secondary CTA click
+  const handleSecondaryClick = (e) => {
+    e.preventDefault();
+    window.location.href = '/community/builds';
   };
 
   return (
     <div className={styles.heroCta}>
       <button onClick={handleCtaClick} className={styles.heroJoinButton}>
-        Join the auto
-        <span className={styles.heroRevText}>rev</span>
-        <span className={`${styles.heroJoinSuffix} ${suffixVisible ? styles.heroJoinSuffixVisible : ''}`}>
-          {brandSuffixes[suffixIndex]}
-        </span>
+        Start Building
+      </button>
+      <button onClick={handleSecondaryClick} className={styles.heroSecondaryButton}>
+        Browse Community Builds
       </button>
     </div>
   );

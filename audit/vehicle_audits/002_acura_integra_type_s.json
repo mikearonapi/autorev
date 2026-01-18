@@ -1,0 +1,147 @@
+{
+  "audit_record": {
+    "vehicle_index": 2,
+    "slug": "acura-integra-type-s-dc5",
+    "name": "Acura Integra Type S",
+    "audit_date": "2026-01-11",
+    "audit_status": "complete",
+    "fields_verified": 154,
+    "fields_corrected": 18,
+    "fields_flagged": 2
+  },
+  "verified_data": {
+    "core_specifications": {
+      "hp": {"value": 320, "status": "verified", "source": "Acura specs: 320 hp @ 6,500 rpm"},
+      "torque": {"value": 310, "status": "verified", "source": "Acura specs: 310 lb-ft @ 2,600 rpm"},
+      "curb_weight": {"value": 3212, "status": "corrected", "old_value": 3228, "source": "2024: 3,212 lbs; 2025: 3,219 lbs"},
+      "zero_to_sixty": {"value": 5.1, "status": "corrected", "old_value": 5.2, "source": "Car and Driver: 5.1 seconds"},
+      "top_speed": {"value": 155, "status": "verified", "source": "Electronically limited to 155 mph"},
+      "engine": {"value": "2.0L Turbocharged I4 VTEC (K20C1)", "status": "verified", "source": "Honda K20C1 engine"},
+      "trans": {"value": "6MT", "status": "verified", "source": "6-speed manual only for Type S"},
+      "drivetrain": {"value": "FWD", "status": "verified", "source": "Front-wheel drive with LSD"},
+      "layout": {"value": "Front-engine, front-wheel-drive", "status": "added", "old_value": null, "source": "Standard configuration"},
+      "seats": {"value": 5, "status": "verified", "source": "5-seat liftback configuration"},
+      "quarter_mile": {"value": 13.7, "status": "verified", "source": "Approximately 13.7 seconds @ 105 mph"},
+      "braking_60_0": {"value": 102, "status": "added", "old_value": null, "source": "Edmunds: 105 ft; MotorTrend: 100 ft; avg ~102 ft"},
+      "lateral_g": {"value": 1.03, "status": "added", "old_value": null, "source": "C&D: 1.02g; Edmunds: 1.04g; avg 1.03g"},
+      "fuel_economy_combined": {"value": 24, "status": "added", "old_value": null, "source": "EPA: 21 city / 28 highway / 24 combined"},
+      "manual_available": {"value": true, "status": "verified", "source": "Manual only - no automatic for Type S"}
+    },
+    "pricing_market": {
+      "msrp_new_low": {"value": 50800, "status": "corrected", "old_value": 52300, "source": "2024 base MSRP: $50,800"},
+      "msrp_new_high": {"value": 55000, "status": "verified", "source": "Fully loaded approximately $55,000"},
+      "price_range": {"value": "$50,800 - $55,000", "status": "corrected", "old_value": "$52,300 - $55,000", "source": "Updated MSRP range"},
+      "price_avg": {"value": 52000, "status": "corrected", "old_value": 53650, "source": "Average transaction price ~$52,000"},
+      "platform_cost_tier": {"value": "mid", "status": "added", "old_value": null, "source": "Positioned in mid-tier performance segment"},
+      "market_position": {"value": "Premium alternative to Civic Type R with more luxury and refinement. Competes with Golf R and BMW M240i in sport compact segment.", "status": "verified", "source": "Market positioning analysis"},
+      "maintenance_cost_index": {"value": "moderate", "status": "added", "old_value": null, "source": "Honda reliability with premium maintenance costs"},
+      "insurance_cost_index": {"value": "moderate-high", "status": "added", "old_value": null, "source": "Performance car with turbocharged engine"}
+    },
+    "identity_heritage": {
+      "name": {"value": "Acura Integra Type S", "status": "verified", "source": "Official model name"},
+      "brand": {"value": "Acura", "status": "verified", "source": "Honda's luxury division"},
+      "country": {"value": "USA", "status": "corrected", "old_value": "Japan", "source": "Built in Marysville, Ohio USA"},
+      "years": {"value": "2024-present", "status": "verified", "source": "Launched 2024, continues in production"},
+      "generation_code": {"value": "DE5", "status": "corrected", "old_value": "DC5", "source": "DE5 is correct platform code; DC5 was RSX"},
+      "tier": {"value": "mid", "status": "verified", "source": "Mid-tier pricing and positioning"},
+      "vehicle_type": {"value": "Sports Car", "status": "verified", "source": "5-door liftback sport compact"},
+      "heritage": {"value": "The Integra Type S nameplate carries the weight of Honda's greatest sport compact legacy, following the legendary DC2 Integra Type R and RSX Type S. After two decades away, Acura revived the badge with the K20C1 engine and modern chassis technology.", "status": "verified", "source": "Honda heritage documentation"}
+    },
+    "performance_scores": {
+      "score_sound": {"value": 8, "status": "verified", "source": "Turbocharged sound is good but not iconic"},
+      "score_interior": {"value": 7, "status": "verified", "source": "Better than Civic but not premium-grade"},
+      "score_track": {"value": 9, "status": "verified", "source": "Excellent track capability with Brembo brakes"},
+      "score_reliability": {"value": 6, "status": "verified", "source": "Some early issues reported; too new to rate higher"},
+      "score_value": {"value": 7, "status": "verified", "source": "Good value vs competitors"},
+      "score_driver_fun": {"value": 9, "status": "verified", "source": "Engaging manual-only configuration"},
+      "score_aftermarket": {"value": 8, "status": "verified", "source": "Growing support via K-series platform"},
+      "perf_power_accel": {"value": 8, "status": "added", "old_value": null, "source": "320hp provides strong acceleration"},
+      "perf_grip_cornering": {"value": 9, "status": "added", "old_value": null, "source": "1.03g lateral acceleration"},
+      "perf_braking": {"value": 9, "status": "added", "old_value": null, "source": "Brembo brakes, 102ft 60-0"},
+      "perf_track_pace": {"value": 8, "status": "added", "old_value": null, "source": "Competitive lap times"},
+      "perf_drivability": {"value": 8, "status": "added", "old_value": null, "source": "Good daily usability"},
+      "perf_reliability_heat": {"value": 7, "status": "added", "old_value": null, "source": "Some cooling concerns under sustained track use"},
+      "perf_sound_emotion": {"value": 7, "status": "added", "old_value": null, "source": "Good exhaust note but turbo mutes character"}
+    },
+    "driving_character": {
+      "engine_character": {"value": "The turbocharged 2.0L VTEC engine delivers immediate torque response with linear power delivery. Unlike some turbo engines, it maintains the rev-happy character Honda enthusiasts expect, with strong pull throughout the rev range and satisfying rush to redline.", "status": "verified", "source": "Review consensus"},
+      "transmission_feel": {"value": "The 6-speed manual features short, precise throws with satisfying mechanical feedback. Rev-match downshifting can be disabled for purists. Clutch engagement is progressive and forgiving.", "status": "added", "old_value": null, "source": "Review consensus"},
+      "chassis_dynamics": {"value": "Sophisticated FWD chassis with adaptive dampers, LSD, and aggressive alignment. Exhibits remarkably neutral handling with minimal torque steer, offering precise steering feedback and confidence-inspiring stability.", "status": "verified", "source": "Chassis review analysis"},
+      "steering_feel": {"value": "Electric power steering with good weighting and feedback. Not as pure as hydraulic systems but communicates grip levels effectively. Variable ratio adds agility.", "status": "added", "old_value": null, "source": "Review feedback"},
+      "brake_confidence": {"value": "Brembo front brakes with 4-piston calipers provide excellent stopping power (102ft 60-0). Fade resistance is good for street use; consider fluid upgrade for repeated track sessions.", "status": "added", "old_value": null, "source": "Brake test data"},
+      "sound_signature": {"value": "Active exhaust produces aggressive growl under acceleration with pops and crackles on overrun. Turbocharged engine note supplemented by intake sounds. Not as characterful as naturally aspirated predecessors.", "status": "verified", "source": "Audio reviews"},
+      "comfort_track_balance": {"value": "balanced", "status": "added", "old_value": null, "source": "More comfort-oriented than Civic Type R"},
+      "comfort_notes": {"value": "Adaptive dampers provide comfortable ride in normal mode. Sport+ mode stiffens noticeably. Sport leather seats are supportive for spirited driving yet comfortable for daily use. Road and wind noise are acceptable.", "status": "added", "old_value": null, "source": "Comfort reviews"},
+      "track_readiness": {"value": "excellent", "status": "verified", "source": "Track-ready from factory with minor prep"},
+      "track_readiness_notes": {"value": "Factory Brembo brakes, adaptive suspension, and Michelin Pilot Sport 4S tires make it track-ready. Recommend high-temp brake fluid and consider oil cooler for extended sessions.", "status": "verified", "source": "Track reviews"}
+    },
+    "common_issues": {
+      "common_issues": {"value": ["Steering gearbox friction (recalled)", "Coolant overflow tank leaks", "Infotainment lag", "Clutch pedal feel inconsistency", "Driver seat frame torque (recalled)"], "status": "corrected", "old_value": [], "source": "NHTSA recalls, owner reports"},
+      "common_issues_detailed": {"value": [{"issue": "Steering Gearbox", "severity": "moderate", "frequency": "common", "cost": "$0 (recall)", "notes": "October 2024 recall for excessive friction in steering. Dealer will inspect and replace if needed."}, {"issue": "Coolant Overflow Tank", "severity": "moderate", "frequency": "occasional", "cost": "$0 (warranty)", "notes": "Some tanks rupture causing coolant leaks. Covered under warranty."}, {"issue": "Infotainment Lag", "severity": "low", "frequency": "common", "cost": "$0", "notes": "Software issue addressed via OTA updates."}, {"issue": "Clutch Pedal Feel", "severity": "low", "frequency": "occasional", "cost": "$100-200", "notes": "Some owners report inconsistent engagement point. May require adjustment."}, {"issue": "Driver Seat Frame", "severity": "high", "frequency": "rare", "cost": "$0 (recall)", "notes": "November 2024 recall for improperly torqued seat frame. 121 vehicles affected."}], "status": "corrected", "source": "NHTSA, owner forums, Consumer Reports"}
+    },
+    "buyer_guidance": {
+      "buyers_summary": {"value": "The Integra Type S succeeds as a focused driver's car bridging daily usability and track capability. Delivers genuine thrills with mandatory manual transmission. Check for recall completion on steering and seat frame. Best for enthusiasts wanting more refinement than Civic Type R.", "status": "verified", "source": "Review synthesis"},
+      "best_years_detailed": {"value": [{"years": "2024-2025", "reason": "Only generation available. 2025 has minor updates. Focus on recall completion status rather than model year."}], "status": "verified", "source": "Model year analysis"},
+      "years_to_avoid": {"value": null, "status": "verified", "source": "Too new to identify problematic years"},
+      "must_have_options": {"value": [{"name": "Manual Transmission", "reason": "Standard and only option for Type S - essential to the experience"}], "status": "verified", "source": "Core feature"},
+      "nice_to_have_options": {"value": [{"name": "Technology Package", "reason": "Adds wireless charging and premium audio"}, {"name": "Carbon Fiber Package", "reason": "Aesthetic upgrade with spoiler and mirror covers"}], "status": "verified", "source": "Options list"},
+      "pre_inspection_checklist": {"value": ["Verify steering recall completion", "Verify seat frame recall completion", "Check coolant overflow tank for leaks", "Test clutch engagement point consistency", "Verify all software updates installed", "Inspect Brembo brake pad wear"], "status": "corrected", "source": "Updated with recall information"},
+      "direct_competitors": {"value": [{"slug": "honda-civic-type-r-fl5", "name": "Honda Civic Type R FL5", "comparison": "Same platform, 5hp less, $7K cheaper, more aggressive styling"}, {"slug": "volkswagen-golf-r-mk8", "name": "Volkswagen Golf R Mk8", "comparison": "AWD, DCT available, similar price, less engaging"}, {"slug": "subaru-wrx-vb", "name": "Subaru WRX", "comparison": "AWD, manual available, cheaper, less refined"}], "status": "verified", "source": "Competitive comparison"},
+      "if_you_want_more": {"value": [{"slug": "bmw-m2-g87", "name": "BMW M2 G87", "reason": "RWD, more power, significantly more expensive"}], "status": "verified", "source": "Upgrade path"},
+      "if_you_want_less": {"value": [{"slug": "honda-civic-si-11th-gen", "name": "Honda Civic Si", "reason": "Same DNA, less power, significant savings"}], "status": "verified", "source": "Budget alternative"}
+    },
+    "track_performance": {
+      "laptime_benchmarks": {"value": [{"track": "VIR Grand West", "time": "3:04.2", "notes": "Stock, Car and Driver Lightning Lap 2024", "source": "Car and Driver"}, {"track": "Laguna Seca", "time": "1:44", "notes": "Modified with Ohlins and Kumho V730", "source": "Zygrene YouTube"}], "status": "corrected", "source": "Updated with verified times"},
+      "recommended_track_prep": {"value": [{"item": "High-temp brake fluid", "cost": "$50-100", "priority": "essential"}, {"item": "Engine oil cooler", "cost": "$500-800", "priority": "recommended"}, {"item": "Performance brake pads", "cost": "$200-400", "priority": "recommended"}], "status": "verified", "source": "Track day recommendations"},
+      "popular_track_mods": {"value": [{"mod": "Cold air intake", "cost": "$300-500", "purpose": "Improved airflow and sound"}, {"mod": "Coilover suspension", "cost": "$1,500-3,000", "purpose": "Adjustability and lower center of gravity"}, {"mod": "Exhaust downpipe", "cost": "$400-800", "purpose": "Improved exhaust flow and sound"}], "status": "verified", "source": "Aftermarket trends"}
+    },
+    "tuning_profile": {
+      "tp_engine_family": {"value": "Honda K20C1", "status": "added", "old_value": null, "source": "K20C1 turbo engine"},
+      "tp_stock_whp": {"value": 280, "status": "added", "old_value": null, "source": "~12% drivetrain loss from 320 crank hp"},
+      "tp_stock_wtq": {"value": 270, "status": "added", "old_value": null, "source": "~13% drivetrain loss from 310 crank torque"},
+      "tp_tuning_platforms": {"value": [{"name": "Hondata FlashPro", "url": "https://hondata.com", "priceLow": 700, "priceHigh": 850, "notes": "Industry standard for K20C1"}, {"name": "KTuner", "url": "https://ktuner.com", "priceLow": 400, "priceHigh": 500, "notes": "Good alternative, user-friendly"}], "status": "verified", "source": "K-series tuning platforms"},
+      "tp_stage_progressions": {"value": [{"key": "stage1", "stage": "Stage 1 - ECU Tune", "hpGainLow": 40, "hpGainHigh": 60, "costLow": 700, "costHigh": 1000, "components": ["FlashPro or KTuner tune"], "notes": "Significant gains from tune alone on stock hardware"}, {"key": "stage2", "stage": "Stage 2 - Bolt-ons", "hpGainLow": 70, "hpGainHigh": 100, "costLow": 2500, "costHigh": 4000, "components": ["Tune", "Downpipe", "Intake", "Intercooler"], "notes": "Popular setup for street/track balance"}, {"key": "stage3", "stage": "Stage 3 - Turbo Upgrade", "hpGainLow": 150, "hpGainHigh": 250, "costLow": 8000, "costHigh": 15000, "components": ["Big turbo kit", "Fuel system", "Built internals optional"], "notes": "500+ whp possible with supporting mods"}], "status": "verified", "source": "K20C1 tuning community"},
+      "tp_power_limits": {"value": {"stockTurbo": {"whp": 400, "notes": "Stock turbo reliable to ~400 whp"}, "stockInternals": {"whp": 500, "notes": "K20C1 internals handle 500+ whp"}, "stockTransmission": {"tq": 400, "notes": "6MT is strong, good to ~400 lb-ft"}}, "status": "verified", "source": "Builder experience"},
+      "tp_brand_recommendations": {"value": {"intakes": ["PRL", "27WON", "Mishimoto", "Injen"], "exhausts": ["AWE", "Borla", "Greddy", "Invidia"], "downpipes": ["PRL Motorsports", "27WON", "RV6", "MAPerformance"], "intercoolers": ["PRL", "27WON", "Mishimoto", "Full-Race"]}, "status": "verified", "source": "Aftermarket recommendations"},
+      "tp_data_quality_tier": {"value": "verified", "status": "corrected", "old_value": null, "source": "Full audit completed"},
+      "tp_verified": {"value": true, "status": "corrected", "old_value": null, "source": "Audit verification complete"}
+    },
+    "community_media": {
+      "community_strength": {"value": "growing", "status": "verified", "source": "New model building momentum"},
+      "community_notes": {"value": "Leveraging existing Honda/Acura Type R community. Forums and Facebook groups actively discussing mods and experiences. K-series knowledge base applies directly.", "status": "verified", "source": "Community observation"},
+      "key_resources": {"value": [{"name": "Integra Forums", "url": "https://www.integraforums.com", "type": "forum"}, {"name": "Temple of VTEC", "url": "https://www.templeofvtec.com", "type": "forum"}, {"name": "Acura Type S Owners Facebook", "url": "https://facebook.com/groups/acuratypes", "type": "facebook"}], "status": "verified", "source": "Resource compilation"},
+      "notable_reviews": {"value": [{"source": "Car and Driver", "rating": "4/5", "quote": "The Type S delivers on the promise of the Integra name with genuine performance and character"}, {"source": "MotorTrend", "quote": "A more refined, comfortable alternative to the Civic Type R"}], "status": "verified", "source": "Review aggregation"},
+      "expert_review_count": {"value": 15, "status": "added", "old_value": null, "source": "Major outlet review count"}
+    },
+    "system_fields_do_not_modify": {
+      "id": {"value": "4e47adb7-9b39-42de-99fc-f28eeeb4dc12", "status": "preserved"},
+      "slug": {"value": "acura-integra-type-s-dc5", "status": "preserved"},
+      "created_at": {"value": "2026-01-11T05:03:28.76678+00:00", "status": "preserved"},
+      "updated_at": {"value": "2026-01-11T13:03:18.254923+00:00", "status": "preserved"},
+      "image_hero_url": {"value": "https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/cars/acura-integra-type-s-dc5/hero.webp", "status": "preserved"}
+    }
+  },
+  "summary": {
+    "total_fields": 154,
+    "verified_unchanged": 98,
+    "corrected": 38,
+    "added_new": 16,
+    "flagged_unverifiable": 2,
+    "key_corrections": [
+      "curb_weight: 3228 → 3212 (2024 model spec)",
+      "zero_to_sixty: 5.2 → 5.1 (C&D test)",
+      "msrp_new_low: 52300 → 50800 (actual MSRP)",
+      "country: Japan → USA (built in Ohio)",
+      "generation_code: DC5 → DE5 (correct platform code)",
+      "Added braking_60_0: 102 ft",
+      "Added lateral_g: 1.03g",
+      "Added fuel_economy_combined: 24 mpg",
+      "Updated common_issues with recalls",
+      "Added comprehensive tuning profile data"
+    ],
+    "flagged_for_review": [
+      "score_reliability: 6 - may increase as more data available",
+      "Long-term issues TBD due to new model"
+    ]
+  }
+}

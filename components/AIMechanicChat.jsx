@@ -141,83 +141,94 @@ function getLoadingMessage(domains = []) {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
-// Page-specific context configurations
+// Page-specific context configurations - Build Pivot (January 2026)
 const PAGE_CONTEXT_CONFIG = {
   'browse': {
-    title: 'Browse Cars',
-    welcome: "Looking for something specific? I can help you explore our collection, compare models, or find cars that match your criteria.",
-    placeholder: "What kind of car are you looking for?",
+    title: 'Car Info',
+    welcome: "Looking for build inspiration? I can help you explore cars with strong aftermarket support and modification potential.",
+    placeholder: "What car are you thinking about building?",
     suggestions: [
-      "Best track cars under $60k",
-      "Compare AWD vs RWD sports cars",
-      "Most reliable daily drivers",
-      "Cars with manual transmissions"
+      "Best cars for first build project",
+      "Strong aftermarket support cars",
+      "Best platform for turbo build",
+      "Cars with big HP potential"
     ]
   },
   'car-selector': {
-    title: 'Find Your Match',
-    welcome: "I'll help you narrow down your perfect sports car. Ask me about differences between models, what to expect from each, or trade-offs to consider.",
-    placeholder: "Ask about any car or comparison...",
+    title: 'Build Advisor',
+    welcome: "I'll help you find the right platform for your build goals. Tell me what you want to achieve.",
+    placeholder: "Describe your build goals...",
     suggestions: [
-      "Cayman vs 911 – which is better?",
-      "Best M car for daily driving",
-      "Explain Mustang GT vs Mach 1",
-      "What makes a good first sports car?"
+      "Best car for 400+ HP build",
+      "Track-focused platforms under $50k",
+      "Easy to mod daily driver",
+      "Best base for turbo project"
     ]
   },
   'car-detail': {
-    title: 'Car Expert',
-    welcome: "I can tell you everything about this car – common issues, best years, how it compares, and what to look for when buying.",
+    title: 'Build Expert',
+    welcome: "I can tell you everything about modifying this car – best upgrades, common build paths, and what to watch for.",
     placeholder: "What would you like to know?",
     suggestions: [
-      "Common issues to watch for",
-      "How does this compare to rivals?",
-      "Best model year to buy",
-      "Is this good for track days?"
+      "Best first mods for this car",
+      "What HP can I expect with full bolt-ons?",
+      "Popular build paths",
+      "Issues that affect modding"
     ]
   },
   'tuning': {
-    title: 'Tuning Advisor',
-    welcome: "Planning modifications? I can help you understand what mods to prioritize, their effects, and the best order to install them.",
-    placeholder: "Ask about mods or tuning...",
+    title: 'Build Planner',
+    welcome: "Let's plan your build. I can help you prioritize mods, understand compatibility, and estimate realistic gains.",
+    placeholder: "What's your build goal?",
     suggestions: [
-      "Best first mods for power",
-      "Do I need supporting mods?",
-      "Intake vs exhaust – which first?",
-      "What's the best tune for my car?"
+      "What mods should I do first?",
+      "Do I need supporting mods for Stage 2?",
+      "Will this part fit my car?",
+      "Estimate HP gains for my build"
     ]
   },
   'garage': {
-    title: 'Your Assistant',
-    welcome: "I'm here to help with your collection. Ask about maintenance schedules, troubleshooting, or planning your next build.",
-    placeholder: "How can I help with your cars?",
+    title: 'Build Assistant',
+    welcome: "I'm here to help with your builds. Ask about your project, next steps, or what parts to consider.",
+    placeholder: "How can I help with your build?",
     suggestions: [
-      "Maintenance at 30k miles",
-      "Help diagnose an issue",
-      "Recommend mods for my car",
-      "Best oil and fluids to use"
+      "What should I do next?",
+      "Recommend mods for my goals",
+      "Is my build plan realistic?",
+      "Help me estimate costs"
+    ]
+  },
+  'parts': {
+    title: 'Parts Expert',
+    welcome: "Looking for parts? I can help you find what fits your car and understand compatibility.",
+    placeholder: "What parts are you looking for?",
+    suggestions: [
+      "Best intake for my car",
+      "Will this part work with my setup?",
+      "Compare these two exhausts",
+      "What brand is most reliable?"
     ]
   },
   'encyclopedia': {
-    title: 'Learn Mods',
-    welcome: "Curious how modifications work? I can explain the technical details, what each upgrade does, and help you understand the science.",
+    title: 'Mod School',
+    welcome: "Curious how modifications work? I can explain the technical details and help you understand what each upgrade actually does.",
     placeholder: "What would you like to learn?",
     suggestions: [
-      "How does turbo work?",
+      "How does a turbo work?",
       "Coilovers vs lowering springs",
       "What does an ECU tune change?",
       "How headers improve power"
     ]
   },
   'general': {
-    title: 'AutoRev AI',
-    welcome: "I'm your automotive AI assistant. Ask me anything about cars, modifications, maintenance, or help finding your next ride.",
-    placeholder: "Ask me anything about cars...",
+    title: 'AL Assistant',
+    welcome: "I'm your build planning expert. Ask me about modifications, parts compatibility, or help planning your project.",
+    placeholder: "Ask me about your build...",
     suggestions: [
-      "Help me find a sports car",
-      "Best beginner modifications",
-      "Explain forced induction",
-      "Manual vs automatic for track"
+      "Help me plan a build",
+      "Best first mods for power",
+      "What HP can I achieve?",
+      "Stage 1 vs Stage 2 explained"
     ]
   }
 };

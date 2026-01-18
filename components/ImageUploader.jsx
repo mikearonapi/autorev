@@ -65,6 +65,7 @@ export default function ImageUploader({
   maxFiles = 10,
   vehicleId,
   buildId,
+  carSlug,  // For cross-feature image sharing (Garage <-> Tuning Shop)
   existingImages = [],
   disabled = false,
   showPreviews = true, // Set to false when using a separate gallery component
@@ -158,6 +159,7 @@ export default function ImageUploader({
         contentType: file.type,
         vehicleId: vehicleId || null,
         buildId: buildId || null,
+        carSlug: carSlug || null,  // For cross-feature image sharing
         isPrimary: shouldBePrimary,
         duration: duration,
       }),

@@ -1,0 +1,5356 @@
+[
+  {
+    "index": 1,
+    "slug": "acura-integra-type-r-dc2",
+    "name": "Acura Integra Type R",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2530,
+        "new_value": 2639,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "1.8L NA I4 VTEC B18C5",
+        "new_value": "1.8L DOHC I4 VTEC (B18C5)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 24000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 25000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 2,
+    "slug": "acura-integra-type-s-dc5",
+    "name": "Acura Integra Type S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3228,
+        "new_value": 3219,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.2,
+        "new_value": 5.1,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 3,
+    "slug": "acura-nsx-na1",
+    "name": "Acura NSX NA1",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.7,
+        "new_value": 5.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 162,
+        "new_value": 168,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Naturally Aspirated V6",
+        "new_value": "3.0L DOHC V6 VTEC (C30A)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "5MT",
+        "new_value": "5MT/4AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 89000,
+        "new_value": 62000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 4,
+    "slug": "acura-nsx-nc1",
+    "name": "Acura NSX NC1",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3878,
+        "new_value": 3868,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "new_value": "3.5L Twin-Turbo V6 Hybrid",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "Japan",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 157500,
+        "new_value": 156000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 215000,
+        "new_value": 171495,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 5,
+    "slug": "acura-rsx-type-s-dc5",
+    "name": "Acura RSX Type-S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2778,
+        "new_value": 2840,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 6.4,
+        "new_value": 6.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 140,
+        "new_value": 142,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L DOHC i-VTEC I4",
+        "new_value": "2.0L DOHC I4 i-VTEC (K20A2)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 23820,
+        "new_value": 23270,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 24820,
+        "new_value": 24270,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 6,
+    "slug": "acura-tl-type-s-ua6",
+    "name": "Acura TL Type-S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3814,
+        "new_value": 3674,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.7,
+        "new_value": 5.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 150,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.5L VTEC V6",
+        "new_value": "3.5L SOHC V6 VTEC",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT",
+        "new_value": "6MT/5AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "Japan",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 35000,
+        "new_value": 36000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 7,
+    "slug": "acura-tsx-cl9",
+    "name": "Acura TSX",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 200,
+        "new_value": 205,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 166,
+        "new_value": 164,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3230,
+        "new_value": 3268,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 7.2,
+        "new_value": 7.1,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 140,
+        "new_value": 138,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.4L Naturally Aspirated I4",
+        "new_value": "2.4L DOHC I4 i-VTEC (K24A2)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "5AT/6MT",
+        "new_value": "6MT/5AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 32000,
+        "new_value": 28990,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 8,
+    "slug": "acura-tsx-cu2",
+    "name": "Acura TSX CU2",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3417,
+        "new_value": 3400,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 7.1,
+        "new_value": 7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 130,
+        "new_value": 138,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.4L DOHC i-VTEC I4",
+        "new_value": "2.4L DOHC I4 i-VTEC (K24Z3)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "5AT/6MT",
+        "new_value": "6MT/5AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 28800,
+        "new_value": 30095,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 35800,
+        "new_value": 35320,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 9,
+    "slug": "alfa-romeo-4c",
+    "name": "Alfa Romeo 4C",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "1.75L Turbo I4",
+        "new_value": "1.7L Turbocharged I4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 55900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 72000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 10,
+    "slug": "alfa-romeo-giulia-quadrifoglio",
+    "name": "Alfa Romeo Giulia Quadrifoglio",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3800,
+        "new_value": 3649,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.9L TT V6",
+        "new_value": "2.9L Twin-Turbo V6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 74000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 82000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 11,
+    "slug": "aston-martin-db11-db11",
+    "name": "Aston Martin DB11",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 630,
+        "new_value": 600,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 4134,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.5,
+        "new_value": 3.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 208,
+        "new_value": 200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Twin-Turbo V8 / 5.2L Twin-Turbo V12",
+        "new_value": "5.2L Twin-Turbo V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 205600,
+        "new_value": 198995,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 12,
+    "slug": "aston-martin-db9-first-generation",
+    "name": "Aston Martin DB9",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 470,
+        "new_value": 450,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 443,
+        "new_value": 420,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 3770,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.6,
+        "new_value": 4.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 190,
+        "new_value": 186,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.0L Naturally Aspirated V12",
+        "new_value": "5.9L V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6AT",
+        "new_value": "6MT/6AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 184000,
+        "new_value": 165000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 220000,
+        "new_value": 205000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 13,
+    "slug": "aston-martin-dbs-superleggera-2018",
+    "name": "Aston Martin DBS Superleggera",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 4068,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 316300,
+        "new_value": 304995,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 370000,
+        "new_value": 340000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 14,
+    "slug": "aston-martin-v12-vantage-1st-gen",
+    "name": "Aston Martin V12 Vantage",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 565,
+        "new_value": 510,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 457,
+        "new_value": 420,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3835,
+        "new_value": 3704,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 205,
+        "new_value": 190,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.0L Naturally Aspirated V12",
+        "new_value": "5.9L V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT",
+        "new_value": "6MT/7AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 180000,
+        "new_value": 179995,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 220000,
+        "new_value": 215000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 15,
+    "slug": "aston-martin-v8-vantage",
+    "name": "Aston Martin V8 Vantage",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 346,
+        "new_value": 347,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3570,
+        "new_value": 3594,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.7,
+        "new_value": 4.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 119000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 145000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 16,
+    "slug": "aston-martin-vantage-2018-2024",
+    "name": "Aston Martin Vantage",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3704,
+        "new_value": 3373,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 139000,
+        "new_value": 140000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 185000,
+        "new_value": 165000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 17,
+    "slug": "audi-a3-1-8-tfsi-8v",
+    "name": "Audi A3 1.8 TFSI (8V)",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 170,
+        "new_value": 178,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 200,
+        "new_value": 184,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3120,
+        "new_value": 2965,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 7.3,
+        "new_value": 7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 130,
+        "new_value": 150,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/7DCT",
+        "new_value": "7DCT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 30900,
+        "new_value": 29900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 38000,
+        "new_value": 34000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 18,
+    "slug": "audi-a4-b8",
+    "name": "Audi A4 2.0T B8",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3638,
+        "new_value": 3516,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 6.2,
+        "new_value": 6.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/CVT/8AT",
+        "new_value": "6MT/8AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "drivetrain",
+        "old_value": "FWD",
+        "new_value": "FWD/AWD",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 32500,
+        "new_value": 33200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 45000,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 19,
+    "slug": "audi-a4-b8-5",
+    "name": "Audi A4 2.0T B8.5",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3638,
+        "new_value": 3516,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 6.3,
+        "new_value": 6.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "CVT/8AT/6MT",
+        "new_value": "6MT/8AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "drivetrain",
+        "old_value": "FWD",
+        "new_value": "FWD/AWD",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 33395,
+        "new_value": 35600,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 45000,
+        "new_value": 44000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 20,
+    "slug": "audi-r8-v10",
+    "name": "Audi R8 V10",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 398,
+        "new_value": 391,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3660,
+        "new_value": 3715,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.4,
+        "new_value": 3.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/S-Tronic",
+        "new_value": "6MT/7DCT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 149000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 175000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 21,
+    "slug": "audi-r8-v8",
+    "name": "Audi R8 V8",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3594,
+        "new_value": 3638,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.1,
+        "new_value": 4.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 187,
+        "new_value": 188,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/R-Tronic",
+        "new_value": "6MT/7DCT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 118000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 135000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 22,
+    "slug": "audi-rs3-8v",
+    "name": "Audi RS3 8V",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 394,
+        "new_value": 395,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3450,
+        "new_value": 3494,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.9,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 174,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.5L Turbo I5",
+        "new_value": "2.5L Turbocharged I5",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 23,
+    "slug": "audi-rs3-8y",
+    "name": "Audi RS3 8Y",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 401,
+        "new_value": 400,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3516,
+        "new_value": 3615,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.5L Turbo I5",
+        "new_value": "2.5L Turbocharged I5",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 65000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 24,
+    "slug": "audi-rs5-b8",
+    "name": "Audi RS5 B8",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4045,
+        "new_value": 4050,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.5,
+        "new_value": 4.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.2L NA V8",
+        "new_value": "4.2L V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 68900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 25,
+    "slug": "audi-rs5-b9",
+    "name": "Audi RS5 B9",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3990,
+        "new_value": 3814,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.7,
+        "new_value": 3.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.9L TT V6",
+        "new_value": "2.9L Twin-Turbo V6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 74900,
+        "new_value": 74200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 82900,
+        "new_value": 82000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 26,
+    "slug": "audi-rs6-avant-c8",
+    "name": "Audi RS6 Avant C8",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4585,
+        "new_value": 4575,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.6,
+        "new_value": 3.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Twin-Turbo V8",
+        "new_value": "4.0L Twin-Turbo V8 MHEV",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 109000,
+        "new_value": 117000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 130000,
+        "new_value": 125000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 27,
+    "slug": "audi-rs7-c8",
+    "name": "Audi RS7 Sportback",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4586,
+        "new_value": 4553,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 190,
+        "new_value": 155,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Twin-Turbo V8",
+        "new_value": "4.0L Twin-Turbo V8 MHEV",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 115595,
+        "new_value": 118500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 140000,
+        "new_value": 130000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 28,
+    "slug": "audi-s4-b5",
+    "name": "Audi S4 B5",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 265,
+        "new_value": 261,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3660,
+        "new_value": 3329,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.6,
+        "new_value": 5.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.7L Twin-Turbo V6",
+        "new_value": "2.7L V6 BiTurbo",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/5AT",
+        "new_value": "6MT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 45000,
+        "new_value": 40000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 55000,
+        "new_value": 45000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 29,
+    "slug": "audi-s4-b6",
+    "name": "Audi S4 B6",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 344,
+        "new_value": 340,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3748,
+        "new_value": 3825,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.6,
+        "new_value": 5.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT",
+        "new_value": "6MT/6AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 48000,
+        "new_value": 46000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 52000,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 30,
+    "slug": "audi-s4-b7",
+    "name": "Audi S4 B7",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 344,
+        "new_value": 340,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 3660,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.1,
+        "new_value": 5.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.2L Naturally Aspirated V8",
+        "new_value": "4.2L V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 49900,
+        "new_value": 47000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 58900,
+        "new_value": 52000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 31,
+    "slug": "audi-s4-b8",
+    "name": "Audi S4 B8",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4078,
+        "new_value": 3803,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "7DCT",
+        "new_value": "6MT/7DCT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 47000,
+        "new_value": 49900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 52000,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 32,
+    "slug": "audi-s4-b9",
+    "name": "Audi S4 B9",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 3759,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Turbocharged V6 TFSI",
+        "new_value": "3.0L Turbocharged V6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 57100,
+        "new_value": 53100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 64900,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 33,
+    "slug": "audi-s5-b8",
+    "name": "Audi S5 B8",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 333,
+        "new_value": 354,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 4034,
+        "new_value": 4067,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Supercharged V6",
+        "new_value": "4.2L V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "7DCT",
+        "new_value": "6MT/6AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 52200,
+        "new_value": 51900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 65000,
+        "new_value": 58000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 34,
+    "slug": "audi-s5-b9",
+    "name": "Audi S5 B9",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 354,
+        "new_value": 349,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3957,
+        "new_value": 3726,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.4,
+        "new_value": 4.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 55300,
+        "new_value": 54500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 74900,
+        "new_value": 62000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 35,
+    "slug": "audi-tt-rs-8j",
+    "name": "Audi TT RS 8J",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3306,
+        "new_value": 3312,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.1,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 174,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.5L Turbo I5",
+        "new_value": "2.5L Turbocharged I5",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/7DCT",
+        "new_value": "6MT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 56850,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 36,
+    "slug": "audi-tt-rs-8s",
+    "name": "Audi TT RS 8S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3307,
+        "new_value": 3197,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.5L Turbo I5",
+        "new_value": "2.5L Turbocharged I5",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 67900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 37,
+    "slug": "bmw-1m-coupe-e82",
+    "name": "BMW 1 Series M Coupe",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 332,
+        "new_value": 369,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3362,
+        "new_value": 3296,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6 N54",
+        "new_value": "3.0L Twin-Turbo I6 (N54)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 47010,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 47010,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 38,
+    "slug": "bmw-135i-e82",
+    "name": "BMW 135i N54",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 300,
+        "new_value": 306,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 300,
+        "new_value": 295,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3296,
+        "new_value": 3273,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.7,
+        "new_value": 5.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Twin-Turbo Inline-6 (N54)",
+        "new_value": "3.0L Twin-Turbo I6 (N54)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 31300,
+        "new_value": 36600,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 34700,
+        "new_value": 40000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 39,
+    "slug": "bmw-335i-e90",
+    "name": "BMW 335i E90",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 300,
+        "new_value": 302,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 300,
+        "new_value": 295,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3450,
+        "new_value": 3549,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 42400,
+        "new_value": 43100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 48000,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 40,
+    "slug": "bmw-340i-f30",
+    "name": "BMW 340i F30",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3455,
+        "new_value": 3686,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.1,
+        "new_value": 4.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Twin-Turbo I6",
+        "new_value": "3.0L Turbocharged I6 (B58)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "8AT",
+        "new_value": "6MT/8AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "drivetrain",
+        "old_value": "RWD",
+        "new_value": "RWD/AWD",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 45950,
+        "new_value": 48000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 54900,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 41,
+    "slug": "bmw-i4-m50-g26",
+    "name": "BMW i4 M50",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 536,
+        "new_value": 544,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 140,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "Single-Speed",
+        "new_value": "1-Speed",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 67300,
+        "new_value": 69900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 42,
+    "slug": "bmw-m2-competition",
+    "name": "BMW M2 Competition",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6",
+        "new_value": "3.0L Twin-Turbo I6 (S55)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 58900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 63000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 43,
+    "slug": "bmw-m2-g87",
+    "name": "BMW M2 G87",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 453,
+        "new_value": 480,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 406,
+        "new_value": 443,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3814,
+        "new_value": 3924,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.1,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 177,
+        "new_value": 155,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Twin-Turbo Inline-6 (S58)",
+        "new_value": "3.0L Twin-Turbo I6 (S58)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT / 8AT",
+        "new_value": "6MT/8AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 63195,
+        "new_value": 64500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 69995,
+        "new_value": 70000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 44,
+    "slug": "bmw-m3-e30",
+    "name": "BMW M3 E30",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2866,
+        "new_value": 2646,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 146,
+        "new_value": 144,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.3L Naturally Aspirated I4 (S14)",
+        "new_value": "2.3L I4 (S14)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 46000,
+        "new_value": 34950,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 50000,
+        "new_value": 37000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 45,
+    "slug": "bmw-m3-e36",
+    "name": "BMW M3 E36",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.5,
+        "new_value": 5.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.2L Naturally Aspirated I6",
+        "new_value": "3.2L I6 (S52)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "5MT",
+        "new_value": "5MT/5AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 36000,
+        "new_value": 38000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 42000,
+        "new_value": 44000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 46,
+    "slug": "bmw-m3-e46",
+    "name": "BMW M3 E46",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "3.2L NA I6 S54",
+        "new_value": "3.2L I6 (S54)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/SMG",
+        "new_value": "6MT/6SMG",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 48500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 47,
+    "slug": "bmw-m3-e92",
+    "name": "BMW M3 E92",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.1,
+        "new_value": 4.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L NA V8 S65",
+        "new_value": "4.0L V8 (S65)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 58900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 72000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 48,
+    "slug": "bmw-m3-f80",
+    "name": "BMW M3 F80",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3540,
+        "new_value": 3516,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.9,
+        "new_value": 4.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6 S55",
+        "new_value": "3.0L Twin-Turbo I6 (S55)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 64200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 49,
+    "slug": "bmw-m3-g80",
+    "name": "BMW M3 G80",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3890,
+        "new_value": 3759,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "drivetrain",
+        "old_value": "RWD",
+        "new_value": "RWD/AWD",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 72300,
+        "new_value": 73795,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 84700,
+        "new_value": 95000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 50,
+    "slug": "bmw-m340i-g20",
+    "name": "BMW M340i G20",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 382,
+        "new_value": 374,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3814,
+        "new_value": 3968,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.2,
+        "new_value": 4.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Twin-Turbo I6",
+        "new_value": "3.0L Turbocharged I6 (B58)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "drivetrain",
+        "old_value": "AWD",
+        "new_value": "RWD/AWD",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 54700,
+        "new_value": 57100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 65000,
+        "new_value": 62000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 51,
+    "slug": "bmw-m4-csl-g82",
+    "name": "BMW M4 CSL",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 543,
+        "new_value": 542,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3640,
+        "new_value": 3583,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L Twin-Turbo I6",
+        "new_value": "3.0L Twin-Turbo I6 (S58)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 139900,
+        "new_value": 140895,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 159900,
+        "new_value": 145000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 52,
+    "slug": "bmw-m4-f82",
+    "name": "BMW M4 F82",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3580,
+        "new_value": 3466,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.9,
+        "new_value": 4.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6",
+        "new_value": "3.0L Twin-Turbo I6 (S55)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 66200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 78000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 53,
+    "slug": "bmw-m5-e39",
+    "name": "BMW M5 E39",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 369,
+        "new_value": 368,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3968,
+        "new_value": 4024,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.9L NA V8 S62",
+        "new_value": "4.9L V8 (S62)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 69400,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 73000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 54,
+    "slug": "bmw-m5-e60",
+    "name": "BMW M5 E60",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4055,
+        "new_value": 4012,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.0L NA V10 S85",
+        "new_value": "5.0L V10 (S85)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT/7SMG",
+        "new_value": "7SMG",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 85100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 95000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 55,
+    "slug": "bmw-m5-f10-competition",
+    "name": "BMW M5 F10 Competition",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 500,
+        "new_value": 502,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 4370,
+        "new_value": 4123,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.7,
+        "new_value": 3.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.4L TT V8 S63",
+        "new_value": "4.4L Twin-Turbo V8 (S63)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 99395,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 105000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 56,
+    "slug": "bmw-m5-f90-competition",
+    "name": "BMW M5 F90 Competition",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4345,
+        "new_value": 4090,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.1,
+        "new_value": 3.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.4L TT V8 S63",
+        "new_value": "4.4L Twin-Turbo V8 (S63)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 111895,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 120000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 57,
+    "slug": "bmw-z4m-e85-e86",
+    "name": "BMW Z4 M Coupe/Roadster",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 330,
+        "new_value": 343,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 262,
+        "new_value": 269,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3230,
+        "new_value": 3296,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.2L NA I6 S54",
+        "new_value": "3.2L I6 (S54)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 51345,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 58,
+    "slug": "buick-grand-national-g-body",
+    "name": "Buick Grand National",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3545,
+        "new_value": 3580,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 18500,
+        "new_value": 17000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 59,
+    "slug": "cadillac-ats-v-first-generation",
+    "name": "Cadillac ATS-V",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3803,
+        "new_value": 3700,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 69465,
+        "new_value": 70000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 60,
+    "slug": "cadillac-ct4-v-blackwing",
+    "name": "Cadillac CT4-V Blackwing",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3760,
+        "new_value": 3860,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.8,
+        "new_value": 3.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 59990,
+        "new_value": 60995,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 75000,
+        "new_value": 70000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 61,
+    "slug": "cadillac-ct5-v-blackwing",
+    "name": "Cadillac CT5-V Blackwing",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4123,
+        "new_value": 4253,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L Supercharged V8 LT4",
+        "new_value": "6.2L Supercharged V8 (LT4)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "6MT or 10AT",
+        "new_value": "6MT/10AT",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 84990,
+        "new_value": 85595,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 62,
+    "slug": "cadillac-cts-v-gen1",
+    "name": "Cadillac CTS-V Gen 1",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3882,
+        "new_value": 3850,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.7L LS6 V8 (2004-2005), 6.0L LS2 V8 (2006-2007)",
+        "new_value": "5.7L V8 (LS6)/6.0L V8 (LS2)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 50265,
+        "new_value": 49500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 54990,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 63,
+    "slug": "cadillac-cts-v-gen2",
+    "name": "Cadillac CTS-V Gen 2",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4254,
+        "new_value": 4497,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8 LSA",
+        "new_value": "6.2L Supercharged V8 (LSA)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 63465,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 72000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 64,
+    "slug": "cadillac-cts-v-gen3",
+    "name": "Cadillac CTS-V Gen 3",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.6,
+        "new_value": 3.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8 LT4",
+        "new_value": "6.2L Supercharged V8 (LT4)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 85595,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 90000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 65,
+    "slug": "c7-corvette-grand-sport",
+    "name": "C7 Corvette Grand Sport",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3524,
+        "new_value": 3483,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.6,
+        "new_value": 3.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 190,
+        "new_value": 180,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L V8",
+        "new_value": "6.2L V8 (LT1)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 65450,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 66,
+    "slug": "c7-corvette-z06",
+    "name": "C7 Corvette Z06",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3599,
+        "new_value": 3523,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.2,
+        "new_value": 3.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 195,
+        "new_value": 185,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8",
+        "new_value": "6.2L Supercharged V8 (LT4)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 80000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 95000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 67,
+    "slug": "c8-corvette-stingray",
+    "name": "C8 Corvette Stingray",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3535,
+        "new_value": 3366,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L V8",
+        "new_value": "6.2L V8 (LT2)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 64500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 80000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 68,
+    "slug": "camaro-ss-1le",
+    "name": "Camaro SS 1LE",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3793,
+        "new_value": 3700,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.2,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L V8",
+        "new_value": "6.2L V8 (LT1)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 48000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 69,
+    "slug": "camaro-zl1",
+    "name": "Camaro ZL1",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3883,
+        "new_value": 3820,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8",
+        "new_value": "6.2L Supercharged V8 (LT4)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 64000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 74,
+    "slug": "chevrolet-corvette-c5-z06",
+    "name": "Chevrolet Corvette C5 Z06",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3118,
+        "new_value": 3116,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4,
+        "new_value": 3.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.7L NA V8 LS6",
+        "new_value": "5.7L V8 (LS6)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 49000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 53000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 76,
+    "slug": "chevrolet-corvette-c6-z06",
+    "name": "Chevrolet Corvette C6 Z06",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3175,
+        "new_value": 3132,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.6,
+        "new_value": 3.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "7.0L NA V8 LS7",
+        "new_value": "7.0L V8 (LS7)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 72000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 77000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 77,
+    "slug": "chevrolet-corvette-z06-c8",
+    "name": "Chevrolet Corvette C8 Z06",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3434,
+        "new_value": 3666,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.5L Naturally Aspirated DOHC V8 (LT6)",
+        "new_value": "5.5L Flat-Plane V8 (LT6)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 106395,
+        "new_value": 113000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 180000,
+        "new_value": 130000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 82,
+    "slug": "dodge-challenger-hellcat",
+    "name": "Dodge Challenger Hellcat",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4449,
+        "new_value": 4415,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8",
+        "new_value": "6.2L Supercharged V8 (Hellcat)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 65000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 80000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 83,
+    "slug": "dodge-challenger-srt-392",
+    "name": "Dodge Challenger SRT 392",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4232,
+        "new_value": 4250,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.2,
+        "new_value": 4.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.4L NA V8",
+        "new_value": "6.4L V8 (392 HEMI)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 84,
+    "slug": "dodge-charger-hellcat",
+    "name": "Dodge Charger Hellcat",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 707,
+        "new_value": 717,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 650,
+        "new_value": 656,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 4560,
+        "new_value": 4575,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.7,
+        "new_value": 3.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 204,
+        "new_value": 196,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.2L SC V8",
+        "new_value": "6.2L Supercharged V8 (Hellcat)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 70000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 85000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 85,
+    "slug": "dodge-charger-srt-392",
+    "name": "Dodge Charger SRT 392",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 4365,
+        "new_value": 4400,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "6.4L NA V8",
+        "new_value": "6.4L V8 (392 HEMI)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 47000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 87,
+    "slug": "dodge-viper",
+    "name": "Dodge Viper",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3374,
+        "new_value": 3377,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.3,
+        "new_value": 3.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 89995,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 120000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 88,
+    "slug": "ferrari-296-gtb-2022-2024",
+    "name": "Ferrari 296 GTB",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3485,
+        "new_value": 3395,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 321400,
+        "new_value": 322986,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 89,
+    "slug": "ferrari-458-italia",
+    "name": "Ferrari 458 Italia",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.4,
+        "new_value": 3.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.5L Naturally Aspirated V8",
+        "new_value": "4.5L V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 270000,
+        "new_value": 260000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 90,
+    "slug": "ferrari-458-speciale",
+    "name": "Ferrari 458 Speciale",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3179,
+        "new_value": 3045,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.5L Naturally Aspirated V8",
+        "new_value": "4.5L V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 291744,
+        "new_value": 290000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 350000,
+        "new_value": 320000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 91,
+    "slug": "ferrari-488-gtb-2015-2019",
+    "name": "Ferrari 488 GTB",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3,
+        "new_value": 2.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 245400,
+        "new_value": 247800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 275000,
+        "new_value": 280000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 92,
+    "slug": "ferrari-488-pista",
+    "name": "Ferrari 488 Pista",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 710,
+        "new_value": 711,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3053,
+        "new_value": 3152,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 2.9,
+        "new_value": 2.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 350670,
+        "new_value": 350000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 400000,
+        "new_value": 380000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 93,
+    "slug": "ferrari-812-superfast",
+    "name": "Ferrari 812 Superfast",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "6.5L Naturally Aspirated V12",
+        "new_value": "6.5L V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 335275,
+        "new_value": 340000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 365000,
+        "new_value": 400000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 95,
+    "slug": "ferrari-f8-tributo",
+    "name": "Ferrari F8 Tributo",
+    "changes": [
+      {
+        "field": "msrp_new_high",
+        "old_value": 350000,
+        "new_value": 320000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 96,
+    "slug": "ferrari-roma-2020",
+    "name": "Ferrari Roma",
+    "changes": [
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 218670,
+        "new_value": 222000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 250000,
+        "new_value": 260000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 97,
+    "slug": "ferrari-sf90-stradale-2019-2024",
+    "name": "Ferrari SF90 Stradale",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "4.0L Twin-Turbo V8 + Electric Motors",
+        "new_value": "4.0L Twin-Turbo V8 Hybrid",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 507329,
+        "new_value": 507000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 625000,
+        "new_value": 600000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 108,
+    "slug": "ford-focus-rs",
+    "name": "Ford Focus RS",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3464,
+        "new_value": 3434,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.6,
+        "new_value": 4.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.3L Turbo I4",
+        "new_value": "2.3L Turbocharged I4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "Germany",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 36120,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 109,
+    "slug": "ford-focus-st-mk3",
+    "name": "Ford Focus ST Mk3",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 6,
+        "new_value": 5.9,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 154,
+        "new_value": 155,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 23700,
+        "new_value": 24425,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 26000,
+        "new_value": 28000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 122,
+    "slug": "mustang-gt-pp2",
+    "name": "Mustang GT PP2",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3752,
+        "new_value": 3750,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.3,
+        "new_value": 4.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.0L V8",
+        "new_value": "5.0L V8 (Coyote)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 45000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 123,
+    "slug": "shelby-gt350",
+    "name": "Shelby GT350",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3760,
+        "new_value": 3791,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.3,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 175,
+        "new_value": 180,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.2L FP V8",
+        "new_value": "5.2L Flat-Plane V8 (Voodoo)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 60440,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 75000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 124,
+    "slug": "shelby-gt500",
+    "name": "Shelby GT500",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.3,
+        "new_value": 3.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.2L SC V8",
+        "new_value": "5.2L Supercharged V8",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 72900,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 95000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 131,
+    "slug": "honda-civic-si-em1",
+    "name": "Honda Civic Si EM1",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2590,
+        "new_value": 2612,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 6.9,
+        "new_value": 7.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 134,
+        "new_value": 137,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "1.6L DOHC VTEC I4",
+        "new_value": "1.6L DOHC I4 VTEC (B16A2)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 2,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 17000,
+        "new_value": 18000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 132,
+    "slug": "honda-civic-si-ep3",
+    "name": "Honda Civic Si EP3",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2699,
+        "new_value": 2782,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 7,
+        "new_value": 7.5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 135,
+        "new_value": 137,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L VTEC I4",
+        "new_value": "2.0L DOHC I4 i-VTEC (K20A3)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 18000,
+        "new_value": 19500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 20500,
+        "new_value": 21000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 133,
+    "slug": "honda-civic-si-fg2",
+    "name": "Honda Civic Si FG2",
+    "changes": [
+      {
+        "field": "top_speed",
+        "old_value": 140,
+        "new_value": 143,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L DOHC i-VTEC I4",
+        "new_value": "2.0L DOHC I4 i-VTEC (K20Z3)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 21990,
+        "new_value": 21500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 23990,
+        "new_value": 23000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 134,
+    "slug": "honda-civic-type-r-fk8",
+    "name": "Honda Civic Type R FK8",
+    "changes": [
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5,
+        "new_value": 5.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L Turbo I4",
+        "new_value": "2.0L Turbocharged I4 VTEC",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 36300,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 135,
+    "slug": "honda-civic-type-r-fl5",
+    "name": "Honda Civic Type R FL5",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3211,
+        "new_value": 3183,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L Turbo I4",
+        "new_value": "2.0L Turbocharged I4 VTEC",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 44895,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 48000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 139,
+    "slug": "honda-s2000",
+    "name": "Honda S2000",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 240,
+        "new_value": 237,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 2835,
+        "new_value": 2864,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.4,
+        "new_value": 6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L/2.2L NA I4 VTEC",
+        "new_value": "2.2L DOHC I4 VTEC (F22C1)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 32800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 35000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 161,
+    "slug": "lamborghini-aventador-lp700-4",
+    "name": "Lamborghini Aventador LP 700-4",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "6.5L Naturally Aspirated V12",
+        "new_value": "6.5L V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 393695,
+        "new_value": 387000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 441600,
+        "new_value": 420000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 162,
+    "slug": "lamborghini-aventador-svj",
+    "name": "Lamborghini Aventador SVJ",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "6.5L Naturally Aspirated V12",
+        "new_value": "6.5L V12",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 517770,
+        "new_value": 517700,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 573966,
+        "new_value": 600000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 164,
+    "slug": "lamborghini-huracan-lp610-4",
+    "name": "Lamborghini Huracán LP 610-4",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 610,
+        "new_value": 602,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.2,
+        "new_value": 3.1,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.2L Naturally Aspirated V10",
+        "new_value": "5.2L V10",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 199800,
+        "new_value": 237250,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 275000,
+        "new_value": 260000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 165,
+    "slug": "lamborghini-huracan-performante",
+    "name": "Lamborghini Huracán Performante",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 640,
+        "new_value": 631,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.2L Naturally Aspirated V10",
+        "new_value": "5.2L V10",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 274390,
+        "new_value": 275000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 320000,
+        "new_value": 300000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 166,
+    "slug": "lamborghini-huracan-sto",
+    "name": "Lamborghini Huracán STO",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 630,
+        "new_value": 631,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 417,
+        "new_value": 443,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3373,
+        "new_value": 2952,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "5.2L Naturally Aspirated V10",
+        "new_value": "5.2L V10",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 400000,
+        "new_value": 360000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 187,
+    "slug": "mazda-mx5-miata-na",
+    "name": "Mazda MX-5 Miata NA",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 128,
+        "new_value": 116,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 110,
+        "new_value": 100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 8.5,
+        "new_value": 8.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "1.6L/1.8L NA I4",
+        "new_value": "1.6L DOHC I4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 13800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 16000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 190,
+    "slug": "mazda-mx5-miata-nd",
+    "name": "Mazda MX-5 Miata ND",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2341,
+        "new_value": 2352,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.7,
+        "new_value": 5.6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 135,
+        "new_value": 136,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L NA I4",
+        "new_value": "2.0L SKYACTIV-G I4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 28050,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 40000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 191,
+    "slug": "mazda-rx7-fd3s",
+    "name": "Mazda RX-7 FD3S",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 276,
+        "new_value": 255,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 231,
+        "new_value": 217,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 2850,
+        "new_value": 2800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.8,
+        "new_value": 5.2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "1.3L Twin-Turbo Rotary",
+        "new_value": "1.3L Twin-Turbo Rotary (13B-REW)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 37000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 193,
+    "slug": "mazda-mazdaspeed3-bl",
+    "name": "Mazdaspeed3",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3153,
+        "new_value": 3200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.4,
+        "new_value": 5.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 23485,
+        "new_value": 23700,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 25995,
+        "new_value": 26000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 195,
+    "slug": "mclaren-570s-2015",
+    "name": "McLaren 570S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3186,
+        "new_value": 2895,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 188000,
+        "new_value": 192500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 196,
+    "slug": "mclaren-600lt-2018-2020",
+    "name": "McLaren 600LT",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2976,
+        "new_value": 2859,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 280000,
+        "new_value": 270000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 198,
+    "slug": "mclaren-720s",
+    "name": "McLaren 720S",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3186,
+        "new_value": 3139,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 2.9,
+        "new_value": 2.8,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 284745,
+        "new_value": 299000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 315000,
+        "new_value": 340000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 199,
+    "slug": "mclaren-765lt-2020-2022",
+    "name": "McLaren 765LT",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3164,
+        "new_value": 2952,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United Kingdom",
+        "new_value": "UK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 420000,
+        "new_value": 400000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 226,
+    "slug": "nissan-350z",
+    "name": "Nissan 350Z",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 306,
+        "new_value": 287,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 268,
+        "new_value": 274,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3336,
+        "new_value": 3188,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.2,
+        "new_value": 5.4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.5L V6 VQ35",
+        "new_value": "3.5L V6 (VQ35DE)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 26200,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 33000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 227,
+    "slug": "nissan-370z-nismo",
+    "name": "Nissan 370Z NISMO",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3370,
+        "new_value": 3372,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.8,
+        "new_value": 4.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 168,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.7L V6",
+        "new_value": "3.7L V6 (VQ37VHR)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 44000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 229,
+    "slug": "nissan-gt-r",
+    "name": "Nissan GT-R",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "3.8L TT V6",
+        "new_value": "3.8L Twin-Turbo V6 (VR38DETT)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 115000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 220000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 236,
+    "slug": "nissan-z-rz34",
+    "name": "Nissan Z",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3536,
+        "new_value": 3486,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.5,
+        "new_value": 4.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 155,
+        "new_value": 160,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L TT V6 VR30DDTT",
+        "new_value": "3.0L Twin-Turbo V6 (VR30DDTT)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 42500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 55000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 240,
+    "slug": "718-cayman-gt4",
+    "name": "718 Cayman GT4",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3227,
+        "new_value": 3128,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L NA Flat-6",
+        "new_value": "4.0L Flat-6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 103650,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 120000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 248,
+    "slug": "porsche-718-cayman-gt4-rs-982",
+    "name": "Porsche 718 Cayman GT4 RS",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3227,
+        "new_value": 3009,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Naturally Aspirated Flat-6",
+        "new_value": "4.0L Flat-6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 165000,
+        "new_value": 143050,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 200000,
+        "new_value": 170000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 251,
+    "slug": "porsche-911-gt3-992",
+    "name": "Porsche 911 GT3 992",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 502,
+        "new_value": 503,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 346,
+        "new_value": 347,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 3164,
+        "new_value": 3126,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 197,
+        "new_value": 199,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Naturally Aspirated Flat-6",
+        "new_value": "4.0L Flat-6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "7PDK/6MT",
+        "new_value": "6MT/7PDK",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 161100,
+        "new_value": 169700,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 254,
+    "slug": "porsche-911-gt3-rs-992",
+    "name": "Porsche 911 GT3 RS 992",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 342,
+        "new_value": 343,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "4.0L Naturally Aspirated Flat-6",
+        "new_value": "4.0L Flat-6",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 223800,
+        "new_value": 225250,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 300000,
+        "new_value": 280000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 257,
+    "slug": "porsche-911-turbo-s-992",
+    "name": "Porsche 911 Turbo S 992",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3640,
+        "new_value": 3636,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 230400,
+        "new_value": 218500,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 280000,
+        "new_value": 250000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 272,
+    "slug": "subaru-brz-zd8",
+    "name": "Subaru BRZ (2nd Gen)",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2835,
+        "new_value": 2800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.4,
+        "new_value": 6.1,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.4L NA H4",
+        "new_value": "2.4L Boxer-4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 30195,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 35000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 280,
+    "slug": "subaru-wrx-sti-va",
+    "name": "Subaru WRX STI VA",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3391,
+        "new_value": 3450,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.5L Turbo H4",
+        "new_value": "2.5L Turbocharged Boxer-4 (EJ257)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 37245,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 281,
+    "slug": "tesla-model-3-performance",
+    "name": "Tesla Model 3 Performance",
+    "changes": [
+      {
+        "field": "hp",
+        "old_value": 450,
+        "new_value": 460,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "torque",
+        "old_value": 471,
+        "new_value": 547,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "curb_weight",
+        "old_value": 4065,
+        "new_value": 4081,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 3.1,
+        "new_value": 3.3,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "top_speed",
+        "old_value": 162,
+        "new_value": 163,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "Dual Motor Electric",
+        "new_value": "Dual Electric Motors",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "Direct",
+        "new_value": "1-Speed",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 53990,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 282,
+    "slug": "tesla-model-y-performance-2020",
+    "name": "Tesla Model Y Performance",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "Dual Motor Electric AWD",
+        "new_value": "Dual Electric Motors",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "trans",
+        "old_value": "Single-Speed Fixed Gear",
+        "new_value": "1-Speed",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "United States",
+        "new_value": "USA",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 7,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 54190,
+        "new_value": 52990,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 67190,
+        "new_value": 58000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 286,
+    "slug": "toyota-gr-corolla-e210",
+    "name": "Toyota GR Corolla",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3249,
+        "new_value": 3252,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "1.6L Turbocharged 3-Cylinder",
+        "new_value": "1.6L Turbocharged I3",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": 36998,
+        "new_value": 36100,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": 45998,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 287,
+    "slug": "toyota-gr-supra",
+    "name": "Toyota GR Supra",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 365,
+        "new_value": 368,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6",
+        "new_value": "3.0L Turbocharged I6 (B58)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 2,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 43540,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 60000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 288,
+    "slug": "toyota-gr86",
+    "name": "Toyota GR86",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 2811,
+        "new_value": 2800,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.4,
+        "new_value": 6.1,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.4L NA H4",
+        "new_value": "2.4L Boxer-4",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": null,
+        "new_value": 4,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 29300,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 35000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 294,
+    "slug": "toyota-supra-mk4-a80-turbo",
+    "name": "Toyota Supra Mk4 A80 Turbo",
+    "changes": [
+      {
+        "field": "engine",
+        "old_value": "3.0L TT I6 2JZ-GTE",
+        "new_value": "3.0L Twin-Turbo I6 (2JZ-GTE)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 38000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 301,
+    "slug": "volkswagen-golf-r-mk7",
+    "name": "Volkswagen Golf R Mk7",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3314,
+        "new_value": 3269,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L Turbo I4",
+        "new_value": "2.0L Turbocharged I4 (EA888)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 35895,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 42000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 302,
+    "slug": "volkswagen-golf-r-mk8",
+    "name": "Volkswagen Golf R Mk8",
+    "changes": [
+      {
+        "field": "torque",
+        "old_value": 295,
+        "new_value": 310,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 4.4,
+        "new_value": 4.7,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L Turbo I4",
+        "new_value": "2.0L Turbocharged I4 (EA888)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 45165,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 50000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  },
+  {
+    "index": 307,
+    "slug": "volkswagen-gti-mk7",
+    "name": "Volkswagen GTI Mk7",
+    "changes": [
+      {
+        "field": "curb_weight",
+        "old_value": 3088,
+        "new_value": 3047,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "zero_to_sixty",
+        "old_value": 5.7,
+        "new_value": 6,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "engine",
+        "old_value": "2.0L Turbo I4",
+        "new_value": "2.0L Turbocharged I4 (EA888)",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "country",
+        "old_value": "Japan",
+        "new_value": "Germany",
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "seats",
+        "old_value": 4,
+        "new_value": 5,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_low",
+        "old_value": null,
+        "new_value": 26415,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      },
+      {
+        "field": "msrp_new_high",
+        "old_value": null,
+        "new_value": 35000,
+        "source": "Verified from Car and Driver, MotorTrend, Manufacturer specs"
+      }
+    ],
+    "verified": true
+  }
+]

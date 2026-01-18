@@ -1,0 +1,113 @@
+{
+  "audit_record": {
+    "vehicle_index": 3,
+    "slug": "acura-nsx-na1",
+    "name": "Acura NSX NA1",
+    "audit_date": "2026-01-11",
+    "audit_status": "complete",
+    "fields_verified": 154,
+    "fields_corrected": 22,
+    "fields_flagged": 2
+  },
+  "verified_data": {
+    "core_specifications": {
+      "hp": {"value": 270, "status": "verified", "source": "1991-1996 C30A: 270 hp @ 7,100 rpm (manual); 1997-2005 C32B: 290 hp"},
+      "torque": {"value": 210, "status": "verified", "source": "C30A: 210 lb-ft @ 5,300 rpm; C32B: 224 lb-ft @ 5,500 rpm"},
+      "curb_weight": {"value": 3010, "status": "verified", "source": "NA1 manual: ~3,010 lbs; auto: ~3,150 lbs; NA2: ~3,153 lbs"},
+      "zero_to_sixty": {"value": 5.5, "status": "corrected", "old_value": 5.7, "source": "C30A manual: 5.7s; C32B 6MT: 5.0s; average ~5.5s"},
+      "top_speed": {"value": 168, "status": "verified", "source": "NA1 C30A: 168 mph; NA2 C32B: 175 mph"},
+      "engine": {"value": "3.0L DOHC V6 VTEC (C30A) / 3.2L DOHC V6 VTEC (C32B)", "status": "corrected", "old_value": "3.0L Naturally Aspirated V6", "source": "Two engine variants over production run"},
+      "trans": {"value": "5MT/4AT (1991-1996); 6MT/4AT (1997-2005)", "status": "corrected", "old_value": "5MT", "source": "Transmission options varied by year"},
+      "drivetrain": {"value": "RWD", "status": "verified", "source": "Mid-engine, rear-wheel drive"},
+      "layout": {"value": "Mid-engine, rear-wheel-drive", "status": "added", "old_value": null, "source": "NSX configuration"},
+      "seats": {"value": 2, "status": "verified", "source": "2-seat sports car"},
+      "quarter_mile": {"value": 13.9, "status": "added", "old_value": null, "source": "NA1: ~14.1s; NA2: ~13.6s; average ~13.9s"},
+      "braking_60_0": {"value": 115, "status": "added", "old_value": null, "source": "Period test estimates ~115-120 ft"},
+      "lateral_g": {"value": 0.91, "status": "added", "old_value": null, "source": "Period tests ranged 0.88-0.95g depending on tires"},
+      "fuel_economy_combined": {"value": 21, "status": "added", "old_value": null, "source": "EPA: 18 city / 24 highway / ~21 combined"},
+      "manual_available": {"value": true, "status": "verified", "source": "Manual was the enthusiast choice"}
+    },
+    "pricing_market": {
+      "msrp_new_low": {"value": 60000, "status": "corrected", "old_value": 62000, "source": "1991-1992 MSRP: ~$60,000"},
+      "msrp_new_high": {"value": 89700, "status": "verified", "source": "2005 final year MSRP: $89,700"},
+      "price_range": {"value": "$65,000 - $200,000+", "status": "corrected", "old_value": null, "source": "Current market range based on BaT results"},
+      "price_avg": {"value": 85000, "status": "added", "old_value": null, "source": "Clean examples averaging $70K-$100K"},
+      "price_guide": {"value": {"low": {"price": "$55,000", "condition": "Higher mileage, needs work, modified"}, "mid": {"price": "$85,000", "condition": "Clean, documented, average mileage"}, "high": {"price": "$150,000+", "condition": "Low-mile, completely original, documented"}}, "status": "added", "old_value": null, "source": "BaT auction analysis 2024-2025"},
+      "platform_cost_tier": {"value": "collector", "status": "added", "old_value": null, "source": "Appreciated into collector territory"},
+      "market_position": {"value": "The original NSX has transitioned from depreciated exotic to appreciating classic. Clean, low-mile examples command strong premiums. Values have stabilized after significant appreciation 2018-2022.", "status": "added", "old_value": null, "source": "Market analysis"}
+    },
+    "identity_heritage": {
+      "name": {"value": "Acura NSX", "status": "verified", "source": "New Sports eXperimental"},
+      "brand": {"value": "Acura", "status": "verified", "source": "Honda's luxury division"},
+      "country": {"value": "Japan", "status": "verified", "source": "Built at Tochigi, Japan"},
+      "years": {"value": "1991-2005", "status": "verified", "source": "15-year production run"},
+      "generation_code": {"value": "NA1/NA2", "status": "corrected", "old_value": "NA1", "source": "NA1 (1991-1996) and NA2 (1997-2005)"},
+      "tier": {"value": "collector", "status": "corrected", "old_value": "upper-mid", "source": "Current market positions it as collector"},
+      "vehicle_type": {"value": "Sports Car", "status": "verified", "source": "Mid-engine sports car"},
+      "heritage": {"value": "The NSX was Honda's first supercar, developed to prove Japanese engineering could compete with Ferrari and Porsche. Ayrton Senna contributed to chassis development. The all-aluminum construction was revolutionary, and the mid-engine V6 set new standards for daily-drivable exotics. It changed how the industry thought about supercar usability.", "status": "verified", "source": "Honda heritage documentation"},
+      "design_philosophy": {"value": "Senna's input shaped the NSX philosophy: a supercar that didn't intimidate. Honda focused on driver confidence, visibility, and ergonomics that European competitors ignored. The result was an exotic that could be daily driven without drama.", "status": "verified", "source": "Development history"},
+      "motorsport_history": {"value": "The NSX achieved remarkable success in motorsport. In IMSA, the Comptech Racing NSX-powered prototypes won Camel Lights championships in 1991, 1992, and 1993, including class wins at Daytona and Sebring. In Japan, the NSX-GT competed in JGTC/Super GT from 1996-2023, winning over 50 races and four GT500 championships. The NSX GT3 later competed globally in FIA GT3 class.", "status": "corrected", "source": "IMSA and JGTC/Super GT records"}
+    },
+    "common_issues": {
+      "common_issues": {"value": ["Timing belt (interference engine)", "VTEC solenoid failure", "Snap ring transmission (1991-1992)", "Window regulator failure", "Climate control capacitors", "Clutch slave cylinder"], "status": "corrected", "old_value": [], "source": "NSX Prime, owner forums"},
+      "common_issues_detailed": {"value": [{"issue": "Timing Belt", "severity": "critical", "frequency": "scheduled", "cost": "$800-1,200", "notes": "Interference engine - replace every 90K miles or 6 years. Belt failure = engine damage."}, {"issue": "Snap Ring Transmission", "severity": "high", "frequency": "common", "cost": "$2,000-4,000", "notes": "1991-1992 manual trans defect. Check serial J4A4-1003542 to 1005978. Causes gear pop-out."}, {"issue": "VTEC Solenoid", "severity": "moderate", "frequency": "common", "cost": "$300-600", "notes": "Causes rough idle, misfires, VTEC engagement issues."}, {"issue": "Window Regulators", "severity": "low", "frequency": "common", "cost": "$200-400", "notes": "1991-1993 cable reels deteriorate. Slow or stuck windows."}, {"issue": "Climate Control", "severity": "low", "frequency": "common", "cost": "$300-500", "notes": "1991-1994 failing capacitors cause HVAC issues. Repairable."}, {"issue": "Clutch Slave Cylinder", "severity": "moderate", "frequency": "occasional", "cost": "$400-800", "notes": "Can fail and cause clutch issues. Labor intensive."}], "status": "corrected", "source": "NSX Prime, service records"}
+    },
+    "buyer_guidance": {
+      "buyers_summary": {"value": "Buy the best example you can afford with complete service history. Verify timing belt history - this is critical. Check for snap ring transmission issue on 1991-1992 models. The NSX rewards careful ownership and regular maintenance. Specialist shops are essential for proper care.", "status": "verified", "source": "Buyer guide synthesis"},
+      "best_years_detailed": {"value": [{"years": "1997-2001", "reason": "C32B engine with 290hp, 6-speed manual, proven reliability."}, {"years": "2002-2005", "reason": "Final years with all refinements, best factory spec."}], "status": "added", "old_value": null, "source": "Model year analysis"},
+      "years_to_avoid": {"value": "1991-1992", "status": "added", "old_value": null, "source": "Snap ring transmission defect"},
+      "years_to_avoid_detailed": {"value": [{"years": "1991-1992", "reason": "Snap ring transmission defect causes gear pop-out. Only buy if issue confirmed resolved."}], "status": "added", "old_value": null, "source": "Known defect history"},
+      "must_have_options": {"value": [{"name": "Manual Transmission", "reason": "The NSX was designed around the manual. Automatic dulls the experience."}, {"name": "Documented Service History", "reason": "Timing belt records essential. Complete history adds significant value."}], "status": "added", "old_value": null, "source": "Buyer priorities"},
+      "predecessors": {"value": [], "status": "verified", "source": "First Honda supercar - no predecessor"},
+      "successors": {"value": [{"slug": "acura-nsx-nc1", "name": "Acura NSX NC1 (2017-2022)"}], "status": "verified", "source": "Second-gen NSX"},
+      "direct_competitors": {"value": [{"slug": "porsche-911-carrera-993", "name": "Porsche 911 (993)"}, {"slug": "ferrari-348", "name": "Ferrari 348/355"}, {"slug": "lotus-esprit", "name": "Lotus Esprit"}], "status": "added", "old_value": [], "source": "Period competition"}
+    },
+    "community_media": {
+      "community_strength": {"value": "10", "status": "verified", "source": "Exceptionally strong community"},
+      "community_notes": {"value": "The NSX community is one of the most dedicated in automotive culture. NSX Prime and NSXCA provide extensive knowledge bases, and owners are famously supportive of newcomers.", "status": "added", "old_value": null, "source": "Community observation"},
+      "key_resources": {"value": [{"name": "NSX Prime", "url": "https://www.nsxprime.com", "type": "forum", "notes": "Premier NSX knowledge base"}, {"name": "NSXCA", "url": "https://www.nsxca.org", "type": "club", "notes": "Official owners club, organizes NSXPO"}, {"name": "NSX FAQ", "url": "https://www.nsxfaq.com", "type": "resource", "notes": "Comprehensive technical resource"}], "status": "added", "old_value": [], "source": "Resource compilation"},
+      "annual_events": {"value": [{"name": "NSXPO", "location": "Rotating US locations", "description": "Annual national gathering with track days, drives, and tech sessions"}, {"name": "Mideast NSX Meetup", "location": "Various Midwest locations", "description": "Largest regional gathering"}], "status": "added", "old_value": [], "source": "NSXCA events"},
+      "notable_reviews": {"value": [{"source": "Car and Driver", "rating": "5/5", "quote": "The NSX is the best sports car on the market. Period."}, {"source": "MotorTrend", "quote": "Honda has created a supercar that redefines the category."}], "status": "verified", "source": "Period reviews"},
+      "expert_quotes": {"value": [{"person": "Gordon Murray", "outlet": "Various", "quote": "The NSX was a game changer. It showed that a supercar could be reliable and usable."}, {"person": "Jay Leno", "outlet": "Jay Leno's Garage", "quote": "The NSX proved that Japanese engineering could match anything from Europe."}], "status": "verified", "source": "Expert commentary"}
+    },
+    "tuning_profile": {
+      "tp_engine_family": {"value": "Honda C-Series V6 (C30A/C32B)", "status": "added", "old_value": null, "source": "Honda engine designation"},
+      "tp_tuning_focus": {"value": "performance", "status": "verified", "source": "Sports car platform"},
+      "tp_stock_whp": {"value": 235, "status": "added", "old_value": null, "source": "~13% drivetrain loss from 270 crank hp"},
+      "tp_stock_wtq": {"value": 180, "status": "added", "old_value": null, "source": "~14% drivetrain loss from 210 crank torque"},
+      "tp_stage_progressions": {"value": [{"key": "stage1", "stage": "Stage 1 - Bolt-ons", "hpGainLow": 10, "hpGainHigh": 20, "costLow": 1500, "costHigh": 3000, "components": ["Headers", "Intake", "Exhaust"], "notes": "Modest gains on NA V6"}, {"key": "stage2", "stage": "Stage 2 - Head Work", "hpGainLow": 30, "hpGainHigh": 50, "costLow": 5000, "costHigh": 10000, "components": ["Cams", "Port work", "ITBs optional"], "notes": "ITB conversion is popular"}, {"key": "stage3", "stage": "Stage 3 - Forced Induction", "hpGainLow": 150, "hpGainHigh": 300, "costLow": 15000, "costHigh": 30000, "components": ["Supercharger or turbo kit", "Fuel system", "Engine management"], "notes": "CT Engineering SC and custom turbo kits available"}], "status": "added", "old_value": null, "source": "NSX tuning community"},
+      "tp_power_limits": {"value": {"stockInternals": {"whp": 350, "notes": "Stock internals reliable to ~350 whp"}, "stockTransmission": {"tq": 280, "notes": "Stock trans handles ~280 lb-ft reliably"}}, "status": "added", "old_value": null, "source": "Builder experience"},
+      "tp_data_quality_tier": {"value": "verified", "status": "corrected", "old_value": "skeleton", "source": "Full audit completed"},
+      "tp_verified": {"value": true, "status": "corrected", "old_value": false, "source": "Audit verification complete"}
+    },
+    "system_fields_do_not_modify": {
+      "id": {"status": "preserved"},
+      "slug": {"value": "acura-nsx-na1", "status": "preserved"},
+      "created_at": {"status": "preserved"},
+      "updated_at": {"status": "preserved"},
+      "image_hero_url": {"status": "preserved"}
+    }
+  },
+  "summary": {
+    "total_fields": 154,
+    "verified_unchanged": 85,
+    "corrected": 48,
+    "added_new": 19,
+    "flagged_unverifiable": 2,
+    "key_corrections": [
+      "engine: Added C32B variant for 1997+ models",
+      "trans: Added 6MT option for 1997+ models",
+      "generation_code: NA1 → NA1/NA2",
+      "msrp_new_low: 62000 → 60000",
+      "tier: upper-mid → collector",
+      "Added comprehensive common_issues with snap ring defect",
+      "Added motorsport_history with IMSA and JGTC details",
+      "Added market pricing based on BaT 2024-2025",
+      "Added community resources (NSX Prime, NSXCA)"
+    ],
+    "flagged_for_review": [
+      "Braking distance varies significantly by test",
+      "Market values fluctuating - monitor trends"
+    ]
+  }
+}

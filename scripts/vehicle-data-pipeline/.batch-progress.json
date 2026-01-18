@@ -1,0 +1,973 @@
+{
+  "processed": [
+    {
+      "slug": "ford-f150-thirteenth",
+      "name": "Ford F-150",
+      "completion": 84,
+      "processedAt": "2026-01-12T04:01:37.473Z"
+    },
+    {
+      "slug": "ford-f150-fourteenth-generation",
+      "name": "Ford F-150",
+      "completion": 84,
+      "processedAt": "2026-01-12T04:03:57.396Z"
+    },
+    {
+      "slug": "jeep-wrangler-jk",
+      "name": "Jeep Wrangler JK",
+      "completion": 79,
+      "processedAt": "2026-01-12T04:06:40.067Z"
+    },
+    {
+      "slug": "jeep-wrangler-jl",
+      "name": "Jeep Wrangler JL",
+      "completion": 80,
+      "processedAt": "2026-01-12T04:09:26.765Z"
+    },
+    {
+      "slug": "ford-mustang-gt-fox-body",
+      "name": "Ford Mustang GT Fox Body",
+      "completion": 83,
+      "processedAt": "2026-01-12T04:11:36.207Z"
+    },
+    {
+      "slug": "ford-mustang-gt-sn95",
+      "name": "Ford Mustang GT SN95",
+      "completion": 58,
+      "processedAt": "2026-01-12T04:13:56.152Z"
+    },
+    {
+      "slug": "ford-mustang-svt-cobra-sn95",
+      "name": "Ford Mustang SVT Cobra",
+      "completion": 80,
+      "processedAt": "2026-01-12T04:15:51.842Z"
+    },
+    {
+      "slug": "ford-mustang-cobra-terminator",
+      "name": "Ford Mustang SVT Cobra Terminator",
+      "completion": 79,
+      "processedAt": "2026-01-12T04:18:44.139Z"
+    },
+    {
+      "slug": "ford-mustang-boss-302",
+      "name": "Ford Mustang Boss 302",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:20:55.995Z"
+    },
+    {
+      "slug": "mustang-gt-pp2",
+      "name": "Mustang GT PP2",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:23:40.501Z"
+    },
+    {
+      "slug": "shelby-gt350",
+      "name": "Shelby GT350",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:25:58.999Z"
+    },
+    {
+      "slug": "shelby-gt500",
+      "name": "Shelby GT500",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:28:30.713Z"
+    },
+    {
+      "slug": "ford-mustang-fastback-1967-1968",
+      "name": "Ford Mustang Fastback",
+      "completion": 55,
+      "processedAt": "2026-01-12T04:30:59.509Z"
+    },
+    {
+      "slug": "chevrolet-silverado-1500-fourth-generation",
+      "name": "Chevrolet Silverado 1500",
+      "completion": 83,
+      "processedAt": "2026-01-12T04:33:55.997Z"
+    },
+    {
+      "slug": "chevrolet-silverado-zr2-t1xx",
+      "name": "Chevrolet Silverado ZR2",
+      "completion": 83,
+      "processedAt": "2026-01-12T04:36:30.260Z"
+    },
+    {
+      "slug": "volkswagen-gti-mk4",
+      "name": "Volkswagen GTI Mk4",
+      "completion": 83,
+      "processedAt": "2026-01-12T04:38:49.544Z"
+    },
+    {
+      "slug": "volkswagen-gti-mk5",
+      "name": "Volkswagen GTI Mk5",
+      "completion": 84,
+      "processedAt": "2026-01-12T04:41:30.381Z"
+    },
+    {
+      "slug": "volkswagen-gti-mk6",
+      "name": "Volkswagen GTI Mk6",
+      "completion": 80,
+      "processedAt": "2026-01-12T04:44:24.480Z"
+    },
+    {
+      "slug": "volkswagen-gti-mk7",
+      "name": "Volkswagen GTI Mk7",
+      "completion": 79,
+      "processedAt": "2026-01-12T04:46:53.519Z"
+    },
+    {
+      "slug": "chevrolet-corvette-c5-z06",
+      "name": "Chevrolet Corvette C5 Z06",
+      "completion": 77,
+      "processedAt": "2026-01-12T04:49:35.655Z"
+    },
+    {
+      "slug": "chevrolet-corvette-c6-z06",
+      "name": "Chevrolet Corvette C6 Z06",
+      "completion": 77,
+      "processedAt": "2026-01-12T04:52:02.775Z"
+    },
+    {
+      "slug": "chevrolet-corvette-c6-grand-sport",
+      "name": "Chevrolet Corvette C6 Grand Sport",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:54:25.269Z"
+    },
+    {
+      "slug": "c7-corvette-z06",
+      "name": "C7 Corvette Z06",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:56:54.171Z"
+    },
+    {
+      "slug": "c7-corvette-grand-sport",
+      "name": "C7 Corvette Grand Sport",
+      "completion": 78,
+      "processedAt": "2026-01-12T04:59:40.307Z"
+    },
+    {
+      "slug": "c8-corvette-stingray",
+      "name": "C8 Corvette Stingray",
+      "completion": 82,
+      "processedAt": "2026-01-12T05:03:15.604Z"
+    },
+    {
+      "slug": "chevrolet-corvette-z06-c8",
+      "name": "Chevrolet Corvette C8 Z06",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:05:38.362Z"
+    },
+    {
+      "slug": "toyota-tacoma-n300",
+      "name": "Toyota Tacoma",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:07:48.910Z"
+    },
+    {
+      "slug": "toyota-tacoma-trd-pro-3rd-gen",
+      "name": "Toyota Tacoma TRD Pro",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:10:04.602Z"
+    },
+    {
+      "slug": "toyota-tacoma-2024",
+      "name": "Toyota Tacoma",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:12:12.847Z"
+    },
+    {
+      "slug": "subaru-impreza-wrx-gc8",
+      "name": "Subaru Impreza WRX GC8",
+      "completion": 84,
+      "processedAt": "2026-01-12T05:14:53.109Z"
+    },
+    {
+      "slug": "subaru-wrx-sti-gc8",
+      "name": "Subaru Impreza WRX STI",
+      "completion": 84,
+      "processedAt": "2026-01-12T05:17:05.201Z"
+    },
+    {
+      "slug": "subaru-wrx-sti-gd",
+      "name": "Subaru Impreza WRX STI GD",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:20:10.247Z"
+    },
+    {
+      "slug": "subaru-wrx-sti-gr-gv",
+      "name": "Subaru WRX STI GR/GV",
+      "completion": 79,
+      "processedAt": "2026-01-12T05:22:49.454Z"
+    },
+    {
+      "slug": "subaru-wrx-sti-va",
+      "name": "Subaru WRX STI VA",
+      "completion": 78,
+      "processedAt": "2026-01-12T05:25:20.846Z"
+    },
+    {
+      "slug": "ram-1500-dt",
+      "name": "Ram 1500",
+      "completion": 81,
+      "processedAt": "2026-01-12T05:27:54.519Z"
+    },
+    {
+      "slug": "ram-1500-rebel-dt",
+      "name": "Ram 1500 Rebel",
+      "completion": 81,
+      "processedAt": "2026-01-12T05:30:08.305Z"
+    },
+    {
+      "slug": "ram-1500-trx-dt",
+      "name": "Ram 1500 TRX",
+      "completion": 92,
+      "processedAt": "2026-01-12T05:32:09.086Z"
+    },
+    {
+      "slug": "bmw-335i-e90",
+      "name": "BMW 335i E90",
+      "completion": 83,
+      "processedAt": "2026-01-12T05:34:32.427Z"
+    },
+    {
+      "slug": "bmw-340i-f30",
+      "name": "BMW 340i F30",
+      "completion": 83,
+      "processedAt": "2026-01-12T05:37:03.155Z"
+    },
+    {
+      "slug": "bmw-m340i-g20",
+      "name": "BMW M340i G20",
+      "completion": 83,
+      "processedAt": "2026-01-12T05:39:08.919Z"
+    },
+    {
+      "slug": "chevrolet-camaro-ss-ls1",
+      "name": "Chevrolet Camaro SS LS1",
+      "completion": 79,
+      "processedAt": "2026-01-12T13:52:02.229Z"
+    },
+    {
+      "slug": "chevrolet-camaro-z28-second-generation",
+      "name": "Chevrolet Camaro Z28",
+      "completion": 55,
+      "processedAt": "2026-01-12T13:54:11.442Z"
+    },
+    {
+      "slug": "chevrolet-camaro-ss-1969",
+      "name": "Chevrolet Camaro SS (1969)",
+      "completion": 55,
+      "processedAt": "2026-01-12T13:56:13.768Z"
+    },
+    {
+      "slug": "camaro-ss-1le",
+      "name": "Camaro SS 1LE",
+      "completion": 78,
+      "processedAt": "2026-01-12T13:58:38.070Z"
+    },
+    {
+      "slug": "camaro-zl1",
+      "name": "Camaro ZL1",
+      "completion": 78,
+      "processedAt": "2026-01-12T14:01:16.755Z"
+    },
+    {
+      "slug": "honda-civic-si-em1",
+      "name": "Honda Civic Si EM1",
+      "completion": 80,
+      "processedAt": "2026-01-12T14:03:41.225Z"
+    },
+    {
+      "slug": "honda-civic-si-ep3",
+      "name": "Honda Civic Si EP3",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:05:43.786Z"
+    },
+    {
+      "slug": "honda-civic-si-fg2",
+      "name": "Honda Civic Si FG2",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:08:46.693Z"
+    },
+    {
+      "slug": "honda-civic-type-r-fk8",
+      "name": "Honda Civic Type R FK8",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:11:46.625Z"
+    },
+    {
+      "slug": "honda-civic-type-r-fl5",
+      "name": "Honda Civic Type R FL5",
+      "completion": 78,
+      "processedAt": "2026-01-12T14:14:45.445Z"
+    },
+    {
+      "slug": "ford-bronco-sixth-generation",
+      "name": "Ford Bronco",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:17:27.900Z"
+    },
+    {
+      "slug": "ford-bronco-raptor-sixth-generation",
+      "name": "Ford Bronco Raptor",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:19:57.772Z"
+    },
+    {
+      "slug": "ram-2500-cummins-ds",
+      "name": "Ram 2500 Cummins",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:22:35.445Z"
+    },
+    {
+      "slug": "ram-power-wagon-dt",
+      "name": "Ram 2500 Power Wagon",
+      "completion": 81,
+      "processedAt": "2026-01-12T14:24:49.299Z"
+    },
+    {
+      "slug": "ford-f250-powerstroke-fourth-generation",
+      "name": "Ford F-250 Power Stroke",
+      "completion": 84,
+      "processedAt": "2026-01-12T14:27:26.363Z"
+    },
+    {
+      "slug": "mazda-mx5-miata-na",
+      "name": "Mazda MX-5 Miata NA",
+      "completion": 78,
+      "processedAt": "2026-01-12T14:29:52.897Z"
+    },
+    {
+      "slug": "mazda-mx5-miata-nb",
+      "name": "Mazda MX-5 Miata NB",
+      "completion": 78,
+      "processedAt": "2026-01-12T14:33:36.426Z"
+    },
+    {
+      "slug": "mazda-mx5-miata-nc",
+      "name": "Mazda MX-5 Miata NC",
+      "completion": 77,
+      "processedAt": "2026-01-12T14:36:51.021Z"
+    },
+    {
+      "slug": "mazda-mx5-miata-nd",
+      "name": "Mazda MX-5 Miata ND",
+      "completion": 77,
+      "processedAt": "2026-01-12T14:39:38.667Z"
+    },
+    {
+      "slug": "toyota-4runner-trd-pro-n280",
+      "name": "Toyota 4Runner TRD Pro",
+      "completion": 80,
+      "processedAt": "2026-01-12T14:41:58.245Z"
+    },
+    {
+      "slug": "dodge-challenger-srt-392",
+      "name": "Dodge Challenger SRT 392",
+      "completion": 78,
+      "processedAt": "2026-01-12T14:44:29.799Z"
+    },
+    {
+      "slug": "dodge-challenger-hellcat",
+      "name": "Dodge Challenger Hellcat",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:47:17.224Z"
+    },
+    {
+      "slug": "volkswagen-golf-r-mk7",
+      "name": "Volkswagen Golf R Mk7",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:50:01.003Z"
+    },
+    {
+      "slug": "volkswagen-golf-r-mk8",
+      "name": "Volkswagen Golf R Mk8",
+      "completion": 79,
+      "processedAt": "2026-01-12T14:52:32.704Z"
+    },
+    {
+      "slug": "volkswagen-r32-mk4",
+      "name": "Volkswagen R32 Mk4",
+      "completion": 83,
+      "processedAt": "2026-01-12T14:55:08.784Z"
+    },
+    {
+      "slug": "bmw-m3-e30",
+      "name": "BMW M3 E30",
+      "completion": 83,
+      "processedAt": "2026-01-12T14:57:31.567Z"
+    },
+    {
+      "slug": "bmw-m3-e36",
+      "name": "BMW M3 E36",
+      "completion": 83,
+      "processedAt": "2026-01-12T15:00:21.182Z"
+    },
+    {
+      "slug": "bmw-m3-e46",
+      "name": "BMW M3 E46",
+      "completion": 78,
+      "processedAt": "2026-01-12T15:02:42.241Z"
+    },
+    {
+      "slug": "bmw-m3-e92",
+      "name": "BMW M3 E92",
+      "completion": 78,
+      "processedAt": "2026-01-12T15:05:25.481Z"
+    },
+    {
+      "slug": "bmw-m3-f80",
+      "name": "BMW M3 F80",
+      "completion": 78,
+      "processedAt": "2026-01-12T15:08:31.721Z"
+    },
+    {
+      "slug": "bmw-m3-g80",
+      "name": "BMW M3 G80",
+      "completion": 79,
+      "processedAt": "2026-01-12T15:10:59.440Z"
+    },
+    {
+      "slug": "bmw-m4-f82",
+      "name": "BMW M4 F82",
+      "completion": 78,
+      "processedAt": "2026-01-12T15:13:36.032Z"
+    },
+    {
+      "slug": "bmw-m4-csl-g82",
+      "name": "BMW M4 CSL",
+      "completion": 78,
+      "processedAt": "2026-01-12T15:16:04.870Z"
+    },
+    {
+      "slug": "porsche-911-gt3-996",
+      "name": "Porsche 911 GT3 996",
+      "completion": 77,
+      "processedAt": "2026-01-12T15:51:36.022Z"
+    },
+    {
+      "slug": "porsche-911-gt3-997",
+      "name": "Porsche 911 GT3 997",
+      "completion": 84,
+      "processedAt": "2026-01-12T15:53:52.539Z"
+    },
+    {
+      "slug": "porsche-911-gt3-9912",
+      "name": "Porsche 911 GT3 991.2",
+      "completion": 82,
+      "processedAt": "2026-01-12T15:56:28.577Z"
+    },
+    {
+      "slug": "porsche-911-gt3-992",
+      "name": "Porsche 911 GT3 992",
+      "completion": 82,
+      "processedAt": "2026-01-12T15:58:58.662Z"
+    },
+    {
+      "slug": "porsche-911-gt3-rs-992",
+      "name": "Porsche 911 GT3 RS 992",
+      "completion": 83,
+      "processedAt": "2026-01-12T16:01:03.544Z"
+    },
+    {
+      "slug": "porsche-911-gt2-rs-991",
+      "name": "Porsche 911 GT2 RS 991",
+      "completion": 82,
+      "processedAt": "2026-01-12T16:03:38.844Z"
+    },
+    {
+      "slug": "porsche-911-turbo-997-1",
+      "name": "Porsche 911 Turbo 997.1",
+      "completion": 78,
+      "processedAt": "2026-01-12T16:06:14.173Z"
+    },
+    {
+      "slug": "porsche-911-turbo-997-2",
+      "name": "Porsche 911 Turbo 997.2",
+      "completion": 85,
+      "processedAt": "2026-01-12T16:08:58.375Z"
+    },
+    {
+      "slug": "porsche-911-turbo-s-992",
+      "name": "Porsche 911 Turbo S 992",
+      "completion": 82,
+      "processedAt": "2026-01-12T16:11:32.831Z"
+    },
+    {
+      "slug": "991-1-carrera-s",
+      "name": "991.1 Carrera S",
+      "completion": 82,
+      "processedAt": "2026-01-12T16:14:13.237Z"
+    },
+    {
+      "slug": "997-2-carrera-s",
+      "name": "997.2 Carrera S",
+      "completion": 78,
+      "processedAt": "2026-01-12T16:16:41.194Z"
+    },
+    {
+      "slug": "dodge-charger-srt-392",
+      "name": "Dodge Charger SRT 392",
+      "completion": 79,
+      "processedAt": "2026-01-12T16:19:08.737Z"
+    },
+    {
+      "slug": "dodge-charger-hellcat",
+      "name": "Dodge Charger Hellcat",
+      "completion": 78,
+      "processedAt": "2026-01-12T16:21:32.208Z"
+    },
+    {
+      "slug": "acura-integra-type-r-dc2",
+      "name": "Acura Integra Type R",
+      "completion": 78,
+      "processedAt": "2026-01-12T16:24:07.569Z"
+    },
+    {
+      "slug": "acura-integra-type-s-dc5",
+      "name": "Acura Integra Type S",
+      "completion": 80,
+      "processedAt": "2026-01-12T16:26:38.164Z"
+    },
+    {
+      "slug": "acura-rsx-type-s-dc5",
+      "name": "Acura RSX Type-S",
+      "completion": 79,
+      "processedAt": "2026-01-12T16:29:06.008Z"
+    },
+    {
+      "slug": "gmc-sierra-1500-fourth-generation",
+      "name": "GMC Sierra 1500",
+      "completion": 83,
+      "processedAt": "2026-01-12T16:31:20.454Z"
+    },
+    {
+      "slug": "gmc-sierra-at4x-k2xx",
+      "name": "GMC Sierra AT4X",
+      "completion": 83,
+      "processedAt": "2026-01-12T16:33:30.448Z"
+    },
+    {
+      "slug": "audi-s4-b5",
+      "name": "Audi S4 B5",
+      "completion": 84,
+      "processedAt": "2026-01-12T16:36:05.921Z"
+    },
+    {
+      "slug": "audi-s4-b6",
+      "name": "Audi S4 B6",
+      "completion": 80,
+      "processedAt": "2026-01-12T16:38:20.072Z"
+    },
+    {
+      "slug": "audi-s4-b7",
+      "name": "Audi S4 B7",
+      "completion": 80,
+      "processedAt": "2026-01-12T16:40:51.499Z"
+    },
+    {
+      "slug": "audi-s4-b8",
+      "name": "Audi S4 B8",
+      "completion": 80,
+      "processedAt": "2026-01-12T16:43:26.766Z"
+    },
+    {
+      "slug": "audi-s4-b9",
+      "name": "Audi S4 B9",
+      "completion": 83,
+      "processedAt": "2026-01-12T16:45:51.640Z"
+    },
+    {
+      "slug": "audi-a4-b8",
+      "name": "Audi A4 2.0T B8",
+      "completion": 80,
+      "processedAt": "2026-01-12T16:48:24.271Z"
+    },
+    {
+      "slug": "audi-a4-b8-5",
+      "name": "Audi A4 2.0T B8.5",
+      "completion": 81,
+      "processedAt": "2026-01-12T16:50:52.864Z"
+    },
+    {
+      "slug": "nissan-240sx-s13",
+      "name": "Nissan 240SX S13",
+      "completion": 83,
+      "processedAt": "2026-01-12T16:53:20.685Z"
+    },
+    {
+      "slug": "nissan-240sx-s14",
+      "name": "Nissan 240SX S14",
+      "completion": 79,
+      "processedAt": "2026-01-12T16:55:51.296Z"
+    },
+    {
+      "slug": "nissan-silvia-s15",
+      "name": "Nissan Silvia S15",
+      "completion": 84,
+      "processedAt": "2026-01-12T16:58:18.672Z"
+    },
+    {
+      "slug": "toyota-tundra-3rd-gen",
+      "name": "Toyota Tundra",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:00:39.745Z"
+    },
+    {
+      "slug": "toyota-tundra-trd-pro-xk70",
+      "name": "Toyota Tundra TRD Pro",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:02:49.795Z"
+    },
+    {
+      "slug": "ford-focus-st-mk3",
+      "name": "Ford Focus ST Mk3",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:05:23.112Z"
+    },
+    {
+      "slug": "nissan-350z",
+      "name": "Nissan 350Z",
+      "completion": 79,
+      "processedAt": "2026-01-12T17:08:04.168Z"
+    },
+    {
+      "slug": "nissan-370z-nismo",
+      "name": "Nissan 370Z NISMO",
+      "completion": 78,
+      "processedAt": "2026-01-12T17:10:54.692Z"
+    },
+    {
+      "slug": "jeep-gladiator-jt",
+      "name": "Jeep Gladiator",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:13:09.388Z"
+    },
+    {
+      "slug": "jeep-gladiator-rubicon-jt",
+      "name": "Jeep Gladiator Rubicon",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:15:49.376Z"
+    },
+    {
+      "slug": "jeep-gladiator-mojave-jt",
+      "name": "Jeep Gladiator Mojave",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:18:05.538Z"
+    },
+    {
+      "slug": "honda-s2000",
+      "name": "Honda S2000",
+      "completion": 77,
+      "processedAt": "2026-01-12T17:23:14.118Z"
+    },
+    {
+      "slug": "mitsubishi-lancer-evolution-viii",
+      "name": "Mitsubishi Lancer Evolution VIII",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:25:16.971Z"
+    },
+    {
+      "slug": "mitsubishi-lancer-evolution-ix",
+      "name": "Mitsubishi Lancer Evolution IX",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:27:08.924Z"
+    },
+    {
+      "slug": "mitsubishi-lancer-evolution-x",
+      "name": "Mitsubishi Lancer Evolution X",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:29:26.820Z"
+    },
+    {
+      "slug": "mitsubishi-lancer-evo-x",
+      "name": "Mitsubishi Lancer Evolution X",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:31:27.578Z"
+    },
+    {
+      "slug": "mitsubishi-lancer-evo-8-9",
+      "name": "Mitsubishi Lancer Evolution VIII/IX",
+      "completion": 79,
+      "processedAt": "2026-01-12T17:33:21.880Z"
+    },
+    {
+      "slug": "ford-ranger-t6-facelift",
+      "name": "Ford Ranger T6 Facelift",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:36:28.045Z"
+    },
+    {
+      "slug": "ford-ranger-raptor-2024",
+      "name": "Ford Ranger Raptor",
+      "completion": 83,
+      "processedAt": "2026-01-12T17:38:43.307Z"
+    },
+    {
+      "slug": "chevrolet-colorado-zr2-2017-2024",
+      "name": "Chevrolet Colorado ZR2",
+      "completion": 81,
+      "processedAt": "2026-01-12T17:41:35.926Z"
+    },
+    {
+      "slug": "gmc-canyon-at4-2017-2024",
+      "name": "GMC Canyon AT4",
+      "completion": 80,
+      "processedAt": "2026-01-12T17:43:37.494Z"
+    },
+    {
+      "slug": "toyota-86-scion-frs",
+      "name": "Toyota 86 / Scion FR-S",
+      "completion": 78,
+      "processedAt": "2026-01-12T17:47:16.794Z"
+    },
+    {
+      "slug": "toyota-gr86",
+      "name": "Toyota GR86",
+      "completion": 77,
+      "processedAt": "2026-01-12T17:50:11.954Z"
+    },
+    {
+      "slug": "subaru-brz-zc6",
+      "name": "Subaru BRZ",
+      "completion": 79,
+      "processedAt": "2026-01-12T17:53:27.448Z"
+    },
+    {
+      "slug": "subaru-brz-zd8",
+      "name": "Subaru BRZ (2nd Gen)",
+      "completion": 78,
+      "processedAt": "2026-01-12T17:57:04.421Z"
+    },
+    {
+      "slug": "audi-rs3-8v",
+      "name": "Audi RS3 8V",
+      "completion": 78,
+      "processedAt": "2026-01-12T17:59:16.906Z"
+    },
+    {
+      "slug": "audi-rs3-8y",
+      "name": "Audi RS3 8Y",
+      "completion": 78,
+      "processedAt": "2026-01-12T18:01:53.419Z"
+    },
+    {
+      "slug": "audi-a3-1-8-tfsi-8v",
+      "name": "Audi A3 1.8 TFSI (8V)",
+      "completion": 83,
+      "processedAt": "2026-01-12T18:04:40.509Z"
+    },
+    {
+      "slug": "bmw-1m-coupe-e82",
+      "name": "BMW 1 Series M Coupe",
+      "completion": 78,
+      "processedAt": "2026-01-12T18:07:57.384Z"
+    },
+    {
+      "slug": "bmw-135i-e82",
+      "name": "BMW 135i N54",
+      "completion": 83,
+      "processedAt": "2026-01-12T18:10:19.879Z"
+    },
+    {
+      "slug": "bmw-m2-competition",
+      "name": "BMW M2 Competition",
+      "completion": 77,
+      "processedAt": "2026-01-12T18:13:35.630Z"
+    },
+    {
+      "slug": "bmw-m2-g87",
+      "name": "BMW M2 G87",
+      "completion": 82,
+      "processedAt": "2026-01-12T18:16:17.246Z"
+    },
+    {
+      "slug": "mercedes-c63-amg-w204",
+      "name": "Mercedes C63 AMG W204",
+      "completion": 78,
+      "processedAt": "2026-01-12T18:19:39.932Z"
+    },
+    {
+      "slug": "mercedes-amg-c63-w205",
+      "name": "Mercedes-AMG C63 W205",
+      "completion": 77,
+      "processedAt": "2026-01-12T18:23:05.616Z"
+    },
+    {
+      "slug": "toyota-supra-mk4-a80-turbo",
+      "name": "Toyota Supra Mk4 A80 Turbo",
+      "completion": 86,
+      "processedAt": "2026-01-12T18:25:54.955Z"
+    },
+    {
+      "slug": "toyota-gr-supra",
+      "name": "Toyota GR Supra",
+      "completion": 78,
+      "processedAt": "2026-01-12T18:29:49.149Z"
+    },
+    {
+      "slug": "981-cayman-s",
+      "name": "981 Cayman S",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:23:46.578Z"
+    },
+    {
+      "slug": "981-cayman-gts",
+      "name": "981 Cayman GTS",
+      "completion": 82,
+      "processedAt": "2026-01-12T20:26:09.024Z"
+    },
+    {
+      "slug": "987-2-cayman-s",
+      "name": "987.2 Cayman S",
+      "completion": 77,
+      "processedAt": "2026-01-12T20:28:46.049Z"
+    },
+    {
+      "slug": "718-cayman-gt4",
+      "name": "718 Cayman GT4",
+      "completion": 84,
+      "processedAt": "2026-01-12T20:31:47.339Z"
+    },
+    {
+      "slug": "718-cayman-gts-40",
+      "name": "718 Cayman GTS 4.0",
+      "completion": 84,
+      "processedAt": "2026-01-12T20:34:21.440Z"
+    },
+    {
+      "slug": "porsche-718-cayman-gt4-rs-982",
+      "name": "Porsche 718 Cayman GT4 RS",
+      "completion": 82,
+      "processedAt": "2026-01-12T20:36:43.266Z"
+    },
+    {
+      "slug": "porsche-boxster-s-986",
+      "name": "Porsche Boxster S 986",
+      "completion": 82,
+      "processedAt": "2026-01-12T20:39:13.981Z"
+    },
+    {
+      "slug": "porsche-boxster-s-987",
+      "name": "Porsche Boxster S 987",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:41:56.332Z"
+    },
+    {
+      "slug": "porsche-boxster-s-981",
+      "name": "Porsche Boxster S 981",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:44:29.549Z"
+    },
+    {
+      "slug": "porsche-718-boxster-gts-40-982",
+      "name": "Porsche 718 Boxster GTS 4.0",
+      "completion": 82,
+      "processedAt": "2026-01-12T20:46:49.748Z"
+    },
+    {
+      "slug": "nissan-gt-r",
+      "name": "Nissan GT-R",
+      "completion": 78,
+      "processedAt": "2026-01-12T20:49:39.225Z"
+    },
+    {
+      "slug": "nissan-gt-r-nismo-r35",
+      "name": "Nissan GT-R NISMO",
+      "completion": 83,
+      "processedAt": "2026-01-12T20:52:03.923Z"
+    },
+    {
+      "slug": "infiniti-g35-coupe-v35",
+      "name": "Infiniti G35 Coupe",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:54:31.228Z"
+    },
+    {
+      "slug": "infiniti-g37-coupe-cv36",
+      "name": "Infiniti G37 Coupe",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:56:53.220Z"
+    },
+    {
+      "slug": "infiniti-g37-sedan",
+      "name": "Infiniti G37 Sedan",
+      "completion": 79,
+      "processedAt": "2026-01-12T20:59:17.212Z"
+    },
+    {
+      "slug": "jeep-grand-cherokee-wk2",
+      "name": "Jeep Grand Cherokee",
+      "completion": 83,
+      "processedAt": "2026-01-12T21:01:34.826Z"
+    },
+    {
+      "slug": "jeep-grand-cherokee-trackhawk-wk2",
+      "name": "Jeep Grand Cherokee Trackhawk",
+      "completion": 83,
+      "processedAt": "2026-01-12T21:03:55.183Z"
+    },
+    {
+      "slug": "mazda-rx7-fd3s",
+      "name": "Mazda RX-7 FD3S",
+      "completion": 78,
+      "processedAt": "2026-01-12T21:06:28.997Z"
+    },
+    {
+      "slug": "mini-cooper-s-r53",
+      "name": "MINI Cooper S R53",
+      "completion": 80,
+      "processedAt": "2026-01-12T21:08:49.958Z"
+    },
+    {
+      "slug": "mini-cooper-s-r56",
+      "name": "MINI Cooper S R56",
+      "completion": 80,
+      "processedAt": "2026-01-12T21:11:02.628Z"
+    },
+    {
+      "slug": "mini-john-cooper-works-f56",
+      "name": "MINI John Cooper Works F56",
+      "completion": 83,
+      "processedAt": "2026-01-12T21:13:28.857Z"
+    },
+    {
+      "slug": "audi-tt-rs-8j",
+      "name": "Audi TT RS 8J",
+      "completion": 78,
+      "processedAt": "2026-01-12T21:15:46.619Z"
+    },
+    {
+      "slug": "audi-tt-rs-8s",
+      "name": "Audi TT RS 8S",
+      "completion": 78,
+      "processedAt": "2026-01-12T21:20:48.723Z"
+    },
+    {
+      "slug": "ford-focus-rs",
+      "name": "Ford Focus RS",
+      "completion": 80,
+      "processedAt": "2026-01-12T21:23:05.094Z"
+    },
+    {
+      "slug": "chevrolet-camaro-ss-1969",
+      "name": "Chevrolet Camaro SS (1969)",
+      "completion": 57,
+      "processedAt": "2026-01-12T21:24:59.204Z"
+    },
+    {
+      "slug": "chevrolet-camaro-z28-second-generation",
+      "name": "Chevrolet Camaro Z28",
+      "completion": 57,
+      "processedAt": "2026-01-12T21:27:13.279Z"
+    },
+    {
+      "slug": "ford-mustang-fastback-1967-1968",
+      "name": "Ford Mustang Fastback",
+      "completion": 57,
+      "processedAt": "2026-01-12T21:29:19.398Z"
+    }
+  ],
+  "failed": [],
+  "skipped": [],
+  "lastRun": "2026-01-12T21:29:19.398Z"
+}

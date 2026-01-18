@@ -4285,6 +4285,31 @@
   gap: 16px;
 }
 
+/* Photos View - Vehicle photos shared with Tuning Shop */
+.photosView {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.photosHeader {
+  margin-bottom: 8px;
+}
+
+.photosHeader h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.photosHint {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+}
+
 .modsHeader {
   display: flex;
   align-items: center;

@@ -1,0 +1,1663 @@
+{
+  "car_id": "e19213d4-384f-40e2-8c03-0572448e367d",
+  "mode": "full",
+  "version": "2.3",
+  "started_at": "2026-01-13T00:59:58.857Z",
+  "stages": {},
+  "car_name": "Acura NSX NC1",
+  "stage1": {
+    "epa": {
+      "atvType": "Hybrid",
+      "barrels08": "14.167142857142858",
+      "barrelsA08": "0.0",
+      "battery": "-1",
+      "c240Dscr": "",
+      "c240bDscr": "",
+      "charge120": "0.0",
+      "charge240": "0.0",
+      "charge240b": "0.0",
+      "city08": "21",
+      "city08U": "21.0",
+      "cityA08": "0",
+      "cityA08U": "0.0",
+      "cityCD": "0.0",
+      "cityE": "0.0",
+      "cityMpk": "0",
+      "cityUF": "0.0",
+      "cityUmpk": "0.0",
+      "co2": "420",
+      "co2A": "-1",
+      "co2TailpipeAGpm": "0.0",
+      "co2TailpipeGpm": "420.0",
+      "comb08": "21",
+      "comb08U": "21.0",
+      "combA08": "0",
+      "combA08U": "0.0",
+      "combE": "0.0",
+      "combMpk": "0",
+      "combUmpk": "0.0",
+      "combinedCD": "0.0",
+      "combinedUF": "0.0",
+      "createdOn": "2016-05-10T00:00:00-04:00",
+      "cylDeact": "N",
+      "cylDeactYesNo": "No",
+      "cylinders": "6",
+      "displ": "3.5",
+      "drive": "All-Wheel Drive",
+      "emissionsList": {
+        "emissionsInfo": [
+          {
+            "efid": "HHNXV03.5KH4",
+            "id": "37436",
+            "salesArea": "7",
+            "score": "6.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "-1",
+            "standard": "L3ULEV125",
+            "stdText": "LEV-III ULEV125"
+          },
+          {
+            "efid": "HHNXV03.5KH4",
+            "id": "37436",
+            "salesArea": "3",
+            "score": "6.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "-1",
+            "standard": "T3B125",
+            "stdText": "Federal Tier 3 Bin 125"
+          }
+        ]
+      },
+      "engId": "3",
+      "eng_dscr": "SIDI",
+      "evMotor": "260V Li-Ion",
+      "feScore": "4",
+      "fuelCost08": "2800",
+      "fuelCostA08": "0",
+      "fuelType": "Premium",
+      "fuelType1": "Premium Gasoline",
+      "fuelType2": "",
+      "ghgScore": "4",
+      "ghgScoreA": "-1",
+      "guzzler": "",
+      "highway08": "22",
+      "highway08U": "21.7131",
+      "highwayA08": "0",
+      "highwayA08U": "0.0",
+      "highwayCD": "0.0",
+      "highwayE": "0.0",
+      "highwayMpk": "0",
+      "highwayUF": "0.0",
+      "highwayUmpk": "0.0",
+      "hlv": "0",
+      "hpv": "0",
+      "id": "37436",
+      "lv2": "0",
+      "lv4": "0",
+      "make": "Acura",
+      "mfrCode": "HNX",
+      "model": "NSX Hybrid",
+      "modifiedOn": "2017-04-05T00:00:00-04:00",
+      "mpgData": "N",
+      "mpgRevised": "false",
+      "phevBlended": "false",
+      "phevCity": "0",
+      "phevComb": "0",
+      "phevHwy": "0",
+      "pv2": "0",
+      "pv4": "0",
+      "range": "0",
+      "rangeA": "",
+      "rangeCity": "0.0",
+      "rangeCityA": "0.0",
+      "rangeHwy": "0.0",
+      "rangeHwyA": "0.0",
+      "startStop": "Y",
+      "trans_dscr": "",
+      "trany": "Automatic (AM-S9)",
+      "UCity": "28.7",
+      "UCityA": "0.0",
+      "UHighway": "30.2",
+      "UHighwayA": "0.0",
+      "VClass": "Two Seaters",
+      "year": "2017",
+      "youSaveSpend": "-6000",
+      "baseModel": "NSX",
+      "sCharger": "",
+      "tCharger": "T"
+    },
+    "safety": {
+      "OverallRating": "Not Rated",
+      "OverallFrontCrashRating": "Not Rated",
+      "FrontCrashDriversideRating": "Not Rated",
+      "FrontCrashPassengersideRating": "Not Rated",
+      "OverallSideCrashRating": "Not Rated",
+      "SideCrashDriversideRating": "Not Rated",
+      "SideCrashPassengersideRating": "Not Rated",
+      "combinedSideBarrierAndPoleRating-Front": "Not Rated",
+      "combinedSideBarrierAndPoleRating-Rear": "Not Rated",
+      "sideBarrierRating-Overall": "Not Rated",
+      "RolloverRating": "Not Rated",
+      "RolloverRating2": "Not Rated",
+      "RolloverPossibility": 0,
+      "RolloverPossibility2": 0,
+      "dynamicTipResult": " ",
+      "SidePoleCrashRating": "Not Rated",
+      "NHTSAElectronicStabilityControl": "Standard",
+      "NHTSAForwardCollisionWarning": "No",
+      "NHTSALaneDepartureWarning": "No",
+      "ComplaintsCount": 6,
+      "RecallsCount": 3,
+      "InvestigationCount": 1,
+      "ModelYear": 2017,
+      "Make": "ACURA",
+      "Model": "NSX",
+      "VehicleDescription": "2017 Acura NSX 2 DR AWD",
+      "VehicleId": 11520
+    },
+    "recalls": [
+      {
+        "Manufacturer": "Honda (American Honda Motor Co.)",
+        "NHTSACampaignNumber": "18V599000",
+        "parkIt": false,
+        "parkOutSide": false,
+        "overTheAirUpdate": false,
+        "ReportReceivedDate": "07/09/2018",
+        "Component": "ELECTRICAL SYSTEM:WIRING:FUSES AND CIRCUIT BREAKERS",
+        "Summary": "Honda (American Honda Motor Co.) is recalling certain 2017 Acura NSX vehicles.  Road vibrations may cause the metal screws that secure the printed circuit board for the high mounted center brake light to loosen and contact the circuitry, possibly resulting in the brake light fuse blowing and the brake lights not functioning.  As such, these vehicles fail to comply with the requirements of Federal Motor Vehicle Safety Standard (FMVSS) number 108, \"Lamps, Reflective Devices, and Associated Equipment.\"",
+        "Consequence": "Brake lights that do not work increase the risk of a crash.",
+        "Remedy": "Honda will notify owners, and dealers will replace the center high mount brake light, free of charge.  The recall began November 2, 2018.  Owners may contact Acura Client Relations at 1-844-682-2872.  Honda's number for this recall is B2B.",
+        "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.safercar.gov.",
+        "ModelYear": "2017",
+        "Make": "ACURA",
+        "Model": "NSX"
+      },
+      {
+        "Manufacturer": "Honda (American Honda Motor Co.)",
+        "NHTSACampaignNumber": "18V600000",
+        "parkIt": false,
+        "parkOutSide": false,
+        "overTheAirUpdate": false,
+        "ReportReceivedDate": "07/09/2018",
+        "Component": "FUEL SYSTEM, GASOLINE:STORAGE:TANK ASSEMBLY",
+        "Summary": "Honda (American Honda Motor Co.) is recalling certain 2017-2018 Acura NSX vehicles.  The crossover pipe couplers between the left and right fuel tanks may leak.",
+        "Consequence": "A fuel leak in the presence of an ignition source can increase the risk of a fire.",
+        "Remedy": "Honda will notify owners, and dealers will replace the left and right fuel tanks, free of charge.  The recall began February 12, 2019.  Owners may contact Honda customer service at 1-888-234-2138.  Honda's numbers for this recall are U29, and Z28.",
+        "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.safercar.gov.",
+        "ModelYear": "2017",
+        "Make": "ACURA",
+        "Model": "NSX"
+      },
+      {
+        "Manufacturer": "Honda (American Honda Motor Co.)",
+        "NHTSACampaignNumber": "23V858000",
+        "parkIt": false,
+        "parkOutSide": false,
+        "overTheAirUpdate": false,
+        "ReportReceivedDate": "18/12/2023",
+        "Component": "FUEL SYSTEM, GASOLINE:DELIVERY:FUEL PUMP",
+        "Summary": "Honda (American Honda Motor Co.) is recalling certain 2013-2023 Honda Accord, Civic Coupe, Civic Sedan, Civic Hatchback, Civic Type R, CR-V, HR-V, Ridgeline, Odyssey, Acura ILX, MDX, MDX Hybrid, RDX, RLX, TLX, 2019-2022 Honda Insight, Passport, 2020 Honda CR-V Hybrid, 2018-2019 Honda Clarity PHEV, Fit, and 2015-2020 Honda Accord Hybrid, Pilot, Acura NSX vehicles.  The fuel pump inside the fuel tank may fail.",
+        "Consequence": "Fuel pump failure can cause an engine stall while driving, increasing the risk of a crash.",
+        "Remedy": "Dealers will replace the fuel pump module, free of charge.  Owner letters were mailed September 6, 2024.  Owners may contact Honda customer service at 1-888-234-2138.  Honda's numbers for this recall are KGC and KGD.  This recall is an expansion of NHTSA recall numbers 21V-215 and 20V-314.",
+        "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.nhtsa.gov.",
+        "ModelYear": "2017",
+        "Make": "ACURA",
+        "Model": "NSX"
+      }
+    ],
+    "complaints": [
+      {
+        "odiNumber": 11676787,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "07/12/2025",
+        "dateComplaintFiled": "07/28/2025",
+        "vin": "19UNC1B08HY",
+        "components": "FUEL/PROPULSION SYSTEM",
+        "summary": "On my 2017 Acura NSX, Fuel Pump Module have failed on July 12, 2025, while driving on a highway, and the engine stalled coming to a stop in the middle of the freeway. The service dealer at Greensboro Acura confirmed the failed Fuel Pump Module part number is 17708-T6N-A02-M1 and it is clearly listed under NHTSA Recall 23V-858 report on page 11 Component Name 31.  I have reported this incident and explained to Honda/Acura Client Relations Recall division, but was told that there's NO recall on my VIN. I believe Honda/Acura has failed to include this vehicle's VIN as part of the NHTSA Recall 23V-858 clearly includes recall information of the part listed on page 11 of NHTSA Recall 23V-858 report - Component Name 31.  I have included a picture of the part 17708-T6N-A02-M1. I believe Acura/Honda has failed to add my VIN as part of the recall. Now that it has failed and require replacement, I hope you attend to this urgent matter at your earliest convenient time possible.",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      },
+      {
+        "odiNumber": 11673469,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "07/12/2025",
+        "dateComplaintFiled": "07/14/2025",
+        "vin": "19UNC1B08HY",
+        "components": "UNKNOWN OR OTHER,FUEL/PROPULSION SYSTEM",
+        "summary": "My vehicle is 2017 Acura NSX with VIN 19UNC1B08HY000777. My vehicle experienced a fuel pump module failure identical to the known defect under Recall 23V-858, but my VIN is not currently included in the recall. I believe it should be. This is a significant safety matter, as I faced such fuel pump module failure that caused failure of the overall vehicle that came to a stop while I was driving on a freeway. I've never experienced such unsafe events. The car is not drivable and failed in hazardous conditions and is a safety risk. It was towed to the Acura dealer and diagnosed with Fuel Pump Malfunction with DTC P0087 and P2636 identical to known defect under Recall 23V-858. Please review and consider adding my VIN to Recall 23V-858.",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      },
+      {
+        "odiNumber": 11174901,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": true,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "02/07/2019",
+        "dateComplaintFiled": "02/07/2019",
+        "vin": "",
+        "components": "AIR BAGS,STRUCTURE",
+        "summary": "0",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      },
+      {
+        "odiNumber": 11100712,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "05/30/2018",
+        "dateComplaintFiled": "06/09/2018",
+        "vin": "19UNC1B05HY",
+        "components": "ELECTRICAL SYSTEM",
+        "summary": "THE CAR HAS LOST POWER A COUPLE OF TIMES.  WHEN THE CAR'S BATTERY GOES DEAD, YOU CANNOT CLOSE EITHER DOOR ON THIS CAR.  IF YOU HAVE BAD WEATHER THERE IS A GOOD CHANCE THE INTERIOR OF THIS CAR WILL GET DAMAGED.  THERE IS AN ONE INCH GAP BETWEEN THE DOOR AND THE BODY OF THE CAR.  THE DOORS WILL LOCK UP AND YOU CANNOT DO ANYTHING UNTIL POWER IS RESTORED.  IN CASE OF EMERGENCY YOU CANNOT LOCK YOURSELF IN THE CAR AND THERE AGAIN YOU CANNOT SECURE THE VECHICLE IF NEEDING TO GO FOR HELP.  THERE IS ALSO A RATTLE IN BOTH DOORS.  THE DEALERSHIP HAS HAD THE CAR FOR OVER 40 DAYS IN THE FIRST YEAR.",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      },
+      {
+        "odiNumber": 11079506,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "03/12/2018",
+        "dateComplaintFiled": "03/15/2018",
+        "vin": "19UNC1B05HY",
+        "components": "SERVICE BRAKES",
+        "summary": "CARBON FIBER BRAKE ROTORS ARE CRACKING AND ACURA S DOING NOTHING TO CORRECT THE PROBLEM",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      },
+      {
+        "odiNumber": 11076850,
+        "manufacturer": "Honda (American Honda Motor Co.)",
+        "crash": false,
+        "fire": false,
+        "numberOfInjuries": 0,
+        "numberOfDeaths": 0,
+        "dateOfIncident": "02/27/2018",
+        "dateComplaintFiled": "03/08/2018",
+        "vin": "1C4NJPFA0HD",
+        "components": "UNKNOWN OR OTHER,SERVICE BRAKES",
+        "summary": "EVERY TIME YOU ACCELERATE IT MAKES A LOAD RATTLING NOISE & THE A.C.  WORKS WHEN IT WANTS TO ..",
+        "products": [
+          {
+            "type": "Vehicle",
+            "productYear": "2017",
+            "productMake": "ACURA",
+            "productModel": "NSX",
+            "manufacturer": "Honda (American Honda Motor Co.)"
+          }
+        ]
+      }
+    ]
+  },
+  "stage2": {
+    "maintenance": {
+      "oil": {
+        "oil_type": "Full Synthetic",
+        "oil_viscosity": "5W-30",
+        "oil_spec": "Motorcraft SAE 5W-30 Full Synthetic",
+        "oil_capacity_liters": 5.7,
+        "oil_capacity_quarts": 6,
+        "oil_filter_oem_part": "15400-5L0-A01",
+        "oil_filter_alternatives": [
+          "Mahle OX 1156D",
+          "Mann HU 6008 z"
+        ],
+        "oil_change_interval_miles": 7500,
+        "oil_change_interval_months": 12
+      },
+      "coolant": {
+        "coolant_type": "HOAT",
+        "coolant_color": "Blue",
+        "coolant_spec": "Honda Long Life Antifreeze/Coolant Type 2",
+        "coolant_capacity_liters": 10.5,
+        "coolant_change_interval_miles": 120000,
+        "coolant_change_interval_years": 10
+      },
+      "brake_fluid": {
+        "brake_fluid_type": "DOT 3",
+        "brake_fluid_spec": "Honda Heavy Duty Brake Fluid DOT 3",
+        "brake_fluid_change_interval_miles": 45000,
+        "brake_fluid_change_interval_years": 3
+      },
+      "transmission": {
+        "trans_fluid_manual": "N/A",
+        "trans_fluid_manual_capacity": null,
+        "trans_fluid_auto": "Honda ATF DW-1",
+        "trans_fluid_auto_capacity": 6.8,
+        "trans_fluid_change_interval_miles": 100000
+      },
+      "differential": {
+        "diff_fluid_type": "Honda Dual Pump Fluid II",
+        "diff_fluid_front_capacity": 1.2,
+        "diff_fluid_rear_capacity": 1.4,
+        "diff_fluid_change_interval_miles": 100000
+      },
+      "power_steering": {
+        "power_steering_type": "Electric",
+        "power_steering_fluid": "N/A",
+        "power_steering_capacity": null
+      },
+      "fuel": {
+        "fuel_type": "Gasoline",
+        "fuel_octane_minimum": 91,
+        "fuel_octane_recommended": 93,
+        "fuel_tank_capacity_gallons": 18.5,
+        "fuel_tank_capacity_liters": 70
+      },
+      "filters": {
+        "air_filter_oem_part": "17220-5NA-A00",
+        "air_filter_alternatives": [
+          "K&N 33-5037",
+          "Mann C 2295/1"
+        ],
+        "air_filter_change_interval_miles": 30000,
+        "cabin_filter_oem_part": "80292-TK8-A41",
+        "cabin_filter_alternatives": [
+          "Mann CU 2545",
+          "K&N VF2045"
+        ],
+        "cabin_filter_change_interval_miles": 15000,
+        "fuel_filter_oem_part": "In-tank (non-serviceable)",
+        "fuel_filter_in_tank": true,
+        "fuel_filter_change_interval_miles": null
+      },
+      "tires": {
+        "tire_size_front": "245/35ZR19",
+        "tire_size_rear": "305/30ZR20",
+        "tire_pressure_front_psi": 33,
+        "tire_pressure_rear_psi": 33,
+        "tire_pressure_spare_psi": null,
+        "tire_rotation_pattern": "Cannot rotate (staggered sizes)",
+        "tire_rotation_interval_miles": null,
+        "tire_oem_brand": "Continental SportContact 6",
+        "tire_recommended_brands": [
+          "Continental",
+          "Michelin",
+          "Pirelli"
+        ]
+      },
+      "wheels": {
+        "wheel_size_front": "19x8.5",
+        "wheel_size_rear": "20x11.0",
+        "wheel_bolt_pattern": "5x114.3",
+        "wheel_center_bore_mm": 64.1,
+        "wheel_lug_torque_ft_lbs": 94,
+        "wheel_lug_torque_nm": 127
+      },
+      "brakes_front": {
+        "brake_front_rotor_diameter_mm": 380,
+        "brake_front_rotor_thickness_mm": 36,
+        "brake_front_rotor_min_thickness_mm": 34,
+        "brake_front_rotor_oem_part": "45251-STX-A01",
+        "brake_front_pad_oem_part": "45022-STX-A01",
+        "brake_front_pad_wear_indicator": "Sensor",
+        "brake_front_caliper_type": "6-piston Brembo"
+      },
+      "brakes_rear": {
+        "brake_rear_rotor_diameter_mm": 345,
+        "brake_rear_rotor_thickness_mm": 28,
+        "brake_rear_rotor_min_thickness_mm": 26,
+        "brake_rear_rotor_oem_part": "42510-STX-A01",
+        "brake_rear_pad_oem_part": "43022-STX-A01",
+        "brake_rear_pad_wear_indicator": "Sensor",
+        "brake_rear_caliper_type": "4-piston Brembo"
+      },
+      "spark": {
+        "spark_plug_type": "Iridium",
+        "spark_plug_gap_mm": 0.7,
+        "spark_plug_oem_part": "9807B-5617W",
+        "spark_plug_alternatives": [
+          "NGK ILZKR7B11",
+          "Denso IK20TT"
+        ],
+        "spark_plug_change_interval_miles": 105000,
+        "spark_plug_quantity": 6
+      },
+      "timing": {
+        "timing_type": "Chain",
+        "timing_change_interval_miles": null,
+        "timing_change_interval_years": null,
+        "timing_tensioner_oem_part": "14510-5NA-A01"
+      },
+      "belts": {
+        "serpentine_belt_oem_part": "56992-5NA-A01",
+        "serpentine_belt_change_interval_miles": 105000,
+        "ac_belt_separate": false,
+        "ac_belt_oem_part": "N/A"
+      },
+      "battery": {
+        "battery_group_size": "H6",
+        "battery_cca": 650,
+        "battery_voltage": 12,
+        "battery_oem_brand": "Honda",
+        "battery_location": "Engine bay",
+        "battery_agm": true
+      },
+      "alternator": {
+        "alternator_output_amps": 130,
+        "alternator_oem_part": "31100-5NA-A01"
+      },
+      "wipers": {
+        "wiper_driver_size_inches": 26,
+        "wiper_passenger_size_inches": 18,
+        "wiper_rear_size_inches": null,
+        "wiper_type": "Beam",
+        "wiper_oem_part_driver": "76620-STX-A01",
+        "wiper_oem_part_passenger": "76630-STX-A01",
+        "wiper_oem_part_rear": "N/A"
+      },
+      "lighting": {
+        "headlight_low_beam_type": "LED (integrated)",
+        "headlight_high_beam_type": "LED (integrated)",
+        "headlight_fog_type": "N/A",
+        "turn_signal_front_type": "LED (integrated)",
+        "turn_signal_rear_type": "LED (integrated)",
+        "brake_light_type": "LED (integrated)",
+        "reverse_light_type": "LED (integrated)"
+      },
+      "alignment": {
+        "alignment_camber_front_degrees": "-0.75 to -0.25",
+        "alignment_camber_rear_degrees": "-1.25 to -0.75",
+        "alignment_toe_front_degrees": "0.00 to 0.16",
+        "alignment_toe_rear_degrees": "0.08 to 0.24",
+        "alignment_caster_degrees": "6.0 to 7.0"
+      },
+      "suspension": {
+        "shock_front_oem_part": "51610-STX-A02",
+        "shock_rear_oem_part": "52610-STX-A02",
+        "spring_front_oem_part": "51401-STX-A01",
+        "spring_rear_oem_part": "52441-STX-A01",
+        "sway_bar_front_diameter_mm": 32,
+        "sway_bar_rear_diameter_mm": 29
+      },
+      "confidence": 0.92,
+      "sources": [
+        "Acura NSX Service Manual",
+        "Honda/Acura Parts Catalog",
+        "Acura Technical Service Bulletins"
+      ]
+    },
+    "serviceIntervals": [
+      {
+        "service_name": "Oil Change",
+        "service_description": "Replace engine oil and filter for hybrid system",
+        "interval_miles": 7500,
+        "interval_months": 12,
+        "items_included": [
+          "Engine oil",
+          "Oil filter",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 120,
+        "dealer_cost_high": 180,
+        "independent_cost_low": 80,
+        "independent_cost_high": 120,
+        "diy_cost_low": 60,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 0.5,
+        "is_critical": true,
+        "skip_consequences": "Engine wear, hybrid system damage, void warranty"
+      },
+      {
+        "service_name": "Transmission Service",
+        "service_description": "Replace dual-clutch transmission fluid and filter",
+        "interval_miles": 30000,
+        "interval_months": 36,
+        "items_included": [
+          "DCT fluid",
+          "Transmission filter",
+          "Gaskets"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 600,
+        "independent_cost_low": 300,
+        "independent_cost_high": 450,
+        "diy_cost_low": 200,
+        "diy_cost_high": 300,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Transmission failure, poor shifting performance"
+      },
+      {
+        "service_name": "Brake Fluid Flush",
+        "service_description": "Replace brake fluid system wide",
+        "interval_miles": 30000,
+        "interval_months": 36,
+        "items_included": [
+          "DOT 4 brake fluid"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 40,
+        "diy_cost_high": 60,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, reduced braking performance"
+      },
+      {
+        "service_name": "Coolant Flush",
+        "service_description": "Replace engine and hybrid cooling system fluid",
+        "interval_miles": 60000,
+        "interval_months": 72,
+        "items_included": [
+          "Engine coolant",
+          "Hybrid system coolant",
+          "System flush"
+        ],
+        "dealer_cost_low": 300,
+        "dealer_cost_high": 500,
+        "independent_cost_low": 200,
+        "independent_cost_high": 350,
+        "diy_cost_low": 100,
+        "diy_cost_high": 150,
+        "labor_hours_estimate": 2.5,
+        "is_critical": true,
+        "skip_consequences": "Engine overheating, hybrid system damage"
+      },
+      {
+        "service_name": "Differential Service",
+        "service_description": "Replace differential fluid",
+        "interval_miles": 30000,
+        "interval_months": 36,
+        "items_included": [
+          "Differential fluid",
+          "Drain plug gasket"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 60,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 0.8,
+        "is_critical": false,
+        "skip_consequences": "Differential wear, noise, reduced performance"
+      },
+      {
+        "service_name": "Spark Plugs",
+        "service_description": "Replace spark plugs",
+        "interval_miles": 60000,
+        "interval_months": 72,
+        "items_included": [
+          "Iridium spark plugs"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 150,
+        "independent_cost_high": 250,
+        "diy_cost_low": 80,
+        "diy_cost_high": 120,
+        "labor_hours_estimate": 1.5,
+        "is_critical": false,
+        "skip_consequences": "Misfires, reduced fuel economy, rough idle"
+      },
+      {
+        "service_name": "Air Filter",
+        "service_description": "Replace engine air filter",
+        "interval_miles": 15000,
+        "interval_months": 18,
+        "items_included": [
+          "Engine air filter"
+        ],
+        "dealer_cost_low": 40,
+        "dealer_cost_high": 80,
+        "independent_cost_low": 25,
+        "independent_cost_high": 50,
+        "diy_cost_low": 15,
+        "diy_cost_high": 30,
+        "labor_hours_estimate": 0.2,
+        "is_critical": false,
+        "skip_consequences": "Reduced performance, poor fuel economy"
+      },
+      {
+        "service_name": "Cabin Air Filter",
+        "service_description": "Replace cabin air filter",
+        "interval_miles": 15000,
+        "interval_months": 18,
+        "items_included": [
+          "Cabin air filter"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 60,
+        "diy_cost_low": 20,
+        "diy_cost_high": 40,
+        "labor_hours_estimate": 0.3,
+        "is_critical": false,
+        "skip_consequences": "Poor air quality, reduced HVAC efficiency"
+      },
+      {
+        "service_name": "Tire Rotation",
+        "service_description": "Rotate tires for even wear",
+        "interval_miles": 7500,
+        "interval_months": 6,
+        "items_included": [
+          "Tire rotation service"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 25,
+        "independent_cost_high": 60,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Uneven tire wear, reduced tire life"
+      },
+      {
+        "service_name": "Brake Inspection",
+        "service_description": "Inspect brake pads, rotors, and system components",
+        "interval_miles": 15000,
+        "interval_months": 12,
+        "items_included": [
+          "Visual inspection",
+          "Brake measurement"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 30,
+        "independent_cost_high": 80,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety hazard"
+      },
+      {
+        "service_name": "Multi-Point Inspection",
+        "service_description": "Comprehensive vehicle inspection including hybrid systems",
+        "interval_miles": 15000,
+        "interval_months": 12,
+        "items_included": [
+          "Fluid levels",
+          "Belt inspection",
+          "Hybrid system check",
+          "Suspension check"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 60,
+        "independent_cost_high": 120,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Missed early problem detection"
+      },
+      {
+        "service_name": "Battery Service",
+        "service_description": "Test and service 12V and hybrid batteries",
+        "interval_miles": 30000,
+        "interval_months": 24,
+        "items_included": [
+          "Battery test",
+          "Terminal cleaning",
+          "Hybrid battery inspection"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 60,
+        "independent_cost_high": 120,
+        "diy_cost_low": 20,
+        "diy_cost_high": 40,
+        "labor_hours_estimate": 0.8,
+        "is_critical": true,
+        "skip_consequences": "Starting issues, hybrid system failure"
+      },
+      {
+        "service_name": "Fuel System Service",
+        "service_description": "Clean fuel injectors and system",
+        "interval_miles": 60000,
+        "interval_months": 60,
+        "items_included": [
+          "Fuel system cleaner",
+          "Injector service"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 400,
+        "independent_cost_low": 150,
+        "independent_cost_high": 300,
+        "diy_cost_low": 50,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 1.5,
+        "is_critical": false,
+        "skip_consequences": "Poor fuel economy, rough running"
+      }
+    ],
+    "variants": [
+      {
+        "variant_key": "acura-nsx-nc1-base-2017-2019",
+        "display_name": "NSX Base",
+        "years_text": "2017-2019",
+        "model_year_start": 2017,
+        "model_year_end": 2019,
+        "trim": "Base",
+        "drivetrain": "AWD",
+        "transmission": "9-speed dual-clutch automatic",
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "metadata": {
+          "hp": 573,
+          "torque": 476,
+          "msrp": 157800,
+          "curb_weight": 3803,
+          "notable_features": [
+            "Sport Hybrid SH-AWD",
+            "Carbon fiber body",
+            "Brembo brakes",
+            "Alcantara interior"
+          ],
+          "is_default": true
+        }
+      },
+      {
+        "variant_key": "acura-nsx-nc1-base-2020-2022",
+        "display_name": "NSX Base",
+        "years_text": "2020-2022",
+        "model_year_start": 2020,
+        "model_year_end": 2022,
+        "trim": "Base",
+        "drivetrain": "AWD",
+        "transmission": "9-speed dual-clutch automatic",
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "metadata": {
+          "hp": 573,
+          "torque": 476,
+          "msrp": 159300,
+          "curb_weight": 3803,
+          "notable_features": [
+            "Sport Hybrid SH-AWD",
+            "Carbon fiber body",
+            "Brembo brakes",
+            "Alcantara interior",
+            "Revised suspension tuning"
+          ],
+          "is_default": true
+        }
+      }
+    ],
+    "performance": {
+      "zero_to_sixty": 2.9,
+      "zero_to_sixty_source": "Car and Driver",
+      "quarter_mile_time": 11,
+      "quarter_mile_speed": 124,
+      "top_speed": 191,
+      "top_speed_limited": true,
+      "braking_60_0": 101,
+      "braking_70_0": 141,
+      "lateral_g": 1.05,
+      "curb_weight": 3878,
+      "weight_distribution": "57/43",
+      "sources": [
+        {
+          "publication": "Car and Driver",
+          "date": "2016-08",
+          "url": "https://www.caranddriver.com/reviews/a15106334/2017-acura-nsx-test-review/"
+        },
+        {
+          "publication": "MotorTrend",
+          "date": "2016-09",
+          "url": "https://www.motortrend.com/reviews/2017-acura-nsx-first-test-review/"
+        },
+        {
+          "publication": "Road & Track",
+          "date": "2016-07",
+          "url": "https://www.roadandtrack.com/new-cars/first-drives/reviews/a29690/2017-acura-nsx-first-drive/"
+        }
+      ],
+      "confidence": 0.95
+    },
+    "tuning": {
+      "engine_family": "3.5L Twin-Turbo V6 + 3 Electric Motors (Sport Hybrid SH-AWD)",
+      "stock_whp": 520,
+      "stock_wtq": 430,
+      "tuning_platforms": [
+        {
+          "name": "Hondata FlashPro",
+          "price_low": 695,
+          "price_high": 895,
+          "notes": "Limited support, mainly for hybrid system optimization"
+        },
+        {
+          "name": "KTuner",
+          "price_low": 650,
+          "price_high": 850,
+          "notes": "Experimental support for NC1 platform"
+        },
+        {
+          "name": "ScienceofSpeed Custom ECU",
+          "price_low": 3500,
+          "price_high": 5000,
+          "notes": "Full standalone solution with hybrid integration"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 30,
+          "hp_gain_high": 50,
+          "cost_low": 2000,
+          "cost_high": 4000,
+          "components": [
+            "tune",
+            "intake",
+            "downpipes"
+          ],
+          "notes": "ECU tune with basic bolt-ons, limited by hybrid system integration complexity"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 60,
+          "hp_gain_high": 100,
+          "cost_low": 8000,
+          "cost_high": 15000,
+          "components": [
+            "tune",
+            "intake",
+            "downpipes",
+            "intercoolers",
+            "exhaust"
+          ],
+          "notes": "Full exhaust system with upgraded intercoolers and advanced tuning"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 120,
+          "hp_gain_high": 200,
+          "cost_low": 20000,
+          "cost_high": 40000,
+          "components": [
+            "standalone ECU",
+            "turbo upgrades",
+            "fuel system",
+            "intercoolers"
+          ],
+          "notes": "Major turbocharger upgrades with standalone management, very limited options"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 700,
+        "stock_transmission_tq": 500,
+        "stock_axles_tq": 550
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Armaspeed",
+          "ScienceofSpeed",
+          "Downforce Solutions"
+        ],
+        "exhaust": [
+          "Armaspeed",
+          "ScienceofSpeed",
+          "Taitec"
+        ],
+        "tuner": [
+          "ScienceofSpeed",
+          "Evasive Motorsports",
+          "King Motorsports"
+        ]
+      }
+    },
+    "issues": [
+      {
+        "title": "Infotainment System Freezing and Black Screen",
+        "severity": "medium",
+        "description": "The infotainment display randomly freezes, goes black, or becomes unresponsive. System may require hard reset or replacement of the head unit.",
+        "symptoms": [
+          "Black screen on startup",
+          "Frozen display",
+          "Unresponsive touchscreen",
+          "No audio output",
+          "Climate controls not working"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 3500,
+        "fix_description": "Software update or complete head unit replacement",
+        "prevention": "Avoid extreme temperature exposure, perform regular software updates",
+        "source_type": "forum"
+      },
+      {
+        "title": "Carbon Fiber Body Panel Delamination",
+        "severity": "medium",
+        "description": "Carbon fiber body panels, particularly around door sills and rear panels, may show signs of delamination or clear coat peeling.",
+        "symptoms": [
+          "Visible separation of carbon fiber layers",
+          "Clear coat bubbling",
+          "White spots under clear coat",
+          "Panel discoloration"
+        ],
+        "affected_years_text": "2017-2020",
+        "affected_year_start": 2017,
+        "affected_year_end": 2020,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Panel replacement or professional refinishing",
+        "prevention": "Regular washing, avoid harsh chemicals, garage parking",
+        "source_type": "forum"
+      },
+      {
+        "title": "Brake System Noise and Judder",
+        "severity": "high",
+        "description": "Premature brake disc warping causing judder and noise during braking. Some owners report brake noise even with low mileage.",
+        "symptoms": [
+          "Steering wheel vibration during braking",
+          "Brake pedal pulsation",
+          "Squealing or grinding noises",
+          "Uneven brake wear"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1200,
+        "estimated_cost_high": 4000,
+        "fix_description": "Brake disc and pad replacement, possible caliper service",
+        "prevention": "Proper brake cooling, avoid excessive hard braking",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Rear Spoiler Motor Failure",
+        "severity": "medium",
+        "description": "The active rear spoiler may fail to deploy or retract properly due to motor or control module failure.",
+        "symptoms": [
+          "Spoiler stuck in one position",
+          "Error messages on dashboard",
+          "Intermittent spoiler operation",
+          "Strange noises from rear spoiler"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 2500,
+        "estimated_cost_high": 5000,
+        "fix_description": "Spoiler motor replacement or control module repair",
+        "prevention": "Regular cleaning of spoiler mechanism, avoid manual manipulation",
+        "source_type": "forum"
+      },
+      {
+        "title": "Transmission Oil Cooler Line Leak",
+        "severity": "high",
+        "description": "Transmission oil cooler lines may develop leaks, particularly at connection points, leading to transmission fluid loss.",
+        "symptoms": [
+          "Transmission fluid puddles under car",
+          "Low transmission fluid warning",
+          "Burning smell",
+          "Transmission overheating"
+        ],
+        "affected_years_text": "2017-2019",
+        "affected_year_start": 2017,
+        "affected_year_end": 2019,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 2000,
+        "fix_description": "Replace transmission cooler lines and seals",
+        "prevention": "Regular transmission service, monitor fluid levels",
+        "source_type": "tsb"
+      },
+      {
+        "title": "Door Handle Mechanism Failure",
+        "severity": "medium",
+        "description": "Electronic door handles may become unresponsive or mechanically jam, preventing normal door operation.",
+        "symptoms": [
+          "Door won't open from outside",
+          "Handle feels loose or stuck",
+          "No response to key fob",
+          "Door ajar warning when closed"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1000,
+        "estimated_cost_high": 2500,
+        "fix_description": "Door handle mechanism replacement and reprogramming",
+        "prevention": "Gentle operation, regular lubrication",
+        "source_type": "forum"
+      },
+      {
+        "title": "Climate Control Malfunction",
+        "severity": "medium",
+        "description": "Air conditioning system may fail to cool properly or produce inconsistent temperatures, often related to electronic control issues.",
+        "symptoms": [
+          "Poor cooling performance",
+          "Inconsistent cabin temperature",
+          "AC compressor not engaging",
+          "Strange noises from vents"
+        ],
+        "affected_years_text": "2017-2021",
+        "affected_year_start": 2017,
+        "affected_year_end": 2021,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 2200,
+        "fix_description": "AC system diagnosis, compressor or control module replacement",
+        "prevention": "Regular AC service, run system periodically",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Engine Mount Vibration Issues",
+        "severity": "medium",
+        "description": "Premature engine mount wear causing excessive vibration in the cabin, particularly at idle or during acceleration.",
+        "symptoms": [
+          "Excessive cabin vibration",
+          "Engine movement visible",
+          "Clunking noises during acceleration",
+          "Rough idle"
+        ],
+        "affected_years_text": "2017-2020",
+        "affected_year_start": 2017,
+        "affected_year_end": 2020,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 3500,
+        "fix_description": "Engine mount replacement",
+        "prevention": "Avoid aggressive launch techniques, regular inspection",
+        "source_type": "forum"
+      },
+      {
+        "title": "Hybrid Battery Cooling System Issues",
+        "severity": "high",
+        "description": "The hybrid battery cooling system may develop leaks or pump failures, potentially leading to battery overheating and reduced performance.",
+        "symptoms": [
+          "Hybrid system warning lights",
+          "Reduced electric motor performance",
+          "Battery temperature warnings",
+          "Coolant loss"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 6000,
+        "fix_description": "Cooling system repair or battery cooling unit replacement",
+        "prevention": "Regular hybrid system maintenance, monitor warning lights",
+        "source_type": "tsb"
+      },
+      {
+        "title": "Suspension Component Premature Wear",
+        "severity": "medium",
+        "description": "Adaptive suspension components may wear prematurely, causing handling issues and potential safety concerns.",
+        "symptoms": [
+          "Uneven tire wear",
+          "Poor handling",
+          "Suspension noise",
+          "Vehicle pulling to one side"
+        ],
+        "affected_years_text": "2017-2022",
+        "affected_year_start": 2017,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 5000,
+        "fix_description": "Suspension component replacement and alignment",
+        "prevention": "Avoid rough roads, regular alignment checks",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Windshield Stress Cracking",
+        "severity": "low",
+        "description": "Windshields may develop stress cracks, particularly along the edges, even without impact damage.",
+        "symptoms": [
+          "Cracks starting from windshield edges",
+          "Spontaneous crack development",
+          "Star-pattern cracks"
+        ],
+        "affected_years_text": "2017-2019",
+        "affected_year_start": 2017,
+        "affected_year_end": 2019,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 1500,
+        "fix_description": "Windshield replacement with updated part",
+        "prevention": "Avoid extreme temperature changes, careful washing",
+        "source_type": "forum"
+      }
+    ],
+    "editorial": {
+      "tagline": "Japan's hybrid hypercar returns with electric fury",
+      "hero_blurb": "The second-generation NSX proves that Honda's supercar legacy burns brighter than ever. This hybrid marvel delivers 573 horsepower through a sophisticated all-wheel-drive system that makes every corner a revelation.",
+      "essence": "The NC1 NSX represents Honda's most advanced engineering achievement, combining a twin-turbo V6 with three electric motors for otherworldly performance. It's a thinking enthusiast's supercar that prioritizes precision and technology over raw brutality.",
+      "heritage": "Born from Honda's 1990s NSX legacy, the NC1 spent nearly a decade in development as Honda's engineers reimagined what a modern supercar could be. This generation marked Honda's return to the supercar arena after the original NSX ended production in 2005.",
+      "design_philosophy": "Honda's engineers pursued the philosophy of 'New Sports eXperience,' creating a hybrid supercar that enhances rather than replaces the driver. Every system was designed to amplify human capability while maintaining the pure connection that made the original NSX legendary.",
+      "motorsport_history": "The NSX competed in IMSA and Pirelli World Challenge, with the GT3 version serving as a testbed for production car technologies. While not as decorated as its predecessor in motorsport, it proved Honda's continued commitment to performance development.",
+      "engine_character": "The twin-turbo V6 delivers power with surgical precision, while the electric motors fill every gap with instant torque. The combination creates a uniquely smooth and relentless power delivery that builds to an intoxicating crescendo.",
+      "transmission_feel": "The 9-speed dual-clutch transmission shifts with lightning precision, while the hybrid system's torque-fill eliminates any hint of lag. Paddle shifts are crisp and immediate, perfectly complementing the powertrain's technological sophistication.",
+      "chassis_dynamics": "The Space Frame chassis offers incredible rigidity while the adaptive dampers and torque vectoring create a car that flows through corners with supernatural grace. It's clinical yet engaging, precise yet forgiving.",
+      "steering_feel": "The electric power steering provides excellent feedback and perfect weighting, offering the kind of precision that inspires confidence at any speed. It's not as raw as the original NSX but maintains that essential Honda connection.",
+      "brake_confidence": "Brembo brakes provide tremendous stopping power with excellent pedal feel, while the regenerative system blends seamlessly for consistent performance. The brakes inspire complete confidence even under extreme conditions.",
+      "sound_signature": "The twin-turbo V6 produces a sophisticated growl that's more refined than raw, with the electric motors adding an otherworldly whir. It's a distinctly modern sound that's captivating without being overwhelming.",
+      "ideal_owner": "Technology-appreciating enthusiasts who want supercar performance with daily usability and appreciate Honda's engineering excellence over badge prestige.",
+      "not_ideal_for": "Traditional supercar buyers seeking maximum drama, pure V8/V10 soundtracks, or those prioritizing brand status over driving dynamics.",
+      "buyers_summary": "The NC1 NSX offers incredible performance and Honda reliability in a package that's more accessible than its exotic competitors. Values have stabilized, making it an excellent entry point into hybrid supercar ownership.",
+      "pros": [
+        "Incredible hybrid powertrain integration",
+        "Daily usable supercar performance",
+        "Honda reliability and build quality"
+      ],
+      "cons": [
+        "Limited emotional drama compared to rivals",
+        "Complex hybrid system maintenance costs",
+        "Depreciation hit from original MSRP"
+      ],
+      "best_for": [
+        "Daily supercar duty",
+        "Track day precision driving"
+      ]
+    },
+    "fitment": [
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 9,
+        "wheel_width_rear": 10.5,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 55,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+50 to +60",
+        "tire_size_front": "245/35R19",
+        "tire_size_rear": "305/30R19",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 305,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Factory fitment with no clearance issues",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 95,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 9,
+        "wheel_width_rear": 11,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 60,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+55 to +65",
+        "tire_size_front": "245/30R20",
+        "tire_size_rear": "305/25R20",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 305,
+        "tire_aspect_front": 30,
+        "tire_aspect_rear": 25,
+        "diameter_change_percent": 2.6,
+        "speedometer_error_percent": 2.6,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Factory optional fitment with no clearance issues",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 85,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "Track",
+        "wheel_diameter_inches": 18,
+        "wheel_width_front": 9.5,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 38,
+        "wheel_offset_rear_mm": 45,
+        "wheel_offset_range_front": "+35 to +45",
+        "wheel_offset_range_rear": "+40 to +50",
+        "tire_size_front": "255/35R18",
+        "tire_size_rear": "315/30R18",
+        "tire_width_front_mm": 255,
+        "tire_width_rear_mm": 315,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": -2.1,
+        "speedometer_error_percent": -2.1,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-2.5",
+        "recommended_camber_rear": "-2.8",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "More sidewall for track use, may require slight camber adjustment",
+        "known_issues": null,
+        "recommended_for": [
+          "track"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "snow"
+        ],
+        "popularity_score": 70,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.8
+      },
+      {
+        "fitment_type": "Plus Size",
+        "wheel_diameter_inches": 21,
+        "wheel_width_front": 9.5,
+        "wheel_width_rear": 12,
+        "wheel_offset_front_mm": 42,
+        "wheel_offset_rear_mm": 55,
+        "wheel_offset_range_front": "+38 to +48",
+        "wheel_offset_range_rear": "+50 to +60",
+        "tire_size_front": "245/25R21",
+        "tire_size_rear": "325/20R21",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 325,
+        "tire_aspect_front": 25,
+        "tire_aspect_rear": 20,
+        "diameter_change_percent": 4.8,
+        "speedometer_error_percent": 4.8,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Larger diameter may reduce ride quality",
+        "known_issues": "Limited tire selection, increased road noise",
+        "recommended_for": [
+          "daily"
+        ],
+        "not_recommended_for": [
+          "track",
+          "snow"
+        ],
+        "popularity_score": 60,
+        "community_verified": false,
+        "forum_threads": [],
+        "source_type": "calculator",
+        "source_url": null,
+        "confidence": 0.7
+      }
+    ],
+    "expertReviews": null,
+    "manuals": null,
+    "images": null
+  },
+  "stage3": {
+    "passed": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "hp",
+      "torque",
+      "curb_weight"
+    ],
+    "warnings": [
+      {
+        "field": "brake_caliper",
+        "severity": "high",
+        "message": "⚠️ VERIFY: brembo brakes listed but Acura NSX NC1 may not come with brembo stock. This could be an aftermarket upgrade confused with OEM specs."
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"6-piston\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"4-piston brembo\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      }
+    ],
+    "errors": []
+  },
+  "stage4": {
+    "car_fuel_economy": {
+      "car_id": "e19213d4-384f-40e2-8c03-0572448e367d",
+      "epa_vehicle_id": 37436,
+      "city_mpg": 21,
+      "highway_mpg": 22,
+      "combined_mpg": 21,
+      "fuel_type": "Premium",
+      "annual_fuel_cost": 2800,
+      "co2_emissions": 420,
+      "ghg_score": 4,
+      "source": "EPA fueleconomy.gov",
+      "fetched_at": "2026-01-13T01:00:54.216Z"
+    },
+    "car_safety_data": {
+      "car_id": "e19213d4-384f-40e2-8c03-0572448e367d",
+      "nhtsa_overall_rating": null,
+      "nhtsa_front_crash_rating": null,
+      "nhtsa_side_crash_rating": null,
+      "nhtsa_rollover_rating": null,
+      "complaint_count": 6,
+      "recall_count": 3,
+      "nhtsa_fetched_at": "2026-01-13T01:00:54.399Z"
+    },
+    "car_recalls": 0,
+    "vehicle_maintenance_specs": 116,
+    "vehicle_service_intervals": 10,
+    "car_variants": 2,
+    "car_tuning_profiles": {
+      "car_id": "e19213d4-384f-40e2-8c03-0572448e367d",
+      "car_variant_id": null,
+      "engine_family": "3.5L Twin-Turbo V6 + 3 Electric Motors (Sport Hybrid SH-AWD)",
+      "tuning_focus": "performance",
+      "stock_whp": 520,
+      "stock_wtq": 430,
+      "tuning_platforms": [
+        {
+          "name": "Hondata FlashPro",
+          "price_low": 695,
+          "price_high": 895,
+          "notes": "Limited support, mainly for hybrid system optimization"
+        },
+        {
+          "name": "KTuner",
+          "price_low": 650,
+          "price_high": 850,
+          "notes": "Experimental support for NC1 platform"
+        },
+        {
+          "name": "ScienceofSpeed Custom ECU",
+          "price_low": 3500,
+          "price_high": 5000,
+          "notes": "Full standalone solution with hybrid integration"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 30,
+          "hp_gain_high": 50,
+          "cost_low": 2000,
+          "cost_high": 4000,
+          "components": [
+            "tune",
+            "intake",
+            "downpipes"
+          ],
+          "notes": "ECU tune with basic bolt-ons, limited by hybrid system integration complexity"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 60,
+          "hp_gain_high": 100,
+          "cost_low": 8000,
+          "cost_high": 15000,
+          "components": [
+            "tune",
+            "intake",
+            "downpipes",
+            "intercoolers",
+            "exhaust"
+          ],
+          "notes": "Full exhaust system with upgraded intercoolers and advanced tuning"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 120,
+          "hp_gain_high": 200,
+          "cost_low": 20000,
+          "cost_high": 40000,
+          "components": [
+            "standalone ECU",
+            "turbo upgrades",
+            "fuel system",
+            "intercoolers"
+          ],
+          "notes": "Major turbocharger upgrades with standalone management, very limited options"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 700,
+        "stock_transmission_tq": 500,
+        "stock_axles_tq": 550
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Armaspeed",
+          "ScienceofSpeed",
+          "Downforce Solutions"
+        ],
+        "exhaust": [
+          "Armaspeed",
+          "ScienceofSpeed",
+          "Taitec"
+        ],
+        "tuner": [
+          "ScienceofSpeed",
+          "Evasive Motorsports",
+          "King Motorsports"
+        ]
+      },
+      "pipeline_version": "vehicle-data-pipeline@2.2",
+      "pipeline_run_at": "2026-01-13T01:00:54.873Z",
+      "verified": false,
+      "notes": "AI-researched - requires verification"
+    },
+    "car_issues": 11,
+    "cars": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "curb_weight",
+      "tagline",
+      "hero_blurb",
+      "essence",
+      "heritage",
+      "design_philosophy",
+      "motorsport_history",
+      "engine_character",
+      "transmission_feel",
+      "chassis_dynamics",
+      "steering_feel",
+      "brake_confidence",
+      "sound_signature",
+      "ideal_owner",
+      "not_ideal_for",
+      "buyers_summary",
+      "pros",
+      "cons",
+      "best_for"
+    ],
+    "wheel_tire_fitment_options": 4
+  },
+  "stage5": {
+    "tables": {
+      "cars": {
+        "exists": true,
+        "filled": 109,
+        "total": 136,
+        "percent": 80,
+        "missing": [
+          "layout",
+          "perf_power_accel",
+          "perf_grip_cornering",
+          "perf_braking",
+          "perf_track_pace"
+        ]
+      },
+      "vehicle_maintenance_specs": {
+        "exists": true,
+        "filled": 106,
+        "total": 126,
+        "percent": 84,
+        "missing": [
+          "trans_fluid_manual_capacity",
+          "power_steering_type",
+          "power_steering_capacity",
+          "fuel_filter_change_interval_miles",
+          "tire_pressure_spare_psi"
+        ]
+      },
+      "car_fuel_economy": {
+        "exists": true,
+        "filled": 12,
+        "total": 17,
+        "percent": 71,
+        "missing": [
+          "user_avg_mpg",
+          "user_city_mpg",
+          "user_highway_mpg",
+          "user_sample_size",
+          "ev_range"
+        ]
+      },
+      "car_safety_data": {
+        "exists": true,
+        "filled": 9,
+        "total": 24,
+        "percent": 38,
+        "missing": [
+          "nhtsa_overall_rating",
+          "nhtsa_front_crash_rating",
+          "nhtsa_side_crash_rating",
+          "nhtsa_rollover_rating",
+          "iihs_overall"
+        ]
+      },
+      "car_tuning_profiles": {
+        "exists": true,
+        "filled": 19,
+        "total": 21,
+        "percent": 90,
+        "missing": [
+          "car_variant_id",
+          "verified_by"
+        ]
+      },
+      "car_issues": {
+        "records": 23
+      },
+      "car_recalls": {
+        "records": 4
+      },
+      "vehicle_service_intervals": {
+        "records": 20
+      },
+      "car_variants": {
+        "records": 2
+      },
+      "wheel_tire_fitment_options": {
+        "records": 4
+      },
+      "car_expert_reviews": {
+        "records": 0
+      },
+      "car_manual_data": {
+        "records": 0
+      },
+      "car_images": {
+        "records": 0
+      },
+      "car_dyno_runs": {
+        "records": 0
+      },
+      "car_track_lap_times": {
+        "records": 0
+      },
+      "car_auction_results": {
+        "records": 0
+      },
+      "car_market_pricing": {
+        "records": 0
+      }
+    },
+    "overall": {
+      "filled": 255,
+      "total": 324,
+      "percent": 79
+    }
+  },
+  "completed_at": "2026-01-13T01:00:56.486Z"
+}

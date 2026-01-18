@@ -40,8 +40,12 @@ import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
 import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
 import AskALButton from '@/components/AskALButton';
 import VehicleHealthCard from '@/components/garage/VehicleHealthCard';
+import VehicleBuildPanel from '@/components/VehicleBuildPanel';
 import { useAIChat } from '@/components/AIChatContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useCarImages } from '@/hooks/useCarImages';
+import ImageUploader from '@/components/ImageUploader';
+import BuildMediaGallery from '@/components/BuildMediaGallery';
 
 // Icon wrapper to prevent browser extension DOM conflicts
 // Wrapping SVGs in a span prevents "removeChild" errors when extensions modify the DOM
@@ -872,6 +876,23 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     return baseCar;
   }, [baseCar, enrichmentData?.image_url]);
 
+  // Get the car slug for shared images (used by useCarImages hook)
+  const carSlugForImages = car?.slug || item?.vehicle?.matchedCarSlug || null;
+  
+  // Get user's uploaded images for this car (shared between garage and tuning shop)
+  // Hook must be called unconditionally per React rules
+  const { 
+    images: carImages, 
+    heroImage: userHeroImage, 
+    heroImageUrl: userHeroImageUrl,
+    setHeroImage: setCarHeroImage, 
+    clearHeroImage: clearCarHeroImage,
+    refreshImages: refreshCarImages 
+  } = useCarImages(carSlugForImages, { enabled: !!carSlugForImages });
+  
+  // Determine if user has a custom hero image
+  const hasCustomHero = !!userHeroImage;
+
   if (!item) return null;
   
   const isOwnedVehicle = type === 'mycars';
@@ -958,10 +979,20 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
 
   return (
     <div className={styles.heroDisplay}>
-      {/* Hero Image - Uses exclusive garage images (premium studio photography) */}
+      {/* Hero Image - Uses user's uploaded hero image if available, otherwise stock garage image */}
       <div className={styles.heroImageWrapper}>
         <div className={styles.heroImageContainer}>
-          {car ? (
+          {hasCustomHero && userHeroImageUrl ? (
+            // User's custom hero image (shared between garage and tuning shop)
+            <Image
+              src={userHeroImageUrl}
+              alt={displayName || 'Vehicle'}
+              fill
+              style={{ objectFit: 'cover' }}
+              className={styles.heroImage}
+              priority
+            />
+          ) : car ? (
             <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
           ) : (
             <div className={styles.heroPlaceholder}>
@@ -1026,6 +1057,18 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   <Icons.gauge size={18} />
                   <span>Health</span>
                 </button>
+                {carSlugForImages && (
+                  <button 
+                    className={styles.mobileActionBtn}
+                    onClick={() => {
+                      setDetailsView('photos');
+                      setPanelState('details');
+                    }}
+                  >
+                    <Icons.star size={18} />
+                    <span>Photos</span>
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -1073,6 +1116,15 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
             <Icons.gauge size={18} />
             <span>Health</span>
           </button>
+          {carSlugForImages && (
+            <button 
+              className={`${styles.mobileActionBtn} ${detailsView === 'photos' ? styles.mobileActionBtnActive : ''}`}
+              onClick={() => setDetailsView('photos')}
+            >
+              <Icons.star size={18} />
+              <span>Photos</span>
+            </button>
+          )}
         </div>
       )}
 
@@ -1152,6 +1204,19 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   <Icons.gauge size={12} />
                   <span>Health</span>
                 </button>
+                {carSlugForImages && (
+                  <button 
+                    className={`${styles.headerToggleBtn} ${detailsView === 'photos' ? styles.headerToggleActive : ''}`}
+                    onClick={() => setDetailsView('photos')}
+                    title="Vehicle Photos"
+                  >
+                    <Icons.star size={12} />
+                    <span>Photos</span>
+                    {carImages.length > 0 && (
+                      <span className={styles.tabBadge}>{carImages.length}</span>
+                    )}
+                  </button>
+                )}
               </div>
             )}
             <button 
@@ -1745,9 +1810,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Front Caliper</span><span>{maintenanceData.specs?.brake_front_caliper_type || 'Brembo 6-piston'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear Caliper</span><span>{maintenanceData.specs?.brake_rear_caliper_type || 'Brembo 4-piston'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Pad Compound</span><span>Performance</span></div>
+                      <div className={styles.detailBlockItem}><span>Front Caliper</span><span>{maintenanceData.specs?.brake_front_caliper_type || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Rear Caliper</span><span>{maintenanceData.specs?.brake_rear_caliper_type || '—'}</span></div>
+                      <div className={styles.detailBlockItem}><span>Pad Compound</span><span>{maintenanceData.specs?.brake_pad_compound || 'OEM'}</span></div>
                     </div>
                   </div>
 
@@ -2058,105 +2123,26 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Modifications View - Shows installed upgrades */}
+            {/* Modifications View - Build Editor with Basic/Advanced modes */}
             {isOwnedVehicle && detailsView === 'mods' && (
               <div className={styles.modsView}>
-                <div className={styles.modsHeader}>
-                  <h4 className={styles.detailBlockTitle}>
-                    <Icons.wrench size={14} />
-                    Installed Modifications
-                  </h4>
-                  {item.vehicle?.matchedCarSlug && (
-                    <Link 
-                      href={`/tuning-shop?plan=${item.vehicle.matchedCarSlug}`}
-                      className={styles.editModsLink}
-                    >
-                      <Icons.edit size={14} />
-                      {item.vehicle?.isModified ? 'Edit Mods' : 'Add Mods'}
-                    </Link>
-                  )}
-                </div>
-
-                {item.vehicle?.isModified && item.vehicle.installedModifications?.length > 0 ? (
-                  <>
-                    {/* HP Gain Summary */}
-                    {item.vehicle.totalHpGain > 0 && (
-                      <div className={styles.modsHpSummary}>
-                        <span className={styles.modsHpLabel}>Total Estimated Gain</span>
-                        <span className={styles.modsHpValue}>+{item.vehicle.totalHpGain} HP</span>
-                      </div>
-                    )}
-
-                    {/* Modifications List */}
-                    <div className={styles.modsList}>
-                      {item.vehicle.installedModifications.map((mod, idx) => (
-                        <div key={idx} className={styles.modItem}>
-                          <Icons.check size={14} />
-                          <span className={styles.modName}>
-                            {mod.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Source Build Link */}
-                    {item.vehicle.activeBuildId && (
-                      <Link 
-                        href={`/tuning-shop?build=${item.vehicle.activeBuildId}`}
-                        className={styles.sourceBuildLink}
-                      >
-                        <Icons.link size={14} />
-                        View Original Build
-                      </Link>
-                    )}
-
-                    {/* Clear Modifications Button */}
-                    <button 
-                      className={styles.clearModsButton}
-                      onClick={async () => {
-                        if (window.confirm('Reset this vehicle to stock configuration? This will remove all modifications.')) {
-                          if (onClearModifications) {
-                            await onClearModifications(item.vehicle.id);
-                          }
-                        }
-                      }}
-                    >
-                      <Icons.x size={14} />
-                      Reset to Stock
-                    </button>
-                  </>
-                ) : (
-                  <div className={styles.modsEmptyState}>
-                    <Icons.wrench size={32} />
-                    <p>No modifications installed</p>
-                    <p className={styles.modsEmptyDesc}>
-                      Track your upgrades by applying a build from the Tuning Shop
-                    </p>
-                    {item.vehicle?.matchedCarSlug && (
-                      <Link 
-                        href={`/tuning-shop?plan=${item.vehicle.matchedCarSlug}`}
-                        className={styles.modsEmptyAction}
-                      >
-                        <Icons.plus size={16} />
-                        Plan Modifications
-                      </Link>
-                    )}
-                  </div>
-                )}
-
-                {/* Link to Reference tab for custom specs */}
-                {item.vehicle?.hasCustomSpecs && (
-                  <div className={styles.customSpecsLink}>
-                    <Icons.info size={14} />
-                    <span>Your wheel & tire specs are shown in the <strong>Reference</strong> tab</span>
-                  </div>
-                )}
-
-                {item.vehicle.modifiedAt && (
-                  <p className={styles.referenceNote}>
-                    Last updated: {new Date(item.vehicle.modifiedAt).toLocaleDateString()}
-                  </p>
-                )}
+                <VehicleBuildPanel
+                  vehicleId={item.vehicle?.id}
+                  carSlug={item.vehicle?.matchedCarSlug}
+                  stockHp={item.car?.hp || 0}
+                  stockTorque={item.car?.torque || 0}
+                  installedMods={item.vehicle?.installedModifications || []}
+                  customSpecs={item.vehicle?.customSpecs || {}}
+                  onUpdateBuild={(updatedVehicle) => {
+                    if (onUpdateVehicle) {
+                      onUpdateVehicle(item.vehicle.id, {
+                        installedModifications: updatedVehicle.installed_modifications,
+                        customSpecs: updatedVehicle.custom_specs,
+                        totalHpGain: updatedVehicle.total_hp_gain,
+                      });
+                    }
+                  }}
+                />
               </div>
             )}
 
@@ -2174,6 +2160,46 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                   initialMileage={item.vehicle.mileage}
                   maintenanceSpecs={maintenanceData.specs}
                 />
+              </div>
+            )}
+
+            {/* Photos View - Upload and manage vehicle photos */}
+            {isOwnedVehicle && detailsView === 'photos' && carSlugForImages && (
+              <div className={styles.photosView}>
+                <div className={styles.photosHeader}>
+                  <h3>Your Photos</h3>
+                  <p className={styles.photosHint}>
+                    Add photos of your build. Photos are shared with Tuning Shop for a consistent look.
+                  </p>
+                </div>
+                
+                {/* Upload Component */}
+                <ImageUploader
+                  onUploadComplete={(media) => {
+                    // Refresh images to include the new upload
+                    refreshCarImages();
+                  }}
+                  onUploadError={(err) => console.error('[Garage] Photo upload error:', err)}
+                  maxFiles={10}
+                  vehicleId={item.vehicle.id}
+                  carSlug={carSlugForImages}
+                  existingImages={carImages}
+                  showPreviews={false}
+                />
+                
+                {/* Gallery with Hero Selection */}
+                {(carImages.length > 0 || car) && (
+                  <BuildMediaGallery
+                    car={car}
+                    media={carImages}
+                    onSetPrimary={async (imageId) => {
+                      await setCarHeroImage(imageId);
+                    }}
+                    onSetStockHero={async () => {
+                      await clearCarHeroImage();
+                    }}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -2238,6 +2264,18 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 <Icons.gauge size={20} />
                 <span>Health</span>
               </button>
+              {carSlugForImages && (
+                <button 
+                  className={styles.quickActionItem}
+                  onClick={() => {
+                    setDetailsView('photos');
+                    setPanelState('details');
+                  }}
+                >
+                  <Icons.star size={20} />
+                  <span>Photos</span>
+                </button>
+              )}
             </>
           )}
         </div>

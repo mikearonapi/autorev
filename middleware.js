@@ -11,6 +11,19 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
 export async function middleware(request) {
+  // =========================================================================
+  // ROUTE REDIRECTS (Build Pivot - January 2026)
+  // Redirect old routes to new Build-focused routes
+  // =========================================================================
+  const pathname = request.nextUrl.pathname;
+  
+  // Redirect /garage to /my-builds
+  if (pathname === '/garage') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/my-builds';
+    return NextResponse.redirect(url, { status: 308 }); // Permanent redirect
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });

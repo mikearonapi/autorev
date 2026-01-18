@@ -1,0 +1,1470 @@
+{
+  "car_id": "5c562a54-15cb-472b-a981-0449bb1d94ac",
+  "mode": "full",
+  "version": "2.3",
+  "started_at": "2026-01-13T00:56:28.788Z",
+  "stages": {},
+  "car_name": "Aston Martin V12 Vantage",
+  "stage1": {
+    "epa": {
+      "atvType": "",
+      "barrels08": "19.834",
+      "barrelsA08": "0.0",
+      "battery": "-1",
+      "c240Dscr": "",
+      "c240bDscr": "",
+      "charge120": "0.0",
+      "charge240": "0.0",
+      "charge240b": "0.0",
+      "city08": "13",
+      "city08U": "0.0",
+      "cityA08": "0",
+      "cityA08U": "0.0",
+      "cityCD": "0.0",
+      "cityE": "0.0",
+      "cityMpk": "0",
+      "cityUF": "0.0",
+      "cityUmpk": "0.0",
+      "co2": "-1",
+      "co2A": "-1",
+      "co2TailpipeAGpm": "0.0",
+      "co2TailpipeGpm": "592.4666666666667",
+      "comb08": "15",
+      "comb08U": "0.0",
+      "combA08": "0",
+      "combA08U": "0.0",
+      "combE": "0.0",
+      "combMpk": "0",
+      "combUmpk": "0.0",
+      "combinedCD": "0.0",
+      "combinedUF": "0.0",
+      "createdOn": "2013-01-01T00:00:00-05:00",
+      "cylDeact": "",
+      "cylDeactYesNo": "No",
+      "cylinders": "8",
+      "displ": "4.7",
+      "drive": "Rear-Wheel Drive",
+      "emissionsList": {
+        "emissionsInfo": [
+          {
+            "efid": "9ASXV04.7VH2",
+            "id": "25380",
+            "salesArea": "3",
+            "score": "5.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "-1",
+            "standard": "B5",
+            "stdText": "BIN 5"
+          },
+          {
+            "efid": "9ASXV04.7VH2",
+            "id": "25380",
+            "salesArea": "7",
+            "score": "5.0",
+            "scoreAlt": "-1.0",
+            "smartwayScore": "-1",
+            "standard": "L2",
+            "stdText": "LEV II"
+          }
+        ]
+      },
+      "engId": "0",
+      "eng_dscr": "",
+      "evMotor": "",
+      "feScore": "-1",
+      "fuelCost08": "3900",
+      "fuelCostA08": "0",
+      "fuelType": "Premium",
+      "fuelType1": "Premium Gasoline",
+      "fuelType2": "",
+      "ghgScore": "-1",
+      "ghgScoreA": "-1",
+      "guzzler": "G",
+      "highway08": "19",
+      "highway08U": "0.0",
+      "highwayA08": "0",
+      "highwayA08U": "0.0",
+      "highwayCD": "0.0",
+      "highwayE": "0.0",
+      "highwayMpk": "0",
+      "highwayUF": "0.0",
+      "highwayUmpk": "0.0",
+      "hlv": "0",
+      "hpv": "0",
+      "id": "25380",
+      "lv2": "0",
+      "lv4": "0",
+      "make": "Aston Martin",
+      "mfrCode": "",
+      "model": "V8 Vantage",
+      "modifiedOn": "2013-01-01T00:00:00-05:00",
+      "mpgData": "N",
+      "mpgRevised": "false",
+      "phevBlended": "false",
+      "phevCity": "0",
+      "phevComb": "0",
+      "phevHwy": "0",
+      "pv2": "0",
+      "pv4": "0",
+      "range": "0",
+      "rangeA": "",
+      "rangeCity": "0.0",
+      "rangeCityA": "0.0",
+      "rangeHwy": "0.0",
+      "rangeHwyA": "0.0",
+      "startStop": "",
+      "trans_dscr": "4MODE",
+      "trany": "Automatic (S6)",
+      "UCity": "15.9375",
+      "UCityA": "0.0",
+      "UHighway": "26.855",
+      "UHighwayA": "0.0",
+      "VClass": "Two Seaters",
+      "year": "2009",
+      "youSaveSpend": "-11500",
+      "baseModel": "Vantage",
+      "sCharger": "",
+      "tCharger": ""
+    },
+    "safety": null,
+    "recalls": [],
+    "complaints": []
+  },
+  "stage2": {
+    "maintenance": {
+      "oil": {
+        "oil_type": "Full Synthetic",
+        "oil_viscosity": "5W-40",
+        "oil_spec": "Castrol EDGE Professional 5W-40",
+        "oil_capacity_liters": 10,
+        "oil_capacity_quarts": 10.5,
+        "oil_filter_oem_part": "6G33-6714-AA",
+        "oil_filter_alternatives": [
+          "MANN W 940/25",
+          "Mahle OC 295"
+        ],
+        "oil_change_interval_miles": 5000,
+        "oil_change_interval_months": 6
+      },
+      "coolant": {
+        "coolant_type": "OAT",
+        "coolant_color": "Orange/Pink",
+        "coolant_spec": "ASTM D3306",
+        "coolant_capacity_liters": 20.5,
+        "coolant_change_interval_miles": 150000,
+        "coolant_change_interval_years": 10
+      },
+      "brake_fluid": {
+        "brake_fluid_type": "DOT 4",
+        "brake_fluid_spec": "SAE J1703",
+        "brake_fluid_change_interval_miles": 30000,
+        "brake_fluid_change_interval_years": 2
+      },
+      "transmission": {
+        "trans_fluid_manual": "75W-90 Synthetic GL-5",
+        "trans_fluid_manual_capacity": 3.5,
+        "trans_fluid_auto": "N/A",
+        "trans_fluid_auto_capacity": null,
+        "trans_fluid_change_interval_miles": 37500
+      },
+      "differential": {
+        "diff_fluid_type": "75W-140 GL-5",
+        "diff_fluid_front_capacity": null,
+        "diff_fluid_rear_capacity": 1.8,
+        "diff_fluid_change_interval_miles": 37500
+      },
+      "power_steering": {
+        "power_steering_type": "Hydraulic",
+        "power_steering_fluid": "Dexron VI ATF",
+        "power_steering_capacity": 1.2
+      },
+      "fuel": {
+        "fuel_type": "Gasoline",
+        "fuel_octane_minimum": 93,
+        "fuel_octane_recommended": 93,
+        "fuel_tank_capacity_gallons": 19.8,
+        "fuel_tank_capacity_liters": 75
+      },
+      "filters": {
+        "air_filter_oem_part": "6G33-9601-AA",
+        "air_filter_alternatives": [
+          "MANN C 32 189",
+          "K&N 33-2962"
+        ],
+        "air_filter_change_interval_miles": 15000,
+        "cabin_filter_oem_part": "6G33-19G244-AA",
+        "cabin_filter_alternatives": [
+          "MANN CU 32 006",
+          "Mahle LAK 388"
+        ],
+        "cabin_filter_change_interval_miles": 15000,
+        "fuel_filter_oem_part": "In-tank (non-serviceable)",
+        "fuel_filter_in_tank": true,
+        "fuel_filter_change_interval_miles": null
+      },
+      "tires": {
+        "tire_size_front": "255/40R19",
+        "tire_size_rear": "295/35R19",
+        "tire_pressure_front_psi": 32,
+        "tire_pressure_rear_psi": 35,
+        "tire_pressure_spare_psi": null,
+        "tire_rotation_pattern": "Directional - Front to rear only",
+        "tire_rotation_interval_miles": 5000,
+        "tire_oem_brand": "Bridgestone Potenza S001",
+        "tire_recommended_brands": [
+          "Pirelli P Zero",
+          "Michelin Pilot Sport 4S"
+        ]
+      },
+      "wheels": {
+        "wheel_size_front": "19x8.5",
+        "wheel_size_rear": "19x10.5",
+        "wheel_bolt_pattern": "5x114.3",
+        "wheel_center_bore_mm": 63.4,
+        "wheel_lug_torque_ft_lbs": 103,
+        "wheel_lug_torque_nm": 140
+      },
+      "brakes_front": {
+        "brake_front_rotor_diameter_mm": 380,
+        "brake_front_rotor_thickness_mm": 34,
+        "brake_front_rotor_min_thickness_mm": 32,
+        "brake_front_rotor_oem_part": "6G33-1125-BA",
+        "brake_front_pad_oem_part": "6G33-2001-CA",
+        "brake_front_pad_wear_indicator": "Sensor",
+        "brake_front_caliper_type": "6-piston fixed Brembo"
+      },
+      "brakes_rear": {
+        "brake_rear_rotor_diameter_mm": 360,
+        "brake_rear_rotor_thickness_mm": 28,
+        "brake_rear_rotor_min_thickness_mm": 26,
+        "brake_rear_rotor_oem_part": "6G33-2C026-BA",
+        "brake_rear_pad_oem_part": "6G33-2200-CA",
+        "brake_rear_pad_wear_indicator": "Sensor",
+        "brake_rear_caliper_type": "4-piston fixed Brembo"
+      },
+      "spark": {
+        "spark_plug_type": "Iridium",
+        "spark_plug_gap_mm": 0.7,
+        "spark_plug_oem_part": "NGK ILFR7G",
+        "spark_plug_alternatives": [
+          "Denso IXE22",
+          "Champion REA7WYPB4"
+        ],
+        "spark_plug_change_interval_miles": 30000,
+        "spark_plug_quantity": 12
+      },
+      "timing": {
+        "timing_type": "Chain",
+        "timing_change_interval_miles": null,
+        "timing_change_interval_years": null,
+        "timing_tensioner_oem_part": "6G33-6K254-AA"
+      },
+      "belts": {
+        "serpentine_belt_oem_part": "6G33-8620-AA",
+        "serpentine_belt_change_interval_miles": 60000,
+        "ac_belt_separate": false,
+        "ac_belt_oem_part": "N/A"
+      },
+      "battery": {
+        "battery_group_size": "H8",
+        "battery_cca": 900,
+        "battery_voltage": 12,
+        "battery_oem_brand": "Exide",
+        "battery_location": "Engine bay",
+        "battery_agm": true
+      },
+      "alternator": {
+        "alternator_output_amps": 150,
+        "alternator_oem_part": "6G33-10300-BA"
+      },
+      "wipers": {
+        "wiper_driver_size_inches": 26,
+        "wiper_passenger_size_inches": 18,
+        "wiper_rear_size_inches": null,
+        "wiper_type": "Conventional",
+        "wiper_oem_part_driver": "6G33-17528-AA",
+        "wiper_oem_part_passenger": "6G33-17526-AA",
+        "wiper_oem_part_rear": "N/A"
+      },
+      "lighting": {
+        "headlight_low_beam_type": "D1S HID",
+        "headlight_high_beam_type": "H7 Halogen",
+        "headlight_fog_type": "H11",
+        "turn_signal_front_type": "PY21W",
+        "turn_signal_rear_type": "PY21W",
+        "brake_light_type": "P21W",
+        "reverse_light_type": "P21W"
+      },
+      "alignment": {
+        "alignment_camber_front_degrees": "-1.0 to 0.0",
+        "alignment_camber_rear_degrees": "-1.5 to -0.5",
+        "alignment_toe_front_degrees": "0.0 to 0.2",
+        "alignment_toe_rear_degrees": "0.1 to 0.3",
+        "alignment_caster_degrees": "6.5 to 7.5"
+      },
+      "suspension": {
+        "shock_front_oem_part": "6G33-18124-AA",
+        "shock_rear_oem_part": "6G33-18A175-AA",
+        "spring_front_oem_part": "6G33-5310-AA",
+        "spring_rear_oem_part": "6G33-5560-AA",
+        "sway_bar_front_diameter_mm": 34,
+        "sway_bar_rear_diameter_mm": 28
+      },
+      "confidence": 0.85,
+      "sources": [
+        "Aston Martin Service Manual",
+        "OEM Parts Catalog",
+        "Technical Service Bulletins"
+      ]
+    },
+    "serviceIntervals": [
+      {
+        "service_name": "Oil Change",
+        "service_description": "Replace engine oil and filter",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Engine oil",
+          "Oil filter",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 150,
+        "independent_cost_high": 250,
+        "diy_cost_low": 80,
+        "diy_cost_high": 120,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Engine wear, void warranty, potential catastrophic failure"
+      },
+      {
+        "service_name": "Air Filter Replacement",
+        "service_description": "Replace engine air filter",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Air filter"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 150,
+        "independent_cost_low": 50,
+        "independent_cost_high": 100,
+        "diy_cost_low": 30,
+        "diy_cost_high": 60,
+        "labor_hours_estimate": 0.3,
+        "is_critical": false,
+        "skip_consequences": "Reduced performance, increased fuel consumption"
+      },
+      {
+        "service_name": "Cabin Filter Replacement",
+        "service_description": "Replace cabin air filter",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Cabin air filter"
+        ],
+        "dealer_cost_low": 60,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 40,
+        "independent_cost_high": 80,
+        "diy_cost_low": 20,
+        "diy_cost_high": 40,
+        "labor_hours_estimate": 0.2,
+        "is_critical": false,
+        "skip_consequences": "Poor air quality, reduced HVAC efficiency"
+      },
+      {
+        "service_name": "Brake Fluid Flush",
+        "service_description": "Replace brake fluid system-wide",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Brake fluid",
+          "System flush"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 30,
+        "diy_cost_high": 50,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety risk"
+      },
+      {
+        "service_name": "Spark Plugs Replacement",
+        "service_description": "Replace all 12 spark plugs",
+        "interval_miles": 30000,
+        "interval_months": 36,
+        "items_included": [
+          "Spark plugs (12)",
+          "Ignition coils inspection"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 700,
+        "independent_cost_low": 300,
+        "independent_cost_high": 500,
+        "diy_cost_low": 150,
+        "diy_cost_high": 250,
+        "labor_hours_estimate": 3,
+        "is_critical": true,
+        "skip_consequences": "Misfires, reduced performance, potential engine damage"
+      },
+      {
+        "service_name": "Coolant Flush",
+        "service_description": "Replace engine coolant and thermostat",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Coolant",
+          "Thermostat",
+          "System flush"
+        ],
+        "dealer_cost_low": 300,
+        "dealer_cost_high": 500,
+        "independent_cost_low": 200,
+        "independent_cost_high": 350,
+        "diy_cost_low": 80,
+        "diy_cost_high": 120,
+        "labor_hours_estimate": 2.5,
+        "is_critical": true,
+        "skip_consequences": "Overheating, engine damage"
+      },
+      {
+        "service_name": "Transmission Service",
+        "service_description": "Change transmission fluid and filter",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Transmission fluid",
+          "Filter",
+          "Gasket"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 600,
+        "independent_cost_low": 250,
+        "independent_cost_high": 400,
+        "diy_cost_low": 100,
+        "diy_cost_high": 150,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Transmission failure, costly repairs"
+      },
+      {
+        "service_name": "Differential Service",
+        "service_description": "Change differential oil",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Differential oil",
+          "Drain plug washer"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 50,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Differential wear, noise, potential failure"
+      },
+      {
+        "service_name": "Belt and Hose Inspection",
+        "service_description": "Inspect and replace belts and hoses as needed",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Drive belt",
+          "Serpentine belt",
+          "Radiator hoses"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 400,
+        "independent_cost_low": 150,
+        "independent_cost_high": 300,
+        "diy_cost_low": 50,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Belt failure, engine overheating, stranded vehicle"
+      },
+      {
+        "service_name": "Brake Inspection and Service",
+        "service_description": "Inspect brake pads, rotors, and calipers",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Brake inspection",
+          "Pad replacement if needed"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 75,
+        "independent_cost_high": 150,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety risk"
+      },
+      {
+        "service_name": "Tire Rotation",
+        "service_description": "Rotate tires for even wear",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Tire rotation",
+          "Pressure check",
+          "Visual inspection"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 60,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Uneven tire wear, reduced tire life"
+      },
+      {
+        "service_name": "Multi-Point Inspection",
+        "service_description": "Comprehensive vehicle inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Fluid levels",
+          "Battery test",
+          "Lights",
+          "Suspension check"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 75,
+        "independent_cost_high": 150,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Undetected issues, potential failures"
+      },
+      {
+        "service_name": "Fuel Filter Replacement",
+        "service_description": "Replace fuel filter",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "Fuel filter"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 40,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Reduced fuel flow, poor performance"
+      },
+      {
+        "service_name": "Battery Service",
+        "service_description": "Test battery and clean terminals",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Battery test",
+          "Terminal cleaning",
+          "Corrosion protection"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 60,
+        "diy_cost_low": 10,
+        "diy_cost_high": 20,
+        "labor_hours_estimate": 0.3,
+        "is_critical": false,
+        "skip_consequences": "Starting issues, electrical problems"
+      },
+      {
+        "service_name": "Power Steering Fluid Service",
+        "service_description": "Replace power steering fluid",
+        "interval_miles": 60000,
+        "interval_months": 72,
+        "items_included": [
+          "Power steering fluid",
+          "System flush"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 180,
+        "independent_cost_low": 75,
+        "independent_cost_high": 130,
+        "diy_cost_low": 25,
+        "diy_cost_high": 40,
+        "labor_hours_estimate": 0.8,
+        "is_critical": false,
+        "skip_consequences": "Steering difficulty, pump failure"
+      }
+    ],
+    "variants": [
+      {
+        "variant_key": "aston-martin-v12-vantage-1st-gen-base-2009-2012",
+        "display_name": "V12 Vantage Base",
+        "years_text": "2009-2012",
+        "model_year_start": 2009,
+        "model_year_end": 2012,
+        "trim": "Base",
+        "drivetrain": "RWD",
+        "transmission": "6-speed manual",
+        "engine": "6.0L Naturally Aspirated V12",
+        "metadata": {
+          "hp": 510,
+          "torque": 420,
+          "msrp": 184000,
+          "curb_weight": 3704,
+          "notable_features": [
+            "Carbon fiber front splitter",
+            "V12 engine",
+            "Manual transmission only"
+          ],
+          "is_default": true
+        }
+      },
+      {
+        "variant_key": "aston-martin-v12-vantage-2nd-gen-base-2013-2018",
+        "display_name": "V12 Vantage Base",
+        "years_text": "2013-2018",
+        "model_year_start": 2013,
+        "model_year_end": 2018,
+        "trim": "Base",
+        "drivetrain": "RWD",
+        "transmission": "7-speed automated manual",
+        "engine": "6.0L Naturally Aspirated V12",
+        "metadata": {
+          "hp": 565,
+          "torque": 457,
+          "msrp": 189000,
+          "curb_weight": 3704,
+          "notable_features": [
+            "Sportshift III transmission",
+            "Enhanced aerodynamics",
+            "Updated interior"
+          ],
+          "is_default": true
+        }
+      },
+      {
+        "variant_key": "aston-martin-v12-vantage-s-2013-2018",
+        "display_name": "V12 Vantage S",
+        "years_text": "2013-2018",
+        "model_year_start": 2013,
+        "model_year_end": 2018,
+        "trim": "S",
+        "drivetrain": "RWD",
+        "transmission": "7-speed automated manual",
+        "engine": "6.0L Naturally Aspirated V12",
+        "metadata": {
+          "hp": 565,
+          "torque": 457,
+          "msrp": 199000,
+          "curb_weight": 3665,
+          "notable_features": [
+            "Sport suspension",
+            "Enhanced aerodynamics",
+            "Carbon fiber details",
+            "Sport exhaust"
+          ],
+          "is_default": false
+        }
+      }
+    ],
+    "performance": {
+      "zero_to_sixty": 3.9,
+      "zero_to_sixty_source": "Car and Driver",
+      "quarter_mile_time": 12.2,
+      "quarter_mile_speed": 118,
+      "top_speed": 205,
+      "top_speed_limited": false,
+      "braking_60_0": 104,
+      "braking_70_0": 138,
+      "lateral_g": 1.05,
+      "curb_weight": 3704,
+      "weight_distribution": "51/49",
+      "sources": [
+        {
+          "publication": "Car and Driver",
+          "date": "2009-10",
+          "url": "https://www.caranddriver.com/reviews/a15136872/2010-aston-martin-v12-vantage-road-test/"
+        },
+        {
+          "publication": "Motor Trend",
+          "date": "2010-02",
+          "url": "https://www.motortrend.com/reviews/2010-aston-martin-v12-vantage-first-test/"
+        },
+        {
+          "publication": "Road & Track",
+          "date": "2009-11",
+          "url": "https://www.roadandtrack.com/reviews/a15136872/2010-aston-martin-v12-vantage-test/"
+        }
+      ],
+      "confidence": 0.85
+    },
+    "tuning": {
+      "engine_family": "6.0L Naturally Aspirated V12 (AM29)",
+      "stock_whp": 450,
+      "stock_wtq": 420,
+      "tuning_platforms": [
+        {
+          "name": "Kess V2/K-TAG",
+          "price_low": 2000,
+          "price_high": 4000,
+          "notes": "ECU reading/writing tool for direct flash tuning"
+        },
+        {
+          "name": "Alientech",
+          "price_low": 3000,
+          "price_high": 5000,
+          "notes": "Professional ECU tuning suite"
+        },
+        {
+          "name": "Custom ECU remap",
+          "price_low": 1200,
+          "price_high": 2500,
+          "notes": "Specialist Aston Martin tuner required"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 25,
+          "hp_gain_high": 45,
+          "cost_low": 2500,
+          "cost_high": 4500,
+          "components": [
+            "ECU remap",
+            "cold air intake",
+            "performance exhaust"
+          ],
+          "notes": "Conservative gains focusing on drivability and reliability"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 45,
+          "hp_gain_high": 75,
+          "cost_low": 5000,
+          "cost_high": 8500,
+          "components": [
+            "aggressive tune",
+            "headers",
+            "high flow cats",
+            "intake manifold work"
+          ],
+          "notes": "More aggressive tuning with supporting modifications"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 75,
+          "hp_gain_high": 120,
+          "cost_low": 12000,
+          "cost_high": 20000,
+          "components": [
+            "individual throttle bodies",
+            "custom cam profiles",
+            "ported heads",
+            "standalone ECU"
+          ],
+          "notes": "Extensive engine modifications requiring professional build"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 600,
+        "stock_transmission_tq": 480,
+        "stock_axles_tq": 520
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "BMC",
+          "K&N"
+        ],
+        "exhaust": [
+          "Quicksilver",
+          "Akrapovic",
+          "Capristo"
+        ],
+        "tuner": [
+          "Litchfield Motors",
+          "V12 Specialist",
+          "Aston Tuning"
+        ]
+      }
+    },
+    "issues": [
+      {
+        "title": "V12 Engine Oil Leak from Valley Cover Gasket",
+        "severity": "high",
+        "description": "The valley cover gasket between the cylinder banks commonly fails, causing significant oil leaks. This is particularly problematic on the AM11 engine and can lead to oil dripping onto hot exhaust components.",
+        "symptoms": [
+          "Oil smell in cabin",
+          "Visible oil leak under vehicle",
+          "Oil on exhaust manifolds",
+          "Low oil level warnings"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 4000,
+        "fix_description": "Replace valley cover gasket, requires engine removal or significant disassembly",
+        "prevention": "Regular oil changes, avoid overheating, monitor oil levels",
+        "source_type": "forum"
+      },
+      {
+        "title": "Transmission Mount Failure",
+        "severity": "medium",
+        "description": "The transmission mount is prone to premature failure, especially on manual transmission models. This causes excessive drivetrain movement and harsh shifting.",
+        "symptoms": [
+          "Clunking noise during gear changes",
+          "Excessive vibration",
+          "Harsh engagement",
+          "Drivetrain noise"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 1500,
+        "fix_description": "Replace transmission mount with updated part",
+        "prevention": "Avoid aggressive launches, regular inspection during service",
+        "source_type": "forum"
+      },
+      {
+        "title": "Carbon Fiber Hood Delamination",
+        "severity": "medium",
+        "description": "Carbon fiber hood panels can experience delamination and cracking, particularly around stress points and mounting areas. This affects both aesthetics and structural integrity.",
+        "symptoms": [
+          "Visible cracking in carbon fiber",
+          "Delaminated layers",
+          "White stress marks",
+          "Loose sections"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 3000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Replace hood or professional carbon fiber repair",
+        "prevention": "Avoid extreme temperature changes, proper storage",
+        "source_type": "forum"
+      },
+      {
+        "title": "Clutch Hydraulic System Failure",
+        "severity": "high",
+        "description": "Manual transmission models suffer from clutch hydraulic system failures, including master cylinder, slave cylinder, and hydraulic line issues leading to clutch engagement problems.",
+        "symptoms": [
+          "Soft clutch pedal",
+          "Clutch won't disengage",
+          "Difficulty shifting",
+          "Clutch pedal to floor"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 1200,
+        "estimated_cost_high": 3000,
+        "fix_description": "Replace clutch master cylinder, slave cylinder, and hydraulic lines",
+        "prevention": "Regular clutch fluid changes, avoid riding the clutch",
+        "source_type": "forum"
+      },
+      {
+        "title": "Cooling System Thermostat Housing Failure",
+        "severity": "medium",
+        "description": "The plastic thermostat housing is prone to cracking and failure, causing coolant leaks and potential overheating. The housing can become brittle over time.",
+        "symptoms": [
+          "Coolant leak",
+          "Overheating",
+          "Low coolant warnings",
+          "White residue around thermostat"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 600,
+        "estimated_cost_high": 1200,
+        "fix_description": "Replace thermostat housing with updated metal version",
+        "prevention": "Regular coolant changes, avoid overheating",
+        "source_type": "forum"
+      },
+      {
+        "title": "Door Lock Actuator Failure",
+        "severity": "low",
+        "description": "Electric door lock actuators commonly fail, causing doors to not lock or unlock properly. This is a widespread issue across the model range.",
+        "symptoms": [
+          "Doors won't lock/unlock",
+          "Clicking noise from door",
+          "Intermittent operation",
+          "Key fob not working"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 400,
+        "estimated_cost_high": 800,
+        "fix_description": "Replace door lock actuator mechanism",
+        "prevention": "Regular lubrication, avoid forcing locked doors",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Fuel Pump Failure",
+        "severity": "high",
+        "description": "High-pressure fuel pump failures can occur, leading to fuel starvation and poor engine performance. This is more common on higher mileage vehicles.",
+        "symptoms": [
+          "Hard starting",
+          "Engine misfiring",
+          "Fuel pressure loss",
+          "Stalling at idle"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 3000,
+        "fix_description": "Replace fuel pump and filter, clean fuel system",
+        "prevention": "Use high-quality fuel, replace fuel filter regularly",
+        "source_type": "forum"
+      },
+      {
+        "title": "Brake Master Cylinder Failure",
+        "severity": "critical",
+        "description": "Brake master cylinder can fail internally, causing brake fluid loss and reduced braking performance. This creates a serious safety hazard.",
+        "symptoms": [
+          "Soft brake pedal",
+          "Brake fluid loss",
+          "Brake warning light",
+          "Poor braking performance"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 800,
+        "estimated_cost_high": 1500,
+        "fix_description": "Replace brake master cylinder and bleed brake system",
+        "prevention": "Regular brake fluid changes, avoid moisture contamination",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Power Steering Pump Failure",
+        "severity": "medium",
+        "description": "Power steering pump can fail, causing heavy steering and pump noise. The pump seals are particularly prone to failure.",
+        "symptoms": [
+          "Heavy steering",
+          "Whining noise",
+          "Power steering fluid leak",
+          "Steering pump noise"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 1000,
+        "estimated_cost_high": 2000,
+        "fix_description": "Replace power steering pump and flush system",
+        "prevention": "Regular power steering fluid changes, check for leaks",
+        "source_type": "forum"
+      },
+      {
+        "title": "Suspension Shock Absorber Leaks",
+        "severity": "medium",
+        "description": "Shock absorbers can develop leaks, particularly the rear units. This affects ride quality and handling performance.",
+        "symptoms": [
+          "Oil on shock absorbers",
+          "Poor ride quality",
+          "Excessive bouncing",
+          "Uneven tire wear"
+        ],
+        "affected_years_text": "2009-2018",
+        "affected_year_start": 2009,
+        "affected_year_end": 2018,
+        "estimated_cost_low": 1200,
+        "estimated_cost_high": 2500,
+        "fix_description": "Replace shock absorbers, typically done in pairs",
+        "prevention": "Avoid harsh impacts, regular suspension inspection",
+        "source_type": "forum"
+      }
+    ],
+    "editorial": {
+      "tagline": "The last great naturally aspirated Aston V12",
+      "hero_blurb": "This is Aston Martin's final love letter to the naturally aspirated V12, wrapped in their most compact body. When 510 horsepower meets classic British craftsmanship, driving nirvana isn't far behind.",
+      "essence": "The V12 Vantage represents the pinnacle of old-school Aston Martin philosophy: a massive, atmospheric engine crammed into the smallest possible chassis. It's the automotive equivalent of cramming a symphony orchestra into a phone booth – gloriously excessive and utterly magnificent.",
+      "heritage": "Born from Aston's need to give their compact Vantage the ultimate powertrain, the V12 version debuted in 2009 as the brand's most extreme production car. It carried the torch of the legendary DB9's 6.0-liter V12 in a more focused, aggressive package until production ended in 2018.",
+      "design_philosophy": "Maximum drama in minimum space. Designers stretched the Vantage's hood, flared the fenders, and added aggressive aerodynamic elements to accommodate the massive V12 while maintaining the car's svelte proportions. Every line screams performance intent.",
+      "motorsport_history": "The V12 Vantage spawned the track-focused V12 Vantage S and the ultra-rare V600 variants. It dominated GT racing series and served as the basis for numerous one-off track specials, proving its competition credentials beyond the street.",
+      "engine_character": "The 6.0-liter V12 is pure theater – a crescendo of mechanical symphony that builds from a cultured rumble to an operatic wail. It's smooth as silk at low revs but transforms into a snarling beast as it climbs toward its 7,000 RPM redline.",
+      "transmission_feel": "The manual gearbox (where available) offers mechanical precision with a hefty, satisfying throw. The automated manual can be clunky at parking speeds but delivers lightning-quick shifts when you're pushing hard.",
+      "chassis_dynamics": "Beautifully balanced with a slight rear bias that encourages playful oversteer. The chassis is stiff enough for serious cornering but compliant enough for grand touring. It rewards smooth, progressive inputs with sublime handling flow.",
+      "steering_feel": "Heavy, communicative, and utterly analog. The steering wheel transmits every detail from the road surface while requiring real commitment in tight corners. It's old-school in the best possible way.",
+      "brake_confidence": "Massive carbon-ceramic brakes provide incredible stopping power with a firm, progressive pedal feel. They're confidence-inspiring on both road and track, though they can be grabby when cold.",
+      "sound_signature": "A masterpiece of automotive acoustics – the V12 produces a deep, rumbling bass note at idle that transforms into a spine-tingling howl under full acceleration. The exhaust note is pure British aristocracy with a dangerous edge.",
+      "ideal_owner": "The purist who appreciates mechanical perfection and doesn't mind sacrificing some modern conveniences for an authentic driving experience. Perfect for the collector who understands this represents the end of an era.",
+      "not_ideal_for": "Daily drivers seeking modern refinement, fuel economy, or cutting-edge technology. Those wanting effortless low-speed maneuverability or practical cargo space should look elsewhere.",
+      "buyers_summary": "Buy the best example you can afford, as values are climbing for this final naturally aspirated V12 Aston. Focus on maintenance records over mileage, and remember that ownership costs reflect the car's exotic nature.",
+      "pros": [
+        "Legendary naturally aspirated V12 engine",
+        "Stunning exhaust soundtrack",
+        "Appreciating classic status"
+      ],
+      "cons": [
+        "Heavy fuel consumption",
+        "Limited practicality",
+        "High maintenance costs"
+      ],
+      "best_for": [
+        "Weekend canyon carving",
+        "Collector investment piece"
+      ]
+    },
+    "fitment": [
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 9,
+        "wheel_width_rear": 10,
+        "wheel_offset_front_mm": 52,
+        "wheel_offset_rear_mm": 45,
+        "wheel_offset_range_front": "+45 to +55",
+        "wheel_offset_range_rear": "+40 to +50",
+        "tire_size_front": "255/40R19",
+        "tire_size_rear": "295/35R19",
+        "tire_width_front_mm": 255,
+        "tire_width_rear_mm": 295,
+        "tire_aspect_front": 40,
+        "tire_aspect_rear": 35,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Factory fitment with no issues",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 95,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "Plus Size",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 9.5,
+        "wheel_width_rear": 11,
+        "wheel_offset_front_mm": 50,
+        "wheel_offset_rear_mm": 40,
+        "wheel_offset_range_front": "+45 to +55",
+        "wheel_offset_range_rear": "+35 to +45",
+        "tire_size_front": "255/35R20",
+        "tire_size_rear": "295/30R20",
+        "tire_width_front_mm": 255,
+        "tire_width_rear_mm": 295,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": 1.2,
+        "speedometer_error_percent": 1.2,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.2",
+        "recommended_camber_rear": "-1.5",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Good clearance, slightly reduced ride comfort",
+        "known_issues": "Higher road noise, reduced tire life",
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 75,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.85
+      },
+      {
+        "fitment_type": "Track",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 45,
+        "wheel_offset_rear_mm": 35,
+        "wheel_offset_range_front": "+40 to +50",
+        "wheel_offset_range_rear": "+30 to +40",
+        "tire_size_front": "275/35R19",
+        "tire_size_rear": "325/30R19",
+        "tire_width_front_mm": 275,
+        "tire_width_rear_mm": 325,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": -1.5,
+        "speedometer_error_percent": -1.5,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-2.0",
+        "recommended_camber_rear": "-2.5",
+        "requires_coilovers": true,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "May require slight fender modification at full lock",
+        "known_issues": "Reduced comfort for daily driving",
+        "recommended_for": [
+          "track"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "snow"
+        ],
+        "popularity_score": 60,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.8
+      },
+      {
+        "fitment_type": "Stance",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 12,
+        "wheel_offset_front_mm": 35,
+        "wheel_offset_rear_mm": 25,
+        "wheel_offset_range_front": "+30 to +40",
+        "wheel_offset_range_rear": "+20 to +30",
+        "tire_size_front": "245/30R20",
+        "tire_size_rear": "295/25R20",
+        "tire_width_front_mm": 245,
+        "tire_width_rear_mm": 295,
+        "tire_aspect_front": 30,
+        "tire_aspect_rear": 25,
+        "diameter_change_percent": -2.8,
+        "speedometer_error_percent": -2.8,
+        "requires_fender_roll": true,
+        "requires_fender_pull": true,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-3.0",
+        "recommended_camber_rear": "-3.5",
+        "requires_coilovers": true,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Requires fender work and lowered suspension",
+        "known_issues": "Significant comfort reduction, potential rubbing",
+        "recommended_for": [
+          "stance"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "track",
+          "snow"
+        ],
+        "popularity_score": 30,
+        "community_verified": false,
+        "forum_threads": [],
+        "source_type": "forum",
+        "source_url": null,
+        "confidence": 0.7
+      }
+    ],
+    "expertReviews": null,
+    "manuals": null,
+    "images": null
+  },
+  "stage3": {
+    "passed": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "hp",
+      "torque",
+      "curb_weight"
+    ],
+    "warnings": [
+      {
+        "field": "brake_caliper",
+        "severity": "high",
+        "message": "⚠️ VERIFY: brembo brakes listed but Aston Martin V12 Vantage may not come with brembo stock. This could be an aftermarket upgrade confused with OEM specs."
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"6-piston\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      }
+    ],
+    "errors": []
+  },
+  "stage4": {
+    "car_fuel_economy": {
+      "car_id": "5c562a54-15cb-472b-a981-0449bb1d94ac",
+      "epa_vehicle_id": 25380,
+      "city_mpg": 13,
+      "highway_mpg": 19,
+      "combined_mpg": 15,
+      "fuel_type": "Premium",
+      "annual_fuel_cost": 3900,
+      "co2_emissions": 592,
+      "ghg_score": -1,
+      "source": "EPA fueleconomy.gov",
+      "fetched_at": "2026-01-13T00:57:21.757Z"
+    },
+    "vehicle_maintenance_specs": 116,
+    "vehicle_service_intervals": 10,
+    "car_variants": 3,
+    "car_tuning_profiles": {
+      "car_id": "5c562a54-15cb-472b-a981-0449bb1d94ac",
+      "car_variant_id": null,
+      "engine_family": "6.0L Naturally Aspirated V12 (AM29)",
+      "tuning_focus": "performance",
+      "stock_whp": 450,
+      "stock_wtq": 420,
+      "tuning_platforms": [
+        {
+          "name": "Kess V2/K-TAG",
+          "price_low": 2000,
+          "price_high": 4000,
+          "notes": "ECU reading/writing tool for direct flash tuning"
+        },
+        {
+          "name": "Alientech",
+          "price_low": 3000,
+          "price_high": 5000,
+          "notes": "Professional ECU tuning suite"
+        },
+        {
+          "name": "Custom ECU remap",
+          "price_low": 1200,
+          "price_high": 2500,
+          "notes": "Specialist Aston Martin tuner required"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 25,
+          "hp_gain_high": 45,
+          "cost_low": 2500,
+          "cost_high": 4500,
+          "components": [
+            "ECU remap",
+            "cold air intake",
+            "performance exhaust"
+          ],
+          "notes": "Conservative gains focusing on drivability and reliability"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 45,
+          "hp_gain_high": 75,
+          "cost_low": 5000,
+          "cost_high": 8500,
+          "components": [
+            "aggressive tune",
+            "headers",
+            "high flow cats",
+            "intake manifold work"
+          ],
+          "notes": "More aggressive tuning with supporting modifications"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 75,
+          "hp_gain_high": 120,
+          "cost_low": 12000,
+          "cost_high": 20000,
+          "components": [
+            "individual throttle bodies",
+            "custom cam profiles",
+            "ported heads",
+            "standalone ECU"
+          ],
+          "notes": "Extensive engine modifications requiring professional build"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 600,
+        "stock_transmission_tq": 480,
+        "stock_axles_tq": 520
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "BMC",
+          "K&N"
+        ],
+        "exhaust": [
+          "Quicksilver",
+          "Akrapovic",
+          "Capristo"
+        ],
+        "tuner": [
+          "Litchfield Motors",
+          "V12 Specialist",
+          "Aston Tuning"
+        ]
+      },
+      "pipeline_version": "vehicle-data-pipeline@2.2",
+      "pipeline_run_at": "2026-01-13T00:57:22.479Z",
+      "verified": false,
+      "notes": "AI-researched - requires verification"
+    },
+    "car_issues": 10,
+    "cars": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "curb_weight",
+      "tagline",
+      "hero_blurb",
+      "essence",
+      "heritage",
+      "design_philosophy",
+      "motorsport_history",
+      "engine_character",
+      "transmission_feel",
+      "chassis_dynamics",
+      "steering_feel",
+      "brake_confidence",
+      "sound_signature",
+      "ideal_owner",
+      "not_ideal_for",
+      "buyers_summary",
+      "pros",
+      "cons",
+      "best_for"
+    ],
+    "wheel_tire_fitment_options": 4
+  },
+  "stage5": {
+    "tables": {
+      "cars": {
+        "exists": true,
+        "filled": 109,
+        "total": 136,
+        "percent": 80,
+        "missing": [
+          "layout",
+          "perf_power_accel",
+          "perf_grip_cornering",
+          "perf_braking",
+          "perf_track_pace"
+        ]
+      },
+      "vehicle_maintenance_specs": {
+        "exists": true,
+        "filled": 106,
+        "total": 126,
+        "percent": 84,
+        "missing": [
+          "trans_fluid_auto_capacity",
+          "diff_fluid_front_capacity",
+          "power_steering_type",
+          "power_steering_capacity",
+          "fuel_filter_change_interval_miles"
+        ]
+      },
+      "car_fuel_economy": {
+        "exists": true,
+        "filled": 12,
+        "total": 17,
+        "percent": 71,
+        "missing": [
+          "user_avg_mpg",
+          "user_city_mpg",
+          "user_highway_mpg",
+          "user_sample_size",
+          "ev_range"
+        ]
+      },
+      "car_safety_data": {
+        "exists": false,
+        "percent": 0
+      },
+      "car_tuning_profiles": {
+        "exists": true,
+        "filled": 19,
+        "total": 21,
+        "percent": 90,
+        "missing": [
+          "car_variant_id",
+          "verified_by"
+        ]
+      },
+      "car_issues": {
+        "records": 17
+      },
+      "car_recalls": {
+        "records": 0
+      },
+      "vehicle_service_intervals": {
+        "records": 20
+      },
+      "car_variants": {
+        "records": 3
+      },
+      "wheel_tire_fitment_options": {
+        "records": 4
+      },
+      "car_expert_reviews": {
+        "records": 0
+      },
+      "car_manual_data": {
+        "records": 0
+      },
+      "car_images": {
+        "records": 0
+      },
+      "car_dyno_runs": {
+        "records": 0
+      },
+      "car_track_lap_times": {
+        "records": 0
+      },
+      "car_auction_results": {
+        "records": 0
+      },
+      "car_market_pricing": {
+        "records": 0
+      }
+    },
+    "overall": {
+      "filled": 246,
+      "total": 300,
+      "percent": 82
+    }
+  },
+  "completed_at": "2026-01-13T00:57:24.081Z"
+}

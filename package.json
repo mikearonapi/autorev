@@ -57,6 +57,7 @@
     "@vercel/blob": "^2.0.0",
     "cheerio": "^1.1.2",
     "dotenv": "^16.4.5",
+    "exa-js": "^2.0.12",
     "googleapis": "^144.0.0",
     "html2canvas": "^1.4.1",
     "next": "14.2.35",

@@ -1,0 +1,1229 @@
+{
+  "car_id": "80ede5f5-16b6-40b3-a70e-0c443381b832",
+  "mode": "full",
+  "version": "2.3",
+  "started_at": "2026-01-13T00:54:09.626Z",
+  "stages": {},
+  "car_name": "Mercedes-AMG GT Black Series",
+  "stage1": {
+    "epa": null,
+    "safety": null,
+    "recalls": [],
+    "complaints": []
+  },
+  "stage2": {
+    "maintenance": {
+      "oil": {
+        "oil_type": "Full Synthetic",
+        "oil_viscosity": "0W-40",
+        "oil_spec": "MB 229.5",
+        "oil_capacity_liters": 8.5,
+        "oil_capacity_quarts": 9.5,
+        "oil_filter_oem_part": "A278 180 00 09",
+        "oil_filter_alternatives": [
+          "Mann W 719/45",
+          "Mahle OX 774D"
+        ],
+        "oil_change_interval_miles": 7500,
+        "oil_change_interval_months": 12
+      },
+      "coolant": {
+        "coolant_type": "OAT",
+        "coolant_color": "Blue",
+        "coolant_spec": "MB 325.0",
+        "coolant_capacity_liters": 11.5,
+        "coolant_change_interval_miles": 150000,
+        "coolant_change_interval_years": 15
+      },
+      "brake_fluid": {
+        "brake_fluid_type": "DOT 4",
+        "brake_fluid_spec": "MB 331.0",
+        "brake_fluid_change_interval_miles": 40000,
+        "brake_fluid_change_interval_years": 4
+      },
+      "transmission": {
+        "trans_fluid_manual": "N/A",
+        "trans_fluid_manual_capacity": null,
+        "trans_fluid_auto": "Mercedes-AMG SPEEDSHIFT DCT 7G",
+        "trans_fluid_auto_capacity": 7.2,
+        "trans_fluid_change_interval_miles": 62000
+      },
+      "differential": {
+        "diff_fluid_type": "75W-90 GL-5",
+        "diff_fluid_front_capacity": 1.8,
+        "diff_fluid_rear_capacity": 2.1,
+        "diff_fluid_change_interval_miles": 62000
+      },
+      "power_steering": {
+        "power_steering_type": "Electric",
+        "power_steering_fluid": "N/A",
+        "power_steering_capacity": null
+      },
+      "fuel": {
+        "fuel_type": "Premium Gasoline",
+        "fuel_octane_minimum": 91,
+        "fuel_octane_recommended": 93,
+        "fuel_tank_capacity_gallons": 21.1,
+        "fuel_tank_capacity_liters": 80
+      },
+      "filters": {
+        "air_filter_oem_part": "A190 094 09 04",
+        "air_filter_alternatives": [
+          "Mann C 2862/2",
+          "Mahle LX 4062"
+        ],
+        "air_filter_change_interval_miles": 30000,
+        "cabin_filter_oem_part": "A205 830 03 18",
+        "cabin_filter_alternatives": [
+          "Mann CUK 2862",
+          "Mahle LA 862"
+        ],
+        "cabin_filter_change_interval_miles": 20000,
+        "fuel_filter_oem_part": "In-tank (non-serviceable)",
+        "fuel_filter_in_tank": true,
+        "fuel_filter_change_interval_miles": null
+      },
+      "tires": {
+        "tire_size_front": "285/35R19",
+        "tire_size_rear": "335/30R20",
+        "tire_pressure_front_psi": 29,
+        "tire_pressure_rear_psi": 32,
+        "tire_pressure_spare_psi": 60,
+        "tire_rotation_pattern": "Not recommended (staggered setup)",
+        "tire_rotation_interval_miles": 0,
+        "tire_oem_brand": "Michelin Pilot Sport Cup 2",
+        "tire_recommended_brands": [
+          "Michelin",
+          "Pirelli",
+          "Continental"
+        ]
+      },
+      "wheels": {
+        "wheel_size_front": "19x10",
+        "wheel_size_rear": "20x12",
+        "wheel_bolt_pattern": "5x112",
+        "wheel_center_bore_mm": 66.6,
+        "wheel_lug_torque_ft_lbs": 110,
+        "wheel_lug_torque_nm": 150
+      },
+      "brakes_front": {
+        "brake_front_rotor_diameter_mm": 390,
+        "brake_front_rotor_thickness_mm": 36,
+        "brake_front_rotor_min_thickness_mm": 34,
+        "brake_front_rotor_oem_part": "A190 421 13 12",
+        "brake_front_pad_oem_part": "A006 420 95 20",
+        "brake_front_pad_wear_indicator": "Sensor",
+        "brake_front_caliper_type": "6-piston AMG composite"
+      },
+      "brakes_rear": {
+        "brake_rear_rotor_diameter_mm": 370,
+        "brake_rear_rotor_thickness_mm": 22,
+        "brake_rear_rotor_min_thickness_mm": 20,
+        "brake_rear_rotor_oem_part": "A190 423 16 12",
+        "brake_rear_pad_oem_part": "A006 420 96 20",
+        "brake_rear_pad_wear_indicator": "Sensor",
+        "brake_rear_caliper_type": "Single-piston AMG"
+      },
+      "spark": {
+        "spark_plug_type": "Iridium",
+        "spark_plug_gap_mm": 0.7,
+        "spark_plug_oem_part": "A003 159 71 03",
+        "spark_plug_alternatives": [
+          "NGK ILFR8T-11",
+          "Bosch FR7KPP332S"
+        ],
+        "spark_plug_change_interval_miles": 50000,
+        "spark_plug_quantity": 8
+      },
+      "timing": {
+        "timing_type": "Chain",
+        "timing_change_interval_miles": null,
+        "timing_change_interval_years": null,
+        "timing_tensioner_oem_part": "A278 050 04 11"
+      },
+      "belts": {
+        "serpentine_belt_oem_part": "A278 997 00 92",
+        "serpentine_belt_change_interval_miles": 100000,
+        "ac_belt_separate": false,
+        "ac_belt_oem_part": "N/A"
+      },
+      "battery": {
+        "battery_group_size": "H8",
+        "battery_cca": 850,
+        "battery_voltage": 12,
+        "battery_oem_brand": "Mercedes-Benz AGM",
+        "battery_location": "Engine bay",
+        "battery_agm": true
+      },
+      "alternator": {
+        "alternator_output_amps": 220,
+        "alternator_oem_part": "A278 154 11 02"
+      },
+      "wipers": {
+        "wiper_driver_size_inches": 26,
+        "wiper_passenger_size_inches": 22,
+        "wiper_rear_size_inches": null,
+        "wiper_type": "Beam",
+        "wiper_oem_part_driver": "A222 820 13 45",
+        "wiper_oem_part_passenger": "A222 820 14 45",
+        "wiper_oem_part_rear": "N/A"
+      },
+      "lighting": {
+        "headlight_low_beam_type": "LED Matrix (non-replaceable)",
+        "headlight_high_beam_type": "LED Matrix (non-replaceable)",
+        "headlight_fog_type": "N/A",
+        "turn_signal_front_type": "LED (non-replaceable)",
+        "turn_signal_rear_type": "LED (non-replaceable)",
+        "brake_light_type": "LED (non-replaceable)",
+        "reverse_light_type": "LED (non-replaceable)"
+      },
+      "alignment": {
+        "alignment_camber_front_degrees": "-0.8 to -0.3",
+        "alignment_camber_rear_degrees": "-1.5 to -1.0",
+        "alignment_toe_front_degrees": "0.05 to 0.15",
+        "alignment_toe_rear_degrees": "0.10 to 0.25",
+        "alignment_caster_degrees": "6.5 to 7.5"
+      },
+      "suspension": {
+        "shock_front_oem_part": "A190 320 36 13",
+        "shock_rear_oem_part": "A190 320 37 13",
+        "spring_front_oem_part": "A190 320 70 04",
+        "spring_rear_oem_part": "A190 320 71 04",
+        "sway_bar_front_diameter_mm": 30,
+        "sway_bar_rear_diameter_mm": 26
+      },
+      "confidence": 0.92,
+      "sources": [
+        "Mercedes-AMG Service Manual",
+        "Mercedes Parts Catalog",
+        "AMG Technical Specifications"
+      ]
+    },
+    "serviceIntervals": [
+      {
+        "service_name": "Oil Change Service A",
+        "service_description": "Replace engine oil and filter, basic inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Synthetic engine oil",
+          "Oil filter",
+          "Drain plug washer",
+          "Basic inspection"
+        ],
+        "dealer_cost_low": 300,
+        "dealer_cost_high": 450,
+        "independent_cost_low": 200,
+        "independent_cost_high": 350,
+        "diy_cost_low": 120,
+        "diy_cost_high": 180,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Engine wear, void warranty, reduced performance"
+      },
+      {
+        "service_name": "Oil Change Service B",
+        "service_description": "Comprehensive service including oil change, filters, and extensive inspection",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Synthetic engine oil",
+          "Oil filter",
+          "Air filter",
+          "Cabin filter",
+          "Brake fluid check",
+          "Comprehensive inspection"
+        ],
+        "dealer_cost_low": 600,
+        "dealer_cost_high": 900,
+        "independent_cost_low": 400,
+        "independent_cost_high": 650,
+        "diy_cost_low": 180,
+        "diy_cost_high": 280,
+        "labor_hours_estimate": 2.5,
+        "is_critical": true,
+        "skip_consequences": "Multiple system failures, void warranty, safety risks"
+      },
+      {
+        "service_name": "Transmission Service",
+        "service_description": "Replace transmission fluid and filter",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "AMG transmission fluid",
+          "Transmission filter",
+          "Pan gasket"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 650,
+        "independent_cost_low": 280,
+        "independent_cost_high": 450,
+        "diy_cost_low": 150,
+        "diy_cost_high": 250,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Transmission damage, shifting issues, costly repairs"
+      },
+      {
+        "service_name": "Brake Fluid Flush",
+        "service_description": "Replace brake fluid system-wide",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "DOT 4 brake fluid",
+          "System flush"
+        ],
+        "dealer_cost_low": 180,
+        "dealer_cost_high": 280,
+        "independent_cost_low": 120,
+        "independent_cost_high": 200,
+        "diy_cost_low": 40,
+        "diy_cost_high": 80,
+        "labor_hours_estimate": 1.5,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety hazard, corrosion"
+      },
+      {
+        "service_name": "Coolant Flush",
+        "service_description": "Replace engine coolant and thermostat",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "MB-approved coolant",
+          "Thermostat",
+          "System flush"
+        ],
+        "dealer_cost_low": 300,
+        "dealer_cost_high": 500,
+        "independent_cost_low": 200,
+        "independent_cost_high": 350,
+        "diy_cost_low": 80,
+        "diy_cost_high": 150,
+        "labor_hours_estimate": 2,
+        "is_critical": true,
+        "skip_consequences": "Engine overheating, head gasket failure"
+      },
+      {
+        "service_name": "Differential Service",
+        "service_description": "Replace rear differential fluid",
+        "interval_miles": 40000,
+        "interval_months": 48,
+        "items_included": [
+          "AMG differential oil",
+          "Drain plug gasket"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 150,
+        "independent_cost_high": 250,
+        "diy_cost_low": 60,
+        "diy_cost_high": 120,
+        "labor_hours_estimate": 1,
+        "is_critical": false,
+        "skip_consequences": "Differential wear, noise, handling issues"
+      },
+      {
+        "service_name": "Spark Plugs Replacement",
+        "service_description": "Replace all spark plugs",
+        "interval_miles": 30000,
+        "interval_months": 36,
+        "items_included": [
+          "8 AMG spark plugs",
+          "Ignition coil inspection"
+        ],
+        "dealer_cost_low": 400,
+        "dealer_cost_high": 600,
+        "independent_cost_low": 280,
+        "independent_cost_high": 450,
+        "diy_cost_low": 200,
+        "diy_cost_high": 300,
+        "labor_hours_estimate": 2.5,
+        "is_critical": false,
+        "skip_consequences": "Misfires, reduced performance, fuel economy loss"
+      },
+      {
+        "service_name": "Air Filter Replacement",
+        "service_description": "Replace engine air filter",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "High-flow air filter"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 150,
+        "independent_cost_low": 50,
+        "independent_cost_high": 100,
+        "diy_cost_low": 30,
+        "diy_cost_high": 60,
+        "labor_hours_estimate": 0.3,
+        "is_critical": false,
+        "skip_consequences": "Reduced performance, poor fuel economy"
+      },
+      {
+        "service_name": "Cabin Filter Replacement",
+        "service_description": "Replace cabin air filter",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Cabin air filter"
+        ],
+        "dealer_cost_low": 60,
+        "dealer_cost_high": 120,
+        "independent_cost_low": 40,
+        "independent_cost_high": 80,
+        "diy_cost_low": 20,
+        "diy_cost_high": 40,
+        "labor_hours_estimate": 0.3,
+        "is_critical": false,
+        "skip_consequences": "Poor air quality, reduced HVAC efficiency"
+      },
+      {
+        "service_name": "Tire Rotation",
+        "service_description": "Rotate tires for even wear",
+        "interval_miles": 5000,
+        "interval_months": 6,
+        "items_included": [
+          "Tire rotation",
+          "Pressure check",
+          "Tread inspection"
+        ],
+        "dealer_cost_low": 50,
+        "dealer_cost_high": 100,
+        "independent_cost_low": 30,
+        "independent_cost_high": 70,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Uneven tire wear, reduced tire life"
+      },
+      {
+        "service_name": "Brake Inspection",
+        "service_description": "Comprehensive brake system inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Pad thickness check",
+          "Rotor inspection",
+          "Brake line inspection",
+          "Caliper inspection"
+        ],
+        "dealer_cost_low": 100,
+        "dealer_cost_high": 200,
+        "independent_cost_low": 70,
+        "independent_cost_high": 150,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 1,
+        "is_critical": true,
+        "skip_consequences": "Brake failure, safety hazard"
+      },
+      {
+        "service_name": "Multi-Point Inspection",
+        "service_description": "Comprehensive vehicle inspection",
+        "interval_miles": 10000,
+        "interval_months": 12,
+        "items_included": [
+          "Fluid levels",
+          "Belt inspection",
+          "Hose inspection",
+          "Suspension check",
+          "Exhaust inspection"
+        ],
+        "dealer_cost_low": 150,
+        "dealer_cost_high": 250,
+        "independent_cost_low": 100,
+        "independent_cost_high": 180,
+        "diy_cost_low": 0,
+        "diy_cost_high": 0,
+        "labor_hours_estimate": 1.5,
+        "is_critical": false,
+        "skip_consequences": "Undetected issues, potential failures"
+      },
+      {
+        "service_name": "Fuel Filter Replacement",
+        "service_description": "Replace fuel filter",
+        "interval_miles": 60000,
+        "interval_months": 72,
+        "items_included": [
+          "Fuel filter"
+        ],
+        "dealer_cost_low": 200,
+        "dealer_cost_high": 350,
+        "independent_cost_low": 120,
+        "independent_cost_high": 250,
+        "diy_cost_low": 50,
+        "diy_cost_high": 100,
+        "labor_hours_estimate": 1.5,
+        "is_critical": false,
+        "skip_consequences": "Fuel delivery issues, performance loss"
+      },
+      {
+        "service_name": "Battery Service",
+        "service_description": "Battery test and terminal cleaning",
+        "interval_miles": 20000,
+        "interval_months": 24,
+        "items_included": [
+          "Battery test",
+          "Terminal cleaning",
+          "Corrosion treatment"
+        ],
+        "dealer_cost_low": 80,
+        "dealer_cost_high": 150,
+        "independent_cost_low": 50,
+        "independent_cost_high": 100,
+        "diy_cost_low": 10,
+        "diy_cost_high": 30,
+        "labor_hours_estimate": 0.5,
+        "is_critical": false,
+        "skip_consequences": "Starting issues, electrical problems"
+      }
+    ],
+    "variants": [
+      {
+        "variant_key": "mercedes-amg-gt-black-series-c190-base-2021-2022",
+        "display_name": "Mercedes-AMG GT Black Series",
+        "years_text": "2021-2022",
+        "model_year_start": 2021,
+        "model_year_end": 2022,
+        "trim": "Black Series",
+        "drivetrain": "RWD",
+        "transmission": "7-speed dual-clutch automatic",
+        "engine": "4.0L Twin-Turbo V8",
+        "metadata": {
+          "hp": 720,
+          "torque": 590,
+          "msrp": 335000,
+          "curb_weight": 3616,
+          "notable_features": [
+            "Carbon fiber body panels",
+            "Active aerodynamics",
+            "Adjustable coilover suspension",
+            "Track-focused interior",
+            "Carbon ceramic brakes",
+            "Limited production"
+          ],
+          "is_default": true
+        }
+      }
+    ],
+    "performance": {
+      "zero_to_sixty": 3.1,
+      "zero_to_sixty_source": "Car and Driver",
+      "quarter_mile_time": 11,
+      "quarter_mile_speed": 130,
+      "top_speed": 202,
+      "top_speed_limited": true,
+      "braking_60_0": 95,
+      "braking_70_0": 130,
+      "lateral_g": 1.05,
+      "curb_weight": 3616,
+      "weight_distribution": "55/45",
+      "sources": [
+        {
+          "publication": "Car and Driver",
+          "date": "2020-11",
+          "url": "https://www.caranddriver.com/reviews/a34602215/2021-mercedes-amg-gt-black-series-by-the-numbers/"
+        },
+        {
+          "publication": "MotorTrend",
+          "date": "2021-02",
+          "url": "https://www.motortrend.com/reviews/2021-mercedes-amg-gt-black-series-first-test-review/"
+        },
+        {
+          "publication": "Road & Track",
+          "date": "2020-12",
+          "url": "https://www.roadandtrack.com/reviews/a34654321/2021-mercedes-amg-gt-black-series-test/"
+        }
+      ],
+      "confidence": 0.85
+    },
+    "tuning": {
+      "engine_family": "M178 4.0L Twin-Turbo V8",
+      "stock_whp": 630,
+      "stock_wtq": 590,
+      "tuning_platforms": [
+        {
+          "name": "ECUTEK",
+          "price_low": 800,
+          "price_high": 1500,
+          "notes": "Primary platform for Mercedes-AMG tuning"
+        },
+        {
+          "name": "Brabus PowerXtra",
+          "price_low": 2000,
+          "price_high": 4000,
+          "notes": "OEM+ tuning solution"
+        },
+        {
+          "name": "RENNtech ECU Flash",
+          "price_low": 1200,
+          "price_high": 2500,
+          "notes": "Mercedes specialist tuning"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 50,
+          "hp_gain_high": 80,
+          "cost_low": 800,
+          "cost_high": 1500,
+          "components": [
+            "ECU tune"
+          ],
+          "notes": "Software optimization only, boost increase and timing adjustments"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 80,
+          "hp_gain_high": 120,
+          "cost_low": 3500,
+          "cost_high": 6000,
+          "components": [
+            "ECU tune",
+            "high-flow cats",
+            "intake"
+          ],
+          "notes": "Requires supporting modifications for reliability"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 120,
+          "hp_gain_high": 180,
+          "cost_low": 8000,
+          "cost_high": 15000,
+          "components": [
+            "ECU tune",
+            "turbo upgrades",
+            "intercooler",
+            "exhaust system",
+            "intake"
+          ],
+          "notes": "Major turbocharger and supporting system upgrades"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 800,
+        "stock_transmission_tq": 700,
+        "stock_axles_tq": 650
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "BMC",
+          "K&N"
+        ],
+        "exhaust": [
+          "Akrapovic",
+          "IPE",
+          "Capristo"
+        ],
+        "tuner": [
+          "RENNtech",
+          "Brabus",
+          "Weistec Engineering"
+        ]
+      }
+    },
+    "issues": [
+      {
+        "title": "Active Ride Control Suspension System Failure",
+        "severity": "high",
+        "description": "The adaptive suspension system experiences failures in the hydraulic dampers and control units, causing harsh ride quality and potential handling issues. The system may enter limp mode or completely fail.",
+        "symptoms": [
+          "Harsh ride quality",
+          "Warning lights on dashboard",
+          "Uneven vehicle height",
+          "Poor handling",
+          "Suspension noise"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 8000,
+        "estimated_cost_high": 15000,
+        "fix_description": "Replace faulty suspension dampers, control modules, or hydraulic components. Software updates may also be required.",
+        "prevention": "Regular suspension system inspections and avoiding extreme driving conditions when possible",
+        "source_type": "forum"
+      },
+      {
+        "title": "Carbon Fiber Body Panel Delamination",
+        "severity": "medium",
+        "description": "Carbon fiber body panels, particularly around high-stress areas, may experience delamination or cracking due to manufacturing defects or extreme temperature cycling.",
+        "symptoms": [
+          "Visible cracks in carbon fiber",
+          "Delamination bubbles",
+          "Unusual noises from body panels",
+          "Paint discoloration"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 5000,
+        "estimated_cost_high": 12000,
+        "fix_description": "Replace damaged carbon fiber panels or perform professional repair with carbon fiber patching techniques",
+        "prevention": "Avoid extreme temperature exposure and protect vehicle from UV damage with proper storage",
+        "source_type": "forum"
+      },
+      {
+        "title": "Twin-Turbo V8 Engine Oil Consumption",
+        "severity": "medium",
+        "description": "The 4.0L twin-turbo V8 engine may consume excessive oil, particularly during high-performance driving, leading to potential engine damage if not monitored.",
+        "symptoms": [
+          "Low oil level warnings",
+          "Blue smoke from exhaust",
+          "Reduced engine performance",
+          "Oil burning smell"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 3000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Replace piston rings, valve seals, or turbocharger seals depending on the source of oil consumption",
+        "prevention": "Regular oil level checks, use manufacturer-specified oil, avoid extended high-RPM driving",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "Track-Focused Brake System Overheating",
+        "severity": "high",
+        "description": "Despite the high-performance brake system, extended track use can lead to brake fade, warped rotors, and premature pad wear due to extreme heat generation.",
+        "symptoms": [
+          "Brake pedal fade",
+          "Vibration during braking",
+          "Squealing or grinding noises",
+          "Reduced braking performance"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 4000,
+        "estimated_cost_high": 10000,
+        "fix_description": "Replace brake rotors, pads, and brake fluid. Upgrade to more aggressive track-spec components if needed",
+        "prevention": "Allow proper cool-down periods during track use, use high-temperature brake fluid, regular brake inspections",
+        "source_type": "forum"
+      },
+      {
+        "title": "Electronic Stability Program Malfunction",
+        "severity": "high",
+        "description": "The ESP system may malfunction, causing erratic behavior of traction control and stability systems, particularly during aggressive driving or track conditions.",
+        "symptoms": [
+          "ESP warning lights",
+          "Unexpected intervention",
+          "Loss of traction control",
+          "Stability system errors"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 6000,
+        "fix_description": "Software updates, sensor replacement, or control module repair/replacement",
+        "prevention": "Keep software updated, avoid water damage to sensors, regular diagnostic checks",
+        "source_type": "tsb"
+      },
+      {
+        "title": "AMG Performance Exhaust Valve Failure",
+        "severity": "medium",
+        "description": "The active exhaust system valves may fail to open or close properly, affecting exhaust sound and potentially engine performance in different driving modes.",
+        "symptoms": [
+          "Exhaust sound not changing between modes",
+          "Check engine light",
+          "Reduced performance in track mode",
+          "Exhaust valve error messages"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1500,
+        "estimated_cost_high": 4000,
+        "fix_description": "Replace faulty exhaust valve actuators or control modules",
+        "prevention": "Regular system cycling, avoid forcing valves, keep exhaust system clean",
+        "source_type": "forum"
+      },
+      {
+        "title": "Aerodynamics Package Adjustment Issues",
+        "severity": "low",
+        "description": "The active aerodynamic components including the rear wing may experience adjustment problems or fail to deploy properly at different speeds.",
+        "symptoms": [
+          "Rear wing not adjusting",
+          "Aerodynamics warning messages",
+          "Unusual wind noise",
+          "Performance mode limitations"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 2000,
+        "estimated_cost_high": 5000,
+        "fix_description": "Calibrate or replace aerodynamic actuators, software updates, mechanical component replacement",
+        "prevention": "Regular system calibration, avoid debris damage, gentle cleaning of moving parts",
+        "source_type": "owner_report"
+      },
+      {
+        "title": "High-Performance Tire Wear Issues",
+        "severity": "medium",
+        "description": "The ultra-high-performance tires experience rapid and uneven wear patterns, particularly on the inside edges, due to aggressive alignment settings and high cornering forces.",
+        "symptoms": [
+          "Rapid tire wear",
+          "Uneven tread patterns",
+          "Road noise increase",
+          "Reduced grip",
+          "Tire pressure monitoring alerts"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 1200,
+        "estimated_cost_high": 2500,
+        "fix_description": "Replace tires and perform proper wheel alignment, potentially adjust suspension settings",
+        "prevention": "Regular tire rotation, proper tire pressure maintenance, avoid aggressive street driving",
+        "source_type": "forum"
+      },
+      {
+        "title": "Cooling System Insufficient for Track Use",
+        "severity": "high",
+        "description": "During extended track sessions, the cooling system may struggle to maintain optimal temperatures, leading to engine overheating warnings and performance limitations.",
+        "symptoms": [
+          "Engine temperature warnings",
+          "Reduced power in track mode",
+          "Cooling system overheating",
+          "Limp mode activation"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 3000,
+        "estimated_cost_high": 8000,
+        "fix_description": "Upgrade cooling system components, install additional heat exchangers, replace thermostat and water pump",
+        "prevention": "Monitor temperatures during track use, allow proper warm-up and cool-down periods, regular coolant maintenance",
+        "source_type": "forum"
+      },
+      {
+        "title": "AMG Infotainment System Glitches",
+        "severity": "low",
+        "description": "The MBUX infotainment system may experience software glitches, freezing, or connectivity issues, particularly with performance data logging features.",
+        "symptoms": [
+          "Screen freezing",
+          "System restart loops",
+          "Bluetooth connectivity issues",
+          "Performance data not recording",
+          "Navigation errors"
+        ],
+        "affected_years_text": "2020-2022",
+        "affected_year_start": 2020,
+        "affected_year_end": 2022,
+        "estimated_cost_low": 500,
+        "estimated_cost_high": 2000,
+        "fix_description": "Software updates, system reset, or control unit replacement in severe cases",
+        "prevention": "Regular software updates, avoid using system while engine is starting, proper shutdown procedures",
+        "source_type": "owner_report"
+      }
+    ],
+    "editorial": {
+      "tagline": "Track-bred fury in its most uncompromising form",
+      "hero_blurb": "The AMG GT Black Series represents the pinnacle of Mercedes-AMG's engineering prowess, delivering 720 horsepower through a hand-built twin-turbo V8. This is street-legal racing distilled to its purest essence.",
+      "essence": "The Black Series transforms the already potent AMG GT into a circuit-focused weapon with extensive aerodynamics, weight reduction, and track-tuned suspension. It's AMG's most extreme road car, built without compromise for the ultimate driving experience.",
+      "heritage": "The Black Series nameplate has crowned AMG's most hardcore offerings since 2006, representing the brand's commitment to translating motorsport technology into road cars. Each Black Series model marks the evolutionary peak of its respective platform.",
+      "design_philosophy": "Form follows function with aggressive aerodynamics, weight-saving measures, and track-focused ergonomics taking precedence over comfort. Every design element serves the pursuit of lap time reduction.",
+      "motorsport_history": "Born from AMG's GT3 and GT4 racing programs, incorporating aerodynamic lessons learned from professional motorsport competition and AMG's extensive track testing programs.",
+      "engine_character": "The hand-built M178 twin-turbo V8 delivers explosive power with minimal turbo lag, building to a savage crescendo that defines modern AMG performance. Raw, visceral, and utterly relentless in its delivery.",
+      "transmission_feel": "The 7-speed dual-clutch transmission snaps through gears with race-car precision, offering lightning-fast shifts that perfectly complement the engine's aggressive character.",
+      "chassis_dynamics": "Track-tuned suspension delivers uncompromising precision with adjustable coilovers and anti-roll bars. The chassis communicates every nuance of the road surface with surgical accuracy.",
+      "steering_feel": "Direct, unfiltered steering provides immediate response and exceptional feedback, connecting the driver intimately to the front wheels' contact patches.",
+      "brake_confidence": "Carbon-ceramic brakes offer relentless stopping power with consistent pedal feel, capable of withstanding repeated track abuse without fade.",
+      "sound_signature": "A thunderous, crackling symphony that builds from a menacing idle to an earth-shaking roar, punctuated by explosive overrun pops and bangs.",
+      "ideal_owner": "Track-day enthusiasts and collectors seeking the ultimate expression of AMG performance, willing to sacrifice comfort for uncompromised capability.",
+      "not_ideal_for": "Daily drivers seeking comfort, practicality, or subtlety - this is a specialized tool for serious performance driving.",
+      "buyers_summary": "Expect eye-watering performance and track capability at the expense of refinement and comfort. This is AMG's most extreme offering, demanding respect and skill to extract its full potential.",
+      "pros": [
+        "Devastating track performance",
+        "Exclusive hand-built engine",
+        "Uncompromising motorsport engineering"
+      ],
+      "cons": [
+        "Harsh ride quality",
+        "Limited practicality",
+        "Extreme price point"
+      ],
+      "best_for": [
+        "Track day dominance",
+        "Ultimate performance collecting"
+      ]
+    },
+    "fitment": [
+      {
+        "fitment_type": "OEM",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 25,
+        "wheel_offset_rear_mm": 38,
+        "wheel_offset_range_front": "+20 to +30",
+        "wheel_offset_range_rear": "+35 to +45",
+        "tire_size_front": "275/35R19",
+        "tire_size_rear": "325/30R19",
+        "tire_width_front_mm": 275,
+        "tire_width_rear_mm": 325,
+        "tire_aspect_front": 35,
+        "tire_aspect_rear": 30,
+        "diameter_change_percent": 0,
+        "speedometer_error_percent": 0,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.0",
+        "recommended_camber_rear": "-1.2",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Factory specification with adequate clearance",
+        "known_issues": null,
+        "recommended_for": [
+          "daily",
+          "track"
+        ],
+        "not_recommended_for": [
+          "snow"
+        ],
+        "popularity_score": 95,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "oem",
+        "source_url": null,
+        "confidence": 1
+      },
+      {
+        "fitment_type": "Track",
+        "wheel_diameter_inches": 19,
+        "wheel_width_front": 10.5,
+        "wheel_width_rear": 12,
+        "wheel_offset_front_mm": 22,
+        "wheel_offset_rear_mm": 35,
+        "wheel_offset_range_front": "+18 to +28",
+        "wheel_offset_range_rear": "+30 to +40",
+        "tire_size_front": "295/30R19",
+        "tire_size_rear": "335/25R19",
+        "tire_width_front_mm": 295,
+        "tire_width_rear_mm": 335,
+        "tire_aspect_front": 30,
+        "tire_aspect_rear": 25,
+        "diameter_change_percent": -2.8,
+        "speedometer_error_percent": 2.8,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": true,
+        "recommended_camber_front": "-2.5",
+        "recommended_camber_rear": "-2.8",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Wider track setup for improved handling",
+        "known_issues": "May reduce ride comfort",
+        "recommended_for": [
+          "track"
+        ],
+        "not_recommended_for": [
+          "daily",
+          "snow"
+        ],
+        "popularity_score": 75,
+        "community_verified": true,
+        "forum_threads": [],
+        "source_type": "other",
+        "source_url": null,
+        "confidence": 0.8
+      },
+      {
+        "fitment_type": "Plus Size",
+        "wheel_diameter_inches": 20,
+        "wheel_width_front": 10,
+        "wheel_width_rear": 11.5,
+        "wheel_offset_front_mm": 25,
+        "wheel_offset_rear_mm": 38,
+        "wheel_offset_range_front": "+20 to +32",
+        "wheel_offset_range_rear": "+35 to +45",
+        "tire_size_front": "265/30R20",
+        "tire_size_rear": "305/25R20",
+        "tire_width_front_mm": 265,
+        "tire_width_rear_mm": 305,
+        "tire_aspect_front": 30,
+        "tire_aspect_rear": 25,
+        "diameter_change_percent": -1.5,
+        "speedometer_error_percent": 1.5,
+        "requires_fender_roll": false,
+        "requires_fender_pull": false,
+        "requires_camber_adjustment": false,
+        "recommended_camber_front": "-1.2",
+        "recommended_camber_rear": "-1.5",
+        "requires_coilovers": false,
+        "requires_spacers": false,
+        "spacer_size_front_mm": 0,
+        "spacer_size_rear_mm": 0,
+        "clearance_notes": "Reduced sidewall height may affect ride quality",
+        "known_issues": "Higher risk of wheel damage from potholes",
+        "recommended_for": [
+          "daily"
+        ],
+        "not_recommended_for": [
+          "track",
+          "snow"
+        ],
+        "popularity_score": 60,
+        "community_verified": false,
+        "forum_threads": [],
+        "source_type": "calculator",
+        "source_url": null,
+        "confidence": 0.7
+      }
+    ],
+    "expertReviews": null,
+    "manuals": null,
+    "images": null
+  },
+  "stage3": {
+    "passed": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "hp",
+      "torque",
+      "curb_weight"
+    ],
+    "warnings": [
+      {
+        "rule": "MPG consistency",
+        "message": "City MPG should be less than highway MPG"
+      },
+      {
+        "field": "brake_caliper",
+        "severity": "medium",
+        "message": "⚠️ VERIFY: \"6-piston\" calipers are uncommon on stock vehicles. Most OEM brakes use 1-2 piston sliding calipers."
+      }
+    ],
+    "errors": []
+  },
+  "stage4": {
+    "vehicle_maintenance_specs": 116,
+    "vehicle_service_intervals": 9,
+    "car_variants": 1,
+    "car_tuning_profiles": {
+      "car_id": "80ede5f5-16b6-40b3-a70e-0c443381b832",
+      "car_variant_id": null,
+      "engine_family": "M178 4.0L Twin-Turbo V8",
+      "tuning_focus": "performance",
+      "stock_whp": 630,
+      "stock_wtq": 590,
+      "tuning_platforms": [
+        {
+          "name": "ECUTEK",
+          "price_low": 800,
+          "price_high": 1500,
+          "notes": "Primary platform for Mercedes-AMG tuning"
+        },
+        {
+          "name": "Brabus PowerXtra",
+          "price_low": 2000,
+          "price_high": 4000,
+          "notes": "OEM+ tuning solution"
+        },
+        {
+          "name": "RENNtech ECU Flash",
+          "price_low": 1200,
+          "price_high": 2500,
+          "notes": "Mercedes specialist tuning"
+        }
+      ],
+      "stage_progressions": [
+        {
+          "stage": "Stage 1",
+          "hp_gain_low": 50,
+          "hp_gain_high": 80,
+          "cost_low": 800,
+          "cost_high": 1500,
+          "components": [
+            "ECU tune"
+          ],
+          "notes": "Software optimization only, boost increase and timing adjustments"
+        },
+        {
+          "stage": "Stage 2",
+          "hp_gain_low": 80,
+          "hp_gain_high": 120,
+          "cost_low": 3500,
+          "cost_high": 6000,
+          "components": [
+            "ECU tune",
+            "high-flow cats",
+            "intake"
+          ],
+          "notes": "Requires supporting modifications for reliability"
+        },
+        {
+          "stage": "Stage 3",
+          "hp_gain_low": 120,
+          "hp_gain_high": 180,
+          "cost_low": 8000,
+          "cost_high": 15000,
+          "components": [
+            "ECU tune",
+            "turbo upgrades",
+            "intercooler",
+            "exhaust system",
+            "intake"
+          ],
+          "notes": "Major turbocharger and supporting system upgrades"
+        }
+      ],
+      "power_limits": {
+        "stock_internals_hp": 800,
+        "stock_transmission_tq": 700,
+        "stock_axles_tq": 650
+      },
+      "brand_recommendations": {
+        "intake": [
+          "Eventuri",
+          "BMC",
+          "K&N"
+        ],
+        "exhaust": [
+          "Akrapovic",
+          "IPE",
+          "Capristo"
+        ],
+        "tuner": [
+          "RENNtech",
+          "Brabus",
+          "Weistec Engineering"
+        ]
+      },
+      "pipeline_version": "vehicle-data-pipeline@2.2",
+      "pipeline_run_at": "2026-01-13T00:55:07.984Z",
+      "verified": false,
+      "notes": "AI-researched - requires verification"
+    },
+    "car_issues": 10,
+    "cars": [
+      "zero_to_sixty",
+      "quarter_mile",
+      "top_speed",
+      "braking_60_0",
+      "lateral_g",
+      "curb_weight",
+      "tagline",
+      "hero_blurb",
+      "essence",
+      "heritage",
+      "design_philosophy",
+      "motorsport_history",
+      "engine_character",
+      "transmission_feel",
+      "chassis_dynamics",
+      "steering_feel",
+      "brake_confidence",
+      "sound_signature",
+      "ideal_owner",
+      "not_ideal_for",
+      "buyers_summary",
+      "pros",
+      "cons",
+      "best_for"
+    ],
+    "wheel_tire_fitment_options": 3
+  },
+  "stage5": {
+    "tables": {
+      "cars": {
+        "exists": true,
+        "filled": 109,
+        "total": 136,
+        "percent": 80,
+        "missing": [
+          "layout",
+          "perf_power_accel",
+          "perf_grip_cornering",
+          "perf_braking",
+          "perf_track_pace"
+        ]
+      },
+      "vehicle_maintenance_specs": {
+        "exists": true,
+        "filled": 108,
+        "total": 126,
+        "percent": 86,
+        "missing": [
+          "trans_fluid_manual_capacity",
+          "power_steering_type",
+          "power_steering_capacity",
+          "fuel_filter_change_interval_miles",
+          "timing_change_interval_miles"
+        ]
+      },
+      "car_fuel_economy": {
+        "exists": false,
+        "percent": 0
+      },
+      "car_safety_data": {
+        "exists": false,
+        "percent": 0
+      },
+      "car_tuning_profiles": {
+        "exists": true,
+        "filled": 19,
+        "total": 21,
+        "percent": 90,
+        "missing": [
+          "car_variant_id",
+          "verified_by"
+        ]
+      },
+      "car_issues": {
+        "records": 17
+      },
+      "car_recalls": {
+        "records": 0
+      },
+      "vehicle_service_intervals": {
+        "records": 19
+      },
+      "car_variants": {
+        "records": 1
+      },
+      "wheel_tire_fitment_options": {
+        "records": 3
+      },
+      "car_expert_reviews": {
+        "records": 0
+      },
+      "car_manual_data": {
+        "records": 0
+      },
+      "car_images": {
+        "records": 0
+      },
+      "car_dyno_runs": {
+        "records": 0
+      },
+      "car_track_lap_times": {
+        "records": 0
+      },
+      "car_auction_results": {
+        "records": 0
+      },
+      "car_market_pricing": {
+        "records": 0
+      }
+    },
+    "overall": {
+      "filled": 236,
+      "total": 283,
+      "percent": 83
+    }
+  },
+  "completed_at": "2026-01-13T00:55:09.484Z"
+}

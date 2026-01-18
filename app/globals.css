@@ -21,9 +21,31 @@
 
 /* --------------------------------------------------------------------------
    CSS Custom Properties (Theme Tokens)
+   Build-Focused Premium Dark Theme (January 2026)
+   Inspired by GRAVL/FIXD - Clean, premium, performance-focused
    -------------------------------------------------------------------------- */
 :root {
-  /* Brand Colors */
+  /* =======================================================================
+     BUILD PIVOT: PREMIUM DARK THEME
+     ======================================================================= */
+  
+  /* Background Hierarchy - Deep blacks for premium feel */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-card: #161616;
+  --bg-card-hover: #1c1c1c;
+  --bg-elevated: #1f1f1f;
+  --bg-input: #0d0d0d;
+  
+  /* Accent Colors - Performance-focused */
+  --accent-primary: #ff4d00;        /* Performance Orange */
+  --accent-primary-hover: #ff6a2a;
+  --accent-primary-muted: rgba(255, 77, 0, 0.15);
+  --accent-secondary: #00d4ff;      /* Tech Blue */
+  --accent-secondary-hover: #33deff;
+  --accent-secondary-muted: rgba(0, 212, 255, 0.15);
+  
+  /* Brand Colors (preserved) */
   --sn-primary: #1a4d6e;
   --sn-primary-light: #2a6d94;
   --sn-primary-dark: #0f3347;
@@ -36,28 +58,40 @@
   --sn-gold-light: #E6C54A;
   --sn-gold-dark: #B8973A;
   
-  /* Neutral Palette */
+  /* Text Colors - High contrast on dark */
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-tertiary: #666666;
+  --text-muted: #444444;
+  
+  /* Border Colors - Subtle definition */
+  --border-subtle: #1a1a1a;
+  --border-default: #252525;
+  --border-hover: #333333;
+  --border-focus: var(--accent-primary);
+  
+  /* Neutral Palette (legacy support) */
   --color-white: #ffffff;
   --color-gray-50: #fafafa;
   --color-gray-100: #f5f5f5;
   --color-gray-200: #e5e5e5;
   --color-gray-300: #d4d4d4;
-  --color-gray-400: #a3a3a3;
-  --color-gray-500: #737373;
-  --color-gray-600: #525252;
-  --color-gray-700: #404040;
-  --color-gray-800: #262626;
-  --color-gray-900: #171717;
+  --color-gray-400: #a0a0a0;
+  --color-gray-500: #666666;
+  --color-gray-600: #444444;
+  --color-gray-700: #333333;
+  --color-gray-800: #1a1a1a;
+  --color-gray-900: #0a0a0a;
   
-  /* Semantic Colors */
-  --color-success: #15803d;
-  --color-success-light: rgba(21, 128, 61, 0.1);
-  --color-info: #1d4ed8;
-  --color-info-light: rgba(29, 78, 216, 0.1);
-  --color-warning: #b45309;
-  --color-warning-light: rgba(180, 83, 9, 0.1);
-  --color-error: #b91c1c;
-  --color-error-light: rgba(185, 28, 28, 0.1);
+  /* Semantic Colors - Brighter for dark theme */
+  --color-success: #22c55e;
+  --color-success-light: rgba(34, 197, 94, 0.15);
+  --color-info: #3b82f6;
+  --color-info-light: rgba(59, 130, 246, 0.15);
+  --color-warning: #f59e0b;
+  --color-warning-light: rgba(245, 158, 11, 0.15);
+  --color-error: #ef4444;
+  --color-error-light: rgba(239, 68, 68, 0.15);
   
   /* Score Colors (for advisory/performance ratings) */
   --score-excellent: #15803d;
@@ -261,8 +295,9 @@ body {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
-  color: var(--color-gray-800);
-  background: var(--color-white);
+  /* Build Pivot: Dark theme by default */
+  color: var(--text-primary);
+  background: var(--bg-primary);
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
   /* Prevent horizontal scroll on mobile */
@@ -617,19 +652,144 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 }
 
 /* --------------------------------------------------------------------------
-   Focus & Accessibility
+   Focus & Accessibility - Build Pivot Dark Theme
    -------------------------------------------------------------------------- */
 :focus-visible {
-  outline: 2px solid var(--sn-primary);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
 /* Enhanced focus for touch devices */
 @media (hover: none) and (pointer: coarse) {
   :focus {
-    outline: 2px solid var(--sn-primary);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
   }
+}
+
+/* --------------------------------------------------------------------------
+   Button Utilities - Build Pivot Premium Styling
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+  padding: 12px 24px;
+  font-size: var(--font-size-base);
+}
+
+.btn-primary:hover {
+  background: var(--accent-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  padding: 12px 24px;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--border-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+  padding: 16px 32px;
+  font-size: var(--font-size-lg);
+}
+
+/* --------------------------------------------------------------------------
+   Form Input Utilities - Build Pivot Dark Theme
+   -------------------------------------------------------------------------- */
+.input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-muted);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* --------------------------------------------------------------------------
+   Loading Skeleton - Build Pivot Dark Theme
+   -------------------------------------------------------------------------- */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 0%,
+    var(--bg-elevated) 50%,
+    var(--bg-card) 100%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 1em;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  height: 1.5em;
+  width: 60%;
+  border-radius: 4px;
+}
+
+.skeleton-card {
+  height: 200px;
+  border-radius: var(--radius-lg);
 }
 
 .sr-only {
@@ -694,13 +854,19 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 }
 
 /* --------------------------------------------------------------------------
-   Card Utilities (Responsive)
+   Card Utilities (Responsive) - Build Pivot Dark Theme
    -------------------------------------------------------------------------- */
 .card {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-default);
 }
 
 @media (min-width: 768px) {
@@ -723,6 +889,18 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   .card-compact {
     padding: var(--space-md);
   }
+}
+
+/* Build Card variant - for project/build cards */
+.card-build {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.card-build:hover {
+  border-color: var(--accent-primary-muted);
 }
 
 /* --------------------------------------------------------------------------
