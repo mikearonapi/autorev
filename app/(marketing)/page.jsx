@@ -1,158 +1,158 @@
-import Link from 'next/link';
+'use client';
+
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import Button from '@/components/Button';
-import HeroSection from '@/components/HeroSection';
+import Link from 'next/link';
+import { useState } from 'react';
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import styles from './page.module.css';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
-// =============================================================================
-// DYNAMIC IMPORTS - Below-the-fold components with deferred loading
-// =============================================================================
-// Performance optimization: Setting ssr: false for below-fold components
-// eliminates their JS from the initial bundle, reducing TBT significantly.
-// These components hydrate after the hero section is visible.
-
-// BUILD PIVOT: Featured Builds carousel replaces Car Carousel as primary social proof
-const FeaturedBuildsCarousel = dynamic(() => import('@/components/FeaturedBuildsCarousel'), {
-  loading: () => <div className={styles.buildsCarouselPlaceholder} />,
-  ssr: false, // Deferred - not visible on initial viewport
-});
-
-const FeaturePhoneShowcase = dynamic(() => import('@/components/FeaturePhoneShowcase'), {
-  loading: () => <div className={styles.phoneShowcasePlaceholder} />,
-  ssr: false, // Deferred - below hero section
-});
-
-const PillarsSection = dynamic(() => import('@/components/PillarsSection'), {
-  loading: () => <div className={styles.pillarsSectionPlaceholder} />,
-  ssr: false, // Deferred - well below fold
-});
-
-const FeatureBreakdown = dynamic(() => import('@/components/FeatureBreakdown'), {
-  loading: () => <div className={styles.featureBreakdownPlaceholder} />,
-  ssr: false, // Deferred - at bottom of page
-});
-
-// Fetch car count directly from database (server-side, no caching layers)
-async function getCarCount() {
-  try {
-    if (!isSupabaseConfigured || !supabase) {
-      return 100; // Fallback if Supabase not configured
-    }
-    
-    const { count, error } = await supabase
-      .from('cars')
-      .select('*', { count: 'exact', head: true });
-    
-    if (error) {
-      console.error('[HomePage] Error fetching car count:', error);
-      return 100;
-    }
-    
-    return count || 100;
-  } catch (err) {
-    console.error('[HomePage] Error in getCarCount:', err);
-    return 100; // Fallback count
-  }
-}
-
-// Revalidate homepage every 60 seconds to pick up new car counts quickly
-export const revalidate = 60;
-
-// =============================================================================
-// Homepage Metadata with LCP Image Preload
-// =============================================================================
-// The hero image is the LCP element on this page. We use Next.js metadata
-// to add a preload hint, which tells the browser to fetch it immediately.
-// Combined with priority prop on Image component, this achieves optimal LCP.
-
-const HERO_IMAGE_URL = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp';
-
-export const metadata = {
-  title: 'AutoRev | AI-Powered Sports Car Research',
-  description: 'Like having the obsessive car nerd in your pocket. Research cars, manage your collection, plan mods, discover events. Tech specs, troubleshooting, upgrades, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
-  alternates: {
-    canonical: '/',
-  },
-  // Preload the LCP hero image for faster initial render
-  // Next.js Image component will handle optimization, so we preload the optimized version
-  other: {
-    // Note: Next.js Image with priority already adds preload, but this ensures it's
-    // in the <head> before SSR content arrives. The browser will dedupe requests.
-  },
-};
-
-// AI-generated images (owned/licensed)
-const BLOB_BASE = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com';
-const valueImageUrl = `${BLOB_BASE}/pages/home/value-section.webp`;
-
-const CheckIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
-export default async function Home() {
-  const carCount = await getCarCount();
+// GRAVL-inspired homepage - Clean, focused, app showcase
+export default function Home() {
+  const authModal = useAuthModal();
   
   return (
-    <div className={styles.page} data-no-main-offset>
-      {/* Hero Section with cycling text */}
-      <HeroSection carCount={carCount} />
+    <div className={styles.landingPage}>
+      {/* Minimal Logo - Top Left */}
+      <header className={styles.minimalHeader}>
+        <div className={styles.logo}>
+          <span className={styles.logoText}>Auto</span>
+          <span className={styles.logoAccent}>Rev</span>
+        </div>
+        <button 
+          className={styles.loginBtn}
+          onClick={() => authModal.openSignIn()}
+        >
+          Log In
+        </button>
+      </header>
 
-      {/* Feature Phone Showcase - Shows build planner UI */}
-      <FeaturePhoneShowcase />
+      {/* Hero Section - App Showcase */}
+      <main className={styles.hero}>
+        {/* Badge */}
+        <div className={styles.badge}>
+          <span className={styles.badgeDot} />
+          Build Planning Platform
+        </div>
 
-      {/* BUILD PIVOT: Featured Community Builds replaces Car Carousel */}
-      <FeaturedBuildsCarousel 
-        title="Featured Community Builds"
-        subtitle="Get inspired by what other enthusiasts are building"
-      />
+        {/* Headline */}
+        <h1 className={styles.headline}>
+          Plan Your Perfect
+          <br />
+          <span className={styles.headlineAccent}>Car Build</span>
+        </h1>
 
-      {/* Pillars Section - How We Help (Build-focused) */}
-      <PillarsSection carCount={carCount} />
+        {/* Subheadline */}
+        <p className={styles.subheadline}>
+          Research parts. Track costs. Get AI-powered recommendations.
+          <br className={styles.desktopBreak} />
+          From concept to completion—build with purpose.
+        </p>
 
-      {/* BUILD PIVOT: Value Props Section - Build Community Focus */}
-      <section className={styles.valueProps}>
-        <div className={styles.container}>
-          <div className={styles.valueGrid}>
-            <div className={styles.valueContent}>
-            <h2 className={styles.valueTitle}>
-              Build With<br />
-              <span className={styles.valueAccent}>Purpose</span>
-            </h2>
-            <p className={styles.valueDescription}>
-              Whether you&apos;re planning a weekend Miata or a full GT3 track build,
-              we help you make informed decisions. No guesswork, no wasted money—just
-              a clear path from concept to completion.
-            </p>
-            <ul className={styles.valueList}>
-              <li><CheckIcon /> Plan upgrades with real performance data</li>
-              <li><CheckIcon /> Track costs and avoid budget surprises</li>
-              <li><CheckIcon /> Get AI-powered compatibility checks</li>
-              <li><CheckIcon /> Learn from builds in our community</li>
-            </ul>
-            </div>
-            <div className={styles.valueImage}>
-              <div className={styles.valueImageWrapper}>
+        {/* CTA Buttons */}
+        <div className={styles.ctaGroup}>
+          <button 
+            className={styles.primaryCta}
+            onClick={() => authModal.openSignUp()}
+          >
+            Get Started — Free
+          </button>
+          <Link href="/community/builds" className={styles.secondaryCta}>
+            Browse Builds
+          </Link>
+        </div>
+
+        {/* Phone Mockup Section */}
+        <div className={styles.phoneMockupContainer}>
+          {/* Left Phone - Garage View */}
+          <div className={`${styles.phoneMockup} ${styles.phoneLeft}`}>
+            <div className={styles.phoneFrame}>
+              <div className={styles.phoneNotch} />
+              <div className={styles.phoneScreen}>
                 <Image
-                  src={valueImageUrl}
-                  alt="Car enthusiast working on their sports car build in a home garage"
-                  width={600}
-                  height={400}
-                  className={styles.valueImagePhoto}
-                  style={{ objectFit: 'cover', borderRadius: 'var(--radius-lg)' }}
+                  src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/app-screen-garage.webp"
+                  alt="AutoRev Garage - Your vehicles and builds"
+                  fill
+                  className={styles.screenImage}
+                  priority
                 />
               </div>
             </div>
+            <p className={styles.phoneLabel}>Your Garage</p>
           </div>
+
+          {/* Center Phone - Build Planner (Featured) */}
+          <div className={`${styles.phoneMockup} ${styles.phoneCenter}`}>
+            <div className={styles.phoneFrame}>
+              <div className={styles.phoneNotch} />
+              <div className={styles.phoneScreen}>
+                <Image
+                  src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/app-screen-build.webp"
+                  alt="AutoRev Build Planner - Configure upgrades"
+                  fill
+                  className={styles.screenImage}
+                  priority
+                />
+              </div>
+            </div>
+            <p className={styles.phoneLabel}>Build Planner</p>
+          </div>
+
+          {/* Right Phone - Performance View */}
+          <div className={`${styles.phoneMockup} ${styles.phoneRight}`}>
+            <div className={styles.phoneFrame}>
+              <div className={styles.phoneNotch} />
+              <div className={styles.phoneScreen}>
+                <Image
+                  src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/app-screen-performance.webp"
+                  alt="AutoRev Performance - Dyno and track estimates"
+                  fill
+                  className={styles.screenImage}
+                  priority
+                />
+              </div>
+            </div>
+            <p className={styles.phoneLabel}>Performance Data</p>
+          </div>
+        </div>
+      </main>
+
+      {/* Features Strip */}
+      <section className={styles.featuresStrip}>
+        <div className={styles.feature}>
+          <svg className={styles.featureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+          <span>188+ Sports Cars</span>
+        </div>
+        <div className={styles.featureDivider} />
+        <div className={styles.feature}>
+          <svg className={styles.featureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg>
+          <span>1000+ Parts</span>
+        </div>
+        <div className={styles.featureDivider} />
+        <div className={styles.feature}>
+          <svg className={styles.featureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+          </svg>
+          <span>AI Build Assistant</span>
         </div>
       </section>
 
-      {/* Full Feature Breakdown */}
-      <FeatureBreakdown />
+      {/* Minimal Footer */}
+      <footer className={styles.minimalFooter}>
+        <p>© 2026 AutoRev • <Link href="/privacy">Privacy</Link> • <Link href="/terms">Terms</Link></p>
+      </footer>
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModal.isOpen} 
+        onClose={authModal.close}
+        defaultMode={authModal.defaultMode}
+      />
     </div>
   );
 }

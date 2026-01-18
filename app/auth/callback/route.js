@@ -34,6 +34,13 @@ const MAX_VERIFICATION_RETRIES = 3;
 const VERIFICATION_RETRY_DELAY = 200; // ms
 
 /**
+ * Default post-login destination
+ * BUILD PIVOT: After login, users land directly in their Garage (the app entry point)
+ * rather than the marketing homepage
+ */
+const DEFAULT_POST_LOGIN_PATH = '/garage';
+
+/**
  * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.
  * 
  * A valid `next` must be:
@@ -42,40 +49,46 @@ const VERIFICATION_RETRY_DELAY = 200; // ms
  * - NOT containing a protocol (`https://`, `http://`, `javascript:`, etc.)
  * 
  * @param {string|null} next - The raw `next` query parameter
- * @returns {string} - A safe relative path, defaulting to `/` if invalid
+ * @returns {string} - A safe relative path, defaulting to /garage if invalid
  */
 function validateRedirectPath(next) {
-  // Default to home if no next provided
+  // Default to garage (app entry point) if no next provided
   if (!next || typeof next !== 'string') {
-    return '/';
+    return DEFAULT_POST_LOGIN_PATH;
   }
   
   const trimmed = next.trim();
   
-  // Empty string → default to home
+  // Empty string → default to garage
   if (trimmed === '') {
-    return '/';
+    return DEFAULT_POST_LOGIN_PATH;
   }
   
   // SECURITY: Reject protocol-relative URLs (e.g., `//evil.com`)
   // These would redirect to evil.com while appearing relative
   if (trimmed.startsWith('//')) {
     console.warn('[Auth Callback] Rejected protocol-relative redirect:', trimmed);
-    return '/';
+    return DEFAULT_POST_LOGIN_PATH;
   }
   
   // SECURITY: Reject absolute URLs with any protocol
   // Catches http://, https://, javascript:, data:, etc.
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
     console.warn('[Auth Callback] Rejected absolute URL redirect:', trimmed);
-    return '/';
+    return DEFAULT_POST_LOGIN_PATH;
   }
   
   // SECURITY: Must start with `/` to be a valid relative path
   // This rejects things like `evil.com` (would resolve relative to current path)
   if (!trimmed.startsWith('/')) {
     console.warn('[Auth Callback] Rejected non-rooted redirect path:', trimmed);
-    return '/';
+    return DEFAULT_POST_LOGIN_PATH;
+  }
+  
+  // If user is being redirected to homepage, send them to garage instead
+  // This ensures logged-in users always land in the app, not the marketing page
+  if (trimmed === '/') {
+    return DEFAULT_POST_LOGIN_PATH;
   }
   
   // Valid relative path - return as-is

@@ -121,6 +121,13 @@ export default function Header() {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const authModal = useAuthModal();
   
+  // GRAVL-STYLE: Hide header completely on homepage
+  // Homepage is a standalone marketing page - no navigation
+  const isHomepage = pathname === '/';
+  if (isHomepage) {
+    return null;
+  }
+  
   // AI Chat context for mobile menu
   const { toggleChat } = useAIChat();
   

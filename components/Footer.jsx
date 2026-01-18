@@ -86,6 +86,10 @@ export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
   
+  // Hide footer completely on homepage (GRAVL-style clean landing)
+  const isHomePage = pathname === '/';
+  if (isHomePage) return null;
+  
   // Check if we're on an app page (where bottom tab bar is shown)
   const isAppPage = APP_ROUTES.some(route => pathname?.startsWith(route));
 
