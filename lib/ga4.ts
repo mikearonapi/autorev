@@ -71,9 +71,141 @@ export function trackSignUp(method: string = 'google'): void {
   });
 }
 
+// ============================================
+// BUILD FUNNEL CONVERSIONS (Primary metrics)
+// ============================================
+
+/**
+ * Track tuning_shop_visit conversion
+ * Fire when user first visits the Tuning Shop / Build Planner
+ */
+export function trackTuningShopVisit(params: {
+  entryPoint?: string;
+  isAuthenticated: boolean;
+}): void {
+  trackEvent('tuning_shop_visit', {
+    entry_point: params.entryPoint,
+    is_authenticated: params.isAuthenticated,
+  });
+}
+
+/**
+ * Track build_car_selected conversion
+ * Fire when user selects a car to build/configure
+ */
+export function trackBuildCarSelected(params: {
+  carSlug: string;
+  carName: string;
+  carCategory?: string;
+}): void {
+  trackEvent('build_car_selected', {
+    car_slug: params.carSlug,
+    car_name: params.carName,
+    car_category: params.carCategory,
+  });
+}
+
+/**
+ * Track build_mod_added conversion
+ * Fire when user adds a modification to their build
+ */
+export function trackBuildModAdded(params: {
+  carSlug: string;
+  modCategory: string;
+  modName: string;
+  estimatedCost?: number;
+  estimatedHpGain?: number;
+}): void {
+  trackEvent('build_mod_added', {
+    car_slug: params.carSlug,
+    mod_category: params.modCategory,
+    mod_name: params.modName,
+    estimated_cost: params.estimatedCost,
+    estimated_hp_gain: params.estimatedHpGain,
+  });
+}
+
+/**
+ * Track build_project_saved conversion
+ * Fire when user saves their build project
+ */
+export function trackBuildProjectSaved(params: {
+  carSlug: string;
+  carName: string;
+  totalMods: number;
+  estimatedTotalCost?: number;
+  estimatedTotalHpGain?: number;
+  isFirstProject: boolean;
+}): void {
+  trackEvent('build_project_saved', {
+    car_slug: params.carSlug,
+    car_name: params.carName,
+    total_mods: params.totalMods,
+    estimated_total_cost: params.estimatedTotalCost,
+    estimated_total_hp_gain: params.estimatedTotalHpGain,
+    is_first_project: params.isFirstProject,
+  });
+}
+
+/**
+ * Track build_shared conversion
+ * Fire when user shares their build with the community
+ */
+export function trackBuildShared(params: {
+  carSlug: string;
+  shareMethod: string;
+  totalMods: number;
+}): void {
+  trackEvent('build_shared', {
+    car_slug: params.carSlug,
+    share_method: params.shareMethod,
+    total_mods: params.totalMods,
+  });
+}
+
+/**
+ * Track part_pricing_clicked conversion
+ * Fire when user clicks to view part pricing/purchase link
+ */
+export function trackPartPricingClicked(params: {
+  partId: string;
+  partName: string;
+  partCategory: string;
+  carSlug?: string;
+  vendor?: string;
+}): void {
+  trackEvent('part_pricing_clicked', {
+    part_id: params.partId,
+    part_name: params.partName,
+    part_category: params.partCategory,
+    car_slug: params.carSlug,
+    vendor: params.vendor,
+  });
+}
+
+/**
+ * Track al_build_chat conversion
+ * Fire when user asks AL a build-related question
+ */
+export function trackALBuildChat(params: {
+  carSlug?: string;
+  questionType?: string;
+  page?: string;
+}): void {
+  trackEvent('al_build_chat', {
+    car_slug: params.carSlug,
+    question_type: params.questionType,
+    page: params.page,
+  });
+}
+
+// ============================================
+// LEGACY CONVERSION EVENTS (kept for backwards compatibility)
+// ============================================
+
 /**
  * Track car_selector_complete conversion
- * Fire when user finishes Car Selector and sees personalized results
+ * @deprecated Use Build funnel events instead
  */
 export function trackCarSelectorComplete(params: {
   resultsCount: number;
@@ -183,6 +315,15 @@ export const ga4 = {
   trackPageView,
   trackEvent,
   trackSignUp,
+  // Build funnel (primary)
+  trackTuningShopVisit,
+  trackBuildCarSelected,
+  trackBuildModAdded,
+  trackBuildProjectSaved,
+  trackBuildShared,
+  trackPartPricingClicked,
+  trackALBuildChat,
+  // Legacy (backwards compatibility)
   trackCarSelectorComplete,
   trackALConversationStart,
   trackAddToGarage,

@@ -11,35 +11,40 @@ import {
   generateWebApplicationSchema 
 } from '@/lib/seoUtils';
 
+// Build Pivot (January 2026): This is now the PRIMARY product page
 export const metadata = {
-  title: 'Tuning Shop | Plan Performance Builds & Modifications',
-  description: 'Plan your perfect build with our interactive modification planner. Select a car, configure upgrades, track costs, and manage mod projects. From suspension to forced induction—build with purpose.',
+  title: 'Build Planner | Performance Modifications & Project Tracking',
+  description: 'Plan your perfect performance build with verified parts data and real dyno results. Select your car, configure upgrades, see projected HP gains, and track your project. The complete platform for car enthusiasts.',
   keywords: [
-    'car tuning',
+    'car build planner',
     'performance modifications',
     'mod planner',
     'build planner',
     'car upgrades',
+    'HP gains',
+    'dyno results',
+    'parts compatibility',
     'suspension upgrades',
-    'brake upgrades',
     'forced induction',
     'turbo kits',
     'supercharger',
     'exhaust upgrades',
     'engine tuning',
     'track car build',
-    'sports car modifications',
+    'stage 1 tune',
+    'stage 2 build',
     'car mod cost calculator',
+    'build project tracker',
   ],
   openGraph: {
-    title: 'Tuning Shop | Plan Performance Builds & Modifications',
-    description: 'Plan your perfect build with our interactive modification planner. Configure upgrades, track costs, and build with purpose.',
+    title: 'Build Planner | Plan Your Perfect Performance Build',
+    description: 'The complete platform for planning performance modifications. Verified parts data, real dyno results, and project tracking.',
     url: '/tuning-shop',
     type: 'website',
   },
   twitter: {
-    title: 'Tuning Shop | Plan Performance Builds & Modifications',
-    description: 'Plan your perfect build with our interactive modification planner. Configure upgrades and track costs.',
+    title: 'Build Planner | Plan Your Perfect Performance Build',
+    description: 'Plan your perfect build with verified parts data and real dyno results. Track your project from start to finish.',
   },
   alternates: {
     canonical: '/tuning-shop',

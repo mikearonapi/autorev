@@ -13,18 +13,22 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 // eliminates their JS from the initial bundle, reducing TBT significantly.
 // These components hydrate after the hero section is visible.
 
-const CarCarousel = dynamic(() => import('@/components/CarCarousel'), {
-  loading: () => <div className={styles.carouselPlaceholder} />,
+// BUILD PIVOT: Featured Builds carousel replaces Car Carousel as primary social proof
+const FeaturedBuildsCarousel = dynamic(() => import('@/components/FeaturedBuildsCarousel'), {
+  loading: () => <div className={styles.buildsCarouselPlaceholder} />,
   ssr: false, // Deferred - not visible on initial viewport
 });
+
 const FeaturePhoneShowcase = dynamic(() => import('@/components/FeaturePhoneShowcase'), {
   loading: () => <div className={styles.phoneShowcasePlaceholder} />,
   ssr: false, // Deferred - below hero section
 });
+
 const PillarsSection = dynamic(() => import('@/components/PillarsSection'), {
   loading: () => <div className={styles.pillarsSectionPlaceholder} />,
   ssr: false, // Deferred - well below fold
 });
+
 const FeatureBreakdown = dynamic(() => import('@/components/FeatureBreakdown'), {
   loading: () => <div className={styles.featureBreakdownPlaceholder} />,
   ssr: false, // Deferred - at bottom of page
@@ -97,47 +101,44 @@ export default async function Home() {
       {/* Hero Section with cycling text */}
       <HeroSection carCount={carCount} />
 
-      {/* Feature Phone Showcase - NEW */}
+      {/* Feature Phone Showcase - Shows build planner UI */}
       <FeaturePhoneShowcase />
 
-      {/* Car Showcase Carousel */}
-      <section className={styles.carShowcase}>
-        <div className={styles.carShowcaseHeader}>
-          <h2 className={styles.carShowcaseTitle}>{carCount} Sports Cars to Explore</h2>
-          <p className={styles.carShowcaseSubtitle}>From weekend warriors to track machines</p>
-        </div>
-        <CarCarousel />
-      </section>
+      {/* BUILD PIVOT: Featured Community Builds replaces Car Carousel */}
+      <FeaturedBuildsCarousel 
+        title="Featured Community Builds"
+        subtitle="Get inspired by what other enthusiasts are building"
+      />
 
-      {/* Pillars Section - How We Help */}
+      {/* Pillars Section - How We Help (Build-focused) */}
       <PillarsSection carCount={carCount} />
 
-      {/* Value Props Section - Brotherhood */}
+      {/* BUILD PIVOT: Value Props Section - Build Community Focus */}
       <section className={styles.valueProps}>
         <div className={styles.container}>
           <div className={styles.valueGrid}>
             <div className={styles.valueContent}>
             <h2 className={styles.valueTitle}>
-              Brotherhood Over<br />
-              <span className={styles.valueAccent}>Gatekeeping</span>
+              Build With<br />
+              <span className={styles.valueAccent}>Purpose</span>
             </h2>
             <p className={styles.valueDescription}>
-              We lift up the driver with the $3K Miata the same as the one with 
-              the $300K GT3RS. No flex culture, no clout chasing—just honest guidance 
-              and genuine community.
+              Whether you&apos;re planning a weekend Miata or a full GT3 track build,
+              we help you make informed decisions. No guesswork, no wasted money—just
+              a clear path from concept to completion.
             </p>
             <ul className={styles.valueList}>
-              <li><CheckIcon /> Real ownership insights, not just spec sheet comparisons</li>
-              <li><CheckIcon /> Honest advice—we&apos;re not selling you anything</li>
-              <li><CheckIcon /> Community built on respect, not rivalry</li>
-              <li><CheckIcon /> Mentorship from drivers who walk the walk</li>
+              <li><CheckIcon /> Plan upgrades with real performance data</li>
+              <li><CheckIcon /> Track costs and avoid budget surprises</li>
+              <li><CheckIcon /> Get AI-powered compatibility checks</li>
+              <li><CheckIcon /> Learn from builds in our community</li>
             </ul>
             </div>
             <div className={styles.valueImage}>
               <div className={styles.valueImageWrapper}>
                 <Image
                   src={valueImageUrl}
-                  alt="Car enthusiast working on their sports car in a home garage"
+                  alt="Car enthusiast working on their sports car build in a home garage"
                   width={600}
                   height={400}
                   className={styles.valueImagePhoto}

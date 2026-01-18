@@ -427,6 +427,7 @@ function inferCategory(eventName) {
 
 /**
  * Standard event names for consistency
+ * BUILD PIVOT: Events organized around the Build user journey
  */
 export const ANALYTICS_EVENTS = {
   // Onboarding
@@ -436,7 +437,49 @@ export const ANALYTICS_EVENTS = {
   ONBOARDING_COMPLETED: 'onboarding_completed',
   ONBOARDING_SKIPPED: 'onboarding_skipped',
   
-  // Feature adoption
+  // BUILD FUNNEL - Core events for the Build pivot
+  // Step 1: Discovery
+  TUNING_SHOP_VIEWED: 'tuning_shop_viewed',
+  BUILD_CAR_SELECTED: 'build_car_selected',
+  BUILD_CONFIGURATION_STARTED: 'build_configuration_started',
+  
+  // Step 2: Configuration
+  MOD_CATEGORY_VIEWED: 'mod_category_viewed',
+  MOD_ADDED_TO_BUILD: 'mod_added_to_build',
+  MOD_REMOVED_FROM_BUILD: 'mod_removed_from_build',
+  PERFORMANCE_PREVIEW_VIEWED: 'performance_preview_viewed',
+  COST_SUMMARY_VIEWED: 'cost_summary_viewed',
+  
+  // Step 3: Project Management
+  BUILD_PROJECT_CREATED: 'build_project_created',
+  BUILD_PROJECT_SAVED: 'build_project_saved',
+  BUILD_PROJECT_UPDATED: 'build_project_updated',
+  BUILD_PROJECT_DELETED: 'build_project_deleted',
+  MOD_MARKED_INSTALLED: 'mod_marked_installed',
+  MOD_MARKED_PURCHASED: 'mod_marked_purchased',
+  
+  // Step 4: Community
+  BUILD_SHARED: 'build_shared',
+  BUILD_LIKED: 'build_liked',
+  BUILD_COMMENTED: 'build_commented',
+  COMMUNITY_BUILD_VIEWED: 'community_build_viewed',
+  BUILD_CLONED: 'build_cloned',
+  
+  // Parts Research
+  PARTS_SEARCH_PERFORMED: 'parts_search_performed',
+  PARTS_FILTER_APPLIED: 'parts_filter_applied',
+  PART_VIEWED: 'part_viewed',
+  PART_ADDED_TO_BUILD: 'part_added_to_build',
+  PART_PRICING_CLICKED: 'part_pricing_clicked',
+  
+  // AI Assistant (Build-focused)
+  AL_CONVERSATION_STARTED: 'al_conversation_started',
+  AL_BUILD_QUESTION_ASKED: 'al_build_question_asked',
+  AL_PART_RECOMMENDATION: 'al_part_recommendation',
+  AL_COMPATIBILITY_CHECK: 'al_compatibility_check',
+  AL_RESPONSE_RATED: 'al_response_rated',
+  
+  // Legacy events (kept for backwards compatibility)
   CAR_SELECTED: 'car_selected',
   CAR_VIEWED: 'car_viewed',
   CAR_FAVORITED: 'car_favorited',
@@ -445,12 +488,9 @@ export const ANALYTICS_EVENTS = {
   CAR_SHARED: 'car_shared',
   GARAGE_ADDED: 'garage_added',
   GARAGE_REMOVED: 'garage_removed',
-  AL_CONVERSATION_STARTED: 'al_conversation_started',
   AL_QUESTION_ASKED: 'al_question_asked',
-  AL_RESPONSE_RATED: 'al_response_rated',
   BUILD_CREATED: 'build_created',
   BUILD_SAVED: 'build_saved',
-  BUILD_SHARED: 'build_shared',
   
   // Conversion
   PRICING_VIEWED: 'pricing_viewed',
@@ -487,55 +527,96 @@ export const ANALYTICS_EVENTS = {
 
 /**
  * Feature keys for adoption tracking
+ * BUILD PIVOT: Features organized around Build functionality
  */
 export const FEATURE_KEYS = {
-  // Core
+  // BUILD CORE (Primary metrics)
+  TUNING_SHOP: 'tuning_shop',
+  BUILD_PLANNER: 'build_planner',
+  MOD_CONFIGURATOR: 'mod_configurator',
+  PERFORMANCE_PREVIEW: 'performance_preview',
+  COST_TRACKER: 'cost_tracker',
+  
+  // Project Management
+  MY_BUILDS: 'my_builds',
+  PROJECT_CREATE: 'project_create',
+  PROJECT_UPDATE: 'project_update',
+  MOD_TRACKING: 'mod_tracking',
+  
+  // Parts Research
+  PARTS_BROWSER: 'parts_browser',
+  PARTS_SEARCH: 'parts_search',
+  PARTS_FILTER: 'parts_filter',
+  PART_DETAIL: 'part_detail',
+  
+  // AI Assistant (Build-focused)
+  AL_BUILD_CHAT: 'al_build_chat',
+  AL_COMPATIBILITY: 'al_compatibility',
+  AL_RECOMMENDATIONS: 'al_recommendations',
+  
+  // Community
+  COMMUNITY_BUILDS: 'community_builds',
+  BUILD_SHARE: 'build_share',
+  EVENTS: 'events',
+  
+  // Discovery
+  ENCYCLOPEDIA: 'encyclopedia',
+  
+  // Legacy (kept for backwards compatibility)
   CAR_BROWSE: 'car_browse',
   CAR_VIEW: 'car_view',
   CAR_SEARCH: 'car_search',
   CAR_FILTER: 'car_filter',
-  
-  // Engagement
   CAR_FAVORITE: 'car_favorite',
   CAR_COMPARE: 'car_compare',
   CAR_SHARE: 'car_share',
-  
-  // Account
   GARAGE: 'garage',
   PROFILE: 'profile',
   SETTINGS: 'settings',
-  
-  // Premium
   AL_CHAT: 'al_chat',
-  TUNING_SHOP: 'tuning_shop',
   MOD_PLANNER: 'mod_planner',
   VEHICLE_HEALTH: 'vehicle_health',
-  
-  // Community
-  EVENTS: 'events',
   COMMUNITY: 'community',
-  
-  // Discovery
-  ENCYCLOPEDIA: 'encyclopedia',
   DAILY_DOSE: 'daily_dose'
 };
 
 /**
  * Goal keys for conversion tracking
+ * BUILD PIVOT: Goals focused on Build funnel progression
  */
 export const GOAL_KEYS = {
   // Acquisition
   SIGNUP: 'signup_completed',
   ONBOARDING: 'onboarding_completed',
   
-  // Activation
-  FIRST_CAR_VIEW: 'first_car_view',
-  FIRST_FAVORITE: 'first_favorite',
-  FIRST_AL_CHAT: 'first_al_chat',
+  // BUILD FUNNEL ACTIVATION (Primary metrics)
+  FIRST_TUNING_SHOP_VISIT: 'first_tuning_shop_visit',
+  FIRST_CAR_SELECTED_FOR_BUILD: 'first_car_selected_for_build',
+  FIRST_MOD_ADDED: 'first_mod_added',
+  FIRST_PROJECT_SAVED: 'first_project_saved',
+  FIRST_BUILD_SHARED: 'first_build_shared',
+  
+  // BUILD ENGAGEMENT
+  MULTIPLE_PROJECTS: 'multiple_projects_created',
+  BUILD_COMPLETED: 'build_marked_completed',
+  COMMUNITY_INTERACTION: 'community_build_interaction',
+  
+  // Parts Engagement
+  FIRST_PART_SEARCH: 'first_part_search',
+  PART_PRICING_CLICKED: 'part_pricing_clicked',
+  
+  // AI Engagement (Build-focused)
+  FIRST_AL_BUILD_CHAT: 'first_al_build_chat',
+  AL_RECOMMENDATION_FOLLOWED: 'al_recommendation_followed',
   
   // Revenue
   SUBSCRIPTION: 'subscription_created',
   UPGRADE: 'upgrade_completed',
+  
+  // Legacy (kept for backwards compatibility)
+  FIRST_CAR_VIEW: 'first_car_view',
+  FIRST_FAVORITE: 'first_favorite',
+  FIRST_AL_CHAT: 'first_al_chat',
   
   // Engagement
   DEEP_ENGAGEMENT: 'deep_engagement',

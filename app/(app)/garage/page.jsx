@@ -1078,43 +1078,16 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
         <div className={styles.heroGradient} />
       </div>
 
-      {/* Mobile Action Bar - Horizontal below car image, only visible on mobile in details mode */}
+      {/* BUILD PIVOT: Mobile Action Bar - Build-focused tabs first */}
       {panelState === 'details' && isOwnedVehicle && (
         <div className={styles.mobileActionBar}>
+          {/* BUILD TABS (Primary) */}
           <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'specs' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('specs')}
+            className={`${styles.mobileActionBtn} ${styles.mobileActionBtnPrimary} ${detailsView === 'mods' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('mods')}
           >
-            <Icons.info size={18} />
-            <span>Details</span>
-          </button>
-          <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'reference' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('reference')}
-          >
-            <Icons.book size={18} />
-            <span>Reference</span>
-          </button>
-          <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'safety' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('safety')}
-          >
-            <Icons.shield size={18} />
-            <span>Safety</span>
-          </button>
-          <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'service' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('service')}
-          >
-            <Icons.clipboard size={18} />
-            <span>Service</span>
-          </button>
-          <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'health' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('health')}
-          >
-            <Icons.gauge size={18} />
-            <span>Health</span>
+            <Icons.wrench size={18} />
+            <span>Build</span>
           </button>
           {carSlugForImages && (
             <button 
@@ -1125,6 +1098,41 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               <span>Photos</span>
             </button>
           )}
+          <button 
+            className={`${styles.mobileActionBtn} ${detailsView === 'specs' ? styles.mobileActionBtnActive : ''}`}
+            onClick={() => setDetailsView('specs')}
+          >
+            <Icons.info size={18} />
+            <span>Specs</span>
+          </button>
+          
+          {/* CARE TABS (Secondary - smaller, right-aligned) */}
+          <div className={styles.mobileActionSecondary}>
+            <button 
+              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'reference' ? styles.mobileActionBtnActive : ''}`}
+              onClick={() => setDetailsView('reference')}
+            >
+              <Icons.book size={16} />
+            </button>
+            <button 
+              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'safety' ? styles.mobileActionBtnActive : ''}`}
+              onClick={() => setDetailsView('safety')}
+            >
+              <Icons.shield size={16} />
+            </button>
+            <button 
+              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'service' ? styles.mobileActionBtnActive : ''}`}
+              onClick={() => setDetailsView('service')}
+            >
+              <Icons.clipboard size={16} />
+            </button>
+            <button 
+              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'health' ? styles.mobileActionBtnActive : ''}`}
+              onClick={() => setDetailsView('health')}
+            >
+              <Icons.gauge size={16} />
+            </button>
+          </div>
         </div>
       )}
 
@@ -1150,65 +1158,26 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
             <p className={styles.heroSubInfo}>{getSubInfo()}</p>
           </div>
           <div className={styles.headerActions}>
-            {/* View toggle for owned vehicles in details mode - 4 tabs */}
+            {/* BUILD PIVOT: View toggle reordered - Mods first, then Photos, then Details, Care features collapsed */}
             {panelState === 'details' && isOwnedVehicle && (
               <div className={styles.headerViewToggle}>
+                {/* BUILD-FOCUSED TABS (Primary) */}
                 <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'specs' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('specs')}
-                  title="Vehicle Details"
-                >
-                  <Icons.info size={12} />
-                  <span>Details</span>
-                </button>
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'reference' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('reference')}
-                  title="Owner's Reference"
-                >
-                  <Icons.book size={12} />
-                  <span>Reference</span>
-                </button>
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'safety' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('safety')}
-                  title="Safety & Recalls"
-                >
-                  <Icons.shield size={12} />
-                  <span>Safety</span>
-                </button>
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'service' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('service')}
-                  title="Service Log"
-                >
-                  <Icons.clipboard size={12} />
-                  <span>Service</span>
-                </button>
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'mods' ? styles.headerToggleActive : ''}`}
+                  className={`${styles.headerToggleBtn} ${styles.headerTogglePrimary} ${detailsView === 'mods' ? styles.headerToggleActive : ''}`}
                   onClick={() => setDetailsView('mods')}
                   title="Modifications"
                 >
                   <Icons.wrench size={12} />
-                  <span>Mods</span>
+                  <span>Build</span>
                   {item.vehicle?.isModified && (
                     <span className={styles.tabBadge}>{item.vehicle.installedModifications?.length || 0}</span>
                   )}
-                </button>
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'health' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('health')}
-                  title="Vehicle Health"
-                >
-                  <Icons.gauge size={12} />
-                  <span>Health</span>
                 </button>
                 {carSlugForImages && (
                   <button 
                     className={`${styles.headerToggleBtn} ${detailsView === 'photos' ? styles.headerToggleActive : ''}`}
                     onClick={() => setDetailsView('photos')}
-                    title="Vehicle Photos"
+                    title="Build Photos"
                   >
                     <Icons.star size={12} />
                     <span>Photos</span>
@@ -1217,6 +1186,50 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     )}
                   </button>
                 )}
+                <button 
+                  className={`${styles.headerToggleBtn} ${detailsView === 'specs' ? styles.headerToggleActive : ''}`}
+                  onClick={() => setDetailsView('specs')}
+                  title="Vehicle Details"
+                >
+                  <Icons.info size={12} />
+                  <span>Specs</span>
+                </button>
+                
+                {/* CARE FEATURES (Secondary - collapsed into "More" on mobile) */}
+                <div className={styles.headerToggleMore}>
+                  <button 
+                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'reference' ? styles.headerToggleActive : ''}`}
+                    onClick={() => setDetailsView('reference')}
+                    title="Owner's Reference"
+                  >
+                    <Icons.book size={12} />
+                    <span>Reference</span>
+                  </button>
+                  <button 
+                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'safety' ? styles.headerToggleActive : ''}`}
+                    onClick={() => setDetailsView('safety')}
+                    title="Safety & Recalls"
+                  >
+                    <Icons.shield size={12} />
+                    <span>Safety</span>
+                  </button>
+                  <button 
+                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'service' ? styles.headerToggleActive : ''}`}
+                    onClick={() => setDetailsView('service')}
+                    title="Service Log"
+                  >
+                    <Icons.clipboard size={12} />
+                    <span>Service</span>
+                  </button>
+                  <button 
+                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'health' ? styles.headerToggleActive : ''}`}
+                    onClick={() => setDetailsView('health')}
+                    title="Vehicle Health"
+                  >
+                    <Icons.gauge size={12} />
+                    <span>Health</span>
+                  </button>
+                </div>
               </div>
             )}
             <button 

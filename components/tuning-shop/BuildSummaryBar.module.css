@@ -1,7 +1,8 @@
 /**
  * Build Summary Bar Styles
  * 
- * Sticky bottom bar for mobile build summary.
+ * BUILD PIVOT: Premium styling with GRAVL/FIXD inspiration
+ * Sticky bottom bar for mobile build summary with bold performance display.
  */
 
 /* Container */
@@ -11,26 +12,29 @@
   left: 0;
   right: 0;
   z-index: 90;
-  background: rgba(26, 27, 30, 0.98);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  background: var(--background-primary, #0a0a0a);
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 
+    0 -8px 32px rgba(0, 0, 0, 0.5),
+    0 -2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .containerExpanded {
   max-height: 80vh;
   overflow-y: auto;
+  background: var(--background-secondary, #141414);
 }
 
 /* Main Bar */
 .bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  gap: var(--space-md, 16px);
+  padding: var(--space-md, 16px);
+  padding-bottom: calc(var(--space-md, 16px) + env(safe-area-inset-bottom, 0px));
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -40,27 +44,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.6);
+  width: 36px;
+  height: 36px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-md, 8px);
+  color: var(--text-secondary, rgba(255, 255, 255, 0.6));
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .expandBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: var(--accent-primary, #ff4d00);
+  border-color: var(--accent-primary, #ff4d00);
+  color: var(--text-primary, #ffffff);
+  transform: scale(1.05);
 }
 
-/* Stats */
+.expandBtn:active {
+  transform: scale(0.98);
+}
+
+/* Stats - Premium HP Display */
 .stats {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-md, 16px);
   flex: 1;
   min-width: 0;
 }
@@ -68,30 +78,49 @@
 .statItem {
   display: flex;
   align-items: center;
-  gap: 4px;
-  color: #ffffff;
+  gap: var(--space-2xs, 4px);
+  color: var(--text-primary, #ffffff);
 }
 
 .statItem svg {
-  color: rgba(255, 255, 255, 0.5);
   flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+/* HP stat is primary - make it bold and orange */
+.statItem:first-child {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.statItem:first-child svg {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.statItem:first-child .statValue {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .statValue {
-  font-size: 14px;
+  font-family: var(--font-display, system-ui);
+  font-size: 15px;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .statLabel {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary, rgba(255, 255, 255, 0.5));
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .statDivider {
   width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 24px;
+  background: var(--border-subtle, rgba(255, 255, 255, 0.1));
   flex-shrink: 0;
 }
 
@@ -106,42 +135,57 @@
   }
   
   .stats {
-    gap: 6px;
+    gap: var(--space-sm, 8px);
+  }
+  
+  .statItem:first-child .statValue {
+    font-size: 16px;
   }
 }
 
-/* Save Button */
+/* Save Button - Bold CTA */
 .saveBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #d4af37 0%, #c5a028 100%);
+  gap: var(--space-xs, 6px);
+  padding: 12px 20px;
+  background: var(--accent-primary, #ff4d00);
   border: none;
-  border-radius: 8px;
-  color: #1a1b1e;
-  font-size: 13px;
+  border-radius: var(--radius-md, 8px);
+  color: var(--text-primary, #ffffff);
+  font-family: var(--font-display, system-ui);
+  font-size: 14px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  min-width: 100px;
+  min-width: 110px;
+  box-shadow: 
+    0 4px 12px rgba(255, 77, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e0bc44 0%, #d4af37 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  background: var(--accent-secondary, #00d4ff);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(0, 212, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .saveBtn:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 
+    0 2px 8px rgba(255, 77, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .saveBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .saveBtnText {
@@ -155,15 +199,18 @@
   
   .saveBtn {
     min-width: auto;
-    padding: 10px 12px;
+    padding: 12px;
+    border-radius: var(--radius-full, 50px);
+    width: 44px;
+    height: 44px;
   }
 }
 
 .spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(26, 27, 30, 0.2);
-  border-top-color: #1a1b1e;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--text-primary, #ffffff);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -172,19 +219,19 @@
   to { transform: rotate(360deg); }
 }
 
-/* Expanded Content */
+/* Expanded Content - Premium Card Design */
 .expandedContent {
-  padding: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--space-lg, 20px);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
   max-width: 1400px;
   margin: 0 auto;
-  animation: slideUp 0.2s ease;
+  animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -196,76 +243,104 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-md, 16px);
 }
 
 .expandedTitle {
   margin: 0;
-  font-size: 14px;
+  font-family: var(--font-display, system-ui);
+  font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary, #ffffff);
+  letter-spacing: -0.01em;
 }
 
 .clearBtn {
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: transparent;
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 6px;
+  border-radius: var(--radius-sm, 6px);
   color: #ef4444;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .clearBtn:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.5);
 }
 
 .clearBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* Upgrades List */
+/* Upgrades List - Card Layout */
 .upgradesList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 200px;
+  gap: var(--space-md, 16px);
+  max-height: 240px;
   overflow-y: auto;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-md, 16px);
+  padding-right: var(--space-xs, 4px);
+  
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-primary, #ff4d00) transparent;
+}
+
+.upgradesList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.upgradesList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.upgradesList::-webkit-scrollbar-thumb {
+  background: var(--accent-primary, #ff4d00);
+  border-radius: 2px;
 }
 
 .categoryGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-sm, 8px);
 }
 
 .categoryName {
   margin: 0;
   font-size: 10px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+  color: var(--accent-primary, #ff4d00);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .upgradeItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
+  gap: var(--space-md, 16px);
+  padding: 10px 12px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-md, 8px);
+  transition: all 0.15s ease;
+}
+
+.upgradeItem:hover {
+  border-color: var(--accent-primary, #ff4d00);
+  background: rgba(255, 77, 0, 0.05);
 }
 
 .upgradeName {
   font-size: 13px;
-  color: #ffffff;
+  font-weight: 500;
+  color: var(--text-primary, #ffffff);
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -275,85 +350,109 @@
 
 .upgradeStats {
   display: flex;
-  gap: 10px;
+  gap: var(--space-md, 12px);
   flex-shrink: 0;
 }
 
 .upgradeHp {
-  font-size: 12px;
-  font-weight: 600;
-  color: #4ade80;
+  font-family: var(--font-display, system-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .upgradeCost {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.5));
 }
 
-/* Totals Row */
+/* Totals Row - Premium Display */
 .totalsRow {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: var(--space-lg, 24px);
+  padding-top: var(--space-md, 16px);
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
 }
 
 .totalItem {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-2xs, 2px);
 }
 
 .totalLabel {
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.4));
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .totalValue {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
+  font-family: var(--font-display, system-ui);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary, #ffffff);
+  letter-spacing: -0.02em;
+}
+
+/* HP total should be accent colored */
+.totalItem:first-child .totalValue {
+  color: var(--accent-primary, #ff4d00);
 }
 
 /* Inline Summary (not sticky) */
 .inlineSummary {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  gap: var(--space-lg, 20px);
+  padding: var(--space-md, 16px) var(--space-lg, 20px);
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-lg, 12px);
 }
 
 .inlineStat {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
+  gap: var(--space-xs, 6px);
+  font-family: var(--font-display, system-ui);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
 }
 
 .inlineStat svg {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+}
+
+/* First inline stat (HP) gets accent color */
+.inlineStat:first-child {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.inlineStat:first-child svg {
+  color: var(--accent-primary, #ff4d00);
 }
 
 /* Desktop adjustments */
 @media (min-width: 768px) {
   .bar {
-    padding: 14px 24px;
+    padding: var(--space-md, 16px) var(--space-xl, 32px);
   }
   
   .stats {
-    gap: 16px;
+    gap: var(--space-lg, 24px);
+  }
+  
+  .statItem:first-child .statValue {
+    font-size: 22px;
   }
   
   .statValue {
-    font-size: 16px;
+    font-size: 17px;
   }
   
   .statLabel {
@@ -361,9 +460,9 @@
   }
   
   .saveBtn {
-    padding: 12px 24px;
-    font-size: 14px;
-    min-width: 140px;
+    padding: 14px 28px;
+    font-size: 15px;
+    min-width: 150px;
   }
   
   .saveBtnText {
@@ -371,28 +470,25 @@
   }
   
   .expandedContent {
-    padding: 20px 24px;
+    padding: var(--space-xl, 28px) var(--space-xl, 32px);
   }
   
   .upgradesList {
-    max-height: 300px;
+    max-height: 320px;
+  }
+  
+  .totalValue {
+    font-size: 24px;
   }
 }
 
-/* When on desktop, optionally make it not fixed */
+/* Large desktop - can make relative if needed */
 @media (min-width: 1024px) {
-  /* Can make relative on desktop if preferred */
-  /* .container { position: relative; } */
+  .statItem:first-child .statValue {
+    font-size: 26px;
+  }
+  
+  .totalValue {
+    font-size: 28px;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
