@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation';
 
 /**
- * Redirect /tuning-shop to /garage/tuning-shop
- * This maintains backwards compatibility for existing links.
+ * LEGACY ROUTE - Redirects directly to /garage/my-build
+ * 
+ * Simplified from: /tuning-shop → /garage/tuning-shop → /garage/my-build
+ * Now goes directly to final destination.
  */
 export default function TuningShopRedirect({ searchParams }) {
-  // Preserve any query parameters
   const params = new URLSearchParams(searchParams).toString();
-  const destination = params ? `/garage/tuning-shop?${params}` : '/garage/tuning-shop';
+  const destination = params ? `/garage/my-build?${params}` : '/garage/my-build';
   redirect(destination);
 }
