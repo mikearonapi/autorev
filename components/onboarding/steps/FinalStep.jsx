@@ -32,9 +32,9 @@ const ACTION_BUTTONS = [
   {
     id: 'tuning',
     emoji: '🔧',
-    label: 'Tuning Shop',
+    label: 'My Build',
     description: 'Plan my build',
-    href: '/tuning-shop',
+    href: '/garage/my-build',
   },
   {
     id: 'community',

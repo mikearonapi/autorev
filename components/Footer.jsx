@@ -49,7 +49,7 @@ const footerSections = [
   {
     title: 'Build',
     links: [
-      { label: 'Start Building', href: '/tuning-shop' },
+      { label: 'Start Building', href: '/garage/my-build' },
       { label: 'Parts Database', href: '/parts' },
       { label: 'Encyclopedia', href: '/encyclopedia' },
     ],
@@ -57,7 +57,7 @@ const footerSections = [
   {
     title: 'My Account',
     links: [
-      { label: 'My Projects', href: '/my-builds' },
+      { label: 'My Garage', href: '/garage' },
       { label: 'Profile', href: '/profile' },
       { label: 'AL Assistant', href: '/al' },
     ],

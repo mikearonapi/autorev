@@ -1295,8 +1295,8 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                     if (onChangeCar) {
                       onChangeCar();
                     } else {
-                      window.history.pushState({}, '', '/tuning-shop');
-                      window.location.href = '/tuning-shop';
+                      window.history.pushState({}, '', '/garage/my-build');
+                      window.location.href = '/garage/my-build';
                     }
                   }}
                   title="Select a different car"

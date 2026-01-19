@@ -30,10 +30,10 @@ export default function HeroCta() {
     return () => clearInterval(suffixInterval);
   }, []);
 
-  // Handle CTA button click - Build Pivot: Go to Tuning Shop
+  // Handle CTA button click - Build Pivot: Go to My Build
   const handleCtaClick = (e) => {
     e.preventDefault();
-    window.location.href = '/tuning-shop';
+    window.location.href = '/garage/my-build';
   };
 
   // Handle secondary CTA click

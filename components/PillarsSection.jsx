@@ -63,7 +63,7 @@ export default function PillarsSection({ carCount = 100 }) {
       title: 'Plan Your Build',
       description: 'Select your car, explore upgrade recommendations, and see projected HP gains. Our intelligent system shows you how mods work together.',
       cta: 'Start Building',
-      href: '/tuning-shop',
+      href: '/garage/my-build',
       accent: 'primary'
     },
     {
@@ -78,8 +78,8 @@ export default function PillarsSection({ carCount = 100 }) {
       icon: <GarageIcon />,
       title: 'Track Progress',
       description: 'Save your build projects, mark parts as installed, and track your total investment. Your personal space to manage every modification.',
-      cta: 'My Projects',
-      href: '/my-builds',
+      cta: 'My Garage',
+      href: '/garage',
       accent: 'tertiary'
     },
     {

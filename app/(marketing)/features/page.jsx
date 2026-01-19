@@ -110,7 +110,7 @@ const FEATURES = [
     title: 'Build',
     description: 'Plan your mods with real dyno data, conflict detection, and cost estimates. Build smarter.',
     cta: 'Start Building',
-    href: '/tuning-shop',
+    href: '/garage/my-build',
   },
   {
     slug: 'connect',
