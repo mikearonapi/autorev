@@ -42,12 +42,12 @@
 
 .trendUp {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .trendDown {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .trendStable {
@@ -132,8 +132,8 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background: rgba(196, 165, 100, 0.1);
-  border: 1px solid rgba(196, 165, 100, 0.2);
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.2);
   border-radius: 8px;
   margin-bottom: 1rem;
   text-align: center;

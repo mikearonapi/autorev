@@ -51,7 +51,7 @@
   background: linear-gradient(135deg, var(--feature-color, var(--sn-accent)) 0%, var(--sn-primary) 100%);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-xl);
-  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 8px 32px rgba(255, 77, 0, 0.25);
 }
 
 .heroIcon svg {
@@ -63,8 +63,8 @@
 .heroLabel {
   display: inline-block;
   padding: 6px 16px;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: 600;
@@ -113,7 +113,7 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -237,7 +237,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(255, 77, 0, 0.1);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
   color: var(--sn-accent);
@@ -321,8 +321,8 @@
   max-width: 600px;
   margin: 0 auto;
   padding: var(--space-2xl);
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0.02) 100%);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: var(--radius-xl);
 }
 
@@ -350,7 +350,7 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;

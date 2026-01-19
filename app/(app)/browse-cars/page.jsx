@@ -18,6 +18,7 @@ import { useFeedback } from '@/components/FeedbackContext';
 import { useCarsList } from '@/hooks/useCarData';
 import { usePrefetchCar } from '@/components/PrefetchCarLink';
 import { useAIChat } from '@/components/AIChatContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';
@@ -384,10 +385,11 @@ function CarCatalogContent() {
       {/* Car Grid */}
       <section className={styles.gridSection}>
         {isLoading && (
-          <div className={styles.loadingState}>
-            <div className={styles.loadingSpinner} />
-            <p>Loading vehicles...</p>
-          </div>
+          <LoadingSpinner 
+            text="Loading vehicles..." 
+            size="large"
+            fullPage 
+          />
         )}
         
         {!isLoading && (

@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--admin-accent-blue, #3b82f6), var(--admin-accent-purple, #8b5cf6));
+  background: linear-gradient(135deg, var(--admin-accent-blue, var(--brand-blue)), var(--admin-accent-purple, var(--brand-purple-accent)));
   border-radius: 8px;
   color: white;
 }
@@ -106,7 +106,7 @@
 .field input:focus,
 .field select:focus {
   outline: none;
-  border-color: var(--admin-accent-blue, #3b82f6);
+  border-color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .field input::placeholder {
@@ -118,13 +118,13 @@
 }
 
 .field select option {
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
   color: var(--admin-text-primary, #f8fafc);
 }
 
 .field select optgroup {
   font-weight: 600;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   background: #0f0f1a;
 }
 
@@ -132,7 +132,7 @@
   display: block;
   margin-top: 4px;
   font-size: 10px;
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
   font-style: italic;
 }
 
@@ -190,7 +190,7 @@
 }
 
 .submitButton {
-  background: linear-gradient(135deg, var(--admin-accent-blue, #3b82f6), var(--admin-accent-purple, #8b5cf6));
+  background: linear-gradient(135deg, var(--admin-accent-blue, var(--brand-blue)), var(--admin-accent-purple, var(--brand-purple-accent)));
   border: none;
   color: white;
 }

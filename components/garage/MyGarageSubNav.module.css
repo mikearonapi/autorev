@@ -1,0 +1,245 @@
+/* ==========================================================================
+   MyGarageSubNav - Dropdown Navigation for Garage Sub-Pages
+   ========================================================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0));
+  position: relative;
+  background: transparent;
+  z-index: 100;
+}
+
+/* Back Button - Left positioned */
+.backButton {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 10px;
+  /* Adjust for safe area */
+  top: calc(50% + env(safe-area-inset-top, 0) / 2);
+}
+
+.backButton:hover {
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.backButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Right Action - Right positioned */
+.rightAction {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  /* Adjust for safe area */
+  top: calc(50% + env(safe-area-inset-top, 0) / 2);
+}
+
+/* Dropdown Container */
+.dropdownContainer {
+  position: relative;
+}
+
+/* Dropdown Trigger Button */
+.dropdownTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.dropdownTrigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dropdownTriggerOpen {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent-primary, var(--brand-gold));
+  box-shadow: 0 0 0 2px rgba(212, 168, 75, 0.2);
+}
+
+.triggerLabel {
+  white-space: nowrap;
+}
+
+.triggerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.triggerIconRotated {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 240px;
+  background: rgba(20, 30, 45, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: dropdownFadeIn 0.2s ease;
+  z-index: 1000;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Dropdown Option */
+.dropdownOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.dropdownOption:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+}
+
+.dropdownOptionActive {
+  background: rgba(212, 168, 75, 0.12);
+  color: var(--accent-primary, var(--brand-gold));
+}
+
+.dropdownOptionActive:hover {
+  background: rgba(212, 168, 75, 0.18);
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.dropdownOptionActive .optionIcon {
+  background: rgba(212, 168, 75, 0.2);
+  color: var(--accent-primary, var(--brand-gold));
+}
+
+.optionText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionLabel {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.optionDescription {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.2;
+}
+
+.dropdownOptionActive .optionDescription {
+  color: rgba(212, 168, 75, 0.7);
+}
+
+.optionCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary, var(--brand-gold));
+  flex-shrink: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .header {
+    padding: 10px 12px;
+    padding-top: calc(10px + env(safe-area-inset-top, 0));
+  }
+  
+  .backButton {
+    left: 12px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .rightAction {
+    right: 12px;
+  }
+  
+  .dropdownTrigger {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  .dropdownMenu {
+    min-width: 220px;
+    left: 50%;
+  }
+  
+  .dropdownOption {
+    padding: 10px 12px;
+  }
+  
+  .optionIcon {
+    width: 32px;
+    height: 32px;
+  }
+}

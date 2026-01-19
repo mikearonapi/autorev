@@ -161,7 +161,7 @@ function BuildSummaryCard({ build, car, complexity }) {
 
         <div className={styles.summaryActions}>
           <Link 
-            href={`/tuning-shop?car=${car.slug}&build=${build.id}`}
+            href={`/garage/my-build?car=${car.slug}&build=${build.id}`}
             className={styles.modifyButton}
           >
             <Icons.tool size={16} />
@@ -604,7 +604,7 @@ export default function BuildDetailView({ build, car, onBack }) {
       {/* Bottom CTA */}
       <div className={styles.bottomCta}>
         <Link 
-          href={`/tuning-shop?car=${car.slug}&build=${build.id}`}
+          href={`/garage/my-build?car=${car.slug}&build=${build.id}`}
           className={styles.ctaButton}
         >
           <Icons.tool size={18} />

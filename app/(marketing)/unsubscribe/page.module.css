@@ -152,7 +152,7 @@
 }
 
 .success p {
-  color: #22c55e;
+  color: var(--brand-success);
 }
 
 .error {
@@ -161,7 +161,7 @@
 }
 
 .error p {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .note {

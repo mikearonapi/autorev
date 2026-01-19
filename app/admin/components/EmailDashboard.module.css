@@ -40,7 +40,7 @@
 .titleIcon {
   display: flex;
   align-items: center;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .title {
@@ -81,7 +81,7 @@
 }
 
 .tabActive {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple-accent));
   color: white;
   border-color: transparent;
 }
@@ -181,7 +181,7 @@
 
 .deliveryRateFill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  background: linear-gradient(90deg, var(--brand-blue), #22c55e);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -226,7 +226,7 @@
 .templateCount {
   font-size: 12px;
   font-weight: 600;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 /* Empty Analytics State */
@@ -293,7 +293,7 @@
   height: 32px;
   background: rgba(59, 130, 246, 0.15);
   border-radius: 6px;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   flex-shrink: 0;
 }
 
@@ -549,7 +549,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple-accent));
   color: white;
   border: none;
   border-radius: 5px;
@@ -608,7 +608,7 @@
 .select:focus,
 .input:focus {
   outline: none;
-  border-color: var(--admin-accent-blue, #3b82f6);
+  border-color: var(--admin-accent-blue, var(--brand-blue));
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -618,7 +618,7 @@
 }
 
 .select option {
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
   color: #f8fafc;
 }
 
@@ -656,8 +656,8 @@
   align-items: center;
   gap: 5px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #D4AF37, #B8973A);
-  color: #1a1a1a;
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00), #B8973A);
+  color: var(--brand-border-subtle);
   border: none;
   border-radius: 5px;
   font-size: 11px;
@@ -668,7 +668,7 @@
 
 .sendBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.4);
 }
 
 .sendBtn:disabled {

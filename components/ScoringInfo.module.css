@@ -198,7 +198,7 @@
 
 .scaleList .scoreGood {
   font-weight: 600;
-  color: var(--score-good, #1d4ed8);
+  color: var(--score-good, var(--brand-blue-dark));
 }
 
 .scaleList .scoreAverage {

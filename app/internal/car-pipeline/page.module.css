@@ -58,15 +58,15 @@
 }
 
 .statCard.inProgress .statValue {
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .statCard.completed .statValue {
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .statCard.blocked .statValue {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 /* Actions Bar */
@@ -101,7 +101,7 @@
 
 .filterSelect:focus {
   outline: none;
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--brand-blue));
 }
 
 .searchInput {
@@ -120,7 +120,7 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--brand-blue));
 }
 
 .actionsGroup {
@@ -129,7 +129,7 @@
 }
 
 .primaryButton {
-  background: var(--accent, #3b82f6);
+  background: var(--accent, var(--brand-blue));
   color: white;
   border: none;
   border-radius: 6px;
@@ -226,17 +226,17 @@
 
 .statusBadge.inProgress {
   background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .statusBadge.completed {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .statusBadge.blocked {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 /* Progress Bar */
@@ -256,7 +256,7 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #10b981);
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-teal));
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -288,12 +288,12 @@
 
 .phasePill.complete {
   background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .phasePill.partial {
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: var(--brand-warning);
 }
 
 .phasePill.pending {
@@ -333,7 +333,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid var(--border-color, #2a2a2a);
-  border-top-color: var(--accent, #3b82f6);
+  border-top-color: var(--accent, var(--brand-blue));
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 1rem;
@@ -352,7 +352,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .retryButton {
@@ -366,7 +366,7 @@
 }
 
 .retryButton:hover {
-  background: #dc2626;
+  background: var(--brand-error-dark);
 }
 
 /* Modal */
@@ -444,7 +444,7 @@
 .formGroup input:focus,
 .formGroup select:focus {
   outline: none;
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--brand-blue));
 }
 
 .formHint {

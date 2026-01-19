@@ -116,7 +116,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: var(--space-2xs) var(--space-sm);
-  background: rgba(196, 165, 100, 0.2);
+  background: rgba(255, 77, 0, 0.2);
   color: var(--sn-gold);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-sm);

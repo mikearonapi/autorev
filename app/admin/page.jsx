@@ -21,6 +21,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Components
 import { TabNav } from './components/TabNav';
@@ -328,10 +329,12 @@ export default function AdminDashboardPage() {
   if (authLoading || !authChecked) {
     return (
       <div className={styles.pageContainer}>
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner} />
-          <p>Verifying access...</p>
-        </div>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Admin Dashboard" 
+          subtext="Verifying access..."
+          fullPage 
+        />
       </div>
     );
   }

@@ -14,6 +14,7 @@ import { useCheckout } from '@/hooks/useCheckout';
 import { IS_BETA } from '@/lib/tierAccess';
 import { AL_CREDIT_PACKS, SUBSCRIPTION_TIERS } from '@/lib/stripe';
 import ReferralPanel from '@/components/ReferralPanel';
+import LoadingSpinner from '@/components/LoadingSpinner';
 // Car count now comes from usePlatformStats hook or default
 
 // Format fuel units for display (1 cent = 1 fuel)
@@ -604,8 +605,12 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className={styles.loading}>
-        <div className={styles.loadingSpinner}></div>
-        <p>Loading profile...</p>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Profile" 
+          subtext="Fetching your account..."
+          fullPage 
+        />
       </div>
     );
   }
@@ -728,7 +733,7 @@ export default function ProfilePage() {
             </div>
             <Icons.externalLink size={14} />
           </Link>
-          <Link href="/tuning-shop" className={styles.statCard}>
+          <Link href="/garage/tuning-shop" className={styles.statCard}>
             <div className={styles.statIcon}>
               <Icons.wrench size={22} />
             </div>

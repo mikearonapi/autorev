@@ -32,14 +32,14 @@
   justify-content: center;
   background: rgba(239, 68, 68, 0.1);
   border-radius: 50%;
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .errorTitle {
   font-family: var(--font-display, system-ui);
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
@@ -72,7 +72,7 @@
 .errorStack {
   font-family: monospace;
   font-size: 11px;
-  color: #f87171;
+  color: var(--brand-error-light);
   background: rgba(0, 0, 0, 0.4);
   padding: 12px;
   border-radius: 6px;
@@ -103,7 +103,7 @@
 
 .retryButton {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--brand-error);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
@@ -112,12 +112,12 @@
 }
 
 .reloadButton {
-  background: linear-gradient(135deg, #d4af37 0%, #b8973a 100%);
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00) 0%, #b8973a 100%);
   color: #000;
 }
 
 .reloadButton:hover {
-  background: linear-gradient(135deg, #e6c54a 0%, #d4af37 100%);
+  background: linear-gradient(135deg, #e6c54a 0%, var(--accent-primary, #ff4d00) 100%);
 }
 
 /* Compact error for smaller sections */
@@ -137,7 +137,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ef4444;
+  color: var(--brand-error);
   flex-shrink: 0;
 }
 
@@ -159,7 +159,7 @@
 
 .compactRetry:hover {
   background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 

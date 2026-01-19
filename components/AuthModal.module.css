@@ -9,8 +9,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-md);
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: transparent;
   animation: fadeIn 0.2s ease;
 }
 
@@ -33,15 +32,15 @@
 
 @media (max-width: 480px) {
   .overlay {
-    align-items: flex-end;
-    padding: 0;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
   }
   
   .modal {
-    max-width: 100%;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-width: calc(100% - var(--space-lg));
+    border-radius: var(--radius-xl);
     padding: var(--space-xl) var(--space-lg);
-    padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom, 20px));
   }
 }
 

@@ -7,15 +7,15 @@
   --admin-card: rgba(255, 255, 255, 0.03);
   --admin-card-hover: rgba(255, 255, 255, 0.05);
   --admin-border: rgba(255, 255, 255, 0.08);
-  --admin-accent-blue: #3b82f6;
-  --admin-accent-purple: #8b5cf6;
+  --admin-accent-blue: var(--brand-blue);
+  --admin-accent-purple: var(--brand-purple-accent);
   --admin-accent-cyan: #06b6d4;
   --admin-positive: #22c55e;
-  --admin-warning: #f59e0b;
+  --admin-warning: var(--brand-warning);
   --admin-negative: #ef4444;
   --admin-text-primary: #f8fafc;
-  --admin-text-secondary: #94a3b8;
-  --admin-text-muted: #64748b;
+  --admin-text-secondary: var(--brand-text-secondary);
+  --admin-text-muted: var(--brand-text-tertiary);
   
   min-height: 100vh;
   background: var(--admin-bg-gradient);

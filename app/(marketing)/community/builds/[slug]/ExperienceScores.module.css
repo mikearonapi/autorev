@@ -61,7 +61,7 @@
 }
 
 .upgradedVal {
-  color: #10b981;
+  color: var(--brand-teal);
   font-weight: 600;
 }
 
@@ -84,7 +84,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: #3b82f6;
+  background: var(--brand-blue);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
@@ -93,7 +93,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-light));
   border-radius: 3px;
   transition: all 0.4s ease;
 }

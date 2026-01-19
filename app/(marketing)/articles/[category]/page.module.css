@@ -9,7 +9,7 @@
 /* Hero */
 .hero {
   padding: 5rem 2rem 3rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, #16213e 50%, #0f3460 100%);
   text-align: center;
 }
 
@@ -34,7 +34,7 @@
 .heroTitle {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.75rem;
 }
 
@@ -92,13 +92,13 @@
 
 .filterLink:hover {
   border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .filterLink.active {
   background: rgba(233, 69, 96, 0.15);
   border-color: rgba(233, 69, 96, 0.4);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .allArticlesBtn {
@@ -120,7 +120,7 @@
 .allArticlesBtn:hover {
   background: rgba(233, 69, 96, 0.1);
   border-color: rgba(233, 69, 96, 0.3);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .filterDivider {
@@ -147,12 +147,12 @@
   gap: 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 1.5rem;
 }
 
 .sectionTitle svg {
-  color: #f59e0b;
+  color: var(--brand-warning);
 }
 
 .filterTag {
@@ -183,7 +183,7 @@
 
 .clearFilter:hover {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Grids */
@@ -225,7 +225,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
 }
 
 .card.featured .cardImage {
@@ -242,7 +242,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark), #16213e);
   color: rgba(255, 255, 255, 0.4);
 }
 
@@ -264,7 +264,7 @@
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .subcategoryBadge svg {
@@ -281,7 +281,7 @@
 .cardTitle {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.75rem;
   line-height: 1.4;
 }

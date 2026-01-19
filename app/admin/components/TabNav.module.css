@@ -36,7 +36,7 @@
 
 .tab.active {
   color: var(--admin-text-primary, #f8fafc);
-  border-bottom-color: var(--admin-accent-blue, #3b82f6);
+  border-bottom-color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .tab.active::after {
@@ -46,7 +46,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--admin-accent-blue, #3b82f6), var(--admin-accent-purple, #8b5cf6));
+  background: linear-gradient(90deg, var(--admin-accent-blue, var(--brand-blue)), var(--admin-accent-purple, var(--brand-purple-accent)));
 }
 
 .tab:disabled {

@@ -277,7 +277,7 @@ export default function PerformancePage() {
               <>
                 <div className={styles.sectionHeader}>
                   <h2>Build Estimates</h2>
-                  <Link href="/build" className={styles.addLink}>
+                  <Link href="/garage/tuning-shop" className={styles.addLink}>
                     <Icons.plus size={16} />
                     New Build
                   </Link>

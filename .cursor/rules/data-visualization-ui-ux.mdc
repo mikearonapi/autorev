@@ -1,9 +1,12 @@
 ---
 description: MANDATORY data visualization and UI/UX rules for analytics dashboards. Apply these rules when generating any chart, dashboard, or data display component.
 globs:
-  - "src/components/**/*.tsx"
-  - "src/app/**/*.tsx"
-  - "src/features/**/*.tsx"
+  - "app/**/*.jsx"
+  - "app/**/*.tsx"
+  - "components/**/*.jsx"
+  - "components/**/*.tsx"
+  - "app/admin/**/*.jsx"
+  - "app/internal/**/*.jsx"
 alwaysApply: false
 ---
 
@@ -115,31 +118,60 @@ const perspectives = [
 
 ## Part 3: Color System
 
-### 3.1 Semantic Colors (Status)
+### 3.1 AutoRev Brand Colors (MANDATORY)
+Use these exact colors for consistency with AutoRev brand:
+
+```typescript
+// AutoRev Brand Color System
+const BRAND_COLORS = {
+  // Backgrounds
+  bgPrimary: '#0d1b2a',      // Page backgrounds
+  bgSecondary: '#1b263b',    // Cards, elevated surfaces
+  bgCard: 'rgba(255, 255, 255, 0.04)',
+  
+  // Chart-Specific Colors
+  chartBaseline: '#3b82f6',   // Blue - Stock/baseline data
+  chartModified: '#10b981',   // Teal - Modified/improved data
+  chartOutline: 'rgba(255, 255, 255, 0.15)',
+  chartGrid: 'rgba(255, 255, 255, 0.08)',
+  
+  // Accent Colors
+  lime: '#d4ff00',            // Emphasis, CTAs
+  teal: '#10b981',            // Improvements, gains, selections
+  blue: '#3b82f6',            // Baseline, stock values
+  gold: '#d4a84b',            // Labels, brand accent
+} as const;
+```
+
+### 3.2 Semantic Colors (Status)
 ONLY use these colors to convey meaning:
 
 ```typescript
 const STATUS_COLORS = {
-  positive: 'text-green-500',  // Success, growth, on-track
-  warning: 'text-amber-500',   // Caution, approaching limit
-  negative: 'text-red-500',    // Critical, decline, over-limit
-  neutral: 'text-slate-500',   // No status, informational
+  positive: '#10b981',     // Teal - Success, growth, on-track (AutoRev brand)
+  warning: '#f59e0b',      // Amber - Caution, approaching limit
+  negative: '#ef4444',     // Red - Critical, decline, over-limit
+  neutral: '#94a3b8',      // Slate - No status, informational
 } as const;
 ```
 
-### 3.2 Data Colors (Non-Status)
-For chart series without semantic meaning:
+### 3.3 Stock vs Modified Comparison Rules
+When displaying baseline vs improvement data:
 
 ```typescript
-const CHART_COLORS = {
-  primary: '#3B82F6',    // Blue - main data series
-  secondary: '#94A3B8',  // Slate - comparison/secondary
-  accent: '#F97316',     // Orange - highlighted segment
+// ALWAYS use these exact colors
+const COMPARISON_COLORS = {
+  stock: '#3b82f6',        // Blue for original/baseline values
+  modified: '#10b981',     // Teal for improved/modified values
+  gain: {
+    text: '#10b981',
+    bg: 'rgba(16, 185, 129, 0.15)',
+  },
 } as const;
 ```
 
-### 3.3 Category Comparison Rules
-- **2 categories:** Gray (#94A3B8) vs Accent (#F97316)
+### 3.4 Category Comparison Rules
+- **2 categories:** Blue (#3b82f6) vs Teal (#10b981)
 - **3-4 categories:** Use a single-hue progression (blue-400 → blue-700)
 - **5-6 categories:** Use distinct hues, but group excess into "Other"
 - **>6 categories:** STOP. Simplify the visualization.

@@ -1,0 +1,200 @@
+/* Vehicle Select Modal */
+
+/* Backdrop - separate from modal */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999998;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Modal - sibling of backdrop, higher z-index */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999999;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  max-height: 80vh;
+  background: linear-gradient(180deg, #0d1b2a 0%, #1a2a3a 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(16, 185, 129, 0.2);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* Header */
+.header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+}
+
+.closeBtn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.closeBtn:active {
+  background: rgba(255,255,255,0.2);
+  transform: scale(0.95);
+}
+
+/* Vehicle List */
+.vehicleList {
+  padding: 12px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  flex: 1;
+  min-height: 0;
+  touch-action: pan-y;
+}
+
+.vehicleItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.vehicleItem:active {
+  background: rgba(255,255,255,0.15);
+}
+
+.vehicleItemActive {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+.vehicleItemActive:active {
+  background: rgba(16, 185, 129, 0.35);
+}
+
+.vehicleImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicleImagePlaceholder {
+  font-size: 24px;
+  opacity: 0.4;
+}
+
+.vehicleInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicleName {
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vehicleNickname {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+.checkmark {
+  color: var(--brand-teal);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* Footer */
+.footer {
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 12px;
+  color: var(--brand-teal);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.addBtn:active {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.addBtn span {
+  font-size: 18px;
+}

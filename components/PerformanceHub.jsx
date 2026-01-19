@@ -1174,13 +1174,15 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
     const buildData = {
       carSlug: car.slug,
       carName: car.name,
-      buildName: buildName.trim(),
+      name: buildName.trim(),
       selectedUpgrades: effectiveSelectedModules,
       // Use smart HP calculation for realistic gains
       totalHpGain: smartHp.totalGain,
       totalCostLow: totalCost.low,
       totalCostHigh: totalCost.high,
       finalHp: smartHp.projectedHp,
+      // PerformanceHub uses the 'basic' tuner mode calculation
+      tunerMode: 'basic',
     };
     
     try {

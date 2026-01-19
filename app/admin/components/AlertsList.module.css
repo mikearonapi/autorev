@@ -24,7 +24,7 @@
 }
 
 .badge {
-  background: var(--admin-accent-blue, #3b82f6);
+  background: var(--admin-accent-blue, var(--brand-blue));
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -84,7 +84,7 @@
 .action {
   font-size: 11px;
   font-weight: 600;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -93,7 +93,7 @@
 }
 
 .action:hover {
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
 }
 
 .action svg {

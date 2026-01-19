@@ -62,8 +62,7 @@ import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCa
 // Mobile-first tuning shop components
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
-import ImageUploader from './ImageUploader';
-import BuildMediaGallery from './BuildMediaGallery';
+// Image management moved to Garage Photos section for cleaner UX
 import VideoPlayer from './VideoPlayer';
 import UpgradeConfigPanel, { 
   calculateConfigHpModifier, 
@@ -287,15 +286,18 @@ const Icons = {
   ),
 };
 
-// Package configs
-const PACKAGES = [
-  { key: 'stock', label: 'Stock' },
+// Build Recommendation configs (presets)
+const BUILD_RECOMMENDATIONS = [
   { key: 'streetSport', label: 'Street' },
   { key: 'trackPack', label: 'Track' },
-  { key: 'timeAttack', label: 'Time Atk' },
-  { key: 'ultimatePower', label: 'Power' },
-  { key: 'custom', label: 'Custom' },
+  { key: 'drag', label: 'Drag' },
 ];
+
+// Custom option (separate from recommendations)
+const CUSTOM_BUILD = { key: 'custom', label: 'Custom' };
+
+// Legacy PACKAGES constant for backwards compatibility
+const PACKAGES = [...BUILD_RECOMMENDATIONS, CUSTOM_BUILD];
 
 // Map icon names from shared categories to local Icon components
 const ICON_NAME_TO_COMPONENT = {
@@ -336,7 +338,7 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
     return {
       primaryText: 'Select a car to see upgrade recommendations.',
       focusArea: null,
-      platformInsights: [],
+      topMods: [],
       watchOuts: [],
       hasDetailedData: false,
     };
@@ -360,8 +362,9 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
       primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
     }
     
-    // Determine focus area from upgrades_by_objective
+    // Determine focus area and extract top 3 mods from upgrades_by_objective
     let focusArea = null;
+    let topMods = [];
     if (hasObjectiveData(tuningProfile)) {
       const objectives = getUpgradesByObjective(tuningProfile);
       // Find the objective with the most upgrades
@@ -381,12 +384,28 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
         };
         focusArea = focusLabels[objectiveCounts[0].key] || objectiveCounts[0].key;
       }
+      
+      // Extract top 3 mods across all objectives (prioritizing power mods)
+      const allMods = [];
+      // Prioritize power mods first as they're typically most popular
+      const priorityOrder = ['power', 'handling', 'braking', 'sound', 'cooling', 'aero'];
+      for (const objective of priorityOrder) {
+        const mods = objectives[objective] || [];
+        for (const mod of mods) {
+          const modName = mod.mod || mod.name || mod;
+          const modGain = mod.gain || mod.note || '';
+          if (modName && typeof modName === 'string') {
+            allMods.push({ mod: modName, gain: modGain, category: objective });
+          }
+        }
+      }
+      topMods = allMods.slice(0, 3);
     }
     
     return {
       primaryText: primaryRecommendation,
       focusArea,
-      platformInsights: strengths.slice(0, 2),
+      topMods,
       watchOuts: weaknesses.slice(0, 2),
       hasDetailedData: true,
       source: 'car_tuning_profiles',
@@ -409,8 +428,8 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
   
   // Build detailed recommendation
   let primaryRecommendation = '';
-  let platformInsights = [];
   let watchOuts = [];
+  let topMods = [];
   
   // Use tier-specific narrative from static carUpgradeRecommendations (legacy fallback)
   if (tierRecs?.narrative) {
@@ -421,9 +440,13 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
     primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
   }
   
-  // Gather platform strengths from static data
-  if (platformNotes?.length > 0) {
-    platformInsights = platformNotes.slice(0, 2);
+  // Extract top mods from tier recommendations if available
+  if (tierRecs?.mods && Array.isArray(tierRecs.mods)) {
+    topMods = tierRecs.mods.slice(0, 3).map(mod => ({
+      mod: typeof mod === 'string' ? mod : (mod.name || mod.mod || ''),
+      gain: mod.gain || mod.note || '',
+      category: 'power',
+    }));
   }
   
   // Gather watch-outs / known issues from static data
@@ -447,7 +470,7 @@ function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuni
   return {
     primaryText: primaryRecommendation,
     focusArea,
-    platformInsights,
+    topMods,
     watchOuts,
     hasDetailedData: !!carRecs,
     source: 'static_file',
@@ -488,198 +511,7 @@ function generateFallbackRecommendation(car, stockMetrics) {
   return `A balanced approach works best for this platform. Start with basic bolt-ons (intake, exhaust, tune) then progress to suspension and brakes based on your driving goals.`;
 }
 
-/**
- * Virtual Dyno Chart - Shows estimated HP/TQ curve
- * Uses physics model to generate RPM-based power curve
- */
-function VirtualDynoChart({ stockHp, estimatedHp, stockTorque, estimatedTq, peakRpm = 6500 }) {
-  // Generate dyno curve data points
-  // NOTE: All values are CRANK HP for consistency (database stores crank HP)
-  const generateCurve = (peakPower, peakTq, isStock = false) => {
-    const points = [];
-    const startRpm = 2000;
-    const endRpm = 7500;
-    const step = 250;
-
-    for (let rpm = startRpm; rpm <= endRpm; rpm += step) {
-      // Power curve shape (rises, peaks, falls)
-      const rpmRatio = rpm / peakRpm;
-      const powerFactor = rpmRatio < 1
-        ? Math.pow(rpmRatio, 1.8)
-        : 1 - Math.pow((rpmRatio - 1) * 2, 2) * 0.3;
-
-      // Torque peaks earlier and stays flatter
-      const torqueRpmRatio = rpm / (peakRpm * 0.75);
-      const torqueFactor = torqueRpmRatio < 1
-        ? Math.pow(torqueRpmRatio, 1.2)
-        : 1 - Math.pow((torqueRpmRatio - 1) * 1.5, 2) * 0.2;
-
-      points.push({
-        rpm,
-        hp: Math.max(0, Math.round(peakPower * Math.max(0, powerFactor))),
-        tq: Math.max(0, Math.round(peakTq * Math.max(0, torqueFactor))),
-      });
-    }
-    return points;
-  };
-
-  const stockCurve = generateCurve(stockHp, stockTorque || stockHp * 0.85, true);
-  const modCurve = generateCurve(estimatedHp, estimatedTq || estimatedHp * 0.9, false);
-
-  const maxHp = Math.max(estimatedHp, stockHp) * 1.15; // More headroom
-  const hpGain = estimatedHp - stockHp;
-  const gainPercent = ((hpGain / stockHp) * 100).toFixed(0);
-
-  return (
-    <div className={styles.virtualDynoLarge}>
-      {/* Header with clear gain summary */}
-      <div className={styles.dynoHeaderLarge}>
-        <div className={styles.dynoTitleSection}>
-          <span className={styles.dynoTitleLarge}>Virtual Dyno</span>
-          <span className={styles.dynoSubtitle}>Estimated power curve based on your modifications</span>
-        </div>
-        <div className={styles.dynoGainBadge}>
-          <span className={styles.dynoGainValue}>+{hpGain}</span>
-          <span className={styles.dynoGainUnit}>HP</span>
-          <span className={styles.dynoGainPercent}>({gainPercent}% gain)</span>
-        </div>
-      </div>
-      
-      {/* Legend */}
-      <div className={styles.dynoLegendLarge}>
-        <span className={styles.dynoLegendItemLarge}>
-          <span className={styles.dynoLegendLine} style={{ background: 'rgba(255,255,255,0.4)', borderStyle: 'dashed' }} />
-          <span>Stock: {stockHp} HP</span>
-        </span>
-        <span className={styles.dynoLegendItemLarge}>
-          <span className={styles.dynoLegendLine} style={{ background: '#10b981' }} />
-          <span>Modified: {estimatedHp} HP</span>
-        </span>
-      </div>
-
-      {/* Chart Area - Larger */}
-      <div className={styles.dynoChartLarge}>
-        {/* Y-Axis Labels */}
-        <div className={styles.dynoYAxisLarge}>
-          <span>{Math.round(maxHp)}</span>
-          <span>{Math.round(maxHp * 0.75)}</span>
-          <span>{Math.round(maxHp * 0.5)}</span>
-          <span>{Math.round(maxHp * 0.25)}</span>
-          <span>0</span>
-        </div>
-        
-        {/* Chart Area */}
-        <div className={styles.dynoChartAreaLarge}>
-          {/* Grid lines */}
-          <div className={styles.dynoGridLarge}>
-            {[0, 1, 2, 3, 4].map(i => (
-              <div key={i} className={styles.dynoGridLineLarge} style={{ bottom: `${i * 25}%` }} />
-            ))}
-          </div>
-          
-          {/* Gain area fill between curves */}
-          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="gainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.05" />
-              </linearGradient>
-            </defs>
-            {/* Fill area between curves */}
-            <path
-              d={
-                modCurve.map((p, i) => {
-                  const x = ((p.rpm - 2000) / 5500) * 100;
-                  const y = 100 - (p.hp / maxHp) * 100;
-                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                }).join(' ') +
-                stockCurve.slice().reverse().map((p) => {
-                  const x = ((p.rpm - 2000) / 5500) * 100;
-                  const y = 100 - (p.hp / maxHp) * 100;
-                  return `L ${x} ${y}`;
-                }).join(' ') + ' Z'
-              }
-              fill="url(#gainGradient)"
-            />
-          </svg>
-          
-          {/* Stock HP curve */}
-          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path
-              d={stockCurve.map((p, i) => {
-                const x = ((p.rpm - 2000) / 5500) * 100;
-                const y = 100 - (p.hp / maxHp) * 100;
-                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-              }).join(' ')}
-              fill="none"
-              stroke="rgba(255,255,255,0.4)"
-              strokeWidth="2"
-              strokeDasharray="6 4"
-            />
-          </svg>
-          
-          {/* Modified HP curve */}
-          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path
-              d={modCurve.map((p, i) => {
-                const x = ((p.rpm - 2000) / 5500) * 100;
-                const y = 100 - (p.hp / maxHp) * 100;
-                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-              }).join(' ')}
-              fill="none"
-              stroke="#10b981"
-              strokeWidth="3"
-            />
-          </svg>
-          
-          {/* Stock peak marker */}
-          <div
-            className={styles.dynoPeakMarkerStock}
-            style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
-              bottom: `${(stockHp / maxHp) * 100}%`
-            }}
-          >
-            <span className={styles.dynoPeakValueStock}>{stockHp}</span>
-          </div>
-          
-          {/* Modified peak marker */}
-          <div
-            className={styles.dynoPeakMarkerMod}
-            style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
-              bottom: `${(estimatedHp / maxHp) * 100}%`
-            }}
-          >
-            <span className={styles.dynoPeakValueMod}>{estimatedHp}</span>
-            <span className={styles.dynoPeakLabelMod}>HP</span>
-          </div>
-
-          {/* Gain annotation line */}
-          <div
-            className={styles.dynoGainLine}
-            style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
-              bottom: `${(stockHp / maxHp) * 100}%`,
-              height: `${((estimatedHp - stockHp) / maxHp) * 100}%`
-            }}
-          >
-            <span className={styles.dynoGainAnnotation}>+{hpGain}</span>
-          </div>
-        </div>
-        
-        {/* X-Axis Labels */}
-        <div className={styles.dynoXAxisLarge}>
-          <span>2,000</span>
-          <span>3,500</span>
-          <span>5,000</span>
-          <span>6,500</span>
-          <span>7,500 RPM</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+/* VirtualDynoChart extracted to components/VirtualDynoChart.jsx */
 
 /**
  * Power Breakdown - Shows where HP gains come from
@@ -689,7 +521,7 @@ function PowerBreakdown({ stockHp, specs, estimate }) {
   let runningTotal = stockHp;
   
   // Engine mods
-  if (specs.engine?.type !== 'stock') {
+  if (specs?.engine && specs.engine.type !== 'stock') {
     let engineGain = 0;
     if (specs.engine.cams === 'stage3') engineGain += Math.round(stockHp * 0.12);
     else if (specs.engine.cams === 'stage2') engineGain += Math.round(stockHp * 0.07);
@@ -1057,1216 +889,10 @@ function ScoreBar({ label, stockScore, upgradedScore }) {
   );
 }
 
-/**
- * Lap Time Estimator - Uses physics simulation for track estimates
- */
-function LapTimeEstimator({
-  stockHp, estimatedHp, weight, drivetrain, tireCompound,
-  suspensionSetup, brakeSetup, aeroSetup, weightMod = 0, driverWeight = 180,
-  user, carSlug, modsSummary
-}) {
-  const [selectedTrackSlug, setSelectedTrackSlug] = useState('laguna-seca');
-  const [driverSkill, setDriverSkill] = useState('intermediate');
-  const [showInfo, setShowInfo] = useState(false);
-  const [showLogForm, setShowLogForm] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const [showTrackSelector, setShowTrackSelector] = useState(false);
-  const [trackSearch, setTrackSearch] = useState('');
-  const [trackHistory, setTrackHistory] = useState([]);
-  const [allTracks, setAllTracks] = useState([]);
-  const [tracksLoading, setTracksLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [analysis, setAnalysis] = useState(null);
-  
-  // Form state for logging a track time
-  const [logForm, setLogForm] = useState({
-    lapTimeMinutes: '',
-    lapTimeSeconds: '',
-    sessionDate: new Date().toISOString().split('T')[0],
-    conditions: 'dry',
-    notes: ''
-  });
-  
-  // Fetch tracks from database on mount
-  useEffect(() => {
-    async function fetchTracks() {
-      try {
-        const res = await fetch('/api/tracks');
-        if (res.ok) {
-          const data = await res.json();
-          setAllTracks(data.tracks || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch tracks:', err);
-      } finally {
-        setTracksLoading(false);
-      }
-    }
-    fetchTracks();
-  }, []);
-  
-  // Fetch track history when history panel is opened
-  useEffect(() => {
-    if (showHistory && user?.id && carSlug) {
-      fetchTrackHistory();
-    }
-  }, [showHistory, user?.id, carSlug]);
-  
-  const fetchTrackHistory = async () => {
-    if (!user?.id) return;
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/users/${user.id}/track-times?carSlug=${carSlug || ''}&limit=10`);
-      if (res.ok) {
-        const data = await res.json();
-        setTrackHistory(data.times || []);
-      }
-    } catch (err) {
-      console.error('Failed to fetch track history:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const handleLogTime = async () => {
-    if (!user?.id) return;
-    
-    const minutes = parseInt(logForm.lapTimeMinutes || '0', 10);
-    const seconds = parseFloat(logForm.lapTimeSeconds || '0');
-    const totalSeconds = (minutes * 60) + seconds;
-    
-    if (totalSeconds < 20 || totalSeconds > 1200) {
-      alert('Please enter a valid lap time between 20 seconds and 20 minutes');
-      return;
-    }
-    
-    setIsSaving(true);
-    try {
-      const res = await fetch(`/api/users/${user.id}/track-times`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          trackName: selectedTrack.name,
-          trackSlug: selectedTrack.slug,
-          trackLengthMiles: selectedTrack.length,
-          lapTimeSeconds: totalSeconds,
-          sessionDate: logForm.sessionDate,
-          conditions: logForm.conditions,
-          tireCompound: tireCompound,
-          modsSummary: modsSummary || {},
-          estimatedHp: estimatedHp,
-          estimatedTimeSeconds: moddedLapTime,
-          driverSkillLevel: driverSkill,
-          notes: logForm.notes,
-          carSlug: carSlug
-        })
-      });
-      
-      if (res.ok) {
-        // Reset form and refresh history
-        setLogForm({
-          lapTimeMinutes: '',
-          lapTimeSeconds: '',
-          sessionDate: new Date().toISOString().split('T')[0],
-          conditions: 'dry',
-          notes: ''
-        });
-        setShowLogForm(false);
-        fetchTrackHistory();
-        setShowHistory(true);
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Failed to save track time');
-      }
-    } catch (err) {
-      console.error('Failed to log track time:', err);
-      alert('Failed to save track time');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-  
-  const requestAnalysis = async () => {
-    if (!user?.id) return;
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/users/${user.id}/track-times/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAnalysis(data.analysis);
-      }
-    } catch (err) {
-      console.error('Failed to get analysis:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const formatLapTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = (seconds % 60).toFixed(2);
-    return `${mins}:${secs.padStart(5, '0')}`;
-  };
-
-  // ==========================================================================
-  // TRACK DEFINITIONS
-  // Based on real-world lap time data from street cars (300-500hp sports cars)
-  // Reference: A skilled driver in a ~400hp RWD sports car on summer tires
-  // ==========================================================================
-  // Fallback tracks if API fails (same structure as API response)
-  const FALLBACK_TRACKS = [
-    {
-      slug: 'laguna-seca', name: 'Laguna Seca', shortName: 'Laguna',
-      length: 2.238, corners: 11, icon: '🏁', state: 'CA', country: 'USA',
-      proTime: 95, powerGainMax: 4.0, gripGainMax: 5.0, suspGainMax: 3.5,
-      brakeGainMax: 2.5, aeroGainMax: 2.0, weightGainMax: 2.0,
-      beginnerPenalty: 25, intermediatePenalty: 10, advancedPenalty: 3, isPopular: true,
-    },
-    {
-      slug: 'road-atlanta', name: 'Road Atlanta', shortName: 'Road Atlanta',
-      length: 2.54, corners: 12, icon: '🍑', state: 'GA', country: 'USA',
-      proTime: 98, powerGainMax: 6.0, gripGainMax: 4.5, suspGainMax: 3.5,
-      brakeGainMax: 3.0, aeroGainMax: 3.0, weightGainMax: 2.0,
-      beginnerPenalty: 30, intermediatePenalty: 12, advancedPenalty: 4, isPopular: true,
-    },
-    {
-      slug: 'cota', name: 'Circuit of the Americas', shortName: 'COTA',
-      length: 3.426, corners: 20, icon: '⭐', state: 'TX', country: 'USA',
-      proTime: 135, powerGainMax: 8.0, gripGainMax: 5.0, suspGainMax: 4.0,
-      brakeGainMax: 3.5, aeroGainMax: 4.0, weightGainMax: 2.5,
-      beginnerPenalty: 40, intermediatePenalty: 16, advancedPenalty: 5, isPopular: true,
-    },
-    {
-      slug: 'autocross-standard', name: 'Autocross', shortName: 'Autocross',
-      length: 0.5, corners: 20, icon: '🔀', state: null, country: 'USA',
-      proTime: 48, powerGainMax: 0.5, gripGainMax: 4.0, suspGainMax: 2.5,
-      brakeGainMax: 1.5, aeroGainMax: 0.3, weightGainMax: 1.5,
-      beginnerPenalty: 15, intermediatePenalty: 6, advancedPenalty: 2, isPopular: true,
-    },
-  ];
-  
-  // Use database tracks or fallback
-  const tracks = allTracks.length > 0 ? allTracks : FALLBACK_TRACKS;
-  const popularTracks = tracks.filter(t => t.isPopular).slice(0, 6);
-  
-  // Get currently selected track data
-  const selectedTrack = tracks.find(t => t.slug === selectedTrackSlug) || tracks[0];
-  
-  // Filter tracks for search
-  const filteredTracks = useMemo(() => {
-    if (!trackSearch.trim()) return tracks;
-    const search = trackSearch.toLowerCase();
-    return tracks.filter(t => 
-      t.name.toLowerCase().includes(search) ||
-      t.shortName?.toLowerCase().includes(search) ||
-      t.state?.toLowerCase().includes(search) ||
-      t.city?.toLowerCase().includes(search)
-    );
-  }, [tracks, trackSearch]);
-
-  // ==========================================================================
-  // DRIVER SKILL DEFINITIONS
-  // Key insight: Mods raise the ceiling, skill determines how much you use
-  // ==========================================================================
-  const DRIVER_SKILLS = {
-    beginner: {
-      label: 'Beginner',
-      description: '0-2 years track experience',
-      // What limits them: Still learning racing lines, braking points, looking ahead
-      // Mods often make things WORSE (more power = more scary/snap oversteer)
-      modUtilization: {
-        power: 0.10,      // More power might scare them, can't use it
-        grip: 0.25,       // Better tires help catch mistakes
-        suspension: 0.15, // Won't feel the difference, might upset balance
-        brakes: 0.30,     // Actually helpful - more forgiving of late braking
-        aero: 0.05,       // Not going fast enough for it to matter
-        weight: 0.20,     // Lighter car is more forgiving
-      },
-      tip: '💡 The best mod for you is seat time! Consider a driving school before spending on parts.',
-      insight: 'At your skill level, improving your driving will gain you 3-5x more time than any modification.',
-    },
-    intermediate: {
-      label: 'Intermediate',
-      description: '2-5 years, consistent laps',
-      // What limits them: Know the basics, working on consistency and speed
-      // Can feel grip differences, starting to use more power
-      modUtilization: {
-        power: 0.45,      // Can use more power on straights, careful in corners
-        grip: 0.60,       // Really benefits from more grip
-        suspension: 0.50, // Starting to feel setup differences
-        brakes: 0.55,     // Can brake later with confidence
-        aero: 0.35,       // Starting to feel high-speed stability
-        weight: 0.50,     // Appreciates lighter car
-      },
-      tip: '💡 Grip mods (tires, suspension) will help you most. Consider advanced driving instruction!',
-      insight: 'You can extract about half of what mods offer. More seat time will unlock the rest.',
-    },
-    advanced: {
-      label: 'Advanced',
-      description: '5+ years, pushing limits',
-      // What limits them: Mostly the car now, at or near the limit
-      // Can feel small differences, uses most of what mods offer
-      modUtilization: {
-        power: 0.80,      // Uses most power, might still lift early sometimes
-        grip: 0.85,       // Maximizing corner speeds
-        suspension: 0.80, // Can tune to preference
-        brakes: 0.85,     // Braking at the limit
-        aero: 0.75,       // Trusting downforce in high-speed corners
-        weight: 0.80,     // Fully exploiting lighter weight
-      },
-      tip: '💡 You can extract most performance from mods. Focus on balanced upgrades.',
-      insight: 'Your skill extracts 80%+ of mod potential. Fine-tuning setup is your next step.',
-    },
-    professional: {
-      label: 'Pro',
-      description: 'Instructor / racer',
-      // What limits them: Only the car - they are at the absolute limit
-      // This is the theoretical maximum - what the mods can truly deliver
-      modUtilization: {
-        power: 0.98,      // Uses everything, maybe 2% safety margin
-        grip: 0.98,       // At the tire limit
-        suspension: 0.95, // Perfect setup utilization
-        brakes: 0.98,     // Trail braking at the limit
-        aero: 0.95,       // Full trust in downforce
-        weight: 0.95,     // Exploiting every advantage
-      },
-      tip: '💡 You\'re extracting the car\'s full potential. Mods directly translate to lap time.',
-      insight: 'This represents the theoretical maximum - what the modifications can truly deliver.',
-    }
-  };
-
-  // ==========================================================================
-  // CALCULATE THEORETICAL MOD IMPROVEMENT
-  // This is what a PROFESSIONAL driver would gain - the ceiling
-  // ==========================================================================
-  const calculateModImprovement = () => {
-    const track = selectedTrack;
-    const improvements = { power: 0, grip: 0, suspension: 0, brakes: 0, aero: 0, weight: 0 };
-
-    // 1. POWER GAINS - More HP = faster on straights
-    // Diminishing returns: first 100hp matters more than next 100hp
-    const hpGain = Math.max(0, estimatedHp - stockHp);
-    const powerFactor = Math.min(1.0, hpGain / 200); // 200hp = max effect
-    improvements.power = powerFactor * track.powerGainMax;
-
-    // 2. TIRE COMPOUND - Affects cornering speed significantly
-    const tireLevel = {
-      'all-season': 0,
-      'summer': 0.15,
-      'max-performance': 0.35,
-      'r-comp': 0.75,
-      'drag-radial': 0.10, // Not great for track, only good for launch
-      'slick': 1.0
-    }[tireCompound] || 0.15;
-    improvements.grip = tireLevel * track.gripGainMax;
-
-    // 3. SUSPENSION - Better turn-in, corner speed, confidence
-    const suspLevel = {
-      'stock': 0,
-      'lowering-springs': 0.25,
-      'coilovers': 0.60,
-      'coilovers-race': 1.0,
-      'air': 0.10 // Not track-oriented
-    }[suspensionSetup?.type] || 0;
-    improvements.suspension = suspLevel * track.suspGainMax;
-
-    // 4. BRAKES - Later braking points, better modulation
-    let brakeLevel = 0;
-    if (brakeSetup?.bbkFront) brakeLevel += 0.40;
-    if (brakeSetup?.brakePads === 'track') brakeLevel += 0.25;
-    if (brakeSetup?.brakePads === 'race') brakeLevel += 0.40;
-    if (brakeSetup?.brakeFluid === 'racing') brakeLevel += 0.10;
-    if (brakeSetup?.stainlessLines) brakeLevel += 0.05;
-    brakeLevel = Math.min(1.0, brakeLevel);
-    improvements.brakes = brakeLevel * track.brakeGainMax;
-
-    // 5. AERO - High-speed stability and downforce
-    let aeroLevel = 0;
-    if (aeroSetup?.rearWing === 'lip-spoiler') aeroLevel += 0.15;
-    if (aeroSetup?.rearWing === 'ducktail') aeroLevel += 0.25;
-    if (aeroSetup?.rearWing === 'gt-wing-low') aeroLevel += 0.60;
-    if (aeroSetup?.rearWing === 'gt-wing-high') aeroLevel += 1.0;
-    if (aeroSetup?.frontSplitter === 'lip') aeroLevel += 0.15;
-    if (aeroSetup?.frontSplitter === 'splitter-rods') aeroLevel += 0.40;
-    if (aeroSetup?.diffuser) aeroLevel += 0.25;
-    aeroLevel = Math.min(1.0, aeroLevel);
-    improvements.aero = aeroLevel * track.aeroGainMax;
-
-    // 6. WEIGHT REDUCTION - Helps everywhere
-    const weightSaved = Math.abs(weightMod || 0);
-    const weightLevel = Math.min(1.0, weightSaved / 200); // 200lbs = max effect
-    improvements.weight = weightLevel * track.weightGainMax;
-
-    return improvements;
-  };
-
-  // ==========================================================================
-  // CALCULATE LAP TIMES
-  // ==========================================================================
-  const track = selectedTrack;
-  const skill = DRIVER_SKILLS[driverSkill];
-  
-  // Get the theoretical improvements (what a pro would gain)
-  const modImprovements = calculateModImprovement();
-  
-  // Calculate theoretical total (pro driver gains)
-  const theoreticalTotal = Object.values(modImprovements).reduce((sum, val) => sum + val, 0);
-  
-  // Apply driver skill to each category differently
-  // A beginner benefits more from brakes than power, for example
-  const realizedByCategory = {
-    power: modImprovements.power * skill.modUtilization.power,
-    grip: modImprovements.grip * skill.modUtilization.grip,
-    suspension: modImprovements.suspension * skill.modUtilization.suspension,
-    brakes: modImprovements.brakes * skill.modUtilization.brakes,
-    aero: modImprovements.aero * skill.modUtilization.aero,
-    weight: modImprovements.weight * skill.modUtilization.weight,
-  };
-  const realizedTotal = Object.values(realizedByCategory).reduce((sum, val) => sum + val, 0);
-  
-  // Stock lap time calculation:
-  // Pro reference time assumes a ~400hp car. Adjust for actual stock power.
-  // Power difference affects time in an additive way (not multiplicative).
-  // Real-world: ~0.02-0.03 sec per hp difference on a 3mi track
-  const hpDifference = 400 - (stockHp || 400);
-  const trackLengthFactor = (track.length || 3.0) / 3.0; // Scale for track length
-  const powerPenalty = hpDifference * 0.025 * trackLengthFactor; // ~2.5 sec per 100hp difference
-  
-  // Skill penalty from database (how much slower than a pro)
-  // Pro drivers have 0 penalty (they ARE the reference), others add time
-  const skillPenalty = driverSkill === 'pro' 
-    ? 0 
-    : (track[`${driverSkill}Penalty`] || track.intermediatePenalty);
-  
-  // Stock lap time = pro reference + power adjustment + skill penalty
-  const stockLapTime = track.proTime + powerPenalty + skillPenalty;
-  
-  // Modified lap time = stock - realized improvements from mods
-  const moddedLapTime = stockLapTime - realizedTotal;
-  
-  // What they're leaving on the table
-  const unrealizedGains = theoreticalTotal - realizedTotal;
-  
-  // Average utilization percentage
-  const avgUtilization = theoreticalTotal > 0 ? (realizedTotal / theoreticalTotal) * 100 : 0;
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = (seconds % 60).toFixed(2);
-    return `${mins}:${secs.padStart(5, '0')}`;
-  };
-
-  return (
-    <div className={styles.lapTimeEstimator}>
-      <div className={styles.lapTimeHeader}>
-        <div className={styles.lapTimeTitleRow}>
-          <Icons.flag size={18} />
-          <span>Lap Time Estimator</span>
-          <button 
-            className={styles.lapTimeInfoBtn}
-            onClick={() => setShowInfo(!showInfo)}
-            title="How this works"
-          >
-            <Icons.info size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* Info Panel - How it works */}
-      {showInfo && (
-        <div className={styles.lapTimeInfoPanel}>
-          <h4>How Lap Time Estimation Works</h4>
-          <p>
-            We calculate potential time gains from your modifications based on power, 
-            grip, suspension, brakes, aero, and weight. <strong>But here's the key insight:</strong>
-          </p>
-          <p>
-            Modifications raise the <em>ceiling</em> of what's possible, but your skill 
-            determines how much of that potential you can actually use.
-          </p>
-          <ul>
-            <li><strong>Beginner:</strong> ~15-25% of mod potential (skill is the limiting factor)</li>
-            <li><strong>Intermediate:</strong> ~45-55% of mod potential</li>
-            <li><strong>Advanced:</strong> ~75-85% of mod potential</li>
-            <li><strong>Professional:</strong> ~95-98% of mod potential (theoretical max)</li>
-          </ul>
-          <p className={styles.lapTimeInfoHighlight}>
-            💡 The fastest path to quicker lap times is often improving YOUR skills, not adding parts!
-          </p>
-        </div>
-      )}
-
-      {/* Driver Skill Selector */}
-      <div className={styles.skillSelector}>
-        <span className={styles.skillLabel}>Driver Skill:</span>
-        <div className={styles.skillBtns}>
-          {Object.entries(DRIVER_SKILLS).map(([key, skillDef]) => (
-            <button
-              key={key}
-              className={`${styles.skillBtn} ${driverSkill === key ? styles.skillBtnActive : ''}`}
-              onClick={() => setDriverSkill(key)}
-              title={skillDef.description}
-            >
-              {skillDef.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Track Selector */}
-      <div className={styles.trackSelectorWrapper}>
-        <button 
-          className={styles.trackSelectedBtn}
-          onClick={() => setShowTrackSelector(!showTrackSelector)}
-        >
-          <div className={styles.trackSelectedInfo}>
-            <span className={styles.trackSelectedName}>{selectedTrack?.name || 'Select Track'}</span>
-            <span className={styles.trackSelectedMeta}>
-              {selectedTrack?.city && selectedTrack?.state 
-                ? `${selectedTrack.city}, ${selectedTrack.state}` 
-                : selectedTrack?.state || selectedTrack?.country}
-              {selectedTrack?.length && ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
-            </span>
-          </div>
-          <Icons.chevronDown size={16} />
-        </button>
-        
-        {/* Track Details - Always visible when track selected */}
-        {selectedTrack && (
-          <div className={styles.trackDetails}>
-            <div className={styles.trackDetailGrid}>
-              {selectedTrack.longestStraight && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Straight</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.longestStraight.toLocaleString()} ft</span>
-                </div>
-              )}
-              {selectedTrack.elevationChange && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Elevation</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.elevationChange} ft</span>
-                </div>
-              )}
-              {selectedTrack.surfaceType && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Surface</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.surfaceType}</span>
-                </div>
-              )}
-            </div>
-            {selectedTrack.characterTags?.length > 0 && (
-              <div className={styles.trackTags}>
-                {selectedTrack.characterTags.slice(0, 4).map(tag => (
-                  <span key={tag} className={styles.trackTag}>{tag}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Dropdown */}
-        {showTrackSelector && (
-          <div className={styles.trackDropdown}>
-            <div className={styles.trackSearchContainer}>
-              <Icons.search size={14} />
-              <input
-                type="text"
-                className={styles.trackSearchInput}
-                placeholder="Search 100 tracks..."
-                value={trackSearch}
-                onChange={(e) => setTrackSearch(e.target.value)}
-                autoFocus
-              />
-              {trackSearch && (
-                <button 
-                  className={styles.trackClearBtn}
-                  onClick={() => setTrackSearch('')}
-                >
-                  <Icons.x size={12} />
-                </button>
-              )}
-            </div>
-            
-            {/* Popular tracks when no search */}
-            {!trackSearch && (
-              <div className={styles.trackQuickPicks}>
-                <span className={styles.trackQuickLabel}>Popular Tracks</span>
-                {popularTracks.slice(0, 6).map((t) => (
-                  <button
-                    key={t.slug}
-                    className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
-                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); }}
-                  >
-                    <div className={styles.trackResultInfo}>
-                      <span className={styles.trackResultName}>{t.name}</span>
-                      <span className={styles.trackResultMeta}>
-                        {t.city && t.state ? `${t.city}, ${t.state}` : t.state}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-            
-            {/* All tracks / Search results */}
-            <div className={styles.trackResultsSection}>
-              <span className={styles.trackQuickLabel}>
-                {trackSearch ? `Results for "${trackSearch}"` : 'All Tracks'}
-              </span>
-              <div className={styles.trackResultsList}>
-                {(trackSearch ? filteredTracks : tracks).slice(0, 20).map((t) => (
-                  <button
-                    key={t.slug}
-                    className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
-                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); setTrackSearch(''); }}
-                  >
-                    <div className={styles.trackResultInfo}>
-                      <span className={styles.trackResultName}>{t.name}</span>
-                      <span className={styles.trackResultMeta}>
-                        {t.city && t.state ? `${t.city}, ${t.state}` : t.state || t.country}
-                        {t.length && ` • ${t.length} mi`}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-                {trackSearch && filteredTracks.length === 0 && (
-                  <div className={styles.trackNoResults}>
-                    No tracks found for "{trackSearch}"
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Lap Time Comparison */}
-      <div className={styles.lapTimeBody}>
-        <div className={styles.lapTimeComparison}>
-          <div className={styles.lapTimeColumn}>
-            <span className={styles.lapTimeLabel}>Stock</span>
-            <span className={styles.lapTimeStock}>{formatTime(stockLapTime)}</span>
-          </div>
-          <div className={styles.lapTimeDelta}>
-            <Icons.chevronsRight size={20} />
-            <span className={`${styles.lapTimeImprovement} ${realizedTotal > 0.5 ? styles.lapTimeGood : ''}`}>
-              {realizedTotal >= 0.01 ? `-${realizedTotal.toFixed(2)}s` : '0.00s'}
-            </span>
-          </div>
-          <div className={styles.lapTimeColumn}>
-            <span className={styles.lapTimeLabel}>Modified</span>
-            <span className={styles.lapTimeMod}>{formatTime(moddedLapTime)}</span>
-          </div>
-        </div>
-
-        <div className={styles.lapTimeTrackInfo}>
-          <span>{track.name}</span>
-          <span>•</span>
-          <span>{track.length} mi</span>
-          <span>•</span>
-          <span>{track.corners} corners</span>
-        </div>
-      </div>
-
-      {/* Gains Breakdown - Shows how mods translate to time */}
-      {theoreticalTotal > 0.1 && (
-        <div className={styles.lapTimeBreakdown}>
-          <div className={styles.lapTimeBreakdownRow}>
-            <span>Theoretical mod gains (Pro driver):</span>
-            <span className={styles.lapTimeTheoretical}>-{theoreticalTotal.toFixed(2)}s</span>
-          </div>
-          <div className={styles.lapTimeBreakdownRow}>
-            <span>Your realized gains ({Math.round(avgUtilization)}%):</span>
-            <span className={styles.lapTimeRealized}>-{realizedTotal.toFixed(2)}s</span>
-          </div>
-          {unrealizedGains > 0.3 && (
-            <div className={styles.lapTimeBreakdownRow}>
-              <span>Left on table (skill limit):</span>
-              <span className={styles.lapTimeUnrealized}>{unrealizedGains.toFixed(2)}s</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Category Breakdown - What's contributing */}
-      {theoreticalTotal > 0.5 && (
-        <div className={styles.lapTimeCategoryBreakdown}>
-          <div className={styles.lapTimeCategoryTitle}>Where your gains come from:</div>
-          <div className={styles.lapTimeCategoryGrid}>
-            {modImprovements.power > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Power</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.power.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.grip > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Tires</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.grip.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.suspension > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Suspension</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.suspension.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.brakes > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Brakes</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.brakes.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.aero > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Aero</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.aero.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.weight > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Weight</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.weight.toFixed(1)}s</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      
-      {/* Driver Skill Insight */}
-      <div className={styles.lapTimeTip}>
-        <span>{skill.tip}</span>
-      </div>
-      
-      {/* Additional insight when leaving gains on table */}
-      {unrealizedGains > 1.0 && driverSkill !== 'professional' && (
-        <div className={styles.lapTimeInsight}>
-          <Icons.info size={12} />
-          <span>{skill.insight}</span>
-        </div>
-      )}
-      
-      {/* ========== TRACK TIME LOGGING SECTION ========== */}
-      {user && (
-        <div className={styles.trackTimeLogging}>
-          <div className={styles.trackTimeActions}>
-            <button 
-              className={`${styles.trackTimeBtn} ${showLogForm ? styles.trackTimeBtnActive : ''}`}
-              onClick={() => { setShowLogForm(!showLogForm); setShowHistory(false); }}
-            >
-              <Icons.plus size={14} />
-              Log Your Time
-            </button>
-            <button 
-              className={`${styles.trackTimeBtn} ${showHistory ? styles.trackTimeBtnActive : ''}`}
-              onClick={() => { setShowHistory(!showHistory); setShowLogForm(false); }}
-            >
-              <Icons.clock size={14} />
-              History
-            </button>
-          </div>
-          
-          {/* Log Form */}
-          {showLogForm && (
-            <div className={styles.logTimeForm}>
-              <div className={styles.logTimeHeader}>
-                <h4>Log Track Time at {selectedTrack.name}</h4>
-                <p>Record your actual lap time to compare with estimates</p>
-              </div>
-              
-              <div className={styles.logTimeFields}>
-                <div className={styles.logTimeRow}>
-                  <label className={styles.logTimeLabel}>Lap Time</label>
-                  <div className={styles.logTimeInputGroup}>
-                    <input
-                      type="number"
-                      className={styles.logTimeInput}
-                      placeholder="0"
-                      min="0"
-                      max="20"
-                      value={logForm.lapTimeMinutes}
-                      onChange={(e) => setLogForm({ ...logForm, lapTimeMinutes: e.target.value })}
-                    />
-                    <span className={styles.logTimeInputLabel}>min</span>
-                    <input
-                      type="number"
-                      className={styles.logTimeInput}
-                      placeholder="00.00"
-                      min="0"
-                      max="59.99"
-                      step="0.01"
-                      value={logForm.lapTimeSeconds}
-                      onChange={(e) => setLogForm({ ...logForm, lapTimeSeconds: e.target.value })}
-                    />
-                    <span className={styles.logTimeInputLabel}>sec</span>
-                  </div>
-                </div>
-                
-                <div className={styles.logTimeRow}>
-                  <label className={styles.logTimeLabel}>Date</label>
-                  <input
-                    type="date"
-                    className={styles.logTimeDateInput}
-                    value={logForm.sessionDate}
-                    onChange={(e) => setLogForm({ ...logForm, sessionDate: e.target.value })}
-                  />
-                </div>
-                
-                <div className={styles.logTimeRow}>
-                  <label className={styles.logTimeLabel}>Conditions</label>
-                  <select
-                    className={styles.logTimeSelect}
-                    value={logForm.conditions}
-                    onChange={(e) => setLogForm({ ...logForm, conditions: e.target.value })}
-                  >
-                    <option value="dry">Dry</option>
-                    <option value="damp">Damp</option>
-                    <option value="wet">Wet</option>
-                    <option value="cold">Cold Track</option>
-                    <option value="hot">Hot Track</option>
-                    <option value="optimal">Optimal</option>
-                  </select>
-                </div>
-                
-                <div className={styles.logTimeRow}>
-                  <label className={styles.logTimeLabel}>Notes</label>
-                  <textarea
-                    className={styles.logTimeTextarea}
-                    placeholder="How did the car feel? Any issues? What worked well?"
-                    value={logForm.notes}
-                    onChange={(e) => setLogForm({ ...logForm, notes: e.target.value })}
-                    rows={2}
-                  />
-                </div>
-              </div>
-              
-              <div className={styles.logTimeCompare}>
-                <div className={styles.logTimeCompareItem}>
-                  <span className={styles.logTimeCompareLabel}>Estimated time:</span>
-                  <span className={styles.logTimeCompareValue}>{formatTime(moddedLapTime)}</span>
-                </div>
-                {logForm.lapTimeMinutes || logForm.lapTimeSeconds ? (
-                  <div className={styles.logTimeCompareItem}>
-                    <span className={styles.logTimeCompareLabel}>Your time:</span>
-                    <span className={styles.logTimeCompareValue}>
-                      {formatLapTime((parseInt(logForm.lapTimeMinutes || '0', 10) * 60) + parseFloat(logForm.lapTimeSeconds || '0'))}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              
-              <button 
-                className={styles.logTimeSaveBtn}
-                onClick={handleLogTime}
-                disabled={isSaving || (!logForm.lapTimeMinutes && !logForm.lapTimeSeconds)}
-              >
-                {isSaving ? 'Saving...' : 'Save Track Time'}
-              </button>
-            </div>
-          )}
-          
-          {/* History Panel */}
-          {showHistory && (
-            <div className={styles.trackHistoryPanel}>
-              <div className={styles.trackHistoryHeader}>
-                <h4>Your Track Times</h4>
-                {trackHistory.length >= 2 && (
-                  <button 
-                    className={styles.trackAnalyzeBtn}
-                    onClick={requestAnalysis}
-                    disabled={isLoading}
-                  >
-                    <Icons.brain size={14} />
-                    {isLoading ? 'Analyzing...' : 'Get AL Insights'}
-                  </button>
-                )}
-              </div>
-              
-              {isLoading && trackHistory.length === 0 ? (
-                <div className={styles.trackHistoryLoading}>Loading...</div>
-              ) : trackHistory.length === 0 ? (
-                <div className={styles.trackHistoryEmpty}>
-                  <p>No track times logged yet.</p>
-                  <p>Log your first time to start tracking your progress!</p>
-                </div>
-              ) : (
-                <div className={styles.trackHistoryList}>
-                  {trackHistory.map((time, idx) => (
-                    <div key={time.id || idx} className={styles.trackHistoryItem}>
-                      <div className={styles.trackHistoryItemMain}>
-                        <span className={styles.trackHistoryTrack}>{time.track_name}</span>
-                        <span className={styles.trackHistoryTime}>{formatLapTime(time.lap_time_seconds)}</span>
-                      </div>
-                      <div className={styles.trackHistoryItemMeta}>
-                        <span>{new Date(time.session_date).toLocaleDateString()}</span>
-                        {time.conditions && time.conditions !== 'dry' && (
-                          <span className={styles.trackHistoryCondition}>{time.conditions}</span>
-                        )}
-                        {time.improvement_from_previous > 0 && (
-                          <span className={styles.trackHistoryImprovement}>
-                            ↓ {time.improvement_from_previous.toFixed(2)}s
-                          </span>
-                        )}
-                      </div>
-                      {time.notes && (
-                        <div className={styles.trackHistoryNotes}>{time.notes}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* AL Analysis Results */}
-              {analysis && (
-                <div className={styles.trackAnalysis}>
-                  <div className={styles.trackAnalysisHeader}>
-                    <Icons.brain size={16} />
-                    <span>AL Analysis</span>
-                  </div>
-                  
-                  {analysis.insights && analysis.insights.length > 0 && (
-                    <div className={styles.trackAnalysisSection}>
-                      <h5>Insights</h5>
-                      {analysis.insights.map((insight, idx) => (
-                        <div key={idx} className={`${styles.trackAnalysisItem} ${styles[`trackAnalysis${insight.type}`]}`}>
-                          {insight.message}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {analysis.recommendations && analysis.recommendations.length > 0 && (
-                    <div className={styles.trackAnalysisSection}>
-                      <h5>Recommendations</h5>
-                      {analysis.recommendations.map((rec, idx) => (
-                        <div key={idx} className={styles.trackAnalysisRec}>
-                          <strong>{rec.title}</strong>
-                          <p>{rec.message}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {analysis.skillAssessment?.estimatedVsActual && (
-                    <div className={styles.trackAnalysisSection}>
-                      <h5>Skill Assessment</h5>
-                      <p>{analysis.skillAssessment.estimatedVsActual.message}</p>
-                      {analysis.skillAssessment.estimatedVsActual.suggestedSkillLevel && (
-                        <p className={styles.trackAnalysisSuggestion}>
-                          Suggested skill level: <strong>{analysis.skillAssessment.estimatedVsActual.suggestedSkillLevel}</strong>
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Handling Balance Indicator - Shows understeer/oversteer tendency
- */
-function HandlingBalanceIndicator({ suspensionSetup, aeroSetup, tireCompound, drivetrain }) {
-  // Calculate handling balance based on setup
-  const calculateBalance = () => {
-    let balance = 0; // -100 = understeer, +100 = oversteer, 0 = neutral
-    
-    // Drivetrain base tendency
-    const drivetrainEffect = { 'FWD': -20, 'RWD': 15, 'AWD': -5 }[drivetrain] || 0;
-    balance += drivetrainEffect;
-    
-    // Sway bar balance
-    if (suspensionSetup?.swayBarFront === 'adjustable' && suspensionSetup?.swayBarRear !== 'adjustable') {
-      balance -= 10; // Stiffer front = understeer
-    }
-    if (suspensionSetup?.swayBarRear === 'adjustable' && suspensionSetup?.swayBarFront !== 'adjustable') {
-      balance += 10; // Stiffer rear = oversteer
-    }
-    if (suspensionSetup?.swayBarRear === 'removed') {
-      balance -= 15; // No rear sway = understeer
-    }
-    
-    // Aero balance
-    if (aeroSetup?.rearWing?.includes('gt-wing')) {
-      balance -= 8; // Rear downforce = understeer at high speed
-    }
-    if (aeroSetup?.frontSplitter === 'splitter-rods') {
-      balance += 5; // Front downforce = more rotation
-    }
-    
-    // Alignment
-    const alignmentEffect = {
-      'stock': 0, 'street': -5, 'aggressive': -10, 'track': -15
-    }[suspensionSetup?.alignment] || 0;
-    balance += alignmentEffect;
-    
-    return Math.max(-100, Math.min(100, balance));
-  };
-  
-  const balance = calculateBalance();
-  const balanceLabel = balance < -30 ? 'Understeer' : balance > 30 ? 'Oversteer' : 'Neutral';
-  const balanceColor = Math.abs(balance) < 30 ? '#10b981' : Math.abs(balance) < 60 ? '#f59e0b' : '#ef4444';
-  
-  return (
-    <div className={styles.handlingBalance}>
-      <div className={styles.handlingBalanceHeader}>
-        <Icons.target size={16} />
-        <span>Handling Balance</span>
-        <span className={styles.handlingBalanceLabel} style={{ color: balanceColor }}>
-          {balanceLabel}
-        </span>
-      </div>
-      
-      <div className={styles.balanceTrack}>
-        <span className={styles.balanceEndLabel}>Understeer</span>
-        <div className={styles.balanceBar}>
-          <div 
-            className={styles.balanceIndicator}
-            style={{ 
-              left: `${50 + (balance / 2)}%`,
-              backgroundColor: balanceColor 
-            }}
-          />
-          <div className={styles.balanceCenter} />
-        </div>
-        <span className={styles.balanceEndLabel}>Oversteer</span>
-      </div>
-      
-      <div className={styles.balanceTips}>
-        {balance < -40 && (
-          <span><Icons.info size={12} /> Stiffen rear sway bar or soften front to reduce understeer</span>
-        )}
-        {balance > 40 && (
-          <span><Icons.info size={12} /> Stiffen front sway bar or add rear aero to reduce oversteer</span>
-        )}
-        {Math.abs(balance) <= 40 && (
-          <span><Icons.check size={12} /> Well-balanced setup for spirited driving</span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Aero Balance Chart - Shows downforce at different speeds
- */
-function AeroBalanceChart({ aeroSetup, weight }) {
-  const speeds = [60, 80, 100, 120, 140];
-  
-  // Calculate downforce at speed (simplified)
-  const calculateDownforce = (speed, setup) => {
-    // Base drag coefficient
-    let cd = 0.32;
-    let cl = 0; // Lift coefficient (negative = downforce)
-    
-    if (setup?.frontSplitter === 'lip') cl -= 0.02;
-    if (setup?.frontSplitter === 'splitter') cl -= 0.05;
-    if (setup?.frontSplitter === 'splitter-rods') cl -= 0.08;
-    
-    if (setup?.rearWing === 'lip-spoiler') cl -= 0.02;
-    if (setup?.rearWing === 'duckbill') cl -= 0.04;
-    if (setup?.rearWing === 'gt-wing-low') cl -= 0.12;
-    if (setup?.rearWing === 'gt-wing-high') cl -= 0.18;
-    
-    if (setup?.diffuser) cl -= 0.04;
-    if (setup?.flatBottom) { cl -= 0.03; cd -= 0.02; }
-    if (setup?.canards) cl -= 0.02;
-    
-    // Downforce in lbs: F = 0.5 * rho * v^2 * A * Cl
-    // Simplified: ~0.0026 * v^2 * Cl * frontalArea(22 sqft)
-    const frontalArea = 22;
-    const speedMs = speed * 0.44704; // mph to m/s
-    const downforceLbs = 0.5 * 1.225 * speedMs * speedMs * frontalArea * Math.abs(cl) * 2.205;
-    
-    // Drag power loss in hp: P = F * v
-    const dragForce = 0.5 * 1.225 * speedMs * speedMs * frontalArea * cd;
-    const dragPowerHp = (dragForce * speedMs) / 745.7;
-    
-    return { downforce: Math.round(downforceLbs), dragHp: Math.round(dragPowerHp) };
-  };
-  
-  const aeroData = speeds.map(speed => ({
-    speed,
-    ...calculateDownforce(speed, aeroSetup)
-  }));
-  
-  const maxDownforce = Math.max(...aeroData.map(d => d.downforce), 1);
-  const hasAero = aeroSetup && (aeroSetup.frontSplitter !== 'none' || aeroSetup.rearWing !== 'none');
-  
-  return (
-    <div className={styles.aeroBalance}>
-      <div className={styles.aeroBalanceHeader}>
-        <Icons.wind size={16} />
-        <span>Aero at Speed</span>
-      </div>
-      
-      {!hasAero ? (
-        <div className={styles.aeroEmpty}>
-          <Icons.alertCircle size={24} />
-          <span>No aero modifications selected</span>
-          <span className={styles.aeroEmptyHint}>Add splitter, wing, or diffuser to see downforce data</span>
-        </div>
-      ) : (
-        <>
-          <div className={styles.aeroChart}>
-            {aeroData.map((data, i) => (
-              <div key={data.speed} className={styles.aeroBar}>
-                <div className={styles.aeroBarLabel}>{data.speed}</div>
-                <div className={styles.aeroBarTrack}>
-                  <div 
-                    className={styles.aeroBarFill}
-                    style={{ height: `${(data.downforce / maxDownforce) * 100}%` }}
-                  />
-                </div>
-                <div className={styles.aeroBarValue}>{data.downforce} lbs</div>
-              </div>
-            ))}
-          </div>
-          
-          <div className={styles.aeroStats}>
-            <div className={styles.aeroStat}>
-              <span className={styles.aeroStatValue}>{aeroData[4]?.downforce || 0}</span>
-              <span className={styles.aeroStatLabel}>lbs @ 140mph</span>
-            </div>
-            <div className={styles.aeroStat}>
-              <span className={styles.aeroStatValue}>{aeroData[4]?.dragHp || 0}</span>
-              <span className={styles.aeroStatLabel}>hp drag loss</span>
-            </div>
-            <div className={styles.aeroStat}>
-              <span className={styles.aeroStatValue}>
-                {((aeroData[4]?.downforce || 0) / (weight || 3500) * 100).toFixed(1)}%
-              </span>
-              <span className={styles.aeroStatLabel}>of vehicle weight</span>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-/**
- * Power Limits Advisory - Shows component limits from database
- * 
- * CONFIDENCE: This is community-reported data, NOT OEM engineering specs.
- * Should be treated as rough estimates based on enthusiast experience.
- */
-function PowerLimitsAdvisory({ powerLimits, currentHp }) {
-  if (!powerLimits || Object.keys(powerLimits).length === 0) return null;
-  
-  // Sort limits by value ascending (weakest first)
-  const sortedLimits = Object.entries(powerLimits)
-    .filter(([_, value]) => typeof value === 'number')
-    .sort((a, b) => a[1] - b[1])
-    .slice(0, 5);
-  
-  if (sortedLimits.length === 0) return null;
-  
-  // User-friendly labels for component limits
-  // Maps both snake_case keys and their _hp/_tq/_whp variants
-  const limitLabels = {
-    // Drivetrain
-    stock_transmission: 'Transmission',
-    stock_transmission_tq: 'Transmission',
-    stock_dsg: 'DSG Gearbox',
-    stock_dsg_tq: 'DSG Gearbox',
-    stock_clutch: 'Clutch',
-    stock_clutch_tq: 'Clutch',
-    stock_driveshaft: 'Driveshaft',
-    stock_driveshaft_tq: 'Driveshaft',
-    stock_axles: 'Axles (CV Shafts)',
-    stock_axles_tq: 'Axles (CV Shafts)',
-    stock_differential: 'Differential',
-    stock_differential_tq: 'Differential',
-    // Engine internals
-    stock_internals: 'Engine Internals',
-    stock_internals_hp: 'Engine Internals',
-    stock_internals_whp: 'Engine Internals',
-    stock_rods: 'Connecting Rods',
-    stock_rods_hp: 'Connecting Rods',
-    stock_pistons: 'Pistons',
-    stock_pistons_hp: 'Pistons',
-    stock_head_gasket: 'Head Gasket',
-    stock_valvetrain: 'Valvetrain',
-    stock_block: 'Engine Block',
-    block: 'Engine Block',
-    internals: 'Engine Internals',
-    // Forced induction
-    stock_turbo: 'Stock Turbo',
-    stock_turbo_whp: 'Stock Turbo',
-    is38_turbo: 'IS38 Turbo',
-    // Fuel system
-    stock_fuel_system: 'Fuel System',
-    stock_fuel_system_hp: 'Fuel System',
-    stock_injectors: 'Fuel Injectors',
-    stock_fuel_pump: 'Fuel Pump',
-  };
-  
-  // Get clean label for a key
-  const getLabel = (key) => {
-    if (limitLabels[key]) return limitLabels[key];
-    // Fallback: clean up key for display
-    return key
-      .replace(/^stock_/, '')
-      .replace(/_(hp|tq|whp)$/, '')
-      .split('_')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
-  };
-  
-  return (
-    <div className={styles.powerLimits}>
-      <div className={styles.powerLimitsHeader}>
-        <Icons.alertTriangle size={16} />
-        <span>Estimated Component Limits</span>
-        <span className={styles.powerLimitsDisclaimer}>Community estimates</span>
-      </div>
-      
-      <div className={styles.powerLimitsList}>
-        {sortedLimits.map(([key, limit]) => {
-          const isAtRisk = currentHp >= limit * 0.9;
-          const isOverLimit = currentHp >= limit;
-          
-          return (
-            <div 
-              key={key} 
-              className={`${styles.powerLimitItem} ${isOverLimit ? styles.overLimit : isAtRisk ? styles.atRisk : ''}`}
-            >
-              <span className={styles.powerLimitLabel}>
-                {getLabel(key)}
-              </span>
-              <div className={styles.powerLimitBar}>
-                <div 
-                  className={styles.powerLimitFill}
-                  style={{ width: `${Math.min(100, (currentHp / limit) * 100)}%` }}
-                />
-              </div>
-              <span className={styles.powerLimitValue}>
-                ~{limit} hp
-                {isOverLimit && <Icons.alertTriangle size={12} />}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className={styles.powerLimitsFooter}>
-        <Icons.info size={12} />
-        Based on community reports. Actual limits vary by driving style, tune quality, and supporting mods.
-      </div>
-    </div>
-  );
-}
+/* LapTimeEstimator extracted to components/LapTimeEstimator.jsx */
+/* HandlingBalanceIndicator extracted to components/HandlingBalanceIndicator.jsx */
+/* AeroBalanceChart extracted to components/AeroBalanceChart.jsx */
+/* PowerLimitsAdvisory extracted to components/PowerLimitsAdvisory.jsx */
 
 /**
  * Brand Recommendations - Shows popular brands from database
@@ -3403,6 +2029,26 @@ export default function UpgradeCenter({
     };
   }, [tunerMode, car, advancedSpecs, turboOptions, effectiveModules]);
   
+  // ============================================================================
+  // SINGLE SOURCE OF TRUTH FOR HP VALUES
+  // Basic mode: Use profile calculations (getPerformanceProfile)
+  // Advanced mode: Use physics-based advancedHpEstimate
+  // This ensures display, save modal, and saved data are all consistent
+  // ============================================================================
+  const effectiveHpGain = useMemo(() => {
+    if (tunerMode === 'advanced' && advancedHpEstimate?.gain) {
+      return advancedHpEstimate.gain;
+    }
+    return hpGain; // Basic mode fallback
+  }, [tunerMode, advancedHpEstimate, hpGain]);
+  
+  const effectiveFinalHp = useMemo(() => {
+    if (tunerMode === 'advanced' && advancedHpEstimate?.whp) {
+      return advancedHpEstimate.whp;
+    }
+    return profile.upgradedMetrics.hp; // Basic mode fallback
+  }, [tunerMode, advancedHpEstimate, profile.upgradedMetrics.hp]);
+  
   // Tunability & Recommendations (with guards for missing car)
   const tunability = useMemo(() => {
     if (!car) return { score: 0, label: 'Unknown' };
@@ -3447,21 +2093,29 @@ export default function UpgradeCenter({
       });
       
       onBuildSummaryUpdate({
-        totalHpGain: hpGain,
+        totalHpGain: effectiveHpGain, // Use single source of truth
         totalTqGain: 0, // Could be calculated if available
         totalCost: totalCost.low || 0,
         upgradeCount: profile.selectedUpgrades.length,
         selectedUpgrades: upgradesArray,
       });
     }
-  }, [onBuildSummaryUpdate, hpGain, totalCost.low, profile.selectedUpgrades]);
+  }, [onBuildSummaryUpdate, effectiveHpGain, totalCost.low, profile.selectedUpgrades]);
   
-  // Listen for save/clear events from BuildSummaryBar
+  // Listen for save/clear/share events from header buttons and BuildSummaryBar
   useEffect(() => {
     const handleSaveEvent = () => {
-      if (profile.selectedUpgrades.length > 0) {
-        setShowSaveModal(true);
+      // Open save modal - allow saving even with no upgrades for car configs
+      setShowSaveModal(true);
+    };
+    
+    const handleShareEvent = () => {
+      // Open save modal with community sharing enabled
+      setShareToNewCommunity(true);
+      if (!communityTitle && buildName) {
+        setCommunityTitle(buildName);
       }
+      setShowSaveModal(true);
     };
     
     const handleClearEvent = () => {
@@ -3470,13 +2124,15 @@ export default function UpgradeCenter({
     };
     
     document.addEventListener('tuning-shop:save-build', handleSaveEvent);
+    document.addEventListener('tuning-shop:share-build', handleShareEvent);
     document.addEventListener('tuning-shop:clear-build', handleClearEvent);
     
     return () => {
       document.removeEventListener('tuning-shop:save-build', handleSaveEvent);
+      document.removeEventListener('tuning-shop:share-build', handleShareEvent);
       document.removeEventListener('tuning-shop:clear-build', handleClearEvent);
     };
-  }, [profile.selectedUpgrades.length]);
+  }, [communityTitle, buildName]);
   
   // Flatten all upgrades for name lookups
   const allUpgradesFlat = useMemo(() => {
@@ -3571,6 +2227,25 @@ export default function UpgradeCenter({
     setSaveError(null);
     
     try {
+      // Check if user has entered any advanced specs (for deciding whether to save advancedSpecs)
+      const hasAdvancedData = tunerMode === 'advanced' && (
+        advancedSpecs.engine?.type !== 'stock' ||
+        advancedSpecs.turbo?.type !== 'stock' ||
+        advancedSpecs.fuel?.type !== '93' ||
+        advancedSpecs.exhaust?.downpipe !== 'stock' ||
+        advancedSpecs.verified?.hasDyno
+      );
+      
+      // Use the pre-computed effectiveHpGain and effectiveFinalHp (single source of truth)
+      // These are already calculated based on tunerMode: basic vs advanced
+      console.log('[UpgradeCenter] Save HP values:', {
+        tunerMode,
+        basicHpGain: hpGain,
+        advancedGain: advancedHpEstimate?.gain,
+        effectiveHpGain, // Pre-computed based on mode
+        effectiveFinalHp, // Pre-computed based on mode
+      });
+      
       const buildData = {
         carSlug: car.slug,
         carName: car.name,
@@ -3578,14 +2253,18 @@ export default function UpgradeCenter({
         selectedUpgrades: effectiveModules,
         selectedParts,
         upgradeConfigs: upgradeConfigs,  // Include upgrade configurations (catless, etc.)
-        totalHpGain: hpGain,
+        // Use the pre-computed HP values (single source of truth)
+        totalHpGain: effectiveHpGain,
         totalCostLow: totalCost.low,
         totalCostHigh: totalCost.high,
-        finalHp: profile.upgradedMetrics.hp,
+        finalHp: effectiveFinalHp,
         selectedPackage,
         // Include factory configuration and wheel fitment from props
         factoryConfig: factoryConfig || null,
         wheelFitment: selectedWheelFitment || null,
+        // Store tuner mode and advanced specs for future reference
+        tunerMode: tunerMode,
+        advancedSpecs: hasAdvancedData ? advancedSpecs : null,
         // Note: Hero image is now stored as is_primary on user_uploaded_images
       };
       
@@ -3633,7 +2312,7 @@ export default function UpgradeCenter({
         if (saveToGarage && selectedGarageVehicle && savedBuildId) {
           const modResult = await applyModifications(selectedGarageVehicle, {
             upgrades: effectiveModules,
-            totalHpGain: hpGain,
+            totalHpGain: effectiveHpGain,  // Use the same effective HP as saved
             buildId: savedBuildId,
           });
           
@@ -3761,108 +2440,66 @@ export default function UpgradeCenter({
   const activeCategoryData = UPGRADE_CATEGORIES.find(c => c.key === activeCategory);
   
   // Get user's selected hero image (is_primary = true) or fall back to stock
-  const userHeroImage = buildImages.find(img => img.is_primary && img.media_type !== 'video');
-  const hasCustomHero = !!userHeroImage;
-  
   return (
     <div className={styles.upgradeCenter}>
-      {/* Vehicle Hero Section - Large, Prominent Display */}
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          {/* Hero Image - Show user's selected hero if available, otherwise stock */}
-          <div className={styles.heroImageContainer}>
-            {hasCustomHero ? (
-              <Image
-                src={userHeroImage.blob_url || userHeroImage.thumbnail_url}
-                alt={`${car.name} - Your Photo`}
-                fill
-                style={{ objectFit: 'cover' }}
-                priority
-              />
-            ) : (
-              <CarImage car={car} variant="hero" showName={false} priority />
+      {/* ═══════════════════════════════════════════════════════════════════════
+          AUTOREV RECOMMENDATION - FIRST on page, always visible
+          Car-specific insights, popular mods, and watch-outs
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <div className={styles.recommendationSection}>
+        <div className={styles.recommendationBannerFull}>
+          <div className={styles.recommendationHeaderFull}>
+            <span className={styles.recommendationTitleFull}>AUTOREV RECOMMENDATION</span>
+            {detailedRecommendation.focusArea && (
+              <span className={styles.focusTagFull}>Focus: {detailedRecommendation.focusArea}</span>
             )}
-            <div className={styles.heroImageOverlay} />
           </div>
+          <p className={styles.recommendationTextFull}>{detailedRecommendation.primaryText}</p>
           
-          {/* Hero Info */}
-          <div className={styles.heroInfo}>
-            <div className={styles.heroHeader}>
-              <div className={styles.heroTitleGroup}>
-                <div className={styles.heroYear}>{car.years || car.year || '2024'}</div>
-                <h1 className={styles.heroName}>{car.name}</h1>
-                <div className={styles.heroSubtitle}>
-                  <span>{car.hp} hp</span>
-                  <span>{car.drivetrain || 'RWD'}</span>
-                  <span>{car.engine || 'Gasoline'}</span>
+          {/* Popular Mods & Watch Outs - Side by side cards */}
+          {(detailedRecommendation.topMods?.length > 0 || detailedRecommendation.watchOuts?.length > 0) && (
+            <div className={styles.insightsGridFull}>
+              {detailedRecommendation.topMods?.length > 0 && (
+                <div className={styles.insightsCardFull}>
+                  <div className={styles.insightsCardHeaderFull}>
+                    <Icons.bolt size={16} />
+                    <span>POPULAR MODS</span>
+                  </div>
+                  <ul className={styles.insightsCardListFull}>
+                    {detailedRecommendation.topMods.map((mod, idx) => (
+                      <li key={idx}>
+                        <span className={styles.modBullet}>•</span>
+                        <span className={styles.modName}>{mod.mod}</span>
+                        {mod.gain && <span className={styles.modGainFull}>{mod.gain}</span>}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-              {/* Tunability Score - Top Right */}
-              <div className={styles.tunabilityBadge} style={{ '--score-color': getTunabilityColor(tunability.score) }}>
-                <span className={styles.tunabilityScore}>{tunability.score}/10</span>
-                <span className={styles.tunabilityLabel}>Tunability</span>
-              </div>
-            </div>
-            
-            {/* Quick Stats Grid - Shows physics estimate in advanced mode */}
-            <div className={styles.heroStats}>
-              <div className={styles.heroStat}>
-                <span className={styles.heroStatValue}>{car.hp || 'N/A'}</span>
-                <span className={styles.heroStatLabel}>Stock HP</span>
-              </div>
-              {tunerMode === 'advanced' && advancedHpEstimate ? (
-                <>
-                  <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue} style={{ color: '#10b981' }}>
-                      +{advancedHpEstimate.gain}
-                    </span>
-                    <span className={styles.heroStatLabel}>HP Gain</span>
+              )}
+              {detailedRecommendation.watchOuts?.length > 0 && (
+                <div className={styles.watchOutsCardFull}>
+                  <div className={styles.watchOutsCardHeaderFull}>
+                    <Icons.alertTriangle size={16} />
+                    <span>WATCH OUT</span>
                   </div>
-                  <div className={styles.heroStat}>
-                    {advancedHpEstimate.range ? (
-                      <>
-                        <span className={styles.heroStatValue}>
-                          {advancedHpEstimate.range.low}-{advancedHpEstimate.range.high}
-                        </span>
-                        <span className={styles.heroStatLabel}>Est. HP Range</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className={styles.heroStatValue}>{advancedHpEstimate.whp}</span>
-                        <span className={styles.heroStatLabel}>Est. HP</span>
-                      </>
-                    )}
-                  </div>
-                  <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
-                    <span className={styles.heroStatLabel}>Est. Cost</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue} style={{ color: '#10b981' }}>+{hpGain}</span>
-                    <span className={styles.heroStatLabel}>HP Gain</span>
-                  </div>
-                  <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue}>{profile.upgradedMetrics.hp}</span>
-                    <span className={styles.heroStatLabel}>Final HP</span>
-                  </div>
-                  <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue}>${(totalCost.low || 0).toLocaleString()}</span>
-                    <span className={styles.heroStatLabel}>Est. Cost</span>
-                  </div>
-                </>
+                  <ul className={styles.watchOutsCardListFull}>
+                    {detailedRecommendation.watchOuts.map((watchOut, idx) => (
+                      <li key={idx}>
+                        <span className={styles.watchBullet}>•</span>
+                        <span>{watchOut}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
-          </div>
+          )}
         </div>
       </div>
       
       {/* ═══════════════════════════════════════════════════════════════════════
-          MODE TOGGLE - User chooses their experience level FIRST
+          MODE TOGGLE - Basic vs Advanced tuning experience
           ═══════════════════════════════════════════════════════════════════════ */}
-      {/* Tuning Mode Toggle - Full Width */}
       <div className={styles.modeToggleSection}>
         <div className={styles.modeToggleFullWidth}>
           <button
@@ -3889,89 +2526,48 @@ export default function UpgradeCenter({
       </div>
       
       {/* ═══════════════════════════════════════════════════════════════════════
-          WORKSPACE - Main build configuration and results
+          BUILD RECOMMENDATIONS - Quick presets (Basic Mode only)
+          ═══════════════════════════════════════════════════════════════════════ */}
+      {tunerMode === 'basic' && (
+        <div className={styles.buildRecommendationsSection}>
+          <div className={styles.buildRecommendationsHeader}>
+            <Icons.settings size={16} />
+            <span>BUILD RECOMMENDATIONS</span>
+          </div>
+          {/* Street, Track, Drag on first row */}
+          <div className={styles.buildRecommendationsGrid}>
+            {BUILD_RECOMMENDATIONS.map(pkg => (
+              <button
+                key={pkg.key}
+                className={`${styles.buildRecBtn} ${selectedPackage === pkg.key ? styles.buildRecBtnActive : ''}`}
+                onClick={() => handlePackageSelect(pkg.key)}
+              >
+                {pkg.label}
+              </button>
+            ))}
+          </div>
+          {/* Custom on second row */}
+          <div className={styles.buildRecommendationsCustomRow}>
+            <button
+              className={`${styles.buildRecBtnCustomFull} ${selectedPackage === 'custom' ? styles.buildRecBtnActive : ''}`}
+              onClick={() => handlePackageSelect('custom')}
+            >
+              <Icons.settings size={14} />
+              <span>Custom Build</span>
+              <span className={styles.customBuildHint}>Pick your own upgrades</span>
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* ═══════════════════════════════════════════════════════════════════════
+          WORKSPACE - Build configuration (sidebar only, no performance panel)
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className={styles.workspace}>
-        {/* Left Sidebar - Build Configuration */}
-        <div className={styles.sidebar}>
+        {/* Sidebar - Build Configuration */}
+        <div className={styles.sidebarFull}>
           
-          {/* ═══════════════════════════════════════════════════════════════
-              AUTOREV RECOMMENDATION - Platform insights at the top
-              ═══════════════════════════════════════════════════════════════ */}
-          {showUpgrade && (
-            <div className={styles.sidebarCard}>
-              <div className={styles.recommendationBannerCompact}>
-                <div className={styles.recommendationHeader}>
-                  <span className={styles.recommendationTitle}>AutoRev Recommendation</span>
-                  {detailedRecommendation.focusArea && (
-                    <span className={styles.focusTag}>Focus: {detailedRecommendation.focusArea}</span>
-                  )}
-                </div>
-                <p className={styles.recommendationText}>{detailedRecommendation.primaryText}</p>
-                
-                {/* Platform Insights & Watch Outs */}
-                {(detailedRecommendation.platformInsights.length > 0 || detailedRecommendation.watchOuts.length > 0) && (
-                  <div className={styles.insightsGrid}>
-                    {detailedRecommendation.platformInsights.length > 0 && (
-                      <div className={styles.insightsCard}>
-                        <div className={styles.insightsCardHeader}>
-                          <Icons.info size={14} />
-                          <span>Platform Insights</span>
-                        </div>
-                        <ul className={styles.insightsCardList}>
-                          {detailedRecommendation.platformInsights.map((insight, idx) => (
-                            <li key={idx}>{insight}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {detailedRecommendation.watchOuts.length > 0 && (
-                      <div className={styles.watchOutsCard}>
-                        <div className={styles.watchOutsCardHeader}>
-                          <Icons.alertTriangle size={14} />
-                          <span>Watch Out</span>
-                        </div>
-                        <ul className={styles.watchOutsCardList}>
-                          {detailedRecommendation.watchOuts.map((watchOut, idx) => (
-                            <li key={idx}>{watchOut}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          
-          {/* ═══════════════════════════════════════════════════════════════
-              VEHICLE SETUP - Always visible (both modes)
-              ═══════════════════════════════════════════════════════════════ */}
-          
-          {/* Factory Configuration */}
-          <div className={styles.sidebarCard}>
-            <FactoryConfig
-              car={car}
-              initialConfig={factoryConfig}
-              onChange={onFactoryConfigChange}
-              defaultExpanded={false}
-              compact={true}
-            />
-          </div>
-          
-          {/* Wheel & Tire Setup */}
-          <div className={styles.sidebarCard}>
-            <WheelTireConfigurator
-              car={car}
-              selectedFitment={selectedWheelFitment}
-              onSelect={onWheelFitmentChange}
-              showCostEstimates={true}
-              defaultExpanded={false}
-              compact={true}
-              selectedUpgrades={effectiveModules}
-              onUpgradeToggle={(key) => handleModuleToggle(key, 'Lightweight Wheels', null)}
-            />
-          </div>
+          {/* Factory Configuration has been removed per product decision */}
           
           {/* ═══════════════════════════════════════════════════════════════
               ADVANCED MODE - Add Upgrades FIRST, then Configure
@@ -4032,31 +2628,9 @@ export default function UpgradeCenter({
           )}
           
           {/* ═══════════════════════════════════════════════════════════════
-              BASIC MODE - Presets & Categories
+              BASIC MODE - Upgrade Categories
+              (Build Recommendations moved to top-level section above)
               ═══════════════════════════════════════════════════════════════ */}
-          
-          {/* Build Presets Card - Basic Mode Only */}
-          {tunerMode === 'basic' && (
-            <div className={styles.sidebarCard}>
-              <div className={styles.sidebarCardHeader}>
-                <Icons.settings size={16} />
-                <span className={styles.sidebarCardTitle}>Build Preset</span>
-              </div>
-              <div className={styles.sidebarCardContent}>
-                <div className={styles.packageGrid}>
-                  {PACKAGES.map(pkg => (
-                    <button
-                      key={pkg.key}
-                      className={`${styles.pkgBtn} ${selectedPackage === pkg.key ? styles.pkgBtnActive : ''}`}
-                      onClick={() => handlePackageSelect(pkg.key)}
-                    >
-                      {pkg.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
           
           {/* Upgrade Categories Card - Basic Mode */}
           {tunerMode === 'basic' && (
@@ -4094,6 +2668,20 @@ export default function UpgradeCenter({
               </div>
             </div>
           )}
+          
+          {/* Wheels & Tires - After Upgrade Categories */}
+          <div className={styles.sidebarCard}>
+            <WheelTireConfigurator
+              car={car}
+              selectedFitment={selectedWheelFitment}
+              onSelect={onWheelFitmentChange}
+              showCostEstimates={true}
+              defaultExpanded={false}
+              compact={true}
+              selectedUpgrades={effectiveModules}
+              onUpgradeToggle={(key) => handleModuleToggle(key, 'Lightweight Wheels', null)}
+            />
+          </div>
           
           {/* Advanced Tuning - Collapsible deep-dive options for power users */}
           {tunerMode === 'advanced' && (
@@ -5408,439 +3996,10 @@ export default function UpgradeCenter({
           
         </div>
         
-        {/* Main Panel - Performance Metrics */}
-        <div className={styles.mainPanel}>
-          
-          {/* === BASIC MODE: Simple Performance Card === */}
-          {tunerMode === 'basic' && (
-            <>
-              <div className={styles.performanceCard}>
-                <div className={styles.performanceHeader}>
-                  <h3 className={styles.performanceTitle}>
-                    <Icons.bolt size={18} />
-                    Performance Metrics
-                  </h3>
-                  {showUpgrade && (
-                    <div className={styles.buildStats}>
-                      <span 
-                        className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
-                        title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
-                      >
-                        ${(totalCost.low || 0).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className={styles.performanceMetrics}>
-                  <MetricRow 
-                    icon={Icons.bolt} 
-                    label="HP" 
-                    stockValue={profile.stockMetrics.hp} 
-                    upgradedValue={profile.upgradedMetrics.hp} 
-                    unit=" hp" 
-                  />
-                  <MetricRow 
-                    icon={Icons.stopwatch} 
-                    label="0-60" 
-                    stockValue={profile.stockMetrics.zeroToSixty} 
-                    upgradedValue={profile.upgradedMetrics.zeroToSixty} 
-                    unit="s" 
-                    isLowerBetter 
-                  />
-                  <MetricRow 
-                    icon={Icons.disc} 
-                    label="Braking" 
-                    stockValue={profile.stockMetrics.braking60To0} 
-                    upgradedValue={profile.upgradedMetrics.braking60To0} 
-                    unit="ft" 
-                    isLowerBetter 
-                  />
-                  <MetricRow 
-                    icon={Icons.target} 
-                    label="Grip" 
-                    stockValue={profile.stockMetrics.lateralG} 
-                    upgradedValue={profile.upgradedMetrics.lateralG} 
-                    unit="g" 
-                  />
-                </div>
-              </div>
-              
-              {/* Experience Scores - Basic Mode */}
-              <div className={styles.section}>
-                <h4 className={styles.sectionTitle}>Experience Scores</h4>
-                <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
-                <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
-                <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
-              </div>
-            </>
-          )}
-          
-          {/* === ADVANCED MODE: Physics-Based Performance Analysis === */}
-          {/* OUTPUT ORDER: Headline → Performance → Details → Track → Recommendations */}
-          {tunerMode === 'advanced' && (
-            <>
-              {/* Performance Metrics - Same visual style as Basic Mode */}
-              {(() => {
-                // Calculate physics-based values for Advanced Mode
-                const stockHp = car?.hp || profile.stockMetrics.hp || 300;
-                const advGain = advancedHpEstimate?.gain;
-                const validGain = (typeof advGain === 'number' && !isNaN(advGain)) ? advGain : (hpGain || 0);
-                const estimatedHp = stockHp + validGain;
-                const weight = car?.curb_weight || car?.weight || 3500;
-                const drivetrain = car?.drivetrain || 'AWD';
-                const tireCompound = advancedSpecs.tires?.compound || 'summer';
-                const weightMod = advancedSpecs.weight?.weightReduction || 0;
-                const driverWeight = advancedSpecs.weight?.driverWeight || 180;
-                
-                // Physics calculations (same as CalculatedPerformance)
-                const totalWeight = weight + (weightMod || 0) + (driverWeight || 180);
-                const stockTotalWeight = weight + 180;
-                const stockWheelWeight = 25;
-                const currentWheelWeight = advancedSpecs.wheels?.weightPerWheel || stockWheelWeight;
-                const wheelWeightDiff = (stockWheelWeight - currentWheelWeight) * 4;
-                const effectiveWeight = totalWeight - wheelWeightDiff;
-                const stockEffectiveWeight = stockTotalWeight;
-                
-                // Drivetrain factor for 0-60
-                const drivetrainK = { 'AWD': 1.20, 'RWD': 1.35, 'FWD': 1.40, '4WD': 1.25 };
-                const baseK = drivetrainK[drivetrain] || 1.30;
-                const tireKMultiplier = { 'all-season': 1.08, 'summer': 1.0, 'max-performance': 0.97, 'r-comp': 0.93, 'drag-radial': 0.85, 'slick': 0.82 };
-                const kTire = tireKMultiplier[tireCompound] || 1.0;
-                
-                // 0-60 times
-                const weightToHp = effectiveWeight / estimatedHp;
-                const stockWeightToHp = stockEffectiveWeight / stockHp;
-                const estimated060 = Math.max(2.0, Math.sqrt(weightToHp) * baseK * kTire);
-                const stock060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
-                
-                // Braking (60-0)
-                const stockBraking60 = profile.stockMetrics.braking60To0 || 120;
-                const brakingScore = advancedHpEstimate?.brakingScore || 100;
-                const brakingImprovement = (brakingScore - 100) / 100;
-                const estimatedBraking60 = Math.round(stockBraking60 * (1 - brakingImprovement * 0.25));
-                
-                // Lateral G
-                const baseG = profile.stockMetrics.lateralG || 0.90;
-                const handlingScore = advancedHpEstimate?.handlingScore || 100;
-                const handlingImprovement = (handlingScore - 100) / 100;
-                const estimatedLateralG = parseFloat((baseG * (1 + handlingImprovement * 0.3)).toFixed(2));
-                
-                // 1/4 Mile (Advanced-only metric)
-                const tractionBonus = tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
-                const estimatedQuarter = 5.825 * Math.pow(weightToHp, 0.333) * tractionBonus;
-                const stockQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
-                
-                // Trap Speed (Advanced-only metric)
-                const finalDriveFactor = advancedSpecs.drivetrain?.finalDrive ? Math.min(1.02, 3.5 / advancedSpecs.drivetrain.finalDrive) : 1.0;
-                const estimatedTrap = 234 * Math.pow(estimatedHp / effectiveWeight, 0.333) * finalDriveFactor;
-                const stockTrap = 234 * Math.pow(stockHp / stockEffectiveWeight, 0.333);
-                
-                // Power/Weight Ratio (Advanced-only metric)
-                const powerToWeight = Math.round((estimatedHp / effectiveWeight) * 2000);
-                const stockPtw = Math.round((stockHp / stockEffectiveWeight) * 2000);
-                
-                // Build cost
-                const buildCost = totalCost?.low || 0;
-                
-                return (
-                  <div className={styles.performanceCard}>
-                    <div className={styles.performanceHeader}>
-                      <h3 className={styles.performanceTitle}>
-                        <Icons.bolt size={18} />
-                        Performance Metrics
-                      </h3>
-                      {buildCost > 0 && (
-                        <div className={styles.buildStats}>
-                          <span 
-                            className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
-                            title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
-                          >
-                            ${buildCost.toLocaleString()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className={styles.performanceMetrics}>
-                      <MetricRow 
-                        icon={Icons.bolt} 
-                        label="HP" 
-                        stockValue={stockHp} 
-                        upgradedValue={estimatedHp} 
-                        unit=" hp" 
-                      />
-                      <MetricRow 
-                        icon={Icons.stopwatch} 
-                        label="0-60" 
-                        stockValue={parseFloat(stock060.toFixed(1))} 
-                        upgradedValue={parseFloat(estimated060.toFixed(1))} 
-                        unit="s" 
-                        isLowerBetter 
-                      />
-                      <MetricRow 
-                        icon={Icons.disc} 
-                        label="Braking" 
-                        stockValue={stockBraking60} 
-                        upgradedValue={estimatedBraking60} 
-                        unit="ft" 
-                        isLowerBetter 
-                      />
-                      <MetricRow 
-                        icon={Icons.target} 
-                        label="Grip" 
-                        stockValue={baseG} 
-                        upgradedValue={estimatedLateralG} 
-                        unit="g" 
-                      />
-                      {/* Advanced-only metrics */}
-                      <MetricRow 
-                        icon={Icons.chevronsRight} 
-                        label="1/4 Mile" 
-                        stockValue={parseFloat(stockQuarter.toFixed(1))} 
-                        upgradedValue={parseFloat(estimatedQuarter.toFixed(1))} 
-                        unit="s" 
-                        isLowerBetter 
-                      />
-                      <MetricRow 
-                        icon={Icons.flag} 
-                        label="Trap Speed" 
-                        stockValue={Math.round(stockTrap)} 
-                        upgradedValue={Math.round(estimatedTrap)} 
-                        unit=" mph" 
-                      />
-                      <MetricRow 
-                        icon={Icons.zap} 
-                        label="Power/Weight" 
-                        stockValue={stockPtw} 
-                        upgradedValue={powerToWeight} 
-                        unit=" hp/ton" 
-                      />
-                    </div>
-                  </div>
-                );
-              })()}
-              
-              {/* Experience Scores - Same as Basic Mode */}
-              <div className={styles.section}>
-                <h4 className={styles.sectionTitle}>Experience Scores</h4>
-                <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
-                <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
-                <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />
-              </div>
-              
-              {/* ═══════════════════════════════════════════════════════════════
-                  TIER 2: POWER DETAILS - Deep dive into power gains
-                  ═══════════════════════════════════════════════════════════════ */}
-              
-              {/* Virtual Dyno Chart - Power curve visualization */}
-              <VirtualDynoChart
-                stockHp={car?.hp || profile.stockMetrics.hp || 300}
-                estimatedHp={(() => {
-                  const stock = car?.hp || profile.stockMetrics.hp || 300;
-                  const gain = advancedHpEstimate?.gain;
-                  const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
-                  return stock + validGain;
-                })()}
-                stockTorque={car?.torque || Math.round((car?.hp || 300) * 0.85)}
-                estimatedTq={advancedHpEstimate?.whp ? Math.round(advancedHpEstimate.whp * 0.9) : null}
-                peakRpm={car?.redline || 6500}
-              />
-              
-              {/* Power Limits Advisory - Warnings about component limits */}
-              {tuningProfile?.power_limits && (
-                <PowerLimitsAdvisory
-                  powerLimits={tuningProfile.power_limits}
-                  currentHp={(() => {
-                    const stock = car?.hp || profile.stockMetrics.hp || 300;
-                    const gain = advancedHpEstimate?.gain;
-                    const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
-                    return stock + validGain;
-                  })()}
-                />
-              )}
-              
-              {/* ═══════════════════════════════════════════════════════════════
-                  TIER 3: HANDLING & TRACK - Dynamics and lap performance
-                  ═══════════════════════════════════════════════════════════════ */}
-              
-              {/* Lap Time Estimator - Track performance estimates */}
-              <LapTimeEstimator
-                stockHp={car?.hp || profile.stockMetrics.hp || 300}
-                estimatedHp={(() => {
-                  const stock = car?.hp || profile.stockMetrics.hp || 300;
-                  const gain = advancedHpEstimate?.gain;
-                  const validGain = (typeof gain === 'number' && !isNaN(gain)) ? gain : (hpGain || 0);
-                  return stock + validGain;
-                })()}
-                weight={car?.curb_weight || car?.weight || 3500}
-                drivetrain={car?.drivetrain || 'AWD'}
-                tireCompound={advancedSpecs.tires?.compound || 'summer'}
-                suspensionSetup={advancedSpecs.suspension}
-                brakeSetup={advancedSpecs.brakes}
-                aeroSetup={advancedSpecs.aero}
-                weightMod={advancedSpecs.weight?.weightReduction || 0}
-                driverWeight={advancedSpecs.weight?.driverWeight || 180}
-                user={user}
-                carSlug={safeCarSlug}
-                modsSummary={advancedSpecs}
-              />
-              
-              {/* Handling Balance - Understeer/oversteer tendency */}
-              <HandlingBalanceIndicator
-                suspensionSetup={advancedSpecs.suspension}
-                aeroSetup={advancedSpecs.aero}
-                tireCompound={advancedSpecs.tires?.compound || 'summer'}
-                drivetrain={car?.drivetrain || 'AWD'}
-              />
-              
-              {/* Aero Balance at Speed - Downforce visualization */}
-              <AeroBalanceChart
-                aeroSetup={advancedSpecs.aero}
-                weight={car?.curb_weight || car?.weight || 3500}
-              />
-              
-              {/* ═══════════════════════════════════════════════════════════════
-                  TIER 4: RECOMMENDATIONS - Shopping guidance
-                  ═══════════════════════════════════════════════════════════════ */}
-              
-              {/* Brand Recommendations - Popular brands for this platform */}
-              {tuningProfile?.brand_recommendations && (
-                <BrandRecommendations
-                  brandRecs={tuningProfile.brand_recommendations}
-                />
-              )}
-            </>
-          )}
-
-          {/* Build Photos & Videos Section */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>
-              <Icons.camera size={14} />
-              Build Photos & Videos
-            </h4>
-            <p className={styles.sectionHint}>
-              Add photos and videos of your build. Choose which image to feature as your hero.
-            </p>
-            
-            {/* Upload Component - previews disabled since BuildMediaGallery handles display */}
-            <ImageUploader
-              onUploadComplete={async (media) => {
-                setBuildImages(media);
-                // If this is the first uploaded image, auto-set it as hero (is_primary)
-                const images = media.filter(m => m.media_type !== 'video');
-                const hasHero = images.some(img => img.is_primary);
-                if (images.length === 1 && !hasHero) {
-                  // Auto-set first image as hero
-                  try {
-                    const response = await fetch('/api/uploads', {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ imageId: images[0].id, isPrimary: true }),
-                    });
-                    if (response.ok) {
-                      setBuildImages(prev => prev.map(img => ({
-                        ...img,
-                        is_primary: img.id === images[0].id,
-                      })));
-                    }
-                  } catch (err) {
-                    console.error('[UpgradeCenter] Error auto-setting hero:', err);
-                  }
-                }
-              }}
-              onUploadError={(err) => console.error('[UpgradeCenter] Media upload error:', err)}
-              onVideoClick={(video) => setSelectedVideo(video)}
-              maxFiles={10}
-              buildId={currentBuildId}
-              carSlug={car.slug}
-              existingImages={buildImages}
-              disabled={!user}
-              showPreviews={false}
-            />
-            
-            {/* Gallery with Hero Selection - tap any image to make it the hero */}
-            {/* Uses car_slug-based API for syncing hero across garage and tuning shop */}
-            <BuildMediaGallery
-              car={car}
-              media={buildImages}
-              onVideoClick={(video) => setSelectedVideo(video)}
-              onSetPrimary={async (imageId) => {
-                // Set hero image by car_slug - this syncs across garage and tuning shop
-                if (!user?.id || !safeCarSlug) {
-                  console.warn('[UpgradeCenter] Cannot set hero: missing user or car slug');
-                  return;
-                }
-                
-                // Optimistic update
-                setBuildImages(prev => prev.map(img => ({
-                  ...img,
-                  is_primary: img.id === imageId,
-                })));
-                
-                try {
-                  const response = await fetch(`/api/users/${user.id}/car-images`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ carSlug: safeCarSlug, imageId }),
-                  });
-                  
-                  if (!response.ok) {
-                    // Revert on failure - reload images
-                    console.error('[UpgradeCenter] Failed to set hero image');
-                  }
-                } catch (err) {
-                  console.error('[UpgradeCenter] Error setting hero image:', err);
-                }
-              }}
-              onSetStockHero={async () => {
-                // Clear hero image by car_slug - reverts to stock across all features
-                if (!user?.id || !safeCarSlug) {
-                  console.warn('[UpgradeCenter] Cannot clear hero: missing user or car slug');
-                  return;
-                }
-                
-                // Optimistic update
-                setBuildImages(prev => prev.map(img => ({
-                  ...img,
-                  is_primary: false,
-                })));
-                
-                try {
-                  const response = await fetch(`/api/users/${user.id}/car-images`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ carSlug: safeCarSlug, imageId: null }),
-                  });
-                  
-                  if (!response.ok) {
-                    console.error('[UpgradeCenter] Failed to clear hero image');
-                  }
-                } catch (err) {
-                  console.error('[UpgradeCenter] Error clearing hero image:', err);
-                }
-              }}
-              readOnly={!user}
-            />
-            
-            {!user && (
-              <p className={styles.loginHint}>
-                Sign in to upload photos and videos of your build
-              </p>
-            )}
-          </div>
-          
-          {/* Parts Shopping List - Based on selected upgrades */}
-          {effectiveModules.length > 0 && (
-            <PartsSelector
-              selectedUpgrades={effectiveModules}
-              selectedParts={selectedParts}
-              onPartsChange={setSelectedParts}
-              carName={car?.name}
-              carSlug={car?.slug}
-              totalHpGain={hpGain}
-              totalCostRange={{ low: totalCost.low, high: totalCost.high }}
-            />
-          )}
-        </div>
+        {/* ═══════════════════════════════════════════════════════════════
+            NOTE: Performance Metrics, Experience Scores, and Shopping List
+            have been moved to dedicated pages (Data and Parts)
+            ═══════════════════════════════════════════════════════════════ */}
       </div>
       
       {/* Save Build Button - Outside workspace for proper fixed positioning on mobile */}
@@ -5939,10 +4098,10 @@ export default function UpgradeCenter({
                   <span className={styles.buildSummaryLabel}>Upgrades</span>
                   <span className={styles.buildSummaryValue}>{effectiveModules.length} selected</span>
                 </div>
-                {hpGain > 0 && (
+                {effectiveHpGain > 0 && (
                   <div className={styles.buildSummaryRow}>
                     <span className={styles.buildSummaryLabel}>HP Gain</span>
-                    <span className={styles.buildSummaryValueGain}>+{hpGain} hp</span>
+                    <span className={styles.buildSummaryValueGain}>+{effectiveHpGain} hp</span>
                   </div>
                 )}
                 <div className={styles.buildSummaryRow}>

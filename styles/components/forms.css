@@ -1,0 +1,273 @@
+/* ==========================================================================
+   AutoRev Form Components
+   Inputs, selects, textareas
+   
+   IMPORTANT: All inputs use 16px font on mobile to prevent iOS zoom
+   ========================================================================== */
+
+/* ==========================================================================
+   BASE INPUT
+   ========================================================================== */
+
+.input {
+  width: 100%;
+  min-height: var(--touch-target-comfortable, 48px);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 16px; /* Prevents iOS zoom */
+  font-weight: 400;
+  color: var(--color-text-primary, #fff);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-input, 10px);
+  transition: var(--transition-fast);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.4));
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent-lime, #d4ff00);
+  background: var(--color-bg-input-focus, rgba(255, 255, 255, 0.1));
+  box-shadow: var(--shadow-input-focus);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error state */
+.input-error {
+  composes: input;
+  border-color: var(--color-error, #ef4444);
+}
+
+.input-error:focus {
+  border-color: var(--color-error, #ef4444);
+  box-shadow: var(--shadow-input-error);
+}
+
+/* ==========================================================================
+   INPUT SIZES
+   ========================================================================== */
+
+.input-sm {
+  composes: input;
+  min-height: 40px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.input-lg {
+  composes: input;
+  min-height: 56px;
+  padding: 16px 20px;
+  font-size: 18px;
+}
+
+/* ==========================================================================
+   INPUT VARIANTS
+   ========================================================================== */
+
+/* Outlined (stronger border) */
+.input-outlined {
+  composes: input;
+  background: transparent;
+  border-color: var(--color-border-strong, rgba(255, 255, 255, 0.15));
+}
+
+/* Filled (more background) */
+.input-filled {
+  composes: input;
+  background: var(--color-bg-elevated, #1b263b);
+  border-color: transparent;
+}
+
+.input-filled:focus {
+  border-color: var(--color-accent-lime, #d4ff00);
+}
+
+/* ==========================================================================
+   INPUT WITH ICON
+   ========================================================================== */
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.4));
+  pointer-events: none;
+}
+
+.input-with-icon {
+  padding-left: 44px;
+}
+
+.input-icon-right {
+  left: auto;
+  right: 14px;
+}
+
+.input-with-icon-right {
+  padding-right: 44px;
+}
+
+/* ==========================================================================
+   TEXTAREA
+   ========================================================================== */
+
+.textarea {
+  composes: input;
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.textarea-auto {
+  composes: textarea;
+  resize: none;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   SELECT
+   ========================================================================== */
+
+.select {
+  composes: input;
+  cursor: pointer;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23d4ff00' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   CHECKBOX & RADIO
+   ========================================================================== */
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--touch-target-min, 44px);
+  cursor: pointer;
+}
+
+.checkbox {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-border-strong, rgba(255, 255, 255, 0.2));
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.checkbox:checked {
+  background: var(--color-accent-lime, #d4ff00);
+  border-color: var(--color-accent-lime, #d4ff00);
+}
+
+.checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-text-inverted, #0a1628);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.radio {
+  composes: checkbox;
+  border-radius: 50%;
+}
+
+.radio:checked::after {
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: var(--color-text-inverted, #0a1628);
+  border: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ==========================================================================
+   FORM LABEL
+   ========================================================================== */
+
+.form-label {
+  display: block;
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  margin-bottom: 8px;
+}
+
+.form-label-required::after {
+  content: '*';
+  color: var(--color-error, #ef4444);
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+   FORM HINT & ERROR
+   ========================================================================== */
+
+.form-hint {
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.5));
+  margin-top: 6px;
+}
+
+.form-error {
+  composes: form-hint;
+  color: var(--color-error, #ef4444);
+}
+
+/* ==========================================================================
+   FORM GROUP
+   ========================================================================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 480px) {
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,196 @@
+/* ==========================================================================
+   AutoRev Badge Components
+   Status indicators, labels, tags
+   ========================================================================== */
+
+/* ==========================================================================
+   BASE BADGE
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-xs, 4px);
+  padding: 4px 10px;
+  font-size: var(--text-xs, 12px);
+  font-weight: 600;
+  border-radius: var(--radius-badge, 6px);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   STATUS BADGES
+   ========================================================================== */
+
+/* Success/Improvement - TEAL */
+.badge-success {
+  composes: badge;
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  color: var(--color-accent-teal, #10b981);
+}
+
+.badge-success-solid {
+  composes: badge;
+  background: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #fff);
+}
+
+/* Warning - AMBER */
+.badge-warning {
+  composes: badge;
+  background: var(--color-warning-muted, rgba(245, 158, 11, 0.15));
+  color: var(--color-warning, #f59e0b);
+}
+
+/* Error/Danger - RED */
+.badge-error {
+  composes: badge;
+  background: var(--color-error-muted, rgba(239, 68, 68, 0.15));
+  color: var(--color-error, #ef4444);
+}
+
+/* Info - BLUE */
+.badge-info {
+  composes: badge;
+  background: var(--color-info-muted, rgba(59, 130, 246, 0.15));
+  color: var(--color-info, #3b82f6);
+}
+
+/* Neutral/Default - GRAY */
+.badge-neutral {
+  composes: badge;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.08));
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+/* ==========================================================================
+   ACCENT BADGES
+   ========================================================================== */
+
+/* Lime accent - for emphasis */
+.badge-lime {
+  composes: badge;
+  background: var(--color-accent-lime-muted, rgba(212, 255, 0, 0.08));
+  border: 1px solid var(--color-accent-lime-border, rgba(212, 255, 0, 0.2));
+  color: var(--color-accent-lime, #d4ff00);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Gold accent - for labels */
+.badge-gold {
+  composes: badge;
+  background: var(--color-accent-gold-muted, rgba(212, 168, 75, 0.15));
+  color: var(--color-accent-gold, #d4a84b);
+}
+
+/* ==========================================================================
+   IMPROVEMENT/GAIN BADGE
+   For showing +99 HP, +50 LB-FT gains
+   ========================================================================== */
+
+.badge-gain {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Small gain badge (for inline use) */
+.badge-gain-sm {
+  composes: badge-gain;
+  padding: 1px 4px;
+  font-size: 10px;
+}
+
+/* ==========================================================================
+   CATEGORY LABELS
+   Uppercase labels for sections
+   ========================================================================== */
+
+.label {
+  font-size: var(--text-label, 10px);
+  font-weight: var(--text-label-weight, 600);
+  color: var(--color-accent-gold, #d4a84b);
+  text-transform: uppercase;
+  letter-spacing: var(--text-label-tracking, 0.12em);
+}
+
+.label-white {
+  composes: label;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+}
+
+.label-lime {
+  composes: label;
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+/* ==========================================================================
+   COUNT BADGE
+   For notification counts, list counts
+   ========================================================================== */
+
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #fff);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--radius-full, 9999px);
+}
+
+.badge-count-sm {
+  composes: badge-count;
+  min-width: 16px;
+  height: 16px;
+  font-size: 9px;
+}
+
+/* ==========================================================================
+   PILL BADGES
+   Rounded pill shape for filters, tags
+   ========================================================================== */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-xs, 4px);
+  padding: 8px 16px;
+  font-size: var(--text-sm, 13px);
+  font-weight: 500;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-full, 9999px);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.pill:hover {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-border-default, rgba(255, 255, 255, 0.15));
+}
+
+.pill-active {
+  composes: pill;
+  background: var(--color-accent-teal, #10b981);
+  border-color: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #fff);
+  font-weight: 600;
+}
+
+.pill-active:hover {
+  background: var(--color-accent-teal-light, #34d399);
+  border-color: var(--color-accent-teal-light, #34d399);
+}

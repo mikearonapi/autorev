@@ -8,13 +8,13 @@
   --card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
+  --text-secondary: var(--brand-text-secondary);
+  --text-muted: var(--brand-text-tertiary);
+  --accent-blue: var(--brand-blue);
+  --accent-purple: var(--brand-purple-accent);
   --accent-cyan: #06b6d4;
   --positive: #22c55e;
-  --warning: #f59e0b;
+  --warning: var(--brand-warning);
   --negative: #ef4444;
   
   display: flex;

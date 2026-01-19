@@ -7,13 +7,13 @@
   --card-bg: rgba(255, 255, 255, 0.03);
   --card-border: rgba(255, 255, 255, 0.08);
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
+  --text-secondary: var(--brand-text-secondary);
+  --text-muted: var(--brand-text-tertiary);
+  --accent-blue: var(--brand-blue);
+  --accent-purple: var(--brand-purple-accent);
   --accent-cyan: #06b6d4;
   --positive: #22c55e;
-  --warning: #f59e0b;
+  --warning: var(--brand-warning);
   --negative: #ef4444;
   
   display: flex;
@@ -346,7 +346,7 @@
 }
 
 .funnelLabel { font-size: 0.5625rem; font-weight: 500; color: rgba(255, 255, 255, 0.9); }
-.funnelValue { font-size: 0.625rem; font-weight: 700; color: #fff; }
+.funnelValue { font-size: 0.625rem; font-weight: 700; color: var(--brand-text-primary); }
 .funnelRate { font-size: 0.5625rem; color: var(--text-muted); width: 28px; text-align: right; }
 
 /* Tables */
@@ -517,7 +517,7 @@
 .errorState button {
   padding: 0.5rem 1rem;
   background: var(--accent-blue);
-  color: #fff;
+  color: var(--brand-text-primary);
   border: none;
   border-radius: 6px;
   cursor: pointer;

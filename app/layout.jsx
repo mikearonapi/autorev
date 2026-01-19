@@ -253,7 +253,7 @@ const softwareAppSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={fontVariables} data-has-banner="true">
+    <html lang="en" className={fontVariables} data-has-banner="false">
       <head>
         {/* =============================================================================
             CRITICAL: Preconnects MUST be first in <head> for maximum effectiveness
@@ -350,14 +350,11 @@ export default function RootLayout({ children }) {
                                     </Suspense>
                                     <Header />
                                     
-                                    {/* Beta banner - shown during beta period */}
-                                    <BetaBanner />
+                                    {/* Beta banner - DISABLED (launch mode) */}
+                                    <BetaBanner visible={false} />
                                     
-                                    {/* Feedback corner - discreet top-right feedback icon */}
-                                    <FeedbackCorner />
-
-                                    {/* On-demand heavy UI (does NOT wrap the whole app) */}
-                                    <FeedbackHost />
+                                    {/* AI Chat Host - renders chat when AL button is clicked */}
+                                    {/* Floating launcher is hidden on app routes (PWA menu has AL button) */}
                                     <AIChatHost />
                                     
                                     <main>

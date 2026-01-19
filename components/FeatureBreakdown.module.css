@@ -235,7 +235,7 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--sn-accent-dark);
-  background: rgba(196, 165, 100, 0.1);
+  background: rgba(255, 77, 0, 0.1);
   padding: 2px 8px;
   border-radius: var(--radius-full);
 }

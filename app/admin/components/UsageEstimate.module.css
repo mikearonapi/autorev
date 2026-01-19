@@ -90,7 +90,7 @@
 .serviceCost {
   font-size: 13px;
   font-weight: 700;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .serviceDetails {
@@ -172,7 +172,7 @@
 
 .projectionValue {
   font-weight: 700;
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
 }
 
 .projectionNote {
@@ -195,7 +195,7 @@
 .actualBadge {
   font-size: 8px;
   background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
+  color: var(--brand-success);
   padding: 2px 6px;
   border-radius: 3px;
   margin-left: 6px;
@@ -303,7 +303,7 @@
 .compactServiceCost {
   font-size: 11px;
   font-weight: 600;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   font-variant-numeric: tabular-nums;
 }
 
@@ -317,7 +317,7 @@
 
 .compactProjectionValue {
   font-weight: 600;
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
 }
 
 /* Responsive */

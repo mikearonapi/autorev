@@ -7,9 +7,13 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  background: linear-gradient(180deg, #0c0d0f 0%, #111214 50%, #0a0b0c 100%);
-  color: #fff;
+  width: 100%;
+  max-width: 100%;
+  background: var(--color-bg-base);
+  color: var(--brand-text-primary);
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   /* Add bottom padding to account for fixed save button */
   padding-bottom: 100px;
 }
@@ -23,8 +27,8 @@
   position: relative;
   padding: 32px 32px 40px;
   background: 
-    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(212, 175, 55, 0.02) 0%, transparent 100%);
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(255, 77, 0, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 77, 0, 0.02) 0%, transparent 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -43,7 +47,7 @@
   aspect-ratio: 16/10;
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(135deg, #18191c 0%, #0c0d0f 100%);
+  background: linear-gradient(135deg, #142536 0%, #0d1b2a 100%);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
@@ -87,7 +91,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
   margin-bottom: 4px;
 }
 
@@ -95,7 +99,7 @@
   font-family: 'SF Pro Display', -apple-system, sans-serif;
   font-size: 32px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 8px 0;
   line-height: 1.2;
   letter-spacing: -0.5px;
@@ -136,7 +140,7 @@
 
 .changeCarBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Tunability Badge - Top Right Position */
@@ -156,7 +160,7 @@
 .tunabilityScore {
   font-size: 26px;
   font-weight: 700;
-  color: var(--score-color, #10b981);
+  color: var(--score-color, var(--brand-teal));
   line-height: 1;
 }
 
@@ -211,17 +215,17 @@
 }
 
 .modeToggleBtnActive {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
-  border-color: rgba(212, 175, 55, 0.5);
-  color: #fff;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.05) 100%);
+  border-color: rgba(255, 77, 0, 0.5);
+  color: var(--brand-text-primary);
 }
 
 .modeToggleBtnActive:hover {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.08) 100%);
 }
 
 .modeToggleBtnActive svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .modeToggleBtnContent {
@@ -244,15 +248,15 @@
 
 /* Confidence color classes for hero stats */
 .confidenceHigh {
-  color: #10b981 !important;
+  color: var(--color-accent-teal) !important;
 }
 
 .confidenceMedium {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 
 .confidenceLow {
-  color: #6b7280 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 /* Hero Stats Grid */
@@ -277,7 +281,7 @@
 .heroStatValue {
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   line-height: 1.2;
 }
 
@@ -308,15 +312,15 @@
 
 .recommendationBanner {
   padding: 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0.03) 100%);
+  border: 1px solid rgba(255, 77, 0, 0.2);
   border-radius: 12px;
 }
 
 /* Compact version for sidebar placement */
 .recommendationBannerCompact {
   padding: 12px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.1) 0%, rgba(255, 77, 0, 0.03) 100%);
   border-radius: 8px;
 }
 
@@ -355,16 +359,16 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .focusTag {
   font-size: 11px;
   font-weight: 500;
   padding: 3px 8px;
-  background: rgba(212, 175, 55, 0.2);
+  background: rgba(255, 77, 0, 0.2);
   border-radius: 4px;
-  color: #f5e6b8;
+  color: var(--color-accent-gold);
 }
 
 .recommendationText {
@@ -381,7 +385,7 @@
   gap: 12px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  border-top: 1px solid rgba(255, 77, 0, 0.12);
 }
 
 .insightsCard,
@@ -415,11 +419,11 @@
 }
 
 .insightsCardHeader {
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
 }
 
 .watchOutsCardHeader {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .insightsCardList,
@@ -445,25 +449,25 @@
   content: '•';
   position: absolute;
   left: 0;
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
 }
 
 .watchOutsCardList li::before {
   content: '•';
   position: absolute;
   left: 0;
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .watchOutsCardList li {
-  color: #fcd34d;
+  color: var(--color-accent-gold);
 }
 
 /* Legacy styles kept for compatibility */
 .recommendationDetails {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  border-top: 1px solid rgba(255, 77, 0, 0.15);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -486,7 +490,7 @@
 }
 
 .watchOutsLabel {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .insightItem, .watchOutItem {
@@ -495,7 +499,293 @@
 }
 
 .watchOutItem {
-  color: #fbbf24;
+  color: var(--color-accent-gold);
+}
+
+/* ===========================================
+   FULL-WIDTH RECOMMENDATION SECTION (Top of Page)
+   Clean, on-brand design with minimal colors
+   =========================================== */
+
+.recommendationSection {
+  padding: 16px 20px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.recommendationBannerFull {
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  position: relative;
+}
+
+.recommendationHeaderFull {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.recommendationTitleFull {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.focusTagFull {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.recommendationTextFull {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 800px;
+}
+
+/* Insights Grid - Full Width, Side by Side */
+.insightsGridFull {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.insightsCardFull {
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.watchOutsCardFull {
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(251, 191, 36, 0.04);
+  border: 1px solid rgba(251, 191, 36, 0.15);
+}
+
+.insightsCardHeaderFull,
+.watchOutsCardHeaderFull {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.insightsCardHeaderFull {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.watchOutsCardHeaderFull {
+  color: var(--color-accent-gold);
+}
+
+.insightsCardListFull,
+.watchOutsCardListFull {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.insightsCardListFull li,
+.watchOutsCardListFull li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.modBullet {
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.watchBullet {
+  color: var(--color-accent-gold);
+  flex-shrink: 0;
+}
+
+.modName {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.modGainFull {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 4px;
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.watchOutsCardListFull li {
+  color: rgba(251, 191, 36, 0.85);
+}
+
+/* ===========================================
+   BUILD RECOMMENDATIONS - Horizontal Row
+   Quick presets (Street, Track, Drag, Custom)
+   =========================================== */
+
+.buildRecommendationsSection {
+  padding: 0 20px 16px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.buildRecommendationsHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.buildRecommendationsHeader svg {
+  opacity: 0.5;
+}
+
+.buildRecommendationsGrid {
+  display: flex;
+  gap: 10px;
+}
+
+.buildRecBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex: 1;
+  min-width: 80px;
+}
+
+.buildRecBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.buildRecBtnActive {
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.1) 100%);
+  border-color: rgba(255, 77, 0, 0.5);
+  color: var(--accent-primary, var(--color-accent-lime));
+  box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.2);
+}
+
+.buildRecBtnActive:hover {
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.25) 0%, rgba(255, 77, 0, 0.12) 100%);
+  border-color: rgba(255, 77, 0, 0.6);
+}
+
+/* Custom Build - Second Row */
+.buildRecommendationsCustomRow {
+  margin-top: 10px;
+}
+
+.buildRecBtnCustomFull {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.buildRecBtnCustomFull svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.buildRecBtnCustomFull span:first-of-type {
+  font-weight: 600;
+}
+
+.buildRecBtnCustomFull .customBuildHint {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.buildRecBtnCustomFull:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.buildRecBtnCustomFull.buildRecBtnActive {
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.12) 0%, rgba(255, 77, 0, 0.06) 100%);
+  border-color: rgba(255, 77, 0, 0.4);
+  border-style: solid;
+  color: var(--accent-primary, var(--color-accent-lime));
+}
+
+.buildRecBtnCustomFull.buildRecBtnActive svg {
+  opacity: 1;
+  color: var(--accent-primary, var(--color-accent-lime));
+}
+
+.buildRecBtnCustomFull.buildRecBtnActive .customBuildHint {
+  color: rgba(255, 77, 0, 0.6);
+}
+
+/* ===========================================
+   SIDEBAR FULL WIDTH (No main panel)
+   =========================================== */
+
+.sidebarFull {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
 /* ===========================================
@@ -521,17 +811,18 @@
 }
 
 /* ===========================================
-   MAIN WORKSPACE - Split Layout
+   MAIN WORKSPACE - Full Width Layout
+   (Performance metrics moved to dedicated pages)
    =========================================== */
 
 .workspace {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px 24px;
   flex: 1;
   min-height: 0;
-  max-width: 1400px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -539,18 +830,14 @@
 }
 
 /* ===========================================
-   SIDEBAR
+   SIDEBAR - Full Width (no split layout)
    =========================================== */
 
 .sidebar {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: sticky;
-  top: 24px;
-  height: fit-content;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
+  width: 100%;
 }
 
 .sidebarCard {
@@ -645,7 +932,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
   margin-bottom: 12px;
 }
 
@@ -672,7 +959,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 13px;
   transition: all 0.2s ease;
 }
@@ -680,23 +967,23 @@
 .advancedSelect:focus,
 .advancedInput:focus {
   outline: none;
-  border-color: rgba(212, 175, 55, 0.5);
+  border-color: rgba(255, 77, 0, 0.5);
   background: rgba(0, 0, 0, 0.4);
 }
 
 .advancedSelect option {
-  background: #1a1b1e;
-  color: #fff;
+  background: #132638;
+  color: var(--brand-text-primary);
 }
 
 /* Disabled/controlled select state - used when config comes from Add Upgrades */
 .advancedSelectDisabled {
   width: 100%;
   padding: 10px 12px;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: 6px;
-  color: var(--color-gold, #d4af37);
+  color: var(--color-gold, var(--accent-primary, var(--color-accent-lime)));
   font-size: 13px;
   font-weight: 500;
 }
@@ -705,10 +992,10 @@
 .configuredBadge {
   font-size: 9px;
   font-weight: 400;
-  color: var(--color-gold, #d4af37);
+  color: var(--color-gold, var(--accent-primary, var(--color-accent-lime)));
   margin-left: 6px;
   padding: 1px 4px;
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 77, 0, 0.15);
   border-radius: 3px;
   text-transform: none;
   letter-spacing: 0;
@@ -730,7 +1017,7 @@
 .advancedCheckbox input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #d4af37;
+  accent-color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .advancedCheckboxRow {
@@ -748,7 +1035,7 @@
   max-height: calc(100vh - 350px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+  scrollbar-color: rgba(255, 77, 0, 0.3) transparent;
 }
 
 .advancedScrollable::-webkit-scrollbar {
@@ -760,12 +1047,12 @@
 }
 
 .advancedScrollable::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.3);
+  background: rgba(255, 77, 0, 0.3);
   border-radius: 3px;
 }
 
 .advancedScrollable::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.5);
+  background: rgba(255, 77, 0, 0.5);
 }
 
 /* Section hint text */
@@ -825,9 +1112,9 @@
 }
 
 .fuelTypeBtnActive {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
-  border-color: rgba(212, 175, 55, 0.5);
-  color: #d4af37;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.1) 100%);
+  border-color: rgba(255, 77, 0, 0.5);
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .loadingDot {
@@ -871,28 +1158,28 @@
 
 .tier1 {
   background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .tier2 {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .tier3 {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .tier4 {
   background: rgba(107, 114, 128, 0.15);
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .physicsEstimateValue {
   font-size: 24px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
   line-height: 1;
 }
 
@@ -960,7 +1247,7 @@
 .dynoTitleLarge {
   font-size: 18px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .dynoSubtitle {
@@ -981,13 +1268,13 @@
 .dynoGainValue {
   font-size: 28px;
   font-weight: 800;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .dynoGainUnit {
   font-size: 14px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .dynoGainPercent {
@@ -1103,7 +1390,7 @@
 .dynoPeakValueMod {
   font-size: 18px;
   font-weight: 800;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .dynoPeakLabelMod {
@@ -1134,7 +1421,7 @@
   padding: 2px 6px;
   font-size: 11px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
   white-space: nowrap;
 }
 
@@ -1158,7 +1445,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #f59e0b;
+  color: var(--color-warning);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1166,7 +1453,7 @@
 .verifiedBadge {
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(16, 185, 129, 0.5);
-  color: #10b981;
+  color: var(--color-accent-teal);
   font-size: 11px;
   font-weight: 600;
   padding: 4px 10px;
@@ -1188,7 +1475,7 @@
 .powerSummaryValue {
   font-size: 48px;
   font-weight: 800;
-  color: #fff;
+  color: var(--brand-text-primary);
   line-height: 1;
 }
 
@@ -1205,7 +1492,7 @@
 .powerSummaryGain {
   font-size: 18px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .dynoHeader {
@@ -1218,7 +1505,7 @@
 .dynoTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .dynoLegend {
@@ -1300,7 +1587,7 @@
 .dynoPeakValue {
   font-size: 14px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   line-height: 1;
 }
 
@@ -1342,13 +1629,13 @@
 .breakdownTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .breakdownTotal {
   font-size: 16px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .breakdownBars {
@@ -1395,7 +1682,7 @@
 .breakdownGain {
   font-size: 12px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
   text-align: right;
 }
 
@@ -1418,7 +1705,7 @@
 .calcTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   display: block;
   margin-bottom: 4px;
 }
@@ -1470,13 +1757,13 @@
 .calcModded {
   font-size: 18px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .calcDelta {
   font-size: 12px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 /* ===========================================
@@ -1484,8 +1771,8 @@
    =========================================== */
 
 .advancedEstimateCard {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.03) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.1) 0%, rgba(255, 77, 0, 0.03) 100%);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 16px;
@@ -1504,7 +1791,7 @@
   gap: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .tierBadgeLarge {
@@ -1529,7 +1816,7 @@
 .advancedEstimateValue {
   font-size: 42px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   line-height: 1;
 }
 
@@ -1550,7 +1837,7 @@
 .advancedEstimateGain {
   font-size: 16px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .advancedEstimateConfidence {
@@ -1599,12 +1886,81 @@
 }
 
 .pkgBtnActive {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
-  border-color: rgba(212, 175, 55, 0.4);
-  color: #d4af37;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.08) 100%);
+  border-color: rgba(255, 77, 0, 0.4);
+  color: var(--accent-primary, var(--color-accent-lime));
   /* Ensure active state is immediately visible */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+}
+
+/* Custom Build Option - Separated from recommendations */
+.customBuildOption {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pkgBtnCustom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.pkgBtnCustom svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.pkgBtnCustom span:first-of-type {
+  font-weight: 600;
+}
+
+.customBuildHint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: auto;
+}
+
+.pkgBtnCustom:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.pkgBtnCustom.pkgBtnActive {
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.12) 0%, rgba(255, 77, 0, 0.06) 100%);
+  border-color: rgba(255, 77, 0, 0.4);
+  border-style: solid;
+  color: var(--accent-primary, var(--color-accent-lime));
+}
+
+.pkgBtnCustom.pkgBtnActive svg {
+  opacity: 1;
+  color: var(--accent-primary, var(--color-accent-lime));
+}
+
+/* Mod Gain display in recommendations */
+.modGain {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent-teal);
 }
 
 /* Category List */
@@ -1659,7 +2015,7 @@
 .catBtnActive {
   background: rgba(var(--cat-color), 0.1);
   border-color: rgba(var(--cat-color), 0.3);
-  color: #fff;
+  color: var(--brand-text-primary);
   /* Ensure active state is immediately visible */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -1676,11 +2032,11 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: #10b981;
+  background: var(--brand-teal);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .catArrow {
@@ -1716,7 +2072,7 @@
   width: 100%;
   max-width: 420px;
   max-height: 70vh;
-  background: #18191c;
+  background: #122333;
   border: 1px solid var(--cat-color, rgba(255, 255, 255, 0.12));
   border-radius: 12px;
   display: flex;
@@ -1740,7 +2096,7 @@
   gap: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .popupTitle svg {
@@ -1771,7 +2127,7 @@
 
 .popupClose:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .popupContent {
@@ -1802,7 +2158,7 @@
 
 .upgradeRowSelected {
   background: rgba(var(--cat-color-rgb, 212, 175, 55), 0.1);
-  border-color: var(--cat-color, rgba(212, 175, 55, 0.3));
+  border-color: var(--cat-color, rgba(255, 77, 0, 0.3));
 }
 
 .upgradeRowConflict {
@@ -1848,8 +2204,8 @@
 }
 
 .upgradeRowSelected .checkbox {
-  background: var(--cat-color, #d4af37);
-  border-color: var(--cat-color, #d4af37);
+  background: var(--cat-color, var(--accent-primary, var(--color-accent-lime)));
+  border-color: var(--cat-color, var(--accent-primary, var(--color-accent-lime)));
   color: #000;
 }
 
@@ -1857,7 +2213,7 @@
   flex: 1;
   font-size: 12px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   line-height: 1.3;
 }
 
@@ -1865,7 +2221,7 @@
   font-size: 9px;
   padding: 2px 5px;
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal);
   border-radius: 3px;
   font-weight: 600;
   display: flex;
@@ -1875,8 +2231,8 @@
 
 /* HP gain boosted by config options */
 .upgradeGainBoosted {
-  background: rgba(212, 175, 55, 0.2);
-  color: #d4af37;
+  background: rgba(255, 77, 0, 0.2);
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 /* Asterisk indicator for config-modified gains */
@@ -1893,7 +2249,7 @@
   height: 18px;
   background: rgba(251, 191, 36, 0.15);
   border-radius: 3px;
-  color: #fbbf24;
+  color: var(--color-accent-gold);
   flex-shrink: 0;
 }
 
@@ -1905,7 +2261,7 @@
   background: rgba(0, 212, 255, 0.12);
   border: 1px solid rgba(0, 212, 255, 0.25);
   border-radius: 4px;
-  color: #00d4ff;
+  color: var(--accent-secondary, #00d4ff);
   font-size: 10px;
   font-weight: 600;
   cursor: pointer;
@@ -1933,7 +2289,7 @@
   gap: 8px;
   padding: 14px 32px;
   min-width: 200px;
-  background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)) 0%, #b8942e 100%);
   border: none;
   border-radius: 12px;
   color: #000;
@@ -1944,15 +2300,15 @@
   z-index: 100;
   box-shadow: 
     0 8px 24px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(212, 175, 55, 0.2);
+    0 2px 8px rgba(255, 77, 0, 0.2);
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c04a 0%, #d4af37 100%);
+  background: linear-gradient(135deg, #e6c04a 0%, var(--accent-primary, var(--color-accent-lime)) 100%);
   transform: translateX(-50%) translateY(-2px);
   box-shadow: 
     0 12px 32px rgba(0, 0, 0, 0.5),
-    0 4px 12px rgba(212, 175, 55, 0.35);
+    0 4px 12px rgba(255, 77, 0, 0.35);
 }
 
 .saveBtn:disabled {
@@ -1993,12 +2349,12 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
 .performanceTitle svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .buildStats {
@@ -2013,7 +2369,7 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .costBadge {
@@ -2028,17 +2384,17 @@
 
 .costVerified {
   border-color: rgba(16, 185, 129, 0.3);
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .costHigh {
   border-color: rgba(96, 165, 250, 0.3);
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
 }
 
 .costEstimated {
   border-color: rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
+  color: var(--color-accent-gold);
 }
 
 /* Performance Metrics - Compact Row Layout */
@@ -2073,7 +2429,7 @@
 }
 
 .metricLabel svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .metricValues {
@@ -2095,7 +2451,7 @@
 }
 
 .upgradedVal {
-  color: #10b981;
+  color: var(--color-accent-teal);
   font-weight: 600;
 }
 
@@ -2105,7 +2461,7 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .currentVal {
@@ -2127,7 +2483,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: #3b82f6;
+  background: var(--brand-blue);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
@@ -2136,7 +2492,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-light));
   border-radius: 3px;
   transition: all 0.4s ease;
 }
@@ -2272,8 +2628,8 @@
 }
 
 .categoryTabActive {
-  background: rgba(212, 175, 55, 0.1);
-  color: #d4af37;
+  background: rgba(255, 77, 0, 0.1);
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .tabBadge {
@@ -2283,11 +2639,11 @@
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  background: #10b981;
+  background: var(--brand-teal);
   border-radius: 9px;
   font-size: 10px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .tabsContent {
@@ -2337,14 +2693,14 @@
 .upgradeName {
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
 .upgradePrice {
   font-size: 14px;
   font-weight: 600;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .upgradeDescription {
@@ -2367,12 +2723,12 @@
 }
 
 .upgradeStat svg {
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .upgradeStatValue {
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .upgradeStatLabel {
@@ -2385,12 +2741,12 @@
   right: 12px;
   width: 24px;
   height: 24px;
-  background: #10b981;
+  background: var(--brand-teal);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* ===========================================
@@ -2430,7 +2786,7 @@
 .saveModal {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(180deg, #1e1f23 0%, #141517 100%);
+  background: linear-gradient(180deg, #162a3d 0%, #0d1b2a 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   overflow: hidden;
@@ -2447,8 +2803,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 18px 20px;
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  background: linear-gradient(180deg, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0.02) 100%);
+  border-bottom: 1px solid rgba(255, 77, 0, 0.15);
 }
 
 .saveModalTitleGroup {
@@ -2458,13 +2814,13 @@
 }
 
 .saveModalIcon {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .saveModalTitle {
   font-size: 17px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -2486,7 +2842,7 @@
 .saveModalClose:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Body */
@@ -2514,7 +2870,7 @@
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 16px;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -2527,9 +2883,9 @@
 
 .formInput:focus {
   outline: none;
-  border-color: rgba(212, 175, 55, 0.5);
+  border-color: rgba(255, 77, 0, 0.5);
   background: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 0, 0.1);
 }
 
 /* Build Summary Card */
@@ -2566,7 +2922,7 @@
 .buildSummaryValueGain {
   font-size: 13px;
   font-weight: 600;
-  color: #22c55e;
+  color: var(--brand-success);
 }
 
 /* Garage Option Section */
@@ -2599,7 +2955,7 @@
 }
 
 .customCheckboxChecked {
-  background: linear-gradient(135deg, #d4af37, #b8942e);
+  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)), #b8942e);
   border-color: transparent;
 }
 
@@ -2614,7 +2970,7 @@
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2626,12 +2982,12 @@
 
 .garageVehicleSelect:focus {
   outline: none;
-  border-color: rgba(212, 175, 55, 0.4);
+  border-color: rgba(255, 77, 0, 0.4);
 }
 
 .garageVehicleSelect option {
-  background: #1a1b1e;
-  color: #fff;
+  background: #132638;
+  color: var(--brand-text-primary);
   padding: 12px;
 }
 
@@ -2698,7 +3054,7 @@
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
-  color: #22c55e;
+  color: var(--brand-success);
   animation: fadeIn 0.2s ease;
 }
 
@@ -2713,7 +3069,7 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
   font-size: 12px;
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 /* Linked Community Post Notice */
@@ -2729,7 +3085,7 @@
 }
 
 .linkedPostNotice svg {
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
   margin-top: 2px;
   flex-shrink: 0;
 }
@@ -2749,7 +3105,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
@@ -2783,7 +3139,7 @@
 }
 
 .communityToggleInfo > svg {
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
   flex-shrink: 0;
 }
 
@@ -2804,7 +3160,7 @@
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #60a5fa;
+  color: var(--color-accent-blue-light);
   text-decoration: none;
 }
 
@@ -2868,11 +3224,11 @@
 }
 
 .toggleSwitchOn {
-  background: #10b981;
+  background: var(--brand-teal);
 }
 
 .toggleSwitchOn:hover {
-  background: #059669;
+  background: var(--brand-teal-dark);
 }
 
 .toggleKnob {
@@ -2895,7 +3251,7 @@
   margin: 10px 0 0;
   padding: 8px 10px;
   font-size: 12px;
-  color: #fbbf24;
+  color: var(--color-accent-gold);
   background: rgba(251, 191, 36, 0.1);
   border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: 8px;
@@ -2926,7 +3282,7 @@
 .cancelBtn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .confirmBtn {
@@ -2936,7 +3292,7 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #d4af37 0%, #b8942e 100%);
+  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)) 0%, #b8942e 100%);
   border: none;
   border-radius: 12px;
   color: #000;
@@ -2944,12 +3300,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.25);
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c04a 0%, #d4af37 100%);
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
+  background: linear-gradient(135deg, #e6c04a 0%, var(--accent-primary, var(--color-accent-lime)) 100%);
+  box-shadow: 0 6px 16px rgba(255, 77, 0, 0.35);
   transform: translateY(-1px);
 }
 
@@ -3043,11 +3399,11 @@
   gap: 10px;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .lapTimeTitleRow svg {
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 /* Track Selector */
@@ -3094,7 +3450,7 @@
 .trackSelectedName {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3138,7 +3494,7 @@
 .trackDetailValue {
   font-size: 12px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   text-transform: capitalize;
 }
 
@@ -3150,11 +3506,11 @@
 
 .trackTag {
   padding: 3px 8px;
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(255, 77, 0, 0.12);
   border-radius: 4px;
   font-size: 10px;
   font-weight: 500;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
   text-transform: capitalize;
 }
 
@@ -3198,7 +3554,7 @@
   padding: 4px 0;
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 13px;
   outline: none;
 }
@@ -3221,7 +3577,7 @@
 
 .trackClearBtn:hover {
   background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Quick Picks */
@@ -3291,7 +3647,7 @@
 .trackResultName {
   font-size: 13px;
   font-weight: 500;
-  color: #fff;
+  color: var(--brand-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3349,7 +3705,7 @@
   font-family: 'SF Mono', monospace;
   font-size: 28px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .lapTimeDelta {
@@ -3357,13 +3713,13 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .lapTimeImprovement {
   font-size: 16px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--color-accent-teal);
   background: rgba(16, 185, 129, 0.15);
   padding: 4px 12px;
   border-radius: 6px;
@@ -3725,7 +4081,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 16px;
   font-family: 'SF Mono', 'Monaco', monospace;
   text-align: center;
@@ -3748,7 +4104,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 14px;
 }
 
@@ -3764,7 +4120,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 13px;
   resize: vertical;
   min-height: 60px;
@@ -3813,7 +4169,7 @@
   background: linear-gradient(135deg, #34c759, #30b350);
   border: none;
   border-radius: 10px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -4063,13 +4419,13 @@
 }
 
 .handlingBalanceHeader svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .handlingBalanceHeader span:first-of-type {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   flex: 1;
 }
 
@@ -4169,11 +4525,11 @@
   margin-bottom: 16px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .aeroBalanceHeader svg {
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .aeroEmpty {
@@ -4229,7 +4585,7 @@
 
 .aeroBarFill {
   width: 100%;
-  background: linear-gradient(180deg, #3b82f6 0%, #60a5fa 100%);
+  background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-light) 100%);
   border-radius: 4px;
   transition: height 0.3s ease;
   min-height: 4px;
@@ -4238,7 +4594,7 @@
 .aeroBarValue {
   font-size: 10px;
   font-weight: 600;
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .aeroStats {
@@ -4261,7 +4617,7 @@
 .aeroStatValue {
   font-size: 18px;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .aeroStatLabel {
@@ -4289,13 +4645,13 @@
 }
 
 .powerLimitsHeader svg {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .powerLimitsHeader span:first-of-type {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   flex: 1;
 }
 
@@ -4336,7 +4692,7 @@
 
 .powerLimitFill {
   height: 100%;
-  background: linear-gradient(90deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+  background: linear-gradient(90deg, var(--brand-teal) 0%, #f59e0b 70%, #ef4444 100%);
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -4353,24 +4709,24 @@
 }
 
 .powerLimitItem.atRisk .powerLimitLabel {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .powerLimitItem.atRisk .powerLimitValue {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .powerLimitItem.overLimit .powerLimitLabel {
-  color: #ef4444;
+  color: var(--brand-error);
   font-weight: 600;
 }
 
 .powerLimitItem.overLimit .powerLimitValue {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .powerLimitItem.overLimit .powerLimitValue svg {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .powerLimitsFooter {
@@ -4409,11 +4765,11 @@
   margin-bottom: 16px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .brandRecsHeader svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .brandRecsList {
@@ -4449,8 +4805,8 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
   padding: 4px 10px;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.2);
   border-radius: 6px;
 }
 
@@ -4845,6 +5201,92 @@
   .watchOutsCardList li {
     font-size: 11px;
     padding-left: 10px;
+  }
+  
+  /* Full-width Recommendation Section - Mobile */
+  .recommendationSection {
+    padding: 12px;
+  }
+  
+  .recommendationBannerFull {
+    padding: 14px;
+  }
+  
+  .recommendationTitleFull {
+    font-size: 10px;
+  }
+  
+  .focusTagFull {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+  
+  .recommendationTextFull {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  
+  .insightsGridFull {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+  
+  .insightsCardFull,
+  .watchOutsCardFull {
+    padding: 12px;
+  }
+  
+  .insightsCardHeaderFull,
+  .watchOutsCardHeaderFull {
+    font-size: 9px;
+    margin-bottom: 8px;
+  }
+  
+  .insightsCardListFull li,
+  .watchOutsCardListFull li {
+    font-size: 12px;
+  }
+  
+  .modGainFull {
+    font-size: 10px;
+    padding: 2px 5px;
+  }
+  
+  /* Build Recommendations - Mobile */
+  .buildRecommendationsSection {
+    padding: 0 12px 12px;
+  }
+  
+  .buildRecommendationsHeader {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .buildRecommendationsGrid {
+    gap: 8px;
+  }
+  
+  .buildRecBtn {
+    padding: 10px 12px;
+    font-size: 12px;
+    min-width: 60px;
+    flex: 1;
+  }
+  
+  .buildRecommendationsCustomRow {
+    margin-top: 8px;
+  }
+  
+  .buildRecBtnCustomFull {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  .buildRecBtnCustomFull .customBuildHint {
+    font-size: 10px;
   }
   
   /* Config Section - Tighter */
@@ -5395,12 +5837,12 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
 }
 
 .tuningEngineBadge {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
@@ -5413,7 +5855,7 @@
 }
 
 .tuningStockPower strong {
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .tuningInsightsGrid {
@@ -5444,7 +5886,7 @@
 }
 
 .tuningCardHeader svg {
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 /* Stage Progressions */
@@ -5470,13 +5912,13 @@
 .stageName {
   font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .stageGain {
   font-size: 12px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
   background: rgba(16, 185, 129, 0.15);
   padding: 2px 8px;
   border-radius: 4px;
@@ -5503,7 +5945,7 @@
 .stageTotalHp {
   font-size: 11px;
   font-weight: 600;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 /* Tuning Platforms */
@@ -5526,12 +5968,12 @@
 .platformName {
   font-size: 13px;
   font-weight: 500;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .platformPrice {
   font-size: 12px;
-  color: #10b981;
+  color: var(--color-accent-teal);
   text-align: right;
 }
 
@@ -5566,7 +6008,7 @@
 .limitValue {
   font-size: 13px;
   font-weight: 600;
-  color: #ef4444;
+  color: var(--brand-error);
   text-align: right;
 }
 
@@ -5597,7 +6039,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #d4af37;
+  color: var(--accent-primary, var(--color-accent-lime));
 }
 
 .brandNames {
@@ -5617,7 +6059,7 @@
 /* Data Quality Badge */
 .dataQualityBadge {
   background: var(--quality-color, #6b7280);
-  color: #fff;
+  color: var(--brand-text-primary);
   padding: 3px 8px;
   border-radius: 4px;
   font-size: 10px;
@@ -5651,7 +6093,7 @@
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 6px;
-  border-left: 2px solid rgba(212, 175, 55, 0.3);
+  border-left: 2px solid rgba(255, 77, 0, 0.3);
 }
 
 .upgradeName {
@@ -5671,7 +6113,7 @@
 .upgradeGain {
   font-size: 11px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal);
   background: rgba(16, 185, 129, 0.15);
   padding: 3px 8px;
   border-radius: 4px;
@@ -5717,7 +6159,7 @@
 }
 
 .insightStrength svg {
-  color: #10b981;
+  color: var(--color-accent-teal);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -5728,7 +6170,7 @@
 }
 
 .insightWeakness svg {
-  color: #f59e0b;
+  color: var(--color-warning);
   flex-shrink: 0;
   margin-top: 2px;
 }

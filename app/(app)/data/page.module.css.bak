@@ -1,0 +1,755 @@
+/* ==========================================================================
+   DATA PAGE - Performance data hub
+   Vehicle-centric data viewing with synthetic and logged data
+   Matches My Garage page layout for consistency
+   ========================================================================== */
+
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0 16px;
+  /* Bottom padding for tab bar */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  background: var(--color-bg-base);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Mobile: Tighter horizontal padding + extra bottom for action buttons */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 12px;
+    /* Increased bottom padding to ensure action buttons stay above PWA menu */
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 24px));
+  }
+}
+
+/* Desktop: No tab bar */
+@media (min-width: 1024px) {
+  .container {
+    padding-bottom: 0;
+  }
+}
+
+/* Header - Matches My Garage page styling */
+.header {
+  padding: 16px 0 8px;
+}
+
+/* Mobile: Tighter header */
+@media (max-width: 767px) {
+  .header {
+    padding: 12px 0 6px;
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 2px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+  margin: 0;
+}
+
+/* ==========================================================================
+   VEHICLE SELECTOR - Main vehicle dropdown
+   ========================================================================== */
+
+.vehicleSelectorSection {
+  margin-bottom: 20px;
+}
+
+.vehicleSelectorWrapper {
+  position: relative;
+}
+
+.vehicleSelectorBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.vehicleSelectorBtn:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%);
+}
+
+.vehicleImage {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.vehicleImage svg {
+  color: var(--color-accent-teal);
+}
+
+.vehicleSelectorInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vehicleSelectorLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #808080);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vehicleSelectorName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vehicleSelectorNickname {
+  font-size: 0.8125rem;
+  color: var(--color-accent-teal);
+  font-style: italic;
+}
+
+.chevron {
+  color: var(--text-secondary, #606060);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Vehicle Dropdown */
+.vehicleDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(13, 27, 42, 0.98);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 14px;
+  padding: 8px;
+  z-index: 1000;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(16, 185, 129, 0.15);
+  max-height: 320px;
+  overflow-y: auto;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vehicleDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.vehicleDropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vehicleDropdownItemActive {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.vehicleDropdownImage {
+  width: 36px;
+  height: 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.vehicleDropdownImage svg {
+  color: var(--text-secondary, #808080);
+}
+
+.vehicleDropdownItemActive .vehicleDropdownImage {
+  border: 2px solid rgba(16, 185, 129, 0.5);
+}
+
+.vehicleDropdownItemActive .vehicleDropdownImage svg {
+  color: var(--color-accent-teal);
+}
+
+.vehicleDropdownEmpty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary, #808080);
+  font-size: 0.875rem;
+}
+
+.checkmark {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.vehicleDropdownInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vehicleDropdownName {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary, #ffffff);
+}
+
+.vehicleDropdownNickname {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+}
+
+.vehicleDropdownAdd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--accent-primary, var(--color-accent-lime));
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.vehicleDropdownAdd:hover {
+  color: var(--text-primary, #ffffff);
+}
+
+.vehicleDropdownAdd svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   FILTER BAR - Horizontal scroll pills
+   ========================================================================== */
+
+.filterBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 4px;
+}
+
+.filterBar::-webkit-scrollbar {
+  display: none;
+}
+
+.filterPill {
+  flex-shrink: 0;
+  padding: 10px 18px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 24px;
+  color: var(--text-secondary, #808080);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.filterPill:hover {
+  border-color: var(--border-subtle, #3a3a3a);
+  color: var(--text-primary, #ffffff);
+}
+
+.filterActive {
+  background: var(--color-accent-teal);
+  border-color: var(--color-accent-teal);
+  color: var(--color-text-primary);
+}
+
+.filterActive:hover {
+  background: var(--color-accent-teal);
+  border-color: var(--color-accent-teal);
+  color: var(--color-text-primary);
+}
+
+/* ==========================================================================
+   SECTION STYLES
+   ========================================================================== */
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 8px;
+}
+
+.sectionTitle svg {
+  color: var(--color-accent-teal);
+  width: 20px;
+  height: 20px;
+}
+
+.sectionDescription {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 16px;
+}
+
+/* ==========================================================================
+   SYNTHETIC DATA SECTION
+   ========================================================================== */
+
+.syntheticDataSection {
+  margin-bottom: 32px;
+}
+
+.dataCard {
+  margin-bottom: 16px;
+}
+
+.loadingCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 16px;
+  color: var(--text-secondary, #808080);
+  font-size: 0.9375rem;
+}
+
+/* Build Prompt */
+.buildPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.2);
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.buildPrompt p {
+  font-size: 0.875rem;
+  color: var(--color-warning);
+  margin: 0;
+}
+
+.buildPromptBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(255, 149, 0, 0.15);
+  border: 1px solid rgba(255, 149, 0, 0.3);
+  border-radius: 8px;
+  color: var(--color-warning);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.buildPromptBtn:hover {
+  background: rgba(255, 149, 0, 0.25);
+}
+
+.buildPromptBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   DATA SOURCES - Feature grid
+   ========================================================================== */
+
+.dataSources {
+  margin-bottom: 32px;
+}
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .sourceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.sourceCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-align: left;
+  width: 100%;
+}
+
+.sourceCard:hover:not(:disabled) {
+  border-color: var(--accent-primary, var(--color-accent-lime));
+  background: var(--background-secondary, #141414);
+}
+
+.sourceCard:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sourceIcon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 77, 0, 0.1);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.sourceIcon svg {
+  color: var(--accent-primary, var(--color-accent-lime));
+}
+
+.sourceContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.sourceContent h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 2px;
+}
+
+.sourceContent p {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #808080);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.sourceCard > svg {
+  color: var(--text-secondary, #606060);
+  flex-shrink: 0;
+}
+
+.comingSoon {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--accent-secondary, #00d4ff);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   FUTURE IDEAS SECTION
+   ========================================================================== */
+
+.futureIdeas {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.futureIdeasTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 6px;
+}
+
+.futureIdeasDescription {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 16px;
+}
+
+.futureIdeasGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.futureIdea {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #808080);
+}
+
+.futureIdeaIcon {
+  font-size: 1rem;
+}
+
+.feedbackLink {
+  display: inline-block;
+  font-size: 0.8125rem;
+  color: var(--accent-primary, var(--color-accent-lime));
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.feedbackLink:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   NO VEHICLES CTA
+   ========================================================================== */
+
+.noVehicles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--background-card, #1a1a1a);
+  border: 1px dashed var(--border-subtle, #2a2a2a);
+  border-radius: 16px;
+  margin-top: 24px;
+}
+
+.noVehicles svg {
+  width: 48px;
+  height: 48px;
+  color: var(--text-secondary, #606060);
+  margin-bottom: 16px;
+}
+
+.noVehicles p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 20px;
+  max-width: 240px;
+}
+
+.addVehicleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--accent-primary, var(--color-accent-lime));
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.addVehicleBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.addVehicleBtn svg {
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+}
+
+/* ==========================================================================
+   EMPTY & LOADING STATES
+   ========================================================================== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 200px);
+  padding: 40px 24px;
+}
+
+.emptyState svg {
+  color: var(--accent-primary, var(--color-accent-lime));
+  margin-bottom: 24px;
+  opacity: 0.8;
+}
+
+.emptyState h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 8px;
+}
+
+.emptyState p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+  margin: 0 0 24px;
+  max-width: 280px;
+}
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  background: var(--accent-primary, var(--color-accent-lime));
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  gap: 16px;
+}
+
+.loadingState p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #808080);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-subtle, #2a2a2a);
+  border-top-color: var(--color-accent-teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  /* Container styles handled by base + mobile media queries above */
+  
+  .futureIdeasGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .futureIdea {
+    flex-direction: column;
+    text-align: center;
+    padding: 14px;
+  }
+  
+  .futureIdeaIcon {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .futureIdeasGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .buildPrompt {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .buildPromptBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

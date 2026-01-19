@@ -56,9 +56,9 @@
 }
 
 .expandBtn:hover {
-  background: var(--accent-primary, #ff4d00);
-  border-color: var(--accent-primary, #ff4d00);
-  color: var(--text-primary, #ffffff);
+  background: var(--brand-gold);
+  border-color: var(--brand-gold);
+  color: var(--brand-text-primary);
   transform: scale(1.05);
 }
 
@@ -87,13 +87,13 @@
   transition: color 0.2s ease;
 }
 
-/* HP stat is primary - make it bold and orange */
+/* HP stat is primary - make it bold and gold */
 .statItem:first-child {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .statItem:first-child svg {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .statItem:first-child .statValue {
@@ -150,10 +150,10 @@
   justify-content: center;
   gap: var(--space-xs, 6px);
   padding: 12px 20px;
-  background: var(--accent-primary, #ff4d00);
+  background: var(--brand-lime);
   border: none;
   border-radius: var(--radius-md, 8px);
-  color: var(--text-primary, #ffffff);
+  color: var(--brand-bg-primary);
   font-family: var(--font-display, system-ui);
   font-size: 14px;
   font-weight: 700;
@@ -163,22 +163,22 @@
   flex-shrink: 0;
   min-width: 110px;
   box-shadow: 
-    0 4px 12px rgba(255, 77, 0, 0.3),
+    0 4px 12px rgba(212, 255, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: var(--accent-secondary, #00d4ff);
+  background: var(--brand-lime-dark);
   transform: translateY(-2px);
   box-shadow: 
-    0 8px 24px rgba(0, 212, 255, 0.4),
+    0 8px 24px rgba(212, 255, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .saveBtn:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 
-    0 2px 8px rgba(255, 77, 0, 0.3),
+    0 2px 8px rgba(212, 255, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -260,7 +260,7 @@
   background: transparent;
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-sm, 6px);
-  color: #ef4444;
+  color: var(--brand-error);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -289,7 +289,7 @@
   
   /* Custom scrollbar */
   scrollbar-width: thin;
-  scrollbar-color: var(--accent-primary, #ff4d00) transparent;
+  scrollbar-color: var(--brand-gold) transparent;
 }
 
 .upgradesList::-webkit-scrollbar {
@@ -301,7 +301,7 @@
 }
 
 .upgradesList::-webkit-scrollbar-thumb {
-  background: var(--accent-primary, #ff4d00);
+  background: var(--brand-gold);
   border-radius: 2px;
 }
 
@@ -315,7 +315,7 @@
   margin: 0;
   font-size: 10px;
   font-weight: 700;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -333,8 +333,8 @@
 }
 
 .upgradeItem:hover {
-  border-color: var(--accent-primary, #ff4d00);
-  background: rgba(255, 77, 0, 0.05);
+  border-color: var(--brand-gold);
+  background: rgba(212, 168, 75, 0.05);
 }
 
 .upgradeName {
@@ -358,7 +358,7 @@
   font-family: var(--font-display, system-ui);
   font-size: 13px;
   font-weight: 700;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 .upgradeCost {
@@ -400,7 +400,7 @@
 
 /* HP total should be accent colored */
 .totalItem:first-child .totalValue {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 /* Inline Summary (not sticky) */
@@ -430,11 +430,11 @@
 
 /* First inline stat (HP) gets accent color */
 .inlineStat:first-child {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 .inlineStat:first-child svg {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 /* Desktop adjustments */

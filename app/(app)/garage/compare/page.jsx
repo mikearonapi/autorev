@@ -12,6 +12,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useCompare } from '@/components/providers/CompareProvider';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Icons
 const Icons = {
@@ -111,7 +112,11 @@ export default function ComparePage() {
   if (!isHydrated) {
     return (
       <div className={styles.page}>
-        <div className={styles.loading}>Loading...</div>
+        <LoadingSpinner 
+          text="Loading comparison..." 
+          size="large"
+          fullPage 
+        />
       </div>
     );
   }

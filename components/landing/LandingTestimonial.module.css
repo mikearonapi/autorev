@@ -41,8 +41,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(212, 175, 55, 0.12);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(255, 77, 0, 0.12);
+  border: 1px solid rgba(255, 77, 0, 0.2);
   color: var(--sn-accent);
   padding: 6px var(--space-sm);
   border-radius: var(--radius-full);

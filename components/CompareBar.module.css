@@ -181,8 +181,8 @@
 
 .clearButton:hover {
   background: rgba(231, 76, 60, 0.2);
-  border-color: #e74c3c;
-  color: #e74c3c;
+  border-color: var(--brand-error);
+  color: var(--brand-error);
 }
 
 /* Expanded State */
@@ -273,7 +273,7 @@
 
 .removeButton:hover {
   background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
+  color: var(--brand-error);
 }
 
 /* Add More */

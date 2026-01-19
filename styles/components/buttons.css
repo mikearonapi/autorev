@@ -1,0 +1,255 @@
+/* ==========================================================================
+   AutoRev Button Components
+   Single source of truth for all button styles
+   
+   USAGE IN MODULE CSS:
+   .myButton { composes: btn-primary from '@/styles/components/buttons.css'; }
+   
+   Or use classes directly in JSX
+   ========================================================================== */
+
+/* ==========================================================================
+   BASE BUTTON
+   All buttons inherit from this
+   ========================================================================== */
+
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm, 8px);
+  min-height: var(--touch-target-min, 44px);
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-button, 9999px);
+  cursor: pointer;
+  transition: var(--transition-button);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.btn-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-base:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   PRIMARY BUTTON - LIME
+   Main CTAs, most important actions
+   ========================================================================== */
+
+.btn-primary {
+  composes: btn-base;
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-text-inverted, #0a1628);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-lime-dark, #bfe600);
+  box-shadow: var(--shadow-lime);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Large primary button */
+.btn-primary-lg {
+  composes: btn-primary;
+  min-height: 52px;
+  padding: 16px 32px;
+  font-size: var(--text-body, 16px);
+}
+
+/* Full-width primary button */
+.btn-primary-full {
+  composes: btn-primary;
+  width: 100%;
+}
+
+/* ==========================================================================
+   SECONDARY BUTTON - OUTLINE
+   Secondary actions, less prominent
+   ========================================================================== */
+
+.btn-secondary {
+  composes: btn-base;
+  background: transparent;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.2));
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-accent-lime, #d4ff00);
+  background: var(--color-accent-lime-muted, rgba(212, 255, 0, 0.05));
+}
+
+/* ==========================================================================
+   ACCENT BUTTON - GOLD
+   Secondary CTAs, brand-colored actions
+   ========================================================================== */
+
+.btn-accent {
+  composes: btn-base;
+  background: var(--color-accent-gold, #d4a84b);
+  color: var(--color-text-inverted, #000);
+  border-radius: var(--radius-md, 10px);
+}
+
+.btn-accent:hover:not(:disabled) {
+  background: var(--color-accent-gold-hover, #e8c875);
+  box-shadow: var(--shadow-gold);
+}
+
+/* ==========================================================================
+   TEAL BUTTON - SUCCESS/IMPROVEMENTS
+   For positive actions, confirmations
+   ========================================================================== */
+
+.btn-teal {
+  composes: btn-base;
+  background: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #fff);
+  border-radius: var(--radius-md, 10px);
+}
+
+.btn-teal:hover:not(:disabled) {
+  background: var(--color-accent-teal-light, #34d399);
+  box-shadow: var(--shadow-teal);
+}
+
+/* Outline variant */
+.btn-teal-outline {
+  composes: btn-base;
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  color: var(--color-accent-teal, #10b981);
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
+  border-radius: var(--radius-md, 10px);
+}
+
+.btn-teal-outline:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: var(--color-accent-teal, #10b981);
+}
+
+/* ==========================================================================
+   GHOST BUTTON - MINIMAL
+   Tertiary actions, inline actions
+   ========================================================================== */
+
+.btn-ghost {
+  composes: btn-base;
+  background: transparent;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  padding: 8px 12px;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  color: var(--color-text-primary, #fff);
+}
+
+/* ==========================================================================
+   ICON BUTTON
+   Square buttons with icons only
+   ========================================================================== */
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  padding: 10px;
+  background: transparent;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  border: none;
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  color: var(--color-text-primary, #fff);
+}
+
+.btn-icon:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Icon button with background */
+.btn-icon-filled {
+  composes: btn-icon;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* Small icon button */
+.btn-icon-sm {
+  composes: btn-icon;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 8px;
+}
+
+/* ==========================================================================
+   DANGER BUTTON
+   Destructive actions
+   ========================================================================== */
+
+.btn-danger {
+  composes: btn-base;
+  background: var(--color-error, #ef4444);
+  color: var(--color-text-primary, #fff);
+  border-radius: var(--radius-md, 10px);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: var(--shadow-error);
+}
+
+.btn-danger-outline {
+  composes: btn-base;
+  background: var(--color-error-muted, rgba(239, 68, 68, 0.15));
+  color: var(--color-error, #ef4444);
+  border: 1px solid var(--color-error-border, rgba(239, 68, 68, 0.3));
+  border-radius: var(--radius-md, 10px);
+}
+
+/* ==========================================================================
+   BUTTON SIZES
+   ========================================================================== */
+
+.btn-sm {
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: var(--text-xs, 12px);
+}
+
+.btn-lg {
+  min-height: 52px;
+  padding: 16px 28px;
+  font-size: var(--text-body, 16px);
+}
+
+.btn-xl {
+  min-height: 56px;
+  padding: 18px 32px;
+  font-size: 18px;
+}

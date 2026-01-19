@@ -1,0 +1,17 @@
+/* ==========================================================================
+   AutoRev Component Styles
+   Reusable UI component patterns
+   
+   USAGE: Import specific components or this index file
+   
+   These styles are designed to:
+   1. Be reusable across pages (no duplication)
+   2. Map cleanly to React Native components
+   3. Support theming via CSS variables
+   ========================================================================== */
+
+@import './buttons.css';
+@import './cards.css';
+@import './badges.css';
+@import './progress.css';
+@import './forms.css';

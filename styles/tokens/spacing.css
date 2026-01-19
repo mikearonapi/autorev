@@ -1,0 +1,121 @@
+/* ==========================================================================
+   AutoRev Spacing Tokens
+   Consistent spacing system for margins, padding, gaps
+   
+   Based on 4px grid (iOS/Android native pattern)
+   ========================================================================== */
+
+:root {
+  /* =======================================================================
+     BASE SPACING SCALE
+     4px base unit - aligns with native app spacing
+     ======================================================================= */
+  
+  --space-0: 0;
+  --space-1: 4px;    /* Tight */
+  --space-2: 8px;    /* XS */
+  --space-3: 12px;   /* SM */
+  --space-4: 16px;   /* MD - Base */
+  --space-5: 20px;   /* LG */
+  --space-6: 24px;   /* XL */
+  --space-8: 32px;   /* 2XL */
+  --space-10: 40px;  /* 3XL */
+  --space-12: 48px;  /* 4XL */
+  --space-16: 64px;  /* 5XL */
+  --space-20: 80px;  /* 6XL */
+  
+  /* =======================================================================
+     SEMANTIC SPACING
+     Named aliases for common use cases
+     ======================================================================= */
+  
+  /* Component internal padding */
+  --padding-card: var(--space-4);           /* 16px */
+  --padding-card-sm: var(--space-3);        /* 12px */
+  --padding-modal: var(--space-5);          /* 20px */
+  --padding-input: var(--space-3) var(--space-4);  /* 12px 16px */
+  
+  /* Page/section padding */
+  --padding-page-x: var(--space-4);         /* 16px - mobile */
+  --padding-page-y: var(--space-6);         /* 24px */
+  --padding-section: var(--space-6);        /* 24px */
+  
+  /* Gaps */
+  --gap-xs: var(--space-1);   /* 4px - tight spacing */
+  --gap-sm: var(--space-2);   /* 8px - default */
+  --gap-md: var(--space-3);   /* 12px - between cards */
+  --gap-lg: var(--space-4);   /* 16px - section spacing */
+  --gap-xl: var(--space-6);   /* 24px - large sections */
+  
+  /* =======================================================================
+     TOUCH TARGETS
+     iOS/Android minimum: 44x44px
+     ======================================================================= */
+  
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  --touch-target-large: 56px;
+  
+  /* =======================================================================
+     SAFE AREAS
+     For notched devices (iPhone X+, Android cutouts)
+     ======================================================================= */
+  
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  
+  /* Bottom tab bar height (including safe area) */
+  --bottom-tab-height: calc(60px + var(--safe-area-bottom));
+  
+  /* =======================================================================
+     BORDER RADIUS
+     Consistent rounding across components
+     ======================================================================= */
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;  /* Pills, circles */
+  
+  /* Component-specific radius */
+  --radius-card: var(--radius-lg);
+  --radius-button: var(--radius-full);
+  --radius-input: var(--radius-md);
+  --radius-badge: var(--radius-sm);
+  --radius-modal: var(--radius-xl);
+  
+  /* =======================================================================
+     Z-INDEX SCALE
+     Layering system for overlapping elements
+     ======================================================================= */
+  
+  --z-base: 0;
+  --z-above: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-toast: 700;
+  --z-tooltip: 800;
+  --z-max: 9999;
+}
+
+/* Responsive page padding */
+@media (min-width: 768px) {
+  :root {
+    --padding-page-x: var(--space-6);       /* 24px */
+    --padding-card: var(--space-5);         /* 20px */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --padding-page-x: var(--space-8);       /* 32px */
+  }
+}

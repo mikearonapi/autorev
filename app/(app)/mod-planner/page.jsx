@@ -331,10 +331,10 @@ function PerformanceContent() {
           
           {/* Loading State */}
           {(isLoading || !isHydrated) && (
-            <div className={styles.loadingState}>
-              <div className={styles.spinner}></div>
-              <p>Loading your cars...</p>
-            </div>
+            <LoadingSpinner 
+              text="Loading your cars..." 
+              size="large"
+            />
           )}
 
           {!isLoading && isHydrated && (
@@ -483,10 +483,12 @@ function PerformanceLoading() {
           </div>
         </div>
       </section>
-      <div className={styles.loadingState}>
-        <LoadingSpinner size="large" />
-        <p>Loading Performance HUB...</p>
-      </div>
+      <LoadingSpinner 
+        variant="branded" 
+        text="Performance HUB" 
+        subtext="Loading tuning tools..."
+        fullPage 
+      />
     </div>
   );
 }

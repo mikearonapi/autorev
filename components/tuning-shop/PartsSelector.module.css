@@ -33,7 +33,7 @@
   font-size: 12px;
   padding: 2px 8px;
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--brand-blue-light);
   border-radius: 10px;
   font-weight: 500;
 }
@@ -116,9 +116,9 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  background: #10b981;
+  background: var(--brand-teal);
   border-radius: 4px;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Item Info */
@@ -161,7 +161,7 @@
 .addPartInline {
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
+  color: var(--brand-blue-light);
 }
 
 .addPartInline:hover {
@@ -234,7 +234,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 13px;
   transition: border-color 0.2s;
 }
@@ -280,13 +280,13 @@
 }
 
 .saveBtn {
-  background: linear-gradient(135deg, #d4af37, #b8973a);
+  background: var(--brand-lime);
   border: none;
-  color: #000;
+  color: var(--brand-bg-primary);
 }
 
 .saveBtn:hover {
-  background: linear-gradient(135deg, #e5c349, #c9a44b);
+  background: var(--brand-lime-dark);
 }
 
 /* Total Row */
@@ -305,7 +305,7 @@
 
 .totalAmount {
   font-weight: 600;
-  color: #10b981;
+  color: var(--brand-teal);
   font-size: 16px;
 }
 

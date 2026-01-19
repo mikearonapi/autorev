@@ -25,7 +25,7 @@
 
 /* Panel */
 .panel {
-  background: var(--surface-elevated, #1a1a2e);
+  background: var(--surface-elevated, var(--brand-bg-card-dark));
   border-radius: 16px;
   max-width: 640px;
   width: 100%;
@@ -54,7 +54,7 @@
 @media (max-width: 480px) {
   .overlay {
     padding: 0;
-    background: var(--surface-elevated, #1a1a2e);
+    background: var(--surface-elevated, var(--brand-bg-card-dark));
     align-items: flex-start; /* Start from top on mobile */
     /* Account for fixed header + beta banner at top of page */
     padding-top: calc(100px + env(safe-area-inset-top, 0px));
@@ -152,7 +152,7 @@
 }
 
 .metaItem svg {
-  color: var(--accent-primary, #00d4ff);
+  color: var(--accent-secondary, #00d4ff);
 }
 
 .tierBadge {
@@ -198,12 +198,12 @@
 
 .tierBadge.streetSport {
   background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
+  color: var(--brand-teal);
 }
 
 .tierBadge.trackPack {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: var(--brand-blue-light);
 }
 
 .tierBadge.timeAttack {
@@ -213,7 +213,7 @@
 
 .tierBadge.ultimatePower {
   background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  color: var(--brand-error-light);
 }
 
 /* Body */
@@ -236,7 +236,7 @@
 .section h3 {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--accent-primary, #00d4ff);
+  color: var(--accent-secondary, #00d4ff);
   margin: 0 0 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -434,7 +434,7 @@
   display: inline-block;
   padding: 0.3rem 0.625rem;
   background: rgba(0, 212, 255, 0.15);
-  color: var(--accent-primary, #00d4ff);
+  color: var(--accent-secondary, #00d4ff);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -453,7 +453,7 @@
   display: inline-block;
   padding: 0.3rem 0.625rem;
   background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  color: var(--brand-error-light);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -542,7 +542,7 @@
 }
 
 .addToBuildBtn {
-  background: var(--accent-primary, #00d4ff);
+  background: var(--accent-secondary, #00d4ff);
   color: #000;
   border: none;
   border-radius: 8px;
@@ -620,11 +620,11 @@
   transition: all 0.2s ease;
 }
 
-.chainStep:nth-child(1) { border-left-color: #22c55e; }
-.chainStep:nth-child(2) { border-left-color: #3b82f6; }
-.chainStep:nth-child(3) { border-left-color: #f59e0b; }
-.chainStep:nth-child(4) { border-left-color: #ef4444; }
-.chainStep:nth-child(5) { border-left-color: #8b5cf6; }
+.chainStep:nth-child(1) { border-left-color: var(--brand-success); }
+.chainStep:nth-child(2) { border-left-color: var(--brand-blue); }
+.chainStep:nth-child(3) { border-left-color: var(--brand-warning); }
+.chainStep:nth-child(4) { border-left-color: var(--brand-error); }
+.chainStep:nth-child(5) { border-left-color: var(--brand-purple-accent); }
 .chainStep:nth-child(6) { border-left-color: #ec4899; }
 .chainStep:nth-child(7) { border-left-color: #06b6d4; }
 
@@ -642,7 +642,7 @@
   width: 20px;
   height: 20px;
   background: rgba(0, 212, 255, 0.2);
-  color: var(--accent-primary, #00d4ff);
+  color: var(--accent-secondary, #00d4ff);
   border-radius: 50%;
   font-size: 0.6875rem;
   font-weight: 700;

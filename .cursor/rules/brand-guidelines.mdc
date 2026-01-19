@@ -1,0 +1,351 @@
+---
+description: MANDATORY brand color and typography rules for AutoRev. Apply these rules when generating any UI component, styling, or design element.
+globs:
+  - "app/**/*.jsx"
+  - "app/**/*.tsx"
+  - "app/**/*.css"
+  - "components/**/*.jsx"
+  - "components/**/*.tsx"
+  - "components/**/*.css"
+alwaysApply: true
+---
+
+# AutoRev Brand Guidelines
+
+> **CRITICAL:** ALL UI code must use these brand colors and typography. Non-compliance results in inconsistent user experience.
+
+---
+
+## Part 1: Core Brand Colors
+
+### 1.1 Color Constants
+
+```css
+/* Background Colors */
+--brand-bg-primary: #0d1b2a;     /* Main page backgrounds */
+--brand-bg-secondary: #1b263b;   /* Cards, elevated surfaces */
+--brand-bg-card: rgba(255, 255, 255, 0.04);
+--brand-bg-card-hover: rgba(255, 255, 255, 0.08);
+
+/* Text Colors */
+--brand-text-primary: #ffffff;
+--brand-text-secondary: #94a3b8;   /* Slate-400 - Secondary text */
+--brand-text-tertiary: #64748b;    /* Slate-500 - Tertiary text */
+--brand-text-muted: #475569;       /* Slate-600 - Muted text */
+
+/* Accent Colors - SEMANTIC MEANINGS */
+--brand-lime: #d4ff00;             /* EMPHASIS: Headlines, CTAs, badges */
+--brand-teal: #10b981;             /* IMPROVEMENTS: Gains, selections, positive */
+--brand-blue: #3b82f6;             /* BASELINE: Stock values, original data */
+--brand-gold: #d4a84b;             /* LABELS: Brand accent, category labels */
+```
+
+### 1.2 Color Usage Rules
+
+| Color | Hex | USE FOR | NEVER USE FOR |
+|-------|-----|---------|---------------|
+| **Lime** | `#d4ff00` | Primary CTAs, emphasized headlines, badges | Body text, backgrounds |
+| **Teal** | `#10b981` | Improvements, gains, active selections, positive changes | Static labels, warnings |
+| **Blue** | `#3b82f6` | Baseline/stock values, original specs, comparison data | Success states, CTAs |
+| **Gold** | `#d4a84b` | Category labels, brand accent on dark, secondary buttons | Primary CTAs, improvements |
+
+### 1.3 Semantic Colors
+
+```css
+--brand-success: #22c55e;    /* Completed actions */
+--brand-warning: #f59e0b;    /* Caution states */
+--brand-error: #ef4444;      /* Errors, destructive */
+--brand-info: #3b82f6;       /* Informational */
+```
+
+---
+
+## Part 2: Chart & Visualization Colors
+
+### 2.1 Chart Color System
+
+```css
+/* Chart Elements */
+--brand-chart-outline: rgba(255, 255, 255, 0.15);   /* Grid lines */
+--brand-chart-border: rgba(255, 255, 255, 0.08);    /* Card borders */
+--brand-chart-grid: rgba(255, 255, 255, 0.08);      /* Track backgrounds */
+--brand-chart-stock: #3b82f6;                       /* Baseline data */
+--brand-chart-modified: #10b981;                    /* Modified data */
+```
+
+### 2.2 Progress Bar Gradients
+
+```css
+/* Stock/Baseline Progress Bar */
+.progress-baseline {
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+/* Modified/Improved Progress Bar */
+.progress-improved {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+}
+
+/* Track Background */
+.progress-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+```
+
+### 2.3 Comparison Visualization Rules
+
+When showing stock vs modified comparisons:
+- **Stock/Baseline:** Always use `#3b82f6` (blue)
+- **Modified/Improved:** Always use `#10b981` (teal)
+- **Gain badges:** Use teal background `rgba(16, 185, 129, 0.15)` with teal text
+
+```tsx
+// CORRECT
+<span className="text-[#3b82f6]">444 HP</span>  {/* Stock */}
+<span className="text-[#10b981]">543 HP</span>  {/* Modified */}
+<span className="bg-[rgba(16,185,129,0.15)] text-[#10b981]">+99</span>  {/* Gain */}
+
+// WRONG - Don't mix colors
+<span className="text-gray-400">444 HP</span>  {/* Stock - should be blue */}
+<span className="text-green-400">543 HP</span>  {/* Modified - should be teal #10b981 */}
+```
+
+---
+
+## Part 3: Typography
+
+### 3.1 Font Families
+
+```css
+--font-display: var(--font-oswald, 'Oswald'), sans-serif;  /* Headers */
+--font-body: var(--font-inter, 'Inter'), sans-serif;       /* Body text */
+--font-mono: 'JetBrains Mono', 'SF Mono', monospace;       /* Data/stats */
+```
+
+### 3.2 Type Scale (Mobile-First)
+
+| Name | Mobile | Desktop | Usage |
+|------|--------|---------|-------|
+| Hero | 28px | 56px | Page headlines |
+| H1 | 26px | 48px | Section titles |
+| H2 | 22px | 36px | Card headers |
+| H3 | 18px | 28px | Subsections |
+| Base | 13px | 16px | Body text |
+| Small | 11px | 14px | Labels |
+| XS | 10px | 12px | Fine print |
+
+### 3.3 Data/Stat Typography
+
+**Hero Stats (544 HP, 558 LB-FT, etc.):**
+
+```css
+.stat-value-hero {
+  font-family: var(--font-mono);
+  font-size: 24px;  /* MOBILE OPTIMIZED */
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+```
+
+**Improvement Values:**
+
+```css
+.stat-improved {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #10b981;  /* Teal */
+}
+```
+
+**Baseline Values:**
+
+```css
+.stat-baseline {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: #3b82f6;  /* Blue */
+}
+```
+
+### 3.4 Labels
+
+```css
+/* Uppercase category labels */
+.label-uppercase {
+  font-size: 10px;
+  font-weight: 600;
+  color: #d4a84b;  /* Gold */
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+```
+
+---
+
+## Part 4: Button Patterns
+
+### 4.1 Primary CTA (Lime)
+
+```css
+.btn-primary {
+  background: #d4ff00;
+  color: #0a1628;  /* Navy */
+  font-weight: 700;
+  padding: 16px 32px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover {
+  background: #bfe600;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
+}
+```
+
+### 4.2 Secondary Button (Outline)
+
+```css
+.btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 32px;
+  border-radius: 100px;
+}
+
+.btn-secondary:hover {
+  border-color: #d4ff00;
+  color: #d4ff00;
+}
+```
+
+### 4.3 Accent Button (Gold) - Secondary Actions
+
+```css
+.btn-accent {
+  background: #d4a84b;
+  color: #000;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+}
+```
+
+---
+
+## Part 5: Component Patterns
+
+### 5.1 Cards
+
+```css
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+```
+
+### 5.2 Active Selection (Filter Pills, Tabs)
+
+```css
+.filter-active {
+  background: #10b981;  /* Teal */
+  border-color: #10b981;
+  color: #ffffff;
+}
+```
+
+### 5.3 Improvement Badge
+
+```css
+.badge-improvement {
+  display: inline-flex;
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #10b981;
+}
+```
+
+### 5.4 Lime Accent Badge
+
+```css
+.badge-lime {
+  background: rgba(212, 255, 0, 0.08);
+  border: 1px solid rgba(212, 255, 0, 0.2);
+  color: #d4ff00;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  border-radius: 100px;
+}
+```
+
+---
+
+## Part 6: Pre-Flight Checklist
+
+Before submitting ANY UI code, verify:
+
+| Check | Question |
+|-------|----------|
+| ☐ Background | Using `#0d1b2a` (not pure black)? |
+| ☐ Primary CTA | Using lime `#d4ff00` (not gold/orange)? |
+| ☐ Improvements | Using teal `#10b981` for gains? |
+| ☐ Baseline | Using blue `#3b82f6` for stock values? |
+| ☐ Stats | Using monospace font for numeric data? |
+| ☐ Hero Stats | Using 24px size with metallic gradient? |
+| ☐ Labels | Using gold `#d4a84b` for category labels? |
+| ☐ Secondary Text | Using `#94a3b8` (not gray-400)? |
+
+---
+
+## Part 7: Banned Patterns
+
+❌ **NEVER:**
+- Use pure black `#000000` for backgrounds
+- Use green-400/500 instead of teal `#10b981`
+- Use gold for primary CTAs (use lime)
+- Use different blues for baseline data
+- Mix improvement colors (always teal for gains)
+- Use gray for interactive elements
+- Make text smaller than 10px on mobile
+- Use light theme backgrounds
+
+---
+
+## Quick Reference
+
+```tsx
+// Import brand colors for JS/TS
+const BRAND = {
+  lime: '#d4ff00',
+  teal: '#10b981',
+  blue: '#3b82f6',
+  gold: '#d4a84b',
+  navy: '#0d1b2a',
+  textPrimary: '#ffffff',
+  textSecondary: '#94a3b8',
+};
+
+// CSS variable usage
+style={{ color: 'var(--brand-teal)' }}
+className="text-[#10b981]"  // Tailwind
+```

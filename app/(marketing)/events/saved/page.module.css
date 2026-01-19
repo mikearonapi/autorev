@@ -61,9 +61,9 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: var(--space-xs) var(--space-sm);
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 77, 0, 0.15);
   color: var(--sn-gold);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-sm);
 }
@@ -242,7 +242,7 @@
 
 .retryButton {
   padding: var(--space-sm) var(--space-lg);
-  background: #dc2626;
+  background: var(--brand-error-dark);
   color: var(--color-white);
   border: none;
   border-radius: var(--radius-md);

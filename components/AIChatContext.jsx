@@ -19,10 +19,12 @@
  */
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { UI_IMAGES } from '@/lib/images';
 import styles from './AIChatLauncher.module.css';
+import { isAppRoute } from '@/lib/appRoutes';
 
 const AIMechanicChat = dynamic(() => import('@/components/AIMechanicChat'), {
   ssr: false,
@@ -123,6 +125,10 @@ export function useAIChat() {
 export function AIChatHost() {
   const { isOpen, hasLoadedChat, pendingPrompt, toggleChat, clearPendingPrompt } = useAIChat();
   const [isHydrated, setIsHydrated] = useState(false);
+  const pathname = usePathname();
+  
+  // Hide floating launcher on app routes (bottom tab bar has AL button)
+  const showFloatingLauncher = !isAppRoute(pathname);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -130,16 +136,19 @@ export function AIChatHost() {
 
   return (
     <>
-      <button
-        type="button"
-        className={`${styles.launcher} ${isOpen ? styles.launcherOpen : ''}`}
-        onClick={toggleChat}
-        aria-label="Ask AL"
-        data-ai-chat-hydrated={isHydrated ? 'true' : 'false'}
-        data-ai-chat-open={isOpen ? 'true' : 'false'}
-      >
-        <Image className={styles.icon} src={UI_IMAGES.alMascotFull} alt="AL" width={56} height={56} loading="lazy" />
-      </button>
+      {/* Floating launcher - hidden on app routes where bottom tab bar exists */}
+      {showFloatingLauncher && (
+        <button
+          type="button"
+          className={`${styles.launcher} ${isOpen ? styles.launcherOpen : ''}`}
+          onClick={toggleChat}
+          aria-label="Ask AL"
+          data-ai-chat-hydrated={isHydrated ? 'true' : 'false'}
+          data-ai-chat-open={isOpen ? 'true' : 'false'}
+        >
+          <Image className={styles.icon} src={UI_IMAGES.alMascotFull} alt="AL" width={56} height={56} loading="lazy" />
+        </button>
+      )}
 
       {hasLoadedChat && (
         <AIMechanicChat

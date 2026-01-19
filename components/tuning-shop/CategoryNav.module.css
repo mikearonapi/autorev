@@ -78,13 +78,13 @@
 }
 
 .tabActive {
-  background: rgba(212, 175, 55, 0.15);
-  color: #d4af37;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--brand-teal);
 }
 
 .tabActive:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.2);
-  color: #d4af37;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--brand-teal);
 }
 
 .tabHasSelection {
@@ -120,11 +120,11 @@
   min-width: 16px;
   height: 16px;
   padding: 0 5px;
-  background: #d4af37;
+  background: var(--brand-teal);
   border-radius: 8px;
   font-size: 10px;
   font-weight: 700;
-  color: #1a1b1e;
+  color: var(--brand-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -200,13 +200,13 @@
 }
 
 .verticalTabActive {
-  background: rgba(212, 175, 55, 0.15);
-  color: #d4af37;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--brand-teal);
 }
 
 .verticalTabActive:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.2);
-  color: #d4af37;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--brand-teal);
 }
 
 .verticalTabHasSelection {
@@ -237,11 +237,11 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: #d4af37;
+  background: var(--brand-teal);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 700;
-  color: #1a1b1e;
+  color: var(--brand-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;

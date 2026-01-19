@@ -1,12 +1,13 @@
 /* ==========================================================================
    BottomTabBar - Native iOS/Android Style Tab Navigation
    
-   GRAVL-Inspired Design:
+   GRAVL-Inspired Glass Design:
+   - Frosted glass transparency with strong blur
    - Clean, minimal icons
    - Generous touch targets (56px)
    - Subtle active state with accent color
    - Safe area support for notched devices
-   - Smooth transitions
+   - Premium depth with subtle shadows
    ========================================================================== */
 
 .tabBar {
@@ -16,16 +17,49 @@
   right: 0;
   z-index: 1000;
   
-  /* Premium dark background with subtle blur */
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* Prevent horizontal overflow */
+  width: 100%;
+  max-width: 100vw;
+  max-width: 100dvw;
+  overflow-x: hidden;
+  box-sizing: border-box;
   
-  /* Top border for definition */
-  border-top: 1px solid var(--border-subtle, #1a1a1a);
+  /* Consistent frosted look - solid base with white frost overlay */
+  background: 
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.08) 100%
+    ),
+    var(--color-bg-base);
   
-  /* Safe area for notched devices */
+  /* Glass edge highlight */
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  
+  /* Subtle depth shadow */
+  box-shadow: 
+    0 -4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  
+  /* Safe area padding - frosted background extends through this */
   padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Extend solid background below tab bar to prevent any content showing beneath */
+.tabBar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Extra tall to cover any possible overscroll/elastic bounce */
+  height: 200px;
+  transform: translateY(100%);
+  /* Solid background - matches tab bar base color */
+  background: var(--color-bg-base);
+  z-index: -1;
+  /* Prevent any interaction with this extension */
+  pointer-events: none;
 }
 
 .tabContainer {
@@ -55,8 +89,8 @@
   cursor: pointer;
   text-decoration: none;
   
-  /* Default state */
-  color: var(--text-tertiary, #666666);
+  /* Default state - more visible inactive color */
+  color: rgba(255, 255, 255, 0.45);
   transition: color 0.2s ease, transform 0.15s ease;
   
   /* Prevent text selection */
@@ -70,11 +104,11 @@
 }
 
 .tab:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .tabActive {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--color-accent-lime);
 }
 
 .tabIcon {
@@ -91,6 +125,24 @@
   transition: stroke-width 0.15s ease;
 }
 
+/* AL Mascot Icon */
+.alMascot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  /* Subtle ring around mascot */
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.alMascotActive {
+  opacity: 1;
+  border-color: var(--color-accent-lime);
+  box-shadow: var(--shadow-lime);
+}
+
 .tabLabel {
   font-size: 10px;
   font-weight: 500;
@@ -103,34 +155,34 @@
   font-weight: 600;
 }
 
-/* Active indicator dot */
+/* Active indicator - subtle bar at top */
 .activeIndicator {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent-primary, #ff4d00);
-  animation: fadeIn 0.2s ease;
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-accent-lime);
+  animation: slideIn 0.25s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) scale(0);
+    width: 0;
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
+    width: 20px;
   }
 }
 
 /* Hover state for non-touch devices */
 @media (hover: hover) {
   .tab:hover:not(.tabActive) {
-    color: var(--text-secondary, #a0a0a0);
+    color: rgba(255, 255, 255, 0.7);
   }
 }
 
@@ -208,7 +260,8 @@
   }
   
   .activeIndicator {
-    top: auto;
-    bottom: 2px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }

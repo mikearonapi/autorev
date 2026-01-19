@@ -38,14 +38,14 @@
 }
 
 .error h2 {
-  color: #ef4444;
+  color: var(--brand-error);
   margin-bottom: 1rem;
 }
 
 .retryButton {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
   color: white;
   border: none;
   border-radius: 8px;
@@ -115,17 +115,17 @@
 }
 
 .summaryNew {
-  color: #10b981;
+  color: var(--brand-teal);
   font-weight: 500;
 }
 
 .summaryBlocking {
-  color: #ef4444;
+  color: var(--brand-error);
   font-weight: 600;
 }
 
 .summaryMajor {
-  color: #f59e0b;
+  color: var(--brand-warning);
   font-weight: 500;
 }
 
@@ -211,11 +211,11 @@
 .refreshButton:hover,
 .exportButton:hover {
   background: var(--surface-secondary, rgba(255, 255, 255, 0.05));
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, var(--brand-blue));
 }
 
 .exportButton {
-  background: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
   background-opacity: 0.1;
 }
 
@@ -225,7 +225,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
   border-radius: 8px;
   margin-bottom: 1rem;
   animation: slideDown 0.2s ease;
@@ -243,7 +243,7 @@
 
 .bulkResolveButton {
   padding: 0.5rem 1rem;
-  background: #10b981;
+  background: var(--brand-teal);
   color: white;
   border: none;
   border-radius: 6px;
@@ -253,7 +253,7 @@
 }
 
 .bulkResolveButton:hover:not(:disabled) {
-  background: #059669;
+  background: var(--brand-teal-dark);
 }
 
 .bulkResolveButton:disabled {
@@ -301,12 +301,12 @@
 }
 
 .feedbackCard:hover {
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, var(--brand-blue));
 }
 
 .feedbackCardSelected {
   background: rgba(59, 130, 246, 0.1);
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, var(--brand-blue));
 }
 
 .feedbackSelectColumn {
@@ -369,7 +369,7 @@
 }
 
 .feedbackRating {
-  color: #f59e0b;
+  color: var(--brand-warning);
   font-size: 0.85rem;
   letter-spacing: 1px;
 }
@@ -414,7 +414,7 @@
 }
 
 .feedbackEmail {
-  color: var(--accent-primary, #3b82f6);
+  color: var(--accent-primary, var(--brand-blue));
   text-decoration: none;
 }
 
@@ -428,7 +428,7 @@
 }
 
 .feedbackPageUrl:hover {
-  color: var(--accent-primary, #3b82f6);
+  color: var(--accent-primary, var(--brand-blue));
 }
 
 .feedbackDate {
@@ -436,11 +436,11 @@
 }
 
 .feedbackResolved {
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .feedbackScreenshot {
-  color: #f59e0b;
+  color: var(--brand-warning);
   text-decoration: none;
   font-weight: 500;
 }
@@ -475,7 +475,7 @@
 }
 
 .screenshotThumbnail:hover {
-  border-color: #f59e0b;
+  border-color: var(--brand-warning);
   transform: scale(1.02);
 }
 

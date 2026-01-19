@@ -1,33 +1,24 @@
 /* ==========================================================================
    GRAVL-INSPIRED LANDING PAGE
-   Clean, focused, app-first design with phone mockups
+   Mobile-first design with lime accent, dark navy background
+   Focus: Build, upgrade, optimize car performance
    ========================================================================== */
+
 
 /* Full Page Container */
 .landingPage {
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(180deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%);
-  color: #ffffff;
+  background: var(--gravl-navy);
+  color: var(--brand-text-primary);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Subtle Background Pattern */
-.landingPage::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(255, 77, 0, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.02) 0%, transparent 50%);
-  pointer-events: none;
-}
-
 /* ==========================================================================
-   MINIMAL HEADER - Just logo + login
+   MINIMAL HEADER
    ========================================================================== */
 
 .minimalHeader {
@@ -53,17 +44,17 @@
 }
 
 .logoText {
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .logoAccent {
-  color: #ff4d00;
+  color: var(--gravl-lime);
 }
 
 .loginBtn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #a0a0a0;
+  color: var(--brand-text-secondary);
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -73,17 +64,16 @@
 }
 
 .loginBtn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--gravl-lime);
+  color: var(--gravl-lime);
+  background: rgba(212, 255, 0, 0.05);
 }
 
 /* ==========================================================================
-   HERO SECTION - Main app showcase
+   HERO SECTION
    ========================================================================== */
 
 .hero {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -104,13 +94,13 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(212, 255, 0, 0.08);
+  border: 1px solid rgba(212, 255, 0, 0.2);
   padding: 8px 16px;
   border-radius: 100px;
   font-size: 0.75rem;
-  font-weight: 500;
-  color: #a0a0a0;
+  font-weight: 600;
+  color: var(--gravl-lime);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 24px;
@@ -127,7 +117,7 @@
 .badgeDot {
   width: 8px;
   height: 8px;
-  background: #ff4d00;
+  background: var(--gravl-lime);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -143,34 +133,32 @@
   }
 }
 
-/* Headline */
+/* Headline - GRAVL Style: Bold condensed uppercase */
 .headline {
   font-family: var(--font-display, system-ui);
-  font-size: clamp(2rem, 8vw, 4rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  margin: 0 0 16px;
-  color: #ffffff;
+  font-size: clamp(2.25rem, 10vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  color: var(--brand-text-primary);
+  text-transform: uppercase;
 }
 
 @media (min-width: 768px) {
   .headline {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
 }
 
 .headlineAccent {
-  background: linear-gradient(135deg, #ff4d00 0%, #ff6a2a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--gravl-lime);
 }
 
 /* Subheadline */
 .subheadline {
   font-size: clamp(0.9375rem, 2vw, 1.125rem);
-  color: #808080;
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
   max-width: 480px;
   margin: 0 0 32px;
@@ -221,22 +209,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff4d00 0%, #ff5a14 100%);
-  color: #ffffff;
+  background: var(--brand-lime);
+  color: var(--gravl-navy);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 16px 32px;
   border: none;
-  border-radius: 12px;
+  border-radius: 100px;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(255, 77, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .primaryCta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(255, 77, 0, 0.4);
-  background: linear-gradient(135deg, #ff5a14 0%, #ff6a2a 100%);
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+  background: var(--gravl-lime);
 }
 
 .primaryCta:active {
@@ -248,25 +237,25 @@
   align-items: center;
   justify-content: center;
   background: transparent;
-  color: #a0a0a0;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   font-weight: 500;
   padding: 16px 32px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .secondaryCta:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--gravl-lime);
+  color: var(--gravl-lime);
+  background: rgba(212, 255, 0, 0.05);
 }
 
 /* ==========================================================================
-   PHONE MOCKUPS - App showcase
+   PHONE MOCKUPS
    ========================================================================== */
 
 .phoneMockupContainer {
@@ -301,12 +290,12 @@
 
 .phoneFrame {
   position: relative;
-  background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+  background: linear-gradient(145deg, #1a2a40 0%, var(--brand-bg-primary-dark) 100%);
   border-radius: 32px;
   padding: 8px;
   box-shadow: 
     0 25px 50px -12px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(212, 255, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -317,7 +306,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 24px;
-  background: #000000;
+  background: var(--brand-bg-primary-dark);
   border-radius: 12px;
   z-index: 10;
 }
@@ -335,7 +324,7 @@
   position: relative;
   width: 140px;
   height: 280px;
-  background: #1a1a1a;
+  background: var(--gravl-navy-light);
   border-radius: 24px;
   overflow: hidden;
 }
@@ -362,7 +351,7 @@
 
 .phoneLabel {
   font-size: 0.75rem;
-  color: #606060;
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -413,6 +402,7 @@
   padding: 24px;
   background: rgba(255, 255, 255, 0.02);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   flex-wrap: wrap;
 }
 
@@ -428,7 +418,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.8125rem;
-  color: #707070;
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
 }
 
@@ -441,7 +431,7 @@
 .featureIcon {
   width: 18px;
   height: 18px;
-  stroke: #ff4d00;
+  stroke: var(--gravl-lime);
 }
 
 @media (min-width: 768px) {
@@ -469,33 +459,419 @@
 }
 
 /* ==========================================================================
-   MINIMAL FOOTER
+   HIGHLIGHT SECTION - GRAVL-style lime cards
    ========================================================================== */
 
-.minimalFooter {
-  padding: 20px 24px;
+.highlightSection {
+  padding: 48px 24px;
+}
+
+@media (min-width: 768px) {
+  .highlightSection {
+    padding: 64px 48px;
+  }
+}
+
+.highlightCard {
+  background: var(--gravl-lime);
+  border-radius: 24px;
+  padding: 40px 24px;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .highlightCard {
+    padding: 56px 48px;
+    border-radius: 32px;
+  }
+}
+
+.highlightSubtext {
+  font-size: 0.875rem;
+  color: var(--gravl-navy);
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .highlightSubtext {
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+}
+
+.highlightHeadline {
+  font-family: var(--font-display, system-ui);
+  font-size: clamp(1.75rem, 7vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--gravl-navy);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.highlightAccent {
+  color: var(--gravl-lime);
+}
+
+/* Make accent visible on lime background */
+.highlightCard .highlightAccent {
+  color: var(--gravl-navy);
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   FAQ SECTION - Accordion style
+   ========================================================================== */
+
+.faqSection {
+  padding: 0 24px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .faqSection {
+    padding: 0 48px 64px;
+  }
+}
+
+.faqItem {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.faqItem:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.faqQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px 0;
+  background: transparent;
+  border: none;
+  color: var(--gravl-lime);
+  font-family: var(--font-display, system-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .faqQuestion {
+    padding: 24px 0;
+    font-size: 1.125rem;
+  }
+}
+
+.faqQuestionText {
+  flex: 1;
+}
+
+.chevron {
+  color: var(--gravl-lime);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faqAnswerOpen {
+  max-height: 300px;
+  padding-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .faqAnswerOpen {
+    padding-bottom: 24px;
+  }
+}
+
+.faqAnswer p {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .faqAnswer p {
+    font-size: 1rem;
+  }
+}
+
+/* ==========================================================================
+   WHY SECTION - Feature breakdown
+   ========================================================================== */
+
+.whySection {
+  padding: 48px 24px;
+  background: var(--gravl-navy-light);
+}
+
+@media (min-width: 768px) {
+  .whySection {
+    padding: 80px 48px;
+  }
+}
+
+.whySectionTitle {
+  font-family: var(--font-display, system-ui);
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 48px;
+  color: var(--brand-text-primary);
+}
+
+@media (min-width: 768px) {
+  .whySectionTitle {
+    margin-bottom: 64px;
+  }
+}
+
+/* Feature Blocks */
+.featureBlock {
+  max-width: 1000px;
+  margin: 0 auto 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .featureBlock {
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+    margin-bottom: 80px;
+  }
+  
+  .featureBlock:nth-child(odd) {
+    flex-direction: row-reverse;
+  }
+}
+
+.featureBlock:last-child {
+  margin-bottom: 0;
+}
+
+.featureContent {
+  flex: 1;
+}
+
+.featureTitle {
+  font-family: var(--font-display, system-ui);
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: var(--brand-text-primary);
+}
+
+.featureDescription {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .featureDescription {
+    font-size: 1rem;
+  }
+}
+
+/* Feature Phones */
+.featurePhones {
+  display: flex;
+  justify-content: center;
+}
+
+.featurePhone {
+  transform: scale(0.9);
+}
+
+@media (min-width: 768px) {
+  .featurePhone {
+    transform: scale(1);
+  }
+}
+
+.featurePhone .phoneFrame {
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(212, 255, 0, 0.15);
+}
+
+.featurePhone .phoneScreen {
+  width: 180px;
+  height: 360px;
+}
+
+@media (min-width: 768px) {
+  .featurePhone .phoneScreen {
+    width: 200px;
+    height: 400px;
+  }
+}
+
+/* ==========================================================================
+   FINAL CTA SECTION
+   ========================================================================== */
+
+.finalCta {
+  padding: 48px 24px;
   text-align: center;
 }
 
 @media (min-width: 768px) {
-  .minimalFooter {
-    padding: 24px 48px;
+  .finalCta {
+    padding: 64px 48px;
   }
 }
 
-.minimalFooter p {
-  font-size: 0.75rem;
-  color: #404040;
-  margin: 0;
+.finalCtaSubtext {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
 }
 
-.minimalFooter a {
-  color: #505050;
+@media (min-width: 768px) {
+  .finalCtaSubtext {
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+}
+
+.finalCtaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--brand-lime);
+  color: var(--gravl-navy);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 18px 40px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (min-width: 640px) {
+  .finalCtaButton {
+    width: auto;
+    max-width: none;
+  }
+}
+
+.finalCtaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+  background: var(--gravl-lime);
+}
+
+.finalCtaButton svg {
+  stroke: var(--gravl-navy);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.footer {
+  padding: 48px 24px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 64px 48px 40px;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .footerLinks {
+    flex-direction: row;
+    justify-content: center;
+    gap: 64px;
+    text-align: left;
+  }
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footerSectionTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gravl-lime);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.footerSection a {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.minimalFooter a:hover {
-  color: #808080;
+.footerSection a:hover {
+  color: var(--gravl-lime);
 }
 
+.footerCopyright {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   UTILITY: Remove main padding for this page
+   ========================================================================== */
+
+.landingPage {
+  margin-top: calc(-1 * var(--content-offset-mobile, 88px));
+}@media (min-width: 768px) {
+  .landingPage {
+    margin-top: calc(-1 * var(--content-offset, 100px));
+  }
+}

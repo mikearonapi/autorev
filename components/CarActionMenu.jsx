@@ -237,7 +237,7 @@ export default function CarActionMenu({
     e?.stopPropagation?.();
     e?.preventDefault?.();
     
-    router.push(`/tuning-shop?plan=${car.slug}`);
+    router.push(`/garage/my-build?car=${car.slug}`);
     onAction?.('mod', car);
   };
 
@@ -564,7 +564,7 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
         break;
       case 'mod':
       case 'project':
-        router.push(`/tuning-shop?plan=${car.slug}`);
+        router.push(`/garage/my-build?car=${car.slug}`);
         break;
       case 'profile':
         router.push(`/browse-cars/${car.slug}`);

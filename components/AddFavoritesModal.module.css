@@ -151,8 +151,8 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #D4AF37;
-  box-shadow: 0 0 0 3px rgba(196, 165, 100, 0.15);
+  border-color: var(--accent-primary, #ff4d00);
+  box-shadow: 0 0 0 3px var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
 }
 
 .searchClear {
@@ -224,12 +224,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .carOption:hover:not(:disabled) {
   background: var(--color-surface-hover, #252525);
-  border-color: #D4AF37;
+  border-color: var(--accent-primary, #ff4d00);
 }
 
 .carOption:disabled {
@@ -272,7 +272,7 @@
 .carOptionName {
   font-weight: 600;
   font-size: 0.9375rem;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -295,19 +295,19 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
-  background: rgba(196, 165, 100, 0.15);
-  border: 1px solid rgba(196, 165, 100, 0.4);
+  background: var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
+  border: 1px solid rgba(255, 77, 0, 0.4);
   border-radius: 1rem;
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .carOption:hover:not(:disabled) .addBadge {
-  background: #D4AF37;
-  border-color: #D4AF37;
-  color: #1a1a1a;
+  background: var(--accent-primary, #ff4d00);
+  border-color: var(--accent-primary, #ff4d00);
+  color: var(--brand-text-primary);
 }
 
 .addingBadge {
@@ -330,7 +330,7 @@
   background: rgba(74, 222, 128, 0.15);
   border: 1px solid rgba(74, 222, 128, 0.4);
   border-radius: 1rem;
-  color: #4ade80;
+  color: var(--brand-teal);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -365,7 +365,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #4ade80;
+  color: var(--brand-teal);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -375,7 +375,7 @@
   background: #4ade80;
   border: none;
   border-radius: 0.5rem;
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;

@@ -9,8 +9,8 @@
 .configPanel {
   margin: 8px 0 4px 28px;  /* Indent to align under checkbox label */
   padding: 12px 14px;
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(255, 77, 0, 0.08);
+  border: 1px solid rgba(255, 77, 0, 0.25);
   border-radius: 8px;
   animation: slideDown 0.2s ease-out;
 }
@@ -35,10 +35,10 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-gold, #d4af37);
+  color: var(--color-gold, var(--accent-primary, #ff4d00));
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  border-bottom: 1px solid rgba(255, 77, 0, 0.15);
 }
 
 .configHeader svg {
@@ -118,8 +118,8 @@
 }
 
 .radioOption.selected {
-  background: rgba(212, 175, 55, 0.12);
-  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(255, 77, 0, 0.12);
+  border-color: rgba(255, 77, 0, 0.4);
 }
 
 /* Hidden radio input */
@@ -144,13 +144,13 @@
 }
 
 .radioOption.selected .radioButton {
-  border-color: var(--color-gold, #d4af37);
+  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
 }
 
 .radioDot {
   width: 8px;
   height: 8px;
-  background: var(--color-gold, #d4af37);
+  background: var(--color-gold, var(--accent-primary, #ff4d00));
   border-radius: 50%;
 }
 
@@ -190,7 +190,7 @@
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: var(--color-info, #3b82f6);
+  color: var(--color-info, var(--brand-blue));
   margin-top: 4px;
 }
 
@@ -268,7 +268,7 @@
 
 .configDependency svg {
   flex-shrink: 0;
-  color: var(--color-info, #3b82f6);
+  color: var(--color-info, var(--brand-blue));
   margin-top: 1px;
 }
 
@@ -291,8 +291,8 @@
 }
 
 .checkboxOption.checked {
-  background: rgba(212, 175, 55, 0.12);
-  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(255, 77, 0, 0.12);
+  border-color: rgba(255, 77, 0, 0.4);
 }
 
 .checkboxInput {
@@ -315,8 +315,8 @@
 }
 
 .checkboxOption.checked .checkboxBox {
-  background: var(--color-gold, #d4af37);
-  border-color: var(--color-gold, #d4af37);
+  background: var(--color-gold, var(--accent-primary, #ff4d00));
+  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
 }
 
 .checkboxBox svg {
@@ -349,7 +349,7 @@
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: var(--color-info, #3b82f6);
+  color: var(--color-info, var(--brand-blue));
   margin-top: 4px;
 }
 

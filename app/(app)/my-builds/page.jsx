@@ -126,7 +126,7 @@ function MyBuildsContent() {
           <button className={styles.signInBtn} onClick={() => authModal.openSignIn()}>
             Sign In
           </button>
-          <Link href="/tuning-shop" className={styles.exploreLink}>
+          <Link href="/garage/tuning-shop" className={styles.exploreLink}>
             Or start building without an account
           </Link>
         </div>
@@ -143,10 +143,12 @@ function MyBuildsContent() {
   if (authLoading || buildsLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingState}>
-          <LoadingSpinner />
-          <p>Loading your builds...</p>
-        </div>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Your Builds" 
+          subtext="Fetching your projects..."
+          fullPage 
+        />
       </div>
     );
   }
@@ -332,7 +334,7 @@ function VehiclesTab({ vehicles }) {
         <CarIcon />
         <h3>No vehicles added</h3>
         <p>Add your cars to track builds and modifications</p>
-        <Link href="/tuning-shop" className={styles.primaryBtn}>
+        <Link href="/garage/tuning-shop" className={styles.primaryBtn}>
           <PlusIcon /> Add a Vehicle
         </Link>
       </div>
@@ -403,10 +405,12 @@ function SavedTab({ favorites }) {
 function MyBuildsLoading() {
   return (
     <div className={styles.container}>
-      <div className={styles.loadingState}>
-        <LoadingSpinner />
-        <p>Loading your builds...</p>
-      </div>
+      <LoadingSpinner 
+        variant="branded" 
+        text="Loading Your Builds" 
+        subtext="Fetching your projects..."
+        fullPage 
+      />
     </div>
   );
 }

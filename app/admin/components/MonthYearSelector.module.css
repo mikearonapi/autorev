@@ -109,7 +109,7 @@
 }
 
 .quickButton.active {
-  border-color: var(--admin-accent-blue, #3b82f6);
+  border-color: var(--admin-accent-blue, var(--brand-blue));
   background: linear-gradient(135deg, 
     rgba(59, 130, 246, 0.2), 
     rgba(139, 92, 246, 0.2)

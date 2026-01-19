@@ -121,10 +121,12 @@ function PartsContent() {
   if (isLoading) {
     return (
       <div className={styles.page}>
-        <div className={styles.loadingState}>
-          <LoadingSpinner />
-          <p>Loading parts database...</p>
-        </div>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Parts" 
+          subtext="Fetching parts database..."
+          fullPage 
+        />
       </div>
     );
   }
@@ -361,10 +363,12 @@ const ChevronIcon = () => (
 function PartsLoading() {
   return (
     <div className={styles.page}>
-      <div className={styles.loadingState}>
-        <LoadingSpinner />
-        <p>Loading parts database...</p>
-      </div>
+      <LoadingSpinner 
+        variant="branded" 
+        text="Loading Parts" 
+        subtext="Fetching parts database..."
+        fullPage 
+      />
     </div>
   );
 }

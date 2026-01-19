@@ -1,0 +1,13 @@
+/* ==========================================================================
+   AutoRev Design Tokens
+   Single Source of Truth for all design values
+   
+   USAGE: @import '@/styles/tokens/index.css' in globals.css
+   Native App: These tokens can be exported to React Native StyleSheet
+   ========================================================================== */
+
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';
+@import './animations.css';
+@import './shadows.css';

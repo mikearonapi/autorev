@@ -12,16 +12,31 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(request) {
   // =========================================================================
-  // ROUTE REDIRECTS (Build Pivot - January 2026)
-  // Redirect old routes to new Build-focused routes
+  // ROUTE REDIRECTS (Simplified 5-Tab Structure - January 2026)
+  // My Garage is the unified hub for all car features
   // =========================================================================
   const pathname = request.nextUrl.pathname;
   
-  // Redirect /garage to /my-builds
-  if (pathname === '/garage') {
+  // Redirect legacy routes to new structure
+  // /track → /data (renamed for future OBD2/telemetry)
+  if (pathname === '/track') {
     const url = request.nextUrl.clone();
-    url.pathname = '/my-builds';
-    return NextResponse.redirect(url, { status: 308 }); // Permanent redirect
+    url.pathname = '/data';
+    return NextResponse.redirect(url, { status: 308 });
+  }
+  
+  // /tuning-shop → /garage (build planning is part of garage)
+  if (pathname === '/tuning-shop') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/garage';
+    return NextResponse.redirect(url, { status: 308 });
+  }
+  
+  // /my-builds → /garage (builds are part of garage)
+  if (pathname === '/my-builds') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/garage';
+    return NextResponse.redirect(url, { status: 308 });
   }
 
   let supabaseResponse = NextResponse.next({

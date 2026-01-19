@@ -12,7 +12,7 @@
   gap: 8px;
   padding: 12px 18px;
   background: var(--sn-primary, #1a4d6e);
-  color: #ffffff;
+  color: var(--brand-text-primary);
   border: none;
   border-radius: 24px;
   font-size: 14px;
@@ -147,7 +147,7 @@
   height: 56px;
   background: linear-gradient(135deg, var(--sn-primary, #1a4d6e) 0%, #2d6a8a 100%);
   border-radius: 16px;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   margin-bottom: 16px;
   box-shadow: 0 8px 24px rgba(26, 77, 110, 0.25);
 }
@@ -208,16 +208,16 @@
 }
 
 .label svg {
-  color: #64748b;
+  color: var(--brand-text-tertiary);
 }
 
 .required {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .optional {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
   font-size: 13px;
 }
 
@@ -244,7 +244,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 14px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--brand-text-tertiary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -311,7 +311,7 @@
 
 .severityDesc {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
   text-align: center;
   line-height: 1.3;
 }
@@ -349,7 +349,7 @@
 }
 
 .textarea::placeholder {
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
 }
 
 .input {
@@ -372,7 +372,7 @@
 }
 
 .input::placeholder {
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
 }
 
 .hint {
@@ -380,12 +380,12 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--brand-text-tertiary);
   margin: 0;
 }
 
 .hint svg {
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
 }
 
 /* Rating */
@@ -405,7 +405,7 @@
 }
 
 .starButton:hover {
-  color: #f59e0b;
+  color: var(--brand-warning);
   transform: scale(1.15);
 }
 
@@ -415,8 +415,8 @@
 
 .starButton:hover svg,
 .starButton svg[fill="currentColor"] {
-  stroke: #f59e0b;
-  color: #f59e0b;
+  stroke: var(--brand-warning);
+  color: var(--brand-warning);
 }
 
 .ratingText {
@@ -432,7 +432,7 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: #dc2626;
+  color: var(--brand-error-dark);
   background: #fef2f2;
   padding: 12px 16px;
   border-radius: 12px;
@@ -449,7 +449,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--brand-text-secondary);
   padding: 10px 14px;
   background: #f8fafc;
   border-radius: 10px;
@@ -473,7 +473,7 @@
   border-radius: 14px;
   font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 4px 16px rgba(26, 77, 110, 0.25);
@@ -505,12 +505,12 @@
 .successIcon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  background: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-teal-light) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
 }
@@ -873,7 +873,7 @@
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--brand-text-tertiary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -926,7 +926,7 @@
 
 .screenshotButton:hover:not(:disabled) {
   background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-color: #94a3b8;
+  border-color: var(--brand-text-secondary);
   color: #334155;
   transform: translateY(-1px);
 }
@@ -937,7 +937,7 @@
 }
 
 .screenshotButton svg {
-  color: #64748b;
+  color: var(--brand-text-tertiary);
 }
 
 /* Capturing state animation */
@@ -955,7 +955,7 @@
   position: relative;
   border-radius: 14px;
   overflow: hidden;
-  border: 2px solid #10b981;
+  border: 2px solid var(--brand-teal);
   background: #f0fdf4;
 }
 
@@ -1004,11 +1004,11 @@
 
 .screenshotRemove {
   background: #ef4444;
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .screenshotRemove:hover {
-  background: #dc2626;
+  background: var(--brand-error-dark);
   transform: scale(1.05);
 }
 
@@ -1029,14 +1029,14 @@
   gap: 8px;
   padding: 8px 12px;
   background: #f0fdf4;
-  border: 1px solid #86efac;
+  border: 1px solid var(--brand-teal-light);
   border-radius: 10px;
   font-size: 13px;
   color: #166534;
 }
 
 .screenshotSuccess svg {
-  color: #22c55e;
+  color: var(--brand-success);
   flex-shrink: 0;
 }
 
@@ -1051,7 +1051,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 14px;
   font-size: 14px;
-  color: #64748b;
+  color: var(--brand-text-tertiary);
 }
 
 .spinner {

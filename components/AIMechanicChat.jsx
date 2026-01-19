@@ -28,6 +28,7 @@ import {
 } from '../lib/stores/alPreferencesStore';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { trackALConversationStart } from '@/lib/ga4';
+import { isAppRoute } from '@/lib/appRoutes';
 
 /**
  * Hook for responsive screen size detection
@@ -623,6 +624,9 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const pathname = usePathname();
+  
+  // Check if we're on an app route (where bottom tab bar is shown)
+  const onAppRoute = isAppRoute(pathname);
   
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { selectedCar } = useCarSelection();
@@ -1464,7 +1468,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
       )}
 
       {isOpen && (
-        <div className={`${styles.chatPanel} ${isExpanded ? styles.chatPanelExpanded : ''}`}>
+        <div className={`${styles.chatPanel} ${isExpanded ? styles.chatPanelExpanded : ''} ${onAppRoute ? styles.chatPanelWithTabBar : ''}`}>
           {shouldShowIntro ? (
             /* ===== AL INTRO SCREEN ===== */
             <div className={styles.introScreen}>

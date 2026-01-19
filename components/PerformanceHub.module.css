@@ -67,7 +67,7 @@
   grid-template-columns: 1fr;
   gap: var(--space-lg);
   padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, #16213e 50%, #0f3460 100%);
   color: var(--color-white);
 }
 
@@ -498,7 +498,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success-dark) 100%);
   border-radius: 0 2px 2px 0;
   transition: all 0.4s ease;
   animation: upgradeGlow 2s ease-in-out infinite;
@@ -548,7 +548,7 @@
 }
 
 .ratingSegment.upgraded {
-  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(180deg, var(--color-success) 0%, var(--color-success-dark) 100%);
   box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
 }
 
@@ -916,11 +916,11 @@
    PLAN YOUR BUILD CTA
    ============================================================================ */
 .planBuildCta {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, #16213e 50%, #0f3460 100%);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-top: var(--space-xl);
-  border: 1px solid rgba(196, 165, 100, 0.3);
+  border: 1px solid rgba(255, 77, 0, 0.3);
 }
 
 .planBuildContent {
@@ -1522,8 +1522,8 @@
 }
 
 .packagePill.ultimatePower.active {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-color: #ef4444;
+  background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error-dark) 100%);
+  border-color: var(--color-error);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
@@ -1951,7 +1951,7 @@
   width: 14px;
   height: 14px;
   background: var(--color-warning, #f59e0b);
-  color: #fff;
+  color: var(--brand-text-primary);
   border-radius: 50%;
   font-size: 10px;
   font-weight: 700;
@@ -2051,7 +2051,7 @@
   display: inline-block;
   padding: 4px 8px;
   background: rgba(239, 68, 68, 0.15);
-  color: #dc2626;
+  color: var(--color-error);
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 500;
@@ -2061,7 +2061,7 @@
   display: inline-block;
   padding: 4px 8px;
   background: rgba(251, 191, 36, 0.15);
-  color: #b45309;
+  color: var(--color-warning);
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 500;
@@ -2083,7 +2083,7 @@
 }
 
 .addDepsBtn:hover {
-  background: #dc2626;
+  background: var(--color-error);
 }
 
 .addDepsBtnSecondary {
@@ -2092,7 +2092,7 @@
   gap: 6px;
   padding: 6px 12px;
   background: var(--color-warning, #f59e0b);
-  color: #fff;
+  color: var(--brand-text-primary);
   border: none;
   border-radius: var(--radius-sm);
   font-size: 11px;
@@ -2102,7 +2102,7 @@
 }
 
 .addDepsBtnSecondary:hover {
-  background: #d97706;
+  background: var(--color-warning);
 }
 
 /* =============================================================================
@@ -2212,7 +2212,7 @@
 }
 
 .buildStat[data-type="negative"] .buildStatNumber {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--brand-error-dark));
 }
 
 .buildStatLabel {
@@ -2232,8 +2232,8 @@
 }
 
 .buildIssueBox[data-severity="critical"] {
-  background: color-mix(in srgb, var(--color-error, #dc2626) 8%, white);
-  border: 1px solid color-mix(in srgb, var(--color-error, #dc2626) 20%, white);
+  background: color-mix(in srgb, var(--color-error, var(--brand-error-dark)) 8%, white);
+  border: 1px solid color-mix(in srgb, var(--color-error, var(--brand-error-dark)) 20%, white);
 }
 
 .buildIssueBox[data-severity="warning"] {
@@ -2251,7 +2251,7 @@
 }
 
 .buildIssueBox[data-severity="critical"] .buildIssueHeader {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--brand-error-dark));
 }
 
 .buildIssueBox[data-severity="warning"] .buildIssueHeader {
@@ -2299,7 +2299,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-md);
-  background: var(--color-error, #dc2626);
+  background: var(--color-error, var(--brand-error-dark));
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -2388,7 +2388,7 @@
 }
 
 .buildSystemChip[data-has-risk="true"] {
-  background: color-mix(in srgb, var(--color-error, #dc2626) 10%, white);
+  background: color-mix(in srgb, var(--color-error, var(--brand-error-dark)) 10%, white);
 }
 
 .buildSystemName {
@@ -2407,7 +2407,7 @@
 }
 
 .buildSystemNegative {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--brand-error-dark));
   font-weight: 500;
 }
 
@@ -2605,12 +2605,12 @@
 /* Core upgrade variant - more prominent */
 .recUpgradeChip.recCore {
   border-color: var(--sn-accent);
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(255, 77, 0, 0.05);
 }
 
 .recUpgradeChip.recCore:hover {
   border-color: var(--sn-accent);
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 77, 0, 0.15);
   color: var(--color-gray-900);
 }
 
@@ -3266,7 +3266,7 @@
   .moduleCategoryTitle {
     font-size: 11px;
     margin-bottom: var(--space-sm);
-    color: var(--sn-accent, #D4AF37);
+    color: var(--sn-accent, var(--accent-primary, #ff4d00));
   }
 
   /* Simplify dense grids on small screens */

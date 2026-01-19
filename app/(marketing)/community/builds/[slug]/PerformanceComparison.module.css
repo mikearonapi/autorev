@@ -20,12 +20,12 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
 .title svg {
-  color: #d4af37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .costBadge {
@@ -71,7 +71,7 @@
 }
 
 .metricLabel svg {
-  color: #d4af37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .metricIcon {
@@ -102,7 +102,7 @@
 }
 
 .upgradedValue {
-  color: #10b981;
+  color: var(--brand-teal);
   font-weight: 600;
 }
 
@@ -117,7 +117,7 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 /* Metric Track (Bar) */
@@ -134,7 +134,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: #3b82f6;
+  background: var(--brand-blue);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
@@ -143,7 +143,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-light));
   border-radius: 3px;
   transition: all 0.4s ease;
 }
@@ -173,12 +173,12 @@
   width: 14px;
   height: 5px;
   border-radius: 3px;
-  background: #3b82f6;
+  background: var(--brand-blue);
 }
 
 .legendUpgrade {
   width: 14px;
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-light));
 }

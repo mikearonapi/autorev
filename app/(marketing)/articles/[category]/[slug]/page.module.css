@@ -10,7 +10,7 @@
 /* Header */
 .header {
   padding: 2rem 2rem 2.5rem;
-  background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+  background: linear-gradient(180deg, var(--brand-bg-card-dark) 0%, #0a0a0f 100%);
 }
 
 .headerContent {
@@ -35,7 +35,7 @@
 }
 
 .breadcrumbs a:hover {
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .separator {
@@ -61,7 +61,7 @@
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .categoryBadge svg,
@@ -79,7 +79,7 @@
 .title {
   font-size: clamp(1.75rem, 4vw, 2.75rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   line-height: 1.2;
   margin: 0 0 1rem;
 }
@@ -141,14 +141,14 @@
 .content h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 2.5rem 0 1rem;
 }
 
 .content h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 2rem 0 0.75rem;
 }
 
@@ -157,7 +157,7 @@
 }
 
 .content a {
-  color: #e94560;
+  color: var(--brand-error);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -208,7 +208,7 @@
 .content th {
   background: rgba(255, 255, 255, 0.05);
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .content code {
@@ -272,13 +272,13 @@
   border-radius: 50%;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .authorInfo h4 {
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -304,7 +304,7 @@
 .related h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 1.5rem;
 }
 
@@ -333,7 +333,7 @@
   position: relative;
   width: 120px;
   flex-shrink: 0;
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
 }
 
 .relatedPlaceholder {
@@ -355,7 +355,7 @@
 .relatedContent h3 {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
   line-height: 1.4;
 }
@@ -379,7 +379,7 @@
 .cta h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -396,7 +396,7 @@
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   text-decoration: none;
   transition: all 0.2s;
 }

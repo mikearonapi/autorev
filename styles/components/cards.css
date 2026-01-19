@@ -1,0 +1,175 @@
+/* ==========================================================================
+   AutoRev Card Components
+   Reusable card patterns for consistent UI
+   ========================================================================== */
+
+/* ==========================================================================
+   BASE CARD
+   ========================================================================== */
+
+.card {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-card, 16px);
+  padding: var(--padding-card, 16px);
+  transition: var(--transition-card);
+}
+
+.card-interactive {
+  composes: card;
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-border-default, rgba(255, 255, 255, 0.1));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-interactive:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   CARD VARIANTS
+   ========================================================================== */
+
+/* Elevated card with shadow */
+.card-elevated {
+  composes: card;
+  background: var(--color-bg-elevated, #1b263b);
+  box-shadow: var(--shadow-card);
+}
+
+/* Outlined card (stronger border) */
+.card-outlined {
+  composes: card;
+  border-color: var(--color-border-default, rgba(255, 255, 255, 0.1));
+}
+
+/* Highlighted card (with accent) */
+.card-highlight {
+  composes: card;
+  border-color: var(--color-accent-lime-border, rgba(212, 255, 0, 0.3));
+  background: var(--color-accent-lime-muted, rgba(212, 255, 0, 0.05));
+}
+
+/* Teal-highlighted card (for improvements) */
+.card-teal {
+  composes: card;
+  border-color: var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.08));
+}
+
+/* Dashed border card (for empty states, drop zones) */
+.card-dashed {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.02));
+  border: 1px dashed var(--color-border-default, rgba(255, 255, 255, 0.15));
+  border-radius: var(--radius-card, 16px);
+  padding: var(--padding-card, 16px);
+}
+
+/* ==========================================================================
+   CARD HEADER
+   ========================================================================== */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm, 8px);
+  margin-bottom: var(--gap-md, 12px);
+}
+
+.card-title {
+  font-size: var(--text-label-lg, 12px);
+  font-weight: var(--text-label-weight, 600);
+  color: var(--color-accent-gold, #d4a84b);
+  text-transform: uppercase;
+  letter-spacing: var(--text-label-tracking, 0.08em);
+  margin: 0;
+}
+
+.card-title-white {
+  composes: card-title;
+  color: var(--color-text-primary, #fff);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: var(--text-body, 16px);
+}
+
+/* ==========================================================================
+   CARD CONTENT
+   ========================================================================== */
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm, 8px);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gap-sm, 8px);
+  margin-top: var(--gap-md, 12px);
+  padding-top: var(--gap-md, 12px);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* ==========================================================================
+   CARD SIZES
+   ========================================================================== */
+
+.card-sm {
+  padding: var(--padding-card-sm, 12px);
+  border-radius: var(--radius-md, 12px);
+}
+
+.card-lg {
+  padding: var(--space-6, 24px);
+  border-radius: var(--radius-xl, 20px);
+}
+
+/* ==========================================================================
+   SPEC CARD (for specifications, data display)
+   ========================================================================== */
+
+.card-spec {
+  composes: card;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--gap-sm, 8px) 0;
+}
+
+.spec-row:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.spec-label {
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+}
+
+.spec-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+}
+
+.spec-value-improved {
+  composes: spec-value;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.spec-value-baseline {
+  composes: spec-value;
+  color: var(--color-accent-blue, #3b82f6);
+}

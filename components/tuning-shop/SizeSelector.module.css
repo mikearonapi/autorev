@@ -36,7 +36,7 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -52,13 +52,13 @@
 }
 
 .optionSelected {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .optionSelected:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.6);
 }
 
 .optionUnavailable {
@@ -78,7 +78,7 @@
 
 .optionStock {
   font-size: 10px;
-  color: #ef4444;
+  color: var(--brand-error);
   text-transform: uppercase;
 }
 
@@ -108,7 +108,7 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   font-size: 13px;
   cursor: pointer;
   -webkit-appearance: none;
@@ -125,7 +125,7 @@
 
 .compactSelect:focus {
   outline: none;
-  border-color: rgba(212, 175, 55, 0.5);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .compactSelect:disabled {
@@ -134,8 +134,8 @@
 }
 
 .compactSelect option {
-  background: #1a1b1e;
-  color: #ffffff;
+  background: var(--brand-bg-primary);
+  color: var(--brand-text-primary);
 }
 
 /* Inline Selector (for part cards) */
@@ -149,7 +149,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   font-size: 12px;
   cursor: pointer;
   -webkit-appearance: none;
@@ -167,7 +167,7 @@
 
 .inlineSelect:focus {
   outline: none;
-  border-color: rgba(212, 175, 55, 0.4);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .inlineSelect:disabled {
@@ -176,8 +176,8 @@
 }
 
 .inlineSelect option {
-  background: #1a1b1e;
-  color: #ffffff;
+  background: var(--brand-bg-primary);
+  color: var(--brand-text-primary);
 }
 
 /* Responsive */

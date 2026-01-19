@@ -108,7 +108,7 @@
   transform: translateY(-50%);
   padding: 6px 10px;
   background: #1f2937;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;

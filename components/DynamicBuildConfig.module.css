@@ -29,9 +29,9 @@
 .configSummaryCount {
   font-size: 11px;
   padding: 3px 8px;
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 77, 0, 0.15);
   border-radius: 10px;
-  color: #d4af37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 /* List of upgrades - clean spacing */
@@ -61,11 +61,11 @@
 .upgradeName {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .upgradeCheck {
-  color: #4ade80;
+  color: var(--brand-teal);
   display: flex;
   align-items: center;
 }
@@ -94,7 +94,7 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: #4ade80;
+  color: var(--brand-teal);
 }
 
 /* Footer hint */

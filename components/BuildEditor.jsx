@@ -415,7 +415,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="radio"
                   name="engineType"
                   value={opt.value}
-                  checked={specs.engine.type === opt.value}
+                  checked={specs?.engine?.type === opt.value}
                   onChange={e => onUpdate('engine', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
@@ -424,7 +424,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
           </div>
         </div>
 
-        {specs.engine.type !== 'stock' && (
+        {specs?.engine?.type && specs.engine.type !== 'stock' && (
           <>
             {specs.engine.type === 'stroked' && (
               <div className={styles.fieldGroup}>
@@ -434,7 +434,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   step="0.1"
                   className={styles.input}
                   placeholder="e.g., 2.2"
-                  value={specs.engine.displacement || ''}
+                  value={specs.engine?.displacement || ''}
                   onChange={e => onUpdate('engine', 'displacement', parseFloat(e.target.value) || null)}
                 />
               </div>
@@ -452,7 +452,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                       type="radio"
                       name="internals"
                       value={opt.value}
-                      checked={specs.engine.internals === opt.value}
+                      checked={specs.engine?.internals === opt.value}
                       onChange={e => onUpdate('engine', 'internals', e.target.value)}
                     />
                     <span className={styles.radioText}>{opt.label}</span>
@@ -475,7 +475,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                       type="radio"
                       name="cams"
                       value={opt.value}
-                      checked={specs.engine.cams === opt.value}
+                      checked={specs.engine?.cams === opt.value}
                       onChange={e => onUpdate('engine', 'cams', e.target.value)}
                     />
                     <span className={styles.radioText}>{opt.label}</span>
@@ -488,7 +488,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
-                  checked={specs.engine.headWork}
+                  checked={specs.engine?.headWork || false}
                   onChange={e => onUpdate('engine', 'headWork', e.target.checked)}
                 />
                 <span>Head work / Porting</span>
@@ -518,7 +518,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="radio"
                   name="turboType"
                   value={opt.value}
-                  checked={specs.turbo.type === opt.value}
+                  checked={specs?.turbo?.type === opt.value}
                   onChange={e => onUpdate('turbo', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
@@ -527,14 +527,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
           </div>
         </div>
 
-        {specs.turbo.type !== 'stock' && (
+        {specs?.turbo?.type && specs.turbo.type !== 'stock' && (
           <>
             {turboOptions.length > 0 && (
               <div className={styles.fieldGroup}>
                 <label className={styles.fieldLabel}>Select Turbo</label>
                 <select
                   className={styles.select}
-                  value={specs.turbo.modelId || ''}
+                  value={specs.turbo?.modelId || ''}
                   onChange={e => onUpdate('turbo', 'modelId', e.target.value || null)}
                 >
                   <option value="">-- Select from library --</option>
@@ -554,14 +554,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="text"
                   className={styles.input}
                   placeholder="Brand (e.g., Garrett)"
-                  value={specs.turbo.customBrand || ''}
+                  value={specs.turbo?.customBrand || ''}
                   onChange={e => onUpdate('turbo', 'customBrand', e.target.value)}
                 />
                 <input
                   type="text"
                   className={styles.input}
                   placeholder="Model (e.g., GTX3576R)"
-                  value={specs.turbo.customModel || ''}
+                  value={specs.turbo?.customModel || ''}
                   onChange={e => onUpdate('turbo', 'customModel', e.target.value)}
                 />
               </div>
@@ -574,7 +574,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="number"
                   className={styles.inputSmall}
                   placeholder="Inducer mm"
-                  value={specs.turbo.inducerMm || ''}
+                  value={specs.turbo?.inducerMm || ''}
                   onChange={e => onUpdate('turbo', 'inducerMm', parseFloat(e.target.value) || null)}
                 />
                 <span className={styles.inputSeparator}>/</span>
@@ -582,7 +582,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="number"
                   className={styles.inputSmall}
                   placeholder="Exducer mm"
-                  value={specs.turbo.exducerMm || ''}
+                  value={specs.turbo?.exducerMm || ''}
                   onChange={e => onUpdate('turbo', 'exducerMm', parseFloat(e.target.value) || null)}
                 />
               </div>
@@ -594,7 +594,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 type="number"
                 className={styles.inputSmall}
                 placeholder="e.g., 30"
-                value={specs.turbo.targetBoostPsi || ''}
+                value={specs.turbo?.targetBoostPsi || ''}
                 onChange={e => onUpdate('turbo', 'targetBoostPsi', parseFloat(e.target.value) || null)}
               />
             </div>
@@ -625,7 +625,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="radio"
                   name="fuelType"
                   value={opt.value}
-                  checked={specs.fuel.type === opt.value}
+                  checked={specs?.fuel?.type === opt.value}
                   onChange={e => onUpdate('fuel', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
@@ -640,7 +640,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
             type="number"
             className={styles.inputSmall}
             placeholder="e.g., 1300"
-            value={specs.fuel.injectorCc || ''}
+            value={specs?.fuel?.injectorCc || ''}
             onChange={e => onUpdate('fuel', 'injectorCc', parseInt(e.target.value) || null)}
           />
         </div>
@@ -651,7 +651,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
             type="text"
             className={styles.input}
             placeholder="e.g., Walbro 450"
-            value={specs.fuel.fuelPump || ''}
+            value={specs?.fuel?.fuelPump || ''}
             onChange={e => onUpdate('fuel', 'fuelPump', e.target.value)}
           />
         </div>
@@ -669,14 +669,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
-              checked={specs.dyno.hasResults}
+              checked={specs?.dyno?.hasResults || false}
               onChange={e => onUpdate('dyno', 'hasResults', e.target.checked)}
             />
             <span>I have dyno results</span>
           </label>
         </div>
 
-        {specs.dyno.hasResults && (
+        {specs?.dyno?.hasResults && (
           <>
             <div className={styles.fieldGroup}>
               <label className={styles.fieldLabel}>Wheel Horsepower</label>
@@ -685,21 +685,21 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   type="number"
                   className={styles.inputSmall}
                   placeholder="WHP"
-                  value={specs.dyno.whp || ''}
+                  value={specs.dyno?.whp || ''}
                   onChange={e => onUpdate('dyno', 'whp', parseInt(e.target.value) || null)}
                 />
                 <input
                   type="number"
                   className={styles.inputSmall}
                   placeholder="WTQ"
-                  value={specs.dyno.wtq || ''}
+                  value={specs.dyno?.wtq || ''}
                   onChange={e => onUpdate('dyno', 'wtq', parseInt(e.target.value) || null)}
                 />
                 <input
                   type="number"
                   className={styles.inputSmall}
                   placeholder="Boost PSI"
-                  value={specs.dyno.boostPsi || ''}
+                  value={specs.dyno?.boostPsi || ''}
                   onChange={e => onUpdate('dyno', 'boostPsi', parseFloat(e.target.value) || null)}
                 />
               </div>
@@ -710,7 +710,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
               <div className={styles.inputRow}>
                 <select
                   className={styles.select}
-                  value={specs.dyno.dynoType || ''}
+                  value={specs.dyno?.dynoType || ''}
                   onChange={e => onUpdate('dyno', 'dynoType', e.target.value)}
                 >
                   <option value="">Dyno Type</option>
@@ -721,7 +721,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 </select>
                 <select
                   className={styles.select}
-                  value={specs.dyno.fuelType || ''}
+                  value={specs.dyno?.fuelType || ''}
                   onChange={e => onUpdate('dyno', 'fuelType', e.target.value)}
                 >
                   <option value="">Fuel</option>
@@ -738,7 +738,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 type="text"
                 className={styles.input}
                 placeholder="Dyno shop name"
-                value={specs.dyno.shop || ''}
+                value={specs.dyno?.shop || ''}
                 onChange={e => onUpdate('dyno', 'shop', e.target.value)}
               />
             </div>

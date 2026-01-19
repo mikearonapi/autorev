@@ -23,7 +23,7 @@
   max-width: 560px;
   max-height: 90vh;
   overflow-y: auto;
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   animation: slideUp 0.3s ease;
@@ -52,7 +52,7 @@
 .title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
@@ -72,7 +72,7 @@
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Content */
@@ -115,7 +115,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.9375rem;
   transition: border-color 0.2s;
 }
@@ -123,7 +123,7 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: var(--brand-error);
 }
 
 .input::placeholder,
@@ -156,7 +156,7 @@
 .buildPreview h4 {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -242,12 +242,12 @@
 
 .buildStatBadge {
   padding: 4px 10px;
-  background: rgba(212, 175, 55, 0.2);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(255, 77, 0, 0.2);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: 6px;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #d4af37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .buildStatBadge strong {
@@ -260,7 +260,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
-  color: #f87171;
+  color: var(--brand-error-light);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -288,7 +288,7 @@
 .primaryBtn {
   background: linear-gradient(135deg, #e94560, #ff6b6b);
   border: none;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .primaryBtn:hover:not(:disabled) {
@@ -309,7 +309,7 @@
 
 .secondaryBtn:hover {
   border-color: rgba(255, 255, 255, 0.4);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Success State */
@@ -325,16 +325,16 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.25rem;
-  background: linear-gradient(135deg, #10b981, #34d399);
+  background: linear-gradient(135deg, var(--brand-teal), var(--brand-teal-light));
   border-radius: 50%;
-  color: #fff;
+  color: var(--brand-text-primary);
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
 }
 
 .successTitle {
   font-size: 1.375rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -392,7 +392,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: none;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -451,7 +451,7 @@
 .socialBtn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
   transform: translateY(-2px);
 }
 
@@ -487,16 +487,16 @@
 .viewPostBtn:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .doneBtn {
   flex: 1;
   padding: 0.875rem 1.25rem;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--brand-teal), #059669);
   border: none;
   border-radius: 10px;
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
@@ -505,7 +505,7 @@
 }
 
 .doneBtn:hover {
-  background: linear-gradient(135deg, #34d399, #10b981);
+  background: linear-gradient(135deg, var(--brand-teal-light), var(--brand-teal));
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }

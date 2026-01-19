@@ -181,7 +181,7 @@
 }
 
 .upgradeLabel svg {
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .upgradeTags {
@@ -424,7 +424,7 @@
 
 .watchLink:hover {
   background: #fee2e2;
-  color: #ef4444; /* YouTube Red */
+  color: var(--brand-error); /* YouTube Red */
 }
 
 /* View More */
@@ -516,7 +516,7 @@
 
 .retryButton {
   background: var(--sn-primary, #059669);
-  color: #fff;
+  color: var(--brand-text-primary);
   border: none;
   padding: 0.4rem 0.75rem;
   border-radius: 4px;

@@ -291,7 +291,7 @@ export default function FeaturedBuildsCarousel({
 
       {/* Start Building CTA */}
       <div className={styles.ctaContainer}>
-        <Link href="/tuning-shop" className={styles.ctaButton}>
+        <Link href="/garage/tuning-shop" className={styles.ctaButton}>
           Start Your Build
         </Link>
       </div>

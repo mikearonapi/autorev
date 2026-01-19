@@ -75,8 +75,8 @@
 }
 
 .toolbarBtn.active {
-  background: rgba(196, 165, 100, 0.15);
-  border-color: rgba(196, 165, 100, 0.3);
+  background: rgba(255, 77, 0, 0.15);
+  border-color: rgba(255, 77, 0, 0.3);
   color: var(--sn-gold);
 }
 
@@ -118,7 +118,7 @@
 }
 
 .viewToggle button.active {
-  background: rgba(196, 165, 100, 0.2);
+  background: rgba(255, 77, 0, 0.2);
   color: var(--sn-gold);
 }
 
@@ -137,7 +137,7 @@
   background: var(--sn-gold);
   border: none;
   border-radius: 6px;
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -145,7 +145,7 @@
 }
 
 .compareBtn:hover:not(:disabled) {
-  background: #e6c346;
+  background: var(--brand-gold-light);
 }
 
 .compareBtn:disabled {
@@ -178,7 +178,7 @@
   background: var(--sn-gold);
   border: none;
   border-radius: 6px;
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -186,7 +186,7 @@
 }
 
 .newBuildBtn:hover {
-  background: #e6c346;
+  background: var(--brand-gold-light);
   transform: translateY(-1px);
 }
 
@@ -207,8 +207,8 @@
   justify-content: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
-  background: rgba(196, 165, 100, 0.1);
-  border: 1px solid rgba(196, 165, 100, 0.2);
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.2);
   border-radius: 8px;
   margin-bottom: var(--space-md);
   color: var(--sn-gold);
@@ -326,11 +326,11 @@
 }
 
 .buildCardSelectable:hover {
-  border-color: rgba(196, 165, 100, 0.3);
+  border-color: rgba(255, 77, 0, 0.3);
 }
 
 .buildCardSelected {
-  background: rgba(196, 165, 100, 0.08);
+  background: rgba(255, 77, 0, 0.08);
   border-color: var(--sn-gold);
 }
 
@@ -353,7 +353,7 @@
 .buildCardSelected .selectCheckbox {
   background: var(--sn-gold);
   border-color: var(--sn-gold);
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
 }
 
 /* Card Header */
@@ -610,7 +610,7 @@
 
 .diyAssessment[data-feasibility="shop-recommended"] .diyLabel,
 .diyAssessment[data-feasibility="mostly-shop"] .diyLabel {
-  color: #e74c3c;
+  color: var(--brand-error);
 }
 
 /* Card Actions */
@@ -651,8 +651,8 @@
   justify-content: center;
   gap: 6px;
   padding: 8px 10px;
-  background: rgba(196, 165, 100, 0.15);
-  border: 1px solid rgba(196, 165, 100, 0.3);
+  background: rgba(255, 77, 0, 0.15);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: 6px;
   color: var(--sn-gold);
   font-size: 12px;
@@ -663,7 +663,7 @@
 }
 
 .actionBtnPrimary:hover {
-  background: rgba(196, 165, 100, 0.25);
+  background: rgba(255, 77, 0, 0.25);
   border-color: var(--sn-gold);
 }
 
@@ -676,14 +676,14 @@
   background: rgba(231, 76, 60, 0.1);
   border: 1px solid rgba(231, 76, 60, 0.2);
   border-radius: 6px;
-  color: #e74c3c;
+  color: var(--brand-error);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .actionBtnDelete:hover {
   background: rgba(231, 76, 60, 0.2);
-  border-color: #e74c3c;
+  border-color: var(--brand-error);
 }
 
 /* ============================================================================
@@ -911,7 +911,7 @@
 .diyIndicator[data-feasibility="shop-recommended"],
 .diyIndicator[data-feasibility="mostly-shop"] {
   background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
+  color: var(--brand-error);
 }
 
 /* ============================================================================
@@ -965,7 +965,7 @@
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-xl);
   background: var(--sn-gold);
-  color: #1a1a1a;
+  color: var(--brand-border-subtle);
   border-radius: 10px;
   font-weight: 700;
   font-size: 14px;
@@ -976,9 +976,9 @@
 }
 
 .emptyAction:hover {
-  background: #e6c346;
+  background: var(--brand-gold-light);
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(196, 165, 100, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 77, 0, 0.4);
 }
 
 /* ============================================================================

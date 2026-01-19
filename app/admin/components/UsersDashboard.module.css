@@ -8,13 +8,13 @@
   --card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
+  --text-secondary: var(--brand-text-secondary);
+  --text-muted: var(--brand-text-tertiary);
+  --accent-blue: var(--brand-blue);
+  --accent-purple: var(--brand-purple-accent);
   --accent-cyan: #06b6d4;
   --positive: #22c55e;
-  --warning: #f59e0b;
+  --warning: var(--brand-warning);
   --negative: #ef4444;
   
   display: flex;
@@ -143,7 +143,7 @@
 }
 
 .filterSelect option {
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
   color: var(--text-primary);
 }
 
@@ -244,7 +244,7 @@
 .avatar span {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .userInfo {
@@ -524,7 +524,7 @@
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
   border: none;
   border-radius: 8px;

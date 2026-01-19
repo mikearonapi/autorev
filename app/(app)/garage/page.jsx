@@ -1,13 +1,15 @@
 'use client';
 
 /**
- * My Garage Page - Gran Turismo / Forza Inspired
+ * My Garage Page - Immersive Vehicle Showcase (GRAVL-inspired)
  * 
- * Immersive vehicle showcase with:
- * - Hero display for the selected vehicle
- * - Spec overlay with key stats
- * - Bottom carousel for vehicle navigation
- * - Tab system: My Collection, Favorites, Builds
+ * Full-screen native app experience with three core tabs:
+ * - Vehicles: Your owned cars with build tracking, photos, and reference data
+ * - Builds: Your saved build projects and modifications
+ * - Tuning Shop: Link to the full modification planner
+ * 
+ * Each vehicle has sub-views: Specs, Build, Performance, Parts, Photos
+ * Photo management is centralized here (not in Tuning Shop).
  */
 
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
@@ -23,7 +25,6 @@ import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import AddVehicleModal from '@/components/AddVehicleModal';
-import AddFavoritesModal from '@/components/AddFavoritesModal';
 import CarImage from '@/components/CarImage';
 import CarActionMenu from '@/components/CarActionMenu';
 import BuildDetailView from '@/components/BuildDetailView';
@@ -349,7 +350,123 @@ const Icons = {
       </svg>
     </IconWrapper>
   ),
+  camera: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </IconWrapper>
+  ),
+  gallery: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+    </IconWrapper>
+  ),
+  list: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"/>
+        <line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/>
+        <line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+    </IconWrapper>
+  ),
+  package: ({ size = 16, style }) => (
+    <IconWrapper style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+    </IconWrapper>
+  ),
 };
+
+// Visual Rating Bar Component - GRAVL-style progress bar for X/10 ratings
+function RatingBar({ value, maxValue = 10, label }) {
+  if (value === undefined || value === null) return null;
+  
+  const percentage = Math.min(Math.max((value / maxValue) * 100, 0), 100);
+  
+  // Determine color class based on percentage
+  const getColorClass = (pct) => {
+    if (pct >= 80) return 'high';
+    if (pct >= 60) return 'good';
+    if (pct >= 40) return 'medium';
+    return 'low';
+  };
+  
+  const colorClass = getColorClass(percentage);
+  
+  return (
+    <div className={styles.ratingItem}>
+      <span className={styles.ratingLabel}>{label}</span>
+      <div className={styles.ratingBarTrack}>
+        <div 
+          className={`${styles.ratingBarFill} ${styles[colorClass]}`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <span className={`${styles.ratingScoreValue} ${styles[colorClass]}`}>
+        {value}/{maxValue}
+      </span>
+    </div>
+  );
+}
+
+// Performance Score Gauge Component - Circular visualization
+function PerformanceScoreGauge({ score, label = 'Performance Score', stats = [] }) {
+  const percentage = Math.min(Math.max(score, 0), 100);
+  const circumference = 2 * Math.PI * 52; // radius = 52
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  
+  return (
+    <div className={styles.performanceScoreCard}>
+      <div className={styles.performanceScoreGauge}>
+        <svg viewBox="0 0 120 120">
+          <circle className={styles.track} cx="60" cy="60" r="52" />
+          <circle 
+            className={styles.fill} 
+            cx="60" 
+            cy="60" 
+            r="52"
+            style={{
+              strokeDasharray: circumference,
+              strokeDashoffset: strokeDashoffset,
+            }}
+          />
+        </svg>
+        <div className={styles.performanceScoreValue}>
+          <div className={styles.performanceScoreNumber}>{Math.round(score)}</div>
+          <div className={styles.performanceScoreLabel}>Score</div>
+        </div>
+      </div>
+      
+      {stats.length > 0 && (
+        <div className={styles.performanceKeyStats}>
+          {stats.map((stat, index) => (
+            <div key={index} className={styles.performanceKeyStat}>
+              <div className={styles.performanceKeyStatValue}>
+                {stat.value}
+                {stat.unit && <span className={styles.performanceKeyStatUnit}>{stat.unit}</span>}
+              </div>
+              <div className={styles.performanceKeyStatLabel}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Brand Logo Component - displays brand name with consistent gold color
 function BrandLogo({ brand }) {
@@ -367,13 +484,13 @@ function BrandLogo({ brand }) {
 
 // Hero Vehicle Display Component
 // Progressive disclosure: Collapsed → Expanded (key info) → Full Details/Owner Dashboard
-function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, onUpdateVehicle, onClearModifications, onUpdateCustomSpecs, onClearCustomSpecs, userId }) {
+function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModifications, onUpdateCustomSpecs, onClearCustomSpecs, userId, selectedIndex, totalItems, onNavigate }) {
   // Panel states: 'collapsed', 'expanded', 'details'
   const [panelState, setPanelState] = useState('collapsed');
   const [showPerformance, setShowPerformance] = useState(false);
   
   // For owned vehicles: toggle between views in details mode
-  // 'specs' = Details, 'reference' = Reference, 'safety' = Safety, 'service' = Service Log
+  // 'specs' = Full specifications (incl. owner data for My Collection), 'safety' = Safety data
   const [detailsView, setDetailsView] = useState('specs');
   
   // VIN input state
@@ -892,12 +1009,17 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
   
   // Determine if user has a custom hero image
   const hasCustomHero = !!userHeroImage;
+  
+  // Fallback hero: use first uploaded image if no designated hero and no stock image
+  const hasStockImage = car?.imageGarageUrl || car?.imageHeroUrl || (car?.slug && !car?._hasNoMatchedCar);
+  const fallbackHeroUrl = !hasCustomHero && !hasStockImage && carImages?.length > 0 
+    ? carImages[0].url 
+    : null;
 
   if (!item) return null;
   
   const isOwnedVehicle = type === 'mycars';
   const isBuild = type === 'projects';
-  const isFavorite = type === 'favorites';
   
   // Calculate all modification gains from installed mods (for owned vehicles)
   const modificationGains = isOwnedVehicle && item.vehicle?.installedModifications?.length > 0
@@ -977,13 +1099,42 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
     }
   };
 
+  // Navigation handlers
+  const canGoPrev = selectedIndex > 0;
+  const canGoNext = selectedIndex < totalItems - 1;
+  
+  const handlePrev = () => {
+    if (canGoPrev && onNavigate) {
+      onNavigate(selectedIndex - 1);
+    }
+  };
+  
+  const handleNext = () => {
+    if (canGoNext && onNavigate) {
+      onNavigate(selectedIndex + 1);
+    }
+  };
+
   return (
     <div className={styles.heroDisplay}>
-      {/* Hero Image - Uses user's uploaded hero image if available, otherwise stock garage image */}
+      {/* Vehicle Info Header - Above the image */}
+      {panelState === 'collapsed' && (
+        <div className={styles.vehicleInfoHeader}>
+          <div className={styles.vehicleInfoText}>
+            <div className={styles.brandYearRow}>
+              <span className={styles.brandName}>{item?.vehicle?.make || car?.brand || car?.make || 'VEHICLE'}</span>
+              <span className={styles.vehicleYear}>{item?.vehicle?.year || car?.years?.split('-')[0] || car?.year}</span>
+            </div>
+            <h2 className={styles.heroVehicleName}>{car?.model || item?.vehicle?.model || displayName}</h2>
+          </div>
+        </div>
+      )}
+      
+      {/* Hero Image - 4:3 aspect ratio */}
       <div className={styles.heroImageWrapper}>
         <div className={styles.heroImageContainer}>
           {hasCustomHero && userHeroImageUrl ? (
-            // User's custom hero image (shared between garage and tuning shop)
+            // User's designated hero image
             <Image
               src={userHeroImageUrl}
               alt={displayName || 'Vehicle'}
@@ -992,158 +1143,188 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               className={styles.heroImage}
               priority
             />
-          ) : car ? (
+          ) : fallbackHeroUrl ? (
+            // First uploaded image as fallback for vehicles without stock images
+            <Image
+              src={fallbackHeroUrl}
+              alt={displayName || 'Vehicle'}
+              fill
+              style={{ objectFit: 'cover' }}
+              className={styles.heroImage}
+              priority
+            />
+          ) : car && !car._hasNoMatchedCar ? (
+            // Stock car image from database
             <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
           ) : (
+            // Placeholder for vehicles with no images
             <div className={styles.heroPlaceholder}>
-              <Icons.car size={120} />
+              <Icons.car size={80} />
+              <span className={styles.heroPlaceholderText}>{displayName || 'Vehicle'}</span>
             </div>
           )}
         </div>
         
-        {/* Mobile Quick Action Bar - Inside image container, below car */}
-        {/* Uses same mobileActionBar styles for consistency */}
-        {panelState !== 'details' && (
-          <div className={styles.mobileActionBar}>
+        {/* Centered Left/Right Navigation Arrows */}
+        {totalItems > 1 && panelState !== 'details' && (
+          <>
             <button 
-              className={styles.mobileActionBtn}
-              onClick={() => {
-                setDetailsView('specs');
-                setPanelState('details');
-              }}
+              className={`${styles.heroNavArrow} ${styles.heroNavArrowLeft} ${!canGoPrev ? styles.heroNavArrowDisabled : ''}`}
+              onClick={handlePrev}
+              disabled={!canGoPrev}
+              aria-label="Previous vehicle"
             >
-              <Icons.info size={18} />
-              <span>Details</span>
+              <Icons.chevronLeft size={14} />
             </button>
-            {isOwnedVehicle && (
-              <>
-                <button 
-                  className={styles.mobileActionBtn}
-                  onClick={() => {
-                    setDetailsView('reference');
-                    setPanelState('details');
-                  }}
-                >
-                  <Icons.book size={18} />
-                  <span>Reference</span>
-                </button>
-                <button 
-                  className={styles.mobileActionBtn}
-                  onClick={() => {
-                    setDetailsView('safety');
-                    setPanelState('details');
-                  }}
-                >
-                  <Icons.shield size={18} />
-                  <span>Safety</span>
-                </button>
-                <button 
-                  className={styles.mobileActionBtn}
-                  onClick={() => {
-                    setDetailsView('service');
-                    setPanelState('details');
-                  }}
-                >
-                  <Icons.clipboard size={18} />
-                  <span>Service</span>
-                </button>
-                <button 
-                  className={styles.mobileActionBtn}
-                  onClick={() => {
-                    setDetailsView('health');
-                    setPanelState('details');
-                  }}
-                >
-                  <Icons.gauge size={18} />
-                  <span>Health</span>
-                </button>
-                {carSlugForImages && (
-                  <button 
-                    className={styles.mobileActionBtn}
-                    onClick={() => {
-                      setDetailsView('photos');
-                      setPanelState('details');
-                    }}
-                  >
-                    <Icons.star size={18} />
-                    <span>Photos</span>
-                  </button>
-                )}
-              </>
-            )}
-          </div>
+            <button 
+              className={`${styles.heroNavArrow} ${styles.heroNavArrowRight} ${!canGoNext ? styles.heroNavArrowDisabled : ''}`}
+              onClick={handleNext}
+              disabled={!canGoNext}
+              aria-label="Next vehicle"
+            >
+              <Icons.chevronRight size={14} />
+            </button>
+          </>
         )}
         
-        {/* Gradient overlay for readability */}
-        <div className={styles.heroGradient} />
-      </div>
-
-      {/* BUILD PIVOT: Mobile Action Bar - Build-focused tabs first */}
-      {panelState === 'details' && isOwnedVehicle && (
-        <div className={styles.mobileActionBar}>
-          {/* BUILD TABS (Primary) */}
-          <button 
-            className={`${styles.mobileActionBtn} ${styles.mobileActionBtnPrimary} ${detailsView === 'mods' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('mods')}
-          >
-            <Icons.wrench size={18} />
-            <span>Build</span>
-          </button>
-          {carSlugForImages && (
-            <button 
-              className={`${styles.mobileActionBtn} ${detailsView === 'photos' ? styles.mobileActionBtnActive : ''}`}
-              onClick={() => setDetailsView('photos')}
-            >
-              <Icons.star size={18} />
-              <span>Photos</span>
-            </button>
-          )}
-          <button 
-            className={`${styles.mobileActionBtn} ${detailsView === 'specs' ? styles.mobileActionBtnActive : ''}`}
-            onClick={() => setDetailsView('specs')}
-          >
-            <Icons.info size={18} />
-            <span>Specs</span>
-          </button>
-          
-          {/* CARE TABS (Secondary - smaller, right-aligned) */}
-          <div className={styles.mobileActionSecondary}>
-            <button 
-              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'reference' ? styles.mobileActionBtnActive : ''}`}
-              onClick={() => setDetailsView('reference')}
-            >
-              <Icons.book size={16} />
-            </button>
-            <button 
-              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'safety' ? styles.mobileActionBtnActive : ''}`}
-              onClick={() => setDetailsView('safety')}
-            >
-              <Icons.shield size={16} />
-            </button>
-            <button 
-              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'service' ? styles.mobileActionBtnActive : ''}`}
-              onClick={() => setDetailsView('service')}
-            >
-              <Icons.clipboard size={16} />
-            </button>
-            <button 
-              className={`${styles.mobileActionBtn} ${styles.mobileActionBtnSmall} ${detailsView === 'health' ? styles.mobileActionBtnActive : ''}`}
-              onClick={() => setDetailsView('health')}
-            >
-              <Icons.gauge size={16} />
-            </button>
+        {/* Vehicle Counter - Top right overlay on image */}
+        {totalItems > 1 && panelState === 'collapsed' && (
+          <div className={styles.heroImageCounter}>
+            <span>{selectedIndex + 1}</span>
+            <span className={styles.heroImageCounterDivider}>/</span>
+            <span>{totalItems}</span>
           </div>
+        )}
+      </div>
+      
+      {/* Key Specs Strip - Quick stats between image and action buttons */}
+      {/* Always show build stats (with mods applied) for owned vehicles */}
+      {panelState !== 'details' && car && (
+        <div className={styles.keySpecsStrip}>
+          {car.hp && (
+            <div className={styles.keySpecItem}>
+              <span className={`${styles.keySpecValue} ${isOwnedVehicle && modificationGains.hpGain > 0 ? styles.keySpecValueModified : ''}`}>
+                {isOwnedVehicle && modificationGains.hpGain > 0 
+                  ? car.hp + modificationGains.hpGain 
+                  : car.hp}
+              </span>
+              <span className={styles.keySpecLabel}>HP</span>
+            </div>
+          )}
+          {car.torque && (
+            <div className={styles.keySpecItem}>
+              <span className={`${styles.keySpecValue} ${isOwnedVehicle && modificationGains.torqueGain > 0 ? styles.keySpecValueModified : ''}`}>
+                {isOwnedVehicle && modificationGains.torqueGain > 0 
+                  ? car.torque + modificationGains.torqueGain 
+                  : car.torque}
+              </span>
+              <span className={styles.keySpecLabel}>LB-FT</span>
+            </div>
+          )}
+          {car.zeroToSixty && (
+            <div className={styles.keySpecItem}>
+              <span className={`${styles.keySpecValue} ${isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 ? styles.keySpecValueModified : ''}`}>
+                {isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 
+                  ? (car.zeroToSixty - modificationGains.zeroToSixtyImprovement).toFixed(1) 
+                  : car.zeroToSixty}s
+              </span>
+              <span className={styles.keySpecLabel}>0-60</span>
+            </div>
+          )}
+          {car.topSpeed && (
+            <div className={styles.keySpecItem}>
+              <span className={styles.keySpecValue}>{car.topSpeed}</span>
+              <span className={styles.keySpecLabel}>MPH</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Bottom Action Bar - Specs, Build, Performance, Parts, Photos (when not in details view) */}
+      {panelState !== 'details' && (
+        <div className={styles.heroBottomBar}>
+          {/* Specs - links to dedicated page */}
+          <Link 
+            href={item.vehicle?.activeBuildId ? `/garage/my-specs?build=${item.vehicle.activeBuildId}` : `/garage/my-specs?car=${car.slug}`}
+            className={styles.heroBottomBtn}
+          >
+            <Icons.gauge size={18} />
+            <span>Specs</span>
+          </Link>
+          {isOwnedVehicle && car?.slug && (
+            <>
+              <Link 
+                href={item.vehicle?.activeBuildId ? `/garage/my-build?build=${item.vehicle.activeBuildId}` : `/garage/my-build?car=${car.slug}`}
+                className={styles.heroBottomBtn}
+              >
+                <Icons.wrench size={18} />
+                <span>Build</span>
+              </Link>
+              <Link 
+                href={item.vehicle?.activeBuildId ? `/garage/my-performance?build=${item.vehicle.activeBuildId}` : `/garage/my-performance?car=${car.slug}`}
+                className={styles.heroBottomBtn}
+              >
+                <Icons.bolt size={18} />
+                <span>Performance</span>
+              </Link>
+              <Link 
+                href={item.vehicle?.activeBuildId ? `/garage/my-parts?build=${item.vehicle.activeBuildId}` : `/garage/my-parts?car=${car.slug}`}
+                className={styles.heroBottomBtn}
+              >
+                <Icons.package size={18} />
+                <span>Parts</span>
+              </Link>
+              {/* Photos - links to dedicated page */}
+              <Link 
+                href={item.vehicle?.activeBuildId ? `/garage/my-photos?build=${item.vehicle.activeBuildId}` : `/garage/my-photos?car=${car.slug}`}
+                className={styles.heroBottomBtn}
+              >
+                <Icons.camera size={18} />
+                <span>Photos</span>
+              </Link>
+            </>
+          )}
         </div>
       )}
 
+      {/* Vehicle Tab Bar removed - was causing extra menu clutter */}
+
       {/* Spec Panel - Left Side with consistent transparency */}
-      <div className={`${styles.specPanel} ${styles[`specPanel_${panelState}`]}`}>
+      <div 
+        className={`${styles.specPanel} ${styles[`specPanel_${panelState}`]}`}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
         {/* Header - Always visible */}
+        {/* Close button - Fixed position top right of panel */}
+        {panelState !== 'collapsed' && (
+          <button 
+            className={styles.panelCloseBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setPanelState('collapsed');
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+            }}
+            title="Close"
+            aria-label="Close panel"
+          >
+            <Icons.x size={20} />
+          </button>
+        )}
+        
         <div className={styles.specPanelHeader}>
           <div className={styles.specPanelHeaderInfo}>
-            <BrandLogo brand={brand} />
+            {/* Match main page format: MAKE YEAR / Model */}
+            <div className={styles.brandYearRow}>
+              <span className={styles.brandName}>{item?.vehicle?.make || car?.brand || car?.make || brand}</span>
+              <span className={styles.vehicleYear}>{getSubInfo()}</span>
+            </div>
             <div className={styles.heroVehicleNameRow}>
-              <h2 className={styles.heroVehicleName}>{displayName}</h2>
+              <h2 className={styles.heroVehicleName}>{car?.model || item?.vehicle?.model || displayName}</h2>
               {/* Modified badge for owned vehicles with modifications */}
               {isOwnedVehicle && item.vehicle?.isModified && (
                 <span className={styles.modifiedBadge}>
@@ -1155,96 +1336,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                 </span>
               )}
             </div>
-            <p className={styles.heroSubInfo}>{getSubInfo()}</p>
-          </div>
-          <div className={styles.headerActions}>
-            {/* BUILD PIVOT: View toggle reordered - Mods first, then Photos, then Details, Care features collapsed */}
-            {panelState === 'details' && isOwnedVehicle && (
-              <div className={styles.headerViewToggle}>
-                {/* BUILD-FOCUSED TABS (Primary) */}
-                <button 
-                  className={`${styles.headerToggleBtn} ${styles.headerTogglePrimary} ${detailsView === 'mods' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('mods')}
-                  title="Modifications"
-                >
-                  <Icons.wrench size={12} />
-                  <span>Build</span>
-                  {item.vehicle?.isModified && (
-                    <span className={styles.tabBadge}>{item.vehicle.installedModifications?.length || 0}</span>
-                  )}
-                </button>
-                {carSlugForImages && (
-                  <button 
-                    className={`${styles.headerToggleBtn} ${detailsView === 'photos' ? styles.headerToggleActive : ''}`}
-                    onClick={() => setDetailsView('photos')}
-                    title="Build Photos"
-                  >
-                    <Icons.star size={12} />
-                    <span>Photos</span>
-                    {carImages.length > 0 && (
-                      <span className={styles.tabBadge}>{carImages.length}</span>
-                    )}
-                  </button>
-                )}
-                <button 
-                  className={`${styles.headerToggleBtn} ${detailsView === 'specs' ? styles.headerToggleActive : ''}`}
-                  onClick={() => setDetailsView('specs')}
-                  title="Vehicle Details"
-                >
-                  <Icons.info size={12} />
-                  <span>Specs</span>
-                </button>
-                
-                {/* CARE FEATURES (Secondary - collapsed into "More" on mobile) */}
-                <div className={styles.headerToggleMore}>
-                  <button 
-                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'reference' ? styles.headerToggleActive : ''}`}
-                    onClick={() => setDetailsView('reference')}
-                    title="Owner's Reference"
-                  >
-                    <Icons.book size={12} />
-                    <span>Reference</span>
-                  </button>
-                  <button 
-                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'safety' ? styles.headerToggleActive : ''}`}
-                    onClick={() => setDetailsView('safety')}
-                    title="Safety & Recalls"
-                  >
-                    <Icons.shield size={12} />
-                    <span>Safety</span>
-                  </button>
-                  <button 
-                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'service' ? styles.headerToggleActive : ''}`}
-                    onClick={() => setDetailsView('service')}
-                    title="Service Log"
-                  >
-                    <Icons.clipboard size={12} />
-                    <span>Service</span>
-                  </button>
-                  <button 
-                    className={`${styles.headerToggleBtn} ${styles.headerToggleSecondary} ${detailsView === 'health' ? styles.headerToggleActive : ''}`}
-                    onClick={() => setDetailsView('health')}
-                    title="Vehicle Health"
-                  >
-                    <Icons.gauge size={12} />
-                    <span>Health</span>
-                  </button>
-                </div>
-              </div>
-            )}
-            <button 
-              className={styles.collapseToggle}
-              onClick={() => {
-                if (panelState === 'details') setPanelState('expanded');
-                else if (panelState === 'expanded') setPanelState('collapsed');
-                else setPanelState('expanded');
-              }}
-              title={panelState === 'collapsed' ? 'Expand' : panelState === 'expanded' ? 'Collapse' : 'Back to summary'}
-            >
-              {panelState === 'collapsed' && <Icons.chevronDown size={16} />}
-              {panelState === 'expanded' && <Icons.chevronUp size={16} />}
-              {panelState === 'details' && <Icons.chevronLeft size={16} />}
-            </button>
           </div>
         </div>
 
@@ -1321,22 +1412,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               )}
             </div>
 
-            {/* Quick link to reference */}
-            {isOwnedVehicle && !car?._hasNoMatchedCar && (
-              <div className={styles.variantMatchRow}>
-                <button
-                  className={styles.variantMatchLink}
-                  onClick={() => {
-                    setPanelState('details');
-                    setDetailsView('reference');
-                  }}
-                  title="Open Owner Reference"
-                >
-                  <Icons.book size={14} />
-                  <span>Reference</span>
-                </button>
-              </div>
-            )}
 
             {/* Daily Driver Enrichment Prompt */}
             {isOwnedVehicle && car?._hasNoMatchedCar && enrichmentStatus !== 'enriched' && (
@@ -1416,15 +1491,35 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
           </div>
         )}
 
-        {/* Full Details - Consistent view for all, with Owner's Reference toggle for My Collection */}
+        {/* Full Details - Specs view with owner-specific data for My Collection vehicles */}
         {panelState === 'details' && car && (
           <div className={styles.specPanelBody}>
-            {/* Vehicle Details View - Same for both My Collection and Favorites */}
+            {/* Vehicle Details View - Specifications and performance data */}
             {(!isOwnedVehicle || detailsView === 'specs') && (
               <>
                 {/* Summary/Tagline at top */}
                 {car.tagline && (
                   <p className={styles.detailsSummary}>{car.tagline}</p>
+                )}
+
+                {/* Performance Score Gauge - GRAVL-style visual summary */}
+                {(car.hp || car.zeroToSixty || car.track) && (
+                  <PerformanceScoreGauge
+                    score={(() => {
+                      // Calculate a composite score from available metrics
+                      let score = 50; // base
+                      if (car.hp) score += Math.min((car.hp / 800) * 25, 25);
+                      if (car.track) score += (car.track / 10) * 15;
+                      if (car.zeroToSixty && car.zeroToSixty < 6) score += (6 - car.zeroToSixty) * 5;
+                      return Math.min(Math.round(score), 100);
+                    })()}
+                    label="Performance"
+                    stats={[
+                      car.hp && { value: car.hp, unit: 'HP', label: 'Power' },
+                      car.zeroToSixty && { value: car.zeroToSixty, unit: 's', label: '0-60' },
+                      car.track && { value: car.track, unit: '/10', label: 'Track' },
+                    ].filter(Boolean).slice(0, 3)}
+                  />
                 )}
 
                 {/* Main Specs Grid - wider blocks */}
@@ -1557,7 +1652,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     </div>
                   </div>
 
-                  {/* AutoRev Ratings */}
+                  {/* AutoRev Ratings - Visual Bars */}
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>AutoRev Ratings</span>
@@ -1568,13 +1663,13 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
-                      {car.driverFun && <div className={styles.detailBlockItem}><span>Driver Fun</span><span className={styles.ratingValue}>{car.driverFun}/10</span></div>}
-                      {car.track && <div className={styles.detailBlockItem}><span>Track</span><span className={styles.ratingValue}>{car.track}/10</span></div>}
-                      {car.sound && <div className={styles.detailBlockItem}><span>Sound</span><span className={styles.ratingValue}>{car.sound}/10</span></div>}
-                      {car.reliability && <div className={styles.detailBlockItem}><span>Reliability</span><span className={styles.ratingValue}>{car.reliability}/10</span></div>}
-                      {car.interior && <div className={styles.detailBlockItem}><span>Interior</span><span className={styles.ratingValue}>{car.interior}/10</span></div>}
-                      {car.value && <div className={styles.detailBlockItem}><span>Value</span><span className={styles.ratingValue}>{car.value}/10</span></div>}
-                      {car.aftermarket && <div className={styles.detailBlockItem}><span>Aftermarket</span><span className={styles.ratingValue}>{car.aftermarket}/10</span></div>}
+                      <RatingBar value={car.driverFun} label="Driver Fun" />
+                      <RatingBar value={car.track} label="Track" />
+                      <RatingBar value={car.sound} label="Sound" />
+                      <RatingBar value={car.reliability} label="Reliability" />
+                      <RatingBar value={car.interior} label="Interior" />
+                      <RatingBar value={car.value} label="Value" />
+                      <RatingBar value={car.aftermarket} label="Aftermarket" />
                     </div>
                   </div>
 
@@ -1612,9 +1707,9 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                       <div className={styles.detailBlockItems}>
                         {car.partsAvailability && <div className={styles.detailBlockItem}><span>Parts</span><span style={{textTransform: 'capitalize'}}>{car.partsAvailability}</span></div>}
                         {car.dealerVsIndependent && <div className={styles.detailBlockItem}><span>Service</span><span style={{textTransform: 'capitalize'}}>{car.dealerVsIndependent.replace(/-/g, ' ')}</span></div>}
-                        {car.diyFriendliness && <div className={styles.detailBlockItem}><span>DIY Friendly</span><span className={styles.ratingValue}>{car.diyFriendliness}/10</span></div>}
+                        <RatingBar value={car.diyFriendliness} label="DIY Friendly" />
                         {car.trackReadiness && <div className={styles.detailBlockItem}><span>Track Ready</span><span style={{textTransform: 'capitalize'}}>{car.trackReadiness.replace(/-/g, ' ')}</span></div>}
-                        {car.communityStrength && <div className={styles.detailBlockItem}><span>Community</span><span className={styles.ratingValue}>{car.communityStrength}/10</span></div>}
+                        <RatingBar value={car.communityStrength} label="Community" />
                       </div>
                     </div>
                   )}
@@ -1648,261 +1743,261 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
                     )}
                   </div>
                 )}
-              </>
-            )}
 
-            {/* Owner's Reference View - Only for My Collection (Enthusiast+ tier) */}
-            {isOwnedVehicle && detailsView === 'reference' && (
-              <PremiumGate feature="ownerReference" variant="compact">
-                {/* VIN Lookup - Compact inline */}
-                <div className={styles.vinLookupCompact}>
-                  <input
-                    type="text"
-                    value={vinInput}
-                    onChange={(e) => setVinInput(e.target.value.toUpperCase())}
-                    placeholder="Enter VIN to decode vehicle info"
-                    className={styles.vinInputCompact}
-                    maxLength={17}
-                  />
-                  <button 
-                    onClick={handleVinLookup}
-                    disabled={vinInput.length !== 17 || vinLookupLoading}
-                    className={styles.vinLookupBtnCompact}
-                  >
-                    {vinLookupLoading ? 'Decoding...' : 'Decode & Save'}
-                  </button>
-                </div>
-
-                {/* VIN Decode Results */}
-                {vinData && (
-                  <div className={styles.vinDecodeResults}>
-                    <div className={styles.vinDecodeHeader}>
-                      <h4 className={styles.detailBlockTitle}>
-                        VIN Decoded
-                        {vinSaveStatus === 'saved' && (
-                          <span className={styles.vinSaveSuccess}>✓ Saved to vehicle</span>
-                        )}
-                        {vinSaveStatus === 'saving' && (
-                          <span className={styles.vinSaving}>Saving...</span>
-                        )}
-                        {vinSaveStatus === 'error' && (
-                          <span className={styles.vinSaveError}>Save failed</span>
-                        )}
-                      </h4>
+                {/* Owner-Specific Specs - Only for My Collection (Enthusiast+ tier) */}
+                {isOwnedVehicle && (
+                  <PremiumGate feature="ownerReference" variant="compact">
+                    {/* VIN Lookup - Compact inline */}
+                    <div className={styles.vinLookupCompact}>
+                      <input
+                        type="text"
+                        value={vinInput}
+                        onChange={(e) => setVinInput(e.target.value.toUpperCase())}
+                        placeholder="Enter VIN to decode vehicle info"
+                        className={styles.vinInputCompact}
+                        maxLength={17}
+                      />
+                      <button 
+                        onClick={handleVinLookup}
+                        disabled={vinInput.length !== 17 || vinLookupLoading}
+                        className={styles.vinLookupBtnCompact}
+                      >
+                        {vinLookupLoading ? 'Decoding...' : 'Decode & Save'}
+                      </button>
                     </div>
-                    <div className={styles.vinDecodeGrid}>
-                      <div className={styles.vinDecodeItem}>
-                        <span>Year</span>
-                        <span className={vinData.modelYear !== item?.vehicle?.year ? styles.vinDataChanged : ''}>
-                          {vinData.modelYear}
-                          {vinData.modelYear !== item?.vehicle?.year && (
-                            <span className={styles.vinDataOld}> (was {item?.vehicle?.year})</span>
-                          )}
-                        </span>
-                      </div>
-                      <div className={styles.vinDecodeItem}>
-                        <span>Make</span>
-                        <span>{vinData.make}</span>
-                      </div>
-                      <div className={styles.vinDecodeItem}>
-                        <span>Model</span>
-                        <span>{vinData.model}</span>
-                      </div>
-                      {vinData.trim && (
-                        <div className={styles.vinDecodeItem}>
-                          <span>Trim</span>
-                          <span>{vinData.trim}</span>
+
+                    {/* VIN Decode Results */}
+                    {vinData && (
+                      <div className={styles.vinDecodeResults}>
+                        <div className={styles.vinDecodeHeader}>
+                          <h4 className={styles.detailBlockTitle}>
+                            VIN Decoded
+                            {vinSaveStatus === 'saved' && (
+                              <span className={styles.vinSaveSuccess}>✓ Saved to vehicle</span>
+                            )}
+                            {vinSaveStatus === 'saving' && (
+                              <span className={styles.vinSaving}>Saving...</span>
+                            )}
+                            {vinSaveStatus === 'error' && (
+                              <span className={styles.vinSaveError}>Save failed</span>
+                            )}
+                          </h4>
                         </div>
-                      )}
-                      {vinData.engine && (
-                        <div className={styles.vinDecodeItem}>
-                          <span>Engine</span>
-                          <span>{vinData.engine}</span>
-                        </div>
-                      )}
-                      {vinData.transmission && (
-                        <div className={styles.vinDecodeItem}>
-                          <span>Transmission</span>
-                          <span>{vinData.transmission}</span>
-                        </div>
-                      )}
-                      {vinData.drivetrain && (
-                        <div className={styles.vinDecodeItem}>
-                          <span>Drivetrain</span>
-                          <span>{vinData.drivetrain}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* VIN Error */}
-                {vinError && (
-                  <div className={styles.vinErrorMsg}>
-                    {vinError}
-                  </div>
-                )}
-
-                {/* Main Reference Grid - Same layout as Details */}
-                <div className={styles.fullDetailsInPanel}>
-                  {/* Engine Oil */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Engine Oil</span>
-                      <AskALButton 
-                        category="Engine Oil"
-                        prompt={`What's the best engine oil for my ${car?.name || 'car'}? Include recommended brands, viscosity, and change intervals.`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Viscosity</span><span>{maintenanceData.specs?.oil_viscosity || '5W-30 or 5W-40'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Capacity</span><span>{maintenanceData.specs?.oil_capacity_quarts ? `${maintenanceData.specs.oil_capacity_quarts} qt` : '~8-10 qt'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Change Interval</span><span>{maintenanceData.specs?.oil_change_interval_miles ? `${maintenanceData.specs.oil_change_interval_miles.toLocaleString()} mi` : '5,000-7,500 mi'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* Fuel */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Fuel</span>
-                      <AskALButton 
-                        category="Fuel"
-                        prompt={`What fuel should I use in my ${car?.name || 'car'}? Is premium worth it, and what about E85 compatibility?`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Fuel Type</span><span>{maintenanceData.specs?.fuel_type || 'Premium Unleaded'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Min Octane</span><span>{maintenanceData.specs?.fuel_octane_minimum || '91'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Recommended</span><span>{maintenanceData.specs?.fuel_octane_recommended ? `${maintenanceData.specs.fuel_octane_recommended} octane` : '93 octane'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Tank Capacity</span><span>{maintenanceData.specs?.fuel_tank_capacity_gallons ? `${maintenanceData.specs.fuel_tank_capacity_gallons} gal` : '~16 gal'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* Tires & Wheels - Inline Editable Card */}
-                  <WheelTireSpecsCard
-                    stockSpecs={maintenanceData.specs}
-                    customSpecs={item.vehicle?.customSpecs}
-                    onUpdateCustomSpecs={onUpdateCustomSpecs ? async (specs) => {
-                      if (item.vehicle?.id) {
-                        await onUpdateCustomSpecs(item.vehicle.id, specs);
-                      }
-                    } : undefined}
-                    fitmentOptions={fitmentOptions}
-                    showFitmentToggle={true}
-                    carName={car?.name}
-                  />
-
-                  {/* Fluids */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Fluids</span>
-                      <AskALButton 
-                        category="Fluids"
-                        prompt={`What fluids does my ${car?.name || 'car'} need? Include coolant, brake fluid, transmission fluid, and differential fluid specifications.`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Coolant</span><span>{maintenanceData.specs?.coolant_type || 'OEM Coolant'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Brake Fluid</span><span>{maintenanceData.specs?.brake_fluid_type || 'DOT 4'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Trans Fluid</span><span>{maintenanceData.specs?.trans_fluid_auto || maintenanceData.specs?.trans_fluid_manual || 'Check manual'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Diff Fluid</span><span>{maintenanceData.specs?.diff_fluid_type || 'Check manual'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* Brakes */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Brakes</span>
-                      <AskALButton 
-                        category="Brakes"
-                        prompt={`Tell me about the brake system on my ${car?.name || 'car'}. What are good upgrade options and when should I replace pads/rotors?`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Front Caliper</span><span>{maintenanceData.specs?.brake_front_caliper_type || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Rear Caliper</span><span>{maintenanceData.specs?.brake_rear_caliper_type || '—'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Pad Compound</span><span>{maintenanceData.specs?.brake_pad_compound || 'OEM'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* Battery */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Battery</span>
-                      <AskALButton 
-                        category="Battery"
-                        prompt={`What battery should I get for my ${car?.name || 'car'}? Include recommended brands and any special considerations.`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Group Size</span><span>{maintenanceData.specs?.battery_group_size || 'H6/48'}</span></div>
-                      <div className={styles.detailBlockItem}><span>CCA</span><span>{maintenanceData.specs?.battery_cca || '750+'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Type</span><span>{maintenanceData.specs?.battery_agm ? 'AGM' : 'AGM Recommended'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* Wipers & Lights */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>Wipers & Lights</span>
-                      <AskALButton 
-                        category="Wipers & Lights"
-                        prompt={`What are the wiper blade sizes and bulb types for my ${car?.name || 'car'}? Any recommended upgrades?`}
-                        carName={car?.name}
-                      />
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <div className={styles.detailBlockItem}><span>Driver Wiper</span><span>{maintenanceData.specs?.wiper_driver_size_inches ? `${maintenanceData.specs.wiper_driver_size_inches}"` : '22"'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Passenger Wiper</span><span>{maintenanceData.specs?.wiper_passenger_size_inches ? `${maintenanceData.specs.wiper_passenger_size_inches}"` : '20"'}</span></div>
-                      <div className={styles.detailBlockItem}><span>Low Beam</span><span>{maintenanceData.specs?.headlight_low_beam_type || 'LED'}</span></div>
-                      <div className={styles.detailBlockItem}><span>High Beam</span><span>{maintenanceData.specs?.headlight_high_beam_type || 'LED'}</span></div>
-                    </div>
-                  </div>
-
-                  {/* VIN Decoded Info - if available */}
-                  {vinData && (
-                    <div className={styles.detailBlock}>
-                      <h4 className={styles.detailBlockTitle}>
-                        <span>VIN Details</span>
-                      </h4>
-                      <div className={styles.detailBlockItems}>
-                        <div className={styles.detailBlockItem}><span>VIN</span><span className={styles.vinValueSmall}>{vinData.vin}</span></div>
-                        <div className={styles.detailBlockItem}><span>Plant</span><span>{vinData.plantCity}, {vinData.plantCountry}</span></div>
-                        <div className={styles.detailBlockItem}><span>Body Style</span><span>{vinData.bodyStyle}</span></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Recalls Section - if VIN decoded and has recalls */}
-                {vinData?.recalls && vinData.recalls.length > 0 && (
-                  <div className={styles.prosConsRow}>
-                    <div className={styles.prosConsBlock} style={{ flex: 1 }}>
-                      <h4 className={styles.detailBlockTitle}>Recalls & Campaigns</h4>
-                      <ul className={styles.proConList}>
-                        {vinData.recalls.map((recall, i) => (
-                          <li key={i} className={styles.conItem}>
-                            <span style={{ color: recall.status === 'Completed' ? '#10b981' : '#ef4444' }}>
-                              {recall.status === 'Completed' ? '✓' : '!'} 
+                        <div className={styles.vinDecodeGrid}>
+                          <div className={styles.vinDecodeItem}>
+                            <span>Year</span>
+                            <span className={vinData.modelYear !== item?.vehicle?.year ? styles.vinDataChanged : ''}>
+                              {vinData.modelYear}
+                              {vinData.modelYear !== item?.vehicle?.year && (
+                                <span className={styles.vinDataOld}> (was {item?.vehicle?.year})</span>
+                              )}
                             </span>
-                            {' '}{recall.description} ({recall.status})
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                          </div>
+                          <div className={styles.vinDecodeItem}>
+                            <span>Make</span>
+                            <span>{vinData.make}</span>
+                          </div>
+                          <div className={styles.vinDecodeItem}>
+                            <span>Model</span>
+                            <span>{vinData.model}</span>
+                          </div>
+                          {vinData.trim && (
+                            <div className={styles.vinDecodeItem}>
+                              <span>Trim</span>
+                              <span>{vinData.trim}</span>
+                            </div>
+                          )}
+                          {vinData.engine && (
+                            <div className={styles.vinDecodeItem}>
+                              <span>Engine</span>
+                              <span>{vinData.engine}</span>
+                            </div>
+                          )}
+                          {vinData.transmission && (
+                            <div className={styles.vinDecodeItem}>
+                              <span>Transmission</span>
+                              <span>{vinData.transmission}</span>
+                            </div>
+                          )}
+                          {vinData.drivetrain && (
+                            <div className={styles.vinDecodeItem}>
+                              <span>Drivetrain</span>
+                              <span>{vinData.drivetrain}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                {/* Data source note */}
-                <p className={styles.referenceNote}>
-                  Values shown are estimates. Verify with your owner's manual or VIN decode.
-                </p>
-              </PremiumGate>
+                    {/* VIN Error */}
+                    {vinError && (
+                      <div className={styles.vinErrorMsg}>
+                        {vinError}
+                      </div>
+                    )}
+
+                    {/* Owner Specs Grid */}
+                    <div className={styles.fullDetailsInPanel}>
+                      {/* Engine Oil */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Engine Oil</span>
+                          <AskALButton 
+                            category="Engine Oil"
+                            prompt={`What's the best engine oil for my ${car?.name || 'car'}? Include recommended brands, viscosity, and change intervals.`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Viscosity</span><span>{maintenanceData.specs?.oil_viscosity || '5W-30 or 5W-40'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Capacity</span><span>{maintenanceData.specs?.oil_capacity_quarts ? `${maintenanceData.specs.oil_capacity_quarts} qt` : '~8-10 qt'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Change Interval</span><span>{maintenanceData.specs?.oil_change_interval_miles ? `${maintenanceData.specs.oil_change_interval_miles.toLocaleString()} mi` : '5,000-7,500 mi'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Fuel */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Fuel</span>
+                          <AskALButton 
+                            category="Fuel"
+                            prompt={`What fuel should I use in my ${car?.name || 'car'}? Is premium worth it, and what about E85 compatibility?`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Fuel Type</span><span>{maintenanceData.specs?.fuel_type || 'Premium Unleaded'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Min Octane</span><span>{maintenanceData.specs?.fuel_octane_minimum || '91'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Recommended</span><span>{maintenanceData.specs?.fuel_octane_recommended ? `${maintenanceData.specs.fuel_octane_recommended} octane` : '93 octane'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Tank Capacity</span><span>{maintenanceData.specs?.fuel_tank_capacity_gallons ? `${maintenanceData.specs.fuel_tank_capacity_gallons} gal` : '~16 gal'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Tires & Wheels - Inline Editable Card */}
+                      <WheelTireSpecsCard
+                        stockSpecs={maintenanceData.specs}
+                        customSpecs={item.vehicle?.customSpecs}
+                        onUpdateCustomSpecs={onUpdateCustomSpecs ? async (specs) => {
+                          if (item.vehicle?.id) {
+                            await onUpdateCustomSpecs(item.vehicle.id, specs);
+                          }
+                        } : undefined}
+                        fitmentOptions={fitmentOptions}
+                        showFitmentToggle={true}
+                        carName={car?.name}
+                      />
+
+                      {/* Fluids */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Fluids</span>
+                          <AskALButton 
+                            category="Fluids"
+                            prompt={`What fluids does my ${car?.name || 'car'} need? Include coolant, brake fluid, transmission fluid, and differential fluid specifications.`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Coolant</span><span>{maintenanceData.specs?.coolant_type || 'OEM Coolant'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Brake Fluid</span><span>{maintenanceData.specs?.brake_fluid_type || 'DOT 4'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Trans Fluid</span><span>{maintenanceData.specs?.trans_fluid_auto || maintenanceData.specs?.trans_fluid_manual || 'Check manual'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Diff Fluid</span><span>{maintenanceData.specs?.diff_fluid_type || 'Check manual'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Brakes */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Brakes</span>
+                          <AskALButton 
+                            category="Brakes"
+                            prompt={`Tell me about the brake system on my ${car?.name || 'car'}. What are good upgrade options and when should I replace pads/rotors?`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Front Caliper</span><span>{maintenanceData.specs?.brake_front_caliper_type || '—'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Rear Caliper</span><span>{maintenanceData.specs?.brake_rear_caliper_type || '—'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Pad Compound</span><span>{maintenanceData.specs?.brake_pad_compound || 'OEM'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Battery */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Battery</span>
+                          <AskALButton 
+                            category="Battery"
+                            prompt={`What battery should I get for my ${car?.name || 'car'}? Include recommended brands and any special considerations.`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Group Size</span><span>{maintenanceData.specs?.battery_group_size || 'H6/48'}</span></div>
+                          <div className={styles.detailBlockItem}><span>CCA</span><span>{maintenanceData.specs?.battery_cca || '750+'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Type</span><span>{maintenanceData.specs?.battery_agm ? 'AGM' : 'AGM Recommended'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Wipers & Lights */}
+                      <div className={styles.detailBlock}>
+                        <h4 className={styles.detailBlockTitle}>
+                          <span>Wipers & Lights</span>
+                          <AskALButton 
+                            category="Wipers & Lights"
+                            prompt={`What are the wiper blade sizes and bulb types for my ${car?.name || 'car'}? Any recommended upgrades?`}
+                            carName={car?.name}
+                          />
+                        </h4>
+                        <div className={styles.detailBlockItems}>
+                          <div className={styles.detailBlockItem}><span>Driver Wiper</span><span>{maintenanceData.specs?.wiper_driver_size_inches ? `${maintenanceData.specs.wiper_driver_size_inches}"` : '22"'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Passenger Wiper</span><span>{maintenanceData.specs?.wiper_passenger_size_inches ? `${maintenanceData.specs.wiper_passenger_size_inches}"` : '20"'}</span></div>
+                          <div className={styles.detailBlockItem}><span>Low Beam</span><span>{maintenanceData.specs?.headlight_low_beam_type || 'LED'}</span></div>
+                          <div className={styles.detailBlockItem}><span>High Beam</span><span>{maintenanceData.specs?.headlight_high_beam_type || 'LED'}</span></div>
+                        </div>
+                      </div>
+
+                      {/* VIN Decoded Info - if available */}
+                      {vinData && (
+                        <div className={styles.detailBlock}>
+                          <h4 className={styles.detailBlockTitle}>
+                            <span>VIN Details</span>
+                          </h4>
+                          <div className={styles.detailBlockItems}>
+                            <div className={styles.detailBlockItem}><span>VIN</span><span className={styles.vinValueSmall}>{vinData.vin}</span></div>
+                            <div className={styles.detailBlockItem}><span>Plant</span><span>{vinData.plantCity}, {vinData.plantCountry}</span></div>
+                            <div className={styles.detailBlockItem}><span>Body Style</span><span>{vinData.bodyStyle}</span></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Recalls Section - if VIN decoded and has recalls */}
+                    {vinData?.recalls && vinData.recalls.length > 0 && (
+                      <div className={styles.prosConsRow}>
+                        <div className={styles.prosConsBlock} style={{ flex: 1 }}>
+                          <h4 className={styles.detailBlockTitle}>Recalls & Campaigns</h4>
+                          <ul className={styles.proConList}>
+                            {vinData.recalls.map((recall, i) => (
+                              <li key={i} className={styles.conItem}>
+                                <span style={{ color: recall.status === 'Completed' ? '#10b981' : '#ef4444' }}>
+                                  {recall.status === 'Completed' ? '✓' : '!'} 
+                                </span>
+                                {' '}{recall.description} ({recall.status})
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Data source note */}
+                    <p className={styles.referenceNote}>
+                      Values shown are estimates. Verify with your owner's manual or VIN decode.
+                    </p>
+                  </PremiumGate>
+                )}
+              </>
             )}
 
             {/* Safety View - Recalls, TSBs, Complaints, Safety Ratings (Enthusiast+ tier) */}
@@ -2036,106 +2131,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </PremiumGate>
             )}
 
-            {/* Service Log View (Enthusiast+ tier) */}
-            {isOwnedVehicle && detailsView === 'service' && (
-              <PremiumGate feature="serviceLog" variant="compact">
-                {/* Add Service Button */}
-                <div className={styles.serviceLogHeader}>
-                  <h4 className={styles.detailBlockTitle}>
-                    <Icons.clipboard size={14} />
-                    Service History
-                  </h4>
-                  <button 
-                    onClick={() => {
-                      setEditingLog(null);
-                      setShowServiceLogModal(true);
-                    }}
-                    className={styles.addServiceBtn}
-                  >
-                    <Icons.plus size={14} />
-                    Log Service
-                  </button>
-                </div>
-
-                {loadingServiceLogs ? (
-                  <div className={styles.emptyServiceLog}>
-                    <LoadingSpinner size="small" />
-                    <p>Loading service records...</p>
-                  </div>
-                ) : serviceLogs.length === 0 ? (
-                  <div className={styles.emptyServiceLog}>
-                    <Icons.clipboard size={48} />
-                    <p>No service records yet</p>
-                    <p className={styles.emptyServiceHint}>
-                      Track oil changes, tire rotations, and other maintenance to stay on top of your vehicle's health.
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setEditingLog(null);
-                        setShowServiceLogModal(true);
-                      }}
-                      className={styles.firstServiceBtn}
-                    >
-                      <Icons.plus size={16} style={{ transform: 'translateY(3px)' }} />
-                      Add First Service Record
-                    </button>
-                  </div>
-                ) : (
-                  <div className={styles.serviceLogList}>
-                    {serviceLogs.map((log, i) => (
-                      <div key={log.id || i} className={styles.serviceLogItem}>
-                        <div className={styles.serviceLogDate}>
-                          <span className={styles.serviceLogMonth}>
-                            {new Date(log.service_date).toLocaleDateString('en-US', { month: 'short' })}
-                          </span>
-                          <span className={styles.serviceLogDay}>
-                            {new Date(log.service_date).getDate()}
-                          </span>
-                        </div>
-                        <div className={styles.serviceLogContent}>
-                          <span className={styles.serviceLogType}>{log.service_type}</span>
-                          {log.odometer_reading && (
-                            <span className={styles.serviceLogMiles}>{log.odometer_reading.toLocaleString()} mi</span>
-                          )}
-                          {log.total_cost && (
-                            <span className={styles.serviceLogCost}>${Number(log.total_cost).toFixed(2)}</span>
-                          )}
-                          {log.notes && (
-                            <p className={styles.serviceLogNotes}>{log.notes}</p>
-                          )}
-                        </div>
-                        <div className={styles.serviceLogActions}>
-                          <button 
-                            className={styles.serviceLogEditBtn}
-                            onClick={() => handleEditServiceLog(log)}
-                            title="Edit service record"
-                          >
-                            <Icons.edit size={14} />
-                          </button>
-                          <button 
-                            className={styles.serviceLogDeleteBtn}
-                            onClick={() => handleDeleteServiceLog(log.id)}
-                            disabled={deletingLogId === log.id}
-                            title="Delete service record"
-                          >
-                            {deletingLogId === log.id ? (
-                              <LoadingSpinner size="tiny" />
-                            ) : (
-                              <Icons.trash size={14} />
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <p className={styles.referenceNote}>
-                  Keep your service records up to date for accurate maintenance reminders.
-                </p>
-              </PremiumGate>
-            )}
-
             {/* Modifications View - Build Editor with Basic/Advanced modes */}
             {isOwnedVehicle && detailsView === 'mods' && (
               <div className={styles.modsView}>
@@ -2159,30 +2154,13 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
               </div>
             )}
 
-            {/* Vehicle Health View - Track maintenance status */}
-            {isOwnedVehicle && detailsView === 'health' && item?.vehicle?.id && (
-              <div className={styles.healthView}>
-                <VehicleHealthCard
-                  userId={userId}
-                  vehicleId={item.vehicle.id}
-                  vehicleName={
-                    car.name ||
-                    item.vehicle.nickname ||
-                    `${item.vehicle.year || ''} ${item.vehicle.make || ''} ${item.vehicle.model || ''}`.trim()
-                  }
-                  initialMileage={item.vehicle.mileage}
-                  maintenanceSpecs={maintenanceData.specs}
-                />
-              </div>
-            )}
-
             {/* Photos View - Upload and manage vehicle photos */}
             {isOwnedVehicle && detailsView === 'photos' && carSlugForImages && (
               <div className={styles.photosView}>
                 <div className={styles.photosHeader}>
                   <h3>Your Photos</h3>
                   <p className={styles.photosHint}>
-                    Add photos of your build. Photos are shared with Tuning Shop for a consistent look.
+                    Add photos of your build. Select a hero image to display across your garage.
                   </p>
                 </div>
                 
@@ -2222,7 +2200,7 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       {/* Quick Action Buttons - Right side */}
       {panelState !== 'details' && (
         <div className={styles.quickActionBar}>
-          {/* Details button - available for both My Collection and Favorites */}
+          {/* Details button - available for vehicles */}
           <button 
             className={styles.quickActionItem}
             onClick={() => {
@@ -2235,61 +2213,17 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
           </button>
           
           {/* Additional buttons only for My Collection */}
-          {isOwnedVehicle && (
-            <>
-              <button 
-                className={styles.quickActionItem}
-                onClick={() => {
-                  setDetailsView('reference');
-                  setPanelState('details');
-                }}
-              >
-                <Icons.book size={20} />
-                <span>Reference</span>
-              </button>
-              <button 
-                className={styles.quickActionItem}
-                onClick={() => {
-                  setDetailsView('safety');
-                  setPanelState('details');
-                }}
-              >
-                <Icons.shield size={20} />
-                <span>Safety</span>
-              </button>
-              <button 
-                className={styles.quickActionItem}
-                onClick={() => {
-                  setDetailsView('service');
-                  setPanelState('details');
-                }}
-              >
-                <Icons.clipboard size={20} />
-                <span>Service</span>
-              </button>
-              <button 
-                className={styles.quickActionItem}
-                onClick={() => {
-                  setDetailsView('health');
-                  setPanelState('details');
-                }}
-              >
-                <Icons.gauge size={20} />
-                <span>Health</span>
-              </button>
-              {carSlugForImages && (
-                <button 
-                  className={styles.quickActionItem}
-                  onClick={() => {
-                    setDetailsView('photos');
-                    setPanelState('details');
-                  }}
-                >
-                  <Icons.star size={20} />
-                  <span>Photos</span>
-                </button>
-              )}
-            </>
+          {isOwnedVehicle && carSlugForImages && (
+            <button 
+              className={styles.quickActionItem}
+              onClick={() => {
+                setDetailsView('photos');
+                setPanelState('details');
+              }}
+            >
+              <Icons.camera size={20} />
+              <span>Photos</span>
+            </button>
           )}
         </div>
       )}
@@ -2297,12 +2231,6 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
       {/* Badges */}
       {isOwnedVehicle && item.vehicle?.isPrimary && (
         <span className={styles.heroBadge}>Primary Vehicle</span>
-      )}
-      {isFavorite && isInMyCars && (
-        <span className={styles.heroBadgeOwned}>
-          <Icons.car size={12} />
-          Owned
-        </span>
       )}
 
       {/* Performance Hub Overlay */}
@@ -2325,6 +2253,77 @@ function HeroVehicleDisplay({ item, type, onAction, onAddToMyCars, isInMyCars, o
           onSave={handleSaveServiceLog}
           maintenanceSpecs={maintenanceData?.specs}
         />
+      )}
+    </div>
+  );
+}
+
+// Build Hero Display - Shows build project with user's hero image if available
+function BuildHeroDisplay({ build, onOpenTuningShop, onViewDetails, selectedIndex, totalItems, onNavigate }) {
+  const carSlug = build?.car?.slug;
+  
+  // Get user's uploaded images for this car (shared between garage and tuning shop)
+  const { 
+    heroImage: userHeroImage, 
+    heroImageUrl: userHeroImageUrl,
+  } = useCarImages(carSlug, { enabled: !!carSlug });
+  
+  // Determine if user has a custom hero image
+  const hasCustomHero = !!userHeroImage && !!userHeroImageUrl;
+
+  return (
+    <div className={styles.buildHeroDisplay}>
+      <div className={styles.buildHeroContent}>
+        <div className={styles.buildHeroInfo}>
+          <span className={styles.buildBadge}>BUILD PROJECT</span>
+          <h2 className={styles.buildHeroName}>{build?.name || 'Untitled Build'}</h2>
+          <p className={styles.buildHeroCar}>{build?.car?.name || 'Unknown Car'}</p>
+          {build?.notes && (
+            <p className={styles.buildHeroNotes}>{build.notes}</p>
+          )}
+        </div>
+        <div className={styles.buildHeroImage}>
+          {hasCustomHero ? (
+            <Image
+              src={userHeroImageUrl}
+              alt={build?.name || 'Build'}
+              fill
+              style={{ objectFit: 'cover' }}
+              priority
+            />
+          ) : (
+            <CarImage 
+              car={build?.car} 
+              variant="garage" 
+              priority
+            />
+          )}
+        </div>
+        <div className={styles.buildHeroActions}>
+          <button
+            className={styles.buildHeroAction}
+            onClick={() => onOpenTuningShop(build)}
+          >
+            <Icons.wrench size={18} />
+            <span>Open in Tuning Shop</span>
+          </button>
+          <button
+            className={styles.buildHeroActionSecondary}
+            onClick={() => onViewDetails(build)}
+          >
+            <Icons.info size={18} />
+            <span>View Details</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Navigation counter */}
+      {totalItems > 1 && (
+        <div className={styles.buildNavCounter}>
+          <span>{selectedIndex + 1}</span>
+          <span className={styles.buildNavCounterSeparator}>/</span>
+          <span>{totalItems}</span>
+        </div>
       )}
     </div>
   );
@@ -2363,9 +2362,9 @@ function PerformanceOverlay({ car, onClose }) {
         </div>
 
         <div className={styles.overlayFooter}>
-          <Link href={`/tuning-shop?car=${car.slug}`} className={styles.overlayLinkPrimary}>
+          <Link href={`/garage/my-build?car=${car.slug}`} className={styles.overlayLinkPrimary}>
             <Icons.wrench size={16} />
-            Open Tuning Shop
+            Configure Build
           </Link>
         </div>
       </div>
@@ -2560,6 +2559,145 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   );
 }
 
+// Vehicle List View Component - Compact list for managing multiple vehicles
+function VehicleListView({ items, onSelectVehicle, onEditBuild, onDeleteVehicle, onStartNewBuild }) {
+  const router = useRouter();
+  const { heroImageUrl: defaultHero } = useCarImages(null);
+  
+  const handleItemClick = (item) => {
+    if (onSelectVehicle) {
+      onSelectVehicle(item);
+    }
+  };
+  
+  const handleEditBuild = (e, item) => {
+    e.stopPropagation();
+    if (item.vehicle?.activeBuildId) {
+      router.push(`/garage/my-build?build=${item.vehicle.activeBuildId}`);
+    } else if (item.matchedCar?.slug) {
+      router.push(`/garage/my-build?car=${item.matchedCar.slug}`);
+    }
+  };
+  
+  const handleShare = (e, item) => {
+    e.stopPropagation();
+    // TODO: Implement share functionality
+    const buildName = item.vehicle?.nickname || item.matchedCar?.name || 'My Build';
+    if (navigator.share) {
+      navigator.share({
+        title: buildName,
+        text: `Check out my ${buildName} build on AutoRev!`,
+        url: window.location.href,
+      }).catch(() => {});
+    }
+  };
+  
+  const handleDelete = (e, item) => {
+    e.stopPropagation();
+    if (onDeleteVehicle) {
+      onDeleteVehicle(item);
+    }
+  };
+  
+  return (
+    <div className={styles.vehicleListView}>
+      {items.map((item, index) => {
+        const car = item.matchedCar;
+        const vehicle = item.vehicle;
+        const hasBuild = vehicle?.activeBuildId || (vehicle?.installedModifications?.length > 0);
+        const hpGain = vehicle?.totalHpGain || 0;
+        const totalCost = item.build?.totalCostLow || 0;
+        
+        // Display name
+        const displayName = vehicle?.nickname || car?.name || 
+          `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
+        const subtitle = car?.name || `${vehicle?.year} ${vehicle?.make} ${vehicle?.model}`;
+        
+        return (
+          <div 
+            key={vehicle?.id || index} 
+            className={styles.vehicleListItem}
+            onClick={() => handleItemClick(item)}
+          >
+            {/* Thumbnail */}
+            <div className={styles.vehicleListThumb}>
+              {car ? (
+                <CarImage car={car} variant="garage" className={styles.vehicleListThumbImg} />
+              ) : (
+                <div className={styles.vehicleListThumbPlaceholder}>
+                  <Icons.car size={24} />
+                </div>
+              )}
+            </div>
+            
+            {/* Info */}
+            <div className={styles.vehicleListInfo}>
+              <h3 className={styles.vehicleListName}>{displayName}</h3>
+              <p className={styles.vehicleListSubtitle}>{subtitle !== displayName ? subtitle : ''}</p>
+              
+              {/* Build stats */}
+              <div className={styles.vehicleListStats}>
+                {hasBuild && hpGain > 0 && (
+                  <span className={styles.vehicleListStat}>
+                    <Icons.bolt size={14} />
+                    <span className={styles.vehicleListStatValue}>+{hpGain}</span>
+                    <span className={styles.vehicleListStatLabel}>HP</span>
+                  </span>
+                )}
+                {totalCost > 0 && (
+                  <span className={styles.vehicleListStat}>
+                    ${totalCost.toLocaleString()}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className={styles.vehicleListActions}>
+              <button 
+                className={styles.vehicleListAction}
+                onClick={(e) => handleEditBuild(e, item)}
+                title="Build"
+              >
+                <Icons.wrench size={18} />
+              </button>
+              <button 
+                className={styles.vehicleListAction}
+                onClick={(e) => handleDelete(e, item)}
+                title="Delete"
+              >
+                <Icons.trash size={18} />
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Share icon for list view
+Icons.share = ({ size = 16, style }) => (
+  <IconWrapper style={style}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  </IconWrapper>
+);
+
+// Bolt icon for HP gains
+Icons.bolt = ({ size = 16, style }) => (
+  <IconWrapper style={style}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  </IconWrapper>
+);
+
 // Car Picker Modal for starting new projects on ANY car
 function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -2645,10 +2783,8 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars 
 // Main Garage Component Content
 function GarageContent() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('mycars');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
-  const [isAddFavoritesOpen, setIsAddFavoritesOpen] = useState(false);
   const [addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
   const [allCars, setAllCars] = useState([]);
@@ -2695,29 +2831,13 @@ function GarageContent() {
     // Wait for prefetch to complete before showing any data
     if (!isDataFetchReady) return true;
     
-    // Check loading state for current tab only
-    switch (activeTab) {
-      case 'mycars':
-        return vehiclesLoading;
-      case 'favorites':
-        return favoritesLoading;
-      case 'projects':
-        return buildsLoading;
-      default:
-        return false;
-    }
-  }, [authLoading, isAuthenticated, isDataFetchReady, activeTab, vehiclesLoading, favoritesLoading, buildsLoading]);
+    return vehiclesLoading;
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading]);
 
   // Fetch car data from database on mount
   useEffect(() => {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
-
-  // Reset selection and exit edit mode when tab changes
-  useEffect(() => {
-    setSelectedIndex(0);
-    setIsEditMode(false);
-  }, [activeTab]);
   
   // Merge favorites with full car data (from database)
   const favoriteCars = useMemo(() => {
@@ -2774,20 +2894,8 @@ function GarageContent() {
   const isInMyCars = (slug) => vehicles.some(v => v.matchedCarSlug === slug);
 
   // Get current items based on tab
-  const getCurrentItems = () => {
-    switch (activeTab) {
-      case 'mycars':
-        return vehiclesWithCars;
-      case 'favorites':
-        return favoriteCars;
-      case 'projects':
-        return buildsWithCars;
-      default:
-        return [];
-    }
-  };
-
-  const currentItems = getCurrentItems();
+  // Vehicles are the current items for this page
+  const currentItems = vehiclesWithCars;
   const currentItem = currentItems[selectedIndex];
 
   // Handle adding a favorite car to My Collection
@@ -2851,26 +2959,11 @@ function GarageContent() {
     const item = confirmModal.item;
     if (!item) return { title: '', message: '' };
     
-    switch (activeTab) {
-      case 'mycars':
-        const vehicleName = item.vehicle?.nickname || `${item.vehicle?.year} ${item.vehicle?.make} ${item.vehicle?.model}`;
-        return {
-          title: 'Remove from Collection',
-          message: `Are you sure you want to remove "${vehicleName}" from My Collection?`,
-        };
-      case 'favorites':
-        return {
-          title: 'Remove from Favorites',
-          message: `Are you sure you want to remove "${item.name}" from your favorites?`,
-        };
-      case 'projects':
-        return {
-          title: 'Delete Project',
-          message: `Are you sure you want to delete the project "${item.name || 'Untitled'}"?`,
-        };
-      default:
-        return { title: 'Confirm Removal', message: 'Are you sure you want to remove this item?' };
-    }
+    const vehicleName = item.vehicle?.nickname || `${item.vehicle?.year} ${item.vehicle?.make} ${item.vehicle?.model}`;
+    return {
+      title: 'Remove from My Garage',
+      message: `Are you sure you want to remove "${vehicleName}" from My Garage?`,
+    };
   };
 
   // Confirm and execute removal
@@ -2881,19 +2974,7 @@ function GarageContent() {
     // Close modal immediately for better UX
     setConfirmModal({ isOpen: false, index: null, item: null });
     
-    let result = { error: null };
-    
-    switch (activeTab) {
-      case 'mycars':
-        result = await removeVehicle(item.vehicle.id);
-        break;
-      case 'favorites':
-        result = await removeFavorite(item.slug);
-        break;
-      case 'projects':
-        result = await deleteBuild(item.id);
-        break;
-    }
+    const result = await removeVehicle(item.vehicle.id);
 
     if (result?.error) {
       console.error('[Garage] Removal failed:', result.error);
@@ -2918,27 +2999,41 @@ function GarageContent() {
   const handleBuildAction = (item) => {
     if (!item) return;
     
-    // For saved builds - navigate to tuning shop with build ID
+    // For saved builds - navigate to My Build with build ID
     if (item.id && item.carSlug) {
-      router.push(`/tuning-shop?build=${item.id}`);
+      router.push(`/garage/my-build?build=${item.id}`);
     }
-    // For car items (from favorites or owned) - navigate to tuning shop with car slug
+    // For car items (from favorites or owned) - navigate to My Build with car slug
     else if (item.slug) {
-      router.push(`/tuning-shop?plan=${item.slug}`);
+      router.push(`/garage/my-build?car=${item.slug}`);
     }
     // For owned vehicle items - get the matched car slug
     else if (item.matchedCar?.slug) {
-      router.push(`/tuning-shop?plan=${item.matchedCar.slug}`);
+      router.push(`/garage/my-build?car=${item.matchedCar.slug}`);
     }
   };
   
-  // Tab configuration - Build-focused (Jan 2026)
-  // Primary: My Vehicles (with their builds)
-  // Secondary: Favorites (wishlist)
-  const tabs = [
-    { id: 'mycars', label: 'Vehicles', icon: Icons.car, count: vehicles.length },
-    { id: 'favorites', label: 'Wishlist', icon: Icons.heart, count: favoriteCars.length },
-  ];
+  // View mode: 'presentation' (swipeable cards) or 'list' (compact list)
+  // Read from URL param on initial load, default to presentation
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('view') === 'list' ? 'list' : 'presentation';
+    }
+    return 'presentation';
+  });
+  
+  // Update URL when view mode changes (without full page reload)
+  const handleViewModeChange = useCallback((mode) => {
+    setViewMode(mode);
+    const url = new URL(window.location);
+    if (mode === 'list') {
+      url.searchParams.set('view', 'list');
+    } else {
+      url.searchParams.delete('view');
+    }
+    window.history.replaceState({}, '', url);
+  }, []);
 
   const handleAddVehicle = async (vehicleData) => {
     const result = await addVehicle(vehicleData);
@@ -2957,10 +3052,6 @@ function GarageContent() {
     }
   };
 
-  // Handle adding a car to favorites from the modal
-  const handleAddFavorite = async (car) => {
-    await addFavorite(car);
-  };
 
   // Handle "Analyze All Vehicles" button - opens AL with comprehensive context
   const handleAnalyzeAllVehicles = useCallback(async () => {
@@ -3149,7 +3240,6 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
   // ============================================================================
   
   const handleMoveVehicle = useCallback(async (fromIndex, toIndex) => {
-    if (activeTab !== 'mycars') return;
     if (toIndex < 0 || toIndex >= vehiclesWithCars.length) return;
     
     setIsReordering(true);
@@ -3172,7 +3262,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
     }
     
     setIsReordering(false);
-  }, [activeTab, vehiclesWithCars, reorderVehicles]);
+  }, [vehiclesWithCars, reorderVehicles]);
 
   const handleToggleEditMode = useCallback(() => {
     setIsEditMode(prev => !prev);
@@ -3181,7 +3271,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
   // If viewing a build detail, show that instead
   if (selectedBuild) {
     return (
-      <div className={styles.page} data-no-main-offset>
+      <div className={styles.page}>
         <BuildDetailView 
           build={selectedBuild}
           car={allCars.find(c => c.slug === selectedBuild.carSlug)}
@@ -3194,135 +3284,62 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
     );
   }
   
-  return (
-    <div className={styles.page} data-no-main-offset>
-      {/* Optimized Background Image */}
-      <div className={styles.backgroundImageWrapper}>
-        <Image
-          src="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/garage/background.webp"
-          alt="Garage Background"
-          fill
-          priority={false}
-          loading="lazy"
-          quality={50}
-          sizes="100vw"
-          style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.4 }}
+  // Full-page loading state - show BEFORE any page content
+  if (isDataLoading) {
+    return (
+      <div className={styles.page}>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Your Garage" 
+          subtext={authLoading ? 'Verifying your session...' : 'Fetching your vehicles...'}
+          fullPage 
         />
       </div>
-
-      {/* Compact Header Bar */}
-      <div className={styles.headerBar}>
+    );
+  }
+  
+  return (
+    <div className={styles.page}>
+      {/* Page Header - Title on left, Add Vehicle on right */}
+      <header className={styles.pageHeader}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.titleCompact}>GARAGE</h1>
+          <h1 className={styles.pageTitle}>My Garage</h1>
         </div>
-
-        <div className={styles.headerCenter}>
-          {/* Tab Pills */}
-          <div className={styles.tabPills}>
-            {tabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`${styles.tabPill} ${activeTab === tab.id ? styles.tabPillActive : ''}`}
-                >
-                  <Icon size={16} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         <div className={styles.headerRight}>
-          {/* Quick Actions for My Collection tab */}
-          {activeTab === 'mycars' && (
-            <div className={styles.quickActions}>
-              {/* Start Build Button - Primary CTA */}
-              <Link
-                href="/build"
-                className={styles.startBuildBtn}
-                title="Start planning a new build"
-              >
-                <Icons.wrench size={16} />
-                <span className={styles.quickActionLabel}>Build</span>
-              </Link>
-              
-              {/* Add Vehicle Button */}
-              <button
-                className={styles.addVehicleBtn}
-                onClick={() => setIsAddVehicleOpen(true)}
-                title="Add a vehicle to your garage"
-              >
-                <Icons.plus size={16} />
-                <span className={styles.quickActionLabel}>Add</span>
-              </button>
-
-              {/* Reorder Mode Toggle - Only when you have 2+ vehicles */}
-              {vehicles.length > 1 && (
-                <button
-                  className={`${styles.quickActionBtn} ${isEditMode ? styles.quickActionBtnActive : ''}`}
-                  onClick={handleToggleEditMode}
-                  title={isEditMode ? 'Done Reordering' : 'Reorder Vehicles'}
-                  disabled={isReordering}
-                >
-                  {isEditMode ? <Icons.check size={16} /> : <Icons.settings size={16} />}
-                  <span className={styles.quickActionLabel}>
-                    {isEditMode ? 'Done' : 'Reorder'}
-                  </span>
-                </button>
-              )}
-
-              {/* Quick Update Mode Toggle - Only when you have vehicles */}
-              {vehicles.length > 0 && !isEditMode && (
-                <button
-                  className={`${styles.quickActionBtn} ${quickUpdateMode ? styles.quickActionBtnActive : ''}`}
-                  onClick={handleToggleQuickUpdate}
-                  title={quickUpdateMode ? 'Cancel Quick Update' : 'Quick Update All Mileage'}
-                >
-                  <Icons.edit size={16} />
-                  <span className={styles.quickActionLabel}>
-                    {quickUpdateMode ? 'Cancel' : 'Quick Update'}
-                  </span>
-                </button>
-              )}
-
-              {/* Analyze All Vehicles - Enthusiast+ */}
-              {vehicles.length > 0 && (
-                <PremiumGate feature="alCollector" fallback={null}>
-                  <button
-                    className={styles.analyzeAllBtn}
-                    onClick={handleAnalyzeAllVehicles}
-                    title="Analyze All Vehicles with AL"
-                  >
-                    <img 
-                      src={UI_IMAGES.alMascot}
-                      alt=""
-                      width={16}
-                      height={16}
-                      style={{ marginRight: 6 }}
-                    />
-                    <span>Analyze All</span>
-                  </button>
-                </PremiumGate>
-              )}
-            </div>
-          )}
-
-          {/* Add Favorites button when on Favorites tab */}
-          {activeTab === 'favorites' && (
-            <div className={styles.quickActions}>
-              <button
-                className={styles.addVehicleBtn}
-                onClick={() => setIsAddFavoritesOpen(true)}
-                title="Add favorites from our catalog"
-              >
-                <Icons.plus size={16} />
-                <span className={styles.quickActionLabel}>Add Favorites</span>
-              </button>
-            </div>
-          )}
+          {/* Add Vehicle Button */}
+          <button
+            className={styles.addVehicleBtn}
+            onClick={() => setIsAddVehicleOpen(true)}
+          >
+            <Icons.plus size={16} />
+            Add Vehicle
+          </button>
+        </div>
+      </header>
+      
+      {/* Subtitle row with vehicle count and view toggle */}
+      <div className={styles.subtitleRow}>
+        <p className={styles.pageSubtitle}>
+          {vehiclesWithCars.length} {vehiclesWithCars.length === 1 ? 'vehicle' : 'vehicles'} in your collection
+        </p>
+        {/* View Toggle */}
+        <div className={styles.viewToggle}>
+          <button
+            className={`${styles.viewToggleBtn} ${viewMode === 'presentation' ? styles.viewToggleBtnActive : ''}`}
+            onClick={() => handleViewModeChange('presentation')}
+            title="Gallery view"
+            aria-label="Gallery view"
+          >
+            <Icons.gallery size={16} />
+          </button>
+          <button
+            className={`${styles.viewToggleBtn} ${viewMode === 'list' ? styles.viewToggleBtnActive : ''}`}
+            onClick={() => handleViewModeChange('list')}
+            title="List view"
+            aria-label="List view"
+          >
+            <Icons.list size={16} />
+          </button>
         </div>
       </div>
 
@@ -3334,7 +3351,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
         onTouchEnd={handleTouchEnd}
       >
         {/* Quick Update Mode Overlay */}
-        {quickUpdateMode && activeTab === 'mycars' && (
+        {quickUpdateMode && (
           <div className={styles.quickUpdateOverlay}>
             <div className={styles.quickUpdatePanel}>
               <div className={styles.quickUpdateHeader}>
@@ -3399,22 +3416,44 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
           </div>
         )}
 
-        {/* My Collection & Favorites - Hero display layout */}
-        {(activeTab === 'mycars' || activeTab === 'favorites') && (
-          currentItems.length > 0 ? (
+        {/* Vehicles - Presentation or List View based on viewMode */}
+        {currentItems.length > 0 ? (
+          viewMode === 'list' ? (
+            /* List View - Compact list for managing multiple vehicles */
+            <div className={styles.listViewContainer}>
+              <VehicleListView
+                items={currentItems}
+                onSelectVehicle={(item) => {
+                  // Switch to presentation view and select this vehicle
+                  const idx = currentItems.findIndex(i => i.vehicle?.id === item.vehicle?.id);
+                  if (idx !== -1) {
+                    setSelectedIndex(idx);
+                    handleViewModeChange('presentation');
+                  }
+                }}
+                onDeleteVehicle={(item) => {
+                  const idx = currentItems.findIndex(i => i.vehicle?.id === item.vehicle?.id);
+                  if (idx !== -1) {
+                    handleRemoveRequest(idx);
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            /* Presentation View - Swipeable hero cards */
             <>
-              {/* Hero Display */}
               <HeroVehicleDisplay
                 item={currentItem}
-                type={activeTab}
+                type="mycars"
                 onAction={handleBuildAction}
-                onAddToMyCars={handleAddFavoriteToMyCars}
-                isInMyCars={activeTab === 'favorites' && currentItem ? isInMyCars(currentItem.slug) : false}
                 onUpdateVehicle={updateVehicle}
                 onClearModifications={clearModifications}
                 onUpdateCustomSpecs={updateCustomSpecs}
                 onClearCustomSpecs={clearCustomSpecs}
                 userId={user?.id}
+                selectedIndex={selectedIndex}
+                totalItems={currentItems.length}
+                onNavigate={setSelectedIndex}
               />
 
               {/* Thumbnail Strip at Bottom */}
@@ -3422,32 +3461,15 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                 items={currentItems}
                 selectedIndex={selectedIndex}
                 onSelect={setSelectedIndex}
-                type={activeTab}
+                type="mycars"
                 onRemoveItem={handleRemoveRequest}
-                isEditMode={isEditMode && activeTab === 'mycars'}
+                isEditMode={isEditMode}
                 onMoveItem={handleMoveVehicle}
                 isReordering={isReordering}
               />
-
-              {/* Vehicle Counter */}
-              <div className={styles.vehicleCounter}>
-                <span>{selectedIndex + 1}</span>
-                <span className={styles.counterDivider}>/</span>
-                <span>{currentItems.length}</span>
-              </div>
             </>
-          ) : isDataLoading ? (
-            // Show loading indicator while fetching data
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>
-                <LoadingSpinner />
-              </div>
-              <h3 className={styles.emptyTitle}>Loading your garage...</h3>
-              <p className={styles.emptyDescription}>
-                {authLoading ? 'Checking authentication...' : 'Fetching your data...'}
-              </p>
-            </div>
-          ) : sessionExpired || authError ? (
+          )
+        ) : sessionExpired || authError ? (
             // Show auth error state with retry option
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>
@@ -3470,28 +3492,13 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
             </div>
           ) : (
             <EmptyState
-              icon={tabs.find(t => t.id === activeTab)?.icon || Icons.car}
-              title={
-                activeTab === 'mycars' ? 'No Vehicles Yet' : 'No Favorites Yet'
-              }
-              description={
-                activeTab === 'mycars' 
-                  ? 'Add the vehicles you own to track maintenance and get personalized recommendations.'
-                  : 'Build your dream garage by adding cars you love. Browse the catalog and tap the heart icon.'
-              }
-              actionLabel={
-                activeTab === 'mycars' ? 'Add Your First Car' : 'Add Your First Favorite'
-              }
-              onAction={() => {
-                if (activeTab === 'mycars') {
-                  setIsAddVehicleOpen(true);
-                } else {
-                  setIsAddFavoritesOpen(true);
-                }
-              }}
+              icon={Icons.car}
+              title="No Vehicles Yet"
+              description="Add the vehicles you own to track builds, maintenance, and get personalized recommendations."
+              actionLabel="Add Your First Vehicle"
+              onAction={() => setIsAddVehicleOpen(true)}
             />
-          )
-        )}
+          )}
       </div>
       
       <AuthModal 
@@ -3505,13 +3512,6 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
         onClose={() => setIsAddVehicleOpen(false)}
         onAdd={handleAddVehicle}
         existingVehicles={vehicles}
-      />
-
-      <AddFavoritesModal
-        isOpen={isAddFavoritesOpen}
-        onClose={() => setIsAddFavoritesOpen(false)}
-        onAdd={handleAddFavorite}
-        existingFavorites={favorites}
       />
 
       {/* Confirmation Modal for deletions */}
@@ -3538,10 +3538,13 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
 // Loading fallback
 function GarageLoading() {
   return (
-    <div className={styles.page} data-no-main-offset>
-      <div className={styles.loadingContainer}>
-        <LoadingSpinner size="large" />
-      </div>
+    <div className={styles.page}>
+      <LoadingSpinner 
+        variant="branded" 
+        text="Loading Your Garage" 
+        subtext="Preparing your vehicles..."
+        fullPage 
+      />
     </div>
   );
 }

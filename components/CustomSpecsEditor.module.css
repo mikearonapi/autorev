@@ -63,7 +63,7 @@
 .clearBtn:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .clearBtn:disabled {
@@ -89,7 +89,7 @@
 .saveBtn.hasChanges {
   background: var(--sn-primary, #0070f3);
   border-color: var(--sn-primary, #0070f3);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .saveBtn.hasChanges:hover:not(:disabled) {

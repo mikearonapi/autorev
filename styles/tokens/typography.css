@@ -1,0 +1,136 @@
+/* ==========================================================================
+   AutoRev Typography Tokens
+   Mobile-First Type Scale
+   
+   RULE: Use these tokens for all font sizing. Never hardcode px values.
+   ========================================================================== */
+
+:root {
+  /* =======================================================================
+     FONT FAMILIES
+     ======================================================================= */
+  
+  --font-display: var(--font-oswald, 'Oswald'), 'Impact', sans-serif;
+  --font-body: var(--font-inter, 'Inter'), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+  
+  /* =======================================================================
+     TYPE SCALE (Mobile-First)
+     All sizes optimized for mobile, scale up on larger screens
+     ======================================================================= */
+  
+  /* Hero - Page headlines */
+  --text-hero: 28px;
+  --text-hero-desktop: 56px;
+  --text-hero-weight: 800;
+  --text-hero-tracking: -0.02em;
+  
+  /* H1 - Section titles */
+  --text-h1: 26px;
+  --text-h1-desktop: 48px;
+  --text-h1-weight: 700;
+  --text-h1-tracking: -0.01em;
+  
+  /* H2 - Card headers */
+  --text-h2: 22px;
+  --text-h2-desktop: 36px;
+  --text-h2-weight: 700;
+  --text-h2-tracking: 0;
+  
+  /* H3 - Subsection titles */
+  --text-h3: 18px;
+  --text-h3-desktop: 28px;
+  --text-h3-weight: 600;
+  
+  /* H4 - Small headers */
+  --text-h4: 16px;
+  --text-h4-desktop: 20px;
+  --text-h4-weight: 600;
+  
+  /* Body */
+  --text-body: 14px;
+  --text-body-desktop: 16px;
+  --text-body-weight: 400;
+  --text-body-line-height: 1.6;
+  
+  /* Small */
+  --text-sm: 13px;
+  --text-sm-desktop: 14px;
+  --text-sm-weight: 400;
+  
+  /* XS - Labels, fine print */
+  --text-xs: 11px;
+  --text-xs-desktop: 12px;
+  --text-xs-weight: 500;
+  
+  /* 2XS - Micro labels */
+  --text-2xs: 10px;
+  --text-2xs-weight: 600;
+  
+  /* =======================================================================
+     STAT/DATA TYPOGRAPHY
+     Monospace for numeric data
+     ======================================================================= */
+  
+  /* Hero Stats (544 HP, 558 LB-FT) */
+  --text-stat-hero: 24px;
+  --text-stat-hero-desktop: 28px;
+  --text-stat-hero-weight: 800;
+  --text-stat-hero-tracking: -0.02em;
+  
+  /* Large Stats */
+  --text-stat-lg: 20px;
+  --text-stat-lg-weight: 700;
+  
+  /* Medium Stats */
+  --text-stat-md: 16px;
+  --text-stat-md-weight: 600;
+  
+  /* Small Stats */
+  --text-stat-sm: 14px;
+  --text-stat-sm-weight: 600;
+  
+  /* =======================================================================
+     LABEL TYPOGRAPHY
+     Uppercase, tracked labels
+     ======================================================================= */
+  
+  --text-label: 10px;
+  --text-label-weight: 600;
+  --text-label-tracking: 0.12em;
+  --text-label-transform: uppercase;
+  
+  --text-label-lg: 12px;
+  --text-label-lg-weight: 600;
+  --text-label-lg-tracking: 0.08em;
+  
+  /* =======================================================================
+     LINE HEIGHTS
+     ======================================================================= */
+  
+  --leading-none: 1;
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose: 1.75;
+}
+
+/* ==========================================================================
+   RESPONSIVE TYPE SCALE
+   Automatically scales up on larger screens
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  :root {
+    --text-hero: var(--text-hero-desktop);
+    --text-h1: var(--text-h1-desktop);
+    --text-h2: var(--text-h2-desktop);
+    --text-h3: var(--text-h3-desktop);
+    --text-h4: var(--text-h4-desktop);
+    --text-body: var(--text-body-desktop);
+    --text-sm: var(--text-sm-desktop);
+    --text-xs: var(--text-xs-desktop);
+    --text-stat-hero: var(--text-stat-hero-desktop);
+  }
+}

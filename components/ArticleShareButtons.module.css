@@ -42,7 +42,7 @@
 .shareButton:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
   transform: translateY(-1px);
 }
 
@@ -62,7 +62,7 @@
 .shareButton.twitter {
   background: rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .shareButton.twitter:hover {
@@ -92,14 +92,14 @@
 .shareButton.copy:hover {
   background: rgba(233, 69, 96, 0.15);
   border-color: rgba(233, 69, 96, 0.3);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 /* Copied state */
 .shareButton.copied {
   background: rgba(74, 222, 128, 0.15);
   border-color: rgba(74, 222, 128, 0.4);
-  color: #4ade80;
+  color: var(--brand-teal);
 }
 
 .shareButton svg {

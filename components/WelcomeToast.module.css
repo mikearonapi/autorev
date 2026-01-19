@@ -68,7 +68,7 @@
 .greeting {
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   white-space: nowrap;
 }
 

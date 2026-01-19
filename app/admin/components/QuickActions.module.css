@@ -74,8 +74,8 @@
   font-weight: bold;
 }
 
-.resultIcon.success { color: #22c55e; }
-.resultIcon.error { color: #ef4444; }
+.resultIcon.success { color: var(--brand-success); }
+.resultIcon.error { color: var(--brand-error); }
 
 /* Links */
 .links {
@@ -89,7 +89,7 @@
 
 .link {
   font-size: 11px;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   text-decoration: none;
   padding: 4px 0;
 }

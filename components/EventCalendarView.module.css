@@ -112,7 +112,7 @@
 
 .dayToday {
   border-color: var(--sn-gold);
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(255, 77, 0, 0.05);
 }
 
 .dayHasEvents {

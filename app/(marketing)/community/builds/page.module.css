@@ -16,7 +16,7 @@
   /* Account for fixed header + banner */
   padding: var(--content-offset-mobile, 88px) 0 2rem 0;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, #16213e 50%, #0f3460 100%);
 }
 
 @media (min-width: 768px) {
@@ -69,7 +69,7 @@
   display: inline-block;
   padding: 0.375rem 0.875rem;
   background: rgba(233, 69, 96, 0.15);
-  color: #e94560;
+  color: var(--brand-error);
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -82,7 +82,7 @@
 .heroTitle {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.75rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -110,7 +110,7 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #e94560, #ff6b6b);
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -132,7 +132,7 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -169,7 +169,7 @@
 .rowTitle {
   font-size: 1.0625rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .seeAll:hover {
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 /* ============================================
@@ -239,7 +239,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark), #16213e);
   overflow: hidden;
 }
 
@@ -260,7 +260,7 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark), #16213e);
   color: rgba(255, 255, 255, 0.3);
 }
 
@@ -296,8 +296,8 @@
 
 .viewBtn {
   padding: 0.4375rem 1rem;
-  background: #e94560;
-  color: #fff;
+  background: var(--brand-error);
+  color: var(--brand-text-primary);
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 5px;
@@ -316,7 +316,7 @@
 .cardTitle {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.1875rem;
   line-height: 1.3;
   white-space: nowrap;
@@ -379,7 +379,7 @@
 .emptyState h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -408,7 +408,7 @@
 .ctaSection h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -425,7 +425,7 @@
   gap: 0.5rem;
   padding: 0.875rem 2rem;
   background: linear-gradient(135deg, #e94560, #ff6b6b);
-  color: #fff;
+  color: var(--brand-text-primary);
   font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;

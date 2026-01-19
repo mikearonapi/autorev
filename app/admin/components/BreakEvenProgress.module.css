@@ -78,7 +78,7 @@
 }
 
 .remaining {
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .assumption {
@@ -162,7 +162,7 @@
 }
 
 .compact .remaining {
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 /* Responsive */

@@ -91,14 +91,14 @@
 .costBadge {
   padding: 2px 6px;
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: var(--brand-warning);
   border-radius: 3px;
 }
 
 .cachedBadge {
   padding: 2px 6px;
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--brand-success);
   border-radius: 3px;
 }
 
@@ -114,7 +114,7 @@
 
 .error {
   font-size: 11px;
-  color: #ef4444;
+  color: var(--brand-error);
   padding: 8px 10px;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
@@ -163,22 +163,22 @@
 /* Type variants */
 .insightCard.critical {
   background: rgba(239, 68, 68, 0.08);
-  border-left-color: #ef4444;
+  border-left-color: var(--brand-error);
 }
 
 .insightCard.warning {
   background: rgba(245, 158, 11, 0.08);
-  border-left-color: #f59e0b;
+  border-left-color: var(--brand-warning);
 }
 
 .insightCard.positive {
   background: rgba(34, 197, 94, 0.08);
-  border-left-color: #22c55e;
+  border-left-color: var(--brand-success);
 }
 
 .insightCard.info {
   background: rgba(59, 130, 246, 0.08);
-  border-left-color: #3b82f6;
+  border-left-color: var(--brand-blue);
 }
 
 .insightHeader {
@@ -195,19 +195,19 @@
 }
 
 .critical .insightIcon {
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .warning .insightIcon {
-  color: #f59e0b;
+  color: var(--brand-warning);
 }
 
 .positive .insightIcon {
-  color: #22c55e;
+  color: var(--brand-success);
 }
 
 .info .insightIcon {
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .insightCategory {
@@ -224,7 +224,7 @@
   padding: 2px 6px;
   border-radius: 3px;
   background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  color: var(--brand-error);
   letter-spacing: 0.05em;
   margin-left: auto;
 }

@@ -81,7 +81,7 @@ export default async function CommunityBuildsPage({ searchParams }) {
           </p>
           
           <div className={styles.heroActions}>
-            <Link href="/tuning-shop" className={styles.primaryBtn}>
+            <Link href="/garage/tuning-shop" className={styles.primaryBtn}>
               Create Your Build
             </Link>
             <a href="#explorer" className={styles.secondaryBtn}>
@@ -163,7 +163,7 @@ export default async function CommunityBuildsPage({ searchParams }) {
             <div className={styles.emptyState}>
               <h3>No {brandFilter} builds yet</h3>
               <p>Be the first to share a {brandFilter} build!</p>
-              <Link href="/tuning-shop" className={styles.primaryBtn}>
+              <Link href="/garage/tuning-shop" className={styles.primaryBtn}>
                 Create a Build
               </Link>
             </div>
@@ -174,7 +174,7 @@ export default async function CommunityBuildsPage({ searchParams }) {
           <div className={styles.emptyState}>
             <h3>No builds shared yet</h3>
             <p>Be the first to share your build with the community!</p>
-            <Link href="/tuning-shop" className={styles.primaryBtn}>
+            <Link href="/garage/tuning-shop" className={styles.primaryBtn}>
               Create Your First Build
             </Link>
           </div>
@@ -186,7 +186,7 @@ export default async function CommunityBuildsPage({ searchParams }) {
         <div className={styles.ctaContent}>
           <h2>Share Your Build</h2>
           <p>Got a project you're proud of? Share it with thousands of enthusiasts.</p>
-          <Link href="/tuning-shop" className={styles.ctaBtn}>
+          <Link href="/garage/tuning-shop" className={styles.ctaBtn}>
             Go to Tuning Shop
           </Link>
         </div>

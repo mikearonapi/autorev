@@ -1,0 +1,385 @@
+/* ===========================================
+   MY PERFORMANCE PAGE
+   EXACT copy of UpgradeCenter's performance styling
+   =========================================== */
+
+.page {
+  min-height: 100dvh;
+  background: var(--brand-bg-primary);
+  color: var(--brand-text-primary);
+  padding-bottom: 120px;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+/* ===========================================
+   CONTENT
+   =========================================== */
+
+.content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===========================================
+   PERFORMANCE CARD - Exact from UpgradeCenter
+   =========================================== */
+
+.performanceCard {
+  background: rgba(13, 27, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.performanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.performanceTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  margin: 0;
+}
+
+.performanceTitle svg {
+  color: var(--brand-gold, var(--brand-gold));
+}
+
+.buildStats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.costBadge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(212, 168, 75, 0.15);
+  border: 1px solid rgba(212, 168, 75, 0.3);
+  color: var(--brand-gold, var(--brand-gold));
+}
+
+.costVerified {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--brand-teal, var(--brand-teal));
+}
+
+.costHigh {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--brand-blue, var(--brand-blue));
+}
+
+.costEstimated {
+  background: rgba(212, 168, 75, 0.15);
+  border-color: rgba(212, 168, 75, 0.3);
+  color: var(--brand-gold, var(--brand-gold));
+}
+
+.performanceMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ===========================================
+   METRIC ROW - Exact from UpgradeCenter
+   =========================================== */
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metricLabel svg {
+  opacity: 0.6;
+}
+
+.metricValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stockVal {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.arrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+}
+
+.upgradedVal {
+  color: var(--brand-teal);
+}
+
+.currentVal {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gain {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-teal);
+  margin-left: 4px;
+}
+
+/* Track bars */
+.track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fillStock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-blue) 0%, var(--brand-blue-light) 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.fillUpgrade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-teal) 0%, var(--brand-teal-light) 100%);
+  border-radius: 4px;
+  transition: all 0.4s ease;
+}
+
+/* ===========================================
+   SECTION - Experience Scores
+   =========================================== */
+
+.section {
+  background: rgba(13, 27, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px 0;
+}
+
+/* ===========================================
+   SCORE ROW - Exact from UpgradeCenter
+   =========================================== */
+
+.scoreRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.scoreRow:last-child {
+  margin-bottom: 0;
+}
+
+.scoreHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.scoreValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ===========================================
+   CTA SECTION
+   =========================================== */
+
+.ctaSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.ctaText {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--brand-lime, var(--brand-lime));
+  border: none;
+  border-radius: 12px;
+  color: var(--gravl-navy, var(--brand-bg-primary-dark));
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  background: var(--brand-lime-dark, #bfe600);
+  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.3);
+}
+
+/* ===========================================
+   EMPTY STATE
+   =========================================== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  min-height: 50vh;
+}
+
+.emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 24px;
+}
+
+.emptyTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  margin: 0 0 8px 0;
+}
+
+.emptyDescription {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 24px 0;
+  max-width: 280px;
+}
+
+.emptyAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: var(--brand-text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.emptyAction:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===========================================
+   MOBILE ADJUSTMENTS
+   =========================================== */
+
+@media (max-width: 480px) {
+  .vehicleHeader {
+    padding: 16px;
+  }
+  
+  .vehicleImage {
+    width: 80px;
+    height: 56px;
+  }
+  
+  .vehicleName {
+    font-size: 16px;
+  }
+  
+  .content {
+    padding: 12px;
+    gap: 16px;
+  }
+  
+  .performanceCard,
+  .section {
+    padding: 16px;
+  }
+}

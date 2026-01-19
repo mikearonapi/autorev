@@ -65,7 +65,7 @@
 }
 
 .filterSelect option {
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
   color: var(--admin-text-primary, #f8fafc);
 }
 
@@ -131,7 +131,7 @@
 }
 
 .totalValue.rAndD {
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
 }
 
 /* Table */
@@ -234,7 +234,7 @@
 
 .recurringBadge {
   font-size: 12px;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   cursor: help;
 }
 
@@ -286,7 +286,7 @@
 .editButton:hover {
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .deleteButton:hover {

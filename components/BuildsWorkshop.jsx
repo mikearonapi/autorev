@@ -595,7 +595,7 @@ function EmptyState({ onCreateBuild }) {
           Start Your First Project
         </button>
       ) : (
-        <Link href="/tuning-shop" className={styles.emptyAction}>
+        <Link href="/garage/tuning-shop" className={styles.emptyAction}>
           <Icons.plus size={18} />
           Start Your First Project
         </Link>
@@ -765,7 +765,7 @@ export default function BuildsWorkshop({
               <span>New Project</span>
             </button>
           ) : (
-            <Link href="/tuning-shop" className={styles.newBuildBtn}>
+            <Link href="/garage/tuning-shop" className={styles.newBuildBtn}>
               <Icons.plus size={16} />
               <span>New Project</span>
             </Link>

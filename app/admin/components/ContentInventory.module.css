@@ -79,8 +79,8 @@
   font-weight: 600;
 }
 
-.trend.up { color: #22c55e; }
-.trend.down { color: #ef4444; }
+.trend.up { color: var(--brand-success); }
+.trend.down { color: var(--brand-error); }
 
 /* Coverage Section */
 .coverage {
@@ -116,7 +116,7 @@
 
 .coverageFill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-purple-accent));
   border-radius: 3px;
   transition: width 0.3s ease;
 }

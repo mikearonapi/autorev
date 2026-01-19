@@ -321,13 +321,14 @@ export default function BuildMediaGallery({
                 />
               );
             })()}
+            
+            {/* Counter positioned inside content for image-relative placement */}
+            {totalCount > 1 && (
+              <div className={styles.lightboxCounter}>
+                {lightboxIndex + 1} / {totalCount}
+              </div>
+            )}
           </div>
-          
-          {totalCount > 1 && (
-            <div className={styles.lightboxCounter}>
-              {lightboxIndex + 1} / {totalCount}
-            </div>
-          )}
         </div>
       )}
     </div>

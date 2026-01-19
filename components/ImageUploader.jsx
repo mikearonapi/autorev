@@ -69,6 +69,7 @@ export default function ImageUploader({
   existingImages = [],
   disabled = false,
   showPreviews = true, // Set to false when using a separate gallery component
+  compact = false, // Compact mode for smaller dropzone
 }) {
   const [uploads, setUploads] = useState(existingImages);
   const [uploading, setUploading] = useState(false);
@@ -287,7 +288,7 @@ export default function ImageUploader({
     <div className={styles.container}>
       {/* Drop Zone */}
       <div
-        className={`${styles.dropzone} ${dragActive ? styles.active : ''} ${disabled ? styles.disabled : ''}`}
+        className={`${styles.dropzone} ${dragActive ? styles.active : ''} ${disabled ? styles.disabled : ''} ${compact ? styles.compact : ''}`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -308,6 +309,22 @@ export default function ImageUploader({
           <div className={styles.uploading}>
             <div className={styles.spinner} />
             <span>Uploading...</span>
+          </div>
+        ) : compact ? (
+          <div className={styles.dropContentCompact}>
+            <svg className={styles.uploadIconCompact} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <div className={styles.dropTextCompact}>
+              <span className={styles.dropTextMain}>
+                {dragActive ? 'Drop files here' : 'Tap to upload photos or videos'}
+              </span>
+              <span className={styles.dropTextSub}>
+                JPEG, PNG, WebP, GIF, MP4, WebM • Max 25MB
+              </span>
+            </div>
           </div>
         ) : (
           <div className={styles.dropContent}>

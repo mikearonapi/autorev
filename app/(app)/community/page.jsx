@@ -4,299 +4,373 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/components/providers/AuthProvider';
+import BuildDetailSheet from './BuildDetailSheet';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './page.module.css';
 
 /**
- * Community Page - TikTok/IG-style Build Feed
- * 
- * Features:
- * - Vertical scrolling feed of builds
- * - Full-width cards with hero images
- * - Quick actions (favorite, share, view details)
- * - Filter by category/tag
- * - Infinite scroll
+ * Community Page - TikTok/Reels-style Full-Screen Feed
+ * Immersive, content-first design with minimal UI
  */
 
-// Icons
+// Minimal Icons
 const HeartIcon = ({ filled }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} 
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} 
+    stroke="currentColor" strokeWidth="2">
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
   </svg>
 );
 
 const ShareIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="18" cy="5" r="3"/>
-    <circle cx="6" cy="12" r="3"/>
-    <circle cx="18" cy="19" r="3"/>
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+    <polyline points="16 6 12 2 8 6"/>
+    <line x1="12" y1="2" x2="12" y2="15"/>
   </svg>
 );
 
 const CommentIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
   </svg>
 );
 
-const FilterIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+const SpinnerIcon = () => (
+  <svg className={styles.spinner} width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2"/>
+    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
   </svg>
 );
 
 const ChevronIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
     <polyline points="9 18 15 12 9 6"/>
   </svg>
 );
 
-// Filter categories
-const CATEGORIES = [
-  { id: 'all', label: 'All Builds' },
-  { id: 'track', label: 'Track' },
-  { id: 'street', label: 'Street' },
-  { id: 'drift', label: 'Drift' },
-  { id: 'show', label: 'Show' },
-  { id: 'rally', label: 'Rally' },
-];
-
-// Sample community builds data (would come from API)
-const SAMPLE_BUILDS = [
-  {
-    id: 1,
-    title: 'Track Monster 991.2 GT3',
-    car: { year: 2018, make: 'Porsche', model: '911 GT3', slug: 'porsche-911-gt3-2018' },
-    owner: { name: 'TrackDayMike', avatar: null },
-    image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f373b?w=800&h=600&fit=crop',
-    stats: { hp: 520, cost: 45000, mods: 12 },
-    tags: ['track', 'na', 'pdk'],
-    likes: 234,
-    comments: 18,
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Daily Driven Widebody M4',
-    car: { year: 2021, make: 'BMW', model: 'M4 Competition', slug: 'bmw-m4-competition-2021' },
-    owner: { name: 'BimmerFan_JP', avatar: null },
-    image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&h=600&fit=crop',
-    stats: { hp: 580, cost: 32000, mods: 8 },
-    tags: ['street', 'turbo', 'widebody'],
-    likes: 456,
-    comments: 42,
-    featured: false,
-  },
-  {
-    id: 3,
-    title: 'K-Swap Track Miata',
-    car: { year: 1995, make: 'Mazda', model: 'MX-5 Miata', slug: 'mazda-mx5-miata-1995' },
-    owner: { name: 'MiataLife', avatar: null },
-    image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800&h=600&fit=crop',
-    stats: { hp: 280, cost: 18000, mods: 15 },
-    tags: ['track', 'swap', 'lightweight'],
-    likes: 892,
-    comments: 76,
-    featured: true,
-  },
-  {
-    id: 4,
-    title: 'Pro Drift 350Z',
-    car: { year: 2006, make: 'Nissan', model: '350Z', slug: 'nissan-350z-2006' },
-    owner: { name: 'DriftKing99', avatar: null },
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop',
-    stats: { hp: 450, cost: 28000, mods: 20 },
-    tags: ['drift', 'turbo', 'ls-swap'],
-    likes: 1203,
-    comments: 89,
-    featured: false,
-  },
-  {
-    id: 5,
-    title: 'Coyote Swapped S550',
-    car: { year: 2019, make: 'Ford', model: 'Mustang GT', slug: 'ford-mustang-gt-2019' },
-    owner: { name: 'MustangMatt', avatar: null },
-    image: 'https://images.unsplash.com/photo-1584345604476-8ec5f82d718e?w=800&h=600&fit=crop',
-    stats: { hp: 720, cost: 55000, mods: 18 },
-    tags: ['street', 'supercharged', 'drag'],
-    likes: 567,
-    comments: 34,
-    featured: false,
-  },
-];
+const PLACEHOLDER_IMAGE = '/images/placeholder-car.jpg';
 
 export default function CommunityPage() {
-  const { user, isAuthenticated } = useAuth();
-  const [builds, setBuilds] = useState(SAMPLE_BUILDS);
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [likedBuilds, setLikedBuilds] = useState(new Set());
-  const feedRef = useRef(null);
+  const { user } = useAuth();
   
-  // Filter builds by category
-  const filteredBuilds = activeFilter === 'all' 
-    ? builds 
-    : builds.filter(b => b.tags.includes(activeFilter));
+  const [activeTab, setActiveTab] = useState('builds');
+  const [builds, setBuilds] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [likedItems, setLikedItems] = useState(new Set());
+  const [showDetails, setShowDetails] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
   
-  // Toggle like
-  const toggleLike = useCallback((buildId) => {
-    setLikedBuilds(prev => {
-      const next = new Set(prev);
-      if (next.has(buildId)) {
-        next.delete(buildId);
-      } else {
-        next.add(buildId);
+  const containerRef = useRef(null);
+  const touchStartY = useRef(0);
+  const touchStartX = useRef(0);
+  const touchStartTime = useRef(0);
+  const swipeDirection = useRef(null);
+  
+  // Fetch builds
+  useEffect(() => {
+    async function fetchBuilds() {
+      if (activeTab !== 'builds') return;
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/community/builds?limit=20');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        setBuilds(data.builds || []);
+      } catch (err) {
+        setError('Unable to load builds');
+      } finally {
+        setIsLoading(false);
       }
+    }
+    fetchBuilds();
+  }, [activeTab]);
+  
+  const currentBuild = builds[currentIndex];
+  
+  const buildImages = currentBuild?.images?.length > 0 
+    ? currentBuild.images 
+    : currentBuild?.car_image_url 
+      ? [{ blob_url: currentBuild.car_image_url }]
+      : [{ blob_url: PLACEHOLDER_IMAGE }];
+  
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [currentIndex]);
+  
+  // Navigation
+  const goToNext = useCallback(() => {
+    if (currentIndex < builds.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setShowDetails(false);
+    }
+  }, [currentIndex, builds.length]);
+  
+  const goToPrev = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+      setShowDetails(false);
+    }
+  }, [currentIndex]);
+  
+  const goToNextImage = useCallback(() => {
+    if (currentImageIndex < buildImages.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    }
+  }, [currentImageIndex, buildImages.length]);
+  
+  const goToPrevImage = useCallback(() => {
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    }
+  }, [currentImageIndex]);
+  
+  useEffect(() => {
+    setCurrentIndex(0);
+    setCurrentImageIndex(0);
+    setShowDetails(false);
+  }, [activeTab]);
+  
+  // Keyboard
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); goToNext(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); goToPrev(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); goToNextImage(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); goToPrevImage(); }
+      else if (e.key === 'Escape') { setShowDetails(false); }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [goToNext, goToPrev, goToNextImage, goToPrevImage]);
+  
+  // Touch handling
+  const handleTouchStart = useCallback((e) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartTime.current = Date.now();
+    swipeDirection.current = null;
+  }, []);
+  
+  const handleTouchMove = useCallback((e) => {
+    if (swipeDirection.current) return;
+    const deltaX = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const deltaY = Math.abs(e.touches[0].clientY - touchStartY.current);
+    if (deltaX > 10 || deltaY > 10) {
+      swipeDirection.current = deltaX > deltaY ? 'horizontal' : 'vertical';
+    }
+  }, []);
+  
+  const handleTouchEnd = useCallback((e) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaY = touchStartY.current - touchEndY;
+    const deltaX = touchStartX.current - touchEndX;
+    const deltaTime = Date.now() - touchStartTime.current;
+    
+    if (swipeDirection.current === 'horizontal' && (Math.abs(deltaX) > 50 || Math.abs(deltaX) / deltaTime > 0.5)) {
+      if (deltaX > 0) goToNextImage();
+      else goToPrevImage();
+    } else if (swipeDirection.current === 'vertical' && !showDetails && (Math.abs(deltaY) > 50 || Math.abs(deltaY) / deltaTime > 0.5)) {
+      if (deltaY > 0) goToNext();
+      else goToPrev();
+    }
+  }, [goToNext, goToPrev, goToNextImage, goToPrevImage, showDetails]);
+  
+  // Mouse wheel
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let isScrolling = false;
+    const handleWheel = (e) => {
+      if (showDetails) return;
+      e.preventDefault();
+      if (isScrolling) return;
+      isScrolling = true;
+      if (e.deltaY > 20) goToNext();
+      else if (e.deltaY < -20) goToPrev();
+      setTimeout(() => { isScrolling = false; }, 400);
+    };
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, [goToNext, goToPrev, showDetails]);
+  
+  // Like
+  const toggleLike = useCallback((buildId) => {
+    setLikedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(buildId)) next.delete(buildId);
+      else next.add(buildId);
+      localStorage.setItem('likedBuilds', JSON.stringify([...next]));
       return next;
     });
   }, []);
   
-  // Share build
-  const shareBuild = useCallback((build) => {
+  useEffect(() => {
+    try {
+      const liked = JSON.parse(localStorage.getItem('likedBuilds') || '[]');
+      setLikedItems(new Set(liked));
+    } catch (e) {}
+  }, []);
+  
+  // Share
+  const shareBuild = useCallback(async (build) => {
+    const url = `${window.location.origin}/community/builds/${build.slug}`;
     if (navigator.share) {
-      navigator.share({
-        title: build.title,
-        text: `Check out this ${build.car.year} ${build.car.make} ${build.car.model} build on AutoRev`,
-        url: `https://autorev.app/community/builds/${build.id}`,
-      });
+      try { await navigator.share({ title: build.title, url }); } catch (e) {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 1500);
     }
   }, []);
   
-  return (
-    <div className={styles.container}>
-      {/* Header */}
-      <header className={styles.header}>
-        <h1 className={styles.title}>Community</h1>
-        <button className={styles.filterBtn}>
-          <FilterIcon />
-        </button>
-      </header>
-      
-      {/* Category Filter - Horizontal scroll */}
-      <div className={styles.filterBar}>
-        <div className={styles.filterScroll}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              className={`${styles.filterPill} ${activeFilter === cat.id ? styles.filterActive : ''}`}
-              onClick={() => setActiveFilter(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
+  const formatNumber = (num) => {
+    if (!num) return '0';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+    return num.toString();
+  };
+
+  // Events placeholder
+  if (activeTab === 'events') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.tabBar}>
+          <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
+          <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
+        </div>
+        <div className={styles.emptyState}>
+          <p>Events coming soon</p>
+          <Link href="/community/events" className={styles.primaryBtn}>Browse Events</Link>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className={styles.container} ref={containerRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       
-      {/* Build Feed */}
-      <div className={styles.feed} ref={feedRef}>
-        {filteredBuilds.map((build, index) => (
-          <article key={build.id} className={styles.buildCard}>
-            {/* Build Image */}
-            <div className={styles.buildImageWrapper}>
-              <Image
-                src={build.image}
-                alt={build.title}
-                fill
-                className={styles.buildImage}
-                sizes="(max-width: 768px) 100vw, 600px"
-                priority={index < 2}
-              />
-              
-              {/* Overlay gradient */}
-              <div className={styles.buildOverlay} />
-              
-              {/* Featured badge */}
-              {build.featured && (
-                <span className={styles.featuredBadge}>Featured</span>
-              )}
-              
-              {/* Quick action buttons - right side */}
-              <div className={styles.quickActions}>
-                <button 
-                  className={`${styles.actionBtn} ${likedBuilds.has(build.id) ? styles.liked : ''}`}
-                  onClick={() => toggleLike(build.id)}
-                  aria-label="Like build"
-                >
-                  <HeartIcon filled={likedBuilds.has(build.id)} />
-                  <span>{build.likes + (likedBuilds.has(build.id) ? 1 : 0)}</span>
-                </button>
-                
-                <button className={styles.actionBtn} aria-label="Comments">
-                  <CommentIcon />
-                  <span>{build.comments}</span>
-                </button>
-                
-                <button 
-                  className={styles.actionBtn} 
-                  onClick={() => shareBuild(build)}
-                  aria-label="Share build"
-                >
-                  <ShareIcon />
-                </button>
-              </div>
+      {/* Tab Bar - Floating */}
+      <div className={styles.tabBar}>
+        <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
+        <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
+      </div>
+      
+      {/* Loading */}
+      {isLoading && (
+        <div className={styles.centerState}>
+          <LoadingSpinner 
+            variant="branded" 
+            text="Loading Community" 
+            subtext="Fetching builds..."
+            fullPage 
+          />
+        </div>
+      )}
+      
+      {/* Error/Empty */}
+      {!isLoading && (error || builds.length === 0) && (
+        <div className={styles.emptyState}>
+          <p>{error || 'No builds yet'}</p>
+          <Link href="/garage" className={styles.primaryBtn}>Share Your Build</Link>
+        </div>
+      )}
+      
+      {/* Main Content */}
+      {currentBuild && !isLoading && (
+        <>
+          {/* Full-screen Image */}
+          <div className={styles.imageContainer}>
+            <div className={styles.imageTrack} style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}>
+              {buildImages.map((img, idx) => (
+                <div key={img.id || idx} className={styles.imageSlide}>
+                  <Image
+                    src={img.blob_url || img.thumbnail_url || PLACEHOLDER_IMAGE}
+                    alt={currentBuild.title}
+                    fill
+                    className={styles.image}
+                    sizes="100vw"
+                    priority={idx === 0}
+                  />
+                </div>
+              ))}
             </div>
             
-            {/* Build Info */}
-            <div className={styles.buildInfo}>
-              <div className={styles.buildHeader}>
-                <div className={styles.ownerInfo}>
-                  <div className={styles.ownerAvatar}>
-                    {build.owner.name.charAt(0)}
-                  </div>
-                  <span className={styles.ownerName}>{build.owner.name}</span>
-                </div>
-              </div>
-              
-              <h2 className={styles.buildTitle}>{build.title}</h2>
-              
-              <p className={styles.buildCar}>
-                {build.car.year} {build.car.make} {build.car.model}
-              </p>
-              
-              {/* Stats */}
-              <div className={styles.buildStats}>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>{build.stats.hp}</span>
-                  <span className={styles.statLabel}>HP</span>
-                </div>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>${(build.stats.cost / 1000).toFixed(0)}k</span>
-                  <span className={styles.statLabel}>Invested</span>
-                </div>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>{build.stats.mods}</span>
-                  <span className={styles.statLabel}>Mods</span>
-                </div>
-              </div>
-              
-              {/* Tags */}
-              <div className={styles.buildTags}>
-                {build.tags.map(tag => (
-                  <span key={tag} className={styles.tag}>#{tag}</span>
-                ))}
-              </div>
-              
-              {/* View Details CTA */}
-              <Link href={`/community/builds/${build.id}`} className={styles.viewDetailsBtn}>
-                View Full Build
-                <ChevronIcon />
-              </Link>
+            {/* Gradient Overlays */}
+            <div className={styles.gradientTop} />
+            <div className={styles.gradientBottom} />
+          </div>
+          
+          {/* Image Dots - Only if multiple */}
+          {buildImages.length > 1 && (
+            <div className={styles.dots}>
+              {buildImages.map((_, idx) => (
+                <span key={idx} className={`${styles.dot} ${idx === currentImageIndex ? styles.dotActive : ''}`} />
+              ))}
             </div>
-          </article>
-        ))}
-        
-        {/* Load More / End of feed */}
-        <div className={styles.feedEnd}>
-          <p>You&apos;ve reached the end!</p>
-          <button 
-            className={styles.refreshBtn}
-            onClick={() => setBuilds([...SAMPLE_BUILDS])}
-          >
-            Refresh Feed
-          </button>
-        </div>
-      </div>
+          )}
+          
+          {/* Right Side Actions */}
+          <div className={styles.actions}>
+            <button className={`${styles.actionBtn} ${likedItems.has(currentBuild.id) ? styles.liked : ''}`} onClick={() => toggleLike(currentBuild.id)}>
+              <HeartIcon filled={likedItems.has(currentBuild.id)} />
+              <span>{formatNumber((currentBuild.like_count || 0) + (likedItems.has(currentBuild.id) ? 1 : 0))}</span>
+            </button>
+            <button className={styles.actionBtn} onClick={() => setShowDetails(true)}>
+              <CommentIcon />
+              <span>Details</span>
+            </button>
+            <button className={`${styles.actionBtn} ${showCopied ? styles.copied : ''}`} onClick={() => shareBuild(currentBuild)}>
+              <ShareIcon />
+              <span>{showCopied ? 'Copied!' : 'Share'}</span>
+            </button>
+          </div>
+          
+          {/* Bottom Info - Minimal */}
+          <div className={styles.info} onClick={() => setShowDetails(true)}>
+            <div className={styles.userRow}>
+              <div className={styles.avatar}>
+                {currentBuild.author?.avatar_url ? (
+                  <Image src={currentBuild.author.avatar_url} alt="" width={32} height={32} />
+                ) : (
+                  <span>{currentBuild.author?.display_name?.charAt(0) || 'A'}</span>
+                )}
+              </div>
+              <span className={styles.username}>{currentBuild.author?.display_name || 'Anonymous'}</span>
+              {currentBuild.author?.tier === 'admin' && <span className={styles.badge}>Staff</span>}
+            </div>
+            <h2 className={styles.title}>{currentBuild.title}</h2>
+            <div className={styles.meta}>
+              <span className={styles.carName}>{currentBuild.car_name}</span>
+              {currentBuild.build_data?.hp_gain > 0 && (
+                <span className={styles.stat}>+{currentBuild.build_data.hp_gain} HP</span>
+              )}
+              {currentBuild.build_data?.mod_count > 0 && (
+                <span className={styles.stat}>{currentBuild.build_data.mod_count} mods</span>
+              )}
+            </div>
+            <div className={styles.seeMore}>
+              <span>See build details</span>
+              <ChevronIcon />
+            </div>
+          </div>
+          
+          {/* Premium Build Detail Sheet */}
+          {showDetails && (
+            <BuildDetailSheet
+              build={currentBuild}
+              images={buildImages}
+              currentImageIndex={currentImageIndex}
+              onImageSelect={(idx) => {
+                setCurrentImageIndex(idx);
+              }}
+              onClose={() => setShowDetails(false)}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

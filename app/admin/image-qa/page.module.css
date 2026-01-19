@@ -3,7 +3,7 @@
   padding: 2rem;
   padding-top: 100px;
   background: #0a0a0f;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .header {
@@ -46,9 +46,9 @@
 }
 
 .filterBtn.active {
-  background: #e94560;
-  border-color: #e94560;
-  color: #fff;
+  background: var(--brand-error);
+  border-color: var(--brand-error);
+  color: var(--brand-text-primary);
 }
 
 /* Checklist */
@@ -65,7 +65,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .checklist ul {
@@ -137,12 +137,12 @@
 
 .status.approved {
   background: rgba(40, 167, 69, 0.9);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .status.rejected {
   background: rgba(220, 53, 69, 0.9);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Info */
@@ -200,7 +200,7 @@
 
 .btn.approve {
   background: #28a745;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .btn.approve:hover:not(:disabled) {
@@ -209,7 +209,7 @@
 
 .btn.reject {
   background: #dc3545;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .btn.reject:hover:not(:disabled) {
@@ -218,7 +218,7 @@
 
 .btn.view {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .btn.view:hover {

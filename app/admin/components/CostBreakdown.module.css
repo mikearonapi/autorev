@@ -175,7 +175,7 @@
 
 .rndLabel {
   font-size: 11px;
-  color: var(--admin-accent-purple, #8b5cf6);
+  color: var(--admin-accent-purple, var(--brand-purple-accent));
 }
 
 .rndValue {

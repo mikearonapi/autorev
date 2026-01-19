@@ -1,0 +1,94 @@
+/* ==========================================================================
+   AutoRev Shadow Tokens
+   Elevation system for depth and hierarchy
+   
+   Optimized for dark theme - subtle, not harsh
+   ========================================================================== */
+
+:root {
+  /* =======================================================================
+     ELEVATION SCALE
+     Higher number = more elevated = more shadow
+     ======================================================================= */
+  
+  /* Level 0 - Flat, no elevation */
+  --shadow-0: none;
+  
+  /* Level 1 - Subtle lift (cards, buttons) */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3),
+              0 1px 3px rgba(0, 0, 0, 0.15);
+  
+  /* Level 2 - Moderate elevation (hover states, dropdowns) */
+  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.3),
+              0 4px 8px rgba(0, 0, 0, 0.2);
+  
+  /* Level 3 - High elevation (modals, popovers) */
+  --shadow-3: 0 4px 8px rgba(0, 0, 0, 0.3),
+              0 8px 16px rgba(0, 0, 0, 0.2),
+              0 16px 32px rgba(0, 0, 0, 0.15);
+  
+  /* Level 4 - Maximum elevation (dialogs, overlays) */
+  --shadow-4: 0 8px 16px rgba(0, 0, 0, 0.4),
+              0 16px 32px rgba(0, 0, 0, 0.3),
+              0 32px 64px rgba(0, 0, 0, 0.2);
+  
+  /* =======================================================================
+     COLORED SHADOWS (for brand accents)
+     ======================================================================= */
+  
+  /* Lime glow (for primary CTAs) */
+  --shadow-lime: 0 4px 16px rgba(212, 255, 0, 0.2),
+                 0 8px 24px rgba(212, 255, 0, 0.15);
+  
+  --shadow-lime-intense: 0 8px 24px rgba(212, 255, 0, 0.3),
+                         0 16px 40px rgba(212, 255, 0, 0.2);
+  
+  /* Teal glow (for success, improvements) */
+  --shadow-teal: 0 4px 16px rgba(16, 185, 129, 0.2),
+                 0 8px 24px rgba(16, 185, 129, 0.15);
+  
+  /* Blue glow (for info, baseline) */
+  --shadow-blue: 0 4px 16px rgba(59, 130, 246, 0.2),
+                 0 8px 24px rgba(59, 130, 246, 0.15);
+  
+  /* Gold glow (for brand accent) */
+  --shadow-gold: 0 4px 16px rgba(212, 168, 75, 0.2),
+                 0 8px 24px rgba(212, 168, 75, 0.15);
+  
+  /* Error glow */
+  --shadow-error: 0 4px 16px rgba(239, 68, 68, 0.2),
+                  0 8px 24px rgba(239, 68, 68, 0.15);
+  
+  /* =======================================================================
+     SEMANTIC SHADOWS
+     Named shadows for specific components
+     ======================================================================= */
+  
+  /* Card - subtle depth */
+  --shadow-card: var(--shadow-1);
+  --shadow-card-hover: var(--shadow-2);
+  
+  /* Button press effect */
+  --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-button-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
+  
+  /* Modal/dialog */
+  --shadow-modal: var(--shadow-4);
+  
+  /* Dropdown/popover */
+  --shadow-dropdown: var(--shadow-3);
+  
+  /* Input focus */
+  --shadow-input-focus: 0 0 0 3px rgba(212, 255, 0, 0.15);
+  
+  /* Error input focus */
+  --shadow-input-error: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  
+  /* =======================================================================
+     INSET SHADOWS
+     For pressed states, inputs
+     ======================================================================= */
+  
+  --shadow-inset-sm: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-inset-md: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}

@@ -2,19 +2,44 @@
  * WheelTireSpecsCard Styles
  * 
  * Inline editing card for wheel/tire specs
- * Matches detailBlock styling from garage page
+ * Matches detailBlock styling from garage page - COMPACT version
  */
 
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 12px 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 40, 55, 0.7) 0%,
+    rgba(20, 30, 45, 0.7) 100%
+  );
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold accent line - matches detailBlock */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary, var(--brand-gold)) 0%,
+    rgba(212, 168, 75, 0.3) 50%,
+    transparent 100%
+  );
+  opacity: 0.6;
 }
 
 /* Header - matches detailBlockTitle */
 .header {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .titleRow {
@@ -29,12 +54,12 @@
   justify-content: space-between;
   gap: 8px;
   margin: 0;
-  font-size: 9px;
+  font-size: 11px;
   width: 100%;
-  font-weight: 700;
-  color: var(--text-primary, #c4a564);
+  font-weight: 800;
+  color: var(--accent-primary, var(--brand-gold));
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .customBadge {
@@ -42,7 +67,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #10b981;
+  color: var(--brand-teal);
   background: rgba(16, 185, 129, 0.15);
   padding: 2px 5px;
   border-radius: 3px;
@@ -72,7 +97,7 @@
 .editToggle.active {
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .editHint {
@@ -89,7 +114,7 @@
 }
 
 .section {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .section:last-child {
@@ -99,25 +124,34 @@
 .sectionLabel {
   display: block;
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 4px;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
-/* Spec Row - matches detailBlockItem */
+.section:first-child .sectionLabel {
+  margin-top: 0;
+}
+
+/* Spec Row - matches detailBlockItem - COMPACT */
 .specRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
-  font-size: 11px;
+  padding: 6px 0;
+  font-size: 13px;
   position: relative;
   transition: background 0.15s ease;
   border-radius: 4px;
   gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.specRow:last-child {
+  border-bottom: none;
 }
 
 .specRow.editable {
@@ -143,28 +177,30 @@
   top: 3px;
   bottom: 3px;
   width: 2px;
-  background: #10b981;
+  background: var(--brand-teal);
   border-radius: 1px;
 }
 
 .specLabel {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.55);
   flex-shrink: 0;
+  font-size: 13px;
 }
 
 .specValue {
-  color: #ffffff;
-  font-weight: 600;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 10px;
+  color: var(--brand-text-primary);
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
+  font-size: 14px;
   text-align: right;
   display: flex;
   align-items: center;
   gap: 8px;
+  letter-spacing: -0.02em;
 }
 
 .specValue.customValue {
-  color: #10b981;
+  color: var(--brand-teal);
   font-weight: 600;
 }
 
@@ -193,7 +229,7 @@
 
 .rowEditBtn:hover {
   background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 /* Edit Container */
@@ -218,7 +254,7 @@
 }
 
 .editInput:focus {
-  border-color: #3b82f6;
+  border-color: var(--brand-blue);
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
@@ -244,7 +280,7 @@
 
 .editActionBtn:first-of-type {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .editActionBtn:first-of-type:hover:not(:disabled) {
@@ -253,7 +289,7 @@
 
 .editActionBtn:last-child:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 .editActionBtn:disabled {
@@ -295,7 +331,7 @@
   padding: 6px 10px;
   font-size: 10px;
   font-weight: 500;
-  color: #3b82f6;
+  color: var(--brand-blue);
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 4px;
@@ -360,12 +396,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #3b82f6;
+  color: var(--brand-blue);
 }
 
 .fitmentVerified {
   font-size: 9px;
-  color: #10b981;
+  color: var(--brand-teal);
 }
 
 .fitmentSpecs {

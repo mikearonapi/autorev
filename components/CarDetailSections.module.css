@@ -118,8 +118,8 @@
 }
 
 .mpgCardPrimary {
-  background: rgba(196, 165, 100, 0.1);
-  border-color: rgba(196, 165, 100, 0.3);
+  background: rgba(255, 77, 0, 0.1);
+  border-color: rgba(255, 77, 0, 0.3);
 }
 
 .mpgValue {
@@ -189,7 +189,7 @@
 .ghg4, .ghg5 { background: #f97316; }
 .ghg6, .ghg7 { background: #eab308; }
 .ghg8, .ghg9 { background: #22c55e; }
-.ghg10 { background: #10b981; }
+.ghg10 { background: var(--brand-teal); }
 
 .evInfo {
   display: flex;
@@ -202,7 +202,7 @@
 
 .evBadge {
   background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  color: var(--brand-blue);
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -230,7 +230,7 @@
   font-weight: 700;
 }
 
-.gradeA { background: #10b981; color: white; }
+.gradeA { background: var(--brand-teal); color: white; }
 .gradeB { background: #22c55e; color: white; }
 .gradeC { background: #eab308; color: black; }
 .gradeD { background: #f97316; color: white; }
@@ -351,7 +351,7 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
   font-size: 0.75rem;
-  color: #ef4444;
+  color: var(--brand-error);
 }
 
 /* ==========================================
@@ -366,7 +366,7 @@
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
   margin-bottom: 1rem;
-  color: #10b981;
+  color: var(--brand-teal);
   font-size: 0.9rem;
 }
 
@@ -417,7 +417,7 @@
 
 .bestBadge {
   font-size: 0.55rem;
-  background: #10b981;
+  background: var(--brand-teal);
   color: white;
   padding: 0.15rem 0.35rem;
   border-radius: 3px;

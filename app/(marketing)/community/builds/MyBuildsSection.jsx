@@ -54,7 +54,7 @@ export default function MyBuildsSection() {
   return (
     <div className={styles.compactSection}>
       <span className={styles.compactLabel}>My Public Builds: {builds.length}</span>
-      <Link href="/tuning-shop" className={styles.compactLink}>
+      <Link href="/garage/tuning-shop" className={styles.compactLink}>
         Edit
       </Link>
     </div>

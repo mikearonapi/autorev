@@ -2,7 +2,10 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './BottomTabBar.module.css';
+import { UI_IMAGES } from '@/lib/images';
+import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
 
 /**
  * BottomTabBar - Native iOS/Android style tab navigation
@@ -48,12 +51,14 @@ const GarageIcon = ({ active }) => (
   </svg>
 );
 
-const TrackIcon = ({ active }) => (
+const DataIcon = ({ active }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
     strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    {/* Racing flag / track icon */}
-    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-    <line x1="4" y1="22" x2="4" y2="15"/>
+    {/* Chart/data icon - represents telemetry, OBD2, track data */}
+    <path d="M3 3v18h18"/>
+    <path d="M18 17V9"/>
+    <path d="M13 17V5"/>
+    <path d="M8 17v-3"/>
   </svg>
 );
 
@@ -69,11 +74,14 @@ const CommunityIcon = ({ active }) => (
 );
 
 const AIIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    {/* Brain/sparkle icon for AI */}
-    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-  </svg>
+  <Image
+    src={UI_IMAGES.alMascotFull}
+    alt="AL"
+    width={26}
+    height={26}
+    className={`${styles.alMascot} ${active ? styles.alMascotActive : ''}`}
+    quality={90}
+  />
 );
 
 const ProfileIcon = ({ active }) => (
@@ -91,15 +99,17 @@ const tabs = [
     label: 'My Garage', 
     href: '/garage', 
     Icon: GarageIcon,
-    // Garage now includes build, upgrades, and performance features
-    matchPaths: ['/garage', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
+    // Garage now includes build, upgrades, specs, photos, and performance features
+    // Routes: /garage (vehicles), /garage/my-specs, /garage/my-build, /garage/my-performance, /garage/my-parts, /garage/my-photos
+    matchPaths: ['/garage', '/garage/builds', '/garage/my-specs', '/garage/my-build', '/garage/my-performance', '/garage/my-parts', '/garage/my-photos', '/garage/tuning-shop', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
   },
   { 
-    id: 'track', 
-    label: 'Track', 
-    href: '/track', 
-    Icon: TrackIcon,
-    matchPaths: ['/track']
+    id: 'data', 
+    label: 'My Data', 
+    href: '/data', 
+    Icon: DataIcon,
+    // Data covers: track sessions, OBD2 logging, telemetry, tuning optimization
+    matchPaths: ['/data', '/track']
   },
   { 
     id: 'community', 
@@ -111,7 +121,7 @@ const tabs = [
   { 
     id: 'al', 
     label: 'AL', 
-    href: '/al', 
+    href: '/al',
     Icon: AIIcon,
     matchPaths: ['/al']
   },
@@ -124,31 +134,17 @@ const tabs = [
   },
 ];
 
-// Pages where the tab bar should be shown (app routes)
-const APP_ROUTES = [
-  '/garage',
-  '/my-builds', // Legacy - part of garage
-  '/build',     // Legacy - part of garage
-  '/tuning-shop', // Legacy - part of garage
-  '/performance', // Part of garage
-  '/parts',     // Part of garage (upgrade flow)
-  '/track',
-  '/community',
-  '/al',
-  '/profile',
-  '/settings',
-  '/encyclopedia', // Reference - accessible from garage
-];
+// APP_ROUTES imported from @/lib/appRoutes
 
 export default function BottomTabBar() {
   const pathname = usePathname();
   
   // Determine if we should show the tab bar
-  const shouldShow = APP_ROUTES.some(route => pathname?.startsWith(route));
+  const shouldShow = isAppRoute(pathname);
   
   if (!shouldShow) return null;
   
-  // Check if a tab is active
+  // Check if a tab is active based on current path
   const isActive = (tab) => {
     return tab.matchPaths?.some(path => pathname?.startsWith(path));
   };
@@ -180,10 +176,7 @@ export default function BottomTabBar() {
   );
 }
 
-// Export route checker for use in other components
-export function isAppRoute(pathname) {
-  return APP_ROUTES.some(route => pathname?.startsWith(route));
-}
-
 // Export tabs configuration for other components that may need it
-export { tabs, APP_ROUTES };
+// Note: isAppRoute and APP_ROUTES are available from @/lib/appRoutes
+export { tabs };
+export { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';

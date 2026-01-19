@@ -41,13 +41,13 @@ const ChevronIcon = () => (
 
 // Navigation links - Simplified 5-Tab Structure (January 2026)
 // 1. My Garage - Vehicles, Builds, Upgrades, Performance (all in one)
-// 2. Track - Track day mode, data logging
+// 2. Data - Track sessions, OBD2, telemetry, analytics
 // 3. Community - TikTok/IG style build feed
 // 4. AL - AI assistant + search
 // 5. Profile - Settings, account
 const navLinks = [
   { href: '/garage', label: 'My Garage' },
-  { href: '/track', label: 'Track' },
+  { href: '/data', label: 'My Data' },
   { href: '/community', label: 'Community' },
   { href: '/al', label: 'AL' },
   { href: '/encyclopedia', label: 'Encyclopedia' }, // Reference resource
@@ -56,7 +56,7 @@ const navLinks = [
 // App routes where tab bar is shown (header should be minimal on mobile)
 const APP_ROUTES = [
   '/garage',
-  '/track',
+  '/data',
   '/community',
   '/profile',
   '/al',
@@ -68,6 +68,7 @@ const APP_ROUTES = [
   // Legacy routes (redirect but still match)
   '/tuning-shop',
   '/my-builds',
+  '/track', // Legacy - redirects to /data
 ];
 
 // AL Mascot Avatar for mobile menu

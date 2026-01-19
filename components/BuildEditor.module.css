@@ -41,7 +41,7 @@
 }
 
 .modeButton.active {
-  background: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
   color: white;
 }
 
@@ -203,8 +203,8 @@
 
 .modButton.selected {
   background: rgba(59, 130, 246, 0.15);
-  border-color: var(--accent-primary, #3b82f6);
-  color: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, var(--brand-blue));
+  color: var(--accent-primary, var(--brand-blue));
 }
 
 .modCheck {
@@ -220,8 +220,8 @@
 }
 
 .modButton.selected .modCheck {
-  background: var(--accent-primary, #3b82f6);
-  border-color: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
+  border-color: var(--accent-primary, var(--brand-blue));
   color: white;
 }
 
@@ -313,12 +313,12 @@
 }
 
 .radioLabel input:checked + .radioText {
-  color: var(--accent-primary, #3b82f6);
+  color: var(--accent-primary, var(--brand-blue));
 }
 
 .radioLabel:has(input:checked) {
   background: rgba(59, 130, 246, 0.15);
-  outline: 1px solid var(--accent-primary, #3b82f6);
+  outline: 1px solid var(--accent-primary, var(--brand-blue));
 }
 
 .radioText {
@@ -341,7 +341,7 @@
 .input:focus,
 .select:focus {
   outline: none;
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--accent-primary, var(--brand-blue));
 }
 
 .input::placeholder {
@@ -375,7 +375,7 @@
 .checkboxLabel input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--accent-primary, #3b82f6);
+  accent-color: var(--accent-primary, var(--brand-blue));
 }
 
 .compactModGrid {
@@ -397,7 +397,7 @@
 .compactModLabel input {
   width: 14px;
   height: 14px;
-  accent-color: var(--accent-primary, #3b82f6);
+  accent-color: var(--accent-primary, var(--brand-blue));
 }
 
 .compactModLabel:has(input:checked) {
@@ -444,7 +444,7 @@
 
 .saveButton {
   padding: 0.625rem 1.5rem;
-  background: var(--accent-primary, #3b82f6);
+  background: var(--accent-primary, var(--brand-blue));
   border: none;
   border-radius: 8px;
   color: white;

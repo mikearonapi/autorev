@@ -194,7 +194,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
-  color: #ef4444;
+  color: var(--brand-error);
   font-size: 13px;
 }
 
@@ -245,7 +245,7 @@
   background: rgba(139, 92, 246, 0.15);
   border-radius: 4px;
   font-size: 11px;
-  color: #8b5cf6;
+  color: var(--brand-purple-accent);
   font-family: 'JetBrains Mono', monospace;
 }
 
@@ -253,7 +253,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--admin-accent-blue, #3b82f6);
+  color: var(--admin-accent-blue, var(--brand-blue));
   font-size: 12px;
   text-decoration: none;
   margin-top: 8px;

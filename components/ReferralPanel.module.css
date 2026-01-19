@@ -6,7 +6,7 @@
 
 .panel {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: var(--radius-xl, 16px);
   padding: 28px;
 }
@@ -24,8 +24,8 @@
 .loadingSpinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  border-top-color: #D4AF37;
+  border: 2px solid var(--accent-primary-muted, rgba(255, 77, 0, 0.3));
+  border-top-color: var(--accent-primary, #ff4d00);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -35,7 +35,7 @@
 }
 
 .error {
-  color: #f87171;
+  color: var(--brand-error-light);
   text-align: center;
   padding: 40px 20px;
   display: flex;
@@ -48,8 +48,8 @@
   padding: 8px 16px;
   font-size: 0.85rem;
   font-weight: 500;
-  background: #D4AF37;
-  color: #0f172a;
+  background: var(--accent-primary, #ff4d00);
+  color: var(--brand-text-primary);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -57,7 +57,7 @@
 }
 
 .retryButton:hover {
-  background: #B8962E;
+  background: var(--accent-primary-hover, #ff6a2a);
 }
 
 /* Header */
@@ -92,7 +92,7 @@
 }
 
 .subtitle strong {
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
   font-weight: 600;
 }
 
@@ -143,7 +143,7 @@
 }
 
 .shareLinkInput:focus {
-  border-color: #D4AF37;
+  border-color: var(--accent-primary, #ff4d00);
 }
 
 .copyButton {
@@ -153,8 +153,8 @@
   padding: 12px 18px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #D4AF37 0%, #B8962E 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00) 0%, var(--accent-primary-hover, #ff6a2a) 100%);
+  color: var(--brand-text-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -164,7 +164,7 @@
 
 .copyButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 77, 0, 0.3);
 }
 
 .copyButton.copied {
@@ -194,16 +194,16 @@
 }
 
 .emailActionButton {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
-  color: #D4AF37;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, var(--accent-primary-muted, rgba(255, 77, 0, 0.15)) 0%, rgba(255, 77, 0, 0.08) 100%);
+  color: var(--accent-primary, #ff4d00);
+  border: 1px solid rgba(255, 77, 0, 0.4);
 }
 
 .emailActionButton:hover {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.15) 100%);
-  border-color: #D4AF37;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.25) 0%, rgba(255, 77, 0, 0.15) 100%);
+  border-color: var(--accent-primary, #ff4d00);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 4px 16px rgba(255, 77, 0, 0.2);
 }
 
 .emailActionButton svg {
@@ -268,7 +268,7 @@
   display: block;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
   line-height: 1;
   margin-bottom: 4px;
 }
@@ -299,7 +299,7 @@
 }
 
 .milestonesTitle svg {
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 /* Progress Bar */
@@ -322,7 +322,7 @@
 .progressReward {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .progressBar {
@@ -335,7 +335,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #D4AF37, #f59e0b);
+  background: linear-gradient(90deg, var(--accent-primary, #ff4d00), var(--accent-primary-hover, #ff6a2a));
   border-radius: 5px;
   transition: width 0.5s ease;
 }
@@ -351,8 +351,8 @@
   align-items: center;
   gap: 10px;
   padding: 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, var(--accent-primary-muted, rgba(255, 77, 0, 0.1)), rgba(255, 77, 0, 0.05));
+  border: 1px solid rgba(255, 77, 0, 0.3);
   border-radius: 10px;
   margin-bottom: 16px;
   color: rgba(255, 255, 255, 0.9);
@@ -388,10 +388,10 @@
 }
 
 .milestoneItem.current {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
-  border-color: rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, var(--accent-primary-muted, rgba(255, 77, 0, 0.1)), rgba(255, 77, 0, 0.05));
+  border-color: rgba(255, 77, 0, 0.4);
   opacity: 1;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 2px 8px rgba(255, 77, 0, 0.15);
 }
 
 .milestoneIcon {
@@ -450,7 +450,7 @@
 }
 
 .referralsListTitle svg {
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .referralsList {
@@ -494,21 +494,21 @@
 
 .statusPending {
   font-size: 0.8rem;
-  color: #f59e0b;
+  color: var(--brand-warning);
   font-weight: 500;
 }
 
 .statusJoined {
   font-size: 0.8rem;
-  color: #22c55e;
+  color: var(--brand-success);
   font-weight: 500;
 }
 
 .creditsEarned {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #D4AF37;
-  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent-primary, #ff4d00);
+  background: var(--accent-primary-muted, rgba(255, 77, 0, 0.1));
   padding: 4px 8px;
   border-radius: 4px;
 }
@@ -611,7 +611,7 @@
 }
 
 .modalTitle svg {
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .modalDescription {
@@ -622,7 +622,7 @@
 }
 
 .modalDescription strong {
-  color: #D4AF37;
+  color: var(--accent-primary, #ff4d00);
 }
 
 .inviteForm {
@@ -647,15 +647,15 @@
 }
 
 .emailInput:focus {
-  border-color: #D4AF37;
+  border-color: var(--accent-primary, #ff4d00);
 }
 
 .sendButton {
   padding: 14px 20px;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #D4AF37 0%, #B8962E 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--accent-primary, #ff4d00) 0%, var(--accent-primary-hover, #ff6a2a) 100%);
+  color: var(--brand-text-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -664,7 +664,7 @@
 
 .sendButton:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 77, 0, 0.3);
 }
 
 .sendButton:disabled {

@@ -89,7 +89,7 @@
 }
 
 .rangeButton.active {
-  color: #fff;
+  color: var(--brand-text-primary);
   background: #8B5CF6;
 }
 
@@ -386,7 +386,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #f87171;
+  color: var(--brand-error-light);
   font-size: 13px;
 }
 

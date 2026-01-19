@@ -3,10 +3,10 @@
  * 
  * Provides metadata for the Garage page since the main page is a client component.
  * Note: Garage is a user-specific page so we use noindex for privacy.
+ * 
+ * IMPORTANT: No SchemaOrg here - user-specific pages don't need structured data
+ * and it was causing rendering issues on mobile.
  */
-
-import SchemaOrg from '@/components/SchemaOrg';
-import { generateBreadcrumbSchema } from '@/lib/seoUtils';
 
 export const metadata = {
   title: 'My Garage | Save Cars & Builds',
@@ -42,17 +42,7 @@ export const metadata = {
 };
 
 export default function GarageLayout({ children }) {
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: '/' },
-    { name: 'My Garage', url: '/garage' },
-  ]);
-
-  return (
-    <>
-      <SchemaOrg schema={breadcrumbSchema} />
-      {children}
-    </>
-  );
+  return children;
 }
 
 

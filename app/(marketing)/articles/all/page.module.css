@@ -16,7 +16,7 @@
 /* Hero */
 .hero {
   padding: 4rem 2rem 2.5rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, #16213e 50%, #0f3460 100%);
   text-align: center;
 }
 
@@ -28,7 +28,7 @@
 .heroTitle {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.75rem;
 }
 
@@ -99,13 +99,13 @@
 
 .filterChip:hover {
   border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .filterChip.active {
   background: rgba(233, 69, 96, 0.15);
   border-color: rgba(233, 69, 96, 0.4);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 .chipCount {
@@ -118,7 +118,7 @@
 
 .filterChip.active .chipCount {
   background: rgba(233, 69, 96, 0.2);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 /* Back to Hub Chip */
@@ -141,7 +141,7 @@
 .backChip:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .filterDivider {
@@ -181,7 +181,7 @@
 
 .viewBtn.active {
   background: rgba(233, 69, 96, 0.2);
-  color: #e94560;
+  color: var(--brand-error);
 }
 
 /* Content */
@@ -219,7 +219,7 @@
 
 .clearFilter:hover {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 /* Grid View */
@@ -251,7 +251,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
 }
 
 .image {
@@ -264,7 +264,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, var(--brand-bg-card-dark), #16213e);
   color: rgba(255, 255, 255, 0.4);
 }
 
@@ -281,7 +281,7 @@
   border-radius: 4px;
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #fff;
+  color: var(--brand-text-primary);
 }
 
 .categoryTag {
@@ -296,7 +296,7 @@
   border-radius: 4px;
   font-size: 0.625rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -311,7 +311,7 @@
 .cardTitle {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
   line-height: 1.4;
 }
@@ -369,7 +369,7 @@
   aspect-ratio: 16/10;
   border-radius: 8px;
   overflow: hidden;
-  background: #1a1a2e;
+  background: var(--brand-bg-card-dark);
 }
 
 .rowContent {
@@ -395,7 +395,7 @@
   border-radius: 4px;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #e94560;
+  color: var(--brand-error);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -411,7 +411,7 @@
 .rowTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--brand-text-primary);
   margin: 0 0 0.5rem;
   line-height: 1.35;
 }
@@ -450,7 +450,7 @@
 }
 
 .row:hover .rowArrow {
-  color: #e94560;
+  color: var(--brand-error);
   transform: translateX(4px);
 }
 

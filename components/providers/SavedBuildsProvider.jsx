@@ -167,6 +167,10 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
         sizeSelections: build.selected_upgrades?.sizeSelections || null,
         heroSource: build.selected_upgrades?.heroSource || 'stock',
         heroImageId: build.selected_upgrades?.heroImageId || null,
+        // Tuner mode ('basic' or 'advanced') - determines HP calculation source
+        tunerMode: build.selected_upgrades?.tunerMode || 'basic',
+        // Advanced specs if user was in advanced mode
+        advancedSpecs: build.selected_upgrades?.advancedSpecs || null,
         // Include hero image URL for display in project cards
         heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
         uploadedImages: uploadedImages,
@@ -289,6 +293,10 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
           sizeSelections: build.selected_upgrades?.sizeSelections || null,
           heroSource: build.selected_upgrades?.heroSource || 'stock',
           heroImageId: build.selected_upgrades?.heroImageId || null,
+          // Tuner mode ('basic' or 'advanced') - determines HP calculation source
+          tunerMode: build.selected_upgrades?.tunerMode || 'basic',
+          // Advanced specs if user was in advanced mode
+          advancedSpecs: build.selected_upgrades?.advancedSpecs || null,
           // Include hero image URL for display in project cards
           heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
           uploadedImages: uploadedImages,
@@ -476,6 +484,9 @@ useEffect(() => {
           sizeSelections: data.selected_upgrades?.sizeSelections || buildData?.sizeSelections || null,
           heroSource: data.selected_upgrades?.heroSource || buildData?.heroSource || 'stock',
           heroImageId: data.selected_upgrades?.heroImageId || buildData?.heroImageId || null,
+          // Tuner mode and advanced specs
+          tunerMode: data.selected_upgrades?.tunerMode || buildData?.tunerMode || 'basic',
+          advancedSpecs: data.selected_upgrades?.advancedSpecs || buildData?.advancedSpecs || null,
           parts: Array.isArray(buildData?.selectedParts) ? buildData.selectedParts : [],
           totalHpGain: data.total_hp_gain || 0,
           totalCostLow: data.total_cost_low || 0,
@@ -506,6 +517,9 @@ useEffect(() => {
       sizeSelections: buildData.sizeSelections || null,
       heroSource: buildData.heroSource || 'stock',
       heroImageId: buildData.heroImageId || null,
+      // Tuner mode and advanced specs
+      tunerMode: buildData.tunerMode || 'basic',
+      advancedSpecs: buildData.advancedSpecs || null,
       parts: buildData.selectedParts || buildData.parts || [],
       totalHpGain: buildData.totalHpGain || 0,
       totalCostLow: buildData.totalCostLow || 0,

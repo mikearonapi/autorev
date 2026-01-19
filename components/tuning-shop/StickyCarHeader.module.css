@@ -57,7 +57,7 @@
   padding: 4px 8px 4px 4px;
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--brand-text-primary);
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.15s ease;
@@ -127,7 +127,7 @@
 .statValue {
   font-size: 14px;
   font-weight: 700;
-  color: #4ade80;
+  color: var(--brand-teal);
 }
 
 .statLabel {
@@ -156,7 +156,7 @@
 .changeCarBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .changeCarText {
@@ -217,7 +217,7 @@
 .expandedStatValue {
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .buildSummary {
@@ -245,12 +245,12 @@
 .summaryValue {
   font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--brand-text-primary);
 }
 
 .summaryGain {
   font-size: 12px;
-  color: #4ade80;
+  color: var(--brand-teal);
   margin-left: 4px;
 }
 

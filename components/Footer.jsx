@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
 
-// App routes where footer should be hidden on mobile (tab bar is used instead)
+// App routes where footer should be completely hidden (native app experience)
+// These pages use the bottom tab bar for navigation
 const APP_ROUTES = [
   '/tuning-shop',
   '/my-builds',
@@ -14,6 +15,11 @@ const APP_ROUTES = [
   '/al',
   '/encyclopedia',
   '/profile',
+  '/data',
+  '/build',
+  '/mod-planner',
+  '/browse-cars',
+  '/performance',
 ];
 
 // Social media links
@@ -91,10 +97,12 @@ export default function Footer() {
   if (isHomePage) return null;
   
   // Check if we're on an app page (where bottom tab bar is shown)
+  // Hide footer COMPLETELY on app pages for native app feel
   const isAppPage = APP_ROUTES.some(route => pathname?.startsWith(route));
+  if (isAppPage) return null;
 
   return (
-    <footer className={`${styles.footer} ${isAppPage ? styles.footerAppPage : ''}`}>
+    <footer className={styles.footer}>
       <div className={styles.container}>
         {/* Top Section: Brand + Nav Columns */}
         <div className={styles.topSection}>

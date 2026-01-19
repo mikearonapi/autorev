@@ -5,9 +5,13 @@ import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './BuildWizard.module.css';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import CarImage from '@/components/CarImage';
 
 /**
  * BuildWizard - Full-screen onboarding flow for creating a new build
+ * 
+ * UPDATED: Vehicle-first approach - builds require a vehicle from your garage.
  * 
  * Inspired by GRAVL's workout setup wizard:
  * - Full-screen steps
@@ -16,7 +20,7 @@ import styles from './BuildWizard.module.css';
  * - Smooth transitions between steps
  * 
  * Steps:
- * 1. Select Your Car (search or browse)
+ * 1. Select Vehicle from Garage (or add new vehicle)
  * 2. What's Your Goal? (Track, Street, Show, Daily)
  * 3. Current Setup (Stock, Light Mods, Stage 1, Stage 2+)
  * 4. Budget Range (Slider or presets)
@@ -26,10 +30,11 @@ import styles from './BuildWizard.module.css';
  *   isOpen={showWizard} 
  *   onClose={() => setShowWizard(false)}
  *   onComplete={(buildData) => handleBuildCreated(buildData)}
+ *   allCars={allCars} // Optional: for matching vehicles to car data
  * />
  */
 
-const STEPS = ['car', 'goal', 'setup', 'budget'];
+const STEPS = ['vehicle', 'goal', 'setup', 'budget'];
 
 const BUILD_GOALS = [
   {
@@ -101,14 +106,18 @@ export default function BuildWizard({
   onClose,
   onComplete,
   initialCar = null,
+  allCars = [], // For matching vehicles to car database
+  onAddVehicle, // Callback to open Add Vehicle modal
 }) {
   const router = useRouter();
+  const { vehicles } = useOwnedVehicles();
   const [mounted, setMounted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState('forward');
   
   // Build data
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedCar, setSelectedCar] = useState(initialCar);
   const [carSearchQuery, setCarSearchQuery] = useState('');
   const [carSearchResults, setCarSearchResults] = useState([]);
@@ -116,6 +125,12 @@ export default function BuildWizard({
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [currentSetup, setCurrentSetup] = useState(null);
   const [budgetRange, setBudgetRange] = useState(null);
+  
+  // Match vehicles with car data from database
+  const vehiclesWithCars = vehicles.map(v => {
+    const car = allCars.find(c => c.slug === v.matchedCarSlug);
+    return { vehicle: v, car };
+  });
   
   // Mount check for portal
   useEffect(() => {
@@ -140,6 +155,7 @@ export default function BuildWizard({
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(0);
+      setSelectedVehicle(null);
       if (!initialCar) {
         setSelectedCar(null);
         setCarSearchQuery('');
@@ -217,8 +233,8 @@ export default function BuildWizard({
   // Check if current step is complete
   const isStepComplete = useCallback(() => {
     switch (STEPS[currentStep]) {
-      case 'car':
-        return !!selectedCar;
+      case 'vehicle':
+        return !!selectedVehicle;
       case 'goal':
         return !!selectedGoal;
       case 'setup':
@@ -228,12 +244,13 @@ export default function BuildWizard({
       default:
         return false;
     }
-  }, [currentStep, selectedCar, selectedGoal, currentSetup, budgetRange]);
+  }, [currentStep, selectedVehicle, selectedGoal, currentSetup, budgetRange]);
   
   // Handle complete
   const handleComplete = useCallback(() => {
     const buildData = {
-      car: selectedCar,
+      vehicle: selectedVehicle,
+      car: selectedVehicle?.car || selectedCar,
       goal: selectedGoal,
       currentSetup,
       budgetRange,
@@ -242,14 +259,31 @@ export default function BuildWizard({
     onComplete?.(buildData);
     
     // Navigate to tuning shop with car selected
-    if (selectedCar?.slug) {
-      router.push(`/tuning-shop?car=${selectedCar.slug}`);
+    const carSlug = selectedVehicle?.car?.slug || selectedCar?.slug;
+    if (carSlug) {
+      router.push(`/tuning-shop?car=${carSlug}`);
     }
     
     onClose?.();
-  }, [selectedCar, selectedGoal, currentSetup, budgetRange, onComplete, onClose, router]);
+  }, [selectedVehicle, selectedCar, selectedGoal, currentSetup, budgetRange, onComplete, onClose, router]);
   
-  // Select car
+  // Select vehicle from garage
+  const handleSelectVehicle = useCallback((vehicleWithCar) => {
+    setSelectedVehicle(vehicleWithCar);
+    if (vehicleWithCar.car) {
+      setSelectedCar(vehicleWithCar.car);
+    }
+    // Auto-advance after short delay
+    setTimeout(() => nextStep(), 300);
+  }, [nextStep]);
+  
+  // Handle add vehicle click
+  const handleAddVehicle = useCallback(() => {
+    onClose?.();
+    onAddVehicle?.();
+  }, [onClose, onAddVehicle]);
+  
+  // Select car (fallback for search - deprecated but kept for compatibility)
   const handleSelectCar = useCallback((car) => {
     setSelectedCar(car);
     setCarSearchQuery('');
@@ -307,73 +341,81 @@ export default function BuildWizard({
         
         {/* Content */}
         <div className={`${styles.content} ${animating ? styles.contentAnimating : ''}`}>
-          {/* Step 1: Select Car */}
-          {STEPS[currentStep] === 'car' && (
+          {/* Step 1: Select Vehicle from Garage */}
+          {STEPS[currentStep] === 'vehicle' && (
             <div className={styles.step}>
-              <h1 className={styles.stepTitle}>Select Your Car</h1>
-              <p className={styles.stepSubtitle}>What car are you building?</p>
+              <h1 className={styles.stepTitle}>Select Your Vehicle</h1>
+              <p className={styles.stepSubtitle}>
+                {vehiclesWithCars.length > 0 
+                  ? 'Choose a vehicle from your garage to build'
+                  : 'Add a vehicle to your garage to start building'
+                }
+              </p>
               
-              <div className={styles.searchContainer}>
-                <SearchIcon />
-                <input
-                  type="text"
-                  className={styles.searchInput}
-                  placeholder="Search make, model, or year..."
-                  value={carSearchQuery}
-                  onChange={(e) => setCarSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                {isSearching && <div className={styles.searchSpinner} />}
-              </div>
-              
-              {/* Selected car preview */}
-              {selectedCar && (
+              {/* Selected vehicle preview */}
+              {selectedVehicle && (
                 <div className={styles.selectedCar}>
                   <div className={styles.selectedCarInfo}>
-                    {selectedCar.thumbnail && (
-                      <Image
-                        src={selectedCar.thumbnail}
-                        alt={selectedCar.name}
-                        width={80}
-                        height={60}
-                        className={styles.selectedCarImage}
-                      />
+                    {selectedVehicle.car ? (
+                      <div className={styles.selectedCarImageWrapper}>
+                        <CarImage car={selectedVehicle.car} variant="garage" />
+                      </div>
+                    ) : (
+                      <div className={styles.selectedCarPlaceholder}>
+                        <CarIcon />
+                      </div>
                     )}
                     <div>
-                      <span className={styles.selectedCarName}>{selectedCar.name}</span>
-                      <span className={styles.selectedCarYear}>{selectedCar.year}</span>
+                      <span className={styles.selectedCarName}>
+                        {selectedVehicle.vehicle.nickname || selectedVehicle.car?.name || 
+                          `${selectedVehicle.vehicle.year} ${selectedVehicle.vehicle.make} ${selectedVehicle.vehicle.model}`}
+                      </span>
+                      {selectedVehicle.vehicle.totalHpGain > 0 && (
+                        <span className={styles.selectedCarYear}>
+                          +{selectedVehicle.vehicle.totalHpGain} HP from existing build
+                        </span>
+                      )}
                     </div>
                   </div>
                   <button
                     className={styles.changeCar}
-                    onClick={() => setSelectedCar(null)}
+                    onClick={() => setSelectedVehicle(null)}
                   >
                     Change
                   </button>
                 </div>
               )}
               
-              {/* Search results */}
-              {carSearchResults.length > 0 && !selectedCar && (
-                <div className={styles.searchResults}>
-                  {carSearchResults.map((car) => (
+              {/* Vehicle list from garage */}
+              {!selectedVehicle && vehiclesWithCars.length > 0 && (
+                <div className={styles.vehicleList}>
+                  {vehiclesWithCars.map((item) => (
                     <button
-                      key={car.id || car.slug}
-                      className={styles.searchResult}
-                      onClick={() => handleSelectCar(car)}
+                      key={item.vehicle.id}
+                      className={styles.vehicleCard}
+                      onClick={() => handleSelectVehicle(item)}
                     >
-                      {car.thumbnail && (
-                        <Image
-                          src={car.thumbnail}
-                          alt={car.name}
-                          width={60}
-                          height={45}
-                          className={styles.resultImage}
-                        />
-                      )}
-                      <div className={styles.resultInfo}>
-                        <span className={styles.resultName}>{car.name}</span>
-                        <span className={styles.resultYear}>{car.year}</span>
+                      <div className={styles.vehicleCardImage}>
+                        {item.car ? (
+                          <CarImage car={item.car} variant="garage" />
+                        ) : (
+                          <div className={styles.vehicleCardPlaceholder}>
+                            <CarIcon />
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles.vehicleCardInfo}>
+                        <span className={styles.vehicleCardName}>
+                          {item.vehicle.nickname || item.car?.name || 
+                            `${item.vehicle.year} ${item.vehicle.make} ${item.vehicle.model}`}
+                        </span>
+                        {item.vehicle.totalHpGain > 0 ? (
+                          <span className={styles.vehicleCardHp}>
+                            +{item.vehicle.totalHpGain} HP
+                          </span>
+                        ) : (
+                          <span className={styles.vehicleCardStock}>Stock</span>
+                        )}
                       </div>
                       <ChevronRightIcon />
                     </button>
@@ -381,22 +423,28 @@ export default function BuildWizard({
                 </div>
               )}
               
-              {/* Popular cars suggestion */}
-              {!carSearchQuery && !selectedCar && (
-                <div className={styles.popularCars}>
-                  <h3 className={styles.popularTitle}>Popular Platforms</h3>
-                  <div className={styles.popularGrid}>
-                    {['BMW M3', 'Porsche 911', 'Toyota Supra', 'Corvette'].map((name) => (
-                      <button
-                        key={name}
-                        className={styles.popularCard}
-                        onClick={() => setCarSearchQuery(name)}
-                      >
-                        {name}
-                      </button>
-                    ))}
+              {/* Empty state - no vehicles */}
+              {!selectedVehicle && vehiclesWithCars.length === 0 && (
+                <div className={styles.emptyVehicles}>
+                  <div className={styles.emptyVehiclesIcon}>
+                    <CarIcon />
                   </div>
+                  <h3 className={styles.emptyVehiclesTitle}>No Vehicles Yet</h3>
+                  <p className={styles.emptyVehiclesText}>
+                    Add your first vehicle to start building
+                  </p>
                 </div>
+              )}
+              
+              {/* Add Vehicle Button */}
+              {!selectedVehicle && (
+                <button
+                  className={styles.addVehicleButton}
+                  onClick={handleAddVehicle}
+                >
+                  <PlusIcon />
+                  Add Vehicle to Garage
+                </button>
               )}
             </div>
           )}
@@ -537,5 +585,21 @@ const ChevronRightIcon = () => (
 const CheckIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const CarIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+    <circle cx="7" cy="17" r="2"/>
+    <path d="M9 17h6"/>
+    <circle cx="17" cy="17" r="2"/>
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5" y1="12" x2="19" y2="12"/>
   </svg>
 );

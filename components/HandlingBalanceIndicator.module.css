@@ -1,0 +1,118 @@
+/* ===========================================
+   HANDLING BALANCE INDICATOR
+   Standalone component for Data tab
+   =========================================== */
+
+.handlingBalance {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.handlingBalanceHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.handlingBalanceHeader svg {
+  color: var(--accent-primary, #ff4d00);
+}
+
+.handlingBalanceHeader span:first-of-type {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  flex: 1;
+}
+
+.handlingBalanceLabel {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+.balanceTrack {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.balanceEndLabel {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  width: 70px;
+  text-align: center;
+}
+
+.balanceBar {
+  flex: 1;
+  position: relative;
+  height: 16px;
+  background: linear-gradient(90deg, 
+    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(16, 185, 129, 0.3) 50%, 
+    rgba(239, 68, 68, 0.3) 100%
+  );
+  border-radius: 8px;
+}
+
+.balanceCenter {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateX(-50%);
+}
+
+.balanceIndicator {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: left 0.3s ease;
+}
+
+.balanceTips {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.balanceTips span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.balanceTips svg {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .handlingBalance {
+    padding: 14px;
+  }
+  
+  .balanceEndLabel {
+    width: 50px;
+    font-size: 9px;
+  }
+}

@@ -1,0 +1,262 @@
+/* ==========================================================================
+   AutoRev Progress Components
+   Progress bars, meters, gauges
+   ========================================================================== */
+
+/* ==========================================================================
+   BASE PROGRESS BAR
+   ========================================================================== */
+
+.progress-track {
+  position: relative;
+  height: 8px;
+  background: var(--color-chart-grid, rgba(255, 255, 255, 0.08));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-track-sm {
+  composes: progress-track;
+  height: 6px;
+}
+
+.progress-track-lg {
+  composes: progress-track;
+  height: 10px;
+}
+
+/* ==========================================================================
+   PROGRESS FILLS
+   ========================================================================== */
+
+/* Stock/Baseline fill - BLUE */
+.progress-fill-stock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--gradient-stock, linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%));
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* Modified/Improved fill - TEAL */
+.progress-fill-improved {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--gradient-improved, linear-gradient(90deg, #10b981 0%, #34d399 100%));
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* Gold fill - for ratings, scores */
+.progress-fill-gold {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-gold) 0%, var(--color-accent-gold-hover) 100%);
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* Success fill - for completion */
+.progress-fill-success {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success) 0%, #4ade80 100%);
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* Warning fill - for caution */
+.progress-fill-warning {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-warning) 0%, #fbbf24 100%);
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* ==========================================================================
+   COMPARISON PROGRESS (Stock vs Modified)
+   ========================================================================== */
+
+.progress-comparison {
+  position: relative;
+  height: 8px;
+  background: var(--color-chart-grid, rgba(255, 255, 255, 0.08));
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.progress-comparison-stock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--gradient-stock);
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+.progress-comparison-gain {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--gradient-improved);
+  border-radius: 4px;
+  transition: var(--transition-progress);
+}
+
+/* ==========================================================================
+   METRIC ROW (Label + Value + Progress)
+   ========================================================================== */
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs, 12px);
+  font-weight: 600;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-values {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+}
+
+.metric-value-stock {
+  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.5));
+}
+
+.metric-value-arrow {
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.3));
+  font-size: 12px;
+}
+
+.metric-value-improved {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.metric-value-current {
+  color: var(--color-text-primary, #fff);
+}
+
+/* ==========================================================================
+   SCORE GAUGE (Circular)
+   ========================================================================== */
+
+.score-gauge {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.score-gauge-track {
+  fill: none;
+  stroke: var(--color-chart-grid, rgba(255, 255, 255, 0.08));
+  stroke-width: 4;
+}
+
+.score-gauge-fill {
+  fill: none;
+  stroke: var(--color-accent-gold, #d4a84b);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-gauge-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-stat-lg, 20px);
+  font-weight: 700;
+  color: var(--color-text-primary, #fff);
+}
+
+/* ==========================================================================
+   RATING BAR (Horizontal with score)
+   ========================================================================== */
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rating-label {
+  width: 90px;
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  flex-shrink: 0;
+}
+
+.rating-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-chart-grid, rgba(255, 255, 255, 0.1));
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rating-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: var(--transition-progress);
+}
+
+/* Rating fill colors based on score */
+.rating-fill-high {
+  background: linear-gradient(90deg, var(--color-accent-teal) 0%, var(--color-accent-teal-light) 100%);
+}
+
+.rating-fill-good {
+  background: linear-gradient(90deg, var(--color-accent-gold) 0%, var(--color-accent-gold-hover) 100%);
+}
+
+.rating-fill-medium {
+  background: linear-gradient(90deg, var(--color-warning) 0%, #fbbf24 100%);
+}
+
+.rating-fill-low {
+  background: linear-gradient(90deg, var(--color-error) 0%, #f87171 100%);
+}
+
+.rating-value {
+  width: 36px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+  text-align: right;
+  flex-shrink: 0;
+}
