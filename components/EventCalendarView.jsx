@@ -5,6 +5,7 @@ import Link from 'next/link';
 import styles from './EventCalendarView.module.css';
 import PremiumGate from './PremiumGate';
 import { EventTypeIcon, TrackEventBadgeIcon } from '@/components/icons/EventIcons';
+import { Icons } from '@/components/ui/Icons';
 
 /**
  * Get days in a month
@@ -34,22 +35,6 @@ function parseDate(dateStr) {
   const [year, month, day] = dateStr.split('-').map(Number);
   return { year, month: month - 1, day };
 }
-
-/**
- * Navigation Icons
- */
-const Icons = {
-  chevronLeft: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-  ),
-  chevronRight: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  ),
-};
 
 /**
  * Month names
