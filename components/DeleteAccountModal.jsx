@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './DeleteAccountModal.module.css';
+import { Icons } from '@/components/ui/Icons';
 
 // Deletion reason options
 const DELETION_REASONS = [
@@ -24,40 +25,6 @@ const DELETION_REASONS = [
   { value: 'technical_issues', label: "Too many bugs or technical issues" },
   { value: 'other', label: "Other reason" },
 ];
-
-// Icons
-const Icons = {
-  close: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  ),
-  warning: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-  ),
-  check: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  ),
-  spinner: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.spinner}>
-      <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
-      <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
-    </svg>
-  ),
-  sad: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
-      <line x1="9" y1="9" x2="9.01" y2="9"/>
-      <line x1="15" y1="9" x2="15.01" y2="9"/>
-    </svg>
-  ),
-};
 
 export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted }) {
   const [step, setStep] = useState(1);
@@ -150,14 +117,14 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
         {/* Close button */}
         {!isDeleting && (
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-            {Icons.close}
+            <Icons.close size={20} />
           </button>
         )}
 
         {/* Step 1: Reason Selection */}
         {step === 1 && (
           <div className={styles.content}>
-            <div className={styles.sadIcon}>{Icons.sad}</div>
+            <div className={styles.sadIcon}><Icons.sad size={48} /></div>
             <h2 className={styles.title}>We hate to see you go</h2>
             <p className={styles.subtitle}>
               Before you leave, please tell us why. Your feedback helps us improve.
@@ -177,7 +144,7 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
                     onChange={(e) => setSelectedReason(e.target.value)}
                   />
                   <span className={styles.radioCircle}>
-                    {selectedReason === reason.value && Icons.check}
+                    {selectedReason === reason.value && <Icons.check size={16} />}
                   </span>
                   <span className={styles.reasonLabel}>{reason.label}</span>
                 </label>
@@ -217,7 +184,7 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
         {/* Step 2: Confirmation */}
         {step === 2 && !isDeleting && (
           <div className={styles.content}>
-            <div className={styles.warningIcon}>{Icons.warning}</div>
+            <div className={styles.warningIcon}><Icons.warning size={24} /></div>
             <h2 className={styles.titleDanger}>Delete your account?</h2>
             
             <div className={styles.warningBox}>
@@ -266,7 +233,7 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
         {/* Step 3: Processing */}
         {isDeleting && (
           <div className={styles.content}>
-            <div className={styles.processingIcon}>{Icons.spinner}</div>
+            <div className={styles.processingIcon}><Icons.spinner size={20} className={styles.spinner} /></div>
             <h2 className={styles.title}>Deleting your account...</h2>
             <p className={styles.subtitle}>
               Please wait while we remove your data. This may take a moment.
