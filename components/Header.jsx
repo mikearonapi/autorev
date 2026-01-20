@@ -126,14 +126,7 @@ export default function Header() {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const authModal = useAuthModal();
   
-  // GRAVL-STYLE: Hide header completely on homepage
-  // Homepage is a standalone marketing page - no navigation
-  const isHomepage = pathname === '/';
-  if (isHomepage) {
-    return null;
-  }
-  
-  // AI Chat context for mobile menu
+  // AI Chat context for mobile menu (must be called before any early return)
   const { toggleChat } = useAIChat();
   
   // Get avatar URL from profile or user metadata
@@ -151,6 +144,69 @@ export default function Header() {
   const isAppPage = useMemo(() => {
     return APP_ROUTES.some(route => pathname?.startsWith(route));
   }, [pathname]);
+
+  // Close menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  // Handle scroll for header shadow
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Prevent body scroll when menu is open and reset menu scroll position
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      // Reset mobile nav scroll to top when opening
+      if (mobileNavRef.current) {
+        mobileNavRef.current.scrollTop = 0;
+      }
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  // Cycle through brand suffixes every 1.5 seconds
+  useEffect(() => {
+    const cycleInterval = setInterval(() => {
+      setSuffixVisible(false);
+      setTimeout(() => {
+        setSuffixIndex((prev) => (prev + 1) % brandSuffixes.length);
+        setSuffixVisible(true);
+      }, 300);
+    }, 1500);
+
+    return () => clearInterval(cycleInterval);
+  }, []);
+
+  // OPTIMIZATION: Prefetch user data on hover over navigation links
+  // This makes page loads feel instant
+  const handleNavHover = useCallback((href) => {
+    // Only prefetch for authenticated users
+    if (!isAuthenticated || !user?.id) return;
+    
+    // Prefetch data for the route
+    prefetchForRoute(href, user.id);
+  }, [isAuthenticated, user?.id]);
+
+  // GRAVL-STYLE: Hide header completely on homepage
+  // Homepage is a standalone marketing page - no navigation
+  // NOTE: This early return MUST come AFTER all hooks
+  const isHomepage = pathname === '/';
+  if (isHomepage) {
+    return null;
+  }
   
   // Handle sign out - redirects to home page after logout
   const handleSignOut = async () => {
@@ -192,67 +248,12 @@ export default function Header() {
     }
   };
 
-  // Close menu on route change
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
-
-  // Handle scroll for header shadow
-  useEffect(() => {
-  if (typeof window === 'undefined') return;
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Prevent body scroll when menu is open and reset menu scroll position
-  useEffect(() => {
-  if (typeof document === 'undefined') return;
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      // Reset mobile nav scroll to top when opening
-      if (mobileNavRef.current) {
-        mobileNavRef.current.scrollTop = 0;
-      }
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMenuOpen]);
-
-  // Cycle through brand suffixes every 1.5 seconds
-  useEffect(() => {
-    const cycleInterval = setInterval(() => {
-      setSuffixVisible(false);
-      setTimeout(() => {
-        setSuffixIndex((prev) => (prev + 1) % brandSuffixes.length);
-        setSuffixVisible(true);
-      }, 300);
-    }, 1500);
-
-    return () => clearInterval(cycleInterval);
-  }, []);
-
   const isActive = (href) => {
     if (href === '/') {
       return pathname === '/';
     }
     return pathname.startsWith(href);
   };
-
-  // OPTIMIZATION: Prefetch user data on hover over navigation links
-  // This makes page loads feel instant
-  const handleNavHover = useCallback((href) => {
-    // Only prefetch for authenticated users
-    if (!isAuthenticated || !user?.id) return;
-    
-    // Prefetch data for the route
-    prefetchForRoute(href, user.id);
-  }, [isAuthenticated, user?.id]);
 
   return (
     <>
