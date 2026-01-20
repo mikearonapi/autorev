@@ -32,6 +32,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import ALPreferencesPanel, { useALPreferences } from '@/components/ALPreferencesPanel';
 import ALAttachmentMenu, { ALAttachmentsBar } from '@/components/ALAttachmentMenu';
 import { getPendingALPrompt } from '@/components/AskALButton';
+import FeedbackDimensionsModal from '@/components/FeedbackDimensionsModal';
 
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
@@ -140,6 +141,16 @@ const Icons = {
       <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
+  thumbsUp: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+    </svg>
+  ),
+  thumbsDown: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+    </svg>
+  ),
   arrowUp: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -212,6 +223,10 @@ export default function ALPageClient() {
   // Preferences state
   const [showPreferences, setShowPreferences] = useState(false);
   const { preferences: alPreferences, updatePreferences } = useALPreferences();
+  
+  // Feedback state
+  const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
+  const [feedbackModal, setFeedbackModal] = useState({ isOpen: false, messageIndex: null, type: null });
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -463,6 +478,63 @@ export default function ALPageClient() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
   
+  // Handle feedback submission
+  const handleFeedback = async (messageIndex, rating) => {
+    const message = messages[messageIndex];
+    if (!message || !user?.id) return;
+    
+    setFeedbackGiven(prev => ({ ...prev, [messageIndex]: rating }));
+    
+    // Submit basic feedback immediately
+    try {
+      await fetch('/api/ai-mechanic/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversationId,
+          messageIndex,
+          rating,
+          userId: user?.id,
+        }),
+      });
+    } catch (err) {
+      console.warn('[AL Feedback] Failed to submit:', err);
+    }
+    
+    // Show enhanced feedback modal for negative feedback
+    if (rating === 'negative') {
+      setFeedbackModal({ isOpen: true, messageIndex, type: 'negative' });
+    }
+  };
+  
+  // Submit enhanced feedback from modal
+  const submitEnhancedFeedback = async (feedbackData) => {
+    const { tags, feedbackText, dimensions } = feedbackData;
+    const { messageIndex, type } = feedbackModal;
+    
+    if (tags.length === 0 && !feedbackText && !dimensions) {
+      return;
+    }
+    
+    try {
+      await fetch('/api/ai-mechanic/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversationId,
+          messageIndex,
+          rating: type,
+          feedbackText,
+          tags,
+          dimensions,
+          userId: user?.id,
+        }),
+      });
+    } catch (err) {
+      console.warn('[AL Feedback] Failed to submit enhanced feedback:', err);
+    }
+  };
+  
   // Not authenticated - show sign in prompt
   if (!authLoading && !isAuthenticated) {
     return (
@@ -697,6 +769,37 @@ export default function ALPageClient() {
                   ) : (
                     msg.content
                   )}
+                  
+                  {/* Feedback buttons for assistant messages */}
+                  {msg.role === 'assistant' && (
+                    <div className={styles.feedbackRow}>
+                      {feedbackGiven[i] ? (
+                        <span className={styles.feedbackThanks}>
+                          {feedbackGiven[i] === 'positive' 
+                            ? <><Icons.thumbsUp size={14} /> Thanks!</> 
+                            : <><Icons.thumbsDown size={14} /> Thanks for the feedback</>
+                          }
+                        </span>
+                      ) : (
+                        <>
+                          <button
+                            className={styles.feedbackBtn}
+                            onClick={() => handleFeedback(i, 'positive')}
+                            title="Good response"
+                          >
+                            <Icons.thumbsUp size={14} />
+                          </button>
+                          <button
+                            className={styles.feedbackBtn}
+                            onClick={() => handleFeedback(i, 'negative')}
+                            title="Bad response"
+                          >
+                            <Icons.thumbsDown size={14} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -806,6 +909,14 @@ export default function ALPageClient() {
         isOpen={authModal.isOpen} 
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
+      />
+      
+      {/* Enhanced Feedback Modal */}
+      <FeedbackDimensionsModal
+        isOpen={feedbackModal.isOpen}
+        onClose={() => setFeedbackModal({ isOpen: false, messageIndex: null, type: null })}
+        onSubmit={submitEnhancedFeedback}
+        feedbackType={feedbackModal.type || 'negative'}
       />
     </div>
   );

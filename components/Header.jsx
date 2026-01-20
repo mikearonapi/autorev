@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 import AuthModal, { useAuthModal } from './AuthModal';
-import { useAIChat } from './AIChatContext';
+// useAIChat removed - mobile menu now navigates to /al page directly
 import { useAuth } from './providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { prefetchForRoute } from '@/lib/prefetch';
@@ -125,9 +125,6 @@ export default function Header() {
   // Auth
   const { user, profile, isAuthenticated, logout } = useAuth();
   const authModal = useAuthModal();
-  
-  // AI Chat context for mobile menu (must be called before any early return)
-  const { toggleChat } = useAIChat();
   
   // Get avatar URL from profile or user metadata
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
@@ -502,7 +499,7 @@ export default function Header() {
             className={styles.mobileAiMechanicBtn}
             onClick={() => {
               setIsMenuOpen(false);
-              toggleChat();
+              router.push('/al');
             }}
           >
             <ALMascotIcon size={32} />

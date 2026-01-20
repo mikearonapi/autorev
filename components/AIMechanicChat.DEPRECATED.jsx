@@ -28,6 +28,7 @@ import {
 } from '../lib/stores/alPreferencesStore';
 import ALPreferencesPanel from './ALPreferencesPanel';
 import ALAttachmentMenu, { ALAttachmentsBar } from './ALAttachmentMenu';
+import FeedbackDimensionsModal from './FeedbackDimensionsModal';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { trackALConversationStart } from '@/lib/ga4';
 import { isAppRoute } from '@/lib/appRoutes';
@@ -583,6 +584,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
   const [showFeedbackInput, setShowFeedbackInput] = useState(null); // messageIndex for expanded feedback
   const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackModal, setFeedbackModal] = useState({ isOpen: false, messageIndex: null, type: null }); // Enhanced feedback modal
   
   // Intro screen state
   const [showIntro, setShowIntro] = useState(true);
@@ -1416,13 +1418,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     
     setFeedbackGiven(prev => ({ ...prev, [messageIndex]: rating }));
     
-    // If negative, show text input
-    if (rating === 'negative') {
-      setShowFeedbackInput(messageIndex);
-      return;
-    }
-    
-    // Submit positive feedback immediately
+    // Submit basic feedback immediately
     try {
       await fetch('/api/ai-mechanic/feedback', {
         method: 'POST',
@@ -1437,9 +1433,44 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     } catch (err) {
       console.warn('[AI Feedback] Failed to submit:', err);
     }
+    
+    // Show enhanced feedback modal for negative feedback (optional detail)
+    // For positive, could also show modal but we keep it simpler
+    if (rating === 'negative') {
+      setFeedbackModal({ isOpen: true, messageIndex, type: 'negative' });
+    }
   };
   
-  // Submit negative feedback with text
+  // Submit enhanced feedback from modal
+  const submitEnhancedFeedback = async (feedbackData) => {
+    const { tags, feedbackText, dimensions } = feedbackData;
+    const { messageIndex, type } = feedbackModal;
+    
+    // Only submit if there's actual enhanced data
+    if (tags.length === 0 && !feedbackText && !dimensions) {
+      return;
+    }
+    
+    try {
+      await fetch('/api/ai-mechanic/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversationId,
+          messageIndex,
+          rating: type,
+          feedbackText,
+          tags,
+          dimensions,
+          userId: user?.id,
+        }),
+      });
+    } catch (err) {
+      console.warn('[AI Feedback] Failed to submit enhanced feedback:', err);
+    }
+  };
+  
+  // Legacy: Submit negative feedback with text (kept for backwards compat with inline input)
   const submitNegativeFeedback = async (messageIndex) => {
     try {
       await fetch('/api/ai-mechanic/feedback', {
@@ -2162,6 +2193,14 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
         isOpen={authModal.isOpen} 
         onClose={authModal.close} 
         defaultMode={authModal.defaultMode}
+      />
+      
+      {/* Enhanced Feedback Modal */}
+      <FeedbackDimensionsModal
+        isOpen={feedbackModal.isOpen}
+        onClose={() => setFeedbackModal({ isOpen: false, messageIndex: null, type: null })}
+        onSubmit={submitEnhancedFeedback}
+        feedbackType={feedbackModal.type || 'negative'}
       />
     </>
   );

@@ -905,3 +905,70 @@
     height: 44px;
   }
 }
+
+/* ===========================================
+   Feedback Row & Buttons
+   =========================================== */
+
+.feedbackRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(13, 27, 42, 0.06);
+}
+
+.feedbackBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid rgba(13, 27, 42, 0.15);
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.feedbackBtn:hover {
+  background: rgba(13, 27, 42, 0.05);
+  border-color: rgba(13, 27, 42, 0.25);
+  color: #0d1b2a;
+}
+
+.feedbackBtn:active {
+  transform: scale(0.95);
+}
+
+.feedbackThanks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.feedbackThanks svg {
+  color: #10b981;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .feedbackRow {
+    margin-top: 10px;
+    gap: 6px;
+  }
+  
+  .feedbackBtn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .feedbackThanks {
+    font-size: 12px;
+  }
+}

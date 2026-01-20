@@ -46,9 +46,9 @@ import BetaBanner from '@/components/BetaBanner';
 // These components are not critical for initial render and can load after hydration
 // =============================================================================
 
-// Deferred Providers - Heavy providers (AIMechanic, Feedback) load after first paint
-// This reduces Total Blocking Time (TBT) by deferring 2100+ lines of code
-import { AIChatHost } from '@/components/AIChatContext';
+// Deferred Providers - Heavy providers load after first paint
+// This reduces Total Blocking Time (TBT) by deferring large code bundles
+// NOTE: AIChatHost removed - AL chat now uses dedicated /al page (ALPageClient.jsx)
 import { FeedbackHost } from '@/components/FeedbackContext';
 
 // Compare Bar - Only shows when user adds cars to compare
@@ -353,9 +353,7 @@ export default function RootLayout({ children }) {
                                     {/* Beta banner - DISABLED (launch mode) */}
                                     <BetaBanner visible={false} />
                                     
-                                    {/* AI Chat Host - renders chat when AL button is clicked */}
-                                    {/* Floating launcher is hidden on app routes (PWA menu has AL button) */}
-                                    <AIChatHost />
+                                    {/* AI Chat removed - AL now uses dedicated /al page */}
                                     
                                     <main>
                                       {children}
