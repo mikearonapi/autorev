@@ -16,7 +16,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SITE_URL = "https://autorev.app";
 
 // Logo URL - using a publicly hosted version for email reliability
-const LOGO_URL = "https://autorev.app/images/autorev-logo-trimmed.png";
+const LOGO_URL = "https://autorev.app/images/autorev-email-logo.png";
 
 const EMAIL_CONFIG = {
   from: "AutoRev <hello@autorev.app>",

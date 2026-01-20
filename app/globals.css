@@ -1363,3 +1363,22 @@ section:not(:first-child) {
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
+
+/* ==========================================================================
+   ONBOARDING ACTIVE STATE
+   When onboarding is open, create a full-screen navy backdrop
+   and hide all other content for an immersive experience
+   ========================================================================== */
+body.onboarding-active {
+  background: #0d1b2a !important;
+}
+
+/* Hide all direct children except the onboarding overlay */
+body.onboarding-active > *:not([data-onboarding-overlay]) {
+  visibility: hidden !important;
+}
+
+/* Ensure the onboarding overlay is visible */
+body.onboarding-active > [data-onboarding-overlay] {
+  visibility: visible !important;
+}

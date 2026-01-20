@@ -65,9 +65,9 @@ export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
   
-  // Hide footer completely on homepage (has its own footer)
-  const isHomePage = pathname === '/';
-  if (isHomePage) return null;
+  // Hide footer on legal pages (they have their own styled footers)
+  const isLegalPage = pathname === '/terms' || pathname === '/privacy' || pathname === '/contact';
+  if (isLegalPage) return null;
   
   // Check if we're on an app page (where bottom tab bar is shown)
   // Hide footer COMPLETELY on app pages for native app feel

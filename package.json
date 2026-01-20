@@ -45,7 +45,8 @@
     "analyze:events:coverage": "node scripts/events/analysis/coverage-analysis.js",
     "scrape:events:cc": "node scripts/events/scrapers/carsandcoffee-directory.js",
     "scrape:events:msr": "node scripts/events/scrapers/motorsportreg-scraper.js",
-    "msr:client": "node scripts/events/scrapers/motorsportreg-client.js"
+    "msr:client": "node scripts/events/scrapers/motorsportreg-client.js",
+    "gen:icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

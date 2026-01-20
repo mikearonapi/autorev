@@ -133,6 +133,54 @@ const pageSchema = {
   },
 };
 
+// FAQ Schema for rich snippets in Google search results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How does the AutoRev Car Selector work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Car Selector lets you set priorities across 7 categories: sound, track capability, reliability, daily comfort, value, driver fun, and aftermarket support. Our algorithm then scores every car in our database against YOUR priorities and shows you a ranked list of matches with score breakdowns.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many cars does AutoRev have in its database?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AutoRev has over 2,500 sports and performance cars in our database, ranging from affordable entry-level sports cars to exotic supercars. We cover vehicles from $25,000 to $300,000+.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the Car Selector free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! The Car Selector is completely free to use. You can set your priorities, see your matches, and compare cars without creating an account. Sign up free to save your results and access additional features.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What makes AutoRev different from other car comparison sites?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Unlike other sites that just list specs, AutoRev starts with YOUR priorities. Instead of searching through thousands of cars, you tell us what matters to you and we show you which cars actually fit. Plus, our AI assistant AL can answer any questions about the cars you\'re considering.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I compare specific cars side-by-side?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! After getting your matches, you can add any cars to your comparison list and see them side-by-side with detailed specs, scores, and our recommendations for who each car is best suited for.',
+      },
+    },
+  ],
+};
+
 const Icons = {
   search: ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -214,6 +262,10 @@ export default function FindYourCarLandingPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
         <LandingTracking pageId="find-your-car" />
 

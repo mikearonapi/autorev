@@ -559,79 +559,265 @@
   transform: translateX(18px);
 }
 
-/* Plan Grid */
-.betaNote {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #a78bfa;
-  margin: -8px 0 12px;
+/* ============================================
+   PLAN SECTION - Enhanced
+   ============================================ */
+
+/* Current Plan Hero */
+.currentPlanHero {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.betaNote svg {
+.currentPlanBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 100px;
+  margin-bottom: 8px;
+}
+
+.currentPlanBadge svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.currentPlanLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.currentPlanName {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.currentPlanPrice {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+}
+
+.priceAmount {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pricePeriod {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* Beta Banner */
+.betaBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.betaTag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.3), rgba(139, 92, 246, 0.2));
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
   color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Plan Options */
+.planOptions {
+  margin-top: 8px;
+}
+
+.planOptionsLabel {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
+  margin: 0 0 12px;
 }
 
 .planGrid {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
 }
 
-.planOption {
+/* Plan Cards */
+.planCard {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 6px;
+  padding: 14px 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   text-align: center;
+  position: relative;
   overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-.planCurrent {
+.planCard:hover:not(.planCardCurrent) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.planCardCurrent {
   border-color: var(--color-accent-teal, #10b981);
   background: rgba(16, 185, 129, 0.08);
 }
 
+/* Your Plan Ribbon */
+.yourPlanRibbon {
+  position: absolute;
+  top: 8px;
+  right: -24px;
+  transform: rotate(45deg);
+  background: var(--color-accent-teal, #10b981);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 28px;
+}
+
 .planName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #fff;
-  white-space: nowrap;
+  margin-bottom: 2px;
 }
 
 .planPrice {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.planPeriod {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* Plan Features List */
+.planFeatures {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  text-align: left;
+}
+
+.planFeatures li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   font-size: 11px;
   color: var(--color-text-secondary, #94a3b8);
-  white-space: nowrap;
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 
-.currentTag {
-  font-size: 10px;
-  font-weight: 600;
+.planFeatures li:last-child {
+  margin-bottom: 0;
+}
+
+.planFeatures li svg {
+  width: 12px;
+  height: 12px;
   color: var(--color-accent-teal, #10b981);
-  text-transform: uppercase;
-  margin-top: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.planBtn {
-  margin-top: 6px;
-  padding: 6px 14px;
-  background: var(--color-accent-lime, #d4ff00);
-  border: none;
+/* Current Plan Tag */
+.currentPlanTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
-  color: #0a1628;
-  cursor: pointer;
+  color: var(--color-accent-teal, #10b981);
+  margin-top: auto;
 }
 
+.currentPlanTag svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Plan Buttons */
+.planBtn {
+  margin-top: auto;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+}
+
+.planBtnUpgrade {
+  background: var(--color-accent-lime, #d4ff00);
+  color: #0a1628;
+}
+
+.planBtnUpgrade:hover:not(:disabled) {
+  background: #bfe600;
+  transform: translateY(-1px);
+}
+
+.planBtnSwitch {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.planBtnSwitch:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.planBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Billing Link */
 .billingLink {
   display: inline-flex;
   align-items: center;
@@ -641,7 +827,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 12px 0 0;
+  margin-top: 12px;
 }
 
 /* Data */
@@ -680,6 +867,68 @@
 }
 
 /* App section */
+.installBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.installBtn svg {
+  color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
+}
+
+.installBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+}
+
+.installBtn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.installHint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-left: auto;
+  padding-left: 12px;
+}
+
+.installedBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--color-accent-teal, #10b981);
+  margin-bottom: 8px;
+}
+
+.installedBadge svg {
+  width: 16px;
+  height: 16px;
+}
+
 .tourBtn {
   width: 100%;
   padding: 12px;
@@ -823,6 +1072,34 @@
   }
 }
 
+/* Medium mobile (375-479px) - plan cards side by side but compact */
+@media (max-width: 479px) {
+  .planCard {
+    padding: 12px 8px;
+  }
+  
+  .planName {
+    font-size: 12px;
+  }
+  
+  .planPrice {
+    font-size: 13px;
+  }
+  
+  .planFeatures li {
+    font-size: 10px;
+  }
+  
+  .yourPlanRibbon {
+    font-size: 7px;
+    right: -26px;
+  }
+  
+  .currentPlanName {
+    font-size: 24px;
+  }
+}
+
 /* Small mobile (under 375px) - stack elements */
 @media (max-width: 374px) {
   .header {
@@ -857,14 +1134,66 @@
     height: 44px;
   }
 
+  /* Plan grid stacks on very small screens */
   .planGrid {
     flex-direction: column;
+    gap: 8px;
   }
 
-  .planOption {
+  .planCard {
     flex-direction: row;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
     padding: 12px 14px;
+    gap: 8px;
+  }
+  
+  .planCardCurrent {
+    order: -1; /* Current plan goes first */
+  }
+  
+  .yourPlanRibbon {
+    display: none;
+  }
+  
+  .planName {
+    font-size: 14px;
+    flex: 0 0 auto;
+  }
+  
+  .planPrice {
+    font-size: 13px;
+    margin-bottom: 0;
+    margin-left: auto;
+  }
+  
+  .planFeatures {
+    width: 100%;
+    margin: 8px 0;
+  }
+  
+  .planFeatures li {
+    font-size: 11px;
+  }
+  
+  .planBtn,
+  .currentPlanTag {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .currentPlanHero {
+    padding: 14px 12px;
+  }
+  
+  .currentPlanName {
+    font-size: 22px;
+  }
+  
+  .betaBanner {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
   }
 
   .topupRow {

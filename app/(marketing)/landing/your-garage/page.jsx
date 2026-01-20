@@ -131,6 +131,54 @@ const pageSchema = {
   },
 };
 
+// FAQ Schema for rich snippets in Google search results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What information does My Garage include for my car?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'My Garage includes maintenance specs (oil type, fluid capacities, torque specs), service intervals, NHTSA safety ratings and crash test results, common issues reported by other owners, and detailed specifications for your specific make, model, and year.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is My Garage free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! The free tier lets you add cars to your collection, save favorites, and access basic specs and safety ratings. The Enthusiast+ tier unlocks the full owner reference including detailed maintenance specs, common issues, and service intervals.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I add my car to My Garage?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Simply search for your car by make, model, and year, then click "Add to Garage." You can also decode your VIN to automatically identify your exact vehicle and get model-specific information.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where does the maintenance and safety data come from?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Safety ratings come directly from NHTSA (National Highway Traffic Safety Administration). Maintenance specs are compiled from manufacturer data and verified owner resources. Common issues are aggregated from owner reports and technical service bulletins.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I track multiple cars in My Garage?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! You can add unlimited cars to your collection. Each car gets its own dedicated page with all relevant specs, maintenance info, and known issues. Perfect for tracking your entire collection or researching future purchases.',
+      },
+    },
+  ],
+};
+
 const Icons = {
   book: ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -207,6 +255,10 @@ export default function YourGarageLandingPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
         <LandingTracking pageId="your-garage" />
 

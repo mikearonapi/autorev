@@ -1509,7 +1509,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Check if user needs onboarding
-  // isFreshLogin: true when user just logged in (vs page refresh with existing session)
+  // SIMPLIFIED LOGIC: If onboarding_completed_at is NULL in DB, ALWAYS show onboarding
+  // No temporary dismissals - user must complete it or it shows every time
   const checkOnboardingStatus = useCallback(async (profile, isFreshLogin = false) => {
     // DEV: Allow forcing onboarding with ?showOnboarding=1 query param
     if (typeof window !== 'undefined') {
@@ -1534,45 +1535,19 @@ export function AuthProvider({ children }) {
       }
     }
     
-    // If onboarding is already completed, don't show
+    // If onboarding is already completed (timestamp set in DB), don't show
     if (profile?.onboarding_completed_at) {
       console.log('[AuthProvider] Onboarding already completed, not showing');
       setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
       return;
     }
     
-    // If user has permanently opted out (too many dismissals), don't show
-    if (profile?.onboarding_opted_out) {
-      console.log('[AuthProvider] User has opted out of onboarding');
-      setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
-      return;
-    }
+    // IMPORTANT: If onboarding is NOT completed, ALWAYS show it
+    // Clear any localStorage dismissal - the database is the source of truth
+    // User must complete onboarding to stop seeing it
+    console.log('[AuthProvider] Onboarding NOT completed - showing onboarding flow');
+    localStorage.removeItem('onboarding_dismissed_until');
     
-    // For FRESH logins (not page refresh), always clear any temporary dismissal
-    // This ensures users who haven't completed onboarding see it immediately after login
-    if (isFreshLogin) {
-      console.log('[AuthProvider] Fresh login detected - clearing any temporary dismissal');
-      localStorage.removeItem('onboarding_dismissed_until');
-    } else {
-      // For page refreshes, check localStorage for session-based dismissal
-      const dismissedUntil = localStorage.getItem('onboarding_dismissed_until');
-      if (dismissedUntil) {
-        const dismissedTime = parseInt(dismissedUntil, 10);
-        // Only honor dismissal for 24 hours
-        if (Date.now() < dismissedTime) {
-          console.log('[AuthProvider] Onboarding dismissed temporarily (page refresh)');
-          setOnboardingState(prev => ({ ...prev, showOnboarding: false, onboardingDismissed: true }));
-          return;
-        } else {
-          // Dismissal expired, clear it
-          localStorage.removeItem('onboarding_dismissed_until');
-        }
-      }
-    }
-
-    // Show onboarding for users who haven't completed it
-    console.log('[AuthProvider] Showing onboarding - user has not completed it yet');
-    const dismissedCount = profile?.onboarding_dismissed_count || 0;
     setOnboardingState({
       showOnboarding: true,
       onboardingStep: profile?.onboarding_step || 1,
@@ -1584,57 +1559,24 @@ export function AuthProvider({ children }) {
         email_opt_in_events: profile?.email_opt_in_events || false,
       },
       onboardingDismissed: false,
-      dismissedCount,
+      dismissedCount: profile?.onboarding_dismissed_count || 0,
     });
   }, []);
 
-  // Handle onboarding close (dismiss with tracking)
+  // Handle onboarding close (dismiss for current session only)
+  // NOTE: This only hides onboarding for the current page session
+  // It will show again on next page load/sign-in until user completes it
   const dismissOnboarding = useCallback(async () => {
-    const newDismissedCount = (onboardingState.dismissedCount || 0) + 1;
-    const shouldOptOut = newDismissedCount >= MAX_ONBOARDING_DISMISSALS;
-    
-    // Set localStorage to dismiss for 24 hours
-    const dismissUntil = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
-    localStorage.setItem('onboarding_dismissed_until', dismissUntil.toString());
-    
-    // Update local state immediately
+    // Just hide for current session - don't persist to localStorage or database
+    // This ensures onboarding shows again on next visit until completed
     setOnboardingState(prev => ({ 
       ...prev, 
       showOnboarding: false, 
       onboardingDismissed: true,
-      dismissedCount: newDismissedCount,
     }));
     
-    // Track dismissal in database
-    if (state.user?.id) {
-      try {
-        const response = await fetch(`/api/users/${state.user.id}/onboarding/dismiss`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ optOut: shouldOptOut }),
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          console.log('[AuthProvider] Onboarding dismissed:', { 
-            count: result.dismissedCount, 
-            optedOut: result.optedOut 
-          });
-          
-          // Update profile state if opted out
-          if (result.optedOut) {
-            setState(prev => ({
-              ...prev,
-              profile: { ...prev.profile, onboarding_opted_out: true },
-            }));
-          }
-        }
-      } catch (err) {
-        console.error('[AuthProvider] Failed to track dismissal:', err);
-        // Continue anyway - localStorage dismissal still works
-      }
-    }
-  }, [state.user?.id, onboardingState.dismissedCount]);
+    console.log('[AuthProvider] Onboarding dismissed for current session (will show again next time)');
+  }, []);
 
   // Handle onboarding complete
   const completeOnboarding = useCallback((data) => {

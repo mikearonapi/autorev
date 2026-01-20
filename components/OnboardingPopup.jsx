@@ -11,17 +11,32 @@ const CheckIcon = ({ size = 14 }) => (
 );
 
 /**
+ * ONBOARDING_VERSION - Increment this to reset page-specific onboarding for all users
+ * 
+ * When bumped, users will see onboarding again because their localStorage key
+ * (e.g., "garage_onboarding_dismissed_v2") won't exist yet.
+ * 
+ * History:
+ * - v1: Initial release
+ * - v2: January 2026 app refresh - reset to communicate new features
+ */
+export const ONBOARDING_VERSION = 2;
+
+/**
  * OnboardingPopup Component
  * 
  * A multi-step onboarding flow for introducing users to features.
- * Stores "don't show again" preference in localStorage.
+ * Stores "don't show again" preference in localStorage with versioning.
  * 
  * @param {Object} props
- * @param {string} props.storageKey - Unique key for localStorage (e.g., 'garage_onboarding_dismissed')
+ * @param {string} props.storageKey - Base key for localStorage (e.g., 'garage_onboarding_dismissed')
+ *                                    Version suffix is added automatically (e.g., '_v2')
  * @param {Array} props.steps - Array of step objects with { icon, title, description }
  * @param {string} props.accentColor - Optional accent color for progress indicators
  */
 export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(--sn-accent)', isOpen: controlledIsOpen, onClose: controlledOnClose }) {
+  // Add version suffix to storage key for easy future resets
+  const versionedStorageKey = `${storageKey}_v${ONBOARDING_VERSION}`;
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -36,11 +51,11 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
   // IMPORTANT: Define handleClose BEFORE any useEffect that
   // references it to avoid TDZ (Temporal Dead Zone) errors.
   // ============================================================
-  const handleClose = useCallback(() => {
-    // CF-004: Always save dismissed state on any close action (not just "don't show again")
-    // This prevents the modal from persisting across navigation
-    if (storageKey && typeof localStorage !== 'undefined') {
-      localStorage.setItem(storageKey, 'true');
+  const handleClose = useCallback((persistDismissal = false) => {
+    // Only save to localStorage if user explicitly checked "Don't show this again"
+    // This ensures onboarding shows every time until user opts out
+    if (persistDismissal && versionedStorageKey && typeof localStorage !== 'undefined') {
+      localStorage.setItem(versionedStorageKey, 'true');
     }
     
     if (isControlled && controlledOnClose) {
@@ -48,7 +63,10 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
     } else {
       setInternalIsOpen(false);
     }
-  }, [storageKey, isControlled, controlledOnClose]);
+    
+    // Reset step for next time (if they didn't opt out)
+    setCurrentStep(0);
+  }, [versionedStorageKey, isControlled, controlledOnClose]);
 
   // Check localStorage on mount (only for uncontrolled mode)
   useEffect(() => {
@@ -58,24 +76,24 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
       // Allow reset via URL param
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('reset_onboarding') === 'true') {
-        localStorage.removeItem(storageKey);
+        localStorage.removeItem(versionedStorageKey);
       }
       
-      const dismissed = localStorage.getItem(storageKey);
+      const dismissed = localStorage.getItem(versionedStorageKey);
       if (!dismissed) {
         // Small delay for smoother page load
         const timer = setTimeout(() => setInternalIsOpen(true), 800);
         return () => clearTimeout(timer);
       }
     }
-  }, [storageKey, isControlled]);
+  }, [versionedStorageKey, isControlled]);
 
-  // Handle escape key
+  // Handle escape key - closes without persisting (user can see onboarding again next visit)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
-        handleClose();
+        handleClose(false); // Don't persist - show again next time
       }
     };
     window.addEventListener('keydown', handleEscape);
@@ -104,7 +122,8 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
         setIsAnimating(false);
       }, 200);
     } else {
-      handleClose();
+      // On last step, persist dismissal only if checkbox is checked
+      handleClose(dontShowAgain);
     }
   };
 
@@ -131,7 +150,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
-      handleClose();
+      handleClose(false); // Don't persist - show again next time
     }
   };
 
@@ -145,29 +164,29 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
     <div className={styles.overlay} onClick={handleBackdropClick}>
       <div className={styles.popup} role="dialog" aria-modal="true">
         {/* Close Button */}
-        <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">
+        <button className={styles.closeBtn} onClick={() => handleClose(false)} aria-label="Close">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
 
-        {/* Progress Bar */}
+        {/* Progress Bar - teal for non-CTA indicator */}
         <div className={styles.progressBar}>
           <div 
             className={styles.progressFill} 
             style={{ 
               width: `${((currentStep + 1) / steps.length) * 100}%`,
-              backgroundColor: accentColor 
+              backgroundColor: '#10b981' 
             }} 
           />
         </div>
 
         {/* Step Content - Fixed height container */}
         <div className={`${styles.content} ${isAnimating ? (slideDirection === 'next' ? styles.slideOutLeft : styles.slideOutRight) : styles.slideIn}`}>
-          {/* Icon - centered */}
+          {/* Icon - centered with solid navy background */}
           {step.icon && (
-            <div className={styles.iconWrapper} style={{ background: `linear-gradient(135deg, ${accentColor} 0%, var(--sn-primary) 100%)` }}>
+            <div className={styles.iconWrapper} style={{ background: '#0d1b2a' }}>
               {step.icon}
             </div>
           )}
@@ -184,7 +203,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
               <ul className={styles.featureList}>
                 {step.features.map((feature, i) => (
                   <li key={i} className={styles.featureItem}>
-                    <span className={styles.featureIcon} style={{ color: accentColor }}><CheckIcon size={14} /></span>
+                    <span className={styles.featureIcon} style={{ color: '#10b981' }}><CheckIcon size={14} /></span>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -195,7 +214,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
         {/* Navigation Footer */}
         <div className={styles.footer}>
-          {/* Dot Navigation */}
+          {/* Dot Navigation - teal for non-CTA indicator */}
           <div className={styles.dots}>
             {steps.map((_, index) => (
               <button
@@ -203,7 +222,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
                 className={`${styles.dot} ${index === currentStep ? styles.dotActive : ''}`}
                 onClick={() => handleDotClick(index)}
                 aria-label={`Go to step ${index + 1}`}
-                style={index === currentStep ? { backgroundColor: accentColor } : {}}
+                style={index === currentStep ? { backgroundColor: '#10b981' } : {}}
               />
             ))}
           </div>

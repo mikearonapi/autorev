@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import styles from './OnboardingFlow.module.css';
 import WelcomeStep from './steps/WelcomeStep';
-import ReferralStep from './steps/ReferralStep';
-import IntentStep from './steps/IntentStep';
+import NameStep from './steps/NameStep';
+import BrandsStep from './steps/BrandsStep';
 import FeatureSlide from './steps/FeatureSlide';
+import ReferralStep from './steps/ReferralStep';
 import FinalStep from './steps/FinalStep';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { ONBOARDING_IMAGES } from '@/lib/images';
@@ -15,85 +17,70 @@ import { ONBOARDING_IMAGES } from '@/lib/images';
 // Feature slides configuration - each becomes its own step
 // Now supports multiple images per feature with auto-rotation
 // Images served from Vercel Blob CDN for optimal performance
-const FEATURE_SLIDES = [
-  {
-    id: 'browse',
-    title: 'Browse & Research',
-    description: 'Explore sports cars with detailed specs, buying guides, and expert insights.',
-    images: [
-      { src: ONBOARDING_IMAGES.browseCarsHero, alt: 'Car detail hero page' },
-      { src: ONBOARDING_IMAGES.browseCarsOverview, alt: 'Car overview with quick take' },
-      { src: ONBOARDING_IMAGES.browseCarsBuyingGuide, alt: 'Buying guide with best years' },
-    ],
-  },
-  {
-    id: 'selector',
-    title: 'Find Your Match',
-    description: 'Tell us what matters most and get personalized car recommendations.',
-    images: [
-      { src: ONBOARDING_IMAGES.carSelectorPreferences, alt: 'Preference sliders' },
-      { src: ONBOARDING_IMAGES.carSelectorResults, alt: 'Personalized recommendations' },
-    ],
-  },
+// Personalized titles/descriptions based on user's name
+const getFeatureSlides = (firstName) => [
   {
     id: 'garage',
-    title: 'Your Garage',
-    description: 'Select a car, see specs, plan your build, track performance, find the best parts, and upload photos.',
+    title: firstName ? `${firstName}'s Garage` : 'Your Garage',
+    description: 'Your cars, specs, and build progress.',
     images: [
-      { src: ONBOARDING_IMAGES.garageHero, alt: 'Your car with performance stats' },
-      { src: ONBOARDING_IMAGES.garageDetails, alt: 'Detailed specs and build configuration' },
-      { src: ONBOARDING_IMAGES.garageReference, alt: 'VIN decoder and vehicle data' },
-      { src: ONBOARDING_IMAGES.garageSafety, alt: 'Safety recalls and alerts' },
-      { src: ONBOARDING_IMAGES.garageHealth, alt: 'Maintenance and service tracking' },
+      { src: ONBOARDING_IMAGES.garageCard, alt: 'Garage landing with your car' },
+      { src: ONBOARDING_IMAGES.garageSpecs, alt: 'Detailed vehicle specs' },
+      { src: ONBOARDING_IMAGES.tuningShopOverview, alt: 'Build & upgrade categories' },
+      { src: ONBOARDING_IMAGES.dataPerformanceMetrics, alt: 'Performance overview' },
+      { src: ONBOARDING_IMAGES.garagePhotos, alt: 'Your photo gallery' },
     ],
   },
   {
     id: 'data',
-    title: 'My Data',
-    description: 'View power estimates, log dyno runs, see track time predictions, and analyze your performance.',
+    title: 'Your Data',
+    description: 'Track power gains and lap time estimates.',
     images: [
-      { src: ONBOARDING_IMAGES.tuningShopOverview, alt: 'Performance overview and estimates' },
-      { src: ONBOARDING_IMAGES.tuningShopMetrics, alt: 'Virtual dyno and power curves' },
-      { src: ONBOARDING_IMAGES.tuningShopPowerList, alt: 'Power breakdown by modification' },
-      { src: ONBOARDING_IMAGES.tuningShopPresets, alt: 'Track time estimates' },
-      { src: ONBOARDING_IMAGES.tuningShopPartDetail, alt: 'Deep analysis and insights' },
+      { src: ONBOARDING_IMAGES.dataVirtualDyno, alt: 'Virtual dyno power curves' },
+      { src: ONBOARDING_IMAGES.dataPowerBreakdown, alt: 'Power breakdown by mod' },
+      { src: ONBOARDING_IMAGES.dataLapTimeEstimator, alt: 'Track lap time estimates' },
     ],
   },
   {
     id: 'community',
-    title: 'Community',
-    description: 'Discover car events, meets, and shows happening near you.',
+    title: 'The Community',
+    description: 'Real builds and insights from enthusiasts.',
     images: [
-      { src: ONBOARDING_IMAGES.communityEventsList, alt: 'Events list' },
-      { src: ONBOARDING_IMAGES.communityEventDetail, alt: 'Event details' },
+      { src: ONBOARDING_IMAGES.communityFeed, alt: 'Community builds feed' },
+      { src: ONBOARDING_IMAGES.communityBuildEvoX, alt: 'Build details & stats' },
+      { src: ONBOARDING_IMAGES.communityBuildMods, alt: 'Modification breakdown' },
     ],
   },
   {
     id: 'al',
-    title: 'Ask AL',
-    description: 'Get instant answers from our AI assistant trained on real car data.',
+    title: firstName ? `${firstName}, Meet AL` : 'Meet AL',
+    description: 'Your AI car expert — ask anything.',
     images: [
-      { src: ONBOARDING_IMAGES.aiAlIntro, alt: 'AL introduction' },
-      { src: ONBOARDING_IMAGES.aiAlThinking, alt: 'AL thinking' },
-      { src: ONBOARDING_IMAGES.aiAlResponseMods, alt: 'AL modification response' },
-      { src: ONBOARDING_IMAGES.aiAlResponseAnalysis, alt: 'AL analysis response' },
+      { src: ONBOARDING_IMAGES.alChatHome, alt: 'AL ready to help' },
+      { src: ONBOARDING_IMAGES.alChatResponse, alt: 'Detailed recommendations' },
+      { src: ONBOARDING_IMAGES.alChatThinking, alt: 'AL researching your question' },
     ],
   },
 ];
 
-// Calculate total steps: Welcome + Referral + Intent + Feature slides + Final
-const TOTAL_STEPS = 3 + FEATURE_SLIDES.length + 1;
+// Static reference for step counting (doesn't need personalization)
+const FEATURE_SLIDES_COUNT = 4;
 
-// Step labels for progress bar (simplified grouping)
-const STEP_LABELS = ['Welcome', 'Source', 'Goals', 'Features', 'Finish'];
+// Calculate total steps: Welcome + Name + Referral + Brands + Feature slides + Final
+// Flow: 1 + 1 + 1 + 1 + 4 + 1 = 9 total steps
+const TOTAL_STEPS = 4 + FEATURE_SLIDES_COUNT + 1;
+
+// Step labels for progress bar
+// Maps to: Welcome (1), You (2), Source (3), Explore (4-8), Go (9)
+const STEP_LABELS = ['Welcome', 'You', 'Source', 'Explore', 'Go'];
 
 // Map step number to label index for progress display
 const getProgressLabelIndex = (step) => {
   if (step === 1) return 0; // Welcome
-  if (step === 2) return 1; // Source/Referral
-  if (step === 3) return 2; // Goals/Intent
-  if (step >= 4 && step < TOTAL_STEPS) return 3; // Features
-  return 4; // Finish
+  if (step === 2) return 1; // Name (You)
+  if (step === 3) return 2; // Referral (Source)
+  if (step >= 4 && step < TOTAL_STEPS) return 3; // Brands + Features (Explore)
+  return 4; // Final (Go)
 };
 
 /**
@@ -123,17 +110,26 @@ export default function OnboardingFlow({
   const [slideDirection, setSlideDirection] = useState('next');
   const [isSaving, setIsSaving] = useState(false);
   
-  // Form data - note: user_intents is now an array for multi-select
+  // Track if component is mounted (for portal - SSR compatibility)
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+  
+  // Form data - pre-populated from user's existing profile data
+  // Users who already provided referral_source will see it pre-selected
   const [formData, setFormData] = useState({
     referral_source: initialData.referral_source || null,
-    referral_source_other: initialData.referral_source_other || '',
-    user_intents: initialData.user_intents || initialData.user_intent 
-      ? (Array.isArray(initialData.user_intents) ? initialData.user_intents : [initialData.user_intent])
-      : [],
+    display_name: initialData.display_name || profile?.display_name || '',
   });
 
-  // Get user's display name
+  // Get user's display name and extract first name for personalization
   const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
+  
+  // Use the name from onboarding form (what they want to be called) or fall back to profile
+  const userDisplayName = formData.display_name || displayName;
+  const firstName = userDisplayName?.split(' ')[0] || null;
 
   // Calculate progress percentage
   const progressPercent = ((step - 1) / (TOTAL_STEPS - 1)) * 100;
@@ -141,8 +137,8 @@ export default function OnboardingFlow({
   // Get current progress label index
   const currentLabelIndex = getProgressLabelIndex(step);
 
-  // Handle escape key (disabled on required steps: Welcome, Referral, Intent)
-  const isRequiredStep = step === 1 || step === 2 || step === 3;
+  // Handle escape key (disabled on required steps: Welcome, Name, Referral)
+  const isRequiredStep = step <= 3;
 
   // =========================================================================
   // CALLBACKS - All useCallback hooks MUST be declared before any useEffect
@@ -160,10 +156,9 @@ export default function OnboardingFlow({
       const endpoint = `/api/users/${user.id}/onboarding`;
       const method = completed ? 'POST' : 'PATCH';
       
-      // Convert user_intents array to legacy user_intent for API compatibility
+      // Prepare data for API
       const legacyData = {
         ...data,
-        user_intent: data.user_intents?.[0] || null,
       };
       
       const payload = completed 
@@ -208,13 +203,9 @@ export default function OnboardingFlow({
   const updateFormData = useCallback((updates) => {
     setFormData(prev => {
       const newData = { ...prev, ...updates };
-      // Save progress when significant data changes
-      if (updates.referral_source !== undefined || updates.user_intents !== undefined) {
-        saveProgress(newData);
-      }
       return newData;
     });
-  }, [saveProgress]);
+  }, []);
 
   // =========================================================================
   // EFFECTS - All useEffect hooks come AFTER callbacks to avoid TDZ errors.
@@ -239,16 +230,19 @@ export default function OnboardingFlow({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, isRequiredStep, handleDismiss]);
 
-  // Prevent body scroll when open
+  // Prevent body scroll and hide other fixed elements when open
   useEffect(() => {
     if (typeof document === 'undefined') return;
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('onboarding-active');
     } else {
       document.body.style.overflow = '';
+      document.body.classList.remove('onboarding-active');
     }
     return () => {
       document.body.style.overflow = '';
+      document.body.classList.remove('onboarding-active');
     };
   }, [isOpen]);
 
@@ -264,11 +258,9 @@ export default function OnboardingFlow({
         saveProgress(formData);
         
         // Track step progression
-        const stepNames = ['welcome', 'referral', 'intent', ...FEATURE_SLIDES.map(f => f.id), 'final'];
-        trackOnboardingStep(newStep, stepNames[newStep - 1] || `step_${newStep}`, {
-          referral_source: formData.referral_source,
-          intents_count: formData.user_intents?.length
-        });
+        const featureIds = getFeatureSlides(null).map(f => f.id);
+        const stepNames = ['welcome', 'name', 'referral', 'brands', ...featureIds, 'final'];
+        trackOnboardingStep(newStep, stepNames[newStep - 1] || `step_${newStep}`);
       }, 200);
     }
   }, [step, formData, saveProgress, trackOnboardingStep]);
@@ -306,7 +298,7 @@ export default function OnboardingFlow({
       // Track onboarding completion
       trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETED, {
         referral_source: formData.referral_source,
-        user_intents: formData.user_intents,
+        has_display_name: !!formData.display_name,
         steps_viewed: TOTAL_STEPS
       });
       
@@ -325,14 +317,11 @@ export default function OnboardingFlow({
     switch (step) {
       case 1: // Welcome
         return true;
-      case 2: // Referral
-        if (formData.referral_source === 'other') {
-          return formData.referral_source_other?.trim().length > 0;
-        }
-        return formData.referral_source !== null;
-      case 3: // Intent (multi-select - at least one required)
-        return formData.user_intents && formData.user_intents.length > 0;
-      default: // Feature slides and Final
+      case 2: // Name - optional but encouraged
+        return true; // Allow proceeding even without a name
+      case 3: // Referral - REQUIRED
+        return !!formData.referral_source;
+      default: // Brands, Feature slides, and Final
         return true;
     }
   }, [step, formData]);
@@ -352,25 +341,31 @@ export default function OnboardingFlow({
       onNext: handleNext,
     };
 
-    // Step 1: Welcome
+    // Step 1: Welcome (REQUIRED)
     if (step === 1) {
-      return <WelcomeStep {...stepProps} displayName={displayName} />;
+      return <WelcomeStep {...stepProps} />;
     }
     
-    // Step 2: Referral
+    // Step 2: Name - What should we call you? (REQUIRED)
     if (step === 2) {
+      return <NameStep {...stepProps} />;
+    }
+    
+    // Step 3: Referral - How did you hear about us? (REQUIRED)
+    if (step === 3) {
       return <ReferralStep {...stepProps} />;
     }
     
-    // Step 3: Intent
-    if (step === 3) {
-      return <IntentStep {...stepProps} />;
+    // Step 4: Brands showcase (skippable)
+    if (step === 4) {
+      return <BrandsStep className={animationClass} firstName={firstName} />;
     }
     
-    // Steps 4 through (TOTAL_STEPS - 1): Feature slides
-    const featureIndex = step - 4;
-    if (featureIndex >= 0 && featureIndex < FEATURE_SLIDES.length) {
-      const feature = FEATURE_SLIDES[featureIndex];
+    // Steps 5 through 8: Feature slides (skippable)
+    const featureIndex = step - 5;
+    const featureSlides = getFeatureSlides(firstName);
+    if (featureIndex >= 0 && featureIndex < featureSlides.length) {
+      const feature = featureSlides[featureIndex];
       return (
         <FeatureSlide
           className={animationClass}
@@ -381,11 +376,12 @@ export default function OnboardingFlow({
       );
     }
     
-    // Final step - action buttons handle navigation
+    // Final step (9) - action buttons handle navigation
     if (step === TOTAL_STEPS) {
       return (
         <FinalStep 
           className={animationClass}
+          firstName={firstName}
           onComplete={handleComplete}
         />
       );
@@ -404,31 +400,34 @@ export default function OnboardingFlow({
   // Check if we're on the final step
   const isFinalStep = step === TOTAL_STEPS;
 
-  return (
-    <div className={styles.overlay} onClick={handleBackdropClick}>
-      <div className={styles.modal} role="dialog" aria-modal="true" aria-label="Welcome to AutoRev">
-        {/* Unified Progress Bar */}
-        <div className={styles.progressBarContainer}>
-          <div className={styles.progressBar}>
-            <div 
-              className={styles.progressFill} 
-              style={{ width: `${progressPercent}%` }}
-            />
+  // The modal content
+  const modalContent = (
+    <div className={styles.overlay} onClick={handleBackdropClick} data-onboarding-overlay>
+      <div className={`${styles.modal} ${isFinalStep ? styles.finalStepModal : ''}`} role="dialog" aria-modal="true" aria-label="Welcome to AutoRev">
+        {/* Unified Progress Bar - Hidden on final step */}
+        {!isFinalStep && (
+          <div className={styles.progressBarContainer}>
+            <div className={styles.progressBar}>
+              <div 
+                className={styles.progressFill} 
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <div className={styles.progressSteps}>
+              {STEP_LABELS.map((label, i) => (
+                <span 
+                  key={i}
+                  className={`${styles.progressStep} ${i === currentLabelIndex ? styles.active : ''} ${i < currentLabelIndex ? styles.completed : ''}`}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
           </div>
-          <div className={styles.progressSteps}>
-            {STEP_LABELS.map((label, i) => (
-              <span 
-                key={i}
-                className={`${styles.progressStep} ${i === currentLabelIndex ? styles.active : ''} ${i < currentLabelIndex ? styles.completed : ''}`}
-              >
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Step Content */}
-        <div className={styles.stepContainer}>
+        <div className={`${styles.stepContainer} ${isFinalStep ? styles.finalStepContainer : ''}`}>
           {renderStep()}
         </div>
 
@@ -444,12 +443,6 @@ export default function OnboardingFlow({
                   Back
                 </button>
               )}
-              {/* Skip button - only shown on non-required steps (feature slides) */}
-              {!isRequiredStep && !isFinalStep && (
-                <button className={styles.skipBtn} onClick={handleDismiss}>
-                  Skip for now
-                </button>
-              )}
               <button 
                 className={styles.nextBtn} 
                 onClick={handleNext}
@@ -461,9 +454,20 @@ export default function OnboardingFlow({
                 </svg>
               </button>
             </div>
+            {/* Skip link - only shown on non-required steps */}
+            {!isRequiredStep && (
+              <button className={styles.skipLink} onClick={handleDismiss}>
+                Skip for now
+              </button>
+            )}
           </div>
         )}
       </div>
     </div>
   );
+
+  // Use portal to render at document body level (above all other content)
+  // This ensures the modal is not trapped inside any parent's stacking context
+  if (!isMounted) return null;
+  return createPortal(modalContent, document.body);
 }

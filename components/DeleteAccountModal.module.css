@@ -1,0 +1,462 @@
+/**
+ * Delete Account Modal Styles
+ * Multi-step account deletion flow
+ */
+
+/* ============================================
+   OVERLAY & MODAL
+   ============================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1100;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  position: relative;
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary, #94a3b8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* ============================================
+   CONTENT
+   ============================================ */
+
+.content {
+  padding: 32px 24px 24px;
+}
+
+.sadIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.warningIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: #ef4444;
+}
+
+.processingIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.titleDanger {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #ef4444;
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary, #94a3b8);
+  text-align: center;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+/* ============================================
+   REASON SELECTION (Step 1)
+   ============================================ */
+
+.reasonList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.reasonOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reasonOption:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.reasonSelected {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.reasonOption input {
+  display: none;
+}
+
+.radioCircle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  color: transparent;
+}
+
+.reasonSelected .radioCircle {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.reasonLabel {
+  font-size: 14px;
+  color: #fff;
+  flex: 1;
+}
+
+/* Details textarea */
+.detailsField {
+  margin-bottom: 24px;
+}
+
+.detailsLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-bottom: 8px;
+}
+
+.detailsInput {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  color: #fff;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.detailsInput:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.detailsInput::placeholder {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.charCount {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--color-text-tertiary, #64748b);
+  margin-top: 6px;
+}
+
+/* ============================================
+   WARNING BOX (Step 2)
+   ============================================ */
+
+.warningBox {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.warningTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ef4444;
+  margin: 0 0 12px;
+}
+
+.warningList {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: disc;
+}
+
+.warningList li {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.warningList li:last-child {
+  margin-bottom: 0;
+}
+
+/* Confirmation input */
+.confirmField {
+  margin-bottom: 20px;
+}
+
+.confirmLabel {
+  display: block;
+  font-size: 14px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.deleteText {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  color: #ef4444;
+  letter-spacing: 0.05em;
+}
+
+.confirmInput {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.confirmInput:focus {
+  outline: none;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.confirmInput::placeholder {
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+/* Error message */
+.error {
+  font-size: 13px;
+  color: #ef4444;
+  text-align: center;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancelBtn,
+.backBtn {
+  flex: 1;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover,
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nextBtn {
+  flex: 1;
+  padding: 14px 20px;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0a1628;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nextBtn:hover:not(:disabled) {
+  background: #bfe600;
+}
+
+.nextBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deleteBtn {
+  flex: 1;
+  padding: 14px 20px;
+  background: #ef4444;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.deleteBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 479px) {
+  .modal {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .content {
+    padding: 28px 20px 20px;
+  }
+
+  .title,
+  .titleDanger {
+    font-size: 20px;
+  }
+
+  .reasonOption {
+    padding: 12px 14px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .cancelBtn,
+  .backBtn,
+  .nextBtn,
+  .deleteBtn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 374px) {
+  .content {
+    padding: 24px 16px 16px;
+  }
+
+  .reasonLabel {
+    font-size: 13px;
+  }
+
+  .warningList li {
+    font-size: 12px;
+  }
+}

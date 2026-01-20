@@ -34,7 +34,7 @@ export default function Button({
   const content = (
     <>
       {icon && <span className={styles.icon}>{icon}</span>}
-      <span>{children}</span>
+      <span className={styles.content}>{children}</span>
     </>
   );
 

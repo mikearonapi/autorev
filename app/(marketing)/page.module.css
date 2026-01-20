@@ -141,6 +141,36 @@
   transform: translateY(0);
 }
 
+/* Download Link - Subtle text below CTA */
+.downloadLink {
+  display: inline-block;
+  background: none;
+  border: none;
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  padding: 8px 16px;
+  margin-top: -24px;
+  margin-bottom: 32px;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.downloadLink:hover {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.downloadLink:active {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+@media (min-width: 768px) {
+  .downloadLink {
+    margin-top: -32px;
+    margin-bottom: 40px;
+  }
+}
+
 /* ==========================================================================
    3 PHONE DISPLAY - Smaller phones with visible side phones
    ========================================================================== */
@@ -631,101 +661,3 @@
 .finalCta svg {
   stroke: var(--color-bg-base, #0d1b2a);
 }
-
-/* ==========================================================================
-   FOOTER
-   ========================================================================== */
-
-.footer {
-  padding: 48px 24px 32px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .footer {
-    padding: 64px 48px 40px;
-  }
-}
-
-/* Social Icons */
-.footerSocial {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.socialIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: var(--color-accent-lime, #d4ff00);
-  transition: all 0.2s ease;
-}
-
-.socialIcon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.socialIcon:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
-}
-
-.footerLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .footerLinks {
-    flex-direction: row;
-    justify-content: center;
-    gap: 64px;
-  }
-}
-
-.footerSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footerSectionTitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-accent-lime, #d4ff00);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-
-.footerSection a {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footerSection a:hover {
-  color: var(--color-accent-lime, #d4ff00);
-}
-
-.footerCopyright {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.3);
-  text-align: center;
-  margin: 0;
-  letter-spacing: 0.05em;
-}
-
-
-
-

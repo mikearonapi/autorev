@@ -1,0 +1,71 @@
+/* NameStep - Simple name input */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 340px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', system-ui);
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.input {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  font-family: var(--font-body, 'Inter', system-ui);
+  font-size: 1.125rem;
+  color: var(--color-text-primary, #ffffff);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.input:focus {
+  outline: none;
+  border-color: #10b981; /* Teal for input selection, not lime CTA */
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hint {
+  font-family: var(--font-body, 'Inter', system-ui);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}

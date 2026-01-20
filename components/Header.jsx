@@ -200,11 +200,12 @@ export default function Header() {
     prefetchForRoute(href, user.id);
   }, [isAuthenticated, user?.id]);
 
-  // GRAVL-STYLE: Hide header completely on homepage
-  // Homepage is a standalone marketing page - no navigation
+  // GRAVL-STYLE: Hide header completely on standalone pages
+  // Homepage and legal pages are standalone - no navigation header
   // NOTE: This early return MUST come AFTER all hooks
   const isHomepage = pathname === '/';
-  if (isHomepage) {
+  const isLegalPage = pathname === '/terms' || pathname === '/privacy' || pathname === '/contact';
+  if (isHomepage || isLegalPage) {
     return null;
   }
   
@@ -263,7 +264,7 @@ export default function Header() {
           <Link href="/" className={styles.logo}>
             <div className={styles.logoIcon}>
               <Image 
-                src={UI_IMAGES.logoTrimmed}
+                src={UI_IMAGES.logoWordmark}
                 alt="AutoRev Logo" 
                 width={36} 
                 height={36}

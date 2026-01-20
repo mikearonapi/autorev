@@ -10,12 +10,31 @@ import { fetchAllComparisons, getComparisonTypeInfo } from '@/lib/comparisonServ
 import styles from './page.module.css';
 
 export const metadata = {
-  title: 'Car Comparisons | AutoRev',
-  description: 'Compare sports cars side-by-side. Detailed specs, performance data, and expert recommendations to help you choose.',
+  title: 'Car Comparisons | Sports Car Showdowns | AutoRev',
+  description: 'Compare sports cars side-by-side with detailed specs, performance data, and AI-powered recommendations. Head-to-head showdowns, three-way battles, and best-of guides.',
+  keywords: [
+    'car comparison',
+    'sports car vs',
+    'car showdown',
+    'which car is better',
+    'car specs comparison',
+    'performance car comparison',
+    'Porsche vs BMW',
+    'Corvette vs Supra',
+    'best sports car comparison',
+  ],
   openGraph: {
     title: 'Car Comparisons | AutoRev',
-    description: 'Compare sports cars side-by-side. Detailed specs, performance data, and expert recommendations.',
+    description: 'Compare sports cars side-by-side with detailed specs and AI-powered recommendations.',
+    url: 'https://autorev.app/compare',
     type: 'website',
+  },
+  twitter: {
+    title: 'Car Comparisons | AutoRev',
+    description: 'Compare sports cars side-by-side with detailed specs and recommendations.',
+  },
+  alternates: {
+    canonical: 'https://autorev.app/compare',
   },
 };
 

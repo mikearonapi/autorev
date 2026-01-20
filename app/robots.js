@@ -4,8 +4,8 @@
  * Generates robots.txt at /robots.txt with crawling directives.
  * 
  * Key rules:
- * - Allow: All public pages
- * - Disallow: API routes, auth callbacks, internal admin pages, user profiles
+ * - Allow: Homepage, public community content (builds, events)
+ * - Disallow: All app routes (require auth), API routes, internal pages
  * - Sitemap: Points to dynamic sitemap.xml
  * 
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
@@ -19,89 +19,79 @@ export default function robots() {
       // Default rules for all crawlers
       {
         userAgent: '*',
-        allow: '/',
-        disallow: [
-          '/api/',          // API routes
-          '/_next/',        // Next.js internal
-          '/private/',      // Private content
-          '/profile/',      // User profiles
-          '/internal/',     // Internal admin pages
-          '/auth/',         // Auth callbacks
-          '/garage/compare/', // Ephemeral compare page
-          '/events/saved/', // User saved events (requires auth)
-        ],
-      },
-      // Google-specific rules
-      {
-        userAgent: 'Googlebot',
-        allow: '/',
-        disallow: [
-          '/api/',
-          '/profile/',
-          '/internal/',
-          '/auth/',
-          '/events/saved/',
-        ],
-      },
-      // Bing-specific rules
-      {
-        userAgent: 'Bingbot',
-        allow: '/',
-        disallow: [
-          '/api/',
-          '/profile/',
-          '/internal/',
-          '/auth/',
-          '/events/saved/',
-        ],
-      },
-      // Google Image bot
-      {
-        userAgent: 'Googlebot-Image',
         allow: [
-          '/browse-cars/',
-          '/community/events/',
-          '/community/builds/', // Public builds for image indexing
-          '/public/',
+          '/',                      // Homepage
+          '/community/builds',      // Public builds gallery
+          '/community/builds/',     // Individual build pages
+          '/community/events',      // Public events listing
+          '/community/events/',     // Individual event pages
+          '/terms',                 // Legal
+          '/privacy',               // Legal
+          '/contact',               // Contact
         ],
         disallow: [
-          '/api/',
-          '/internal/',
+          '/api/',                  // API routes
+          '/_next/',                // Next.js internal
+          '/garage/',               // Auth-required
+          '/data/',                 // Auth-required
+          '/community/',            // Base community is auth-required (user feed)
+          '/al/',                   // Auth-required
+          '/profile/',              // Auth-required
+          '/build/',                // Auth-required
+          '/performance/',          // Auth-required
+          '/parts/',                // Auth-required
+          '/mod-planner/',          // Auth-required
+          '/internal/',             // Internal admin pages
+          '/admin/',                // Admin pages
+          '/auth/',                 // Auth callbacks
         ],
       },
-      // Social media crawlers - allow most pages for previews
+      // Social media crawlers - allow public pages for previews
       {
         userAgent: 'facebookexternalhit',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
+        allow: [
+          '/',
+          '/community/builds/',
+          '/community/events/',
+        ],
+        disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       {
         userAgent: 'Twitterbot',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
+        allow: [
+          '/',
+          '/community/builds/',
+          '/community/events/',
+        ],
+        disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       {
         userAgent: 'LinkedInBot',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
+        allow: [
+          '/',
+          '/community/builds/',
+          '/community/events/',
+        ],
+        disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
-      // Apple bot for iMessage previews
-      {
-        userAgent: 'Applebot',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
-      },
-      // Slack bot for link previews
+      // Slack/Discord for link previews
       {
         userAgent: 'Slackbot-LinkExpanding',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
+        allow: [
+          '/',
+          '/community/builds/',
+          '/community/events/',
+        ],
+        disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
-      // Discord bot for link previews
       {
         userAgent: 'Discordbot',
-        allow: '/',
-        disallow: ['/api/', '/internal/', '/auth/'],
+        allow: [
+          '/',
+          '/community/builds/',
+          '/community/events/',
+        ],
+        disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

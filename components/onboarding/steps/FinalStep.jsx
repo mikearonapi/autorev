@@ -1,101 +1,56 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './FinalStep.module.css';
 
 /**
- * Action buttons for the final step
- * Each takes the user directly to that feature
- */
-const ACTION_BUTTONS = [
-  {
-    id: 'browse',
-    emoji: '🔍',
-    label: 'Browse Cars',
-    description: 'Explore specs & reviews',
-    href: '/browse-cars',
-  },
-  {
-    id: 'selector',
-    emoji: '🎯',
-    label: 'Find My Match',
-    description: 'Get personalized picks',
-    href: '/car-selector',
-  },
-  {
-    id: 'garage',
-    emoji: '🚗',
-    label: 'My Garage',
-    description: 'Add & track my cars',
-    href: '/garage?add=true',
-  },
-  {
-    id: 'tuning',
-    emoji: '🔧',
-    label: 'My Build',
-    description: 'Plan my build',
-    href: '/garage/my-build',
-  },
-  {
-    id: 'community',
-    emoji: '📍',
-    label: 'Events',
-    description: 'Find local meets',
-    href: '/community',
-  },
-  {
-    id: 'learn',
-    emoji: '📚',
-    label: 'Learn',
-    description: 'How things work',
-    href: '/encyclopedia',
-  },
-];
-
-/**
  * FinalStep Component
- * Final step: "You're all set!" with action buttons for each feature
+ * 
+ * Clean final step with just the logo and Get Started button.
+ * Simple, bold, no personalization.
+ * Takes user directly to their garage.
  * 
  * @param {Object} props
  * @param {string} props.className - CSS class name for animation
- * @param {Function} props.onComplete - Called when user selects an action
+ * @param {Function} props.onComplete - Called when user clicks Get Started
  */
 export default function FinalStep({ 
   className,
   onComplete,
 }) {
   const router = useRouter();
+  const [showButton, setShowButton] = useState(false);
 
-  const handleAction = (href) => {
+  // Show button after short delay for smooth entrance
+  useEffect(() => {
+    const timer = setTimeout(() => setShowButton(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleGetStarted = () => {
     onComplete?.();
-    router.push(href);
+    router.push('/garage');
   };
 
   return (
-    <div className={`${className} ${styles.container}`}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>You're all set!</h2>
-        <p className={styles.subtitle}>What would you like to do first?</p>
+    <div className={`${className || ''} ${styles.container}`}>
+      {/* Centered Brand Logo */}
+      <div className={styles.brandContainer}>
+        <h1 className={styles.brandTitle}>
+          <span className={styles.brandAuto}>AUTO</span>
+          <span className={styles.brandRev}>REV</span>
+        </h1>
       </div>
-      
-      <div className={styles.actionGrid}>
-        {ACTION_BUTTONS.map((action) => (
-          <button
-            key={action.id}
-            className={styles.actionButton}
-            onClick={() => handleAction(action.href)}
-          >
-            <span className={styles.actionEmoji}>{action.emoji}</span>
-            <div className={styles.actionContent}>
-              <span className={styles.actionLabel}>{action.label}</span>
-              <span className={styles.actionDesc}>{action.description}</span>
-            </div>
-            <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
-        ))}
-      </div>
+
+      {/* CTA to Garage */}
+      <button 
+        className={`${styles.ctaButton} ${showButton ? styles.visible : ''}`}
+        onClick={handleGetStarted}
+        disabled={!showButton}
+      >
+        Enter Your Garage
+      </button>
     </div>
   );
 }

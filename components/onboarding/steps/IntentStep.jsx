@@ -1,25 +1,25 @@
 'use client';
 
-import styles from '../OnboardingFlow.module.css';
+import styles from './IntentStep.module.css';
 
 const INTENT_OPTIONS = [
   { 
     value: 'owner', 
-    emoji: '🚗', 
+    emoji: '🏎️', 
     title: 'I own a sports car',
-    description: 'Track maintenance, get recalls, and plan upgrades',
+    description: 'Track mods, log dyno runs, plan your next build',
   },
   { 
     value: 'shopping', 
-    emoji: '🔍', 
+    emoji: '🎯', 
     title: "I'm shopping for one",
-    description: 'Research, compare, and find your perfect match',
+    description: 'Compare specs, find your perfect match',
   },
   { 
     value: 'learning', 
-    emoji: '📚', 
-    title: 'Just exploring/learning',
-    description: 'Browse specs, watch reviews, and learn about cars',
+    emoji: '🔥', 
+    title: 'Just here to explore',
+    description: 'Browse the database, learn about cars',
   },
 ];
 
@@ -32,7 +32,7 @@ const CheckIcon = () => (
 
 /**
  * IntentStep Component
- * Step 3: What brings you to AutoRev? (MULTI-SELECT)
+ * Step 2: What brings you to AutoRev? (MULTI-SELECT)
  * 
  * Users can select MULTIPLE reasons. At least one required.
  */
@@ -54,30 +54,31 @@ export default function IntentStep({ className, formData, updateFormData }) {
   };
 
   return (
-    <div className={className}>
-      <h2 className={styles.stepTitle}>What brings you here?</h2>
-      <p className={styles.stepDescription}>
+    <div className={`${className || ''} ${styles.container}`}>
+      <h2 className={styles.title}>What brings you here?</h2>
+      <p className={styles.subtitle}>
         This helps us personalize your experience.
       </p>
       
-      <div className={styles.intentGrid}>
-        {INTENT_OPTIONS.map((option) => {
+      <div className={styles.optionGrid}>
+        {INTENT_OPTIONS.map((option, index) => {
           const isSelected = selectedIntents.includes(option.value);
           
           return (
             <button
               key={option.value}
-              className={`${styles.intentCard} ${isSelected ? styles.selected : ''}`}
+              className={`${styles.optionCard} ${isSelected ? styles.selected : ''}`}
               onClick={() => handleToggle(option.value)}
               type="button"
               aria-pressed={isSelected}
+              style={{ animationDelay: `${0.1 + index * 0.05}s` }}
             >
-              <span className={styles.intentEmoji}>{option.emoji}</span>
-              <div className={styles.intentContent}>
-                <h3 className={styles.intentTitle}>{option.title}</h3>
-                <p className={styles.intentDesc}>{option.description}</p>
+              <span className={styles.emoji}>{option.emoji}</span>
+              <div className={styles.content}>
+                <h3 className={styles.optionTitle}>{option.title}</h3>
+                <p className={styles.optionDesc}>{option.description}</p>
               </div>
-              <span className={styles.intentCheckbox}>
+              <span className={styles.checkbox}>
                 <CheckIcon />
               </span>
             </button>
@@ -85,7 +86,7 @@ export default function IntentStep({ className, formData, updateFormData }) {
         })}
       </div>
       
-      <p className={styles.intentHint}>
+      <p className={styles.hint}>
         Select all that apply
       </p>
     </div>

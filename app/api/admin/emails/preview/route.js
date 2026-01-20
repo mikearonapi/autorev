@@ -106,7 +106,7 @@ function generateInactivity7dHtml(vars, baseUrl) {
           <!-- Logo Header -->
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block;">
+              <img src="${baseUrl}/images/autorev-email-logo.png" alt="AutoRev" width="60" height="60" style="display: block;">
             </td>
           </tr>
           
@@ -259,7 +259,7 @@ function generateInactivity21dHtml(vars, baseUrl) {
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block;">
+              <img src="${baseUrl}/images/autorev-email-logo.png" alt="AutoRev" width="60" height="60" style="display: block;">
             </td>
           </tr>
           
@@ -528,7 +528,7 @@ function generateReferralInviteHtml(vars, baseUrl) {
           <!-- Logo Header -->
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${baseUrl}/images/autorev-logo-trimmed.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <img src="${baseUrl}/images/autorev-email-logo.png" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">You're Invited</p>
             </td>
           </tr>

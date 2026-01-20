@@ -100,19 +100,52 @@ export async function middleware(request) {
     console.log(`[Middleware] Stored referral code: ${refCode.toUpperCase()}`);
   }
 
-  // Optional: Protect routes that require authentication
-  // Uncomment if you want to redirect unauthenticated users from certain paths
-  // const protectedPaths = ['/my-garage', '/tuning-shop', '/settings'];
-  // const isProtectedPath = protectedPaths.some(path => 
-  //   request.nextUrl.pathname.startsWith(path)
-  // );
+  // =========================================================================
+  // ROUTE PROTECTION - Redirect unauthenticated users to homepage
   // 
-  // if (!user && isProtectedPath) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = '/';
-  //   url.searchParams.set('auth', 'signin');
-  //   return NextResponse.redirect(url);
-  // }
+  // IMPORTANT: Some paths have PUBLIC sub-routes for SEO:
+  // - /community/builds and /community/events are PUBLIC (SEO content)
+  // - /community (base) is PRIVATE (user's feed)
+  // =========================================================================
+  
+  // Paths that are PUBLIC - do not protect these for SEO crawlability
+  const publicPaths = [
+    '/community/builds',      // Public build gallery - SEO content
+    '/community/events',      // Public events listing - SEO content
+  ];
+  
+  // Check if this is a public path FIRST
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+  
+  // If it's a known public path, don't protect it
+  if (isPublicPath) {
+    return supabaseResponse;
+  }
+  
+  // Protected paths - require authentication
+  const protectedPaths = [
+    '/garage',
+    '/data',
+    '/community',      // Base /community is protected (user feed), but /community/builds and /community/events are public
+    '/al',
+    '/profile',
+    '/build',
+    '/performance',
+    '/parts',
+    '/my-builds',
+    '/mod-planner',
+  ];
+  
+  const isProtectedPath = protectedPaths.some(path => 
+    pathname.startsWith(path)
+  );
+  
+  if (!user && isProtectedPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    // Don't add auth=signin param - just redirect to homepage cleanly
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }

@@ -1,24 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Button from '@/components/Button';
 import styles from './page.module.css';
+import legalStyles from '@/styles/legal-page.module.css';
 import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient.js';
 
 // Icons (Lucide style - matches community/AL pages)
 const Icons = {
-  mail: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-      <polyline points="22,6 12,13 2,6"/>
-    </svg>
-  ),
-  clock: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <polyline points="12 6 12 12 16 14"/>
-    </svg>
-  ),
   messageCircle: ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
@@ -28,24 +18,6 @@ const Icons = {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10"/>
       <path d="m9 12 2 2 4-4"/>
-    </svg>
-  ),
-  users: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  ),
-  shield: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-  ),
-  heart: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>
   ),
   arrowRight: ({ size = 20 }) => (
@@ -64,24 +36,6 @@ const interests = [
   { id: 'general', label: 'General Question' },
 ];
 
-const faqs = [
-  {
-    question: 'How quickly do you respond?',
-    answer: 'We typically respond within 24-48 hours. For urgent matters, mention it in your message and we\'ll prioritize.'
-  },
-  {
-    question: 'What kind of questions can I ask?',
-    answer: "Anything car-related. Questions about AL's answers, need help with the Car Selector, curious about performance upgrades, or just want to talk shop—we're here for it."
-  },
-  {
-    question: 'Do you sell parts or services?',
-    answer: "Nope. AutoRev is a data platform, not a shop. We help you make informed decisions, but we don't sell parts, services, or have affiliate relationships. Just honest information."
-  },
-  {
-    question: 'Can I suggest features or report bugs?',
-    answer: "Absolutely. We're constantly improving based on user feedback. Tell us what's broken, what's missing, or what would make your experience better."
-  }
-];
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -105,9 +59,70 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitError(null);
     
+    // Track which saves succeeded for debugging
+    const saveResults = {
+      leads: false,
+      feedback: false,
+      email: false,
+    };
+    
     try {
-      // 1. Send email notification
-      const emailResponse = await fetch('/api/contact', {
+      // PRIORITY 1: Save to leads table (CRM tracking) - this is critical
+      try {
+        const leadResult = await submitLead({
+          email: formData.email,
+          name: formData.name,
+          source: LEAD_SOURCES.CONTACT,
+          metadata: {
+            car: formData.car,
+            interest: formData.interest,
+            form_page: 'contact',
+            message: formData.message,
+            submitted_at: new Date().toISOString(),
+          },
+        });
+        saveResults.leads = leadResult.success;
+        if (!leadResult.success) {
+          console.warn('[Contact] Lead capture failed:', leadResult.error);
+        }
+      } catch (leadErr) {
+        console.error('[Contact] Lead capture error:', leadErr);
+      }
+      
+      // PRIORITY 2: Save to user_feedback table (support tracking) - also critical
+      try {
+        const feedbackResponse = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            feedback_type: 'question',
+            category: 'general',
+            message: formData.message,
+            email: formData.email,
+            page_url: '/contact',
+            page_title: 'Contact Us',
+            car_slug: null,
+            tags: ['contact-form', formData.interest].filter(Boolean),
+            metadata: {
+              name: formData.name,
+              car: formData.car,
+              interest: formData.interest,
+              source: 'contact-page',
+            },
+          }),
+        });
+        const feedbackResult = await feedbackResponse.json();
+        saveResults.feedback = feedbackResult.success;
+        if (!feedbackResult.success) {
+          console.warn('[Contact] Feedback logging failed:', feedbackResult.error);
+        }
+      } catch (feedbackErr) {
+        console.error('[Contact] Feedback logging error:', feedbackErr);
+      }
+      
+      // PRIORITY 3: Send email notification (fire-and-forget, non-blocking)
+      // Email is nice-to-have but database saves are what matter
+      fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -117,63 +132,24 @@ export default function Contact() {
           car: formData.car,
           message: formData.message,
         }),
-      });
+      })
+        .then(res => res.json())
+        .then(result => {
+          saveResults.email = result.success;
+          if (!result.success) {
+            console.warn('[Contact] Email notification failed:', result.error);
+          }
+        })
+        .catch(err => console.error('[Contact] Email notification error:', err));
       
-      const emailResult = await emailResponse.json();
-      
-      if (!emailResult.success) {
-        console.warn('[Contact] Email failed, but continuing with database logging:', emailResult.error);
-      }
-      
-      // 2. Save to leads table for CRM tracking
-      const leadResult = await submitLead({
-        email: formData.email,
-        name: formData.name,
-        source: LEAD_SOURCES.CONTACT,
-        metadata: {
-          car: formData.car,
-          interest: formData.interest,
-          form_page: 'contact',
-          email_sent: emailResult.success,
-          message: formData.message,
-        },
-      });
-      
-      if (!leadResult.success) {
-        console.warn('[Contact] Lead capture failed:', leadResult.error);
-      }
-      
-      // 3. Save to user_feedback table for analytics and tracking
-      const feedbackResponse = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          feedback_type: 'question',
-          message: formData.message,
-          email: formData.email,
-          page_url: '/contact',
-          page_title: 'Contact Us',
-          car_slug: null,
-          tags: ['contact-form', formData.interest].filter(Boolean),
-          metadata: {
-            name: formData.name,
-            car: formData.car,
-            interest: formData.interest,
-          },
-        }),
-      });
-      
-      const feedbackResult = await feedbackResponse.json();
-      
-      if (!feedbackResult.success) {
-        console.warn('[Contact] Feedback logging failed:', feedbackResult.error);
-      }
-      
-      // Consider success if email OR database logging succeeded
-      if (emailResult.success || leadResult.success || feedbackResult.success) {
+      // Success if at least ONE database save succeeded
+      // (leads OR feedback - email doesn't count as it's just notification)
+      if (saveResults.leads || saveResults.feedback) {
+        console.log('[Contact] Submission saved successfully:', saveResults);
         setSubmitted(true);
       } else {
-        setSubmitError('Failed to send message. Please try again or email us directly.');
+        console.error('[Contact] All database saves failed:', saveResults);
+        setSubmitError('Failed to send message. Please try again or email us directly at contact@autorev.app');
       }
     } catch (err) {
       console.error('[Contact] Error submitting form:', err);
@@ -184,29 +160,20 @@ export default function Contact() {
   };
 
   return (
-    <div className={styles.page} data-no-main-offset>
-      {/* Hero Section */}
-      <section className={styles.hero}>
-        <div className={styles.heroOverlay} />
-        <div className={styles.heroContent}>
-          <span className={styles.badge}>Get in Touch</span>
-          <h1 className={styles.heroTitle}>
-            Let&apos;s Talk <span className={styles.titleAccent}>Cars</span>
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Questions? Looking for straight-up honest advice? Just want to talk shop?
-            We&apos;re here to help—no sales pitch, no ego, just drivers helping drivers.
-          </p>
-        </div>
-      </section>
+    <div className={styles.page}>
+      {/* Hero-style Header - matches homepage */}
+      <header className={legalStyles.heroHeader}>
+        <Link href="/" className={legalStyles.logo}>
+          <span className={legalStyles.logoAuto}>AUTO</span>
+          <span className={legalStyles.logoRev}>REV</span>
+        </Link>
+      </header>
 
       {/* Main Content */}
       <section className={styles.main}>
         <div className={styles.container}>
-          <div className={styles.grid}>
-            {/* Contact Form */}
-            <div className={styles.formSection}>
-              {submitted ? (
+          <div className={styles.formWrapper}>
+            {submitted ? (
                 <div className={styles.successCard}>
                   <div className={styles.successIcon}>
                     <Icons.checkCircle size={48} />
@@ -217,11 +184,11 @@ export default function Contact() {
                     In the meantime, check out our Car Selector or Upgrade Planner.
                   </p>
                   <div className={styles.successLinks}>
-                    <Button href="/car-selector" variant="primary" size="lg">
+                    <Button href="/car-selector" variant="secondary" size="lg">
                       Your Sportscar Match
                       <Icons.arrowRight size={16} />
                     </Button>
-                    <Button href="/browse-cars" variant="outline" size="lg">
+                    <Button href="/browse-cars" variant="outlineLight" size="lg">
                       Browse Cars
                     </Button>
                   </div>
@@ -319,7 +286,7 @@ export default function Contact() {
                   <div className={styles.formActions}>
                     <Button 
                       type="submit" 
-                      variant="primary" 
+                      variant="secondary" 
                       size="lg" 
                       fullWidth
                       disabled={isSubmitting}
@@ -339,69 +306,51 @@ export default function Contact() {
                   </div>
                 </form>
               )}
-            </div>
-
-            {/* Info Sidebar */}
-            <div className={styles.infoSection}>
-              <div className={styles.infoCard}>
-                <div className={styles.cardIcon}>
-                  <Icons.clock size={24} />
-                </div>
-                <h3 className={styles.cardTitle}>Response Time</h3>
-                <p className={styles.cardText}>Within 48 hours, usually sooner</p>
-              </div>
-
-              <div className={styles.valuesCard}>
-                <div className={styles.valuesHeader}>
-                  <div className={styles.valuesIconWrapper}>
-                    <Icons.shield size={20} />
-                  </div>
-                  <h3 className={styles.valuesTitle}>How We Operate</h3>
-                </div>
-                <ul className={styles.valuesList}>
-                  <li>
-                    <Icons.checkCircle size={16} />
-                    <span>Straight talk—no BS, no upselling</span>
-                  </li>
-                  <li>
-                    <Icons.users size={16} />
-                    <span>Respect for every budget, every build</span>
-                  </li>
-                  <li>
-                    <Icons.messageCircle size={16} />
-                    <span>Real experience, not keyboard warrior advice</span>
-                  </li>
-                  <li>
-                    <Icons.heart size={16} />
-                    <span>We compete with honor—and help you do the same</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className={styles.faqSection}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Common Questions</h2>
-            <p className={styles.sectionSubtitle}>
-              Everything you need to know about getting in touch
-            </p>
+      {/* Site Footer */}
+      <footer className={legalStyles.footer}>
+        {/* Social Icons */}
+        <div className={legalStyles.footerSocial}>
+          <a 
+            href="https://www.instagram.com/autorev.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={legalStyles.socialIcon}
+            aria-label="Follow us on Instagram"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+          <a 
+            href="https://www.facebook.com/profile.php?id=61585868463925" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={legalStyles.socialIcon}
+            aria-label="Follow us on Facebook"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+        </div>
+
+        <div className={legalStyles.footerLinks}>
+          <div className={legalStyles.footerSection}>
+            <h4 className={legalStyles.footerSectionTitle}>INFO</h4>
+            <Link href="/terms">Terms & Conditions</Link>
+            <Link href="/privacy">Privacy Policy</Link>
           </div>
-          <div className={styles.faqGrid}>
-            {faqs.map((faq, index) => (
-              <div key={index} className={styles.faqCard}>
-                <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                <p className={styles.faqAnswer}>{faq.answer}</p>
-              </div>
-            ))}
+          <div className={legalStyles.footerSection}>
+            <h4 className={legalStyles.footerSectionTitle}>CONTACT</h4>
+            <Link href="/contact">Support</Link>
           </div>
         </div>
-      </section>
+        <p className={legalStyles.footerCopyright}>© 2026 AUTOREV</p>
+      </footer>
     </div>
   );
 }
-

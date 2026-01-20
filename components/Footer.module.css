@@ -40,7 +40,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-text-primary, #ffffff);
   transition: all 0.2s ease;
 }
 
@@ -82,7 +82,7 @@
 .columnTitle {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-accent-teal, #10b981);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 4px;

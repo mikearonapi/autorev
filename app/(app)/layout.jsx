@@ -16,6 +16,7 @@
  */
 
 import BottomTabBar from '@/components/BottomTabBar';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import styles from './layout.module.css';
 
 export default function AppLayout({ children }) {
@@ -23,6 +24,12 @@ export default function AppLayout({ children }) {
     <div className={styles.appLayout} data-app-layout="true">
       {children}
       <BottomTabBar />
+      {/* PWA Install Banner - shows after 5 page views, 3s delay */}
+      <PWAInstallPrompt 
+        variant="banner" 
+        showAfterViews={5} 
+        delay={3000}
+      />
     </div>
   );
 }

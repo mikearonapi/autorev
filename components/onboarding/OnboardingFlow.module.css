@@ -1,26 +1,28 @@
 /* OnboardingFlow - First-time User Onboarding Modal */
-/* Cross-device compatible with multiple viewport fallbacks */
+/* Rendered via React Portal to document.body for proper stacking */
 
-/* Overlay - full screen with solid background */
+/* Overlay - Full screen coverage including safe areas */
 .overlay {
   position: fixed;
-  top: 0;
+  /* Extend beyond viewport to cover safe areas (notch, dynamic island) */
+  top: calc(-1 * env(safe-area-inset-top, 50px) - 50px);
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
-  height: 100%;
-  /* Multiple height fallbacks for cross-device support */
-  min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport - accounts for browser UI */
-  min-height: -webkit-fill-available; /* iOS Safari specific */
-  z-index: 1200;
+  width: 100vw;
+  /* Add extra height to compensate for negative top */
+  min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
+  min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
+  /* High z-index - rendered at body level via portal */
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--brand-border-subtle);
-  /* Prevent any content from showing through */
-  isolation: isolate;
+  /* Add padding to offset the negative top */
+  padding-top: calc(env(safe-area-inset-top, 50px) + 50px);
+  /* Navy background */
+  background: #0d1b2a;
+  box-sizing: border-box;
 }
 
 /* Modal Container */
@@ -31,11 +33,23 @@
   max-height: 90vh;
   max-height: 90dvh;
   overflow: hidden;
-  background: var(--brand-border-subtle);
+  background: var(--color-bg-base);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
+}
+
+/* Final Step Modal - Full navy, no chrome */
+.modal.finalStepModal {
+  background: var(--color-bg-base);
+  border-color: transparent;
+}
+
+/* Final Step Container - Full height for centering */
+.stepContainer.finalStepContainer {
+  padding: 0;
+  flex: 1;
 }
 
 /* ==========================================================
@@ -60,7 +74,8 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--sn-accent) 0%, var(--sn-primary) 100%);
+  /* Teal gradient for progress (positive/progress indicator per brand guidelines) */
+  background: linear-gradient(90deg, var(--color-accent-teal, #10b981) 0%, #34d399 100%);
   border-radius: var(--radius-full);
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -408,10 +423,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl) var(--space-lg);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: var(--brand-border-subtle); /* Match modal background for consistency */
+  gap: 8px;
+  padding: var(--space-md) var(--space-xl);
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  border-top: none;
+  background: transparent;
   flex-shrink: 0;
 }
 
@@ -419,77 +435,81 @@
   display: flex;
   gap: var(--space-sm);
   width: 100%;
-  justify-content: center;
 }
 
 .backBtn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 12px 16px;
+  padding: 12px 24px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 44px;
-  flex-shrink: 0;
 }
 
 .backBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
   color: var(--color-white);
 }
 
-/* Skip button - middle button between Back and Continue */
-.skipBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 14px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-md);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: var(--font-size-xs);
+/* Skip link - text below buttons */
+.skipLink {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--font-body, 'Inter', system-ui);
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
-.skipBtn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 0.8);
+.skipLink:hover {
+  color: rgba(255, 255, 255, 0.7);
 }
 
+/* CTA Button - Matches homepage exactly */
 .nextBtn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px 24px;
-  background: var(--sn-accent);
+  gap: 8px;
+  padding: 12px 32px;
+  background: #d4ff00;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--brand-border-subtle);
+  border-radius: 100px;
+  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #0d1b2a;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   min-height: 44px;
 }
 
 .nextBtn:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(212, 255, 0, 0.35);
+}
+
+.nextBtn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .nextBtn:disabled {
@@ -589,38 +609,39 @@
    ========================================================== */
 @media (max-width: 480px) {
   .overlay {
-    /* Reset to ensure full coverage */
+    /* Full screen on mobile - extend into safe areas */
     position: fixed;
-    top: 0;
+    top: calc(-1 * env(safe-area-inset-top, 50px) - 50px);
     left: 0;
-    width: 100%;
-    height: 100%;
-    /* Fallback chain for different browsers */
-    min-height: 100vh;
-    min-height: 100dvh;
-    min-height: -webkit-fill-available;
-    /* No flex alignment - modal will be absolute positioned */
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
+    min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
     display: block;
+    background: #0d1b2a;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
   }
   
   .modal {
-    /* Absolute positioning within fixed overlay */
+    /* Position modal in the visible viewport area */
     position: absolute;
-    top: 0;
+    top: calc(env(safe-area-inset-top, 50px) + 50px);
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    height: 100%;
-    /* Fallback chain */
-    min-height: 100vh;
-    min-height: 100dvh;
-    min-height: -webkit-fill-available;
     max-width: none;
     max-height: none;
     border-radius: 0;
     border: none;
-    /* Flex for content layout */
     display: flex;
     flex-direction: column;
+    background: #0d1b2a;
+    /* Safe area padding for home indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
   
   .progressBarContainer {
@@ -635,6 +656,12 @@
     padding: var(--space-xs) var(--space-md);
     min-height: 0;
     overflow: hidden;
+  }
+  
+  /* Final step - full screen navy */
+  .stepContainer.finalStepContainer {
+    padding: 0;
+    padding-top: env(safe-area-inset-top, 0px);
   }
   
   .footer {
@@ -698,7 +725,7 @@
   }
   
   .progressStep.active {
-    color: var(--sn-accent);
+    color: var(--color-accent-teal, #10b981);
   }
   
   .progressStep.completed {

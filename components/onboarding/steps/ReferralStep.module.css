@@ -1,83 +1,198 @@
-/* ReferralStep.module.css - Compact 4-column grid referral selector */
+/* ReferralStep.module.css */
+/* Clean grid design matching BrandsStep and brand guidelines */
 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+/* ==========================================================
+   HEADER - Title & Subtitle (matches BrandsStep)
+   ========================================================== */
+.header {
+  text-align: center;
+  padding: 32px 24px 24px;
+  flex-shrink: 0;
+  max-width: 400px;
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', system-ui);
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 12px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================
+   OPTIONS GRID - 4 columns on desktop, 3 on mobile
+   ========================================================== */
 .optionGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 20px;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 24px;
+  margin: 0 auto;
 }
 
+/* ==========================================================
+   OPTION CARD - Matches BrandsStep card styling
+   ========================================================== */
 .optionCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 10px 6px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 8px;
+  padding: 16px 8px;
+  min-height: 88px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg, 16px);
   cursor: pointer;
-  transition: all 0.15s ease;
-  min-height: 64px;
+  transition: all 0.2s ease;
 }
 
 .optionCard:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
+.optionCard:active {
+  transform: translateY(0);
+}
+
+/* Selected state - uses teal accent per brand guidelines */
 .optionCard.selected {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: var(--sn-accent);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--color-accent-teal, #10b981);
+  box-shadow: 0 0 0 1px var(--color-accent-teal, #10b981);
 }
 
+.optionCard.selected:hover {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+/* ==========================================================
+   ICON - Consistent monochrome styling
+   ========================================================== */
 .optionIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  color: rgba(255, 255, 255, 0.6);
+  width: 28px;
+  height: 28px;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  transition: color 0.2s ease;
 }
 
 .optionIcon svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+}
+
+.optionCard:hover .optionIcon {
+  color: var(--color-text-primary, #ffffff);
 }
 
 .optionCard.selected .optionIcon {
-  color: var(--sn-accent);
+  color: var(--color-accent-teal, #10b981);
 }
 
+/* ==========================================================
+   LABEL - Clean typography
+   ========================================================== */
 .optionLabel {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.3;
+  transition: color 0.2s ease;
 }
 
-/* Mobile: full-width rows for better touch targets */
+.optionCard:hover .optionLabel {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.optionCard.selected .optionLabel {
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 600;
+}
+
+/* ==========================================================
+   OTHER INPUT - Shown when "Other" selected
+   ========================================================== */
+.otherInputWrapper {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 24px;
+}
+
+.otherInput {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg, 12px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-text-primary, #ffffff);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.otherInput::placeholder {
+  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.4));
+}
+
+.otherInput:focus {
+  border-color: var(--color-accent-teal, #10b981);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* ==========================================================
+   MOBILE - 3 columns with better touch targets
+   ========================================================== */
 @media (max-width: 480px) {
+  .header {
+    padding: 24px 20px 20px;
+  }
+  
   .optionGrid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: var(--space-md);
+    gap: 10px;
+    padding: 0 16px;
+    max-width: 360px;
   }
   
   .optionCard {
-    padding: 12px 8px;
-    min-height: 72px;
+    padding: 14px 6px;
+    min-height: 84px;
+    border-radius: var(--radius-md, 12px);
   }
   
   .optionIcon {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
   
   .optionIcon svg {
@@ -86,62 +201,43 @@
   }
   
   .optionLabel {
-    font-size: 11px;
+    font-size: 10px;
+  }
+  
+  .otherInputWrapper {
+    padding: 0 16px;
+    max-width: 360px;
+  }
+  
+  .otherInput {
+    padding: 12px 14px;
+    font-size: 14px;
   }
 }
 
-/* Small mobile: 3 columns, tighter */
+/* Small phones */
 @media (max-width: 380px) {
   .optionGrid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: 8px;
+    padding: 0 12px;
   }
   
   .optionCard {
-    padding: 10px 6px;
-    min-height: 64px;
+    padding: 12px 4px;
+    min-height: 76px;
   }
   
   .optionIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .optionIcon svg {
     width: 20px;
     height: 20px;
   }
   
-  .optionIcon svg {
-    width: 18px;
-    height: 18px;
-  }
-  
   .optionLabel {
-    font-size: 10px;
+    font-size: 9px;
   }
-}
-
-/* "Other" text input */
-.otherInputWrapper {
-  margin-top: 16px;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.otherInput {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  outline: none;
-  transition: all 0.15s ease;
-}
-
-.otherInput::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.otherInput:focus {
-  border-color: var(--sn-accent);
-  background: rgba(255, 255, 255, 0.08);
 }

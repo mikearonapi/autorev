@@ -1,0 +1,120 @@
+/* WelcomeStep - Celebratory welcome matching homepage style */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  padding: 32px 24px 0;
+}
+
+/* Brand Wordmark - Positioned at top like homepage */
+.brand {
+  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin: 0 0 48px;
+  animation: brandEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* Content wrapper - centers the celebration in remaining space */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+}
+
+@keyframes brandEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.brandAuto {
+  color: #ffffff;
+}
+
+.brandRev {
+  color: #d4ff00;
+}
+
+/* Celebration Section */
+.celebration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  animation: celebrationEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+@keyframes celebrationEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Headline - Big, bold, celebratory */
+.headline {
+  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-size: clamp(2.5rem, 12vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.headlineAccent {
+  color: #d4ff00;
+}
+
+/* Subheadline */
+.subheadline {
+  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .container {
+    padding: 48px 48px 0;
+  }
+  
+  .brand {
+    font-size: 3.5rem;
+    margin-bottom: 64px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .container {
+    padding: 24px 20px 0;
+  }
+  
+  .brand {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+}

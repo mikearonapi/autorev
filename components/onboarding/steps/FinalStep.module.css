@@ -1,4 +1,5 @@
-/* FinalStep - Action-focused completion screen */
+/* FinalStep - Clean branded completion screen */
+/* Just the brand text on navy, no icon, delayed CTA */
 
 .container {
   display: flex;
@@ -6,155 +7,168 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: var(--space-lg);
-  overflow-y: auto;
-}
-
-.header {
+  padding: var(--space-2xl);
   text-align: center;
-  margin-bottom: var(--space-2xl);
-  flex-shrink: 0;
+  background: var(--color-bg-base); /* Navy background */
 }
 
-.title {
+/* Brand Container - Centered text */
+.brandContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  animation: brandFadeIn 0.8s ease-out;
+}
+
+@keyframes brandFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Brand Title - Large, bold, two-tone */
+.brandTitle {
   font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  color: var(--color-white);
-  margin: 0 0 var(--space-sm);
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0 0 16px;
+  display: flex;
+  gap: 0;
 }
 
-.subtitle {
-  font-size: var(--font-size-base);
-  color: rgba(255, 255, 255, 0.6);
+.brandAuto {
+  color: var(--color-white);
+}
+
+.brandRev {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+/* Welcome text - "You're in, Mike." */
+.welcomeText {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+/* Subtitle - "Welcome to the garage." */
+.subtitleText {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
   margin: 0;
 }
 
-/* Action Button List - Horizontal buttons */
-.actionGrid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  width: 100%;
-  max-width: 400px;
-}
-
-.actionButton {
+/* CTA Button - Full width lime button with delayed appearance */
+.ctaButton {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
-  padding: var(--space-lg) var(--space-xl);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-xl);
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  padding: 18px 32px;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-bg-base, #0d1b2a);
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
+  min-height: 56px;
+  margin-bottom: var(--space-xl);
+  
+  /* Start invisible */
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
 }
 
-.actionButton:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(4px);
-}
-
-.actionButton:active {
-  transform: translateX(0);
-}
-
-.actionEmoji {
-  font-size: 36px;
+.ctaButton svg {
   flex-shrink: 0;
 }
 
-.actionContent {
-  flex: 1;
-  min-width: 0;
+/* Button visible state - triggered after delay */
+.ctaButton.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  animation: ctaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.actionLabel {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-white);
-  display: block;
-  margin-bottom: 4px;
+@keyframes ctaSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.actionDesc {
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.4;
-  display: block;
+.ctaButton:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.25);
 }
 
-/* Arrow indicator */
-.actionArrow {
-  color: rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-  transition: transform 0.2s ease, color 0.2s ease;
+.ctaButton:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.actionButton:hover .actionArrow {
-  color: rgba(255, 255, 255, 0.6);
-  transform: translateX(2px);
+.ctaButton:disabled {
+  cursor: default;
 }
 
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .container {
-    padding: var(--space-md);
-    justify-content: center;
+    padding: var(--space-xl);
   }
-
-  .header {
-    margin-bottom: var(--space-xl);
+  
+  .brandTitle {
+    font-size: 44px;
+    margin-bottom: 12px;
   }
-
-  .title {
-    font-size: var(--font-size-xl);
+  
+  .welcomeText {
+    font-size: 24px;
   }
-
-  .subtitle {
-    font-size: var(--font-size-sm);
+  
+  .subtitleText {
+    font-size: 15px;
   }
-
-  .actionGrid {
-    gap: var(--space-sm);
+  
+  .ctaButton {
     max-width: 100%;
-  }
-
-  .actionButton {
-    padding: var(--space-md) var(--space-lg);
-    gap: var(--space-md);
-  }
-
-  .actionEmoji {
-    font-size: 30px;
-  }
-
-  .actionLabel {
-    font-size: var(--font-size-base);
-  }
-
-  .actionDesc {
-    font-size: var(--font-size-xs);
+    padding: 16px 28px;
+    font-size: 15px;
+    margin-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   }
 }
 
 /* Small phones */
 @media (max-width: 380px) {
-  .actionButton {
-    padding: var(--space-sm) var(--space-md);
+  .brandTitle {
+    font-size: 38px;
   }
   
-  .actionEmoji {
-    font-size: 26px;
-  }
-  
-  .actionLabel {
-    font-size: var(--font-size-sm);
+  .welcomeText {
+    font-size: 22px;
   }
 }
-

@@ -9,14 +9,10 @@ export const size = {
 export const contentType = 'image/png';
 
 /**
- * Favicon - Uses the actual AutoRev logo image
+ * Favicon - AUTOREV wordmark style
+ * Navy background with white "A" and lime "R" for small sizes
  */
 export default async function Icon() {
-  // Fetch the actual logo image
-  const logoData = await fetch(
-    new URL('../public/images/autorev-logo-trimmed.png', import.meta.url)
-  ).then((res) => res.arrayBuffer());
-
   return new ImageResponse(
     (
       <div
@@ -26,19 +22,16 @@ export default async function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#ffffff',
+          background: '#0d1b2a',
+          borderRadius: '6px',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontWeight: 700,
+          fontSize: '18px',
+          letterSpacing: '-1px',
         }}
       >
-{/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`data:image/png;base64,${Buffer.from(logoData).toString('base64')}`}
-          alt=""
-          width={30}
-          height={30}
-          style={{
-            objectFit: 'contain',
-          }}
-        />
+        <span style={{ color: '#ffffff' }}>A</span>
+        <span style={{ color: '#d4ff00' }}>R</span>
       </div>
     ),
     {

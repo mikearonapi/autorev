@@ -1,0 +1,456 @@
+/* =============================================================================
+   PWAInstallPrompt - Installation UI for Progressive Web App
+   
+   Variants:
+   - Banner: Slides up from bottom, minimal footprint
+   - Modal: Full instructions overlay for iOS/manual install
+   - Inline: Embeddable row for settings/profile pages
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Banner Variant
+   ----------------------------------------------------------------------------- */
+
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-elevated, #1b263b);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  padding-bottom: calc(var(--space-3, 12px) + env(safe-area-inset-bottom, 0));
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bannerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 12px);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  flex: 1;
+  min-width: 0;
+}
+
+.bannerIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bannerTitle {
+  font-size: var(--text-body, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bannerDescription {
+  font-size: var(--text-small, 12px);
+  color: var(--color-text-secondary, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bannerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  flex-shrink: 0;
+}
+
+.installButton {
+  background: var(--color-accent-teal, #10b981);
+  color: #ffffff;
+  border: none;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  border-radius: 100px;
+  font-size: var(--text-small, 12px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--touch-target-min, 44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.installButton:hover {
+  background: #0ea573;
+  transform: scale(1.02);
+}
+
+.installButton:active {
+  transform: scale(0.98);
+}
+
+.installButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  padding: var(--space-2, 8px);
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+}
+
+.closeButton:hover {
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* -----------------------------------------------------------------------------
+   Modal Variant (iOS Instructions)
+   ----------------------------------------------------------------------------- */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-4, 16px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--color-bg-elevated, #1b263b);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-6, 24px);
+  padding-bottom: calc(var(--space-6, 24px) + env(safe-area-inset-bottom, 0));
+  position: relative;
+  animation: slideUpModal 0.3s ease-out;
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 640px) {
+  .modalOverlay {
+    align-items: center;
+  }
+  
+  .modal {
+    border-radius: 24px;
+  }
+}
+
+.modalClose {
+  position: absolute;
+  top: var(--space-4, 16px);
+  right: var(--space-4, 16px);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: var(--space-2, 8px);
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.modalClose:hover {
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.modalHeader {
+  text-align: center;
+  margin-bottom: var(--space-6, 24px);
+}
+
+.appIconWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4, 16px);
+}
+
+.appIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modalTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 var(--space-2, 8px);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.modalSubtitle {
+  font-size: var(--text-body, 14px);
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+/* Steps */
+.stepsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+  margin-bottom: var(--space-6, 24px);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+}
+
+.stepNumber {
+  width: 28px;
+  height: 28px;
+  background: var(--color-accent-teal, #10b981);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  flex: 1;
+}
+
+.stepIcon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary, #ffffff);
+  flex-shrink: 0;
+}
+
+.stepIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.scrollText {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.fileText {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stepText {
+  font-size: var(--text-body, 14px);
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1.4;
+}
+
+/* iOS Share hint */
+.iosShareHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-3, 12px);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  margin-bottom: var(--space-6, 24px);
+}
+
+.iosShareHint span {
+  font-size: var(--text-small, 12px);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.shareIconDemo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.shareIconDemo svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Modal actions */
+.modalActions {
+  display: flex;
+  justify-content: center;
+}
+
+.dismissButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-secondary, #94a3b8);
+  padding: var(--space-3, 12px) var(--space-6, 24px);
+  border-radius: 100px;
+  font-size: var(--text-body, 14px);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--touch-target-min, 44px);
+}
+
+.dismissButton:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* -----------------------------------------------------------------------------
+   Inline Variant (for Settings/Profile)
+   ----------------------------------------------------------------------------- */
+
+.inlineContainer {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+}
+
+.inlineContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.inlineIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent-teal, #10b981);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.inlineIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.inlineText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inlineTitle {
+  font-size: var(--text-body, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.inlineDescription {
+  font-size: var(--text-small, 12px);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.inlineButton {
+  background: var(--color-accent-teal, #10b981);
+  color: #ffffff;
+  border: none;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  border-radius: 100px;
+  font-size: var(--text-small, 12px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+
+.inlineButton:hover {
+  background: #0ea573;
+}
+
+.inlineButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}

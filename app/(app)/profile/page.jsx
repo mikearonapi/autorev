@@ -18,6 +18,9 @@ import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
 import { useCheckout } from '@/hooks/useCheckout';
 import { IS_BETA } from '@/lib/tierAccess';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import usePWAInstall from '@/hooks/usePWAInstall';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import DeleteAccountModal from '@/components/DeleteAccountModal';
 
 // Compact Icons
 const Icon = {
@@ -27,13 +30,71 @@ const Icon = {
   external: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
   gift: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
   star: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
+  install: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
 };
 
 const PLAN_NAMES = { free: 'Free', collector: 'Enthusiast', tuner: 'Tuner', admin: 'Admin' };
 
+// Tier features for display
+const TIER_FEATURES = {
+  free: ['Browse car database', 'Basic garage', '25 AL chats/mo'],
+  collector: ['VIN decoding', 'Service tracking', 'Maintenance reminders', '75 AL chats/mo'],
+  tuner: ['Dyno data access', 'Full parts catalog', 'Build projects', '150 AL chats/mo'],
+};
+
+const TIER_PRICES = {
+  free: { amount: 'Free', period: 'forever' },
+  collector: { amount: '$4.99', period: '/month' },
+  tuner: { amount: '$9.99', period: '/month' },
+};
+
+// Tier order for upgrade/downgrade logic
+const TIER_ORDER = ['free', 'collector', 'tuner'];
+
 export default function ProfilePage() {
   const router = useRouter();
   const { user, profile, isAuthenticated, isLoading, logout, updateProfile, triggerOnboarding } = useAuth();
+  const { 
+    shouldShowInstallPrompt, 
+    isIOS, 
+    canPromptNatively, 
+    promptInstall, 
+    isInstalled 
+  } = usePWAInstall();
+  const [showPWAModal, setShowPWAModal] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  // Handle PWA install
+  const handleInstallApp = async () => {
+    if (canPromptNatively) {
+      setIsInstalling(true);
+      await promptInstall();
+      setIsInstalling(false);
+    } else {
+      // Show instructions modal (iOS, etc.)
+      setShowPWAModal(true);
+    }
+  };
+  
+  // Handle account deletion success
+  const handleAccountDeleted = async () => {
+    // Account has been deleted, redirect to home
+    // The logout will happen automatically since auth state changes
+    router.push('/');
+  };
+  
+  // Handle sign out - redirect to homepage after logout
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('[ProfilePage] Sign out error:', error);
+      // Still redirect to home even on error - user expects to be logged out
+      router.push('/');
+    }
+  };
   const { checkoutSubscription, checkoutCredits, isLoading: checkoutLoading } = useCheckout();
   
   const [displayName, setDisplayName] = useState('');
@@ -152,7 +213,7 @@ export default function ProfilePage() {
             <span className={styles.sinceBadge}>Since {memberSince}</span>
           </div>
         </div>
-        <button onClick={logout} className={styles.logoutBtn} title="Sign Out">{Icon.logout}</button>
+        <button onClick={handleSignOut} className={styles.logoutBtn} title="Sign Out">{Icon.logout}</button>
       </header>
 
       {/* AL Fuel Card */}
@@ -253,25 +314,86 @@ export default function ProfilePage() {
 
         {/* Plan */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Plan</h2>
-          {IS_BETA && <p className={styles.betaNote}>{Icon.star} Beta: All features free!</p>}
-          <div className={styles.planGrid}>
-            {['free', 'collector', 'tuner'].map(tier => (
-              <div key={tier} className={`${styles.planOption} ${currentTier === tier ? styles.planCurrent : ''}`}>
-                <span className={styles.planName}>{PLAN_NAMES[tier]}</span>
-                <span className={styles.planPrice}>{tier === 'free' ? 'Free' : tier === 'collector' ? '$5/mo' : '$10/mo'}</span>
-                {currentTier === tier ? (
-                  <span className={styles.currentTag}>Current</span>
-                ) : (
-                  <button onClick={() => handleUpgrade(tier)} className={styles.planBtn}>
-                    {['free', 'collector', 'tuner'].indexOf(tier) > ['free', 'collector', 'tuner'].indexOf(currentTier) ? 'Upgrade' : 'Switch'}
-                  </button>
-                )}
-              </div>
-            ))}
+          <h2 className={styles.sectionTitle}>Your Plan</h2>
+          
+          {/* Current Plan Hero */}
+          <div className={styles.currentPlanHero}>
+            <div className={styles.currentPlanBadge}>
+              {Icon.star}
+              <span className={styles.currentPlanLabel}>Current Plan</span>
+            </div>
+            <h3 className={styles.currentPlanName}>{PLAN_NAMES[currentTier]}</h3>
+            {IS_BETA ? (
+              <p className={styles.betaBanner}>
+                <span className={styles.betaTag}>BETA</span>
+                All features unlocked free during beta!
+              </p>
+            ) : (
+              <p className={styles.currentPlanPrice}>
+                <span className={styles.priceAmount}>{TIER_PRICES[currentTier].amount}</span>
+                <span className={styles.pricePeriod}>{TIER_PRICES[currentTier].period}</span>
+              </p>
+            )}
           </div>
-          {profile?.stripe_customer_id && (
-            <button onClick={async () => { const res = await fetch('/api/billing/portal', { method: 'POST' }); const d = await res.json(); if (d.url) window.location.href = d.url; }} className={styles.billingLink}>
+
+          {/* Plan Options */}
+          <div className={styles.planOptions}>
+            <p className={styles.planOptionsLabel}>
+              {IS_BETA ? 'Select your tier (all features free in beta):' : 'Available plans:'}
+            </p>
+            <div className={styles.planGrid}>
+              {TIER_ORDER.map(tier => {
+                const isCurrent = currentTier === tier;
+                const tierIndex = TIER_ORDER.indexOf(tier);
+                const currentIndex = TIER_ORDER.indexOf(currentTier);
+                const isUpgrade = tierIndex > currentIndex;
+                const isDowngrade = tierIndex < currentIndex;
+                
+                return (
+                  <div 
+                    key={tier} 
+                    className={`${styles.planCard} ${isCurrent ? styles.planCardCurrent : ''}`}
+                  >
+                    {isCurrent && <div className={styles.yourPlanRibbon}>Your Plan</div>}
+                    <span className={styles.planName}>{PLAN_NAMES[tier]}</span>
+                    <span className={styles.planPrice}>
+                      {TIER_PRICES[tier].amount}
+                      {tier !== 'free' && <span className={styles.planPeriod}>{TIER_PRICES[tier].period}</span>}
+                    </span>
+                    <ul className={styles.planFeatures}>
+                      {TIER_FEATURES[tier].map((feature, i) => (
+                        <li key={i}>{Icon.check} {feature}</li>
+                      ))}
+                    </ul>
+                    {isCurrent ? (
+                      <span className={styles.currentPlanTag}>
+                        {Icon.check} Active
+                      </span>
+                    ) : (
+                      <button 
+                        onClick={() => handleUpgrade(tier)} 
+                        className={`${styles.planBtn} ${isUpgrade ? styles.planBtnUpgrade : styles.planBtnSwitch}`}
+                        disabled={checkoutLoading}
+                      >
+                        {isUpgrade ? 'Upgrade' : 'Switch'}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Billing Link */}
+          {profile?.stripe_customer_id && !IS_BETA && (
+            <button 
+              onClick={async () => { 
+                const res = await fetch('/api/billing/portal', { method: 'POST' }); 
+                const d = await res.json(); 
+                if (d.url) window.location.href = d.url; 
+              }} 
+              className={styles.billingLink}
+            >
               Manage billing {Icon.external}
             </button>
           )}
@@ -290,26 +412,60 @@ export default function ProfilePage() {
         {/* App */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>App</h2>
-          <button onClick={triggerOnboarding} className={styles.tourBtn}>Replay app tour</button>
-          <button onClick={logout} className={styles.signOutBtn}>{Icon.logout} Sign out</button>
-          <button onClick={() => setShowClearModal('delete')} className={styles.deleteBtn}>Delete account</button>
+          {/* PWA Install button - only shown when not installed */}
+          {shouldShowInstallPrompt && !isInstalled && (
+            <button 
+              onClick={handleInstallApp} 
+              className={styles.installBtn}
+              disabled={isInstalling}
+            >
+              {Icon.install} 
+              {isInstalling ? 'Installing...' : 'Install App'}
+              <span className={styles.installHint}>Add to home screen</span>
+            </button>
+          )}
+          {isInstalled && (
+            <div className={styles.installedBadge}>
+              {Icon.check} App installed
+            </div>
+          )}
+          <button onClick={triggerOnboarding} className={styles.tourBtn}>Relaunch Onboarding</button>
+          <button onClick={handleSignOut} className={styles.signOutBtn}>{Icon.logout} Sign out</button>
+          <button onClick={() => setShowDeleteModal(true)} className={styles.deleteBtn}>Delete account</button>
         </section>
       </div>
 
-      {/* Clear Modal */}
+      {/* Clear Data Modal */}
       {showClearModal && (
         <div className={styles.modalOverlay} onClick={() => setShowClearModal(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3>{showClearModal === 'delete' ? 'Delete Account?' : `Clear ${showClearModal === 'vehicles' ? 'Garage' : 'AL History'}?`}</h3>
+            <h3>Clear {showClearModal === 'vehicles' ? 'Garage' : 'AL History'}?</h3>
             <p>This cannot be undone.</p>
             <div className={styles.modalBtns}>
               <button onClick={() => setShowClearModal(null)} className={styles.cancelBtn}>Cancel</button>
-              <button onClick={() => showClearModal === 'delete' ? alert('Contact support') : handleClearData(showClearModal)} className={styles.confirmBtn}>
-                {showClearModal === 'delete' ? 'Contact Support' : 'Clear'}
+              <button onClick={() => handleClearData(showClearModal)} className={styles.confirmBtn}>
+                Clear
               </button>
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Delete Account Modal */}
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        userId={user?.id}
+        onDeleted={handleAccountDeleted}
+      />
+      
+      {/* PWA Install Modal (iOS instructions) */}
+      {showPWAModal && (
+        <PWAInstallPrompt 
+          variant="modal" 
+          forceShow={true}
+          onDismissed={() => setShowPWAModal(false)}
+        />
       )}
     </div>
   );

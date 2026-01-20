@@ -134,6 +134,62 @@ const pageSchema = {
   },
 };
 
+// FAQ Schema for rich snippets in Google search results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How does the Tuning Shop calculate horsepower gains?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Power gain estimates are based on real dyno data from verified builds, manufacturer claims, and community-reported results. We show estimated ranges rather than exact numbers because actual gains depend on factors like tune quality, supporting mods, and individual engine health.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I see which mods work well together?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! The Tuning Shop shows you common build paths and which modifications complement each other. You can see how different mods stack, identify potential conflicts, and build a complete package that makes sense for your goals.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the Tuning Shop free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! You can explore builds, configure modifications, and see estimated gains completely free. Create a free account to save your builds and compare different configurations. Premium features like detailed part recommendations are available with upgraded tiers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What types of modifications does the Tuning Shop cover?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Tuning Shop covers engine modifications (intake, exhaust, tune, headers, forced induction), suspension upgrades, brake upgrades, wheel and tire configurations, and exterior/aero modifications. Each category includes multiple options with estimated performance impacts.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How accurate are the build cost estimates?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Cost estimates are based on typical retail prices for parts and common labor rates for installation. We show ranges to account for price variations between brands and regions. Actual costs may vary based on your location, chosen shops, and specific part selections.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can AL help me plan my build?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely! AL can recommend modifications based on your specific car, budget, and goals (street, track, daily driving). Ask AL about common build paths, what to prioritize first, and which mods give the best value for your platform.',
+      },
+    },
+  ],
+};
+
 const Icons = {
   chat: ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -227,6 +283,10 @@ export default function TuningShopLandingPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
         <LandingTracking pageId="tuning-shop" />
 

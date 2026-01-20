@@ -248,7 +248,7 @@
 
 .dotActive {
   width: 20px;
-  background: var(--sn-accent);
+  background: #10b981; /* Teal for non-CTA indicators */
 }
 
 /* Footer - compact with dots, buttons, checkbox */

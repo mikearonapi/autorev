@@ -1,0 +1,198 @@
+/* IntentStep - Multi-select cards with checkboxes */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: var(--space-lg);
+}
+
+/* Header */
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-xs);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 var(--space-xl);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out 0.1s backwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Option Grid */
+.optionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Option Card */
+.optionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+  animation: cardSlideIn 0.4s ease-out backwards;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.optionCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.optionCard:active {
+  transform: scale(0.98);
+}
+
+.optionCard.selected {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--sn-accent);
+}
+
+/* Emoji */
+.emoji {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.optionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 2px;
+}
+
+.optionDesc {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Checkbox */
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: transparent;
+}
+
+.optionCard.selected .checkbox {
+  background: var(--sn-accent);
+  border-color: var(--sn-accent);
+  color: var(--brand-border-subtle);
+}
+
+/* Hint */
+.hint {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: var(--space-lg);
+  animation: fadeIn 0.4s ease-out 0.3s backwards;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
+  .title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .subtitle {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .optionGrid {
+    gap: var(--space-xs);
+  }
+  
+  .optionCard {
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-sm);
+  }
+  
+  .emoji {
+    font-size: 24px;
+  }
+  
+  .optionTitle {
+    font-size: var(--font-size-sm);
+  }
+  
+  .optionDesc {
+    font-size: 11px;
+  }
+  
+  .checkbox {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .optionCard {
+    padding: var(--space-sm);
+  }
+  
+  .emoji {
+    font-size: 22px;
+  }
+}
