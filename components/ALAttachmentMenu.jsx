@@ -13,49 +13,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import styles from './ALAttachmentMenu.module.css';
-
-// SVG Icons
-const Icons = {
-  // Close icon
-  close: (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  ),
-  // Camera icon
-  camera: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  ),
-  // Image/Gallery icon
-  image: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-      <circle cx="8.5" cy="8.5" r="1.5"/>
-      <polyline points="21 15 16 10 5 21"/>
-    </svg>
-  ),
-  // Document icon
-  document: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-      <polyline points="10 9 9 9 8 9"/>
-    </svg>
-  ),
-  // Small document icon for preview
-  documentSmall: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-    </svg>
-  ),
-};
+import { Icons } from '@/components/ui/Icons';
 
 // Supported file types
 const ACCEPTED_FILE_TYPES = {
@@ -204,7 +162,7 @@ export default function ALAttachmentMenu({
         <div className={styles.menuHeader}>
           <span className={styles.menuTitle}>Add Attachment</span>
           <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-            {Icons.close}
+            <Icons.close size={12} />
           </button>
         </div>
         
@@ -224,7 +182,7 @@ export default function ALAttachmentMenu({
               className={styles.option} 
               onClick={triggerCameraCapture}
             >
-              <span className={styles.optionIcon}>{Icons.camera}</span>
+              <span className={styles.optionIcon}><Icons.camera size={20} /></span>
               <div className={styles.optionText}>
                 <span className={styles.optionLabel}>Take Photo</span>
                 <span className={styles.optionDescription}>Capture with camera</span>
@@ -236,7 +194,7 @@ export default function ALAttachmentMenu({
               className={styles.option} 
               onClick={triggerImageUpload}
             >
-              <span className={styles.optionIcon}>{Icons.image}</span>
+              <span className={styles.optionIcon}><Icons.image size={20} /></span>
               <div className={styles.optionText}>
                 <span className={styles.optionLabel}>Photo Library</span>
                 <span className={styles.optionDescription}>Choose from gallery</span>
@@ -248,7 +206,7 @@ export default function ALAttachmentMenu({
               className={styles.option} 
               onClick={triggerDocumentUpload}
             >
-              <span className={styles.optionIcon}>{Icons.document}</span>
+              <span className={styles.optionIcon}><Icons.document size={20} /></span>
               <div className={styles.optionText}>
                 <span className={styles.optionLabel}>Document</span>
                 <span className={styles.optionDescription}>Upload PDF</span>
@@ -292,7 +250,7 @@ export function ALAttachmentPreview({ attachment, onRemove, compact = false }) {
         />
       ) : (
         <div className={styles.previewDocument}>
-          <span className={styles.previewDocIcon}>{Icons.documentSmall}</span>
+          <span className={styles.previewDocIcon}><Icons.document size={18} /></span>
         </div>
       )}
       <div className={styles.previewInfo}>
@@ -309,7 +267,7 @@ export function ALAttachmentPreview({ attachment, onRemove, compact = false }) {
           onClick={() => onRemove(attachment.id)}
           aria-label="Remove attachment"
         >
-          {Icons.close}
+          <Icons.close size={12} />
         </button>
       )}
     </div>
