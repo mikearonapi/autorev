@@ -56,7 +56,15 @@ export async function GET(request, { params }) {
     
     if (error) {
       // If RPC doesn't exist yet (migration not run), fall back to direct query
-      if (error.code === '42883' || error.message?.includes('does not exist')) {
+      // PostgREST returns PGRST202 when function is not in schema cache
+      // Postgres returns 42883 when function doesn't exist
+      const isMissingFunction = 
+        error.code === '42883' || 
+        error.code === 'PGRST202' ||
+        error.message?.includes('does not exist') ||
+        error.message?.includes('Could not find the function');
+      
+      if (isMissingFunction) {
         const query = supabase
           .from('user_track_times')
           .select(`

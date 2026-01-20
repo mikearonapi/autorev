@@ -36,9 +36,10 @@ async function getUserContext(userId) {
   
   try {
     // Fetch user's owned vehicles
+    // Note: cars table has 'name' not 'make' - name contains full car name like "2019 BMW M3"
     const { data: vehicles } = await supabaseAdmin
       .from('user_vehicles')
-      .select('car_slug, car_id, cars(make, hp)')
+      .select('car_slug, car_id, cars(name, hp)')
       .eq('user_id', userId)
       .limit(10);
     
@@ -71,7 +72,8 @@ async function getUserContext(userId) {
     return buildUserContext({
       ownedVehicles: vehicles?.map(v => ({
         car_slug: v.car_slug,
-        make: v.cars?.make,
+        // Extract make from car name (first word, e.g., "BMW M3" -> "BMW")
+        make: v.cars?.name?.split(' ')[0] || null,
         hp: v.cars?.hp,
       })) || [],
       favorites: favorites?.map(f => ({ car_slug: f.car_slug })) || [],
