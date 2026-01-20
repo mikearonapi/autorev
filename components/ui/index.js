@@ -11,6 +11,4 @@ export { Icons, default as IconsDefault } from './Icons';
 export * from './Icons';
 
 export { default as Modal } from './Modal';
-
-// Future exports (uncomment when created):
-// export { default as EmptyState } from './EmptyState';
+export { default as EmptyState } from './EmptyState';
