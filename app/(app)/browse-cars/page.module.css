@@ -83,7 +83,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: var(--space-2xs) var(--space-sm);
-  background: rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.2);
   color: var(--sn-gold);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-sm);
@@ -236,7 +236,7 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--sn-primary);
-  box-shadow: 0 0 0 3px rgba(26, 77, 110, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 /* Filters */
@@ -787,23 +787,48 @@
   color: var(--color-white);
 }
 
+/* Ask AL CTA button - LIME per brand guidelines
+   MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
 .askAlBtn {
-  display: flex;
+  /* Fixed dimensions for consistency */
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-lg);
-  background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-primary-dark) 100%);
-  color: var(--color-white);
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  
+  /* Appearance */
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #0d1b2a);
   border: none;
-  border-radius: var(--radius-md);
-  font-weight: 500;
+  border-radius: 14px;
+  
+  /* Typography - use fixed px for consistency */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  
+  /* Layout */
+  gap: 4px;
+  flex-shrink: 0;
+  
+  /* Interaction */
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .askAlBtn:hover {
+  background: var(--brand-lime-dark, #bfe600);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.askAlBtn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 /* Request a Car Banner */
@@ -893,7 +918,7 @@
 .requestCarBannerBtn:hover {
   background: var(--sn-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-teal-dark-rgb), 0.3);
 }
 
 /* CTA Section */

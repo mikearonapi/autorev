@@ -1,0 +1,379 @@
+/**
+ * UpgradeConfigPanel Styles
+ * 
+ * Inline configuration panel that appears when an upgrade with options is selected.
+ * Uses progressive disclosure pattern - expands smoothly below the upgrade checkbox.
+ */
+
+/* Container for the config panel */
+.configPanel {
+  margin: 8px 0 4px 28px;  /* Indent to align under checkbox label */
+  padding: 12px 14px;
+  background: rgba(255, 77, 0, 0.08);
+  border: 1px solid rgba(255, 77, 0, 0.25);
+  border-radius: 8px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header with "Configure" label */
+.configHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gold, var(--accent-primary, #ff4d00));
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 77, 0, 0.15);
+}
+
+.configHeader svg {
+  opacity: 0.8;
+}
+
+.totalModifier {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-success, var(--brand-success-light));
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Body containing config options */
+.configBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Compact mode - no outer container, cleaner look */
+.configBodyCompact {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Individual config group (label + options) */
+.configGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.configLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.labelText {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.labelHint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Radio button options container */
+.radioOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual radio option */
+.radioOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.radioOption:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.radioOption.selected {
+  background: rgba(255, 77, 0, 0.12);
+  border-color: rgba(255, 77, 0, 0.4);
+}
+
+/* Hidden radio input */
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Custom radio button */
+.radioButton {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: all 0.15s ease;
+}
+
+.radioOption.selected .radioButton {
+  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
+}
+
+.radioDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-gold, var(--accent-primary, #ff4d00));
+  border-radius: 50%;
+}
+
+/* Radio content (label, description, notes) */
+.radioContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  flex-wrap: wrap;
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.radioDescription {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+}
+
+.radioNote {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--color-info, var(--brand-blue));
+  margin-top: 4px;
+}
+
+.radioNote svg {
+  flex-shrink: 0;
+}
+
+/* HP badge on options */
+.hpBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--color-success, var(--brand-success-light));
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Cost badges */
+.costBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning, #f59e0b);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.costBadgeSave {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--color-success, var(--brand-success-light));
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Warning message for selected option */
+.configWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.configWarning svg {
+  flex-shrink: 0;
+  color: var(--color-error, var(--brand-error));
+  margin-top: 1px;
+}
+
+/* Dependency/recommendation message */
+.configDependency {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.configDependency svg {
+  flex-shrink: 0;
+  color: var(--color-info, var(--brand-blue));
+  margin-top: 1px;
+}
+
+/* Checkbox option styling */
+.checkboxOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.checkboxOption:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.checkboxOption.checked {
+  background: rgba(255, 77, 0, 0.12);
+  border-color: rgba(255, 77, 0, 0.4);
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkboxBox {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: all 0.15s ease;
+}
+
+.checkboxOption.checked .checkboxBox {
+  background: var(--color-gold, var(--accent-primary, #ff4d00));
+  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
+}
+
+.checkboxBox svg {
+  color: var(--brand-bg-primary);
+}
+
+.checkboxContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.checkboxDescription {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.checkboxNote {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--color-info, var(--brand-blue));
+  margin-top: 4px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+  .configPanel {
+    margin-left: 20px;
+    padding: 10px 12px;
+  }
+  
+  .radioOption,
+  .checkboxOption {
+    padding: 8px 10px;
+  }
+  
+  .radioLabel,
+  .checkboxLabel {
+    font-size: 12px;
+  }
+  
+  .hpBadge,
+  .costBadge,
+  .costBadgeSave {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+}

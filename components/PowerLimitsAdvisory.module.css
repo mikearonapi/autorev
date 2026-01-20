@@ -1,11 +1,14 @@
 /* ===========================================
    POWER LIMITS ADVISORY
    Standalone component for Data tab
+   
+   Design: Matches specs page card styling - dark background, subtle borders
+   Amber is used sparingly for WARNING HIGHLIGHTS only, not card chrome
    =========================================== */
 
 .powerLimits {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 20px;
 }
@@ -18,13 +21,16 @@
 }
 
 .powerLimitsHeader svg {
-  color: var(--brand-warning);
+  color: var(--color-warning, #f59e0b);
 }
 
 .powerLimitsHeader span:first-of-type {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--brand-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-warning, #f59e0b);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   flex: 1;
 }
 

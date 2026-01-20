@@ -60,7 +60,7 @@
 .viewAllLink {
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--accent-primary);
+  color: var(--brand-teal);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -95,8 +95,8 @@
 }
 
 .arrowBtn:hover:not(:disabled) {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
+  background: var(--brand-teal);
+  border-color: var(--brand-teal);
   color: var(--text-primary);
 }
 
@@ -180,10 +180,10 @@
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: var(--accent-primary);
+  border-color: var(--brand-teal);
   box-shadow: 
-    0 12px 40px -12px rgba(255, 77, 0, 0.3),
-    0 0 0 1px rgba(255, 77, 0, 0.1);
+    0 12px 40px -12px rgba(16, 185, 129, 0.3),
+    0 0 0 1px rgba(16, 185, 129, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -248,7 +248,7 @@
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   border-radius: var(--radius-full);
-  color: var(--accent-primary);
+  color: var(--brand-teal);
 }
 
 /* Card Content */
@@ -299,11 +299,11 @@
 }
 
 .statItem svg {
-  color: var(--accent-primary);
+  color: var(--brand-teal);
 }
 
 .statItem:first-child {
-  color: var(--accent-primary);
+  color: var(--brand-teal);
   font-weight: 600;
 }
 
@@ -331,7 +331,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-sm) var(--space-xl);
-  background: var(--accent-primary);
+  background: var(--brand-teal);
   color: var(--text-primary);
   font-family: var(--font-display);
   font-size: var(--font-size-base);

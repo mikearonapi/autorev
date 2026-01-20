@@ -83,7 +83,7 @@
 }
 
 .learnMore a {
-  color: var(--accent-primary);
+  color: var(--brand-teal);
   text-decoration: none;
 }
 
@@ -103,14 +103,14 @@
 }
 
 .infoLink:hover {
-  color: var(--accent-primary);
+  color: var(--brand-teal);
 }
 
 /* =========================================================================
    Advisory Variant
    ========================================================================= */
 .advisoryContainer {
-  background: var(--color-white, #fff);
+  background: var(--color-white, var(--brand-text-primary));
   border: 1px solid var(--color-gray-200, #e5e5e5);
   border-radius: 12px;
   overflow: hidden;
@@ -208,7 +208,7 @@
 
 .scaleList .scoreBelowAverage {
   font-weight: 600;
-  color: var(--score-poor, #b91c1c);
+  color: var(--score-poor, var(--brand-error-dark));
 }
 
 .sourceList li::before {
@@ -555,7 +555,7 @@
   content: '•';
   position: absolute;
   left: 0;
-  color: var(--accent-primary);
+  color: var(--brand-teal);
 }
 
 .notList strong {
@@ -567,7 +567,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  color: var(--accent-primary);
+  color: var(--brand-teal);
   font-weight: 500;
   text-decoration: none;
   transition: opacity var(--transition-fast);

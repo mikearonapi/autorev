@@ -48,6 +48,52 @@ import { logServerError } from '@/lib/serverErrorLogger';
 // Stream encoding helper
 const encoder = new TextEncoder();
 
+/**
+ * Build Claude message content with text and optional image attachments
+ * Uses Claude Vision API format for image analysis
+ * @param {string} text - The text content
+ * @param {Array} attachments - Array of attachment objects
+ * @returns {Array} Content array for Claude message
+ */
+function buildMessageContentWithAttachments(text, attachments = []) {
+  if (!attachments || attachments.length === 0) {
+    return text; // Simple string for text-only messages
+  }
+  
+  // Build content array with images first, then text
+  const content = [];
+  
+  // Add image attachments
+  for (const attachment of attachments) {
+    if (attachment.file_type?.startsWith('image/')) {
+      // Claude Vision format for URL-based images
+      content.push({
+        type: 'image',
+        source: {
+          type: 'url',
+          url: attachment.public_url,
+        },
+      });
+    }
+  }
+  
+  // Add text content (with context about what to analyze if applicable)
+  let textContent = text;
+  if (content.length > 0) {
+    // Prepend context about attached images
+    const imageCount = content.length;
+    const contextPrefix = `[User has attached ${imageCount} image${imageCount > 1 ? 's' : ''} for analysis]\n\n`;
+    textContent = contextPrefix + text;
+  }
+  
+  content.push({
+    type: 'text',
+    text: textContent,
+  });
+  
+  return content;
+}
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
@@ -95,7 +141,43 @@ const DOMAIN_TOOL_MAP = {
   track: ['get_car_ai_context', 'get_track_lap_times', 'search_knowledge', 'recommend_build', 'search_events'],
   events: ['search_events'],
   education: ['search_encyclopedia', 'get_upgrade_info', 'search_knowledge'],
+  // Image analysis domain - triggered when attachments are present
+  image_analysis: ['analyze_uploaded_content', 'get_car_ai_context', 'search_parts', 'get_known_issues'],
 };
+
+/**
+ * Map user preference toggles to tool names
+ * These tools can be disabled by the user in their preferences
+ */
+const TOGGLEABLE_TOOLS = {
+  web_search_enabled: ['search_web'],
+  forum_insights_enabled: ['search_community_insights'],
+  youtube_reviews_enabled: ['get_expert_reviews'],
+  event_search_enabled: ['search_events'],
+};
+
+/**
+ * Filter tools based on user preferences (toggles)
+ * @param {Array} tools - Array of tool objects
+ * @param {Object} userPreferences - User's AL preferences
+ * @returns {Array} Filtered tools based on user preferences
+ */
+function filterToolsByUserPreferences(tools, userPreferences) {
+  if (!userPreferences) return tools;
+  
+  // Build set of disabled tool names based on user preferences
+  const disabledTools = new Set();
+  
+  for (const [prefKey, toolNames] of Object.entries(TOGGLEABLE_TOOLS)) {
+    // If preference is explicitly false, disable those tools
+    if (userPreferences[prefKey] === false) {
+      toolNames.forEach(tool => disabledTools.add(tool));
+    }
+  }
+  
+  // Filter out disabled tools
+  return tools.filter(tool => !disabledTools.has(tool.name));
+}
 
 /**
  * Filter tools based on detected query domains to reduce token count.
@@ -103,17 +185,23 @@ const DOMAIN_TOOL_MAP = {
  * @param {Array} allTools - All available tools
  * @param {Array} domains - Detected query domains
  * @param {Object} plan - User's plan (for tool access filtering)
+ * @param {Object} userPreferences - User's AL preferences (for toggles)
  * @returns {Array} Filtered tools relevant to the query
  */
-function filterToolsByDomain(allTools, domains, plan) {
+function filterToolsByDomain(allTools, domains, plan, userPreferences = null) {
   // First filter by plan access
-  const planAccessibleTools = allTools.filter(tool => 
+  let filteredTools = allTools.filter(tool => 
     plan.toolAccess === 'all' || plan.toolAccess.includes(tool.name)
   );
   
-  // If no domains detected or domains array is empty, return all plan-accessible tools
+  // Apply user preference toggles (if user disabled web search, forums, etc.)
+  if (userPreferences) {
+    filteredTools = filterToolsByUserPreferences(filteredTools, userPreferences);
+  }
+  
+  // If no domains detected or domains array is empty, return all accessible tools
   if (!domains || domains.length === 0) {
-    return planAccessibleTools;
+    return filteredTools;
   }
   
   // Build set of relevant tool names from detected domains
@@ -127,17 +215,17 @@ function filterToolsByDomain(allTools, domains, plan) {
   }
   
   // Filter to only include relevant tools
-  const filteredTools = planAccessibleTools.filter(tool => 
+  const domainFilteredTools = filteredTools.filter(tool => 
     relevantToolNames.has(tool.name)
   );
   
-  // If filtering resulted in very few tools, include all plan-accessible tools
+  // If filtering resulted in very few tools, include all accessible tools
   // (this handles edge cases where domain detection might miss something)
-  if (filteredTools.length < 4) {
-    return planAccessibleTools;
+  if (domainFilteredTools.length < 4) {
+    return filteredTools;
   }
   
-  return filteredTools;
+  return domainFilteredTools;
 }
 
 // =============================================================================
@@ -358,6 +446,8 @@ async function handleStreamingResponse({
   activeConversationId,
   carSlug,
   userId,
+  userPreferences = null,
+  attachments = [],
 }) {
   const stream = new ReadableStream({
     async start(controller) {
@@ -369,9 +459,9 @@ async function handleStreamingResponse({
           conversationId: activeConversationId,
         });
 
-        // Filter tools based on user's plan AND detected domains
+        // Filter tools based on user's plan, detected domains, AND user preferences
         // Domain filtering reduces token count by only including relevant tools
-        const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan);
+        const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan, userPreferences);
 
         // Build system prompt from single source of truth
         const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
@@ -385,12 +475,15 @@ async function handleStreamingResponse({
         });
 
         // Format messages for Claude
+        // Build user message content with attachments (for Claude Vision)
+        const userMessageContent = buildMessageContentWithAttachments(message, attachments);
+        
         let messages;
         if (existingMessages.length > 0) {
           messages = formatMessagesForClaude(existingMessages);
-          messages.push({ role: 'user', content: message });
+          messages.push({ role: 'user', content: userMessageContent });
         } else {
-          messages = [{ role: 'user', content: message }];
+          messages = [{ role: 'user', content: userMessageContent }];
         }
 
         const usageTotals = { inputTokens: 0, outputTokens: 0, callCount: 0 };
@@ -630,6 +723,7 @@ export async function POST(request) {
       planId: requestedPlanId,
       userVehicleOverride,
       stream: bodyStream,
+      attachments = [], // Array of { public_url, file_type, file_name, analysis_context }
     } = body;
     
     // Allow streaming to be requested via body as well
@@ -655,6 +749,7 @@ export async function POST(request) {
     let userBalance = null;
     let plan = null;
     let costEstimate = null;
+    let userPreferences = null;
 
     if (!isInternalEval) {
       // Check and potentially refill user's balance
@@ -665,6 +760,24 @@ export async function POST(request) {
       // Get user's current balance and plan
       userBalance = await getUserBalance(userId);
       plan = getPlan(userBalance.plan);
+
+      // Fetch user's AL preferences (for tool toggles)
+      try {
+        const supabaseServiceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (supabaseServiceUrl && supabaseServiceKey) {
+          const supabaseAdmin = createClient(supabaseServiceUrl, supabaseServiceKey);
+          const { data: prefs } = await supabaseAdmin
+            .from('al_user_preferences')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+          userPreferences = prefs || null;
+        }
+      } catch (prefsError) {
+        // Non-fatal - continue with default preferences (all enabled)
+        console.warn('[AL] Failed to fetch user preferences:', prefsError?.message);
+      }
 
       // Estimate cost and check if user has enough balance
       costEstimate = estimateQueryCost(message, !!carSlug);
@@ -694,6 +807,14 @@ export async function POST(request) {
     // PARALLEL EXECUTION START
     // 1. Detect domains (sync, fast)
     const domains = detectDomains(message);
+    
+    // Add image_analysis domain if attachments are present
+    if (attachments && attachments.length > 0) {
+      const hasImages = attachments.some(a => a.file_type?.startsWith('image/'));
+      if (hasImages && !domains.includes('image_analysis')) {
+        domains.push('image_analysis');
+      }
+    }
 
     // 2. Start building context (async, heavy) - we'll await this later
     const contextPromise = buildAIContext({
@@ -786,6 +907,8 @@ export async function POST(request) {
         activeConversationId,
         carSlug,
         userId,
+        userPreferences,
+        attachments,
       });
     }
 
@@ -796,9 +919,9 @@ export async function POST(request) {
     // Format context for the system prompt
     const contextText = formatContextForAI(context);
 
-    // Filter tools based on user's plan AND detected domains
+    // Filter tools based on user's plan, detected domains, AND user preferences
     // Domain filtering reduces token count by only including relevant tools
-    const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan);
+    const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan, userPreferences);
 
     // Build system prompt from single source of truth
     const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
@@ -812,14 +935,17 @@ export async function POST(request) {
     });
 
     // Format messages for Claude - use existing conversation history if available
+    // Build user message content with attachments (for Claude Vision)
+    const userMessageContent = buildMessageContentWithAttachments(message, attachments);
+    
     let messages;
     if (existingMessages.length > 0) {
       // Use stored conversation history
       messages = formatMessagesForClaude(existingMessages);
-      messages.push({ role: 'user', content: message });
+      messages.push({ role: 'user', content: userMessageContent });
     } else {
-      // Use provided history (for backwards compatibility)
-      messages = formatMessagesForClaudeFromHistory(history, message);
+      // Use provided history (for backwards compatibility) with attachments
+      messages = formatMessagesForClaudeFromHistory(history, message, attachments);
     }
 
     // Initial Claude API call with tools
@@ -1121,7 +1247,7 @@ async function callClaudeWithTools({ systemPrompt, messages, tools, maxTokens })
 /**
  * Format chat history for Claude (from client-provided history)
  */
-function formatMessagesForClaudeFromHistory(history, currentMessage) {
+function formatMessagesForClaudeFromHistory(history, currentMessage, attachments = []) {
   const messages = [];
   
   // Add recent history
@@ -1132,10 +1258,11 @@ function formatMessagesForClaudeFromHistory(history, currentMessage) {
     });
   });
   
-  // Add current message
+  // Add current message with attachments (for Claude Vision)
+  const currentContent = buildMessageContentWithAttachments(currentMessage, attachments);
   messages.push({
     role: 'user',
-    content: currentMessage,
+    content: currentContent,
   });
   
   return messages;

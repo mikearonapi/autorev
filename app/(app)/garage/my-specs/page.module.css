@@ -83,7 +83,7 @@
 .emptyAction:hover {
   background: var(--brand-lime-dark, #bfe600);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.25);
 }
 
 /* Content */
@@ -97,34 +97,36 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
-  position: relative;
+  gap: 4px;
 }
 
+.statRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+/* HP stat value uses teal (positive metric) */
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-teal);
 }
 
 .statLabel {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 .statGain {
-  position: absolute;
-  top: -4px;
-  right: -8px;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: var(--brand-teal, var(--brand-teal));
+  color: var(--brand-teal, #10b981);
   background: rgba(16, 185, 129, 0.15);
-  padding: 2px 5px;
+  padding: 2px 8px;
   border-radius: 4px;
-  transform: translateX(100%);
 }
 
 /* Specs Grid */
@@ -149,13 +151,68 @@
   padding: 16px;
 }
 
+/* Section header row with title + Ask AL button */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 12px;
+  gap: 8px;
+}
+
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .cardTitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0 0 12px;
+  margin: 0;
+}
+
+/* Ask AL CTA button - LIME per brand guidelines
+   MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
+.askAlBtn {
+  /* Fixed dimensions for consistency */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  
+  /* Appearance */
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #0d1b2a);
+  border: none;
+  border-radius: 14px;
+  
+  /* Typography - use fixed px for consistency */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  
+  /* Layout */
+  gap: 4px;
+  flex-shrink: 0;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.askAlBtn:hover {
+  background: var(--brand-lime-dark, #bfe600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.askAlBtn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 .specItems {
@@ -164,11 +221,12 @@
   gap: 10px;
 }
 
+/* Body content is SMALLER than section headers */
 .specItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
 }
 
 .specItem span:first-child {
@@ -249,9 +307,10 @@
   overflow: hidden;
 }
 
+/* Rating fill uses teal (positive metric) */
 .ratingFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary, var(--brand-gold)) 0%, var(--brand-gold-light) 100%);
+  background: linear-gradient(90deg, var(--brand-teal) 0%, var(--brand-teal-light) 100%);
   border-radius: 3px;
   transition: width 0.3s ease;
 }

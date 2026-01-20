@@ -24,7 +24,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   flex: 1;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .trendDown {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   color: var(--brand-error);
 }
 
@@ -107,7 +107,7 @@
 
 .retryButton {
   background: var(--sn-accent, #c4a564);
-  color: #000;
+  color: var(--brand-bg-primary);
   border: none;
   padding: 0.4rem 0.75rem;
   border-radius: 4px;
@@ -118,7 +118,7 @@
 }
 
 .retryButton:hover {
-  background: #d4b574;
+  background: var(--brand-gold);
   transform: scale(1.02);
 }
 
@@ -132,8 +132,8 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background: rgba(255, 77, 0, 0.1);
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 8px;
   margin-bottom: 1rem;
   text-align: center;
@@ -188,7 +188,7 @@
 .sourceName {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .sourceType {
@@ -218,7 +218,7 @@
 .sourceStatValue {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .sourceFooter {
@@ -262,7 +262,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   margin: 0 0 0.75rem;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .historyTitle svg {
@@ -296,7 +296,7 @@
 .historyPrice {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 /* Responsive */

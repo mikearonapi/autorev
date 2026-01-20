@@ -67,7 +67,7 @@
 
 .tierBadge {
   padding: 0.25rem 0.75rem;
-  background: rgba(233, 69, 96, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   color: var(--brand-error);
   font-size: 0.75rem;
   font-weight: 600;

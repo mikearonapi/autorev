@@ -472,7 +472,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(26, 77, 110, 0.1);
+  background: rgba(var(--brand-teal-dark-rgb), 0.1);
   color: var(--sn-primary);
   border-radius: var(--radius-md);
 }
@@ -862,7 +862,7 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--sn-accent-dark);
-  background: rgba(255, 77, 0, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   padding: 2px 8px;
   border-radius: var(--radius-full);
 }

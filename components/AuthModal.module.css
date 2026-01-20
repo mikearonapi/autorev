@@ -189,7 +189,7 @@
 .inputGroup input:focus {
   outline: none;
   border-color: var(--sn-primary);
-  box-shadow: 0 0 0 3px rgba(26, 77, 110, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 .inputGroup input::placeholder {

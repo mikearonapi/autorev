@@ -1,0 +1,346 @@
+/* ===========================================
+   PREDICTED VS ACTUAL
+   Feedback loop comparison component
+   
+   Brand Colors:
+   - Teal (#10b981): Positive outcomes
+   - Blue (#3b82f6): Baseline/predicted
+   - Amber (#f59e0b): Warnings/negative gaps
+   =========================================== */
+
+.comparisonCard {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.labelSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.typeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-teal);
+}
+
+.label {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Gap Badge */
+.gapBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.gapBadge.positive {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--color-accent-teal);
+}
+
+.gapBadge.negative {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  color: var(--color-warning, #f59e0b);
+}
+
+.gapBadge.neutral {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gapIcon {
+  display: flex;
+  align-items: center;
+}
+
+.gapValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.gapPercent {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+/* Values Row */
+.valuesRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.valueColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.valueColumn:last-child {
+  align-items: flex-end;
+}
+
+.valueLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.predictedValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-accent-blue, #3b82f6);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.actualValue {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.actualValue.positive {
+  color: var(--color-accent-teal);
+}
+
+.actualValue.negative {
+  color: var(--color-warning, #f59e0b);
+}
+
+.actualValue.neutral {
+  color: var(--brand-text-primary);
+}
+
+.unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.arrow {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+/* Log Button - CTA uses LIME */
+.logButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(212, 255, 0, 0.12);
+  border: 1px dashed rgba(212, 255, 0, 0.4);
+  border-radius: 10px;
+  color: var(--color-accent-lime, #d4ff00);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logButton:hover {
+  background: var(--color-accent-lime, #d4ff00);
+  border-style: solid;
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+}
+
+/* Gap Analysis Section */
+.gapAnalysisSection {
+  margin-top: 16px;
+}
+
+/* Insight Section */
+.insightSection {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 10px;
+}
+
+.insightText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Footer */
+.footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lastLogged {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Empty Prompt */
+.emptyPrompt {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.emptyPrompt p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  text-align: center;
+}
+
+/* ===========================================
+   COMPACT VERSION
+   =========================================== */
+
+.compactCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.compactLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.compactValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+}
+
+.compactPredicted {
+  color: var(--color-accent-blue, #3b82f6);
+  font-weight: 600;
+}
+
+.compactArrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 11px;
+}
+
+.compactActual {
+  font-weight: 600;
+}
+
+.compactActual.positive {
+  color: var(--color-accent-teal);
+}
+
+.compactActual.negative {
+  color: var(--color-warning, #f59e0b);
+}
+
+.compactActual.neutral {
+  color: var(--brand-text-primary);
+}
+
+.compactGap {
+  font-size: 11px;
+}
+
+.compactGap.positive {
+  color: var(--color-accent-teal);
+}
+
+.compactGap.negative {
+  color: var(--color-warning, #f59e0b);
+}
+
+.compactUnit {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===========================================
+   RESPONSIVE - Mobile
+   =========================================== */
+
+@media (max-width: 600px) {
+  .comparisonCard {
+    padding: 16px;
+  }
+
+  .header {
+    margin-bottom: 12px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+
+  .gapBadge {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .valuesRow {
+    gap: 12px;
+  }
+
+  .predictedValue,
+  .actualValue {
+    font-size: 20px;
+  }
+
+  .logButton {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .insightSection {
+    padding: 10px;
+  }
+
+  .insightText {
+    font-size: 11px;
+  }
+}

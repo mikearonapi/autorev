@@ -1,0 +1,1324 @@
+[2026-01-20T05:22:28.513Z] 
+
+[2026-01-20T05:22:28.513Z] 🌙 OVERNIGHT DATABASE EXPANSION STARTED
+[2026-01-20T05:22:28.513Z] ========================================
+[2026-01-20T05:22:28.513Z] Timestamp: 2026-01-20T05:22:28.513Z
+[2026-01-20T05:22:28.513Z] Log file: /Volumes/10TB External HD/01. Apps - WORKING/AutoRev/logs/overnight-expansion-2026-01-20.log
+[2026-01-20T05:22:28.513Z] Dry run: false
+[2026-01-20T05:22:28.513Z] 
+[2026-01-20T05:22:28.513Z] 
+============================================================
+[2026-01-20T05:22:28.513Z] STARTING: Phase 1: AI Research - Tier 1 (20 cars)
+[2026-01-20T05:22:28.513Z] Command: node scripts/tuning-pipeline/batch-ai-research.mjs --tier 1 --limit 20 --delay 8000 --verbose
+[2026-01-20T05:22:28.513Z] ============================================================
+[2026-01-20T05:22:30.120Z]   🚀 Batch AI Research for Tuning Profiles
+[2026-01-20T05:22:30.120Z]   =========================================
+[2026-01-20T05:22:30.120Z]   Processing Tier 1 (20 cars)
+[2026-01-20T05:22:30.120Z]   Delay between cars: 8000ms
+[2026-01-20T05:22:30.120Z]   [1/20] Processing: camaro-ss-1le
+[2026-01-20T05:22:30.134Z]   [ERR] (node:16502) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-01-20T05:22:30.134Z]   [ERR] (Use `node --trace-warnings ...` to show where the warning was created)
+[2026-01-20T05:22:30.295Z]      📍 Camaro SS 1LE (2017-2023)
+[2026-01-20T05:22:30.295Z]      🔧 6.2L V8 | 455 HP | RWD
+[2026-01-20T05:22:30.368Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:22:38.372Z]   [2/20] Processing: chevrolet-corvette-c5-z06
+[2026-01-20T05:22:38.472Z]      📍 Chevrolet Corvette C5 Z06 (2001-2004)
+[2026-01-20T05:22:38.472Z]      🔧 5.7L NA V8 LS6 | 405 HP | RWD
+[2026-01-20T05:22:38.527Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:22:46.529Z]   [3/20] Processing: dodge-charger-srt-392
+[2026-01-20T05:22:46.621Z]      📍 Dodge Charger SRT 392 (2012-2023)
+[2026-01-20T05:22:46.621Z]      🔧 6.4L NA V8 | 485 HP | RWD
+[2026-01-20T05:22:46.671Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:22:54.671Z]   [4/20] Processing: chevrolet-camaro-ss-ls1
+[2026-01-20T05:22:54.746Z]      📍 Chevrolet Camaro SS LS1 (1998-2002)
+[2026-01-20T05:22:54.746Z]      🔧 5.7L LS1 V8 | 325 HP | RWD
+[2026-01-20T05:22:54.786Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:02.789Z]   [5/20] Processing: chevrolet-corvette-c6-grand-sport
+[2026-01-20T05:23:02.864Z]      📍 Chevrolet Corvette C6 Grand Sport (2010-2013)
+[2026-01-20T05:23:02.864Z]      🔧 6.2L NA V8 LS3 | 436 HP | RWD
+[2026-01-20T05:23:02.916Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:10.919Z]   [6/20] Processing: bmw-z4m-e85-e86
+[2026-01-20T05:23:10.997Z]      📍 BMW Z4 M Coupe/Roadster (2006-2008)
+[2026-01-20T05:23:10.997Z]      🔧 3.2L NA I6 S54 | 330 HP | RWD
+[2026-01-20T05:23:11.056Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:19.058Z]   [7/20] Processing: chevrolet-corvette-c6-z06
+[2026-01-20T05:23:19.147Z]      📍 Chevrolet Corvette C6 Z06 (2006-2013)
+[2026-01-20T05:23:19.147Z]      🔧 7.0L NA V8 LS7 | 505 HP | RWD
+[2026-01-20T05:23:19.192Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:27.198Z]   [8/20] Processing: ford-focus-rs
+[2026-01-20T05:23:27.305Z]      📍 Ford Focus RS (2016-2018)
+[2026-01-20T05:23:27.305Z]      🔧 2.3L Turbo I4 | 350 HP | AWD
+[2026-01-20T05:23:27.359Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:35.361Z]   [9/20] Processing: audi-s4-b6
+[2026-01-20T05:23:35.961Z]      📍 Audi S4 B6 (2004-2005)
+[2026-01-20T05:23:35.961Z]      🔧 4.2L V8 | 344 HP | AWD
+[2026-01-20T05:23:36.168Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:44.168Z]   [10/20] Processing: bmw-m3-e36
+[2026-01-20T05:23:44.546Z]      📍 BMW M3 E36 (1995-1999)
+[2026-01-20T05:23:44.546Z]      🔧 3.2L Naturally Aspirated I6 | 240 HP | RWD
+[2026-01-20T05:23:44.709Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:23:52.710Z]   [11/20] Processing: audi-s5-b9
+[2026-01-20T05:23:53.012Z]      📍 Audi S5 B9 (2017-2024)
+[2026-01-20T05:23:53.013Z]      🔧 3.0L Turbocharged V6 | 354 HP | AWD
+[2026-01-20T05:23:53.193Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:24:01.195Z]   [12/20] Processing: bmw-m3-e46
+[2026-01-20T05:24:01.369Z]      📍 BMW M3 E46 (2001-2006)
+[2026-01-20T05:24:01.369Z]      🔧 3.2L NA I6 S54 | 333 HP | RWD
+[2026-01-20T05:24:01.455Z]      🔬 Researching upgrades...
+[2026-01-20T05:24:42.466Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:24:42.467Z]         power: 5
+[2026-01-20T05:24:42.467Z]         handling: 5
+[2026-01-20T05:24:42.467Z]         braking: 4
+[2026-01-20T05:24:42.467Z]         cooling: 3
+[2026-01-20T05:24:42.467Z]         sound: 3
+[2026-01-20T05:24:42.467Z]         aero: 4
+[2026-01-20T05:24:42.467Z]      🔬 Researching platform insights...
+[2026-01-20T05:24:56.021Z]      ✅ Generated platform insights
+[2026-01-20T05:24:56.021Z]         Strengths: 5
+[2026-01-20T05:24:56.021Z]         Weaknesses: 5
+[2026-01-20T05:24:56.021Z]         Tips: 5
+[2026-01-20T05:24:56.250Z]      ✅ Profile saved
+[2026-01-20T05:25:04.252Z]   [13/20] Processing: bmw-m5-e39
+[2026-01-20T05:25:04.399Z]      📍 BMW M5 E39 (1999-2003)
+[2026-01-20T05:25:04.399Z]      🔧 4.9L NA V8 S62 | 394 HP | RWD
+[2026-01-20T05:25:04.470Z]      🔬 Researching upgrades...
+[2026-01-20T05:25:47.498Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:25:47.498Z]         power: 6
+[2026-01-20T05:25:47.498Z]         handling: 5
+[2026-01-20T05:25:47.498Z]         braking: 4
+[2026-01-20T05:25:47.498Z]         cooling: 4
+[2026-01-20T05:25:47.498Z]         sound: 3
+[2026-01-20T05:25:47.498Z]         aero: 4
+[2026-01-20T05:25:47.498Z]      🔬 Researching platform insights...
+[2026-01-20T05:26:02.220Z]      ✅ Generated platform insights
+[2026-01-20T05:26:02.220Z]         Strengths: 5
+[2026-01-20T05:26:02.220Z]         Weaknesses: 5
+[2026-01-20T05:26:02.220Z]         Tips: 5
+[2026-01-20T05:26:02.394Z]      ✅ Profile saved
+[2026-01-20T05:26:10.396Z]   [14/20] Processing: audi-s4-b8
+[2026-01-20T05:26:10.510Z]      📍 Audi S4 B8 (2010-2016)
+[2026-01-20T05:26:10.510Z]      🔧 3.0L Supercharged V6 | 333 HP | AWD
+[2026-01-20T05:26:10.569Z]      🔬 Researching upgrades...
+[2026-01-20T05:26:53.660Z]      ✅ Generated 25 upgrades
+[2026-01-20T05:26:53.660Z]         power: 6
+[2026-01-20T05:26:53.660Z]         handling: 5
+[2026-01-20T05:26:53.660Z]         braking: 4
+[2026-01-20T05:26:53.660Z]         cooling: 3
+[2026-01-20T05:26:53.660Z]         sound: 3
+[2026-01-20T05:26:53.660Z]         aero: 4
+[2026-01-20T05:26:53.660Z]      🔬 Researching platform insights...
+[2026-01-20T05:27:09.258Z]      ✅ Generated platform insights
+[2026-01-20T05:27:09.259Z]         Strengths: 5
+[2026-01-20T05:27:09.259Z]         Weaknesses: 5
+[2026-01-20T05:27:09.259Z]         Tips: 5
+[2026-01-20T05:27:09.446Z]      ✅ Profile saved
+[2026-01-20T05:27:17.447Z]   [15/20] Processing: bmw-m5-e60
+[2026-01-20T05:27:17.542Z]      📍 BMW M5 E60 (2006-2010)
+[2026-01-20T05:27:17.542Z]      🔧 5.0L NA V10 S85 | 500 HP | RWD
+[2026-01-20T05:27:17.587Z]      🔬 Researching upgrades...
+[2026-01-20T05:27:54.993Z]      ✅ Generated 25 upgrades
+[2026-01-20T05:27:54.993Z]         power: 5
+[2026-01-20T05:27:54.993Z]         handling: 5
+[2026-01-20T05:27:54.993Z]         braking: 4
+[2026-01-20T05:27:54.993Z]         cooling: 4
+[2026-01-20T05:27:54.993Z]         sound: 3
+[2026-01-20T05:27:54.993Z]         aero: 4
+[2026-01-20T05:27:54.993Z]      🔬 Researching platform insights...
+[2026-01-20T05:28:08.159Z]      ✅ Generated platform insights
+[2026-01-20T05:28:08.160Z]         Strengths: 5
+[2026-01-20T05:28:08.160Z]         Weaknesses: 5
+[2026-01-20T05:28:08.160Z]         Tips: 5
+[2026-01-20T05:28:08.343Z]      ✅ Profile saved
+[2026-01-20T05:28:16.347Z]   [16/20] Processing: chevrolet-corvette-z06-c8
+[2026-01-20T05:28:16.465Z]      📍 Chevrolet Corvette C8 Z06 (2023-2024)
+[2026-01-20T05:28:16.465Z]      🔧 5.5L Naturally Aspirated DOHC V8 (LT6) | 670 HP | RWD
+[2026-01-20T05:28:16.507Z]      🔬 Researching upgrades...
+[2026-01-20T05:28:58.755Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:28:58.755Z]         power: 5
+[2026-01-20T05:28:58.756Z]         handling: 5
+[2026-01-20T05:28:58.756Z]         braking: 4
+[2026-01-20T05:28:58.756Z]         cooling: 4
+[2026-01-20T05:28:58.756Z]         sound: 3
+[2026-01-20T05:28:58.756Z]         aero: 5
+[2026-01-20T05:28:58.756Z]      🔬 Researching platform insights...
+[2026-01-20T05:29:12.107Z]      ✅ Generated platform insights
+[2026-01-20T05:29:12.107Z]         Strengths: 5
+[2026-01-20T05:29:12.107Z]         Weaknesses: 5
+[2026-01-20T05:29:12.107Z]         Tips: 5
+[2026-01-20T05:29:12.262Z]      ✅ Profile saved
+[2026-01-20T05:29:20.263Z]   [17/20] Processing: audi-s4-b7
+[2026-01-20T05:29:20.442Z]      📍 Audi S4 B7 (2005-2008)
+[2026-01-20T05:29:20.443Z]      🔧 4.2L Naturally Aspirated V8 | 344 HP | AWD
+[2026-01-20T05:29:20.504Z]      🔬 Researching upgrades...
+[2026-01-20T05:30:04.264Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:30:04.269Z]         power: 6
+[2026-01-20T05:30:04.269Z]         handling: 5
+[2026-01-20T05:30:04.269Z]         braking: 4
+[2026-01-20T05:30:04.269Z]         cooling: 4
+[2026-01-20T05:30:04.269Z]         sound: 3
+[2026-01-20T05:30:04.269Z]         aero: 4
+[2026-01-20T05:30:04.269Z]      🔬 Researching platform insights...
+[2026-01-20T05:30:17.723Z]      ✅ Generated platform insights
+[2026-01-20T05:30:17.725Z]         Strengths: 5
+[2026-01-20T05:30:17.725Z]         Weaknesses: 5
+[2026-01-20T05:30:17.725Z]         Tips: 5
+[2026-01-20T05:30:17.828Z]      ✅ Profile saved
+[2026-01-20T05:30:25.832Z]   [18/20] Processing: honda-s2000
+[2026-01-20T05:30:25.945Z]      📍 Honda S2000 (1999-2009)
+[2026-01-20T05:30:25.945Z]      🔧 2.0L/2.2L NA I4 VTEC | 240 HP | RWD
+[2026-01-20T05:30:26.010Z]      🔬 Researching upgrades...
+[2026-01-20T05:31:05.706Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:31:05.707Z]         power: 6
+[2026-01-20T05:31:05.707Z]         handling: 5
+[2026-01-20T05:31:05.707Z]         braking: 4
+[2026-01-20T05:31:05.707Z]         cooling: 4
+[2026-01-20T05:31:05.707Z]         sound: 3
+[2026-01-20T05:31:05.707Z]         aero: 4
+[2026-01-20T05:31:05.707Z]      🔬 Researching platform insights...
+[2026-01-20T05:31:20.877Z]      ✅ Generated platform insights
+[2026-01-20T05:31:20.879Z]         Strengths: 5
+[2026-01-20T05:31:20.879Z]         Weaknesses: 5
+[2026-01-20T05:31:20.879Z]         Tips: 5
+[2026-01-20T05:31:21.154Z]      ✅ Profile saved
+[2026-01-20T05:31:29.161Z]   [19/20] Processing: ford-mustang-svt-cobra-sn95
+[2026-01-20T05:31:29.261Z]      📍 Ford Mustang SVT Cobra (1996-2004)
+[2026-01-20T05:31:29.262Z]      🔧 4.6L DOHC V8 | 320 HP | RWD
+[2026-01-20T05:31:29.296Z]      🔬 Researching upgrades...
+[2026-01-20T05:32:14.557Z]      ✅ Generated 28 upgrades
+[2026-01-20T05:32:14.622Z]         power: 7
+[2026-01-20T05:32:14.622Z]         handling: 6
+[2026-01-20T05:32:14.622Z]         braking: 4
+[2026-01-20T05:32:14.622Z]         cooling: 4
+[2026-01-20T05:32:14.622Z]         sound: 3
+[2026-01-20T05:32:14.622Z]         aero: 4
+[2026-01-20T05:32:14.622Z]      🔬 Researching platform insights...
+[2026-01-20T05:32:30.134Z]      ✅ Generated platform insights
+[2026-01-20T05:32:30.134Z]         Strengths: 5
+[2026-01-20T05:32:30.135Z]         Weaknesses: 5
+[2026-01-20T05:32:30.135Z]         Tips: 5
+[2026-01-20T05:32:30.261Z]      ✅ Profile saved
+[2026-01-20T05:32:38.262Z]   [20/20] Processing: bmw-m4-f82
+[2026-01-20T05:32:38.338Z]      📍 BMW M4 F82 (2015-2020)
+[2026-01-20T05:32:38.338Z]      🔧 3.0L TT I6 | 425 HP | RWD
+[2026-01-20T05:32:38.374Z]      🔬 Researching upgrades...
+[2026-01-20T05:33:26.207Z]      ✅ Generated 27 upgrades
+[2026-01-20T05:33:26.208Z]         power: 6
+[2026-01-20T05:33:26.208Z]         handling: 5
+[2026-01-20T05:33:26.208Z]         braking: 4
+[2026-01-20T05:33:26.208Z]         cooling: 4
+[2026-01-20T05:33:26.209Z]         sound: 4
+[2026-01-20T05:33:26.209Z]         aero: 4
+[2026-01-20T05:33:26.209Z]      🔬 Researching platform insights...
+[2026-01-20T05:33:39.649Z]      ✅ Generated platform insights
+[2026-01-20T05:33:39.649Z]         Strengths: 5
+[2026-01-20T05:33:39.649Z]         Weaknesses: 5
+[2026-01-20T05:33:39.650Z]         Tips: 5
+[2026-01-20T05:33:40.004Z]      ✅ Profile saved
+[2026-01-20T05:33:40.004Z]   =========================================
+[2026-01-20T05:33:40.004Z]   📊 Summary
+[2026-01-20T05:33:40.004Z]   =========================================
+[2026-01-20T05:33:40.005Z]   ✅ Processed: 9
+[2026-01-20T05:33:40.005Z]   ⏭️  Skipped (already has data): 11
+[2026-01-20T05:33:40.005Z]   ❌ Failed: 0
+[2026-01-20T05:33:40.005Z]   Total upgrades generated: 233
+[2026-01-20T05:33:40.031Z] ✅ COMPLETED: Phase 1: AI Research - Tier 1 (20 cars) (11.2 min)
+[2026-01-20T05:33:40.031Z] 
+⏳ Pausing 30 seconds before next phase...
+
+[2026-01-20T05:34:10.033Z] 
+============================================================
+[2026-01-20T05:34:10.033Z] STARTING: Phase 2: AI Research - Tier 2 (15 cars)
+[2026-01-20T05:34:10.033Z] Command: node scripts/tuning-pipeline/batch-ai-research.mjs --tier 2 --limit 15 --delay 8000 --verbose
+[2026-01-20T05:34:10.033Z] ============================================================
+[2026-01-20T05:34:11.016Z]   🚀 Batch AI Research for Tuning Profiles
+[2026-01-20T05:34:11.016Z]   =========================================
+[2026-01-20T05:34:11.016Z]   Processing Tier 2 (15 cars)
+[2026-01-20T05:34:11.016Z]   Delay between cars: 8000ms
+[2026-01-20T05:34:11.016Z]   [1/15] Processing: dodge-challenger-srt-392
+[2026-01-20T05:34:11.031Z]   [ERR] (node:18396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-01-20T05:34:11.031Z]   [ERR] (Use `node --trace-warnings ...` to show where the warning was created)
+[2026-01-20T05:34:11.397Z]      📍 Dodge Challenger SRT 392 (2011-2023)
+[2026-01-20T05:34:11.398Z]      🔧 6.4L NA V8 | 485 HP | RWD
+[2026-01-20T05:34:11.489Z]      🔬 Researching upgrades...
+[2026-01-20T05:34:56.695Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:34:56.695Z]         power: 6
+[2026-01-20T05:34:56.695Z]         handling: 5
+[2026-01-20T05:34:56.696Z]         braking: 4
+[2026-01-20T05:34:56.696Z]         cooling: 4
+[2026-01-20T05:34:56.696Z]         sound: 3
+[2026-01-20T05:34:56.696Z]         aero: 4
+[2026-01-20T05:34:56.696Z]      🔬 Researching platform insights...
+[2026-01-20T05:35:10.453Z]      ✅ Generated platform insights
+[2026-01-20T05:35:10.453Z]         Strengths: 5
+[2026-01-20T05:35:10.454Z]         Weaknesses: 5
+[2026-01-20T05:35:10.454Z]         Tips: 5
+[2026-01-20T05:35:10.654Z]      ✅ Profile saved
+[2026-01-20T05:35:18.655Z]   [2/15] Processing: nissan-350z
+[2026-01-20T05:35:18.765Z]      📍 Nissan 350Z (2003-2008)
+[2026-01-20T05:35:18.765Z]      🔧 3.5L V6 VQ35 | 306 HP | RWD
+[2026-01-20T05:35:18.881Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:35:26.884Z]   [3/15] Processing: mazda-mx5-miata-nb
+[2026-01-20T05:35:27.001Z]      📍 Mazda MX-5 Miata NB (1999-2005)
+[2026-01-20T05:35:27.001Z]      🔧 1.8L NA I4 | 142 HP | RWD
+[2026-01-20T05:35:27.080Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:35:35.081Z]   [4/15] Processing: lotus-elise-s2
+[2026-01-20T05:35:35.156Z]      📍 Lotus Elise S2 (2005-2011)
+[2026-01-20T05:35:35.156Z]      🔧 1.8L NA I4 Toyota | 189 HP | RWD
+[2026-01-20T05:35:35.190Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:35:43.192Z]   [5/15] Processing: dodge-viper
+[2026-01-20T05:35:43.285Z]      📍 Dodge Viper (2013-2017)
+[2026-01-20T05:35:43.285Z]      🔧 8.4L V10 | 645 HP | RWD
+[2026-01-20T05:35:43.345Z]      🔬 Researching upgrades...
+[2026-01-20T05:36:26.945Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:36:26.946Z]         power: 6
+[2026-01-20T05:36:26.946Z]         handling: 5
+[2026-01-20T05:36:26.946Z]         braking: 4
+[2026-01-20T05:36:26.946Z]         cooling: 4
+[2026-01-20T05:36:26.946Z]         sound: 3
+[2026-01-20T05:36:26.947Z]         aero: 4
+[2026-01-20T05:36:26.947Z]      🔬 Researching platform insights...
+[2026-01-20T05:36:40.558Z]      ✅ Generated platform insights
+[2026-01-20T05:36:40.559Z]         Strengths: 5
+[2026-01-20T05:36:40.559Z]         Weaknesses: 5
+[2026-01-20T05:36:40.559Z]         Tips: 5
+[2026-01-20T05:36:40.652Z]      ✅ Profile saved
+[2026-01-20T05:36:48.653Z]   [6/15] Processing: bmw-m5-f90-competition
+[2026-01-20T05:36:48.742Z]      📍 BMW M5 F90 Competition (2018-2024)
+[2026-01-20T05:36:48.742Z]      🔧 4.4L TT V8 S63 | 617 HP | AWD
+[2026-01-20T05:36:48.778Z]      🔬 Researching upgrades...
+[2026-01-20T05:37:31.073Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:37:31.078Z]         power: 6
+[2026-01-20T05:37:31.078Z]         handling: 5
+[2026-01-20T05:37:31.078Z]         braking: 4
+[2026-01-20T05:37:31.078Z]         cooling: 4
+[2026-01-20T05:37:31.078Z]         sound: 3
+[2026-01-20T05:37:31.078Z]         aero: 4
+[2026-01-20T05:37:31.078Z]      🔬 Researching platform insights...
+[2026-01-20T05:37:43.260Z]      ✅ Generated platform insights
+[2026-01-20T05:37:43.261Z]         Strengths: 5
+[2026-01-20T05:37:43.261Z]         Weaknesses: 5
+[2026-01-20T05:37:43.261Z]         Tips: 5
+[2026-01-20T05:37:43.338Z]      ✅ Profile saved
+[2026-01-20T05:37:51.340Z]   [7/15] Processing: mazda-rx7-fd3s
+[2026-01-20T05:37:51.445Z]      📍 Mazda RX-7 FD3S (1992-2002)
+[2026-01-20T05:37:51.445Z]      🔧 1.3L Twin-Turbo Rotary | 276 HP | RWD
+[2026-01-20T05:37:51.503Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:37:59.507Z]   [8/15] Processing: toyota-gr86
+[2026-01-20T05:37:59.716Z]      📍 Toyota GR86 (2022-2024)
+[2026-01-20T05:37:59.716Z]      🔧 2.4L NA H4 | 228 HP | RWD
+[2026-01-20T05:37:59.763Z]      🔬 Researching upgrades...
+[2026-01-20T05:38:40.986Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:38:40.987Z]         power: 5
+[2026-01-20T05:38:40.987Z]         handling: 5
+[2026-01-20T05:38:40.987Z]         braking: 4
+[2026-01-20T05:38:40.987Z]         cooling: 3
+[2026-01-20T05:38:40.987Z]         sound: 3
+[2026-01-20T05:38:40.987Z]         aero: 4
+[2026-01-20T05:38:40.987Z]      🔬 Researching platform insights...
+[2026-01-20T05:38:54.379Z]      ✅ Generated platform insights
+[2026-01-20T05:38:54.381Z]         Strengths: 5
+[2026-01-20T05:38:54.381Z]         Weaknesses: 5
+[2026-01-20T05:38:54.382Z]         Tips: 5
+[2026-01-20T05:38:54.568Z]      ✅ Profile saved
+[2026-01-20T05:39:02.571Z]   [9/15] Processing: toyota-supra-a90
+[2026-01-20T05:39:02.664Z]      ❌ Car not found: toyota-supra-a90
+[2026-01-20T05:39:10.665Z]   [10/15] Processing: hyundai-elantra-n
+[2026-01-20T05:39:10.753Z]      ❌ Car not found: hyundai-elantra-n
+[2026-01-20T05:39:18.753Z]   [11/15] Processing: subaru-brz-gen2
+[2026-01-20T05:39:18.831Z]      ❌ Car not found: subaru-brz-gen2
+[2026-01-20T05:39:26.833Z]   [12/15] Processing: bmw-m2-g87
+[2026-01-20T05:39:27.971Z]      📍 BMW M2 G87 (2023-2024)
+[2026-01-20T05:39:27.971Z]      🔧 3.0L Twin-Turbo Inline-6 (S58) | 453 HP | RWD
+[2026-01-20T05:39:28.006Z]      🔬 Researching upgrades...
+[2026-01-20T05:40:05.138Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:40:05.148Z]         power: 5
+[2026-01-20T05:40:05.148Z]         handling: 5
+[2026-01-20T05:40:05.148Z]         braking: 4
+[2026-01-20T05:40:05.148Z]         cooling: 3
+[2026-01-20T05:40:05.148Z]         sound: 3
+[2026-01-20T05:40:05.148Z]         aero: 4
+[2026-01-20T05:40:05.148Z]      🔬 Researching platform insights...
+[2026-01-20T05:40:18.911Z]      ✅ Generated platform insights
+[2026-01-20T05:40:18.912Z]         Strengths: 5
+[2026-01-20T05:40:18.912Z]         Weaknesses: 5
+[2026-01-20T05:40:18.913Z]         Tips: 5
+[2026-01-20T05:40:18.993Z]      ✅ Profile saved
+[2026-01-20T05:40:27.002Z]   [13/15] Processing: nissan-z-z34
+[2026-01-20T05:40:27.122Z]      ❌ Car not found: nissan-z-z34
+[2026-01-20T05:40:35.123Z]   [14/15] Processing: honda-civic-type-r-fl5
+[2026-01-20T05:40:35.206Z]      📍 Honda Civic Type R FL5 (2023-2024)
+[2026-01-20T05:40:35.206Z]      🔧 2.0L Turbo I4 | 315 HP | FWD
+[2026-01-20T05:40:35.246Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:40:43.247Z]   [15/15] Processing: ford-mustang-gt-s650
+[2026-01-20T05:40:43.379Z]      ❌ Car not found: ford-mustang-gt-s650
+[2026-01-20T05:40:43.379Z]   =========================================
+[2026-01-20T05:40:43.380Z]   📊 Summary
+[2026-01-20T05:40:43.380Z]   =========================================
+[2026-01-20T05:40:43.380Z]   ✅ Processed: 5
+[2026-01-20T05:40:43.380Z]   ⏭️  Skipped (already has data): 5
+[2026-01-20T05:40:43.380Z]   ❌ Failed: 5
+[2026-01-20T05:40:43.380Z]   Failed cars:
+[2026-01-20T05:40:43.380Z]     - toyota-supra-a90: Car not found
+[2026-01-20T05:40:43.380Z]     - hyundai-elantra-n: Car not found
+[2026-01-20T05:40:43.380Z]     - subaru-brz-gen2: Car not found
+[2026-01-20T05:40:43.380Z]     - nissan-z-z34: Car not found
+[2026-01-20T05:40:43.380Z]     - ford-mustang-gt-s650: Car not found
+[2026-01-20T05:40:43.380Z]   Total upgrades generated: 126
+[2026-01-20T05:40:43.389Z] ✅ COMPLETED: Phase 2: AI Research - Tier 2 (15 cars) (6.6 min)
+[2026-01-20T05:40:43.389Z] 
+⏳ Pausing 30 seconds before next phase...
+
+[2026-01-20T05:41:13.392Z] 
+============================================================
+[2026-01-20T05:41:13.393Z] STARTING: Phase 3: AI Research - Tier 3 (10 cars)
+[2026-01-20T05:41:13.393Z] Command: node scripts/tuning-pipeline/batch-ai-research.mjs --tier 3 --limit 10 --delay 8000 --verbose
+[2026-01-20T05:41:13.393Z] ============================================================
+[2026-01-20T05:41:14.392Z]   🚀 Batch AI Research for Tuning Profiles
+[2026-01-20T05:41:14.392Z]   =========================================
+[2026-01-20T05:41:14.392Z]   Processing Tier 3 (10 cars)
+[2026-01-20T05:41:14.392Z]   Delay between cars: 8000ms
+[2026-01-20T05:41:14.392Z]   [1/10] Processing: porsche-cayman-gt4-981
+[2026-01-20T05:41:14.417Z]   [ERR] (node:19415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-01-20T05:41:14.417Z]   [ERR] (Use `node --trace-warnings ...` to show where the warning was created)
+[2026-01-20T05:41:14.504Z]      ❌ Car not found: porsche-cayman-gt4-981
+[2026-01-20T05:41:22.507Z]   [2/10] Processing: alfa-romeo-4c
+[2026-01-20T05:41:22.591Z]      📍 Alfa Romeo 4C (2015-2020)
+[2026-01-20T05:41:22.591Z]      🔧 1.75L Turbo I4 | 237 HP | RWD
+[2026-01-20T05:41:22.623Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:41:30.624Z]   [3/10] Processing: lexus-lc500
+[2026-01-20T05:41:30.683Z]      ❌ Car not found: lexus-lc500
+[2026-01-20T05:41:38.685Z]   [4/10] Processing: maserati-granturismo
+[2026-01-20T05:41:38.778Z]      📍 Maserati GranTurismo (2008-2019)
+[2026-01-20T05:41:38.778Z]      🔧 4.7L V8 | 454 HP | RWD
+[2026-01-20T05:41:38.823Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:41:46.825Z]   [5/10] Processing: jaguar-f-type-r
+[2026-01-20T05:41:46.915Z]      📍 Jaguar F-Type R (2015-2020)
+[2026-01-20T05:41:46.915Z]      🔧 5.0L SC V8 | 550 HP | RWD
+[2026-01-20T05:41:46.955Z]      🔬 Researching upgrades...
+[2026-01-20T05:42:28.572Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:42:28.587Z]         power: 5
+[2026-01-20T05:42:28.587Z]         handling: 5
+[2026-01-20T05:42:28.588Z]         braking: 4
+[2026-01-20T05:42:28.588Z]         cooling: 4
+[2026-01-20T05:42:28.588Z]         sound: 4
+[2026-01-20T05:42:28.588Z]         aero: 4
+[2026-01-20T05:42:28.588Z]      🔬 Researching platform insights...
+[2026-01-20T05:42:42.205Z]      ✅ Generated platform insights
+[2026-01-20T05:42:42.206Z]         Strengths: 5
+[2026-01-20T05:42:42.206Z]         Weaknesses: 5
+[2026-01-20T05:42:42.206Z]         Tips: 5
+[2026-01-20T05:42:42.375Z]      ✅ Profile saved
+[2026-01-20T05:42:50.383Z]   [6/10] Processing: genesis-g70
+[2026-01-20T05:42:50.539Z]      ❌ Car not found: genesis-g70
+[2026-01-20T05:42:58.880Z]   [7/10] Processing: kia-stinger-gt
+[2026-01-20T05:42:59.093Z]      ❌ Car not found: kia-stinger-gt
+[2026-01-20T05:43:07.098Z]   [8/10] Processing: infiniti-q60-red-sport
+[2026-01-20T05:43:07.195Z]      ❌ Car not found: infiniti-q60-red-sport
+[2026-01-20T05:43:15.196Z]   [9/10] Processing: acura-nsx-nc1
+[2026-01-20T05:43:15.272Z]      📍 Acura NSX NC1 (2017-2022)
+[2026-01-20T05:43:15.272Z]      🔧 3.5L Twin-Turbo V6 + 3 Electric Motors | 573 HP | AWD
+[2026-01-20T05:43:15.312Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:43:23.314Z]   [10/10] Processing: aston-martin-v8-vantage
+[2026-01-20T05:43:23.404Z]      📍 Aston Martin V8 Vantage (2008-2017)
+[2026-01-20T05:43:23.404Z]      🔧 4.7L V8 | 420 HP | RWD
+[2026-01-20T05:43:23.461Z]      ⏭️  Already has upgrade data, skipping (use --force to override)
+[2026-01-20T05:43:23.461Z]   =========================================
+[2026-01-20T05:43:23.461Z]   📊 Summary
+[2026-01-20T05:43:23.461Z]   =========================================
+[2026-01-20T05:43:23.461Z]   ✅ Processed: 1
+[2026-01-20T05:43:23.461Z]   ⏭️  Skipped (already has data): 4
+[2026-01-20T05:43:23.461Z]   ❌ Failed: 5
+[2026-01-20T05:43:23.461Z]   Failed cars:
+[2026-01-20T05:43:23.461Z]     - porsche-cayman-gt4-981: Car not found
+[2026-01-20T05:43:23.461Z]     - lexus-lc500: Car not found
+[2026-01-20T05:43:23.461Z]     - genesis-g70: Car not found
+[2026-01-20T05:43:23.461Z]     - kia-stinger-gt: Car not found
+[2026-01-20T05:43:23.461Z]     - infiniti-q60-red-sport: Car not found
+[2026-01-20T05:43:23.461Z]   Total upgrades generated: 26
+[2026-01-20T05:43:23.474Z] ✅ COMPLETED: Phase 3: AI Research - Tier 3 (10 cars) (2.2 min)
+[2026-01-20T05:43:23.474Z] 
+⏳ Pausing 30 seconds before next phase...
+
+[2026-01-20T05:43:53.476Z] 
+============================================================
+[2026-01-20T05:43:53.477Z] STARTING: Phase 4: AI Research - Missing Cars (up to 50)
+[2026-01-20T05:43:53.477Z] Command: node scripts/tuning-pipeline/batch-ai-research.mjs --missing --limit 50 --delay 8000 --verbose
+[2026-01-20T05:43:53.477Z] ============================================================
+[2026-01-20T05:43:54.486Z]   🚀 Batch AI Research for Tuning Profiles
+[2026-01-20T05:43:54.486Z]   =========================================
+[2026-01-20T05:43:54.486Z]   Finding cars missing upgrade data...
+[2026-01-20T05:43:54.502Z]   [ERR] (node:19817) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-01-20T05:43:54.502Z]   [ERR] (Use `node --trace-warnings ...` to show where the warning was created)
+[2026-01-20T05:43:55.477Z]   Found 50 cars missing data
+[2026-01-20T05:43:55.478Z]   Delay between cars: 8000ms
+[2026-01-20T05:43:55.478Z]   [1/50] Processing: mclaren-765lt-2020-2022
+[2026-01-20T05:43:55.555Z]      📍 McLaren 765LT (2020-2022)
+[2026-01-20T05:43:55.556Z]      🔧 4.0L Twin-Turbo V8 | 755 HP | RWD
+[2026-01-20T05:43:55.615Z]      🔬 Researching upgrades...
+[2026-01-20T05:44:35.456Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:44:35.495Z]         power: 5
+[2026-01-20T05:44:35.496Z]         handling: 5
+[2026-01-20T05:44:35.496Z]         braking: 4
+[2026-01-20T05:44:35.496Z]         cooling: 3
+[2026-01-20T05:44:35.496Z]         sound: 3
+[2026-01-20T05:44:35.496Z]         aero: 4
+[2026-01-20T05:44:35.496Z]      🔬 Researching platform insights...
+[2026-01-20T05:44:47.908Z]      ✅ Generated platform insights
+[2026-01-20T05:44:47.916Z]         Strengths: 5
+[2026-01-20T05:44:47.917Z]         Weaknesses: 5
+[2026-01-20T05:44:47.917Z]         Tips: 5
+[2026-01-20T05:44:48.124Z]      ✅ Profile saved
+[2026-01-20T05:44:56.128Z]   [2/50] Processing: dodge-srt-4-2003-2005
+[2026-01-20T05:44:56.230Z]      📍 Dodge SRT-4 (2003-2005)
+[2026-01-20T05:44:56.230Z]      🔧 2.4L Turbocharged I4 | 230 HP | FWD
+[2026-01-20T05:44:56.287Z]      🔬 Researching upgrades...
+[2026-01-20T05:45:35.724Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:45:35.725Z]         power: 6
+[2026-01-20T05:45:35.725Z]         handling: 5
+[2026-01-20T05:45:35.725Z]         braking: 4
+[2026-01-20T05:45:35.725Z]         cooling: 4
+[2026-01-20T05:45:35.725Z]         sound: 3
+[2026-01-20T05:45:35.725Z]         aero: 4
+[2026-01-20T05:45:35.725Z]      🔬 Researching platform insights...
+[2026-01-20T05:45:47.202Z]      ✅ Generated platform insights
+[2026-01-20T05:45:47.203Z]         Strengths: 5
+[2026-01-20T05:45:47.203Z]         Weaknesses: 5
+[2026-01-20T05:45:47.203Z]         Tips: 5
+[2026-01-20T05:45:47.318Z]      ✅ Profile saved
+[2026-01-20T05:45:55.319Z]   [3/50] Processing: audi-a3-1-8-tfsi-8v
+[2026-01-20T05:45:55.417Z]      📍 Audi A3 1.8 TFSI (8V) (2014-2020)
+[2026-01-20T05:45:55.417Z]      🔧 1.8L Turbocharged I4 | 170 HP | FWD
+[2026-01-20T05:45:55.478Z]      🔬 Researching upgrades...
+[2026-01-20T05:46:36.422Z]      ✅ Generated 27 upgrades
+[2026-01-20T05:46:36.423Z]         power: 6
+[2026-01-20T05:46:36.423Z]         handling: 5
+[2026-01-20T05:46:36.423Z]         braking: 4
+[2026-01-20T05:46:36.423Z]         cooling: 4
+[2026-01-20T05:46:36.423Z]         sound: 4
+[2026-01-20T05:46:36.423Z]         aero: 4
+[2026-01-20T05:46:36.423Z]      🔬 Researching platform insights...
+[2026-01-20T05:46:51.129Z]      ✅ Generated platform insights
+[2026-01-20T05:46:51.129Z]         Strengths: 5
+[2026-01-20T05:46:51.129Z]         Weaknesses: 5
+[2026-01-20T05:46:51.129Z]         Tips: 5
+[2026-01-20T05:46:51.327Z]      ✅ Profile saved
+[2026-01-20T05:46:59.328Z]   [4/50] Processing: mclaren-650s-mp4-12c-successor
+[2026-01-20T05:46:59.421Z]      📍 McLaren 650S (2014-2017)
+[2026-01-20T05:46:59.422Z]      🔧 3.8L Twin-Turbo V8 | 641 HP | RWD
+[2026-01-20T05:46:59.474Z]      🔬 Researching upgrades...
+[2026-01-20T05:47:36.947Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:47:36.947Z]         power: 5
+[2026-01-20T05:47:36.947Z]         handling: 5
+[2026-01-20T05:47:36.948Z]         braking: 4
+[2026-01-20T05:47:36.948Z]         cooling: 3
+[2026-01-20T05:47:36.948Z]         sound: 3
+[2026-01-20T05:47:36.948Z]         aero: 4
+[2026-01-20T05:47:36.948Z]      🔬 Researching platform insights...
+[2026-01-20T05:47:49.305Z]      ✅ Generated platform insights
+[2026-01-20T05:47:49.306Z]         Strengths: 5
+[2026-01-20T05:47:49.306Z]         Weaknesses: 5
+[2026-01-20T05:47:49.306Z]         Tips: 5
+[2026-01-20T05:47:49.424Z]      ✅ Profile saved
+[2026-01-20T05:47:57.425Z]   [5/50] Processing: bmw-1m-coupe-e82
+[2026-01-20T05:47:57.559Z]      📍 BMW 1 Series M Coupe (2011)
+[2026-01-20T05:47:57.560Z]      🔧 3.0L TT I6 N54 | 335 HP | RWD
+[2026-01-20T05:47:57.622Z]      🔬 Researching upgrades...
+[2026-01-20T05:48:41.528Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:48:41.530Z]         power: 6
+[2026-01-20T05:48:41.530Z]         handling: 5
+[2026-01-20T05:48:41.530Z]         braking: 4
+[2026-01-20T05:48:41.530Z]         cooling: 4
+[2026-01-20T05:48:41.530Z]         sound: 3
+[2026-01-20T05:48:41.530Z]         aero: 4
+[2026-01-20T05:48:41.530Z]      🔬 Researching platform insights...
+[2026-01-20T05:48:57.022Z]      ✅ Generated platform insights
+[2026-01-20T05:48:57.023Z]         Strengths: 5
+[2026-01-20T05:48:57.024Z]         Weaknesses: 5
+[2026-01-20T05:48:57.024Z]         Tips: 5
+[2026-01-20T05:48:57.126Z]      ✅ Profile saved
+[2026-01-20T05:49:05.126Z]   [6/50] Processing: volkswagen-gti-mk6
+[2026-01-20T05:49:05.229Z]      📍 Volkswagen GTI Mk6 (2010-2014)
+[2026-01-20T05:49:05.229Z]      🔧 2.0L Turbocharged I4 (TSI) | 200 HP | FWD
+[2026-01-20T05:49:05.292Z]      🔬 Researching upgrades...
+[2026-01-20T05:49:52.518Z]      ✅ Generated 28 upgrades
+[2026-01-20T05:49:52.519Z]         power: 6
+[2026-01-20T05:49:52.519Z]         handling: 6
+[2026-01-20T05:49:52.519Z]         braking: 4
+[2026-01-20T05:49:52.519Z]         cooling: 4
+[2026-01-20T05:49:52.519Z]         sound: 4
+[2026-01-20T05:49:52.519Z]         aero: 4
+[2026-01-20T05:49:52.519Z]      🔬 Researching platform insights...
+[2026-01-20T05:50:09.753Z]      ✅ Generated platform insights
+[2026-01-20T05:50:09.753Z]         Strengths: 5
+[2026-01-20T05:50:09.753Z]         Weaknesses: 5
+[2026-01-20T05:50:09.753Z]         Tips: 5
+[2026-01-20T05:50:09.925Z]      ✅ Profile saved
+[2026-01-20T05:50:17.929Z]   [7/50] Processing: audi-s5-b8
+[2026-01-20T05:50:18.014Z]      📍 Audi S5 B8 (2008-2016)
+[2026-01-20T05:50:18.015Z]      🔧 3.0L Supercharged V6 | 333 HP | AWD
+[2026-01-20T05:50:18.068Z]      🔬 Researching upgrades...
+[2026-01-20T05:51:00.082Z]      ✅ Generated 27 upgrades
+[2026-01-20T05:51:00.083Z]         power: 6
+[2026-01-20T05:51:00.083Z]         handling: 5
+[2026-01-20T05:51:00.083Z]         braking: 4
+[2026-01-20T05:51:00.083Z]         cooling: 4
+[2026-01-20T05:51:00.083Z]         sound: 4
+[2026-01-20T05:51:00.083Z]         aero: 4
+[2026-01-20T05:51:00.083Z]      🔬 Researching platform insights...
+[2026-01-20T05:51:12.443Z]      ✅ Generated platform insights
+[2026-01-20T05:51:12.444Z]         Strengths: 5
+[2026-01-20T05:51:12.444Z]         Weaknesses: 5
+[2026-01-20T05:51:12.444Z]         Tips: 5
+[2026-01-20T05:51:12.618Z]      ✅ Profile saved
+[2026-01-20T05:51:20.621Z]   [8/50] Processing: volkswagen-gti-mk5
+[2026-01-20T05:51:20.721Z]      📍 Volkswagen GTI Mk5 (2006-2009)
+[2026-01-20T05:51:20.721Z]      🔧 2.0L Turbocharged I4 | 200 HP | FWD
+[2026-01-20T05:51:20.780Z]      🔬 Researching upgrades...
+[2026-01-20T05:52:03.905Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:52:03.906Z]         power: 6
+[2026-01-20T05:52:03.907Z]         handling: 5
+[2026-01-20T05:52:03.907Z]         braking: 4
+[2026-01-20T05:52:03.907Z]         cooling: 4
+[2026-01-20T05:52:03.907Z]         sound: 3
+[2026-01-20T05:52:03.907Z]         aero: 4
+[2026-01-20T05:52:03.907Z]      🔬 Researching platform insights...
+[2026-01-20T05:52:17.167Z]      ✅ Generated platform insights
+[2026-01-20T05:52:17.168Z]         Strengths: 5
+[2026-01-20T05:52:17.168Z]         Weaknesses: 5
+[2026-01-20T05:52:17.168Z]         Tips: 5
+[2026-01-20T05:52:17.271Z]      ✅ Profile saved
+[2026-01-20T05:52:25.272Z]   [9/50] Processing: ford-mustang-gt-sn95
+[2026-01-20T05:52:25.361Z]      📍 Ford Mustang GT SN95 (1996-1998)
+[2026-01-20T05:52:25.362Z]      🔧 4.6L SOHC V8 | 215 HP | RWD
+[2026-01-20T05:52:25.422Z]      🔬 Researching upgrades...
+[2026-01-20T05:53:10.181Z]      ✅ Generated 29 upgrades
+[2026-01-20T05:53:10.182Z]         power: 7
+[2026-01-20T05:53:10.182Z]         handling: 6
+[2026-01-20T05:53:10.182Z]         braking: 4
+[2026-01-20T05:53:10.182Z]         cooling: 4
+[2026-01-20T05:53:10.182Z]         sound: 4
+[2026-01-20T05:53:10.182Z]         aero: 4
+[2026-01-20T05:53:10.182Z]      🔬 Researching platform insights...
+[2026-01-20T05:53:24.128Z]      ✅ Generated platform insights
+[2026-01-20T05:53:24.129Z]         Strengths: 5
+[2026-01-20T05:53:24.129Z]         Weaknesses: 5
+[2026-01-20T05:53:24.129Z]         Tips: 5
+[2026-01-20T05:53:24.328Z]      ✅ Profile saved
+[2026-01-20T05:53:32.332Z]   [10/50] Processing: lamborghini-huracan-performante
+[2026-01-20T05:53:32.453Z]      📍 Lamborghini Huracán Performante (2017-2019)
+[2026-01-20T05:53:32.453Z]      🔧 5.2L Naturally Aspirated V10 | 640 HP | AWD
+[2026-01-20T05:53:32.525Z]      🔬 Researching upgrades...
+[2026-01-20T05:54:16.628Z]      ✅ Generated 26 upgrades
+[2026-01-20T05:54:16.629Z]         power: 5
+[2026-01-20T05:54:16.629Z]         handling: 5
+[2026-01-20T05:54:16.629Z]         braking: 4
+[2026-01-20T05:54:16.629Z]         cooling: 4
+[2026-01-20T05:54:16.629Z]         sound: 3
+[2026-01-20T05:54:16.629Z]         aero: 5
+[2026-01-20T05:54:16.629Z]      🔬 Researching platform insights...
+[2026-01-20T05:54:29.829Z]      ✅ Generated platform insights
+[2026-01-20T05:54:29.830Z]         Strengths: 5
+[2026-01-20T05:54:29.830Z]         Weaknesses: 5
+[2026-01-20T05:54:29.830Z]         Tips: 5
+[2026-01-20T05:54:30.697Z]      ✅ Profile saved
+[2026-01-20T05:54:38.701Z]   [11/50] Processing: porsche-911-gt3-9912
+[2026-01-20T05:54:39.090Z]      📍 Porsche 911 GT3 991.2 (2017-2019)
+[2026-01-20T05:54:39.090Z]      🔧 4.0L Naturally Aspirated Flat-6 | 500 HP | RWD
+[2026-01-20T05:54:39.252Z]      🔬 Researching upgrades...
+[2026-01-20T05:55:20.724Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:55:20.724Z]         power: 5
+[2026-01-20T05:55:20.725Z]         handling: 5
+[2026-01-20T05:55:20.725Z]         braking: 4
+[2026-01-20T05:55:20.725Z]         cooling: 3
+[2026-01-20T05:55:20.725Z]         sound: 3
+[2026-01-20T05:55:20.725Z]         aero: 4
+[2026-01-20T05:55:20.725Z]      🔬 Researching platform insights...
+[2026-01-20T05:55:36.861Z]      ✅ Generated platform insights
+[2026-01-20T05:55:36.862Z]         Strengths: 5
+[2026-01-20T05:55:36.862Z]         Weaknesses: 5
+[2026-01-20T05:55:36.862Z]         Tips: 5
+[2026-01-20T05:55:37.215Z]      ✅ Profile saved
+[2026-01-20T05:55:45.217Z]   [12/50] Processing: audi-rs5-b8
+[2026-01-20T05:55:45.387Z]      📍 Audi RS5 B8 (2013-2015)
+[2026-01-20T05:55:45.388Z]      🔧 4.2L NA V8 | 450 HP | AWD
+[2026-01-20T05:55:45.514Z]      🔬 Researching upgrades...
+[2026-01-20T05:56:22.807Z]      ✅ Generated 24 upgrades
+[2026-01-20T05:56:22.808Z]         power: 5
+[2026-01-20T05:56:22.808Z]         handling: 5
+[2026-01-20T05:56:22.808Z]         braking: 4
+[2026-01-20T05:56:22.808Z]         cooling: 3
+[2026-01-20T05:56:22.808Z]         sound: 3
+[2026-01-20T05:56:22.808Z]         aero: 4
+[2026-01-20T05:56:22.808Z]      🔬 Researching platform insights...
+[2026-01-20T05:56:37.308Z]      ✅ Generated platform insights
+[2026-01-20T05:56:37.309Z]         Strengths: 5
+[2026-01-20T05:56:37.309Z]         Weaknesses: 5
+[2026-01-20T05:56:37.309Z]         Tips: 5
+[2026-01-20T05:56:37.571Z]      ✅ Profile saved
+[2026-01-20T05:56:45.573Z]   [13/50] Processing: bmw-m3-e92
+[2026-01-20T05:56:45.733Z]      📍 BMW M3 E92 (2008-2013)
+[2026-01-20T05:56:45.733Z]      🔧 4.0L NA V8 S65 | 414 HP | RWD
+[2026-01-20T05:56:45.805Z]      🔬 Researching upgrades...
+[2026-01-20T05:57:31.383Z]      ✅ Generated 27 upgrades
+[2026-01-20T05:57:31.384Z]         power: 6
+[2026-01-20T05:57:31.384Z]         handling: 6
+[2026-01-20T05:57:31.384Z]         braking: 4
+[2026-01-20T05:57:31.384Z]         cooling: 4
+[2026-01-20T05:57:31.384Z]         sound: 3
+[2026-01-20T05:57:31.384Z]         aero: 4
+[2026-01-20T05:57:31.384Z]      🔬 Researching platform insights...
+[2026-01-20T05:57:44.335Z]      ✅ Generated platform insights
+[2026-01-20T05:57:44.336Z]         Strengths: 5
+[2026-01-20T05:57:44.336Z]         Weaknesses: 5
+[2026-01-20T05:57:44.336Z]         Tips: 5
+[2026-01-20T05:57:44.529Z]      ✅ Profile saved
+[2026-01-20T05:57:52.530Z]   [14/50] Processing: nissan-maxima-a36
+[2026-01-20T05:57:52.655Z]      📍 Nissan Maxima (2016-2023)
+[2026-01-20T05:57:52.655Z]      🔧 3.5L Naturally Aspirated V6 | 300 HP | FWD
+[2026-01-20T05:57:52.711Z]      🔬 Researching upgrades...
+[2026-01-20T05:58:30.481Z]      ✅ Generated 23 upgrades
+[2026-01-20T05:58:30.482Z]         power: 5
+[2026-01-20T05:58:30.482Z]         handling: 5
+[2026-01-20T05:58:30.482Z]         braking: 4
+[2026-01-20T05:58:30.482Z]         cooling: 3
+[2026-01-20T05:58:30.482Z]         sound: 3
+[2026-01-20T05:58:30.482Z]         aero: 3
+[2026-01-20T05:58:30.482Z]      🔬 Researching platform insights...
+[2026-01-20T05:58:44.244Z]      ✅ Generated platform insights
+[2026-01-20T05:58:44.244Z]         Strengths: 5
+[2026-01-20T05:58:44.244Z]         Weaknesses: 5
+[2026-01-20T05:58:44.244Z]         Tips: 5
+[2026-01-20T05:58:44.357Z]      ✅ Profile saved
+[2026-01-20T05:58:52.358Z]   [15/50] Processing: mitsubishi-eclipse-gsx-2g
+[2026-01-20T05:58:52.475Z]      📍 Mitsubishi Eclipse GSX (1995-1999)
+[2026-01-20T05:58:52.475Z]      🔧 2.0L Turbocharged I4 | 210 HP | AWD
+[2026-01-20T05:58:52.546Z]      🔬 Researching upgrades...
+[2026-01-20T05:59:33.402Z]      ✅ Generated 27 upgrades
+[2026-01-20T05:59:33.404Z]         power: 7
+[2026-01-20T05:59:33.404Z]         handling: 5
+[2026-01-20T05:59:33.404Z]         braking: 4
+[2026-01-20T05:59:33.404Z]         cooling: 4
+[2026-01-20T05:59:33.404Z]         sound: 3
+[2026-01-20T05:59:33.404Z]         aero: 4
+[2026-01-20T05:59:33.404Z]      🔬 Researching platform insights...
+[2026-01-20T05:59:48.032Z]      ✅ Generated platform insights
+[2026-01-20T05:59:48.033Z]         Strengths: 5
+[2026-01-20T05:59:48.033Z]         Weaknesses: 5
+[2026-01-20T05:59:48.033Z]         Tips: 5
+[2026-01-20T05:59:48.219Z]      ✅ Profile saved
+[2026-01-20T05:59:56.222Z]   [16/50] Processing: bmw-m5-f10-competition
+[2026-01-20T05:59:56.339Z]      📍 BMW M5 F10 Competition (2014-2016)
+[2026-01-20T05:59:56.339Z]      🔧 4.4L TT V8 S63 | 575 HP | RWD
+[2026-01-20T05:59:56.398Z]      🔬 Researching upgrades...
+[2026-01-20T06:00:41.810Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:00:41.811Z]         power: 6
+[2026-01-20T06:00:41.812Z]         handling: 5
+[2026-01-20T06:00:41.812Z]         braking: 4
+[2026-01-20T06:00:41.812Z]         cooling: 4
+[2026-01-20T06:00:41.812Z]         sound: 3
+[2026-01-20T06:00:41.812Z]         aero: 4
+[2026-01-20T06:00:41.812Z]      🔬 Researching platform insights...
+[2026-01-20T06:00:56.586Z]      ✅ Generated platform insights
+[2026-01-20T06:00:56.587Z]         Strengths: 5
+[2026-01-20T06:00:56.587Z]         Weaknesses: 5
+[2026-01-20T06:00:56.587Z]         Tips: 5
+[2026-01-20T06:00:56.672Z]      ✅ Profile saved
+[2026-01-20T06:01:04.675Z]   [17/50] Processing: volkswagen-golf-tsi-mk7
+[2026-01-20T06:01:04.812Z]      📍 Volkswagen Golf TSI (Mk7) (2013-2020)
+[2026-01-20T06:01:04.812Z]      🔧 1.4L Turbocharged I4 | 150 HP | FWD
+[2026-01-20T06:01:04.854Z]      🔬 Researching upgrades...
+[2026-01-20T06:01:44.296Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:01:44.297Z]         power: 5
+[2026-01-20T06:01:44.297Z]         handling: 5
+[2026-01-20T06:01:44.297Z]         braking: 4
+[2026-01-20T06:01:44.297Z]         cooling: 4
+[2026-01-20T06:01:44.297Z]         sound: 3
+[2026-01-20T06:01:44.297Z]         aero: 4
+[2026-01-20T06:01:44.297Z]      🔬 Researching platform insights...
+[2026-01-20T06:01:58.974Z]      ✅ Generated platform insights
+[2026-01-20T06:01:58.975Z]         Strengths: 5
+[2026-01-20T06:01:58.975Z]         Weaknesses: 5
+[2026-01-20T06:01:58.975Z]         Tips: 5
+[2026-01-20T06:01:59.141Z]      ✅ Profile saved
+[2026-01-20T06:02:07.142Z]   [18/50] Processing: subaru-impreza-wrx-gc8
+[2026-01-20T06:02:07.303Z]      📍 Subaru Impreza WRX GC8 (1992-2000)
+[2026-01-20T06:02:07.303Z]      🔧 2.0L Turbocharged Flat-4 | 218 HP | AWD
+[2026-01-20T06:02:07.364Z]      🔬 Researching upgrades...
+[2026-01-20T06:02:49.420Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:02:49.421Z]         power: 6
+[2026-01-20T06:02:49.421Z]         handling: 5
+[2026-01-20T06:02:49.421Z]         braking: 4
+[2026-01-20T06:02:49.421Z]         cooling: 4
+[2026-01-20T06:02:49.421Z]         sound: 4
+[2026-01-20T06:02:49.421Z]         aero: 4
+[2026-01-20T06:02:49.421Z]      🔬 Researching platform insights...
+[2026-01-20T06:03:06.583Z]      ✅ Generated platform insights
+[2026-01-20T06:03:06.584Z]         Strengths: 5
+[2026-01-20T06:03:06.584Z]         Weaknesses: 5
+[2026-01-20T06:03:06.584Z]         Tips: 5
+[2026-01-20T06:03:06.805Z]      ✅ Profile saved
+[2026-01-20T06:03:14.808Z]   [19/50] Processing: infiniti-q60-red-sport-400
+[2026-01-20T06:03:15.012Z]      📍 Infiniti Q60 Red Sport 400 (2017-2024)
+[2026-01-20T06:03:15.012Z]      🔧 3.0L Twin-Turbo V6 | 400 HP | RWD
+[2026-01-20T06:03:15.096Z]      🔬 Researching upgrades...
+[2026-01-20T06:03:58.939Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:03:58.940Z]         power: 6
+[2026-01-20T06:03:58.940Z]         handling: 5
+[2026-01-20T06:03:58.940Z]         braking: 4
+[2026-01-20T06:03:58.940Z]         cooling: 3
+[2026-01-20T06:03:58.940Z]         sound: 3
+[2026-01-20T06:03:58.940Z]         aero: 4
+[2026-01-20T06:03:58.940Z]      🔬 Researching platform insights...
+[2026-01-20T06:04:13.118Z]      ✅ Generated platform insights
+[2026-01-20T06:04:13.119Z]         Strengths: 5
+[2026-01-20T06:04:13.119Z]         Weaknesses: 5
+[2026-01-20T06:04:13.119Z]         Tips: 5
+[2026-01-20T06:04:13.221Z]      ✅ Profile saved
+[2026-01-20T06:04:21.223Z]   [20/50] Processing: bmw-m3-e30
+[2026-01-20T06:04:21.352Z]      📍 BMW M3 E30 (1988-1991)
+[2026-01-20T06:04:21.353Z]      🔧 2.3L Naturally Aspirated I4 (S14) | 192 HP | RWD
+[2026-01-20T06:04:21.427Z]      🔬 Researching upgrades...
+[2026-01-20T06:05:05.489Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:05:05.490Z]         power: 6
+[2026-01-20T06:05:05.490Z]         handling: 5
+[2026-01-20T06:05:05.490Z]         braking: 4
+[2026-01-20T06:05:05.490Z]         cooling: 4
+[2026-01-20T06:05:05.490Z]         sound: 3
+[2026-01-20T06:05:05.490Z]         aero: 4
+[2026-01-20T06:05:05.490Z]      🔬 Researching platform insights...
+[2026-01-20T06:05:17.465Z]      ✅ Generated platform insights
+[2026-01-20T06:05:17.466Z]         Strengths: 5
+[2026-01-20T06:05:17.466Z]         Weaknesses: 5
+[2026-01-20T06:05:17.466Z]         Tips: 5
+[2026-01-20T06:05:17.580Z]      ✅ Profile saved
+[2026-01-20T06:05:25.583Z]   [21/50] Processing: ford-mustang-gt-fox-body
+[2026-01-20T06:05:25.696Z]      📍 Ford Mustang GT Fox Body (1987-1993)
+[2026-01-20T06:05:25.696Z]      🔧 5.0L V8 | 225 HP | RWD
+[2026-01-20T06:05:25.764Z]      🔬 Researching upgrades...
+[2026-01-20T06:06:07.531Z]      ✅ Generated 29 upgrades
+[2026-01-20T06:06:07.533Z]         power: 8
+[2026-01-20T06:06:07.533Z]         handling: 6
+[2026-01-20T06:06:07.533Z]         braking: 4
+[2026-01-20T06:06:07.533Z]         cooling: 4
+[2026-01-20T06:06:07.533Z]         sound: 3
+[2026-01-20T06:06:07.533Z]         aero: 4
+[2026-01-20T06:06:07.533Z]      🔬 Researching platform insights...
+[2026-01-20T06:06:23.090Z]      ✅ Generated platform insights
+[2026-01-20T06:06:23.091Z]         Strengths: 5
+[2026-01-20T06:06:23.091Z]         Weaknesses: 5
+[2026-01-20T06:06:23.091Z]         Tips: 5
+[2026-01-20T06:06:23.207Z]      ✅ Profile saved
+[2026-01-20T06:06:31.216Z]   [22/50] Processing: mazda-mazdaspeed6-gy
+[2026-01-20T06:06:31.331Z]      📍 Mazdaspeed6 (2006-2007)
+[2026-01-20T06:06:31.331Z]      🔧 2.3L Turbocharged I4 | 274 HP | AWD
+[2026-01-20T06:06:31.394Z]      🔬 Researching upgrades...
+[2026-01-20T06:07:15.141Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:07:15.143Z]         power: 7
+[2026-01-20T06:07:15.143Z]         handling: 5
+[2026-01-20T06:07:15.143Z]         braking: 4
+[2026-01-20T06:07:15.143Z]         cooling: 4
+[2026-01-20T06:07:15.143Z]         sound: 4
+[2026-01-20T06:07:15.143Z]         aero: 3
+[2026-01-20T06:07:15.143Z]      🔬 Researching platform insights...
+[2026-01-20T06:07:27.688Z]      ✅ Generated platform insights
+[2026-01-20T06:07:27.688Z]         Strengths: 5
+[2026-01-20T06:07:27.688Z]         Weaknesses: 5
+[2026-01-20T06:07:27.688Z]         Tips: 5
+[2026-01-20T06:07:27.864Z]      ✅ Profile saved
+[2026-01-20T06:07:35.867Z]   [23/50] Processing: porsche-boxster-s-986
+[2026-01-20T06:07:35.972Z]      📍 Porsche Boxster S 986 (1997-2004)
+[2026-01-20T06:07:35.972Z]      🔧 3.2L Flat-6 | 250 HP | RWD
+[2026-01-20T06:07:36.038Z]      🔬 Researching upgrades...
+[2026-01-20T06:08:21.164Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:08:21.165Z]         power: 6
+[2026-01-20T06:08:21.165Z]         handling: 6
+[2026-01-20T06:08:21.165Z]         braking: 4
+[2026-01-20T06:08:21.165Z]         cooling: 4
+[2026-01-20T06:08:21.165Z]         sound: 3
+[2026-01-20T06:08:21.165Z]         aero: 4
+[2026-01-20T06:08:21.165Z]      🔬 Researching platform insights...
+[2026-01-20T06:08:35.345Z]      ✅ Generated platform insights
+[2026-01-20T06:08:35.345Z]         Strengths: 5
+[2026-01-20T06:08:35.345Z]         Weaknesses: 5
+[2026-01-20T06:08:35.345Z]         Tips: 5
+[2026-01-20T06:08:35.474Z]      ✅ Profile saved
+[2026-01-20T06:08:43.476Z]   [24/50] Processing: porsche-boxster-s-987
+[2026-01-20T06:08:43.598Z]      📍 Porsche Boxster S 987 (2005-2012)
+[2026-01-20T06:08:43.598Z]      🔧 3.4L Naturally Aspirated Flat-6 | 310 HP | RWD
+[2026-01-20T06:08:43.652Z]      🔬 Researching upgrades...
+[2026-01-20T06:09:21.618Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:09:21.619Z]         power: 5
+[2026-01-20T06:09:21.619Z]         handling: 5
+[2026-01-20T06:09:21.619Z]         braking: 4
+[2026-01-20T06:09:21.621Z]         cooling: 4
+[2026-01-20T06:09:21.621Z]         sound: 3
+[2026-01-20T06:09:21.621Z]         aero: 4
+[2026-01-20T06:09:21.621Z]      🔬 Researching platform insights...
+[2026-01-20T06:09:34.564Z]      ✅ Generated platform insights
+[2026-01-20T06:09:34.565Z]         Strengths: 5
+[2026-01-20T06:09:34.566Z]         Weaknesses: 5
+[2026-01-20T06:09:34.566Z]         Tips: 5
+[2026-01-20T06:09:34.654Z]      ✅ Profile saved
+[2026-01-20T06:09:42.657Z]   [25/50] Processing: subaru-brz-zc6
+[2026-01-20T06:09:42.739Z]      📍 Subaru BRZ (2013-2020)
+[2026-01-20T06:09:42.739Z]      🔧 2.0L NA H4 | 205 HP | RWD
+[2026-01-20T06:09:42.775Z]      🔬 Researching upgrades...
+[2026-01-20T06:10:23.100Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:10:23.103Z]         power: 6
+[2026-01-20T06:10:23.103Z]         handling: 5
+[2026-01-20T06:10:23.103Z]         braking: 4
+[2026-01-20T06:10:23.103Z]         cooling: 3
+[2026-01-20T06:10:23.103Z]         sound: 3
+[2026-01-20T06:10:23.103Z]         aero: 4
+[2026-01-20T06:10:23.103Z]      🔬 Researching platform insights...
+[2026-01-20T06:10:38.749Z]      ✅ Generated platform insights
+[2026-01-20T06:10:38.749Z]         Strengths: 5
+[2026-01-20T06:10:38.749Z]         Weaknesses: 5
+[2026-01-20T06:10:38.749Z]         Tips: 5
+[2026-01-20T06:10:38.856Z]      ✅ Profile saved
+[2026-01-20T06:10:46.862Z]   [26/50] Processing: porsche-boxster-s-981
+[2026-01-20T06:10:46.986Z]      📍 Porsche Boxster S 981 (2012-2016)
+[2026-01-20T06:10:46.986Z]      🔧 3.4L Naturally Aspirated Flat-6 | 315 HP | RWD
+[2026-01-20T06:10:47.061Z]      🔬 Researching upgrades...
+[2026-01-20T06:11:32.315Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:11:32.316Z]         power: 5
+[2026-01-20T06:11:32.316Z]         handling: 5
+[2026-01-20T06:11:32.316Z]         braking: 4
+[2026-01-20T06:11:32.316Z]         cooling: 4
+[2026-01-20T06:11:32.316Z]         sound: 4
+[2026-01-20T06:11:32.316Z]         aero: 4
+[2026-01-20T06:11:32.316Z]      🔬 Researching platform insights...
+[2026-01-20T06:11:47.354Z]      ✅ Generated platform insights
+[2026-01-20T06:11:47.355Z]         Strengths: 5
+[2026-01-20T06:11:47.355Z]         Weaknesses: 5
+[2026-01-20T06:11:47.355Z]         Tips: 5
+[2026-01-20T06:11:47.543Z]      ✅ Profile saved
+[2026-01-20T06:11:55.545Z]   [27/50] Processing: bmw-335i-e90
+[2026-01-20T06:11:55.642Z]      📍 BMW 335i E90 (2007-2013)
+[2026-01-20T06:11:55.643Z]      🔧 3.0L Twin-Turbo I6 (N54/N55) | 300 HP | RWD
+[2026-01-20T06:11:55.694Z]      🔬 Researching upgrades...
+[2026-01-20T06:12:39.335Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:12:39.335Z]         power: 6
+[2026-01-20T06:12:39.335Z]         handling: 5
+[2026-01-20T06:12:39.335Z]         braking: 4
+[2026-01-20T06:12:39.335Z]         cooling: 3
+[2026-01-20T06:12:39.335Z]         sound: 3
+[2026-01-20T06:12:39.335Z]         aero: 4
+[2026-01-20T06:12:39.335Z]      🔬 Researching platform insights...
+[2026-01-20T06:12:55.671Z]      ✅ Generated platform insights
+[2026-01-20T06:12:55.672Z]         Strengths: 5
+[2026-01-20T06:12:55.672Z]         Weaknesses: 5
+[2026-01-20T06:12:55.672Z]         Tips: 5
+[2026-01-20T06:12:56.376Z]      ✅ Profile saved
+[2026-01-20T06:13:04.378Z]   [28/50] Processing: bmw-340i-f30
+[2026-01-20T06:13:05.128Z]      📍 BMW 340i F30 (2016-2019)
+[2026-01-20T06:13:05.128Z]      🔧 3.0L Twin-Turbo I6 | 320 HP | RWD
+[2026-01-20T06:13:05.360Z]      🔬 Researching upgrades...
+[2026-01-20T06:13:53.789Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:13:53.790Z]         power: 6
+[2026-01-20T06:13:53.790Z]         handling: 5
+[2026-01-20T06:13:53.791Z]         braking: 4
+[2026-01-20T06:13:53.791Z]         cooling: 4
+[2026-01-20T06:13:53.791Z]         sound: 4
+[2026-01-20T06:13:53.791Z]         aero: 4
+[2026-01-20T06:13:53.791Z]      🔬 Researching platform insights...
+[2026-01-20T06:14:08.403Z]      ✅ Generated platform insights
+[2026-01-20T06:14:08.404Z]         Strengths: 5
+[2026-01-20T06:14:08.404Z]         Weaknesses: 5
+[2026-01-20T06:14:08.404Z]         Tips: 5
+[2026-01-20T06:14:08.903Z]      ✅ Profile saved
+[2026-01-20T06:14:16.904Z]   [29/50] Processing: bmw-m340i-g20
+[2026-01-20T06:14:17.095Z]      📍 BMW M340i G20 (2019-2024)
+[2026-01-20T06:14:17.095Z]      🔧 3.0L Twin-Turbo I6 | 382 HP | AWD
+[2026-01-20T06:14:17.225Z]      🔬 Researching upgrades...
+[2026-01-20T06:14:58.625Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:14:58.626Z]         power: 5
+[2026-01-20T06:14:58.626Z]         handling: 5
+[2026-01-20T06:14:58.626Z]         braking: 4
+[2026-01-20T06:14:58.626Z]         cooling: 3
+[2026-01-20T06:14:58.626Z]         sound: 3
+[2026-01-20T06:14:58.626Z]         aero: 4
+[2026-01-20T06:14:58.626Z]      🔬 Researching platform insights...
+[2026-01-20T06:15:11.975Z]      ✅ Generated platform insights
+[2026-01-20T06:15:11.975Z]         Strengths: 5
+[2026-01-20T06:15:11.975Z]         Weaknesses: 5
+[2026-01-20T06:15:11.975Z]         Tips: 5
+[2026-01-20T06:15:12.254Z]      ✅ Profile saved
+[2026-01-20T06:15:20.256Z]   [30/50] Processing: porsche-panamera-turbo-971
+[2026-01-20T06:15:20.394Z]      📍 Porsche Panamera Turbo 971 (2017-2024)
+[2026-01-20T06:15:20.394Z]      🔧 4.0L Twin-Turbo V8 | 550 HP | AWD
+[2026-01-20T06:15:20.491Z]      🔬 Researching upgrades...
+[2026-01-20T06:16:02.426Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:16:02.429Z]         power: 6
+[2026-01-20T06:16:02.429Z]         handling: 5
+[2026-01-20T06:16:02.429Z]         braking: 4
+[2026-01-20T06:16:02.429Z]         cooling: 4
+[2026-01-20T06:16:02.429Z]         sound: 4
+[2026-01-20T06:16:02.429Z]         aero: 4
+[2026-01-20T06:16:02.429Z]      🔬 Researching platform insights...
+[2026-01-20T06:16:18.976Z]      ✅ Generated platform insights
+[2026-01-20T06:16:18.977Z]         Strengths: 5
+[2026-01-20T06:16:18.978Z]         Weaknesses: 5
+[2026-01-20T06:16:18.978Z]         Tips: 5
+[2026-01-20T06:16:19.166Z]      ✅ Profile saved
+[2026-01-20T06:16:27.168Z]   [31/50] Processing: mini-cooper-s-r53
+[2026-01-20T06:16:27.280Z]      📍 MINI Cooper S R53 (2002-2006)
+[2026-01-20T06:16:27.280Z]      🔧 1.6L Supercharged I4 | 163 HP | FWD
+[2026-01-20T06:16:27.348Z]      🔬 Researching upgrades...
+[2026-01-20T06:17:10.330Z]      ✅ Generated 28 upgrades
+[2026-01-20T06:17:10.331Z]         power: 6
+[2026-01-20T06:17:10.331Z]         handling: 6
+[2026-01-20T06:17:10.331Z]         braking: 4
+[2026-01-20T06:17:10.331Z]         cooling: 4
+[2026-01-20T06:17:10.331Z]         sound: 4
+[2026-01-20T06:17:10.331Z]         aero: 4
+[2026-01-20T06:17:10.331Z]      🔬 Researching platform insights...
+[2026-01-20T06:17:26.069Z]      ✅ Generated platform insights
+[2026-01-20T06:17:26.070Z]         Strengths: 5
+[2026-01-20T06:17:26.070Z]         Weaknesses: 5
+[2026-01-20T06:17:26.070Z]         Tips: 5
+[2026-01-20T06:17:26.314Z]      ✅ Profile saved
+[2026-01-20T06:17:34.316Z]   [32/50] Processing: mini-cooper-s-r56
+[2026-01-20T06:17:34.407Z]      📍 MINI Cooper S R56 (2007-2013)
+[2026-01-20T06:17:34.408Z]      🔧 1.6L Turbocharged I4 | 181 HP | FWD
+[2026-01-20T06:17:34.477Z]      🔬 Researching upgrades...
+[2026-01-20T06:18:19.227Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:18:19.228Z]         power: 6
+[2026-01-20T06:18:19.229Z]         handling: 6
+[2026-01-20T06:18:19.229Z]         braking: 4
+[2026-01-20T06:18:19.229Z]         cooling: 4
+[2026-01-20T06:18:19.229Z]         sound: 3
+[2026-01-20T06:18:19.229Z]         aero: 4
+[2026-01-20T06:18:19.229Z]      🔬 Researching platform insights...
+[2026-01-20T06:18:33.191Z]      ✅ Generated platform insights
+[2026-01-20T06:18:33.191Z]         Strengths: 5
+[2026-01-20T06:18:33.191Z]         Weaknesses: 5
+[2026-01-20T06:18:33.192Z]         Tips: 5
+[2026-01-20T06:18:33.366Z]      ✅ Profile saved
+[2026-01-20T06:18:41.367Z]   [33/50] Processing: mitsubishi-lancer-ralliart-cz4a
+[2026-01-20T06:18:41.450Z]      📍 Mitsubishi Lancer Ralliart (2009-2015)
+[2026-01-20T06:18:41.450Z]      🔧 2.0L Turbocharged I4 | 237 HP | AWD
+[2026-01-20T06:18:41.502Z]      🔬 Researching upgrades...
+[2026-01-20T06:19:21.972Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:19:21.973Z]         power: 6
+[2026-01-20T06:19:21.973Z]         handling: 5
+[2026-01-20T06:19:21.973Z]         braking: 4
+[2026-01-20T06:19:21.973Z]         cooling: 3
+[2026-01-20T06:19:21.973Z]         sound: 3
+[2026-01-20T06:19:21.973Z]         aero: 3
+[2026-01-20T06:19:21.973Z]      🔬 Researching platform insights...
+[2026-01-20T06:19:34.571Z]      ✅ Generated platform insights
+[2026-01-20T06:19:34.572Z]         Strengths: 5
+[2026-01-20T06:19:34.572Z]         Weaknesses: 5
+[2026-01-20T06:19:34.572Z]         Tips: 5
+[2026-01-20T06:19:34.694Z]      ✅ Profile saved
+[2026-01-20T06:19:42.695Z]   [34/50] Processing: mini-john-cooper-works-f56
+[2026-01-20T06:19:42.818Z]      📍 MINI John Cooper Works F56 (2014-2024)
+[2026-01-20T06:19:42.818Z]      🔧 2.0L Twin-Power Turbo I4 | 231 HP | FWD
+[2026-01-20T06:19:42.882Z]      🔬 Researching upgrades...
+[2026-01-20T06:20:23.461Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:20:23.463Z]         power: 6
+[2026-01-20T06:20:23.463Z]         handling: 5
+[2026-01-20T06:20:23.463Z]         braking: 4
+[2026-01-20T06:20:23.463Z]         cooling: 3
+[2026-01-20T06:20:23.463Z]         sound: 3
+[2026-01-20T06:20:23.463Z]         aero: 4
+[2026-01-20T06:20:23.463Z]      🔬 Researching platform insights...
+[2026-01-20T06:20:40.001Z]      ✅ Generated platform insights
+[2026-01-20T06:20:40.001Z]         Strengths: 5
+[2026-01-20T06:20:40.002Z]         Weaknesses: 5
+[2026-01-20T06:20:40.002Z]         Tips: 5
+[2026-01-20T06:20:40.175Z]      ✅ Profile saved
+[2026-01-20T06:20:48.178Z]   [35/50] Processing: toyota-gr-corolla-e210
+[2026-01-20T06:20:48.268Z]      📍 Toyota GR Corolla (2023-2024)
+[2026-01-20T06:20:48.268Z]      🔧 1.6L Turbocharged 3-Cylinder | 300 HP | AWD
+[2026-01-20T06:20:48.321Z]      🔬 Researching upgrades...
+[2026-01-20T06:21:30.476Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:21:30.476Z]         power: 6
+[2026-01-20T06:21:30.477Z]         handling: 5
+[2026-01-20T06:21:30.477Z]         braking: 4
+[2026-01-20T06:21:30.477Z]         cooling: 4
+[2026-01-20T06:21:30.477Z]         sound: 4
+[2026-01-20T06:21:30.477Z]         aero: 4
+[2026-01-20T06:21:30.477Z]      🔬 Researching platform insights...
+[2026-01-20T06:21:45.609Z]      ✅ Generated platform insights
+[2026-01-20T06:21:45.610Z]         Strengths: 5
+[2026-01-20T06:21:45.610Z]         Weaknesses: 5
+[2026-01-20T06:21:45.610Z]         Tips: 5
+[2026-01-20T06:21:45.718Z]      ✅ Profile saved
+[2026-01-20T06:21:53.719Z]   [36/50] Processing: volkswagen-jetta-gli-mk6
+[2026-01-20T06:21:53.816Z]      📍 Volkswagen Jetta GLI Mk6 (2012-2018)
+[2026-01-20T06:21:53.817Z]      🔧 2.0L Turbocharged I4 | 200 HP | FWD
+[2026-01-20T06:21:53.872Z]      🔬 Researching upgrades...
+[2026-01-20T06:22:36.607Z]      ✅ Generated 25 upgrades
+[2026-01-20T06:22:36.608Z]         power: 6
+[2026-01-20T06:22:36.608Z]         handling: 5
+[2026-01-20T06:22:36.609Z]         braking: 4
+[2026-01-20T06:22:36.609Z]         cooling: 3
+[2026-01-20T06:22:36.609Z]         sound: 3
+[2026-01-20T06:22:36.609Z]         aero: 4
+[2026-01-20T06:22:36.609Z]      🔬 Researching platform insights...
+[2026-01-20T06:22:49.280Z]      ✅ Generated platform insights
+[2026-01-20T06:22:49.280Z]         Strengths: 5
+[2026-01-20T06:22:49.280Z]         Weaknesses: 5
+[2026-01-20T06:22:49.280Z]         Tips: 5
+[2026-01-20T06:22:49.471Z]      ✅ Profile saved
+[2026-01-20T06:22:57.473Z]   [37/50] Processing: audi-rs7-c8
+[2026-01-20T06:22:57.574Z]      📍 Audi RS7 Sportback (2020-present)
+[2026-01-20T06:22:57.574Z]      🔧 4.0L Twin-Turbo V8 | 591 HP | AWD
+[2026-01-20T06:22:57.631Z]      🔬 Researching upgrades...
+[2026-01-20T06:23:39.954Z]      ✅ Generated 28 upgrades
+[2026-01-20T06:23:39.955Z]         power: 6
+[2026-01-20T06:23:39.955Z]         handling: 5
+[2026-01-20T06:23:39.955Z]         braking: 4
+[2026-01-20T06:23:39.955Z]         cooling: 4
+[2026-01-20T06:23:39.955Z]         sound: 4
+[2026-01-20T06:23:39.955Z]         aero: 5
+[2026-01-20T06:23:39.955Z]      🔬 Researching platform insights...
+[2026-01-20T06:23:56.049Z]      ✅ Generated platform insights
+[2026-01-20T06:23:56.049Z]         Strengths: 5
+[2026-01-20T06:23:56.049Z]         Weaknesses: 5
+[2026-01-20T06:23:56.049Z]         Tips: 5
+[2026-01-20T06:23:56.143Z]      ✅ Profile saved
+[2026-01-20T06:24:04.145Z]   [38/50] Processing: jaguar-xe-s-x760
+[2026-01-20T06:24:04.577Z]      📍 Jaguar XE S (2017-2024)
+[2026-01-20T06:24:04.578Z]      🔧 3.0L Supercharged V6 | 380 HP | RWD
+[2026-01-20T06:24:04.839Z]      🔬 Researching upgrades...
+[2026-01-20T06:24:46.545Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:24:46.546Z]         power: 5
+[2026-01-20T06:24:46.546Z]         handling: 5
+[2026-01-20T06:24:46.546Z]         braking: 4
+[2026-01-20T06:24:46.546Z]         cooling: 3
+[2026-01-20T06:24:46.546Z]         sound: 3
+[2026-01-20T06:24:46.546Z]         aero: 4
+[2026-01-20T06:24:46.546Z]      🔬 Researching platform insights...
+[2026-01-20T06:24:58.792Z]      ✅ Generated platform insights
+[2026-01-20T06:24:58.792Z]         Strengths: 5
+[2026-01-20T06:24:58.792Z]         Weaknesses: 5
+[2026-01-20T06:24:58.792Z]         Tips: 5
+[2026-01-20T06:24:59.388Z]      ✅ Profile saved
+[2026-01-20T06:25:07.388Z]   [39/50] Processing: kia-k5-gt-2021
+[2026-01-20T06:25:07.904Z]      📍 Kia K5 GT (2021-2024)
+[2026-01-20T06:25:07.904Z]      🔧 2.5L Turbo I4 | 290 HP | FWD
+[2026-01-20T06:25:08.069Z]      🔬 Researching upgrades...
+[2026-01-20T06:25:51.374Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:25:51.375Z]         power: 5
+[2026-01-20T06:25:51.375Z]         handling: 5
+[2026-01-20T06:25:51.375Z]         braking: 4
+[2026-01-20T06:25:51.375Z]         cooling: 3
+[2026-01-20T06:25:51.375Z]         sound: 3
+[2026-01-20T06:25:51.375Z]         aero: 4
+[2026-01-20T06:25:51.375Z]      🔬 Researching platform insights...
+[2026-01-20T06:26:07.182Z]      ✅ Generated platform insights
+[2026-01-20T06:26:07.183Z]         Strengths: 5
+[2026-01-20T06:26:07.183Z]         Weaknesses: 5
+[2026-01-20T06:26:07.183Z]         Tips: 5
+[2026-01-20T06:26:07.499Z]      ✅ Profile saved
+[2026-01-20T06:26:15.502Z]   [40/50] Processing: lamborghini-aventador-lp700-4
+[2026-01-20T06:26:15.674Z]      📍 Lamborghini Aventador LP 700-4 (2011-2016)
+[2026-01-20T06:26:15.674Z]      🔧 6.5L Naturally Aspirated V12 | 700 HP | AWD
+[2026-01-20T06:26:15.792Z]      🔬 Researching upgrades...
+[2026-01-20T06:26:55.781Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:26:55.782Z]         power: 5
+[2026-01-20T06:26:55.782Z]         handling: 5
+[2026-01-20T06:26:55.782Z]         braking: 4
+[2026-01-20T06:26:55.782Z]         cooling: 3
+[2026-01-20T06:26:55.782Z]         sound: 3
+[2026-01-20T06:26:55.782Z]         aero: 4
+[2026-01-20T06:26:55.782Z]      🔬 Researching platform insights...
+[2026-01-20T06:27:09.993Z]      ✅ Generated platform insights
+[2026-01-20T06:27:09.993Z]         Strengths: 5
+[2026-01-20T06:27:09.993Z]         Weaknesses: 5
+[2026-01-20T06:27:09.993Z]         Tips: 5
+[2026-01-20T06:27:10.346Z]      ✅ Profile saved
+[2026-01-20T06:27:18.348Z]   [41/50] Processing: porsche-911-gt3-992
+[2026-01-20T06:27:18.501Z]      📍 Porsche 911 GT3 992 (2021-2024)
+[2026-01-20T06:27:18.502Z]      🔧 4.0L Naturally Aspirated Flat-6 | 502 HP | RWD
+[2026-01-20T06:27:18.599Z]      🔬 Researching upgrades...
+[2026-01-20T06:28:02.522Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:28:02.523Z]         power: 5
+[2026-01-20T06:28:02.523Z]         handling: 5
+[2026-01-20T06:28:02.523Z]         braking: 4
+[2026-01-20T06:28:02.523Z]         cooling: 4
+[2026-01-20T06:28:02.523Z]         sound: 4
+[2026-01-20T06:28:02.523Z]         aero: 5
+[2026-01-20T06:28:02.523Z]      🔬 Researching platform insights...
+[2026-01-20T06:28:18.252Z]      ✅ Generated platform insights
+[2026-01-20T06:28:18.253Z]         Strengths: 5
+[2026-01-20T06:28:18.253Z]         Weaknesses: 5
+[2026-01-20T06:28:18.253Z]         Tips: 5
+[2026-01-20T06:28:18.405Z]      ✅ Profile saved
+[2026-01-20T06:28:26.408Z]   [42/50] Processing: porsche-carrera-gt-980
+[2026-01-20T06:28:26.512Z]      📍 Porsche Carrera GT (2004-2007)
+[2026-01-20T06:28:26.513Z]      🔧 5.7L Naturally Aspirated V10 | 612 HP | RWD
+[2026-01-20T06:28:26.571Z]      🔬 Researching upgrades...
+[2026-01-20T06:29:01.787Z]      ✅ Generated 22 upgrades
+[2026-01-20T06:29:01.788Z]         power: 4
+[2026-01-20T06:29:01.788Z]         handling: 4
+[2026-01-20T06:29:01.788Z]         braking: 4
+[2026-01-20T06:29:01.788Z]         cooling: 3
+[2026-01-20T06:29:01.788Z]         sound: 3
+[2026-01-20T06:29:01.788Z]         aero: 4
+[2026-01-20T06:29:01.788Z]      🔬 Researching platform insights...
+[2026-01-20T06:29:15.480Z]      ✅ Generated platform insights
+[2026-01-20T06:29:15.480Z]         Strengths: 5
+[2026-01-20T06:29:15.480Z]         Weaknesses: 5
+[2026-01-20T06:29:15.480Z]         Tips: 5
+[2026-01-20T06:29:15.653Z]      ✅ Profile saved
+[2026-01-20T06:29:23.655Z]   [43/50] Processing: chevrolet-ss-vf
+[2026-01-20T06:29:23.746Z]      📍 Chevrolet SS (2014-2017)
+[2026-01-20T06:29:23.746Z]      🔧 6.2L Naturally Aspirated V8 (LS3) | 415 HP | RWD
+[2026-01-20T06:29:23.795Z]      🔬 Researching upgrades...
+[2026-01-20T06:30:04.099Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:30:04.100Z]         power: 6
+[2026-01-20T06:30:04.100Z]         handling: 5
+[2026-01-20T06:30:04.100Z]         braking: 4
+[2026-01-20T06:30:04.100Z]         cooling: 4
+[2026-01-20T06:30:04.100Z]         sound: 3
+[2026-01-20T06:30:04.100Z]         aero: 4
+[2026-01-20T06:30:04.100Z]      🔬 Researching platform insights...
+[2026-01-20T06:30:17.062Z]      ✅ Generated platform insights
+[2026-01-20T06:30:17.062Z]         Strengths: 5
+[2026-01-20T06:30:17.062Z]         Weaknesses: 5
+[2026-01-20T06:30:17.062Z]         Tips: 5
+[2026-01-20T06:30:17.176Z]      ✅ Profile saved
+[2026-01-20T06:30:25.178Z]   [44/50] Processing: pontiac-g8-gt
+[2026-01-20T06:30:25.295Z]      📍 Pontiac G8 GT (2008-2009)
+[2026-01-20T06:30:25.295Z]      🔧 6.0L LS2 V8 | 361 HP | RWD
+[2026-01-20T06:30:25.385Z]      🔬 Researching upgrades...
+[2026-01-20T06:31:08.413Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:31:08.414Z]         power: 6
+[2026-01-20T06:31:08.414Z]         handling: 5
+[2026-01-20T06:31:08.414Z]         braking: 4
+[2026-01-20T06:31:08.414Z]         cooling: 4
+[2026-01-20T06:31:08.414Z]         sound: 3
+[2026-01-20T06:31:08.414Z]         aero: 4
+[2026-01-20T06:31:08.414Z]      🔬 Researching platform insights...
+[2026-01-20T06:31:23.045Z]      ✅ Generated platform insights
+[2026-01-20T06:31:23.046Z]         Strengths: 5
+[2026-01-20T06:31:23.046Z]         Weaknesses: 5
+[2026-01-20T06:31:23.046Z]         Tips: 5
+[2026-01-20T06:31:23.542Z]      ✅ Profile saved
+[2026-01-20T06:31:31.545Z]   [45/50] Processing: mclaren-720s
+[2026-01-20T06:31:31.728Z]      📍 McLaren 720S (2017-2022)
+[2026-01-20T06:31:31.729Z]      🔧 4.0L Twin-Turbo V8 | 710 HP | RWD
+[2026-01-20T06:31:31.914Z]      🔬 Researching upgrades...
+[2026-01-20T06:32:16.290Z]      ✅ Generated 27 upgrades
+[2026-01-20T06:32:16.290Z]         power: 5
+[2026-01-20T06:32:16.290Z]         handling: 5
+[2026-01-20T06:32:16.290Z]         braking: 4
+[2026-01-20T06:32:16.290Z]         cooling: 4
+[2026-01-20T06:32:16.291Z]         sound: 4
+[2026-01-20T06:32:16.291Z]         aero: 5
+[2026-01-20T06:32:16.291Z]      🔬 Researching platform insights...
+[2026-01-20T06:32:28.709Z]      ✅ Generated platform insights
+[2026-01-20T06:32:28.710Z]         Strengths: 5
+[2026-01-20T06:32:28.710Z]         Weaknesses: 5
+[2026-01-20T06:32:28.710Z]         Tips: 5
+[2026-01-20T06:32:28.877Z]      ✅ Profile saved
+[2026-01-20T06:32:36.879Z]   [46/50] Processing: porsche-918-spyder-918
+[2026-01-20T06:32:36.995Z]      📍 Porsche 918 Spyder (2013-2015)
+[2026-01-20T06:32:36.995Z]      🔧 4.6L V8 + Electric Motors Hybrid | 887 HP | AWD
+[2026-01-20T06:32:37.061Z]      🔬 Researching upgrades...
+[2026-01-20T06:33:14.095Z]      ✅ Generated 23 upgrades
+[2026-01-20T06:33:14.096Z]         power: 4
+[2026-01-20T06:33:14.096Z]         handling: 5
+[2026-01-20T06:33:14.096Z]         braking: 4
+[2026-01-20T06:33:14.096Z]         cooling: 3
+[2026-01-20T06:33:14.096Z]         sound: 3
+[2026-01-20T06:33:14.096Z]         aero: 4
+[2026-01-20T06:33:14.096Z]      🔬 Researching platform insights...
+[2026-01-20T06:33:27.472Z]      ✅ Generated platform insights
+[2026-01-20T06:33:27.472Z]         Strengths: 5
+[2026-01-20T06:33:27.472Z]         Weaknesses: 5
+[2026-01-20T06:33:27.472Z]         Tips: 5
+[2026-01-20T06:33:27.679Z]      ✅ Profile saved
+[2026-01-20T06:33:35.680Z]   [47/50] Processing: subaru-brz-zd8
+[2026-01-20T06:33:35.821Z]      📍 Subaru BRZ (2nd Gen) (2022-2024)
+[2026-01-20T06:33:35.821Z]      🔧 2.4L NA H4 | 228 HP | RWD
+[2026-01-20T06:33:35.893Z]      🔬 Researching upgrades...
+[2026-01-20T06:34:17.651Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:34:17.653Z]         power: 6
+[2026-01-20T06:34:17.653Z]         handling: 5
+[2026-01-20T06:34:17.653Z]         braking: 4
+[2026-01-20T06:34:17.653Z]         cooling: 4
+[2026-01-20T06:34:17.653Z]         sound: 3
+[2026-01-20T06:34:17.653Z]         aero: 4
+[2026-01-20T06:34:17.653Z]      🔬 Researching platform insights...
+[2026-01-20T06:34:31.646Z]      ✅ Generated platform insights
+[2026-01-20T06:34:31.646Z]         Strengths: 5
+[2026-01-20T06:34:31.646Z]         Weaknesses: 5
+[2026-01-20T06:34:31.646Z]         Tips: 5
+[2026-01-20T06:34:31.990Z]      ✅ Profile saved
+[2026-01-20T06:34:39.992Z]   [48/50] Processing: nissan-skyline-gt-r-r33
+[2026-01-20T06:34:40.233Z]      📍 Nissan Skyline GT-R R33 (1995-1998)
+[2026-01-20T06:34:40.233Z]      🔧 2.6L Twin-Turbo I6 (RB26DETT) | 276 HP | AWD
+[2026-01-20T06:34:40.313Z]      🔬 Researching upgrades...
+[2026-01-20T06:35:20.813Z]      ✅ Generated 26 upgrades
+[2026-01-20T06:35:20.814Z]         power: 6
+[2026-01-20T06:35:20.814Z]         handling: 5
+[2026-01-20T06:35:20.814Z]         braking: 4
+[2026-01-20T06:35:20.814Z]         cooling: 4
+[2026-01-20T06:35:20.814Z]         sound: 3
+[2026-01-20T06:35:20.814Z]         aero: 4
+[2026-01-20T06:35:20.814Z]      🔬 Researching platform insights...
+[2026-01-20T06:35:33.881Z]      ✅ Generated platform insights
+[2026-01-20T06:35:33.882Z]         Strengths: 5
+[2026-01-20T06:35:33.882Z]         Weaknesses: 5
+[2026-01-20T06:35:33.882Z]         Tips: 5
+[2026-01-20T06:35:34.057Z]      ✅ Profile saved
+[2026-01-20T06:35:42.059Z]   [49/50] Processing: toyota-lfa-lfa01
+[2026-01-20T06:35:42.179Z]      📍 Toyota LFA (2010-2012)
+[2026-01-20T06:35:42.179Z]      🔧 4.8L Naturally Aspirated V10 | 552 HP | RWD
+[2026-01-20T06:35:42.260Z]      🔬 Researching upgrades...
+[2026-01-20T06:36:18.782Z]      ✅ Generated 23 upgrades
+[2026-01-20T06:36:18.783Z]         power: 4
+[2026-01-20T06:36:18.783Z]         handling: 5
+[2026-01-20T06:36:18.783Z]         braking: 4
+[2026-01-20T06:36:18.783Z]         cooling: 3
+[2026-01-20T06:36:18.783Z]         sound: 3
+[2026-01-20T06:36:18.783Z]         aero: 4
+[2026-01-20T06:36:18.783Z]      🔬 Researching platform insights...
+[2026-01-20T06:36:33.153Z]      ✅ Generated platform insights
+[2026-01-20T06:36:33.153Z]         Strengths: 5
+[2026-01-20T06:36:33.153Z]         Weaknesses: 5
+[2026-01-20T06:36:33.154Z]         Tips: 5
+[2026-01-20T06:36:33.362Z]      ✅ Profile saved
+[2026-01-20T06:36:41.364Z]   [50/50] Processing: toyota-supra-mk4-a80-turbo
+[2026-01-20T06:36:41.494Z]      📍 Toyota Supra Mk4 A80 Turbo (1993-2002)
+[2026-01-20T06:36:41.494Z]      🔧 3.0L TT I6 2JZ-GTE | 320 HP | RWD
+[2026-01-20T06:36:41.558Z]      🔬 Researching upgrades...
+[2026-01-20T06:37:14.235Z]      ✅ Generated 24 upgrades
+[2026-01-20T06:37:14.235Z]         power: 6
+[2026-01-20T06:37:14.235Z]         handling: 5
+[2026-01-20T06:37:14.235Z]         braking: 3
+[2026-01-20T06:37:14.235Z]         cooling: 3
+[2026-01-20T06:37:14.235Z]         sound: 3
+[2026-01-20T06:37:14.235Z]         aero: 4
+[2026-01-20T06:37:14.235Z]      🔬 Researching platform insights...
+[2026-01-20T06:37:27.308Z]      ✅ Generated platform insights
+[2026-01-20T06:37:27.308Z]         Strengths: 5
+[2026-01-20T06:37:27.308Z]         Weaknesses: 5
+[2026-01-20T06:37:27.308Z]         Tips: 5
+[2026-01-20T06:37:27.476Z]      ✅ Profile saved
+[2026-01-20T06:37:27.476Z]   =========================================
+[2026-01-20T06:37:27.476Z]   📊 Summary
+[2026-01-20T06:37:27.476Z]   =========================================
+[2026-01-20T06:37:27.481Z]   ✅ Processed: 50
+[2026-01-20T06:37:27.481Z]   ⏭️  Skipped (already has data): 0
+[2026-01-20T06:37:27.481Z]   ❌ Failed: 0
+[2026-01-20T06:37:27.481Z]   Total upgrades generated: 1285
+[2026-01-20T06:37:27.507Z] ✅ COMPLETED: Phase 4: AI Research - Missing Cars (up to 50) (53.6 min)
+[2026-01-20T06:37:27.507Z] 
+
+[2026-01-20T06:37:27.507Z] ========================================
+[2026-01-20T06:37:27.507Z] 🌅 OVERNIGHT EXPANSION COMPLETE
+[2026-01-20T06:37:27.507Z] ========================================
+[2026-01-20T06:37:27.507Z] Total duration: 75.0 minutes
+[2026-01-20T06:37:27.507Z] Log file: /Volumes/10TB External HD/01. Apps - WORKING/AutoRev/logs/overnight-expansion-2026-01-20.log
+[2026-01-20T06:37:27.507Z] 
+[2026-01-20T06:37:27.507Z] Next steps:
+[2026-01-20T06:37:27.507Z]   1. Review log file for any failures
+[2026-01-20T06:37:27.507Z]   2. Run validation queries from DATABASE-EXPANSION-FOR-MY-GARAGE.md
+[2026-01-20T06:37:27.507Z]   3. Check UI to verify data is displaying correctly
+[2026-01-20T06:37:27.507Z] 

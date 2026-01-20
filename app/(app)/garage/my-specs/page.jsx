@@ -14,7 +14,7 @@
  * URL: /garage/my-specs?car=<carSlug> or ?build=<buildId>
  */
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -28,6 +28,7 @@ import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import { fetchCars } from '@/lib/carsClient';
 import { useCarImages } from '@/hooks/useCarImages';
+import { useAIChat } from '@/components/AIChatContext';
 
 // Icons
 const Icons = {
@@ -45,7 +46,29 @@ const Icons = {
       <circle cx="17" cy="17" r="2"/>
     </svg>
   ),
+  sparkle: ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/>
+    </svg>
+  ),
 };
+
+/**
+ * AskALSectionButton - Opens AL chat with a section-specific prompt
+ * For use in card headers on specs pages
+ */
+function AskALSectionButton({ prompt, category, carName, onClick }) {
+  return (
+    <button 
+      className={styles.askAlBtn}
+      onClick={onClick}
+      title={`Ask AL about ${category}`}
+    >
+      <Icons.sparkle size={12} />
+      Ask AL
+    </button>
+  );
+}
 
 // Stat component for VehicleInfoBar - shows HP with optional gain
 function HpStat({ hp, finalHp, hpGain }) {
@@ -54,8 +77,10 @@ function HpStat({ hp, finalHp, hpGain }) {
   
   return (
     <div className={styles.statBadge}>
-      <span className={styles.statValue}>{displayHp || '—'}</span>
-      <span className={styles.statLabel}>HP</span>
+      <div className={styles.statRow}>
+        <span className={styles.statValue}>{displayHp || '—'}</span>
+        <span className={styles.statLabel}>HP</span>
+      </div>
       {hasGain && (
         <span className={styles.statGain}>+{hpGain}</span>
       )}
@@ -89,9 +114,45 @@ function MySpecsContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
+  const { openChatWithPrompt } = useAIChat();
   
   // Get user's hero image for this car
   const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  
+  // Create contextualized AL prompt handlers for each section
+  // Each section has a detailed prompt (sent to AL) and a short displayMessage (shown to user)
+  const askALAboutSection = useCallback((section) => {
+    if (!selectedCar) return;
+    
+    const carName = selectedCar.name;
+    
+    // Detailed prompts sent to AL
+    const prompts = {
+      performance: `Tell me about the performance specs of my ${carName}. What makes it special, and how does it compare to competitors? What should I know about its acceleration, handling, and track potential?`,
+      engine: `Tell me about the ${selectedCar.engine || 'engine'} in my ${carName}. What are its strengths, common maintenance items, and tuning potential? Any reliability concerns I should know about?`,
+      chassis: `Tell me about the chassis and body of my ${carName}. How does the weight distribution affect handling? What makes the platform special?`,
+      ownership: `What should I know about owning a ${carName}? What are typical maintenance costs, common issues to watch for, and ownership tips from experienced owners?`,
+      ratings: `Explain the AutoRev ratings for my ${carName}. Why does it score the way it does for driver fun, track capability, sound, reliability, and value?`,
+    };
+    
+    // Short, clear questions shown to user in the confirmation card
+    const displayMessages = {
+      performance: `How does the ${carName} perform? How fast is it, and what's it like on track?`,
+      engine: `What should I know about the ${selectedCar.engine || 'engine'}? Reliability, maintenance, tuning potential?`,
+      chassis: `How does the ${carName}'s weight and chassis affect handling?`,
+      ownership: `What are the real costs and common issues with owning a ${carName}?`,
+      ratings: `Why does the ${carName} score the way it does in AutoRev ratings?`,
+    };
+    
+    const prompt = prompts[section] || `Tell me more about ${section} for my ${carName}`;
+    const displayMessage = displayMessages[section] || prompt;
+    
+    openChatWithPrompt(prompt, {
+      category: section.charAt(0).toUpperCase() + section.slice(1),
+      carSlug: selectedCar.slug,
+      carName: carName,
+    }, displayMessage);
+  }, [selectedCar, openChatWithPrompt]);
 
   // Fetch all cars
   useEffect(() => {
@@ -207,7 +268,17 @@ function MySpecsContent() {
         <div className={styles.specsGrid}>
           {/* Performance */}
           <div className={styles.specCard}>
-            <h3 className={styles.cardTitle}>Performance</h3>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.cardTitle}>Performance</h3>
+              <button 
+                className={styles.askAlBtn}
+                onClick={() => askALAboutSection('performance')}
+                title="Ask AL about performance"
+              >
+                <Icons.sparkle size={12} />
+                Ask AL
+              </button>
+            </div>
             <div className={styles.specItems}>
               {selectedCar.hp && (
                 <div className={styles.specItem}>
@@ -235,7 +306,17 @@ function MySpecsContent() {
 
           {/* Engine & Drivetrain */}
           <div className={styles.specCard}>
-            <h3 className={styles.cardTitle}>Engine & Drivetrain</h3>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.cardTitle}>Engine & Drivetrain</h3>
+              <button 
+                className={styles.askAlBtn}
+                onClick={() => askALAboutSection('engine')}
+                title="Ask AL about engine & drivetrain"
+              >
+                <Icons.sparkle size={12} />
+                Ask AL
+              </button>
+            </div>
             <div className={styles.specItems}>
               {selectedCar.engine && <div className={styles.specItem}><span>Engine</span><span>{selectedCar.engine}</span></div>}
               {selectedCar.trans && <div className={styles.specItem}><span>Transmission</span><span>{selectedCar.trans}</span></div>}
@@ -246,7 +327,17 @@ function MySpecsContent() {
 
           {/* Chassis & Body */}
           <div className={styles.specCard}>
-            <h3 className={styles.cardTitle}>Chassis & Body</h3>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.cardTitle}>Chassis & Body</h3>
+              <button 
+                className={styles.askAlBtn}
+                onClick={() => askALAboutSection('chassis')}
+                title="Ask AL about chassis & body"
+              >
+                <Icons.sparkle size={12} />
+                Ask AL
+              </button>
+            </div>
             <div className={styles.specItems}>
               {selectedCar.curbWeight && <div className={styles.specItem}><span>Curb Weight</span><span>{selectedCar.curbWeight.toLocaleString()} lbs</span></div>}
               {selectedCar.seats && <div className={styles.specItem}><span>Seats</span><span>{selectedCar.seats}</span></div>}
@@ -257,7 +348,17 @@ function MySpecsContent() {
 
           {/* Ownership */}
           <div className={styles.specCard}>
-            <h3 className={styles.cardTitle}>Ownership</h3>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.cardTitle}>Ownership</h3>
+              <button 
+                className={styles.askAlBtn}
+                onClick={() => askALAboutSection('ownership')}
+                title="Ask AL about ownership"
+              >
+                <Icons.sparkle size={12} />
+                Ask AL
+              </button>
+            </div>
             <div className={styles.specItems}>
               {selectedCar.priceRange && <div className={styles.specItem}><span>Price Range</span><span>{selectedCar.priceRange}</span></div>}
               {selectedCar.dailyUsabilityTag && <div className={styles.specItem}><span>Daily Use</span><span>{selectedCar.dailyUsabilityTag}</span></div>}
@@ -268,7 +369,17 @@ function MySpecsContent() {
 
         {/* AutoRev Ratings */}
         <div className={styles.ratingsCard}>
-          <h3 className={styles.cardTitle}>AutoRev Ratings</h3>
+          <div className={styles.cardHeader}>
+            <h3 className={styles.cardTitle}>AutoRev Ratings</h3>
+            <button 
+              className={styles.askAlBtn}
+              onClick={() => askALAboutSection('ratings')}
+              title="Ask AL about ratings"
+            >
+              <Icons.sparkle size={12} />
+              Ask AL
+            </button>
+          </div>
           <div className={styles.ratingsGrid}>
             <RatingBar value={selectedCar.driverFun} label="Driver Fun" />
             <RatingBar value={selectedCar.track} label="Track" />
@@ -285,7 +396,9 @@ function MySpecsContent() {
           <div className={styles.prosConsRow}>
             {selectedCar.pros?.length > 0 && (
               <div className={styles.prosCard}>
-                <h3 className={styles.cardTitle}>Pros</h3>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.cardTitle}>Pros</h3>
+                </div>
                 <ul className={styles.prosList}>
                   {selectedCar.pros.slice(0, 5).map((pro, i) => (
                     <li key={i}>✓ {pro}</li>
@@ -295,7 +408,9 @@ function MySpecsContent() {
             )}
             {selectedCar.cons?.length > 0 && (
               <div className={styles.consCard}>
-                <h3 className={styles.cardTitle}>Cons</h3>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.cardTitle}>Cons</h3>
+                </div>
                 <ul className={styles.consList}>
                   {selectedCar.cons.slice(0, 5).map((con, i) => (
                     <li key={i}>✗ {con}</li>

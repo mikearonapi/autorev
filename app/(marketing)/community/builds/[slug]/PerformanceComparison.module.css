@@ -25,7 +25,7 @@
 }
 
 .title svg {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .costBadge {
@@ -71,7 +71,7 @@
 }
 
 .metricLabel svg {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .metricIcon {

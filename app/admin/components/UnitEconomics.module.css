@@ -87,18 +87,18 @@
 }
 
 .ratioCard.healthy {
-  background: rgba(34, 197, 94, 0.06);
-  border-color: rgba(34, 197, 94, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.06);
+  border-color: rgba(var(--brand-success-rgb), 0.15);
 }
 
 .ratioCard.warning {
-  background: rgba(245, 158, 11, 0.06);
-  border-color: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.06);
+  border-color: rgba(var(--brand-warning-rgb), 0.15);
 }
 
 .ratioCard.critical {
-  background: rgba(239, 68, 68, 0.06);
-  border-color: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.06);
+  border-color: rgba(var(--brand-error-rgb), 0.15);
 }
 
 .ratioHeader {
@@ -126,17 +126,17 @@
 }
 
 .ratioBadge.healthy {
-  background: rgba(34, 197, 94, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.2);
   color: var(--brand-success);
 }
 
 .ratioBadge.warning {
-  background: rgba(245, 158, 11, 0.2);
+  background: rgba(var(--brand-warning-rgb), 0.2);
   color: var(--brand-warning);
 }
 
 .ratioBadge.critical {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   color: var(--brand-error);
 }
 

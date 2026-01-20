@@ -20,6 +20,17 @@
 @import './mobile-utilities.css';
 
 /* --------------------------------------------------------------------------
+   Design Token System Import
+   --------------------------------------------------------------------------
+   CRITICAL: This import makes all --color-* variables available globally.
+   The token system provides a single source of truth for colors, spacing,
+   typography, shadows, and animations.
+   
+   See: styles/tokens/colors.css for the color definitions
+   -------------------------------------------------------------------------- */
+@import '../styles/tokens/index.css';
+
+/* --------------------------------------------------------------------------
    CSS Custom Properties (Theme Tokens)
    Build-Focused Premium Dark Theme (January 2026)
    Inspired by GRAVL/FIXD - Clean, premium, performance-focused
@@ -48,18 +59,37 @@
   --brand-text-tertiary: #64748b;     /* Slate-500: Subtle text */
   --brand-text-muted: #475569;        /* Slate-600: Very subtle */
   
-  /* Accent Colors - Each has a specific semantic meaning */
-  --brand-lime: #d4ff00;          /* EMPHASIS: Headlines, important CTAs, badges */
+  /* Accent Colors - THE CORE 4 (Each has ONE specific purpose)
+     See docs/BRAND_GUIDELINES.md for usage rules */
+  --brand-lime: #d4ff00;          /* USER ACTIONS: CTAs, buttons, focus states */
   --brand-lime-dark: #bfe600;
-  --brand-teal: #10b981;          /* IMPROVEMENTS: Gains, positive changes, selections */
+  --brand-teal: #10b981;          /* POSITIVE DATA: Gains, improvements, active states */
   --brand-teal-light: #34d399;
   --brand-teal-dark: #059669;
   --brand-blue: #3b82f6;          /* BASELINE: Stock values, original data */
   --brand-blue-light: #60a5fa;
   --brand-blue-dark: #1d4ed8;
-  --brand-gold: #d4a84b;          /* INTERACTIVE: Buttons, links, brand accent */
-  --brand-gold-light: #e8c875;
-  --brand-gold-hover: #e8c875;
+  --brand-amber: #f59e0b;         /* WARNINGS ONLY: Caution, alerts (use sparingly) */
+  --brand-amber-light: #fbbf24;
+  
+  /* DEPRECATED: Gold removed from palette - use amber for warnings, muted white for labels */
+  --brand-gold: #f59e0b;          /* Maps to amber - DO NOT USE DIRECTLY */
+  --brand-gold-light: #fbbf24;
+  --brand-gold-hover: #fbbf24;
+  
+  /* RGB Components - For use with rgba(var(--brand-X-rgb), opacity) */
+  --brand-lime-rgb: 212, 255, 0;
+  --brand-teal-rgb: 16, 185, 129;
+  --brand-teal-dark-rgb: 26, 77, 110;
+  --brand-blue-rgb: 59, 130, 246;
+  --brand-amber-rgb: 245, 158, 11;
+  --brand-error-rgb: 239, 68, 68;
+  --brand-success-rgb: 34, 197, 94;
+  --brand-warning-rgb: 245, 158, 11;
+  --brand-purple-rgb: 139, 92, 246;
+  
+  /* DEPRECATED: Use amber-rgb instead */
+  --brand-gold-rgb: 245, 158, 11;  /* Maps to amber */
   
   /* Additional brand colors needed for migration */
   --brand-bg-primary-dark: #0a1628;
@@ -106,13 +136,13 @@
   --gravl-lime: #d4ff00;
   --gravl-lime-dark: #bfe600;
   
-  /* Accent Colors - Using Brand System */
-  --accent-primary: #d4a84b;        /* Interactive: Buttons, links */
-  --accent-primary-hover: #e8c875;
-  --accent-primary-muted: rgba(212, 168, 75, 0.15);
-  --accent-secondary: #00d4ff;      /* Tech Blue (legacy) */
-  --accent-secondary-hover: #33deff;
-  --accent-secondary-muted: rgba(0, 212, 255, 0.15);
+  /* Accent Colors - Using Brand System (LEGACY ALIASES) */
+  --accent-primary: var(--brand-lime);        /* Primary CTAs now use lime */
+  --accent-primary-hover: var(--brand-lime-dark);
+  --accent-primary-muted: rgba(var(--brand-lime-rgb), 0.15);
+  --accent-secondary: var(--brand-teal);      /* Secondary actions use teal */
+  --accent-secondary-hover: var(--brand-teal-light);
+  --accent-secondary-muted: rgba(var(--brand-teal-rgb), 0.15);
   
   /* Improvement/Gain Color - Teal for positive changes */
   --color-improvement: #10b981;
@@ -122,20 +152,20 @@
   /* Baseline/Stock Color - Blue for original values */
   --color-baseline: #3b82f6;
   --color-baseline-light: #60a5fa;
-  --color-baseline-muted: rgba(59, 130, 246, 0.15);
+  --color-baseline-muted: rgba(var(--brand-blue-rgb), 0.15);
   
   /* Brand Colors - Updated January 2026 */
   --sn-primary: #1a4d6e;
   --sn-primary-light: #2a6d94;
   --sn-primary-dark: #0f3347;
-  --sn-accent: var(--accent-primary);  /* Now uses Performance Orange */
-  --sn-accent-light: var(--accent-primary-hover);
-  --sn-accent-dark: #b8923f;
+  --sn-accent: var(--brand-lime);  /* Primary accent is now lime */
+  --sn-accent-light: var(--brand-lime-dark);
+  --sn-accent-dark: #a8cc00;
   
-  /* Legacy Gold - Only for premium tier badges, use sparingly */
-  --sn-gold: #D4AF37;
-  --sn-gold-light: #E6C54A;
-  --sn-gold-dark: #B8973A;
+  /* DEPRECATED: Premium gold badge color - migrate to purple tier colors */
+  --sn-gold: #7c3aed;             /* Now maps to premium purple */
+  --sn-gold-light: #8b5cf6;
+  --sn-gold-dark: #6d28d9;
   
   /* Text Colors - Using Brand System */
   --text-primary: #ffffff;
@@ -150,7 +180,7 @@
   --border-subtle: #1a1a1a;
   --border-default: #252525;
   --border-hover: #333333;
-  --border-focus: var(--accent-primary);
+  --border-focus: var(--brand-lime);  /* Focus states use lime (action intent) */
   
   /* Neutral Palette (legacy support) */
   --color-white: #ffffff;
@@ -167,13 +197,13 @@
   
   /* Semantic Colors - Brighter for dark theme */
   --color-success: #22c55e;
-  --color-success-light: rgba(34, 197, 94, 0.15);
+  --color-success-light: rgba(var(--brand-success-rgb), 0.15);
   --color-info: #3b82f6;
-  --color-info-light: rgba(59, 130, 246, 0.15);
+  --color-info-light: rgba(var(--brand-blue-rgb), 0.15);
   --color-warning: #f59e0b;
-  --color-warning-light: rgba(245, 158, 11, 0.15);
+  --color-warning-light: rgba(var(--brand-warning-rgb), 0.15);
   --color-error: #ef4444;
-  --color-error-light: rgba(239, 68, 68, 0.15);
+  --color-error-light: rgba(var(--brand-error-rgb), 0.15);
   
   /* Score Colors (for advisory/performance ratings) */
   --score-excellent: #15803d;
@@ -457,7 +487,7 @@ a {
   color: inherit;
   text-decoration: none;
   /* Improve tap highlighting */
-  -webkit-tap-highlight-color: rgba(26, 77, 110, 0.1);
+  -webkit-tap-highlight-color: rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 button {
@@ -466,7 +496,7 @@ button {
   border: none;
   background: none;
   /* Improve tap highlighting */
-  -webkit-tap-highlight-color: rgba(26, 77, 110, 0.1);
+  -webkit-tap-highlight-color: rgba(var(--brand-teal-dark-rgb), 0.1);
   /* Remove default touch callout */
   -webkit-touch-callout: none;
 }
@@ -754,14 +784,14 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
    Focus & Accessibility - Build Pivot Dark Theme
    -------------------------------------------------------------------------- */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--brand-lime);
   outline-offset: 2px;
 }
 
 /* Enhanced focus for touch devices */
 @media (hover: none) and (pointer: coarse) {
   :focus {
-    outline: 2px solid var(--accent-primary);
+    outline: 2px solid var(--brand-lime);
     outline-offset: 2px;
   }
 }
@@ -797,17 +827,17 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 .btn-primary:hover {
   background: var(--brand-lime-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
+  box-shadow: 0 8px 30px rgba(var(--brand-lime-rgb), 0.3);
 }
 
 .btn-primary:active {
   transform: translateY(0);
 }
 
-/* Accent Button - GOLD (For secondary actions on dark backgrounds) */
+/* Accent Button - TEAL (For positive/success actions) */
 .btn-accent {
-  background: var(--brand-gold);
-  color: #000;
+  background: var(--brand-teal);
+  color: #fff;
   padding: 12px 24px;
   font-size: var(--font-size-base);
   font-weight: 600;
@@ -815,7 +845,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 }
 
 .btn-accent:hover {
-  background: var(--brand-gold-hover);
+  background: var(--brand-teal-light);
   transform: translateY(-1px);
 }
 
@@ -835,7 +865,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 .btn-secondary:hover {
   border-color: var(--brand-lime);
   color: var(--brand-lime);
-  background: rgba(212, 255, 0, 0.05);
+  background: rgba(var(--brand-lime-rgb), 0.05);
 }
 
 .btn-ghost {
@@ -875,8 +905,8 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 
 .input:focus {
   outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-primary-muted);
+  border-color: var(--brand-lime);
+  box-shadow: 0 0 0 3px rgba(var(--brand-lime-rgb), 0.15);
 }
 
 .input::placeholder {
@@ -1226,10 +1256,14 @@ section:not(:first-child) {
 .text-brand-lime { color: var(--brand-lime) !important; }
 .text-brand-teal { color: var(--brand-teal) !important; }
 .text-brand-blue { color: var(--brand-blue) !important; }
-.text-brand-gold { color: var(--brand-gold) !important; }
+.text-brand-amber { color: var(--brand-amber) !important; }
 .text-improvement { color: var(--brand-teal) !important; }
 .text-baseline { color: var(--brand-blue) !important; }
 .text-emphasis { color: var(--brand-lime) !important; }
+.text-warning { color: var(--brand-amber) !important; }
+
+/* DEPRECATED: Use .text-brand-amber instead */
+.text-brand-gold { color: var(--brand-amber) !important; }
 
 /* Background Colors */
 .bg-brand-primary { background-color: var(--brand-bg-primary) !important; }
@@ -1292,8 +1326,8 @@ section:not(:first-child) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(212, 255, 0, 0.08);
-  border: 1px solid rgba(212, 255, 0, 0.2);
+  background: rgba(var(--brand-lime-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-lime-rgb), 0.2);
   padding: 8px 16px;
   border-radius: 100px;
   font-size: 12px;
@@ -1321,11 +1355,11 @@ section:not(:first-child) {
   border-radius: 4px;
 }
 
-/* Uppercase Label */
+/* Uppercase Label - Use muted white, NOT accent colors */
 .label-uppercase {
   font-size: 10px;
   font-weight: 600;
-  color: var(--brand-gold);
+  color: rgba(255, 255, 255, 0.5);  /* Muted white per brand guidelines */
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }

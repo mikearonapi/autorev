@@ -1,0 +1,822 @@
+/* ===========================================
+   PREMIUM GARAGE COMPONENTS
+   GRAVL-inspired Design System
+   =========================================== */
+
+/* ===========================================
+   VEHICLE SELECTOR DROPDOWN - Premium Dropdown Menu
+   Like GRAVL's gym selector at the top
+   =========================================== */
+
+.vehicleSelector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vehicleSelectorTrigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--brand-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+}
+
+.vehicleSelectorTrigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.vehicleSelectorTriggerActive {
+  background: rgba(212, 168, 75, 0.15);
+  border-color: var(--accent-primary, var(--brand-gold));
+}
+
+.vehicleSelectorIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.vehicleSelectorIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vehicleSelectorInfo {
+  flex: 1;
+  text-align: left;
+  min-width: 0;
+}
+
+.vehicleSelectorLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-primary, var(--brand-gold));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.vehicleSelectorName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vehicleSelectorChevron {
+  color: rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.vehicleSelectorTriggerActive .vehicleSelectorChevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.vehicleSelectorMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 280px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: rgba(13, 27, 42, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 8px;
+  z-index: 100;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vehicleSelectorMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.vehicleSelectorMenuItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.vehicleSelectorMenuItemActive {
+  background: rgba(212, 168, 75, 0.15);
+  border-left: 3px solid var(--accent-primary, var(--brand-gold));
+}
+
+.vehicleSelectorMenuItemImage {
+  width: 48px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.vehicleSelectorMenuItemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vehicleSelectorMenuItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.vehicleSelectorMenuItemName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  margin-bottom: 2px;
+}
+
+.vehicleSelectorMenuItemSub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.vehicleSelectorMenuItemCheck {
+  color: var(--accent-primary, var(--brand-gold));
+  flex-shrink: 0;
+}
+
+/* Menu Divider */
+.vehicleSelectorDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 8px 12px;
+}
+
+/* Add Vehicle Option */
+.vehicleSelectorAddItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: transparent;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.vehicleSelectorAddItem:hover {
+  background: rgba(212, 168, 75, 0.1);
+  border-color: var(--accent-primary, var(--brand-gold));
+}
+
+.vehicleSelectorAddIcon {
+  width: 48px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary, var(--brand-gold));
+}
+
+.vehicleSelectorAddText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-primary, var(--brand-gold));
+}
+
+/* ===========================================
+   QUICK ACTION BUTTONS - GRAVL-style
+   Icon + label in rounded rectangles
+   =========================================== */
+
+.quickActions {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.quickActions::-webkit-scrollbar {
+  display: none;
+}
+
+.quickActionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 80px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.quickActionBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--brand-text-primary);
+}
+
+.quickActionBtnActive {
+  background: var(--accent-primary, var(--brand-gold));
+  border-color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-bg-primary);
+}
+
+.quickActionBtnActive:hover {
+  background: var(--accent-primary-hover, var(--brand-gold-light));
+  border-color: var(--accent-primary-hover, var(--brand-gold-light));
+  color: var(--brand-bg-primary);
+}
+
+.quickActionIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quickActionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* ===========================================
+   CIRCULAR PROGRESS GAUGE
+   For performance scores, health indicators
+   =========================================== */
+
+.circularGauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circularGaugeSvg {
+  transform: rotate(-90deg);
+}
+
+.circularGaugeTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.circularGaugeProgress {
+  fill: none;
+  stroke: var(--gauge-color, var(--accent-primary, var(--brand-gold)));
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.circularGaugeCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.circularGaugeValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  line-height: 1;
+}
+
+.circularGaugeLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+}
+
+.circularGaugeMeta {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gauge-color, var(--accent-primary, var(--brand-gold)));
+}
+
+/* Gauge Sizes */
+.circularGaugeSmall {
+  width: 64px;
+  height: 64px;
+}
+
+.circularGaugeSmall .circularGaugeValue {
+  font-size: 18px;
+}
+
+.circularGaugeSmall .circularGaugeLabel {
+  display: none;
+}
+
+.circularGaugeMedium {
+  width: 100px;
+  height: 100px;
+}
+
+.circularGaugeLarge {
+  width: 140px;
+  height: 140px;
+}
+
+/* ===========================================
+   PREMIUM SPEC CARD
+   With gradient background, badge, visual flair
+   =========================================== */
+
+.premiumCard {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.premiumCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary, var(--brand-gold)) 0%,
+    transparent 100%
+  );
+  opacity: 0.8;
+}
+
+.premiumCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.premiumCardTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-primary, var(--brand-gold));
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+.premiumCardBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(212, 168, 75, 0.15);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-primary, var(--brand-gold));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.premiumCardDivider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  margin-bottom: 16px;
+}
+
+/* Spec Row inside Premium Card */
+.premiumSpecRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.premiumSpecRow:last-child {
+  border-bottom: none;
+}
+
+.premiumSpecLabel {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.premiumSpecValue {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--brand-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.premiumSpecUnit {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 4px;
+}
+
+/* Modified value styling */
+.premiumSpecValueModified {
+  color: var(--brand-teal);
+}
+
+.premiumSpecGain {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-teal);
+  margin-left: 6px;
+}
+
+/* ===========================================
+   FLOATING CTA BAR
+   Bottom action bar like GRAVL's "START WORKOUT"
+   =========================================== */
+
+.floatingCta {
+  position: fixed;
+  bottom: calc(70px + env(safe-area-inset-bottom, 0));
+  left: 16px;
+  right: 16px;
+  display: flex;
+  gap: 12px;
+  z-index: 90;
+  animation: floatingCtaSlideUp 0.3s ease;
+}
+
+@keyframes floatingCtaSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.floatingCtaPrimary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: var(--accent-primary, var(--brand-gold));
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brand-bg-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 4px 20px rgba(212, 168, 75, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.floatingCtaPrimary:hover {
+  background: var(--accent-primary-hover, var(--brand-gold-light));
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 24px rgba(212, 168, 75, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+.floatingCtaPrimary:active {
+  transform: translateY(0);
+}
+
+.floatingCtaSecondary {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  color: var(--brand-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.floatingCtaSecondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ===========================================
+   VEHICLE HEALTH SUMMARY ROW
+   Horizontal scroll of health metrics
+   =========================================== */
+
+.healthSummaryRow {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 16px;
+}
+
+.healthSummaryRow::-webkit-scrollbar {
+  display: none;
+}
+
+.healthSummaryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.healthSummaryIcon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.healthSummaryValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  margin-bottom: 2px;
+}
+
+.healthSummaryLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Status colors */
+.healthSummaryItemGood {
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.healthSummaryItemGood .healthSummaryIcon {
+  color: var(--brand-teal);
+}
+
+.healthSummaryItemWarning {
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.healthSummaryItemWarning .healthSummaryIcon {
+  color: var(--brand-warning);
+}
+
+.healthSummaryItemDanger {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.healthSummaryItemDanger .healthSummaryIcon {
+  color: var(--brand-error);
+}
+
+/* ===========================================
+   SEGMENT CONTROL (Toggle between views)
+   Like GRAVL's Statistics/Friends toggle
+   =========================================== */
+
+.segmentControl {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 4px;
+  margin: 0 16px 16px;
+}
+
+.segmentOption {
+  flex: 1;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segmentOption:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.segmentOptionActive {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--brand-text-primary);
+}
+
+/* ===========================================
+   ACHIEVEMENT BADGE ROW
+   For gamification elements
+   =========================================== */
+
+.badgeRow {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 16px;
+}
+
+.badgeRow::-webkit-scrollbar {
+  display: none;
+}
+
+.achievementBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(212, 168, 75, 0.2) 0%,
+    rgba(212, 168, 75, 0.1) 100%
+  );
+  border: 1px solid rgba(212, 168, 75, 0.3);
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.achievementBadgeIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-primary, var(--brand-gold));
+}
+
+.achievementBadgeText {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary, var(--brand-gold));
+  white-space: nowrap;
+}
+
+/* ===========================================
+   SLIDE-UP PANEL PREMIUM STYLING
+   For details panels
+   =========================================== */
+
+.premiumPanel {
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 42, 0.95) 0%,
+    rgba(13, 27, 42, 0.98) 100%
+  );
+  backdrop-filter: blur(20px);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.premiumPanelHandle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  margin: 12px auto 16px;
+}
+
+.premiumPanelHeader {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 16px;
+}
+
+.premiumPanelTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-primary, var(--brand-gold));
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.premiumPanelHeading {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  margin: 0;
+}
+
+.premiumPanelSubheading {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+/* ===========================================
+   RESPONSIVE ADJUSTMENTS
+   =========================================== */
+
+@media (min-width: 768px) {
+  .quickActions {
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .quickActionBtn {
+    min-width: 100px;
+    padding: 16px 20px;
+  }
+  
+  .premiumCard {
+    padding: 24px;
+  }
+  
+  .floatingCta {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .vehicleSelectorMenu {
+    min-width: 320px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .floatingCta {
+    display: none;
+  }
+}

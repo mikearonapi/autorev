@@ -51,15 +51,15 @@
 }
 
 .headerAppPage .logoName {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .navLink {
-  color: var(--text-secondary, #a0a0a0);
+  color: var(--text-secondary, var(--brand-text-secondary));
 }
 
 .headerAppPage .navLink:hover {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
   background: var(--bg-card, #161616);
 }
 
@@ -68,7 +68,7 @@
 }
 
 .headerAppPage .menuToggle {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .menuToggle:active {
@@ -76,11 +76,11 @@
 }
 
 .headerAppPage .profileGreeting {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .mobileGreetingText {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .mobileUserGreeting {
@@ -92,11 +92,11 @@
 }
 
 .headerAppPage .loginLink {
-  color: var(--text-secondary, #a0a0a0);
+  color: var(--text-secondary, var(--brand-text-secondary));
 }
 
 .headerAppPage .loginLink:hover {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .dropdownMenu {
@@ -105,7 +105,7 @@
 }
 
 .headerAppPage .dropdownItem {
-  color: var(--text-secondary, #a0a0a0);
+  color: var(--text-secondary, var(--brand-text-secondary));
 }
 
 .headerAppPage .dropdownItem:hover {
@@ -119,7 +119,7 @@
 }
 
 .headerAppPage .profileDropdownName {
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .headerAppPage .profileDropdownEmail {
@@ -131,7 +131,7 @@
 }
 
 .headerAppPage .profileDropdownItem {
-  color: var(--text-secondary, #a0a0a0);
+  color: var(--text-secondary, var(--brand-text-secondary));
 }
 
 .headerAppPage .profileDropdownItem:hover {
@@ -398,12 +398,12 @@
   text-decoration: none;
   padding: 4px 10px 4px 12px;
   border-radius: 20px;
-  background: rgba(26, 77, 110, 0.05);
+  background: rgba(var(--brand-teal-dark-rgb), 0.05);
   transition: all 0.2s ease;
 }
 
 .profileLink:hover {
-  background: rgba(26, 77, 110, 0.1);
+  background: rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 /* Profile greeting text - "Hi [Name]" */
@@ -448,7 +448,7 @@
 
 .profileLink:hover .profileAvatar {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.25);
+  box-shadow: 0 4px 12px rgba(var(--brand-teal-dark-rgb), 0.25);
 }
 
 /* Profile Dropdown Menu */
@@ -537,7 +537,7 @@
 /* Admin Dashboard Link in Dropdown */
 .profileDropdownItem[href="/admin"] {
   color: var(--color-accent-blue);
-  background: linear-gradient(135deg, var(--color-accent-blue-muted) 0%, rgba(139, 92, 246, 0.05) 100%);
+  background: linear-gradient(135deg, var(--color-accent-blue-muted) 0%, rgba(var(--brand-purple-rgb), 0.05) 100%);
 }
 
 .profileDropdownItem[href="/admin"] svg {
@@ -545,7 +545,7 @@
 }
 
 .profileDropdownItem[href="/admin"]:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.1) 0%, rgba(var(--brand-purple-rgb), 0.1) 100%);
   color: var(--color-accent-blue);
 }
 
@@ -606,7 +606,7 @@
 
 .mobileAiMechanicBtn:hover,
 .mobileAiMechanicBtn:active {
-  background: linear-gradient(135deg, rgba(212, 160, 74, 0.15) 0%, rgba(196, 154, 58, 0.15) 100%);
+  background: linear-gradient(135deg, rgba(var(--brand-gold-rgb), 0.15) 0%, rgba(196, 154, 58, 0.15) 100%);
   border-color: var(--color-accent-gold);
 }
 
@@ -641,7 +641,7 @@
   width: 100%;
   padding: 14px var(--space-4);
   margin-top: var(--space-sm);
-  background: linear-gradient(135deg, var(--color-accent-blue-muted) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: linear-gradient(135deg, var(--color-accent-blue-muted) 0%, rgba(var(--brand-purple-rgb), 0.1) 100%);
   border: 1px solid var(--color-accent-blue-border);
   border-radius: var(--radius-lg);
   color: var(--color-accent-blue);
@@ -653,7 +653,7 @@
 
 .mobileAdminLink:hover,
 .mobileAdminLink:active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.2) 0%, rgba(var(--brand-purple-rgb), 0.2) 100%);
   border-color: var(--color-accent-blue);
 }
 
@@ -687,7 +687,7 @@
 .mobileLoginBtn:active {
   border-color: var(--sn-primary);
   color: var(--sn-primary);
-  background: rgba(26, 77, 110, 0.05);
+  background: rgba(var(--brand-teal-dark-rgb), 0.05);
 }
 
 .mobileJoinBtn {
@@ -753,13 +753,13 @@
   text-decoration: none;
   padding: 4px 8px;
   border-radius: 20px;
-  background: rgba(26, 77, 110, 0.05);
+  background: rgba(var(--brand-teal-dark-rgb), 0.05);
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .mobileUserGreeting:active {
-  background: rgba(26, 77, 110, 0.1);
+  background: rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 .mobileGreetingText {

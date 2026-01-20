@@ -8,21 +8,23 @@
   gap: 1.25rem;
 }
 
-/* Section Title - Premium styling */
+/* Section Title - LARGER than body content, matches other Garage pages */
 .sectionTitle {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
-  letter-spacing: -0.01em;
+  color: var(--brand-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
+/* Section icons use TEAL per brand guidelines */
 .sectionTitle svg {
-  color: var(--accent-primary, var(--brand-gold));
-  opacity: 0.8;
+  color: var(--brand-teal);
+  opacity: 0.9;
 }
 
 .sectionHint {
@@ -71,8 +73,8 @@
 }
 
 .heroOptionSelected {
-  border-color: var(--accent-primary, #ff4d00);
-  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.2);
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .heroOptionImage {
@@ -95,13 +97,14 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+/* Hero badge uses TEAL for selection state */
 .heroOptionBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   padding: 0.125rem 0.375rem;
-  background: linear-gradient(135deg, var(--accent-primary, #ff4d00), #b8973a);
-  color: #000;
+  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  color: var(--brand-bg-primary);
   font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -161,10 +164,10 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Active/Hero state */
+/* Active/Hero state - uses TEAL for selection per brand guidelines */
 .mediaItem.isHero {
-  border-color: var(--accent-primary, var(--brand-gold));
-  box-shadow: 0 0 0 2px rgba(212, 168, 75, 0.25);
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.25);
 }
 
 .videoItem {
@@ -195,7 +198,7 @@
   transform: translate(-50%, -50%);
   width: 48px;
   height: 48px;
-  background: rgba(233, 69, 96, 0.9);
+  background: rgba(var(--brand-error-rgb), 0.9);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -220,14 +223,14 @@
   border-radius: 4px;
 }
 
-/* Hero/Primary badge - GRAVL premium styling */
+/* Hero/Primary badge - uses TEAL for selection state */
 .primaryBadge {
   position: absolute;
   top: 10px;
   left: 10px;
   padding: 5px 10px;
-  background: linear-gradient(135deg, var(--accent-primary, var(--brand-gold)), #c4a564);
-  color: #000;
+  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  color: var(--brand-bg-primary);
   font-size: 0.6875rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -236,8 +239,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 8px rgba(212, 168, 75, 0.4);
-  gap: 4px;
+  box-shadow: 0 2px 8px rgba(var(--brand-teal-rgb), 0.4);
   z-index: 2;
 }
 
@@ -246,11 +248,11 @@
   height: 10px;
 }
 
-/* Hero item highlight - Premium gold border */
+/* Hero item highlight - uses TEAL for selection state */
 .heroItem {
-  border: 2.5px solid var(--accent-primary, var(--brand-gold)) !important;
+  border: 2.5px solid var(--brand-teal) !important;
   box-shadow: 
-    0 0 0 3px rgba(212, 168, 75, 0.2),
+    0 0 0 3px rgba(var(--brand-teal-rgb), 0.2),
     0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -282,11 +284,12 @@
   z-index: 2;
 }
 
+/* Set Hero button icons use TEAL */
 .setHeroBtn svg {
   width: 12px;
   height: 12px;
-  fill: rgba(212, 168, 75, 0.9);
-  stroke: rgba(212, 168, 75, 0.9);
+  fill: rgba(var(--brand-teal-rgb), 0.9);
+  stroke: rgba(var(--brand-teal-rgb), 0.9);
 }
 
 .mediaItem:hover .setHeroBtn {
@@ -294,15 +297,15 @@
 }
 
 .setHeroBtn:hover {
-  background: linear-gradient(135deg, var(--accent-primary, var(--brand-gold)), #c4a564);
-  color: #000;
-  border-color: var(--accent-primary, var(--brand-gold));
-  box-shadow: 0 4px 12px rgba(212, 168, 75, 0.35);
+  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  color: var(--brand-bg-primary);
+  border-color: var(--brand-teal);
+  box-shadow: 0 4px 12px rgba(var(--brand-teal-rgb), 0.35);
 }
 
 .setHeroBtn:hover svg {
-  fill: #000;
-  stroke: #000;
+  fill: var(--brand-bg-primary);
+  stroke: var(--brand-bg-primary);
 }
 
 .setHeroBtn:active {
@@ -413,7 +416,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #000;
+  background: var(--brand-bg-primary);
 }
 
 .lightboxCounter {
@@ -481,8 +484,9 @@
     box-sizing: border-box;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .sectionTitle {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     flex-wrap: wrap;
   }
   

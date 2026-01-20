@@ -8,8 +8,8 @@
   justify-content: center;
   gap: 4px;
   padding: 4px;
-  background: rgba(212, 160, 74, 0.1);
-  border: 1px solid rgba(212, 160, 74, 0.2);
+  background: rgba(var(--brand-gold-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-gold-rgb), 0.2);
   border-radius: 6px;
   color: var(--sn-gold, #d4a04a);
   font-size: 10px;
@@ -21,8 +21,8 @@
 }
 
 .askALButton:hover {
-  background: rgba(212, 160, 74, 0.2);
-  border-color: rgba(212, 160, 74, 0.4);
+  background: rgba(var(--brand-gold-rgb), 0.2);
+  border-color: rgba(var(--brand-gold-rgb), 0.4);
   transform: scale(1.05);
 }
 
@@ -30,12 +30,8 @@
   transform: scale(0.98);
 }
 
-/* AL Icon */
-.alIcon {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  object-fit: cover;
+/* Sparkle Icon */
+.sparkleIcon {
   flex-shrink: 0;
 }
 
@@ -46,38 +42,64 @@
 
 /* Variant: Icon only (default) */
 .variantIcon {
-  padding: 3px;
+  padding: 4px;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
-}
-
-.variantIcon .alIcon {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 /* Variant: Compact (icon + "Ask") */
 .variantCompact {
-  padding: 4px 8px 4px 4px;
+  padding: 4px 8px;
   border-radius: 12px;
-}
-
-.variantCompact .alIcon {
-  width: 14px;
-  height: 14px;
 }
 
 /* Variant: Full (icon + "Ask AL") */
 .variantFull {
-  padding: 6px 10px 6px 6px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-size: 11px;
 }
 
-.variantFull .alIcon {
-  width: 16px;
-  height: 16px;
+/* Variant: Header - Lime CTA for card headers (Brand compliant)
+   CANONICAL DEFINITION - All Ask AL buttons should match these exact values */
+.variantHeader {
+  /* Fixed dimensions for consistency */
+  min-height: 28px;
+  padding: 0 12px;
+  
+  /* Appearance */
+  background: var(--brand-lime, #d4ff00);
+  border: none;
+  border-radius: 14px;
+  color: var(--brand-bg-primary, #0d1b2a);
+  
+  /* Typography - use fixed px for consistency */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  
+  /* Layout */
+  gap: 4px;
+}
+
+.variantHeader:hover {
+  background: var(--brand-lime-dark, #bfe600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.variantHeader .sparkleIcon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.variantHeader .buttonText {
+  display: flex;
+  align-items: center;
 }
 
 /* Inline link-style variant */
@@ -101,10 +123,6 @@
   text-decoration: underline;
 }
 
-.askALInline .alIcon {
-  width: 12px;
-  height: 12px;
-}
 
 /* Mobile touch target adjustments */
 @media (max-width: 480px) {
@@ -123,15 +141,21 @@
     width: 18px;
     height: 18px;
   }
+  
+  /* Header variant maintains consistent size on mobile */
+  .variantHeader {
+    min-height: 28px;
+    min-width: auto;
+  }
 }
 
-/* Hover glow effect */
+/* Hover glow effect - for non-header variants */
 .askALButton::before {
   content: '';
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  background: radial-gradient(circle, rgba(212, 160, 74, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--brand-gold-rgb), 0.3) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
@@ -140,6 +164,11 @@
 
 .askALButton:hover::before {
   opacity: 1;
+}
+
+/* Disable gold glow for header variant (uses lime hover effect instead) */
+.variantHeader::before {
+  display: none;
 }
 
 /* Ensure button is positioned for the glow effect */

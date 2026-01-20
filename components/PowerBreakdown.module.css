@@ -1,87 +1,199 @@
 /* ===========================================
-   POWER BREAKDOWN
-   Standalone component for Data tab
-   Shows where HP gains come from
+   POWER BREAKDOWN - Donut Chart
+   Shows where HP gains come from as percentages
+   
+   Design: Donut chart with legend showing category breakdown
+   Teal (#10b981): Primary accent color
    =========================================== */
 
 .powerBreakdown {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
 }
 
 .breakdownHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .breakdownTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--brand-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .breakdownTotal {
   font-size: 16px;
   font-weight: 700;
   color: var(--color-accent-teal);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
-.breakdownBars {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* ===========================================
+   DONUT CHART LAYOUT
+   =========================================== */
 
-.breakdownRow {
-  display: grid;
-  grid-template-columns: 120px 1fr 50px;
-  align-items: center;
-  gap: 12px;
-}
-
-.breakdownLabel {
+.donutLayout {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  gap: 24px;
 }
 
-.breakdownDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.donutContainer {
   flex-shrink: 0;
 }
 
-.breakdownBarContainer {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  overflow: hidden;
+.donutSvg {
+  display: block;
 }
 
-.breakdownBar {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.3s ease;
+.donutSegment {
+  animation: donutGrow 0.6s ease-out forwards;
+  animation-delay: var(--segment-delay, 0s);
+  opacity: 0;
 }
 
-.breakdownGain {
+@keyframes donutGrow {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Center text in donut */
+.donutCenterValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 24px;
+  font-weight: 800;
+  fill: var(--color-accent-teal, #10b981);
+}
+
+.donutCenterLabel {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-accent-teal);
+  fill: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===========================================
+   LEGEND
+   =========================================== */
+
+.legendContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.legendItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.legendItem:hover,
+.legendItemActive {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.legendLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.legendLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legendRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.legendPercent {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  min-width: 32px;
   text-align: right;
 }
 
-/* Empty state */
+.legendGain {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ===========================================
+   ADJUSTMENT SUMMARY
+   =========================================== */
+
+.adjustmentSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 0;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+}
+
+.adjustmentLabel {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.adjustmentValue {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ===========================================
+   EMPTY STATE
+   =========================================== */
+
 .breakdownEmpty {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
   color: rgba(255, 255, 255, 0.4);
   font-size: 13px;
 }
@@ -92,18 +204,60 @@
   margin-top: 4px;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* ===========================================
+   RESPONSIVE - Mobile
+   =========================================== */
+
+@media (max-width: 480px) {
   .powerBreakdown {
     padding: 16px;
   }
 
-  .breakdownRow {
-    grid-template-columns: 100px 1fr 40px;
+  .donutLayout {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .donutContainer {
+    display: flex;
+    justify-content: center;
+  }
+
+  .legendContainer {
+    width: 100%;
+  }
+
+  .legendItem {
+    padding: 10px 12px;
+  }
+
+  .legendLabel {
+    font-size: 12px;
+  }
+
+  .legendPercent {
+    font-size: 11px;
+  }
+
+  .legendGain {
+    font-size: 12px;
+  }
+
+  .donutCenterValue {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 360px) {
+  .legendRight {
     gap: 8px;
   }
-  
-  .breakdownLabel {
-    font-size: 11px;
+
+  .legendPercent {
+    min-width: 28px;
+  }
+
+  .legendGain {
+    min-width: 32px;
   }
 }

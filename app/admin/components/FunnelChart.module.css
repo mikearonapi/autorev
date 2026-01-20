@@ -57,7 +57,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--admin-warning, #f59e0b);
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--brand-warning-rgb), 0.1);
   padding: 2px 5px;
   border-radius: 3px;
 }

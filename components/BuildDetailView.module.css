@@ -190,7 +190,7 @@
 .modifyButton:hover {
   background: var(--brand-gold-light);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 /* Sections */
@@ -298,14 +298,14 @@
 }
 
 .badgeWarn {
-  border-color: rgba(245, 158, 11, 0.25);
-  background: rgba(245, 158, 11, 0.12);
-  color: rgba(245, 158, 11, 0.95);
+  border-color: rgba(var(--brand-warning-rgb), 0.25);
+  background: rgba(var(--brand-warning-rgb), 0.12);
+  color: rgba(var(--brand-warning-rgb), 0.95);
 }
 
 .badgePrice {
-  border-color: rgba(255, 77, 0, 0.30);
-  background: rgba(255, 77, 0, 0.14);
+  border-color: rgba(16, 185, 129, 0.30);
+  background: rgba(16, 185, 129, 0.14);
   color: var(--sn-gold);
 }
 
@@ -400,12 +400,12 @@
 }
 
 .diyAssessment[data-feasibility="fully-diy"] {
-  background: rgba(46, 204, 113, 0.1);
-  border: 1px solid rgba(46, 204, 113, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
 }
 
 .diyAssessment[data-feasibility="fully-diy"] .diyAssessmentIcon {
-  color: #2ecc71;
+  color: var(--brand-success);
 }
 
 .diyAssessment[data-feasibility="partial-diy"] {
@@ -419,8 +419,8 @@
 
 .diyAssessment[data-feasibility="shop-recommended"],
 .diyAssessment[data-feasibility="mostly-shop"] {
-  background: rgba(231, 76, 60, 0.1);
-  border: 1px solid rgba(231, 76, 60, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
 }
 
 .diyAssessment[data-feasibility="shop-recommended"] .diyAssessmentIcon,
@@ -506,7 +506,7 @@
 
 .upgradeCheck {
   flex-shrink: 0;
-  color: #2ecc71;
+  color: var(--brand-success);
   margin-top: 2px;
 }
 
@@ -525,7 +525,7 @@
 .upgradeGain {
   display: inline-block;
   font-size: 11px;
-  color: #2ecc71;
+  color: var(--brand-success);
   font-weight: 600;
   margin-top: 2px;
 }
@@ -597,7 +597,7 @@
 .toolEssential {
   font-size: 10px;
   padding: 2px 6px;
-  background: rgba(231, 76, 60, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   color: var(--brand-error);
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -645,8 +645,8 @@
 }
 
 .systemCard[data-has-stress="true"] {
-  border-color: rgba(231, 76, 60, 0.3);
-  background: rgba(231, 76, 60, 0.05);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
+  background: rgba(var(--brand-error-rgb), 0.05);
 }
 
 .systemName {
@@ -664,7 +664,7 @@
 
 .systemImproves {
   font-size: 11px;
-  color: #2ecc71;
+  color: var(--brand-success);
 }
 
 .systemStress {
@@ -674,8 +674,8 @@
 
 /* Synergies Box */
 .synergiesBox {
-  background: rgba(46, 204, 113, 0.1);
-  border: 1px solid rgba(46, 204, 113, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-md);
@@ -685,7 +685,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  color: #2ecc71;
+  color: var(--brand-success);
   font-weight: 600;
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-sm);
@@ -797,12 +797,12 @@
   letter-spacing: 0.05em;
   text-decoration: none;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 20px rgba(255, 77, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
 }
 
 .ctaButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
 }
 
 

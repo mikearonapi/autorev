@@ -61,7 +61,7 @@
 
 .retryButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-purple-rgb), 0.4);
 }
 
 /* Summary Grid */
@@ -139,8 +139,8 @@
 }
 
 .sectionTabActive {
-  background: rgba(139, 92, 246, 0.15) !important;
-  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: rgba(var(--brand-purple-rgb), 0.15) !important;
+  border: 1px solid rgba(var(--brand-purple-rgb), 0.25);
   color: var(--text-primary) !important;
 }
 

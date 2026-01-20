@@ -14,8 +14,8 @@
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  /* Add bottom padding to account for fixed save button */
-  padding-bottom: 100px;
+  /* Removed excessive padding - parent page handles safe area */
+  padding-bottom: 20px;
 }
 
 /* ===========================================
@@ -27,8 +27,8 @@
   position: relative;
   padding: 32px 32px 40px;
   background: 
-    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(255, 77, 0, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(255, 77, 0, 0.02) 0%, transparent 100%);
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(16, 185, 129, 0.02) 0%, transparent 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -91,7 +91,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
   margin-bottom: 4px;
 }
 
@@ -215,17 +215,17 @@
 }
 
 .modeToggleBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.05) 100%);
-  border-color: rgba(255, 77, 0, 0.5);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-color: rgba(16, 185, 129, 0.5);
   color: var(--brand-text-primary);
 }
 
 .modeToggleBtnActive:hover {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.08) 100%);
 }
 
 .modeToggleBtnActive svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .modeToggleBtnContent {
@@ -312,24 +312,26 @@
 
 .recommendationBanner {
   padding: 16px;
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0.03) 100%);
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 12px;
 }
 
 /* Compact version for sidebar placement */
 .recommendationBannerCompact {
   padding: 12px;
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.1) 0%, rgba(255, 77, 0, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.03) 100%);
   border-radius: 8px;
 }
 
+/* Compact sizes - still maintain hierarchy (header > body) */
 .recommendationBannerCompact .recommendationTitle {
-  font-size: 11px;
+  font-size: 0.8125rem;
 }
 
+/* Compact body content - slightly smaller but still readable */
 .recommendationBannerCompact .recommendationText {
-  font-size: 13px;
+  font-size: 0.8125rem;
   margin-bottom: 10px;
 }
 
@@ -342,9 +344,10 @@
   padding: 10px;
 }
 
+/* Compact body content - matches main content size */
 .recommendationBannerCompact .insightsCardList,
 .recommendationBannerCompact .watchOutsCardList {
-  font-size: 12px;
+  font-size: 0.8125rem;
 }
 
 .recommendationHeader {
@@ -354,26 +357,28 @@
   margin-bottom: 8px;
 }
 
+/* Section header - LARGER than body content, matches Specs page */
 .recommendationTitle {
-  font-size: 11px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--accent-primary, var(--color-accent-lime));
+  letter-spacing: 0.08em;
+  color: var(--brand-teal);
 }
 
 .focusTag {
   font-size: 11px;
   font-weight: 500;
   padding: 3px 8px;
-  background: rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.2);
   border-radius: 4px;
-  color: var(--color-accent-gold);
+  color: rgba(255, 255, 255, 0.85);  /* Muted white on teal bg */
 }
 
+/* Body content - SMALLER than section headers */
 .recommendationText {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.85);
 }
@@ -385,7 +390,7 @@
   gap: 12px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 77, 0, 0.12);
+  border-top: 1px solid rgba(16, 185, 129, 0.12);
 }
 
 .insightsCard,
@@ -397,24 +402,25 @@
 }
 
 .insightsCard {
-  background: rgba(59, 130, 246, 0.04);
-  border-color: rgba(59, 130, 246, 0.12);
+  background: rgba(var(--brand-blue-rgb), 0.04);
+  border-color: rgba(var(--brand-blue-rgb), 0.12);
 }
 
 .watchOutsCard {
-  background: rgba(245, 158, 11, 0.04);
-  border-color: rgba(245, 158, 11, 0.12);
+  background: rgba(var(--brand-warning-rgb), 0.04);
+  border-color: rgba(var(--brand-warning-rgb), 0.12);
 }
 
+/* Section headers - LARGER than body content, matches Specs page */
 .insightsCardHeader,
 .watchOutsCardHeader {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.08em;
   margin-bottom: 8px;
 }
 
@@ -436,9 +442,10 @@
   gap: 6px;
 }
 
+/* Body content - SMALLER than section headers */
 .insightsCardList li,
 .watchOutsCardList li {
-  font-size: 12px;
+  font-size: 0.8125rem;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.7);
   padding-left: 12px;
@@ -460,14 +467,14 @@
 }
 
 .watchOutsCardList li {
-  color: var(--color-accent-gold);
+  color: rgba(245, 158, 11, 0.9);  /* Amber warning - consistent */
 }
 
 /* Legacy styles kept for compatibility */
 .recommendationDetails {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 77, 0, 0.15);
+  border-top: 1px solid rgba(16, 185, 129, 0.15);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -499,7 +506,7 @@
 }
 
 .watchOutItem {
-  color: var(--color-accent-gold);
+  color: rgba(245, 158, 11, 0.9);  /* Amber warning - consistent */
 }
 
 /* ===========================================
@@ -525,19 +532,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .recommendationTitleFull {
-  font-size: 11px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.08em;
+  color: var(--brand-teal);
 }
 
 .focusTagFull {
+  display: inline-block;
   font-size: 10px;
   font-weight: 600;
   padding: 4px 10px;
@@ -545,11 +553,13 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 4px;
   color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
 }
 
+/* Body content is SMALLER than section headers */
 .recommendationTextFull {
   margin: 0 0 16px 0;
-  font-size: 15px;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
   max-width: 800px;
@@ -575,28 +585,29 @@
 .watchOutsCardFull {
   padding: 14px;
   border-radius: 8px;
-  background: rgba(251, 191, 36, 0.04);
-  border: 1px solid rgba(251, 191, 36, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.04);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.15);
 }
 
+/* Section headers (Full width) - LARGER than body content, matches Specs page */
 .insightsCardHeaderFull,
 .watchOutsCardHeaderFull {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: 10px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
 }
 
 .insightsCardHeaderFull {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-teal);
 }
 
 .watchOutsCardHeaderFull {
-  color: var(--color-accent-gold);
+  color: var(--color-warning);  /* Amber for warnings */
 }
 
 .insightsCardListFull,
@@ -609,12 +620,13 @@
   gap: 6px;
 }
 
+/* Body content (Full width) - SMALLER than section headers */
 .insightsCardListFull li,
 .watchOutsCardListFull li {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.4;
 }
 
@@ -624,7 +636,7 @@
 }
 
 .watchBullet {
-  color: var(--color-accent-gold);
+  color: var(--color-warning);  /* Amber for warnings */
   flex-shrink: 0;
 }
 
@@ -638,15 +650,15 @@
   font-size: 11px;
   font-weight: 600;
   padding: 2px 6px;
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.25);
+  background: rgba(var(--brand-success-rgb), 0.12);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.25);
   border-radius: 4px;
   color: var(--color-success);
   white-space: nowrap;
 }
 
 .watchOutsCardListFull li {
-  color: rgba(251, 191, 36, 0.85);
+  color: rgba(var(--brand-warning-rgb), 0.85);
 }
 
 /* ===========================================
@@ -660,20 +672,33 @@
   width: 100%;
 }
 
+/* Card wrapper for Build Recommendations */
+.buildRecommendationsCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .buildRecommendationsHeader {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  font-size: 11px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.08em;
+  color: var(--brand-teal);
 }
 
-.buildRecommendationsHeader svg {
-  opacity: 0.5;
+.buildRecommendationsHeader > svg {
+  color: var(--brand-teal);
+}
+
+.buildRecommendationsHeader > span {
+  flex: 1;
 }
 
 .buildRecommendationsGrid {
@@ -706,15 +731,15 @@
 }
 
 .buildRecBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.1) 100%);
-  border-color: rgba(255, 77, 0, 0.5);
-  color: var(--accent-primary, var(--color-accent-lime));
-  box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: var(--brand-teal);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
 }
 
 .buildRecBtnActive:hover {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.25) 0%, rgba(255, 77, 0, 0.12) 100%);
-  border-color: rgba(255, 77, 0, 0.6);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border-color: rgba(16, 185, 129, 0.6);
 }
 
 /* Custom Build - Second Row */
@@ -762,19 +787,19 @@
 }
 
 .buildRecBtnCustomFull.buildRecBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.12) 0%, rgba(255, 77, 0, 0.06) 100%);
-  border-color: rgba(255, 77, 0, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
   border-style: solid;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .buildRecBtnCustomFull.buildRecBtnActive svg {
   opacity: 1;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .buildRecBtnCustomFull.buildRecBtnActive .customBuildHint {
-  color: rgba(255, 77, 0, 0.6);
+  color: rgba(16, 185, 129, 0.6);
 }
 
 /* ===========================================
@@ -854,15 +879,63 @@
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-teal);
 }
 
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .sidebarCardTitle {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-teal);
+}
+
+/* Ask AL button in section headers - LIME per brand guidelines */
+/* Ask AL CTA button - LIME per brand guidelines
+   MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
+.askAlBtn {
+  /* Fixed dimensions for consistency */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  
+  /* Appearance */
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #0d1b2a);
+  border: none;
+  border-radius: 14px;
+  
+  /* Typography - use fixed px for consistency */
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.7);
+  line-height: 1;
+  
+  /* Layout */
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.askAlBtn:hover {
+  background: var(--brand-lime-dark, #bfe600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.askAlBtn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 /* Collapsible header for Advanced Tuning section */
@@ -875,7 +948,7 @@
   background: rgba(255, 255, 255, 0.02);
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-teal);
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -932,7 +1005,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
   margin-bottom: 12px;
 }
 
@@ -967,7 +1040,7 @@
 .advancedSelect:focus,
 .advancedInput:focus {
   outline: none;
-  border-color: rgba(255, 77, 0, 0.5);
+  border-color: rgba(16, 185, 129, 0.5);
   background: rgba(0, 0, 0, 0.4);
 }
 
@@ -980,10 +1053,10 @@
 .advancedSelectDisabled {
   width: 100%;
   padding: 10px 12px;
-  background: rgba(255, 77, 0, 0.1);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 6px;
-  color: var(--color-gold, var(--accent-primary, var(--color-accent-lime)));
+  color: var(--color-gold, var(--brand-teal));
   font-size: 13px;
   font-weight: 500;
 }
@@ -992,10 +1065,10 @@
 .configuredBadge {
   font-size: 9px;
   font-weight: 400;
-  color: var(--color-gold, var(--accent-primary, var(--color-accent-lime)));
+  color: var(--color-gold, var(--brand-teal));
   margin-left: 6px;
   padding: 1px 4px;
-  background: rgba(255, 77, 0, 0.15);
+  background: rgba(16, 185, 129, 0.15);
   border-radius: 3px;
   text-transform: none;
   letter-spacing: 0;
@@ -1017,7 +1090,7 @@
 .advancedCheckbox input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--accent-primary, var(--color-accent-lime));
+  accent-color: var(--brand-teal);
 }
 
 .advancedCheckboxRow {
@@ -1035,7 +1108,7 @@
   max-height: calc(100vh - 350px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 77, 0, 0.3) transparent;
+  scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
 }
 
 .advancedScrollable::-webkit-scrollbar {
@@ -1047,12 +1120,12 @@
 }
 
 .advancedScrollable::-webkit-scrollbar-thumb {
-  background: rgba(255, 77, 0, 0.3);
+  background: rgba(16, 185, 129, 0.3);
   border-radius: 3px;
 }
 
 .advancedScrollable::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 77, 0, 0.5);
+  background: rgba(16, 185, 129, 0.5);
 }
 
 /* Section hint text */
@@ -1069,10 +1142,10 @@
 .advancedHint {
   margin-top: 8px;
   padding: 8px 10px;
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--brand-warning-rgb), 0.1);
   border-radius: 6px;
   font-size: 10px;
-  color: rgba(245, 158, 11, 0.9);
+  color: rgba(var(--brand-warning-rgb), 0.9);
   line-height: 1.4;
 }
 
@@ -1112,9 +1185,9 @@
 }
 
 .fuelTypeBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0.1) 100%);
-  border-color: rgba(255, 77, 0, 0.5);
-  color: var(--accent-primary, var(--color-accent-lime));
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: var(--brand-teal);
 }
 
 .loadingDot {
@@ -1167,7 +1240,7 @@
 }
 
 .tier3 {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.15);
   color: var(--color-warning);
 }
 
@@ -1427,8 +1500,8 @@
 
 /* Power Summary Card - replaces Physics-Based Estimate */
 .powerSummaryCard {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.03) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(var(--brand-warning-rgb), 0.12) 0%, rgba(var(--brand-warning-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.3);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 16px;
@@ -1771,8 +1844,8 @@
    =========================================== */
 
 .advancedEstimateCard {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.1) 0%, rgba(255, 77, 0, 0.03) 100%);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 16px;
@@ -1791,7 +1864,7 @@
   gap: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .tierBadgeLarge {
@@ -1886,9 +1959,9 @@
 }
 
 .pkgBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.08) 100%);
-  border-color: rgba(255, 77, 0, 0.4);
-  color: var(--accent-primary, var(--color-accent-lime));
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--brand-teal);
   /* Ensure active state is immediately visible */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -1940,15 +2013,15 @@
 }
 
 .pkgBtnCustom.pkgBtnActive {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.12) 0%, rgba(255, 77, 0, 0.06) 100%);
-  border-color: rgba(255, 77, 0, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
   border-style: solid;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .pkgBtnCustom.pkgBtnActive svg {
   opacity: 1;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 /* Mod Gain display in recommendations */
@@ -2049,6 +2122,42 @@
   transform: translateX(2px);
 }
 
+/* Goal Indicator for Build Objective */
+.goalIndicator {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+}
+
+.goalLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Recommended badge for goal-aligned categories */
+.recommendedBadge {
+  color: #10b981;
+  font-size: 10px;
+  margin-left: -4px;
+}
+
+/* Subtle highlight for goal-recommended categories */
+.catBtnRecommended {
+  background: rgba(16, 185, 129, 0.04);
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.catBtnRecommended:hover {
+  background: rgba(16, 185, 129, 0.08);
+}
+
 /* ===========================================
    CATEGORY POPUP - Upgrade Selection Modal
    =========================================== */
@@ -2100,7 +2209,7 @@
 }
 
 .popupTitle svg {
-  color: var(--cat-color, #fff);
+  color: var(--cat-color, var(--brand-text-primary));
 }
 
 .popupCount {
@@ -2158,11 +2267,11 @@
 
 .upgradeRowSelected {
   background: rgba(var(--cat-color-rgb, 212, 175, 55), 0.1);
-  border-color: var(--cat-color, rgba(255, 77, 0, 0.3));
+  border-color: var(--cat-color, rgba(16, 185, 129, 0.3));
 }
 
 .upgradeRowConflict {
-  border-color: rgba(251, 191, 36, 0.4);
+  border-color: rgba(var(--brand-warning-rgb), 0.4);
 }
 
 /* Main row containing checkbox, name, hp gain, and learn more button */
@@ -2204,9 +2313,9 @@
 }
 
 .upgradeRowSelected .checkbox {
-  background: var(--cat-color, var(--accent-primary, var(--color-accent-lime)));
-  border-color: var(--cat-color, var(--accent-primary, var(--color-accent-lime)));
-  color: #000;
+  background: var(--cat-color, var(--brand-teal));
+  border-color: var(--cat-color, var(--brand-teal));
+  color: var(--brand-bg-primary);
 }
 
 .upgradeName {
@@ -2231,8 +2340,32 @@
 
 /* HP gain boosted by config options */
 .upgradeGainBoosted {
-  background: rgba(255, 77, 0, 0.2);
-  color: var(--accent-primary, var(--color-accent-lime));
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--brand-teal);
+}
+
+/* Inline Performance Preview */
+.inlinePreview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 0 28px;
+  margin-top: 2px;
+}
+
+.previewLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.previewValue {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--color-accent-teal, #10b981);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 /* Asterisk indicator for config-modified gains */
@@ -2247,9 +2380,9 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  background: rgba(251, 191, 36, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.15);
   border-radius: 3px;
-  color: var(--color-accent-gold);
+  color: var(--color-warning);  /* Amber for conflicts */
   flex-shrink: 0;
 }
 
@@ -2289,10 +2422,10 @@
   gap: 8px;
   padding: 14px 32px;
   min-width: 200px;
-  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)) 0%, #b8942e 100%);
+  background: linear-gradient(135deg, var(--brand-teal) 0%, #b8942e 100%);
   border: none;
   border-radius: 12px;
-  color: #000;
+  color: var(--brand-bg-primary);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -2300,15 +2433,15 @@
   z-index: 100;
   box-shadow: 
     0 8px 24px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(255, 77, 0, 0.2);
+    0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c04a 0%, var(--accent-primary, var(--color-accent-lime)) 100%);
+  background: linear-gradient(135deg, #e6c04a 0%, var(--brand-teal) 100%);
   transform: translateX(-50%) translateY(-2px);
   box-shadow: 
     0 12px 32px rgba(0, 0, 0, 0.5),
-    0 4px 12px rgba(255, 77, 0, 0.35);
+    0 4px 12px rgba(16, 185, 129, 0.35);
 }
 
 .saveBtn:disabled {
@@ -2354,7 +2487,7 @@
 }
 
 .performanceTitle svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .buildStats {
@@ -2393,8 +2526,8 @@
 }
 
 .costEstimated {
-  border-color: rgba(251, 191, 36, 0.3);
-  color: var(--color-accent-gold);
+  border-color: rgba(var(--brand-warning-rgb), 0.3);
+  color: var(--color-warning);  /* Amber for estimates */
 }
 
 /* Performance Metrics - Compact Row Layout */
@@ -2429,7 +2562,7 @@
 }
 
 .metricLabel svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .metricValues {
@@ -2628,8 +2761,8 @@
 }
 
 .categoryTabActive {
-  background: rgba(255, 77, 0, 0.1);
-  color: var(--accent-primary, var(--color-accent-lime));
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--brand-teal);
 }
 
 .tabBadge {
@@ -2700,7 +2833,7 @@
 .upgradePrice {
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .upgradeDescription {
@@ -2803,8 +2936,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 18px 20px;
-  background: linear-gradient(180deg, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0.02) 100%);
-  border-bottom: 1px solid rgba(255, 77, 0, 0.15);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .saveModalTitleGroup {
@@ -2814,7 +2947,7 @@
 }
 
 .saveModalIcon {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .saveModalTitle {
@@ -2883,9 +3016,9 @@
 
 .formInput:focus {
   outline: none;
-  border-color: rgba(255, 77, 0, 0.5);
+  border-color: rgba(16, 185, 129, 0.5);
   background: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 77, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 /* Build Summary Card */
@@ -2955,12 +3088,12 @@
 }
 
 .customCheckboxChecked {
-  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)), #b8942e);
+  background: linear-gradient(135deg, var(--brand-teal), #b8942e);
   border-color: transparent;
 }
 
 .customCheckbox svg {
-  color: #000;
+  color: var(--brand-bg-primary);
 }
 
 .garageVehicleSelect {
@@ -2982,7 +3115,7 @@
 
 .garageVehicleSelect:focus {
   outline: none;
-  border-color: rgba(255, 77, 0, 0.4);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .garageVehicleSelect option {
@@ -2994,11 +3127,11 @@
 .garageNote {
   margin-top: 10px;
   padding: 10px 12px;
-  background: rgba(234, 179, 8, 0.1);
-  border: 1px solid rgba(234, 179, 8, 0.2);
+  background: rgba(var(--brand-warning-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.2);
   border-radius: 8px;
   font-size: 12px;
-  color: rgba(234, 179, 8, 0.9);
+  color: rgba(var(--brand-warning-rgb), 0.9);
 }
 
 /* Add to Garage Prompt */
@@ -3049,8 +3182,8 @@
   gap: 6px;
   margin-top: 10px;
   padding: 8px 12px;
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.3);
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
@@ -3065,8 +3198,8 @@
   gap: 8px;
   padding: 10px 12px;
   margin-top: 12px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
   border-radius: 8px;
   font-size: 12px;
   color: var(--brand-error);
@@ -3079,8 +3212,8 @@
   gap: 10px;
   padding: 12px;
   margin-top: 12px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.08));
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.1), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   border-radius: 10px;
 }
 
@@ -3112,7 +3245,7 @@
 }
 
 .linkedPostLink:hover {
-  color: #93c5fd;
+  color: var(--brand-blue-light);
   text-decoration: underline;
 }
 
@@ -3120,8 +3253,8 @@
 .communityToggleSection {
   margin-top: 16px;
   padding: 14px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.05));
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.08), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.15);
   border-radius: 12px;
 }
 
@@ -3192,11 +3325,11 @@
 
 .communityTitleInput .formInput {
   background: rgba(0, 0, 0, 0.3);
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
 }
 
 .communityTitleInput .formInput:focus {
-  border-color: rgba(59, 130, 246, 0.6);
+  border-color: rgba(var(--brand-blue-rgb), 0.6);
 }
 
 .communityTitleHint {
@@ -3237,7 +3370,7 @@
   left: 2px;
   width: 20px;
   height: 20px;
-  background: #fff;
+  background: var(--brand-text-primary);
   border-radius: 50%;
   transition: transform 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -3251,9 +3384,9 @@
   margin: 10px 0 0;
   padding: 8px 10px;
   font-size: 12px;
-  color: var(--color-accent-gold);
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.2);
+  color: var(--color-warning);  /* Amber for warnings */
+  background: rgba(var(--brand-warning-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.2);
   border-radius: 8px;
 }
 
@@ -3292,20 +3425,20 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, var(--accent-primary, var(--color-accent-lime)) 0%, #b8942e 100%);
+  background: var(--brand-lime, #d4ff00);
   border: none;
   border-radius: 12px;
-  color: #000;
+  color: var(--brand-bg-primary, #0a1628);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.25);
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e6c04a 0%, var(--accent-primary, var(--color-accent-lime)) 100%);
-  box-shadow: 0 6px 16px rgba(255, 77, 0, 0.35);
+  background: #bfe600;
+  box-shadow: 0 8px 20px rgba(212, 255, 0, 0.35);
   transform: translateY(-1px);
 }
 
@@ -3320,7 +3453,7 @@
   width: 14px;
   height: 14px;
   border: 2px solid rgba(0, 0, 0, 0.2);
-  border-top-color: #000;
+  border-top-color: var(--brand-bg-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -3506,11 +3639,11 @@
 
 .trackTag {
   padding: 3px 8px;
-  background: rgba(255, 77, 0, 0.12);
+  background: rgba(16, 185, 129, 0.12);
   border-radius: 4px;
   font-size: 10px;
   font-weight: 500;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
   text-transform: capitalize;
 }
 
@@ -3774,8 +3907,8 @@
 
 /* Info Panel */
 .lapTimeInfoPanel {
-  background: rgba(52, 199, 89, 0.08);
-  border: 1px solid rgba(52, 199, 89, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
@@ -3853,8 +3986,8 @@
 }
 
 .skillBtnActive {
-  background: rgba(52, 199, 89, 0.15);
-  border-color: rgba(52, 199, 89, 0.4);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  border-color: rgba(var(--brand-success-rgb), 0.4);
   color: #34c759;
 }
 
@@ -3930,9 +4063,9 @@
   flex-direction: column;
   align-items: center;
   padding: 8px 6px;
-  background: rgba(52, 199, 89, 0.08);
+  background: rgba(var(--brand-success-rgb), 0.08);
   border-radius: 8px;
-  border: 1px solid rgba(52, 199, 89, 0.15);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.15);
 }
 
 .lapTimeCategoryLabel {
@@ -3967,11 +4100,11 @@
   gap: 8px;
   margin-top: 10px;
   padding: 10px 14px;
-  background: rgba(52, 199, 89, 0.06);
-  border: 1px solid rgba(52, 199, 89, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.06);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.15);
   border-radius: 8px;
   font-size: 12px;
-  color: rgba(52, 199, 89, 0.9);
+  color: rgba(var(--brand-success-rgb), 0.9);
   line-height: 1.4;
 }
 
@@ -4019,8 +4152,8 @@
 }
 
 .trackTimeBtnActive {
-  background: rgba(52, 199, 89, 0.12);
-  border-color: rgba(52, 199, 89, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.12);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
   color: #34c759;
 }
 
@@ -4089,7 +4222,7 @@
 
 .logTimeInput:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeInputLabel {
@@ -4111,7 +4244,7 @@
 .logTimeDateInput:focus,
 .logTimeSelect:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeTextarea {
@@ -4128,7 +4261,7 @@
 
 .logTimeTextarea:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeTextarea::placeholder {
@@ -4178,7 +4311,7 @@
 
 .logTimeSaveBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-success-rgb), 0.3);
 }
 
 .logTimeSaveBtn:disabled {
@@ -4393,7 +4526,7 @@
 .trackAnalysisSuggestion {
   margin-top: 8px;
   padding: 8px 10px;
-  background: rgba(52, 199, 89, 0.1);
+  background: rgba(var(--brand-success-rgb), 0.1);
   border-radius: 6px;
   font-size: 12px;
   color: #34c759;
@@ -4419,7 +4552,7 @@
 }
 
 .handlingBalanceHeader svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .handlingBalanceHeader span:first-of-type {
@@ -4458,9 +4591,9 @@
   position: relative;
   height: 16px;
   background: linear-gradient(90deg, 
-    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(var(--brand-blue-rgb), 0.3) 0%, 
     rgba(16, 185, 129, 0.3) 50%, 
-    rgba(239, 68, 68, 0.3) 100%
+    rgba(var(--brand-error-rgb), 0.3) 100%
   );
   border-radius: 8px;
 }
@@ -4630,8 +4763,8 @@
    =========================================== */
 
 .powerLimits {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: linear-gradient(135deg, rgba(var(--brand-warning-rgb), 0.08) 0%, rgba(var(--brand-warning-rgb), 0.02) 100%);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.2);
   border-radius: 16px;
   padding: 20px;
   margin-top: 16px;
@@ -4769,7 +4902,7 @@
 }
 
 .brandRecsHeader svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .brandRecsList {
@@ -4805,8 +4938,8 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
   padding: 4px 10px;
-  background: rgba(255, 77, 0, 0.1);
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 6px;
 }
 
@@ -5191,15 +5324,16 @@
     padding: 10px;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .insightsCardHeader,
   .watchOutsCardHeader {
-    font-size: 9px;
+    font-size: 0.875rem;
     margin-bottom: 6px;
   }
   
   .insightsCardList li,
   .watchOutsCardList li {
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding-left: 10px;
   }
   
@@ -5212,17 +5346,19 @@
     padding: 14px;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .recommendationTitleFull {
-    font-size: 10px;
+    font-size: 0.875rem;
   }
   
   .focusTagFull {
-    font-size: 9px;
+    font-size: 0.625rem;
     padding: 3px 8px;
   }
   
+  /* Mobile body content - matches Specs page (0.8125rem = 13px) */
   .recommendationTextFull {
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.5;
     margin-bottom: 12px;
   }
@@ -5239,15 +5375,17 @@
     padding: 12px;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .insightsCardHeaderFull,
   .watchOutsCardHeaderFull {
-    font-size: 9px;
+    font-size: 0.875rem;
     margin-bottom: 8px;
   }
   
+  /* Mobile body content - matches Specs page (0.8125rem = 13px) */
   .insightsCardListFull li,
   .watchOutsCardListFull li {
-    font-size: 12px;
+    font-size: 0.8125rem;
   }
   
   .modGainFull {
@@ -5260,8 +5398,9 @@
     padding: 0 12px 12px;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .buildRecommendationsHeader {
-    font-size: 10px;
+    font-size: 0.875rem;
     margin-bottom: 10px;
   }
   
@@ -5333,8 +5472,9 @@
     padding: 10px 12px;
   }
   
+  /* Mobile: Keep header same size as Specs page (0.875rem) */
   .sidebarCardTitle {
-    font-size: 11px;
+    font-size: 0.875rem;
   }
   
   .sidebarCardContent {
@@ -5495,9 +5635,9 @@
     transform: none;
   }
   
-  /* Add bottom padding to workspace to account for fixed save button */
+  /* Reduced padding - parent page handles safe area */
   .workspace {
-    padding-bottom: 80px;
+    padding-bottom: 16px;
   }
   
   /* ---- Tuning Insights Section - Extra Small Mobile ---- */
@@ -5886,7 +6026,7 @@
 }
 
 .tuningCardHeader svg {
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 /* Stage Progressions */
@@ -5945,7 +6085,7 @@
 .stageTotalHp {
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 /* Tuning Platforms */
@@ -6039,7 +6179,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
 }
 
 .brandNames {
@@ -6093,7 +6233,7 @@
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 6px;
-  border-left: 2px solid rgba(255, 77, 0, 0.3);
+  border-left: 2px solid rgba(16, 185, 129, 0.3);
 }
 
 .upgradeName {
@@ -6165,7 +6305,7 @@
 }
 
 .insightWeakness {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--brand-warning-rgb), 0.1);
   color: rgba(255, 255, 255, 0.8);
 }
 

@@ -1,12 +1,169 @@
 'use client';
 
 /**
- * Calculated Performance - Physics-based 0-60, 1/4 mile, braking estimates
- * Uses validated empirical formulas for realistic performance predictions
+ * Calculated Performance - Physics-based performance estimates
+ * 
+ * Matches the styling of garage/my-performance page with progress bars.
+ * Shows Performance Metrics + Experience Scores.
  */
 
 import React from 'react';
+import AskALButton from './AskALButton';
 import styles from './CalculatedPerformance.module.css';
+
+// ============================================================================
+// ICONS - Same as Performance tab
+// ============================================================================
+const Icons = {
+  bolt: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
+  stopwatch: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="8"/>
+      <path d="M12 9v4l2 2"/>
+      <path d="M9 2h6"/>
+    </svg>
+  ),
+  target: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="6"/>
+      <circle cx="12" cy="12" r="2"/>
+    </svg>
+  ),
+  disc: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="2"/>
+    </svg>
+  ),
+  speed: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v4"/>
+      <path d="m4.93 10.93 2.83 2.83"/>
+      <path d="M2 18h2"/>
+      <path d="M20 18h2"/>
+      <path d="m19.07 10.93-2.83 2.83"/>
+      <path d="M22 22H2"/>
+      <path d="m16 6-4 4"/>
+      <circle cx="12" cy="18" r="4"/>
+    </svg>
+  ),
+  weight: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="3"/>
+      <path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.9-2.5l-2.495-9.04A2 2 0 0 0 17.5 8h-11Z"/>
+    </svg>
+  ),
+  gauge: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 14 4-4"/>
+      <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
+    </svg>
+  ),
+};
+
+// ============================================================================
+// METRIC ROW - With progress bar (same as Performance tab)
+// ============================================================================
+function MetricRow({ icon: Icon, label, stockValue, upgradedValue, unit, isLowerBetter = false, maxScale }) {
+  const stock = stockValue ?? 0;
+  const upgraded = upgradedValue ?? stock;
+  
+  const hasImproved = isLowerBetter ? upgraded < stock : upgraded > stock;
+  const improvement = Math.abs(upgraded - stock);
+  
+  const formatValue = (val) => {
+    if (val === undefined || val === null || isNaN(val)) return '—';
+    if (unit === 'g') return val.toFixed(2);
+    if (unit === 's') return val.toFixed(1);
+    if (unit === 'ft') return Math.round(val);
+    if (unit === 'mph') return Math.round(val);
+    return Math.round(val);
+  };
+  
+  const formatDelta = (val) => {
+    if (unit === 'g') return val.toFixed(2);
+    if (unit === 's') return val.toFixed(1);
+    return Math.round(val);
+  };
+  
+  // Calculate bar percentages based on metric type
+  // Use explicit maxScale if provided, otherwise use defaults
+  const defaultMaxValues = { hp: 1200, s: 8, ft: 150, g: 1.6, mph: 200 };
+  const maxValue = maxScale || defaultMaxValues[unit] || 1200;
+  
+  const stockPercent = isLowerBetter 
+    ? ((maxValue - stock) / maxValue) * 100 
+    : (stock / maxValue) * 100;
+  const upgradedPercent = isLowerBetter 
+    ? ((maxValue - upgraded) / maxValue) * 100 
+    : (upgraded / maxValue) * 100;
+  
+  return (
+    <div className={styles.metric}>
+      <div className={styles.metricHeader}>
+        <span className={styles.metricLabel}><Icon size={12} />{label}</span>
+        <span className={styles.metricValues}>
+          {hasImproved ? (
+            <>
+              <span className={styles.stockVal}>{formatValue(stock)}</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.upgradedVal}>{formatValue(upgraded)}{unit}</span>
+              <span className={styles.gain}>{isLowerBetter ? '-' : '+'}{formatDelta(improvement)}</span>
+            </>
+          ) : (
+            <span className={styles.currentVal}>{formatValue(stock)}{unit}</span>
+          )}
+        </span>
+      </div>
+      <div className={styles.track}>
+        <div className={styles.fillStock} style={{ width: `${Math.min(100, stockPercent)}%` }} />
+        {hasImproved && (
+          <div className={styles.fillUpgrade} style={{ left: `${stockPercent}%`, width: `${Math.abs(upgradedPercent - stockPercent)}%` }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// SCORE BAR - Experience scores with progress bar
+// ============================================================================
+function ScoreBar({ label, stockScore, upgradedScore }) {
+  const safeStockScore = stockScore ?? 7;
+  const safeUpgradedScore = upgradedScore ?? safeStockScore;
+  const hasImproved = safeUpgradedScore > safeStockScore;
+  const delta = safeUpgradedScore - safeStockScore;
+  
+  return (
+    <div className={styles.scoreRow}>
+      <div className={styles.scoreHeader}>
+        <span className={styles.scoreLabel}>{label}</span>
+        <span className={styles.scoreValues}>
+          {hasImproved ? (
+            <>
+              <span className={styles.stockVal}>{safeStockScore.toFixed(1)}</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.upgradedVal}>{safeUpgradedScore.toFixed(1)}</span>
+            </>
+          ) : (
+            <span className={styles.currentVal}>{safeStockScore.toFixed(1)}/10</span>
+          )}
+        </span>
+      </div>
+      <div className={styles.track}>
+        <div className={styles.fillStock} style={{ width: `${(safeStockScore / 10) * 100}%` }} />
+        {hasImproved && (
+          <div className={styles.fillUpgrade} style={{ left: `${(safeStockScore / 10) * 100}%`, width: `${(delta / 10) * 100}%` }} />
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function CalculatedPerformance({
   stockHp,
@@ -17,9 +174,23 @@ export default function CalculatedPerformance({
   weightMod = 0, 
   driverWeight = 180, 
   finalDrive = null,
-  wheelWeight = null, // lbs per wheel (stock ~25, forged ~18)
+  wheelWeight = null,
   handlingScore = 100,
   brakingScore = 100,
+  // Experience score props (optional - will calculate defaults if not provided)
+  stockComfort = 8.5,
+  upgradedComfort = null,
+  stockReliability = 8.0,
+  upgradedReliability = null,
+  stockSound = 6.5,
+  upgradedSound = null,
+  hasExhaust = false,
+  hasIntake = false,
+  hasTune = false,
+  hasSuspension = false,
+  // Car context for Ask AL prompts
+  carName = null,
+  carSlug = null,
 }) {
   // Guard against invalid inputs
   const safeStockHp = (typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0) ? stockHp : 300;
@@ -28,40 +199,27 @@ export default function CalculatedPerformance({
   
   // Adjust weight for modifications and driver
   const totalWeight = safeWeight + (weightMod || 0) + (driverWeight || 180);
-  const stockTotalWeight = safeWeight + 180; // Stock with driver
+  const stockTotalWeight = safeWeight + 180;
   
-  // Wheel weight affects rotational inertia (lighter wheels = faster accel)
-  // Rule of thumb: 1lb of wheel weight = 4-5lbs of static weight for acceleration
-  const stockWheelWeight = 25; // Average stock wheel
+  // Wheel weight affects rotational inertia
+  const stockWheelWeight = 25;
   const currentWheelWeight = wheelWeight || stockWheelWeight;
-  const wheelWeightDiff = (stockWheelWeight - currentWheelWeight) * 4; // Effective weight savings
+  const wheelWeightDiff = (stockWheelWeight - currentWheelWeight) * 4;
   const effectiveWeight = totalWeight - wheelWeightDiff;
   const stockEffectiveWeight = stockTotalWeight;
   
-  // Tire grip multiplier for launch (affects 0-60 more than 1/4)
-  const tireGripMap = {
-    'all-season': 0.82,
-    'summer': 0.90,
-    'max-performance': 0.95,
-    'r-comp': 1.05,
-    'drag-radial': 1.25, // Massive launch advantage
-    'slick': 1.35,
+  // Tire grip multiplier
+  const tireKMultiplier = {
+    'all-season': 1.08,
+    'summer': 1.0,
+    'max-performance': 0.97,
+    'r-comp': 0.93,
+    'drag-radial': 0.85,
+    'slick': 0.82,
   };
-  const tireGrip = tireGripMap[tireCompound] || 0.90;
+  const kTire = tireKMultiplier[tireCompound] || 1.0;
   
-  // Power to weight ratio (hp per ton, where ton = 2000 lbs)
-  const powerToWeight = (safeEstimatedHp / effectiveWeight) * 2000;
-  const stockPtw = (safeStockHp / stockEffectiveWeight) * 2000;
-  
-  // ==========================================================================
-  // 0-60 MPH CALCULATION
-  // ==========================================================================
-  // Empirical formula validated against real-world data:
-  // 0-60 = sqrt(weight/hp) * k, where k varies by drivetrain
-  // AWD: k ≈ 1.2 (best launch, minimal wheelspin)
-  // RWD: k ≈ 1.35 (wheelspin limited)
-  // FWD: k ≈ 1.4 (torque steer, weight transfer issues)
-  
+  // Drivetrain coefficient
   const drivetrainK = {
     'AWD': 1.20,
     'RWD': 1.35,
@@ -70,129 +228,212 @@ export default function CalculatedPerformance({
   };
   const baseK = drivetrainK[drivetrain] || 1.30;
   
-  // Tire grip affects launch (drag radials are huge for RWD)
-  const tireKMultiplier = {
-    'all-season': 1.08,
-    'summer': 1.0,
-    'max-performance': 0.97,
-    'r-comp': 0.93,
-    'drag-radial': 0.85, // Massive launch improvement
-    'slick': 0.82,
-  };
-  const kTire = tireKMultiplier[tireCompound] || 1.0;
-  
   // Calculate 0-60
   const weightToHp = effectiveWeight / safeEstimatedHp;
   const stockWeightToHp = stockEffectiveWeight / safeStockHp;
-  
-  // Minimum realistic 0-60 times (even hypercars can't beat physics)
   const estimated060 = Math.max(2.0, Math.sqrt(weightToHp) * baseK * kTire);
   const stock060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
   
-  // ==========================================================================
-  // 1/4 MILE CALCULATION  
-  // ==========================================================================
-  // Classic empirical formula: ET = 5.825 * (weight/hp)^0.333
-  // This is well-validated across many vehicles
+  // 1/4 mile
   const tractionBonus = tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
   const estimatedQuarter = 5.825 * Math.pow(weightToHp, 0.333) * tractionBonus;
   const stockQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
 
-  // ==========================================================================
-  // TRAP SPEED CALCULATION
-  // ==========================================================================
-  // Formula: Trap Speed (mph) = 234 * (hp/weight)^0.333
-  // Adjusted from 224 to 234 based on modern vehicle data
+  // Trap speed
   const finalDriveFactor = finalDrive ? Math.min(1.02, 3.5 / finalDrive) : 1.0;
   const estimatedTrap = 234 * Math.pow(safeEstimatedHp / effectiveWeight, 0.333) * finalDriveFactor;
   const stockTrap = 234 * Math.pow(safeStockHp / stockEffectiveWeight, 0.333);
   
-  // Braking distance (60-0) estimation
-  // Base: ~120ft for average car at 60mph
-  // Better brakes/tires reduce this
-  const stockBraking60 = 120; // feet
-  const brakingImprovement = (brakingScore - 100) / 100; // percentage improvement
+  // Braking distance
+  const stockBraking60 = 120;
+  const brakingImprovement = (brakingScore - 100) / 100;
   const estimatedBraking60 = Math.round(stockBraking60 * (1 - brakingImprovement * 0.25));
   
-  // Lateral G estimation
-  // Stock sedan ~0.85g, sport car ~0.95g
+  // Lateral G
   const baseG = 0.90;
   const handlingImprovement = (handlingScore - 100) / 100;
-  const estimatedLateralG = (baseG * (1 + handlingImprovement * 0.3)).toFixed(2);
-  const stockLateralG = baseG.toFixed(2);
+  const estimatedLateralG = baseG * (1 + handlingImprovement * 0.3);
+  const stockLateralG = baseG;
   
-  // Safe number formatting to prevent NaN display
-  const safeFixed = (num, decimals = 1, fallback = '—') => {
-    if (typeof num !== 'number' || isNaN(num) || !isFinite(num)) return fallback;
-    return num.toFixed(decimals);
+  // Power/Weight ratio
+  const powerToWeight = (safeEstimatedHp / effectiveWeight) * 2000;
+  const stockPtw = (safeStockHp / stockEffectiveWeight) * 2000;
+  
+  // Calculate experience scores based on modifications
+  const calcComfort = () => {
+    let score = upgradedComfort ?? stockComfort;
+    if (upgradedComfort === null) {
+      // Suspension mods reduce comfort slightly
+      if (hasSuspension) score = Math.max(5, score - 1.2);
+      // Stiffer tires reduce comfort
+      if (tireCompound === 'r-comp' || tireCompound === 'slick') score = Math.max(5, score - 0.8);
+    }
+    return score;
   };
   
-  const safeDelta = (from, to, decimals = 1) => {
-    const diff = from - to;
-    if (isNaN(diff) || !isFinite(diff)) return '0';
-    return diff.toFixed(decimals);
+  const calcReliability = () => {
+    let score = upgradedReliability ?? stockReliability;
+    if (upgradedReliability === null) {
+      // More power can stress components
+      const hpGainPercent = ((safeEstimatedHp - safeStockHp) / safeStockHp) * 100;
+      if (hpGainPercent > 30) score = Math.max(5, score - 0.8);
+      else if (hpGainPercent > 15) score = Math.max(6, score - 0.4);
+      // Tunes can improve efficiency if done right
+      if (hasTune && hpGainPercent < 20) score = Math.min(10, score + 0.3);
+    }
+    return score;
   };
+  
+  const calcSound = () => {
+    let score = upgradedSound ?? stockSound;
+    if (upgradedSound === null) {
+      // Exhaust significantly improves sound
+      if (hasExhaust) score = Math.min(10, score + 2.0);
+      // Intake adds some sound character
+      if (hasIntake) score = Math.min(10, score + 0.5);
+    }
+    return score;
+  };
+  
+  const finalComfort = calcComfort();
+  const finalReliability = calcReliability();
+  const finalSound = calcSound();
+
+  // Build contextual prompts for Ask AL
+  const hasModifications = safeEstimatedHp > safeStockHp;
+  
+  const performancePrompt = carName
+    ? `Explain my ${carName}'s performance metrics. ${hasModifications ? `With modifications, I've improved from ${stock060.toFixed(1)}s to ${estimated060.toFixed(1)}s 0-60 and ${stockQuarter.toFixed(1)}s to ${estimatedQuarter.toFixed(1)}s quarter mile.` : 'It\'s currently stock.'} How do these numbers compare to similar cars? What mods would improve my times the most?`
+    : `Explain these performance metrics: ${estimated060.toFixed(1)}s 0-60, ${estimatedQuarter.toFixed(1)}s quarter mile, ${Math.round(estimatedTrap)} mph trap speed. How can I improve these numbers?`;
+  
+  const performanceDisplayMessage = hasModifications
+    ? 'Explain my performance gains'
+    : 'How can I improve these numbers?';
+
+  const experiencePrompt = carName
+    ? `Tell me about my ${carName}'s comfort, reliability, and sound characteristics. ${hasExhaust ? 'I have an aftermarket exhaust.' : ''} ${hasSuspension ? 'I have modified suspension.' : ''} What are the tradeoffs with my current setup and how might they affect daily driving vs track use?`
+    : `Explain the tradeoffs between comfort (${finalComfort.toFixed(1)}/10), reliability (${finalReliability.toFixed(1)}/10), and sound (${finalSound.toFixed(1)}/10). How do modifications affect the driving experience?`;
+  
+  const experienceDisplayMessage = 'Explain my experience scores';
 
   return (
     <div className={styles.calcPerformance}>
-      <div className={styles.calcHeader}>
-        <span className={styles.calcTitle}>Calculated Performance</span>
-        <span className={styles.calcSubtitle}>Based on {safeWeight.toLocaleString()} lbs, {drivetrain}</span>
+      {/* Performance Metrics Section */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.sectionTitle}>Performance Metrics</h3>
+          <AskALButton
+            category="Performance Metrics"
+            prompt={performancePrompt}
+            displayMessage={performanceDisplayMessage}
+            carName={carName}
+            carSlug={carSlug}
+            variant="header"
+            metadata={{
+              section: 'performance-metrics',
+              estimated060,
+              estimatedQuarter,
+              estimatedTrap,
+              stock060,
+              stockQuarter,
+            }}
+          />
+        </div>
+        <div className={styles.metricsGrid}>
+          <MetricRow 
+            icon={Icons.bolt} 
+            label="HP" 
+            stockValue={safeStockHp} 
+            upgradedValue={safeEstimatedHp} 
+            unit="hp" 
+          />
+          <MetricRow 
+            icon={Icons.stopwatch} 
+            label="0-60" 
+            stockValue={stock060} 
+            upgradedValue={estimated060} 
+            unit="s" 
+            isLowerBetter 
+          />
+          <MetricRow 
+            icon={Icons.gauge} 
+            label="1/4 Mile" 
+            stockValue={stockQuarter} 
+            upgradedValue={estimatedQuarter} 
+            unit="s" 
+            isLowerBetter 
+            maxScale={15}
+          />
+          <MetricRow 
+            icon={Icons.speed} 
+            label="Trap Speed" 
+            stockValue={stockTrap} 
+            upgradedValue={estimatedTrap} 
+            unit="mph" 
+          />
+          <MetricRow 
+            icon={Icons.disc} 
+            label="60-0 Braking" 
+            stockValue={stockBraking60} 
+            upgradedValue={estimatedBraking60} 
+            unit="ft" 
+            isLowerBetter 
+          />
+          <MetricRow 
+            icon={Icons.target} 
+            label="Lateral G" 
+            stockValue={stockLateralG} 
+            upgradedValue={estimatedLateralG} 
+            unit="g" 
+          />
+          <MetricRow 
+            icon={Icons.weight} 
+            label="Power/Weight" 
+            stockValue={stockPtw} 
+            upgradedValue={powerToWeight} 
+            unit="hp/ton" 
+          />
+        </div>
       </div>
-      <div className={styles.calcGrid}>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>0-60 mph</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{safeFixed(stock060)}s</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{safeFixed(estimated060)}s</span>
-          </div>
-          <div className={styles.calcDelta}>-{safeDelta(stock060, estimated060)}s</div>
+      
+      {/* Experience Scores Section */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.sectionTitle}>Experience Scores</h3>
+          <AskALButton
+            category="Experience Scores"
+            prompt={experiencePrompt}
+            displayMessage={experienceDisplayMessage}
+            carName={carName}
+            carSlug={carSlug}
+            variant="header"
+            metadata={{
+              section: 'experience-scores',
+              comfort: finalComfort,
+              reliability: finalReliability,
+              sound: finalSound,
+              hasExhaust,
+              hasSuspension,
+              hasTune,
+            }}
+          />
         </div>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>1/4 Mile</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{safeFixed(stockQuarter)}s</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{safeFixed(estimatedQuarter)}s</span>
-          </div>
-          <div className={styles.calcDelta}>-{safeDelta(stockQuarter, estimatedQuarter)}s</div>
-        </div>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>Trap Speed</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{safeFixed(stockTrap, 0)}</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{safeFixed(estimatedTrap, 0)} mph</span>
-          </div>
-          <div className={styles.calcDelta}>+{safeDelta(stockTrap, estimatedTrap, 0)} mph</div>
-        </div>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>Power/Weight</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{safeFixed(stockPtw, 0)}</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{safeFixed(powerToWeight, 0)} hp/ton</span>
-          </div>
-          <div className={styles.calcDelta}>+{safeDelta(stockPtw, powerToWeight, 0)}</div>
-        </div>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>60-0 Braking</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{stockBraking60}ft</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{estimatedBraking60} ft</span>
-          </div>
-          <div className={styles.calcDelta}>{estimatedBraking60 <= stockBraking60 ? '-' : '+'}{Math.abs(stockBraking60 - estimatedBraking60)} ft</div>
-        </div>
-        <div className={styles.calcMetric}>
-          <div className={styles.calcMetricHeader}>Lateral G</div>
-          <div className={styles.calcMetricValues}>
-            <span className={styles.calcStock}>{stockLateralG}g</span>
-            <span className={styles.calcArrow}>→</span>
-            <span className={styles.calcModded}>{estimatedLateralG}g</span>
-          </div>
-          <div className={styles.calcDelta}>+{safeFixed(parseFloat(estimatedLateralG) - parseFloat(stockLateralG), 2, '0.00')}g</div>
+        <div className={styles.scoresGrid}>
+          <ScoreBar 
+            label="Comfort" 
+            stockScore={stockComfort} 
+            upgradedScore={finalComfort} 
+          />
+          <ScoreBar 
+            label="Reliability" 
+            stockScore={stockReliability} 
+            upgradedScore={finalReliability} 
+          />
+          <ScoreBar 
+            label="Sound" 
+            stockScore={stockSound} 
+            upgradedScore={finalSound} 
+          />
         </div>
       </div>
     </div>

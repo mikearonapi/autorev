@@ -1,0 +1,326 @@
+/**
+ * PremiumGate Component Styles
+ * 
+ * Upgrade prompts and teaser components for premium features
+ */
+
+/* ============================================
+   Default Upgrade Card
+   ============================================ */
+.upgradeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tier-color-rgb, 124, 58, 237), 0.08) 0%,
+    rgba(var(--tier-color-rgb, 124, 58, 237), 0.02) 100%
+  );
+  border: 1px solid rgba(var(--tier-color-rgb, 124, 58, 237), 0.2);
+  border-radius: 12px;
+  max-width: 400px;
+  margin: 1rem auto;
+}
+
+.cardIcon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--tier-color-rgb, 124, 58, 237), 0.15);
+  border-radius: 50%;
+  color: var(--tier-color, #7c3aed);
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.cardDescription {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.cardTier {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tierBadge {
+  background: var(--tier-color, #7c3aed);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tierPrice {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.cardCTA {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--tier-color, #7c3aed);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cardCTA:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--tier-color-rgb, 124, 58, 237), 0.3);
+}
+
+.betaNote {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--brand-teal);
+  font-weight: 500;
+}
+
+/* ============================================
+   Compact Upgrade Prompt
+   ============================================ */
+.compactPrompt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(var(--tier-color-rgb, 124, 58, 237), 0.05);
+  border: 1px solid rgba(var(--tier-color-rgb, 124, 58, 237), 0.15);
+  border-radius: 8px;
+}
+
+.compactHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--tier-color, #7c3aed);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.compactDescription {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.compactCTA {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: var(--tier-color, #7c3aed);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-top: 0.25rem;
+}
+
+.compactCTA:hover {
+  opacity: 0.9;
+}
+
+/* ============================================
+   Inline Upgrade Prompt
+   ============================================ */
+.inlinePrompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(var(--tier-color-rgb, 124, 58, 237), 0.08);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.inlinePrompt svg {
+  color: var(--tier-color, #7c3aed);
+  flex-shrink: 0;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--tier-color, #7c3aed);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Teaser Prompt (for limited content)
+   ============================================ */
+.teaserPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--tier-color-rgb, 124, 58, 237), 0.08) 0%,
+    rgba(var(--tier-color-rgb, 124, 58, 237), 0.03) 100%
+  );
+  border: 1px solid rgba(var(--tier-color-rgb, 124, 58, 237), 0.15);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.teaserContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.teaserContent svg {
+  color: var(--tier-color, #7c3aed);
+  flex-shrink: 0;
+}
+
+.teaserCTA {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--tier-color, #7c3aed);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.teaserCTA:hover {
+  opacity: 0.9;
+}
+
+/* Teaser variant: subtle */
+.teaser_subtle {
+  background: transparent;
+  border: 1px dashed rgba(var(--tier-color-rgb, 124, 58, 237), 0.3);
+}
+
+.teaser_subtle .teaserCTA {
+  background: transparent;
+  color: var(--tier-color, #7c3aed);
+  border: 1px solid var(--tier-color, #7c3aed);
+}
+
+/* Teaser variant: banner */
+.teaser_banner {
+  border-radius: 0;
+  margin: 0;
+  border-left: none;
+  border-right: none;
+}
+
+/* ============================================
+   Dark Mode Overrides
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  .upgradeCard {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--tier-color-rgb, 124, 58, 237), 0.12) 0%,
+      rgba(var(--tier-color-rgb, 124, 58, 237), 0.04) 100%
+    );
+    border-color: rgba(var(--tier-color-rgb, 124, 58, 237), 0.25);
+  }
+  
+  .compactPrompt {
+    background: rgba(var(--tier-color-rgb, 124, 58, 237), 0.08);
+    border-color: rgba(var(--tier-color-rgb, 124, 58, 237), 0.2);
+  }
+  
+  .inlinePrompt {
+    background: rgba(var(--tier-color-rgb, 124, 58, 237), 0.12);
+  }
+  
+  .teaserPrompt {
+    background: linear-gradient(
+      90deg,
+      rgba(var(--tier-color-rgb, 124, 58, 237), 0.12) 0%,
+      rgba(var(--tier-color-rgb, 124, 58, 237), 0.05) 100%
+    );
+    border-color: rgba(var(--tier-color-rgb, 124, 58, 237), 0.2);
+  }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 640px) {
+  .upgradeCard {
+    padding: 1.5rem;
+    margin: 0.75rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.1rem;
+  }
+  
+  .teaserPrompt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .teaserCTA {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

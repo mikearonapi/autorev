@@ -103,12 +103,8 @@ function ShoppingListItem({
   upgrade, 
   partDetails, 
   onUpdatePart, 
-  carName,
-  carSlug,
-  allUpgrades, // Full build context
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const { openChatWithPrompt } = useAIChat();
   
   const [editData, setEditData] = useState({
     brandName: partDetails?.brandName || '',
@@ -143,69 +139,6 @@ function ShoppingListItem({
     setIsEditing(false);
   };
 
-  // Open AL chat with two prompt options - includes FULL BUILD CONTEXT
-  const handleALClick = () => {
-    const partName = upgrade.name || 'part';
-    const buildSummary = buildContextSummary(allUpgrades);
-    const otherMods = allUpgrades
-      .filter(u => u.key !== upgrade.key)
-      .map(u => u.name)
-      .join(', ');
-    
-    // Build the two prompt options WITH full build context
-    const findPrompt = `I'm building a ${carName} and need help finding the best ${partName}.
-
-## My Full Build (for context):
-${buildSummary}
-
-## What I need:
-Please recommend specific ${partName} products that will work well with my other modifications (${otherMods || 'stock otherwise'}).
-
-Include for each recommendation:
-- Brand and model name
-- Part number if available  
-- Estimated price range
-- Why it's compatible with my build
-- Any installation notes
-
-Focus on quality options that complement my other mods. Consider any synergies or compatibility requirements.`;
-
-    const comparePrompt = `I'm building a ${carName} and want to compare the top ${partName} options.
-
-## My Full Build (for context):
-${buildSummary}
-
-## What I need:
-Compare the top 3-4 ${partName} options, keeping in mind I'm also running: ${otherMods || 'mostly stock'}.
-
-For each option include:
-- Brand and model
-- Price range
-- Pros and cons
-- How well it works with my other mods
-- Best for: daily driving vs track use vs best overall value
-
-Help me understand which option is best for MY specific build configuration.`;
-
-    // Open chat with multi-option mode
-    openChatWithPrompt(null, {
-      category: `${partName} for ${carName}`,
-      carSlug,
-      upgradeName: upgrade.name,
-    }, null, {
-      options: [
-        {
-          prompt: findPrompt,
-          displayMessage: `Find the best ${partName} for my ${carName} build`,
-        },
-        {
-          prompt: comparePrompt,
-          displayMessage: `Compare ${partName} options for my build`,
-        },
-      ],
-    });
-  };
-
   return (
     <div className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''}`}>
       <div className={styles.itemHeader}>
@@ -227,39 +160,27 @@ Help me understand which option is best for MY specific build configuration.`;
               {partDetails.price && ` • $${Number(partDetails.price).toLocaleString()}`}
             </span>
           )}
-          
-          {/* Add/Edit part button - inline after text for clarity */}
-          {!isEditing && !hasPartDetails && (
-            <button
-              className={styles.addPartInline}
-              onClick={() => setIsEditing(true)}
-            >
-              <Icons.plus size={12} />
-              Add your part
-            </button>
-          )}
-          {!isEditing && hasPartDetails && (
-            <button
-              className={styles.editPartInline}
-              onClick={() => setIsEditing(true)}
-            >
-              <Icons.edit size={12} />
-              Edit
-            </button>
-          )}
         </div>
         
-        <div className={styles.itemActions}>
-          {!isEditing && (
-            <button
-              className={styles.askAlBtn}
-              onClick={handleALClick}
-              title="Get AL Recommendations"
-            >
-              <ALAvatar size={20} />
-            </button>
-          )}
-        </div>
+        {/* Add/Edit part button - positioned right */}
+        {!isEditing && !hasPartDetails && (
+          <button
+            className={styles.addPartInline}
+            onClick={() => setIsEditing(true)}
+          >
+            <Icons.plus size={10} />
+            Add your part
+          </button>
+        )}
+        {!isEditing && hasPartDetails && (
+          <button
+            className={styles.editPartInline}
+            onClick={() => setIsEditing(true)}
+          >
+            <Icons.edit size={10} />
+            Edit
+          </button>
+        )}
       </div>
 
       {isEditing && (
@@ -473,13 +394,24 @@ Be specific to my ${carName} and this exact build configuration.`;
 
   return (
     <div className={styles.container}>
+      {/* AL Parts Recommendations CTA - LIME glow at top */}
+      <button
+        className={styles.alRecommendationsBtn}
+        onClick={handleALBuildReview}
+      >
+        <ALAvatar size={24} />
+        <div className={styles.alRecommendationsText}>
+          <span className={styles.alRecommendationsTitle}>AL Parts Recommendations</span>
+          <span className={styles.alRecommendationsSubtitle}>
+            Get compatibility checks, suggestions & find the best parts for your build
+          </span>
+        </div>
+      </button>
+
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Icons.shoppingCart size={16} />
           <span className={styles.title}>Parts Shopping List</span>
-          <span className={styles.count}>
-            {partsCount}/{upgrades.length} specified
-          </span>
         </div>
         <button
           className={styles.copyBtn}
@@ -491,10 +423,6 @@ Be specific to my ${carName} and this exact build configuration.`;
         </button>
       </div>
 
-      <p className={styles.subtitle}>
-        Click <ALAvatar size={16} /> to get AL&apos;s recommendations for each part
-      </p>
-
       <div className={styles.list}>
         {upgrades.map(upgrade => (
           <ShoppingListItem
@@ -502,9 +430,6 @@ Be specific to my ${carName} and this exact build configuration.`;
             upgrade={upgrade}
             partDetails={partsByUpgrade[upgrade.key]}
             onUpdatePart={handleUpdatePart}
-            carName={carName}
-            carSlug={carSlug}
-            allUpgrades={upgrades} // Pass full build context
           />
         ))}
       </div>
@@ -515,20 +440,6 @@ Be specific to my ${carName} and this exact build configuration.`;
           <span className={styles.totalAmount}>${totalCost.toLocaleString()}</span>
         </div>
       )}
-
-      {/* AL Build Review Button */}
-      <button
-        className={styles.buildReviewBtn}
-        onClick={handleALBuildReview}
-      >
-        <ALAvatar size={22} />
-        <div className={styles.buildReviewText}>
-          <span className={styles.buildReviewTitle}>AL Build Review</span>
-          <span className={styles.buildReviewSubtitle}>
-            Check compatibility, get suggestions & identify missing parts
-          </span>
-        </div>
-      </button>
     </div>
   );
 }

@@ -73,7 +73,7 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--accent-primary, #ff4d00);
+  border-color: var(--brand-gold);
 }
 
 .searchInput::placeholder {
@@ -147,8 +147,8 @@
 }
 
 .categoryPillActive {
-  background: var(--accent-primary, #ff4d00);
-  border-color: var(--accent-primary, #ff4d00);
+  background: var(--brand-gold);
+  border-color: var(--brand-gold);
   color: var(--brand-text-primary);
 }
 
@@ -195,7 +195,7 @@
 
 .partCard:hover {
   background: var(--bg-card-hover, #1c1c1c);
-  border-color: var(--accent-primary, #ff4d00);
+  border-color: var(--brand-gold);
 }
 
 .partMain {
@@ -207,7 +207,7 @@
   display: inline-block;
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -336,7 +336,7 @@
   display: inline-block;
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
@@ -446,7 +446,7 @@
   display: block;
   width: 100%;
   padding: 16px;
-  background: var(--accent-primary, #ff4d00);
+  background: var(--brand-gold);
   border: none;
   border-radius: 12px;
   color: var(--brand-text-primary);

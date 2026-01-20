@@ -77,7 +77,7 @@
 
 .retryButton {
   background: var(--sn-accent, #c4a564);
-  color: #000;
+  color: var(--brand-bg-primary);
   border: none;
   padding: 0.4rem 0.75rem;
   border-radius: 4px;
@@ -88,7 +88,7 @@
 }
 
 .retryButton:hover {
-  background: #d4b574;
+  background: var(--brand-gold);
   transform: scale(1.02);
 }
 
@@ -118,14 +118,14 @@
 }
 
 .mpgCardPrimary {
-  background: rgba(255, 77, 0, 0.1);
-  border-color: rgba(255, 77, 0, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .mpgValue {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   line-height: 1;
 }
 
@@ -165,7 +165,7 @@
 .statValue {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .statLabel {
@@ -185,10 +185,10 @@
   color: white;
 }
 
-.ghg1, .ghg2, .ghg3 { background: #ef4444; }
-.ghg4, .ghg5 { background: #f97316; }
-.ghg6, .ghg7 { background: #eab308; }
-.ghg8, .ghg9 { background: #22c55e; }
+.ghg1, .ghg2, .ghg3 { background: var(--brand-error); }
+.ghg4, .ghg5 { background: var(--brand-warning); }
+.ghg6, .ghg7 { background: var(--brand-warning); }
+.ghg8, .ghg9 { background: var(--brand-success); }
 .ghg10 { background: var(--brand-teal); }
 
 .evInfo {
@@ -201,7 +201,7 @@
 }
 
 .evBadge {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(var(--brand-blue-rgb), 0.15);
   color: var(--brand-blue);
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
@@ -231,10 +231,10 @@
 }
 
 .gradeA { background: var(--brand-teal); color: white; }
-.gradeB { background: #22c55e; color: white; }
-.gradeC { background: #eab308; color: black; }
-.gradeD { background: #f97316; color: white; }
-.gradeF { background: #ef4444; color: white; }
+.gradeB { background: var(--brand-success); color: white; }
+.gradeC { background: var(--brand-warning); color: black; }
+.gradeD { background: var(--brand-warning); color: white; }
+.gradeF { background: var(--brand-error); color: white; }
 
 .safetyGrid {
   display: grid;
@@ -256,12 +256,12 @@
   font-size: 0.85rem;
   font-weight: 600;
   margin: 0 0 0.75rem;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .iihsBadge {
   font-size: 0.55rem;
-  background: #22c55e;
+  background: var(--brand-success);
   color: white;
   padding: 0.15rem 0.4rem;
   border-radius: 3px;
@@ -310,7 +310,7 @@
 
 .iihsRating {
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   text-transform: capitalize;
 }
 
@@ -329,7 +329,7 @@
   display: block;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .safetyStatLabel {
@@ -339,7 +339,7 @@
 }
 
 .safetyStatWarn .safetyStatValue {
-  color: #f97316;
+  color: var(--brand-warning);
 }
 
 .openRecallWarning {
@@ -347,8 +347,8 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.5rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 6px;
   font-size: 0.75rem;
   color: var(--brand-error);
@@ -412,7 +412,7 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .bestBadge {

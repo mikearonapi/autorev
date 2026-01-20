@@ -44,55 +44,28 @@ const socialLinks = [
   },
 ];
 
-// Navigation sections - Build-focused (January 2026)
+// Simplified navigation sections
 const footerSections = [
   {
-    title: 'Build',
+    title: 'Info',
     links: [
-      { label: 'Start Building', href: '/garage/my-build' },
-      { label: 'Parts Database', href: '/parts' },
-      { label: 'Encyclopedia', href: '/encyclopedia' },
+      { label: 'Terms & Conditions', href: '/terms' },
+      { label: 'Privacy Policy', href: '/privacy' },
     ],
   },
   {
-    title: 'My Account',
+    title: 'Contact',
     links: [
-      { label: 'My Garage', href: '/garage' },
-      { label: 'Profile', href: '/profile' },
-      { label: 'AL Assistant', href: '/al' },
+      { label: 'Support', href: '/contact' },
     ],
   },
-  {
-    title: 'Community',
-    links: [
-      { label: 'Community Builds', href: '/community/builds' },
-      { label: 'Events', href: '/community/events' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { label: 'Join AutoRev', href: '/join' },
-      { label: 'Contact', href: '/contact' },
-    ],
-  },
-];
-
-// Popular brands
-const popularBrands = [
-  { name: 'Porsche', slug: 'porsche' },
-  { name: 'BMW', slug: 'bmw' },
-  { name: 'Audi', slug: 'audi' },
-  { name: 'Chevrolet', slug: 'chevrolet' },
-  { name: 'Lotus', slug: 'lotus' },
-  { name: 'Ferrari', slug: 'ferrari' },
 ];
 
 export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
   
-  // Hide footer completely on homepage (GRAVL-style clean landing)
+  // Hide footer completely on homepage (has its own footer)
   const isHomePage = pathname === '/';
   if (isHomePage) return null;
   
@@ -104,85 +77,42 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* Top Section: Brand + Nav Columns */}
-        <div className={styles.topSection}>
-          {/* Brand */}
-          <div className={styles.brandColumn}>
-            <Link href="/" className={styles.logo}>
-              <span className={styles.logoText}>
-                Auto<span className={styles.logoAccent}>Rev</span>
-              </span>
-            </Link>
-            <p className={styles.tagline}>
-              Plan your perfect build.
-            </p>
-            <p className={styles.jarvisTag}>
-              The complete platform for performance modifications.
-            </p>
-            <div className={styles.socialLinks}>
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label={`Follow us on ${social.name}`}
-                >
-                  {social.icon}
-                </a>
-              ))}
+        {/* Social Icons */}
+        <div className={styles.socialLinks}>
+          {socialLinks.map((social) => (
+            <a
+              key={social.name}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.socialLink}
+              aria-label={`Follow us on ${social.name}`}
+            >
+              {social.icon}
+            </a>
+          ))}
+        </div>
+
+        {/* Navigation Sections */}
+        <div className={styles.navColumns}>
+          {footerSections.map((section) => (
+            <div key={section.title} className={styles.navColumn}>
+              <h3 className={styles.columnTitle}>{section.title}</h3>
+              <ul className={styles.columnLinks}>
+                {section.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className={styles.columnLink}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          {/* Navigation Columns */}
-          <div className={styles.navColumns}>
-            {footerSections.map((section) => (
-              <div key={section.title} className={styles.navColumn}>
-                <h3 className={styles.columnTitle}>{section.title}</h3>
-                <ul className={styles.columnLinks}>
-                  {section.links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className={styles.columnLink}>
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
 
-        {/* Divider */}
-        <div className={styles.divider} />
-
-        {/* Bottom Section: Brands + Legal */}
-        <div className={styles.bottomSection}>
-          <nav className={styles.brandsNav} aria-label="Popular brands">
-            {popularBrands.map((brand, i) => (
-              <span key={brand.slug}>
-                <Link href={`/browse-cars?brand=${brand.slug}`} className={styles.brandLink}>
-                  {brand.name}
-                </Link>
-                {i < popularBrands.length - 1 && <span className={styles.brandSep}>·</span>}
-              </span>
-            ))}
-            <span className={styles.brandSep}>·</span>
-            <Link href="/browse-cars" className={styles.brandLinkAll}>
-              All Cars →
-            </Link>
-          </nav>
-
-          <div className={styles.legalRow}>
-            <p className={styles.copyright}>© {currentYear} AutoRev</p>
-            <nav className={styles.legalLinks} aria-label="Legal">
-              <Link href="/privacy" className={styles.legalLink}>Privacy</Link>
-              <span className={styles.legalSep}>·</span>
-              <Link href="/terms" className={styles.legalLink}>Terms</Link>
-            </nav>
-          </div>
-        </div>
+        {/* Copyright */}
+        <p className={styles.copyright}>© {currentYear} AUTOREV</p>
       </div>
     </footer>
   );

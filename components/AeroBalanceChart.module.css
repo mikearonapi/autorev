@@ -1,11 +1,14 @@
 /* ===========================================
    AERO BALANCE CHART
    Standalone component for Data tab
+   
+   Design: Matches specs page card styling - dark background, subtle borders
+   Blue is used for BASELINE DATA only
    =========================================== */
 
 .aeroBalance {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 20px;
 }
@@ -15,13 +18,16 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--brand-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .aeroBalanceHeader svg {
-  color: var(--brand-blue);
+  color: var(--color-accent-teal, #10b981);
 }
 
 .aeroEmpty {
@@ -115,6 +121,31 @@
 .aeroStatLabel {
   font-size: 10px;
   color: rgba(255, 255, 255, 0.45);
+}
+
+/* Method Note - Explains estimation methodology */
+.aeroMethodNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary, #64748b);
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+.aeroMethodNote svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+  margin-top: 1px;
+}
+
+.aeroMethodNote em {
+  color: var(--color-text-secondary, #94a3b8);
+  font-style: normal;
 }
 
 /* Responsive */

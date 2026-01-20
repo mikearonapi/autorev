@@ -102,7 +102,7 @@
 
 .error {
   color: var(--admin-negative, #ef4444);
-  background: rgba(239, 68, 68, 0.05);
+  background: rgba(var(--brand-error-rgb), 0.05);
 }
 
 /* Analytics Grid - Compact */
@@ -147,8 +147,8 @@
 .deliveryRate {
   grid-column: 1 / -1;
   padding: 12px 14px;
-  background: rgba(34, 197, 94, 0.05);
-  border: 1px solid rgba(34, 197, 94, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.05);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.15);
   border-radius: 8px;
 }
 
@@ -275,7 +275,7 @@
 
 .automationRow:hover,
 .templateRow:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -291,7 +291,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(var(--brand-blue-rgb), 0.15);
   border-radius: 6px;
   color: var(--admin-accent-blue, var(--brand-blue));
   flex-shrink: 0;
@@ -328,12 +328,12 @@
 }
 
 .statusActive {
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.15);
   color: var(--admin-positive, #22c55e);
 }
 
 .statusDraft {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.15);
   color: var(--admin-warning, #f59e0b);
 }
 
@@ -490,17 +490,17 @@
 }
 
 .statusSuccess {
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.15);
   color: var(--admin-positive, #22c55e);
 }
 
 .statusError {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   color: var(--admin-negative, #ef4444);
 }
 
 .statusPending {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.15);
   color: var(--admin-warning, #f59e0b);
 }
 
@@ -561,7 +561,7 @@
 
 .processBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 .processBtn:disabled {
@@ -656,7 +656,7 @@
   align-items: center;
   gap: 5px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, var(--accent-primary, #ff4d00), #B8973A);
+  background: linear-gradient(135deg, var(--brand-gold), #B8973A);
   color: var(--brand-border-subtle);
   border: none;
   border-radius: 5px;
@@ -668,7 +668,7 @@
 
 .sendBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .sendBtn:disabled {

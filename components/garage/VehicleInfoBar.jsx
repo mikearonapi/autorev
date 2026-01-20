@@ -95,11 +95,11 @@ export default function VehicleInfoBar({
  * Pre-built stat components for each page
  */
 
-// My Build: Shows upgrade count
+// My Build: Shows upgrade count (teal = positive/improvements)
 export function UpgradeCountStat({ count }) {
   if (!count && count !== 0) return null;
   return (
-    <div className={styles.statBadge} data-color="orange">
+    <div className={styles.statBadge} data-color="teal">
       <Icons.wrench size={14} />
       <span>{count} upgrade{count !== 1 ? 's' : ''}</span>
     </div>

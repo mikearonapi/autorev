@@ -42,8 +42,8 @@
 }
 
 .actionButton:hover:not(:disabled) {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
 }
 
 .actionButton:disabled {

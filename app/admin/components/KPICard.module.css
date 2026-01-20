@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--brand-blue-rgb), 0.3), transparent);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -80,12 +80,12 @@
 
 .trendUp {
   color: var(--admin-positive, #22c55e);
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--brand-success-rgb), 0.1);
 }
 
 .trendDown {
   color: var(--admin-negative, #ef4444);
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--brand-error-rgb), 0.1);
 }
 
 .trendNeutral {

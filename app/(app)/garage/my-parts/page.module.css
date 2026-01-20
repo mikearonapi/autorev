@@ -111,8 +111,8 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(212, 168, 75, 0.1);
-  color: rgba(212, 168, 75, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 20px;
 }
 
@@ -149,7 +149,7 @@
 .noBuildAction:hover {
   transform: translateY(-2px);
   background: var(--brand-lime-dark, #bfe600);
-  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.3);
 }
 
 /* ===========================================

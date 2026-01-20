@@ -3,7 +3,7 @@
    =========================================== */
 
 .container {
-  background: #1a1b1e;
+  background: var(--brand-bg-card-dark);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
@@ -82,7 +82,7 @@
 
 .variantCard:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  border-color: var(--sn-gold, var(--brand-teal));
 }
 
 .variantImage {
@@ -191,17 +191,17 @@
 .vsIndicator {
   font-size: 12px;
   font-weight: 700;
-  color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  color: var(--sn-gold, var(--brand-teal));
   padding: 6px 10px;
-  background: rgba(255, 77, 0, 0.15);
+  background: rgba(16, 185, 129, 0.15);
   border-radius: 20px;
 }
 
 /* Summary */
 .summary {
   padding: 14px 16px;
-  background: rgba(255, 77, 0, 0.1);
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 10px;
   margin-bottom: 16px;
 }
@@ -254,7 +254,7 @@
 }
 
 .diffCategory svg {
-  color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  color: var(--sn-gold, var(--brand-teal));
 }
 
 .diffValue {
@@ -338,7 +338,7 @@
 
 .chip:hover {
   background: rgba(255, 255, 255, 0.15);
-  border-color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  border-color: var(--sn-gold, var(--brand-teal));
   color: var(--brand-text-primary);
 }
 

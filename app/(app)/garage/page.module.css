@@ -69,11 +69,14 @@
 }
 
 .pageTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: 2rem;
   font-weight: 700;
-  color: var(--text-primary, #ffffff);
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
   letter-spacing: -0.02em;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 /* Subtitle row with count + view toggle */
@@ -85,9 +88,17 @@
 }
 
 .pageSubtitle {
-  font-size: 0.875rem;
-  color: var(--text-secondary, rgba(255, 255, 255, 0.5));
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
   margin: 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 360px) {
+  .pageSubtitle {
+    font-size: 0.6875rem;
+  }
 }
 
 /* ===========================================
@@ -127,27 +138,28 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
+/* Active toggle uses TEAL (active selection state per brand guidelines) */
 .viewToggleBtnActive {
-  background: var(--accent-primary, var(--brand-gold));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal);
+  color: var(--brand-text-primary);
 }
 
 .viewToggleBtnActive:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal-light);
+  color: var(--brand-text-primary);
 }
 
-/* Add Vehicle Button */
+/* Add Vehicle Button - PRIMARY CTA uses LIME per brand guidelines */
 .addVehicleBtn {
   display: flex;
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
-  background: transparent;
-  color: var(--accent-primary, var(--brand-gold));
+  background: var(--brand-lime);
+  color: var(--brand-bg-primary);
   font-size: 0.8125rem;
-  font-weight: 600;
-  border: 1px solid var(--accent-primary, var(--brand-gold));
+  font-weight: 700;
+  border: 1px solid var(--brand-lime);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -155,7 +167,9 @@
 }
 
 .addVehicleBtn:hover {
-  background: rgba(212, 168, 75, 0.1);
+  background: var(--brand-lime-dark);
+  box-shadow: 0 4px 12px rgba(var(--brand-lime-rgb), 0.3);
+  transform: translateY(-1px);
 }
 
 .addVehicleBtn:active {
@@ -498,10 +512,10 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* GRAVL-inspired active state - solid pill with brand color */
+/* Active state - TEAL for active selections per brand guidelines */
 .tabPillActive {
-  background: var(--accent-primary, var(--brand-gold));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal);
+  color: var(--brand-text-primary);
   font-weight: 700;
 }
 
@@ -510,21 +524,22 @@
 }
 
 .tabPillActive:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal-light);
+  color: var(--brand-text-primary);
 }
 
 /* ===========================================
    ADD BUTTON - Simple circular action
    =========================================== */
 
+/* Add Button - PRIMARY CTA uses LIME per brand guidelines */
 .addBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: var(--accent-primary, var(--brand-gold));
+  background: var(--brand-lime);
   border: none;
   border-radius: 50%;
   color: var(--brand-bg-primary);
@@ -535,8 +550,9 @@
 }
 
 .addBtn:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
+  background: var(--brand-lime-dark);
   transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(var(--brand-lime-rgb), 0.4);
 }
 
 .addBtn:active {
@@ -659,12 +675,12 @@
 .buildBadge {
   display: inline-flex;
   padding: 4px 12px;
-  background: var(--accent-primary-muted);
-  border: 1px solid var(--accent-primary);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--brand-teal);
   border-radius: 20px;
   font-size: 10px;
   font-weight: 700;
-  color: var(--accent-primary);
+  color: var(--brand-teal);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -699,24 +715,26 @@
   margin-top: 8px;
 }
 
+/* Build Hero Action - Primary CTA uses LIME */
 .buildHeroAction {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: var(--accent-primary);
+  background: var(--brand-lime);
   border: none;
   border-radius: 10px;
   color: var(--brand-bg-primary);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .buildHeroAction:hover {
-  background: var(--accent-primary-hover);
+  background: var(--brand-lime-dark);
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(var(--brand-lime-rgb), 0.3);
 }
 
 .buildHeroActionSecondary {
@@ -968,11 +986,12 @@
   gap: 8px;
 }
 
+/* Brand name labels use TEAL for visual rhythm with stat labels */
 .vehicleInfoHeader .brandName {
   font-size: 11px;
   letter-spacing: 0.18em;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-teal);
   text-transform: uppercase;
 }
 
@@ -1250,15 +1269,14 @@
   }
 }
 
+/* Brand name labels use TEAL for visual rhythm with stat labels */
 .brandName {
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--accent-primary, var(--brand-gold));
-  /* Premium glow effect */
-  text-shadow: 0 0 20px rgba(212, 168, 75, 0.3);
+  color: var(--brand-teal);
 }
 
 @media (max-width: 767px) {
@@ -1467,8 +1485,8 @@
   gap: 8px;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 77, 0, 0.35);
-  background: rgba(255, 77, 0, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.16);
   color: var(--brand-text-primary);
   cursor: pointer;
   font-weight: 700;
@@ -1477,8 +1495,8 @@
 
 .variantMatchLink:hover {
   transform: translateY(-1px);
-  background: rgba(255, 77, 0, 0.22);
-  border-color: rgba(255, 77, 0, 0.5);
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .variantMatchLink span {
@@ -1492,8 +1510,8 @@
   gap: 10px;
   padding: 14px 16px;
   margin: 8px 0 14px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(var(--brand-purple-rgb), 0.15) 100%);
+  border: 1px solid rgba(var(--brand-purple-rgb), 0.3);
   border-radius: 12px;
   align-items: center;
   text-align: center;
@@ -1513,13 +1531,14 @@
   flex-shrink: 0;
 }
 
+/* Enrichment Button - Primary CTA uses LIME */
 .enrichmentButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, var(--brand-gold) 0%, var(--brand-gold-light) 100%);
+  background: var(--brand-lime);
   color: var(--brand-bg-primary);
   border: none;
   border-radius: 8px;
@@ -1531,7 +1550,7 @@
 
 .enrichmentButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
 .enrichmentButton:active {
@@ -1544,8 +1563,8 @@
   gap: 8px;
   padding: 10px 14px;
   margin: 8px 0 14px;
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.12);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.3);
   border-radius: 10px;
   font-size: 13px;
   color: rgb(134, 239, 172);
@@ -1618,8 +1637,8 @@
 /* Price Tag */
 .priceTag {
   padding: 10px 14px;
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(255, 77, 0, 0.35);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: 8px;
   margin-bottom: 14px;
 }
@@ -1692,11 +1711,12 @@
   gap: 8px;
 }
 
+/* Brand name labels use TEAL for visual rhythm */
 .specPanelHeaderInfo .brandName {
   font-size: 11px;
   letter-spacing: 0.18em;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-teal);
   text-transform: uppercase;
 }
 
@@ -1743,8 +1763,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
   color: var(--sn-gold);
   cursor: pointer;
@@ -1763,7 +1783,7 @@
 }
 
 .headerActionBtn:hover {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   border-color: var(--sn-gold);
 }
 
@@ -1782,7 +1802,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(46, 204, 113, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.15);
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
   color: var(--brand-teal, var(--brand-teal));
@@ -1968,27 +1988,27 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Primary tabs get gold accent color when active */
+/* Primary tabs get teal accent color when active (active selection state) */
 .headerTogglePrimary {
-  border-color: rgba(212, 168, 75, 0.3);
+  border-color: rgba(var(--brand-teal-rgb), 0.3);
 }
 
 .headerTogglePrimary:hover {
-  border-color: var(--accent-primary, var(--brand-gold));
-  background: rgba(212, 168, 75, 0.1);
+  border-color: var(--brand-teal);
+  background: rgba(var(--brand-teal-rgb), 0.1);
 }
 
-/* Active state - solid gold like Gravl's active tabs */
+/* Active state - TEAL for active selections per brand guidelines */
 .headerToggleActive {
-  background: var(--accent-primary, var(--brand-gold));
-  border-color: var(--accent-primary, var(--brand-gold));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal);
+  border-color: var(--brand-teal);
+  color: var(--brand-text-primary);
   font-weight: 600;
 }
 
 .headerToggleActive:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
-  color: var(--brand-bg-primary);
+  background: var(--brand-teal-light);
+  color: var(--brand-text-primary);
 }
 
 @media (max-width: 600px) {
@@ -2042,10 +2062,11 @@
   transition: all 0.2s ease;
 }
 
+/* Hero nav arrows - LIME for interactive hover per brand guidelines */
 .heroNavArrow:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.7);
-  border-color: var(--accent-primary, var(--brand-gold));
-  color: var(--accent-primary, var(--brand-gold));
+  border-color: var(--brand-lime);
+  color: var(--brand-lime);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -2155,19 +2176,21 @@
   }
 }
 
+/* Performance stat labels use TEAL - they represent positive metrics */
 .keySpecLabel {
   font-size: 10px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 @media (max-width: 767px) {
+  /* Performance stat labels - teal for visual rhythm */
   .keySpecLabel {
     font-size: 10px;
     font-weight: 600;
-    color: var(--accent-primary, var(--brand-gold));
+    color: var(--brand-teal);
     letter-spacing: 0.12em;
   }
 }
@@ -2215,11 +2238,75 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated lime glow - ONE button at a time, jumping effect */
+.heroBottomBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    #d4ff00 320deg,
+    #d4ff00 340deg,
+    transparent 360deg
+  );
+  transform-origin: center;
+  z-index: -1;
+  opacity: 0;
+  animation: glowJump 7.5s ease-in-out infinite;
+}
+
+.heroBottomBtn::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 11px;
+  background: rgba(30, 40, 50, 0.95);
+  z-index: -1;
+}
+
+/* Each button takes turns - only ONE glows at a time */
+.heroBottomBtn:nth-child(1)::before { animation-delay: 0s; }
+.heroBottomBtn:nth-child(2)::before { animation-delay: 1.5s; }
+.heroBottomBtn:nth-child(3)::before { animation-delay: 3s; }
+.heroBottomBtn:nth-child(4)::before { animation-delay: 4.5s; }
+.heroBottomBtn:nth-child(5)::before { animation-delay: 6s; }
+
+@keyframes glowJump {
+  /* Glow appears and rotates only during this button's turn (0-20% of cycle) */
+  0% { 
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  2% { 
+    opacity: 0.7;
+  }
+  15% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) rotate(270deg);
+  }
+  18% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  /* Stay invisible while other buttons glow (20-100% of cycle) */
+  20%, 100% { 
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .heroBottomBtn svg {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   opacity: 0.85;
 }
 
@@ -2275,32 +2362,33 @@
   .heroBottomBar {
     position: relative;
     bottom: auto;
-    padding: 4px 8px;
+    padding: 4px 10px;
     gap: 6px;
     background: transparent;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
     /* Ensure buttons stay above PWA menu */
     margin-bottom: 8px;
   }
   
-  .heroBottomBar::-webkit-scrollbar {
-    display: none;
+  .heroBottomBtn {
+    flex: 1 1 auto;
+    padding: 10px 10px;
+    min-width: fit-content;
+    font-size: 9px;
+    gap: 4px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
   }
   
-  .heroBottomBtn {
-    padding: 8px 12px;
-    min-width: 64px;
-    font-size: 9px;
-    gap: 3px;
-    border-radius: 10px;
-    flex-shrink: 0;
+  .heroBottomBtn::before {
+    border-radius: 12px;
+  }
+  
+  .heroBottomBtn::after {
+    border-radius: 9px;
   }
   
   .heroBottomBtn svg {
@@ -2399,24 +2487,24 @@
     color: var(--brand-text-primary);
   }
   
-  /* Primary tab styling - gold accent like Gravl */
+  /* Active tab styling - TEAL for active selections per brand guidelines */
   .mobileActionBtnPrimary {
-    border-color: rgba(212, 168, 75, 0.4);
-    background: rgba(212, 168, 75, 0.15);
-    color: var(--accent-primary, var(--brand-gold));
+    border-color: rgba(var(--brand-teal-rgb), 0.4);
+    background: rgba(var(--brand-teal-rgb), 0.15);
+    color: var(--brand-teal);
   }
   
   .mobileActionBtnActive {
-    background: var(--accent-primary, var(--brand-gold));
-    border-color: var(--accent-primary, var(--brand-gold));
-    color: var(--brand-bg-primary);
+    background: var(--brand-teal);
+    border-color: var(--brand-teal);
+    color: var(--brand-text-primary);
     font-weight: 700;
   }
   
   .mobileActionBtnActive:hover,
   .mobileActionBtnActive:active {
-    background: var(--accent-primary-hover, var(--brand-gold-light));
-    color: var(--brand-bg-primary);
+    background: var(--brand-teal-light);
+    color: var(--brand-text-primary);
   }
   
   /* BUILD PIVOT: Secondary action container (Care features) */
@@ -2497,8 +2585,8 @@
 
 .vinLookupBtnCompact {
   padding: 0.5rem 0.875rem;
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(212, 255, 0, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(var(--brand-lime-rgb), 0.3);
   border-radius: 0.375rem;
   color: var(--brand-lime, var(--brand-lime));
   font-size: 0.6875rem;
@@ -2509,7 +2597,7 @@
 }
 
 .vinLookupBtnCompact:hover:not(:disabled) {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
 }
 
 .vinLookupBtnCompact:disabled {
@@ -2521,8 +2609,8 @@
 .vinDecodeResults {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  background: rgba(34, 197, 94, 0.08);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: 0.5rem;
 }
 
@@ -2549,11 +2637,12 @@
   letter-spacing: 0;
 }
 
+/* Saving state - muted/neutral styling */
 .vinSaving {
   font-size: 10px;
   font-weight: 600;
-  color: var(--brand-gold, var(--brand-gold));
-  background: rgba(212, 168, 75, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
   padding: 2px 8px;
   border-radius: 4px;
   text-transform: none;
@@ -2564,7 +2653,7 @@
   font-size: 10px;
   font-weight: 600;
   color: var(--brand-error);
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   padding: 2px 8px;
   border-radius: 4px;
   text-transform: none;
@@ -2616,8 +2705,8 @@
 .vinErrorMsg {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 0.5rem;
   font-size: 12px;
   color: var(--brand-error-light);
@@ -2725,8 +2814,8 @@
 
 .recallItem {
   padding: 12px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
   border-radius: 8px;
 }
 
@@ -2789,10 +2878,11 @@
   margin-bottom: 6px;
 }
 
+/* Complaint label - muted white for labels */
 .complaintComponent {
   font-size: 11px;
   font-weight: 600;
-  color: var(--brand-gold, var(--brand-gold));
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .complaintWarning {
@@ -2831,10 +2921,11 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* Ratings use teal (positive metric) */
 .ratingStars {
   font-size: 14px;
   font-weight: 700;
-  color: var(--brand-gold, var(--brand-gold));
+  color: var(--brand-teal);
 }
 
 /* ===========================================
@@ -2860,8 +2951,8 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: rgba(212, 255, 0, 0.1);
-  border: 1px solid rgba(212, 255, 0, 0.3);
+  background: rgba(var(--brand-lime-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-lime-rgb), 0.3);
   border-radius: 6px;
   color: var(--brand-lime, var(--brand-lime));
   font-size: 12px;
@@ -2871,7 +2962,7 @@
 }
 
 .addServiceBtn:hover {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
 }
 
 .emptyServiceLog {
@@ -2922,8 +3013,9 @@
   flex-shrink: 0;
 }
 
+/* CTA hover - use lime-dark per brand guidelines */
 .firstServiceBtn:hover {
-  background: var(--brand-gold);
+  background: var(--brand-lime-dark);
 }
 
 .serviceLogList {
@@ -2948,14 +3040,15 @@
   justify-content: center;
   min-width: 44px;
   padding: 8px;
-  background: rgba(255, 77, 0, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   border-radius: 6px;
 }
 
+/* Label - muted white per brand guidelines */
 .serviceLogMonth {
   font-size: 10px;
   font-weight: 600;
-  color: var(--brand-gold, var(--brand-gold));
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
 
@@ -3028,12 +3121,12 @@
 }
 
 .serviceLogEditBtn:hover {
-  background: rgba(212, 255, 0, 0.15);
+  background: rgba(var(--brand-lime-rgb), 0.15);
   color: var(--brand-lime, var(--brand-lime));
 }
 
 .serviceLogDeleteBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   color: var(--brand-error);
 }
 
@@ -3241,7 +3334,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Premium top accent line - GRAVL gold gradient */
+/* Premium top accent line - teal gradient per brand */
 .detailBlock::before {
   content: '';
   position: absolute;
@@ -3251,8 +3344,8 @@
   height: 2px;
   background: linear-gradient(
     90deg,
-    var(--accent-primary, var(--brand-gold)) 0%,
-    rgba(212, 168, 75, 0.3) 50%,
+    var(--brand-teal) 0%,
+    rgba(var(--brand-teal-rgb), 0.3) 50%,
     transparent 100%
   );
   opacity: 0.7;
@@ -3297,11 +3390,12 @@
   }
 }
 
+/* Highlight block uses teal accent */
 .detailBlockHighlight {
-  background: linear-gradient(135deg, rgba(212, 168, 75, 0.08), rgba(212, 168, 75, 0.02));
+  background: linear-gradient(135deg, rgba(var(--brand-teal-rgb), 0.08), rgba(var(--brand-teal-rgb), 0.02));
   border-radius: 12px;
   padding: 14px 16px;
-  border: 1px solid rgba(212, 168, 75, 0.2);
+  border: 1px solid rgba(var(--brand-teal-rgb), 0.2);
   grid-column: 1 / -1;
 }
 
@@ -3316,6 +3410,7 @@
    DETAIL BLOCK TITLES - GRAVL Premium Styling
    =========================================== */
 
+/* Section headers use MUTED WHITE, not accent colors (per brand guidelines) */
 .detailBlockTitle {
   display: flex;
   align-items: center;
@@ -3323,7 +3418,7 @@
   gap: 8px;
   font-size: 12px;
   font-weight: 800;
-  color: var(--accent-primary, var(--brand-gold));
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin: 0 0 14px;
@@ -3498,8 +3593,9 @@
   background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-dark));
 }
 
+/* Good rating uses teal (positive metric) */
 .ratingBarFill.good {
-  background: linear-gradient(90deg, var(--brand-gold), var(--brand-gold-light));
+  background: linear-gradient(90deg, var(--brand-teal), var(--brand-teal-light));
 }
 
 .ratingBarFill.medium {
@@ -3523,8 +3619,9 @@
   color: var(--brand-teal, var(--brand-teal));
 }
 
+/* Good score uses teal */
 .ratingScoreValue.good {
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-teal);
 }
 
 .ratingScoreValue.medium {
@@ -3539,9 +3636,10 @@
    PERFORMANCE SCORE GAUGE
    =========================================== */
 
+/* Performance score card uses teal accent (positive metric) */
 .performanceScoreCard {
-  background: linear-gradient(135deg, rgba(212, 168, 75, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(212, 168, 75, 0.15);
+  background: linear-gradient(135deg, rgba(var(--brand-teal-rgb), 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(var(--brand-teal-rgb), 0.15);
   border-radius: 14px;
   padding: 16px;
   display: flex;
@@ -3590,8 +3688,9 @@
   stroke: rgba(255, 255, 255, 0.08);
 }
 
+/* Performance gauge fill uses teal */
 .performanceScoreGauge .fill {
-  stroke: var(--accent-primary, var(--brand-gold));
+  stroke: var(--brand-teal);
   transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -3619,10 +3718,11 @@
   margin-top: 2px;
 }
 
+/* Label uses muted white per brand guidelines */
 .performanceScoreSubtitle {
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -3749,11 +3849,11 @@
 .fitmentTag {
   display: inline-block;
   padding: 2px 6px;
-  background: rgba(255, 77, 0, 0.1);
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 10px;
   font-size: 9px;
-  color: rgba(255, 77, 0, 0.8);
+  color: rgba(16, 185, 129, 0.8);
   text-transform: lowercase;
 }
 
@@ -3772,8 +3872,8 @@
 .tag {
   display: inline-block;
   padding: 3px 8px;
-  background: rgba(255, 77, 0, 0.12);
-  border: 1px solid rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 12px;
   color: var(--sn-gold);
   font-size: 9px;
@@ -3862,8 +3962,9 @@
   transition: all 0.2s ease;
 }
 
+/* CTA hover uses lime-dark */
 .expandedActionPrimary:hover {
-  background: var(--brand-gold-light);
+  background: var(--brand-lime-dark);
 }
 
 .expandedActionOwn {
@@ -3871,7 +3972,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  background: rgba(46, 204, 113, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.15);
   border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 8px;
   color: var(--brand-teal, var(--brand-teal));
@@ -3882,7 +3983,7 @@
 }
 
 .expandedActionOwn:hover {
-  background: rgba(46, 204, 113, 0.25);
+  background: rgba(var(--brand-success-rgb), 0.25);
 }
 
 .expandedActionLink {
@@ -3967,8 +4068,8 @@
   justify-content: center;
   gap: 6px;
   padding: 10px 18px;
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(255, 77, 0, 0.4);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 8px;
   color: var(--sn-gold);
   font-size: 13px;
@@ -3980,7 +4081,7 @@
 }
 
 .seeDetailsBtn:hover {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   border-color: var(--sn-gold);
   transform: translateY(-1px);
 }
@@ -4065,13 +4166,13 @@
 }
 
 .miniActionPrimary {
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(255, 77, 0, 0.5);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.5);
   color: var(--sn-gold);
 }
 
 .miniActionPrimary:hover {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   border-color: var(--sn-gold);
 }
 
@@ -4082,7 +4183,7 @@
 }
 
 .miniActionOwn:hover {
-  background: rgba(46, 204, 113, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.3);
 }
 
 /* Legacy Hero Actions (kept for reference) */
@@ -4109,10 +4210,11 @@
   text-shadow: none;
 }
 
+/* CTA hover uses lime-dark */
 .heroActionPrimary:hover {
-  background: var(--brand-gold-light);
+  background: var(--brand-lime-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(var(--brand-lime-rgb), 0.4);
 }
 
 .heroActionSecondary {
@@ -4141,7 +4243,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  background: rgba(46, 204, 113, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.2);
   border: 1px solid rgba(16, 185, 129, 0.5);
   border-radius: 6px;
   color: var(--brand-teal, var(--brand-teal));
@@ -4166,8 +4268,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(231, 76, 60, 0.15);
-  border: 1px solid rgba(231, 76, 60, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 12px;
   color: var(--brand-error);
   cursor: pointer;
@@ -4176,7 +4278,7 @@
 }
 
 .heroRemoveButton:hover {
-  background: rgba(231, 76, 60, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.3);
   border-color: var(--brand-error);
 }
 
@@ -4228,7 +4330,7 @@
 
 .quickActionItem:hover {
   background: rgba(0, 0, 0, 0.55);
-  border-color: rgba(255, 77, 0, 0.4);
+  border-color: rgba(16, 185, 129, 0.4);
   color: var(--sn-gold);
   transform: translateX(-4px);
 }
@@ -4274,7 +4376,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 16px;
-  background: rgba(46, 204, 113, 0.9);
+  background: rgba(var(--brand-success-rgb), 0.9);
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
@@ -4293,7 +4395,7 @@
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  background: rgba(46, 204, 113, 0.9);
+  background: rgba(var(--brand-success-rgb), 0.9);
   border-radius: 6px;
   font-size: 10px;
   font-weight: 700;
@@ -4386,7 +4488,7 @@
 .navArrow:hover {
   background: rgba(255, 255, 255, 0.15);
   color: var(--brand-text-primary);
-  border-color: var(--accent-primary, var(--brand-gold));
+  border-color: var(--brand-lime);
 }
 
 .thumbnailStrip {
@@ -4439,8 +4541,9 @@
   }
 }
 
+/* Thumbnail hover uses lime for interaction */
 .thumbnail:hover {
-  border-color: var(--accent-primary, var(--brand-gold));
+  border-color: var(--brand-lime);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -4465,12 +4568,12 @@
   }
 }
 
-/* Selected thumbnail - Gold accent border like Gravl's lime accent */
+/* Selected thumbnail - lime accent border per brand guidelines */
 .thumbnailSelected {
-  border-color: var(--accent-primary, var(--brand-gold));
+  border-color: var(--brand-lime);
   box-shadow: 
-    0 0 0 2px rgba(212, 168, 75, 0.4),
-    0 4px 16px rgba(212, 168, 75, 0.25);
+    0 0 0 2px rgba(var(--brand-lime-rgb), 0.4),
+    0 4px 16px rgba(var(--brand-lime-rgb), 0.25);
 }
 
 /* Build status indicator badge on thumbnails */
@@ -4514,7 +4617,7 @@
   border-radius: 10px;
   font-size: 9px;
   font-weight: 600;
-  color: var(--brand-gold, var(--brand-gold));
+  color: var(--brand-teal);
   z-index: 3;
 }
 
@@ -4713,7 +4816,7 @@
 }
 
 .reorderBtn:hover:not(:disabled) {
-  background: rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.2);
   border-color: var(--sn-gold);
   color: var(--sn-gold);
 }
@@ -4811,6 +4914,7 @@
    PREMIUM LOADING STATE
    =========================================== */
 
+/* Loading state uses teal accent */
 .loadingState {
   flex: 1;
   display: flex;
@@ -4822,7 +4926,7 @@
   /* Subtle radial gradient for premium feel */
   background: radial-gradient(
     ellipse 60% 40% at 50% 45%,
-    rgba(212, 168, 75, 0.04) 0%,
+    rgba(var(--brand-teal-rgb), 0.04) 0%,
     transparent 70%
   );
 }
@@ -4856,11 +4960,12 @@
   }
 }
 
+/* Loading ring uses teal accent */
 .loadingRing {
   position: absolute;
   inset: 0;
   border: 2px solid transparent;
-  border-top-color: var(--accent-primary, var(--brand-gold));
+  border-top-color: var(--brand-teal);
   border-radius: 50%;
   animation: loadingRotate 1.2s linear infinite;
 }
@@ -4869,7 +4974,7 @@
   content: '';
   position: absolute;
   inset: -8px;
-  border: 1px solid rgba(212, 168, 75, 0.15);
+  border: 1px solid rgba(var(--brand-teal-rgb), 0.15);
   border-radius: 50%;
 }
 
@@ -4877,7 +4982,7 @@
   content: '';
   position: absolute;
   inset: 8px;
-  border: 1px solid rgba(212, 168, 75, 0.1);
+  border: 1px solid rgba(var(--brand-teal-rgb), 0.1);
   border-radius: 50%;
 }
 
@@ -4923,7 +5028,7 @@
   /* Subtle radial gradient for depth */
   background: radial-gradient(
     ellipse 80% 50% at 50% 40%,
-    rgba(212, 168, 75, 0.03) 0%,
+    rgba(var(--brand-teal-rgb), 0.03) 0%,
     transparent 70%
   );
 }
@@ -5022,11 +5127,12 @@
   transition: all 0.2s ease;
 }
 
+/* CTA hover uses lime-dark */
 .emptyAction:hover {
-  background: var(--brand-gold-light);
+  background: var(--brand-lime-dark);
   transform: translateY(-2px);
   gap: 14px;
-  box-shadow: 0 4px 20px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(var(--brand-lime-rgb), 0.4);
 }
 
 /* ===========================================
@@ -5372,7 +5478,7 @@
 
 .perfCategory:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 77, 0, 0.3);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .perfCategory svg {
@@ -5434,10 +5540,11 @@
   transition: all 0.2s ease;
 }
 
+/* CTA hover uses lime-dark */
 .overlayLinkPrimary:hover {
-  background: var(--brand-gold-light);
+  background: var(--brand-lime-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 77, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(var(--brand-lime-rgb), 0.4);
 }
 
 /* ===========================================
@@ -5735,7 +5842,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   border-radius: 50%;
   color: var(--brand-error);
 }
@@ -5792,8 +5899,8 @@
 }
 
 .confirmBtnDanger {
-  background: rgba(239, 68, 68, 0.9);
-  border-color: rgba(239, 68, 68, 0.8);
+  background: rgba(var(--brand-error-rgb), 0.9);
+  border-color: rgba(var(--brand-error-rgb), 0.8);
   color: var(--brand-text-primary);
 }
 
@@ -5857,8 +5964,8 @@
   transform: translateY(-6px);
   box-shadow: 
     0 16px 48px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 77, 0, 0.2),
-    0 8px 32px rgba(255, 77, 0, 0.15);
+    0 0 0 1px rgba(16, 185, 129, 0.2),
+    0 8px 32px rgba(16, 185, 129, 0.15);
 }
 
 .projectCardImage {
@@ -5903,8 +6010,9 @@
   color: var(--accent-secondary, #00d4ff);
 }
 
+/* In-progress status uses muted/neutral styling */
 .projectStatusBadge.statusInProgress {
-  color: var(--brand-gold, var(--brand-gold));
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .projectStatusBadge.statusCompleted {
@@ -5963,9 +6071,9 @@
   font-weight: 600;
 }
 
-/* HP stat is primary - accent colored */
+/* HP stat uses teal (positive metric) */
 .statBadge.statHp {
-  color: var(--brand-gold, var(--brand-gold));
+  color: var(--brand-teal);
 }
 
 .statBadge.statMods {
@@ -6040,7 +6148,7 @@
 }
 
 .projectDeleteBtn:hover {
-  background: rgba(239, 68, 68, 0.9);
+  background: rgba(var(--brand-error-rgb), 0.9);
   color: var(--text-primary, #ffffff);
 }
 
@@ -6256,7 +6364,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--brand-blue-rgb), 0.1);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -6266,7 +6374,7 @@
 }
 
 .editModsLink:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(var(--brand-blue-rgb), 0.2);
 }
 
 .modsHpSummary {
@@ -6274,8 +6382,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.15) 100%);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: linear-gradient(135deg, rgba(var(--brand-success-rgb), 0.1) 0%, rgba(22, 163, 74, 0.15) 100%);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: 8px;
 }
 
@@ -6352,7 +6460,7 @@
   padding: 10px 16px;
   margin-top: 8px;
   background: transparent;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -6362,8 +6470,8 @@
 }
 
 .clearModsButton:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border-color: rgba(var(--brand-error-rgb), 0.5);
 }
 
 .modsEmptyState {
@@ -6411,7 +6519,7 @@
 
 .modsEmptyAction:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 /* Custom Specs Link (in Mods tab) */
@@ -6505,8 +6613,8 @@
 }
 
 .quickActionBtnActive {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  border-color: rgba(var(--brand-blue-rgb), 0.4);
   color: var(--brand-blue-light);
 }
 
@@ -6541,30 +6649,10 @@
 .startBuildBtn:hover {
   background: var(--brand-lime-dark, #bfe600);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(212, 255, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(var(--brand-lime-rgb), 0.3);
 }
 
-.addVehicleBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--brand-blue-light);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.addVehicleBtn:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%);
-  border-color: rgba(59, 130, 246, 0.6);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
+/* Note: Primary .addVehicleBtn definition is at line ~140 with lime styling */
 
 @media (max-width: 767px) {
   .startBuildBtn {
@@ -6593,21 +6681,21 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.05) 100%);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--brand-gold);
+  color: var(--brand-teal);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .analyzeAllBtn:hover {
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.25) 0%, rgba(255, 77, 0, 0.1) 100%);
-  border-color: rgba(255, 77, 0, 0.5);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 /* ===========================================
@@ -6800,7 +6888,7 @@
 
 .quickUpdateSave:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 .quickUpdateSave:disabled {

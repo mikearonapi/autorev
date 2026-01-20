@@ -304,7 +304,7 @@
 
 .priorityCardHigh {
   border-color: var(--sn-primary);
-  background: linear-gradient(180deg, var(--color-white) 0%, rgba(26, 77, 110, 0.03) 100%);
+  background: linear-gradient(180deg, var(--color-white) 0%, rgba(var(--brand-teal-dark-rgb), 0.03) 100%);
 }
 
 .priorityCardLow {
@@ -363,7 +363,7 @@
 }
 
 .priorityBadgeHigh {
-  background: rgba(26, 77, 110, 0.1);
+  background: rgba(var(--brand-teal-dark-rgb), 0.1);
   color: var(--sn-primary);
 }
 
@@ -474,7 +474,7 @@
 }
 
 .requirementCard:hover {
-  border-color: rgba(26, 77, 110, 0.3);
+  border-color: rgba(var(--brand-teal-dark-rgb), 0.3);
 }
 
 .requirementQuestion {
@@ -770,7 +770,7 @@
 
 .recCardPrimary {
   border: 2px solid var(--rec-color, var(--sn-primary));
-  background: linear-gradient(135deg, rgba(26, 77, 110, 0.03) 0%, var(--color-white) 100%);
+  background: linear-gradient(135deg, rgba(var(--brand-teal-dark-rgb), 0.03) 0%, var(--color-white) 100%);
 }
 
 .recCardPrimary::before {
@@ -1086,7 +1086,7 @@
 .searchInput input:focus {
   outline: none;
   border-color: var(--sn-primary);
-  box-shadow: 0 0 0 2px rgba(26, 77, 110, 0.1);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 .searchInput input::placeholder {
@@ -1145,7 +1145,7 @@
 .filterSelect:focus {
   outline: none;
   border-color: var(--sn-primary);
-  box-shadow: 0 0 0 2px rgba(26, 77, 110, 0.1);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 /* --------------------------------------------------------------------------
@@ -1455,8 +1455,8 @@
 
 .highlightBadge {
   display: inline-block;
-  background: rgba(26, 77, 110, 0.08);
-  border: 1px solid rgba(26, 77, 110, 0.2);
+  background: rgba(var(--brand-teal-dark-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-teal-dark-rgb), 0.2);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
@@ -1786,7 +1786,7 @@
 .searchInput input:focus-visible {
   outline: none;
   border-color: var(--sn-primary);
-  box-shadow: 0 0 0 3px rgba(26, 77, 110, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--brand-teal-dark-rgb), 0.15);
 }
 
 /* Screen reader only */

@@ -62,7 +62,7 @@
 
 .retryButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 /* Stats Grid */
@@ -185,7 +185,7 @@
 
 .chartBar:hover {
   background: linear-gradient(180deg, var(--brand-blue-light) 0%, var(--accent-blue) 100%);
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 .chartLabel {
@@ -249,8 +249,8 @@
 }
 
 .tabActive {
-  background: rgba(59, 130, 246, 0.15) !important;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(var(--brand-blue-rgb), 0.15) !important;
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.25);
   color: var(--text-primary) !important;
 }
 

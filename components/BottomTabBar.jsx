@@ -8,64 +8,40 @@ import { UI_IMAGES } from '@/lib/images';
 import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
 
 /**
- * BottomTabBar - Native iOS/Android style tab navigation
+ * BottomTabBar - Premium Minimal Tab Navigation
  * 
- * SIMPLIFIED 5-Tab Structure (GRAVL-inspired):
- * 
- * 1. My Garage - Everything about YOUR cars
- *    - Your vehicles
- *    - Build projects  
- *    - Upgrade planner
- *    - Performance estimates
- * 
- * 2. Track - Real-world performance
- *    - Track day mode
- *    - Data logging
- *    - Telemetry upload
- *    - Lap times
- * 
- * 3. Community - Social discovery (TikTok/IG style)
- *    - Build feed
- *    - Favorite builds
- *    - Build details
- * 
- * 4. AI AL - Search + AI Assistant
- *    - Ask anything
- *    - Get recommendations
- *    - Research
- * 
- * 5. Profile - Account management
- *    - Settings
- *    - Subscription
- *    - Preferences
+ * Design Philosophy: Less is more
+ * - Clean, thin stroke icons (no filled variants - too heavy)
+ * - Subtle active indicator dot
+ * - Teal accent for active state
+ * - Special AL mascot with elegant glow
+ * - No pills or backgrounds - just color and weight
  */
 
-// Tab icons - clean, minimal line icons
+// Refined icons - consistent 1.5px stroke, cleaner paths
 const GarageIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/>
-    <path d="M1 21h22"/>
-    <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/>
-    <rect x="9" y="7" width="6" height="4" rx="1"/>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 21h18"/>
+    <path d="M5 21V7l7-4 7 4v14"/>
+    <path d="M9 21v-6h6v6"/>
   </svg>
 );
 
 const DataIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    {/* Chart/data icon - represents telemetry, OBD2, track data */}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 3v18h18"/>
-    <path d="M18 17V9"/>
-    <path d="M13 17V5"/>
-    <path d="M8 17v-3"/>
+    <path d="M7 16v-3"/>
+    <path d="M11 16V8"/>
+    <path d="M15 16v-5"/>
+    <path d="M19 16v-7"/>
   </svg>
 );
 
 const CommunityIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    {/* Grid/feed icon - more social media feel */}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="7" height="7" rx="1"/>
     <rect x="14" y="3" width="7" height="7" rx="1"/>
     <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -73,42 +49,40 @@ const CommunityIcon = ({ active }) => (
   </svg>
 );
 
-const AIIcon = ({ active }) => (
-  <Image
-    src={UI_IMAGES.alMascotFull}
-    alt="AL"
-    width={26}
-    height={26}
-    className={`${styles.alMascot} ${active ? styles.alMascotActive : ''}`}
-    quality={90}
-  />
+const ALIcon = ({ active }) => (
+  <div className={`${styles.alWrapper} ${active ? styles.alWrapperActive : ''}`}>
+    <Image
+      src={UI_IMAGES.alMascotFull}
+      alt="AL"
+      width={26}
+      height={26}
+      className={styles.alImage}
+      quality={90}
+    />
+  </div>
 );
 
 const ProfileIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-    strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
   </svg>
 );
 
-// Tab configuration - SIMPLIFIED 5-tab structure
 const tabs = [
   { 
     id: 'garage', 
-    label: 'My Garage', 
+    label: 'Garage', 
     href: '/garage', 
     Icon: GarageIcon,
-    // Garage now includes build, upgrades, specs, photos, and performance features
-    // Routes: /garage (vehicles), /garage/my-specs, /garage/my-build, /garage/my-performance, /garage/my-parts, /garage/my-photos
     matchPaths: ['/garage', '/garage/builds', '/garage/my-specs', '/garage/my-build', '/garage/my-performance', '/garage/my-parts', '/garage/my-photos', '/garage/tuning-shop', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
   },
   { 
     id: 'data', 
-    label: 'My Data', 
+    label: 'Data', 
     href: '/data', 
     Icon: DataIcon,
-    // Data covers: track sessions, OBD2 logging, telemetry, tuning optimization
     matchPaths: ['/data', '/track']
   },
   { 
@@ -122,7 +96,8 @@ const tabs = [
     id: 'al', 
     label: 'AL', 
     href: '/al',
-    Icon: AIIcon,
+    Icon: ALIcon,
+    isAL: true,
     matchPaths: ['/al']
   },
   { 
@@ -134,24 +109,19 @@ const tabs = [
   },
 ];
 
-// APP_ROUTES imported from @/lib/appRoutes
-
 export default function BottomTabBar() {
   const pathname = usePathname();
   
-  // Determine if we should show the tab bar
   const shouldShow = isAppRoute(pathname);
-  
   if (!shouldShow) return null;
   
-  // Check if a tab is active based on current path
   const isActive = (tab) => {
     return tab.matchPaths?.some(path => pathname?.startsWith(path));
   };
   
   return (
-    <nav className={styles.tabBar} aria-label="Main navigation">
-      <div className={styles.tabContainer}>
+    <nav className={styles.nav} aria-label="Main navigation">
+      <div className={styles.container}>
         {tabs.map((tab) => {
           const active = isActive(tab);
           const TabIcon = tab.Icon;
@@ -160,14 +130,13 @@ export default function BottomTabBar() {
             <Link
               key={tab.id}
               href={tab.href}
-              className={`${styles.tab} ${active ? styles.tabActive : ''}`}
+              className={`${styles.tab} ${active ? styles.active : ''} ${tab.isAL ? styles.alTab : ''}`}
               aria-current={active ? 'page' : undefined}
             >
-              <span className={styles.tabIcon}>
+              <span className={styles.icon}>
                 <TabIcon active={active} />
               </span>
-              <span className={styles.tabLabel}>{tab.label}</span>
-              {active && <span className={styles.activeIndicator} />}
+              <span className={styles.label}>{tab.label}</span>
             </Link>
           );
         })}
@@ -176,7 +145,5 @@ export default function BottomTabBar() {
   );
 }
 
-// Export tabs configuration for other components that may need it
-// Note: isAppRoute and APP_ROUTES are available from @/lib/appRoutes
 export { tabs };
 export { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';

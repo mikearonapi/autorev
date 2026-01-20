@@ -57,8 +57,8 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   border-radius: 10px;
   flex-shrink: 0;
 }
@@ -122,7 +122,7 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--accent-blue);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 2px rgba(var(--brand-blue-rgb), 0.15);
   background: var(--card-hover);
 }
 
@@ -212,7 +212,7 @@
 }
 
 .userRow.expanded {
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(var(--brand-blue-rgb), 0.05);
 }
 
 /* User Cell */
@@ -232,7 +232,7 @@
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(var(--brand-blue-rgb), 0.3);
 }
 
 .avatar img {
@@ -307,8 +307,8 @@
   font-size: 0.6875rem;
   font-weight: 600;
   color: var(--positive);
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.3);
   border-radius: 4px;
 }
 
@@ -534,7 +534,7 @@
 
 .retryButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 /* Mobile optimizations */

@@ -20,7 +20,7 @@ export default function TermsOfService() {
     <main className={styles.page}>
       <div className={styles.container}>
         <h1 className={styles.title}>Terms of Service</h1>
-        <p className={styles.lastUpdated}>Last updated: December 16, 2024</p>
+        <p className={styles.lastUpdated}>Last updated: January 20, 2026</p>
 
         {/* Table of Contents */}
         <nav className={styles.toc}>
@@ -724,10 +724,10 @@ export default function TermsOfService() {
 
         <div className={styles.legalFooter}>
           <p>
-            <strong>Document Version:</strong> 1.0 (December 16, 2024)
+            <strong>Document Version:</strong> 1.1 (January 20, 2026)
           </p>
           <p>
-            These Terms of Service were last reviewed and updated on December 16, 2024. Please check this 
+            These Terms of Service were last reviewed and updated on January 20, 2026. Please check this 
             page periodically for updates.
           </p>
           <p>

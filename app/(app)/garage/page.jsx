@@ -1022,9 +1022,17 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
   const isBuild = type === 'projects';
   
   // Calculate all modification gains from installed mods (for owned vehicles)
-  const modificationGains = isOwnedVehicle && item.vehicle?.installedModifications?.length > 0
+  // If an active build exists, prefer its saved HP gain (more accurate, includes advanced calculations)
+  // Fall back to recalculating from installedModifications if no build or no saved HP gain
+  const calculatedGains = isOwnedVehicle && item.vehicle?.installedModifications?.length > 0
     ? calculateAllModificationGains(item.vehicle.installedModifications, car)
     : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0, brakingImprovement: 0, lateralGImprovement: 0 };
+  
+  // Use build's saved HP gain if available (more accurate), otherwise use calculated value
+  const modificationGains = {
+    ...calculatedGains,
+    hpGain: item.build?.totalHpGain ?? calculatedGains.hpGain,
+  };
 
   // Get display name
   const displayName = isOwnedVehicle 
@@ -1330,8 +1338,8 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                 <span className={styles.modifiedBadge}>
                   <Icons.wrench size={12} />
                   MODIFIED
-                  {item.vehicle.totalHpGain > 0 && (
-                    <span className={styles.modifiedHpGain}>+{item.vehicle.totalHpGain} HP</span>
+                  {modificationGains.hpGain > 0 && (
+                    <span className={styles.modifiedHpGain}>+{modificationGains.hpGain} HP</span>
                   )}
                 </span>
               )}
@@ -1535,9 +1543,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         </span>
                       )}
                       <AskALButton 
+                        variant="header"
                         category="Performance"
                         prompt={`Tell me about the performance capabilities of my ${car?.name || 'car'}. How does it compare to competitors, and what are its strengths on the street and track?`}
+                        displayMessage={`How fast is my ${car?.name || 'car'}? How does it compare to rivals?`}
                         carName={car?.name}
+                        carSlug={car?.slug}
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
@@ -1621,9 +1632,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                     <h4 className={styles.detailBlockTitle}>
                       <span>Engine & Drivetrain</span>
                       <AskALButton 
+                        variant="header"
                         category="Engine & Drivetrain"
                         prompt={`Tell me about the engine and drivetrain in my ${car?.name || 'car'}. What are common issues, maintenance tips, and potential upgrades?`}
+                        displayMessage={`What should I know about my ${car?.engine || 'engine'}? Common issues, maintenance tips?`}
                         carName={car?.name}
+                        carSlug={car?.slug}
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
@@ -1640,9 +1654,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                     <h4 className={styles.detailBlockTitle}>
                       <span>Chassis & Body</span>
                       <AskALButton 
+                        variant="header"
                         category="Chassis & Body"
                         prompt={`Tell me about the chassis and body of my ${car?.name || 'car'}. What makes it unique, and what should I know about its construction and handling characteristics?`}
+                        displayMessage={`What makes the ${car?.name || 'car'} platform special? How does weight affect handling?`}
                         carName={car?.name}
+                        carSlug={car?.slug}
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
@@ -1657,9 +1674,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                     <h4 className={styles.detailBlockTitle}>
                       <span>AutoRev Ratings</span>
                       <AskALButton 
+                        variant="header"
                         category="AutoRev Ratings"
                         prompt={`Explain the AutoRev ratings for my ${car?.name || 'car'}. Why did it receive these scores, and how does it compare to similar vehicles?`}
+                        displayMessage={`Why did my ${car?.name || 'car'} get these ratings? What do the scores mean?`}
                         carName={car?.name}
+                        carSlug={car?.slug}
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
@@ -1678,9 +1698,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                     <h4 className={styles.detailBlockTitle}>
                       <span>Ownership</span>
                       <AskALButton 
+                        variant="header"
                         category="Ownership"
                         prompt={`What should I know about owning a ${car?.name || 'car'}? Include typical costs, common issues to watch for, and what makes it special as a daily driver or weekend car.`}
+                        displayMessage={`What's it really like to own a ${car?.name || 'car'}? Costs, reliability, common issues?`}
                         carName={car?.name}
+                        carSlug={car?.slug}
                       />
                     </h4>
                     <div className={styles.detailBlockItems}>
@@ -1699,9 +1722,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                       <h4 className={styles.detailBlockTitle}>
                         <span>Ownership Extras</span>
                         <AskALButton 
+                          variant="header"
                           category="Ownership Extras"
                           prompt={`Tell me more about owning a ${car?.name || 'car'} - parts availability, DIY friendliness, track readiness, and the enthusiast community.`}
+                          displayMessage={`Is the ${car?.name || 'car'} DIY-friendly? What about parts availability and the community?`}
                           carName={car?.name}
+                          carSlug={car?.slug}
                         />
                       </h4>
                       <div className={styles.detailBlockItems}>
@@ -1843,9 +1869,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Engine Oil</span>
                           <AskALButton 
+                            variant="header"
                             category="Engine Oil"
                             prompt={`What's the best engine oil for my ${car?.name || 'car'}? Include recommended brands, viscosity, and change intervals.`}
+                            displayMessage={`What oil should I use? Best brands and change interval for my ${car?.name || 'car'}?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -1860,9 +1889,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Fuel</span>
                           <AskALButton 
+                            variant="header"
                             category="Fuel"
                             prompt={`What fuel should I use in my ${car?.name || 'car'}? Is premium worth it, and what about E85 compatibility?`}
+                            displayMessage={`Do I need premium fuel? Is E85 an option for my ${car?.name || 'car'}?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -1892,9 +1924,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Fluids</span>
                           <AskALButton 
+                            variant="header"
                             category="Fluids"
                             prompt={`What fluids does my ${car?.name || 'car'} need? Include coolant, brake fluid, transmission fluid, and differential fluid specifications.`}
+                            displayMessage={`What fluids does my ${car?.name || 'car'} need? Coolant, brake fluid, trans fluid specs?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -1910,9 +1945,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Brakes</span>
                           <AskALButton 
+                            variant="header"
                             category="Brakes"
                             prompt={`Tell me about the brake system on my ${car?.name || 'car'}. What are good upgrade options and when should I replace pads/rotors?`}
+                            displayMessage={`When should I replace brakes? What are the best upgrade options for my ${car?.name || 'car'}?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -1927,9 +1965,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Battery</span>
                           <AskALButton 
+                            variant="header"
                             category="Battery"
                             prompt={`What battery should I get for my ${car?.name || 'car'}? Include recommended brands and any special considerations.`}
+                            displayMessage={`What battery should I get? Best brands for my ${car?.name || 'car'}?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -1944,9 +1985,12 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
                         <h4 className={styles.detailBlockTitle}>
                           <span>Wipers & Lights</span>
                           <AskALButton 
+                            variant="header"
                             category="Wipers & Lights"
                             prompt={`What are the wiper blade sizes and bulb types for my ${car?.name || 'car'}? Any recommended upgrades?`}
+                            displayMessage={`What wiper blades and bulbs fit my ${car?.name || 'car'}? Any good upgrades?`}
                             carName={car?.name}
+                            carSlug={car?.slug}
                           />
                         </h4>
                         <div className={styles.detailBlockItems}>
@@ -2605,7 +2649,8 @@ function VehicleListView({ items, onSelectVehicle, onEditBuild, onDeleteVehicle,
         const car = item.matchedCar;
         const vehicle = item.vehicle;
         const hasBuild = vehicle?.activeBuildId || (vehicle?.installedModifications?.length > 0);
-        const hpGain = vehicle?.totalHpGain || 0;
+        // Use build's HP gain if available (current/accurate), fall back to vehicle's cached value
+        const hpGain = item.build?.totalHpGain ?? vehicle?.totalHpGain ?? 0;
         const totalCost = item.build?.totalCostLow || 0;
         
         // Display name
@@ -2863,6 +2908,10 @@ function GarageContent() {
     return vehicles.map(vehicle => {
       const matchedCar = vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null;
       
+      // Get the active build data if the vehicle has one linked
+      // This ensures we show the CURRENT build HP gain, not the stale cached value on user_vehicles
+      const activeBuild = vehicle.activeBuildId ? builds.find(b => b.id === vehicle.activeBuildId) : null;
+      
       // Create a temporary car object from vehicle data when:
       // 1. matchedCar isn't available yet (allCars still loading), OR
       // 2. Vehicle has no matchedCarSlug (manually added, not in our database)
@@ -2884,11 +2933,13 @@ function GarageContent() {
         vehicle,
         matchedCar: matchedCar || tempCarFromVehicle,
         id: vehicle.id,
+        // Include the active build data for HP gain display
+        build: activeBuild,
         // Only show loading state if we expect to get real car data eventually
         _isCarDataLoading: !matchedCar && vehicle.matchedCarSlug && allCars.length === 0,
       };
     });
-  }, [vehicles, allCars]);
+  }, [vehicles, allCars, builds]);
 
   // Check if a car is already in My Collection
   const isInMyCars = (slug) => vehicles.some(v => v.matchedCarSlug === slug);
@@ -3493,8 +3544,8 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
           ) : (
             <EmptyState
               icon={Icons.car}
-              title="No Vehicles Yet"
-              description="Add the vehicles you own to track builds, maintenance, and get personalized recommendations."
+              title="Your Garage Awaits"
+              description="Add your vehicle and we'll handle the research — curated upgrades, known issues, and maintenance schedules, all specific to your car."
               actionLabel="Add Your First Vehicle"
               onAction={() => setIsAddVehicleOpen(true)}
             />

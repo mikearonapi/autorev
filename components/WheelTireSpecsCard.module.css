@@ -28,8 +28,8 @@
   height: 2px;
   background: linear-gradient(
     90deg,
-    var(--accent-primary, var(--brand-gold)) 0%,
-    rgba(212, 168, 75, 0.3) 50%,
+    var(--brand-gold) 0%,
+    rgba(var(--brand-gold-rgb), 0.3) 50%,
     transparent 100%
   );
   opacity: 0.6;
@@ -57,7 +57,7 @@
   font-size: 11px;
   width: 100%;
   font-weight: 800;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -95,8 +95,8 @@
 }
 
 .editToggle.active {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
   color: var(--brand-blue);
 }
 
@@ -228,7 +228,7 @@
 }
 
 .rowEditBtn:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(var(--brand-blue-rgb), 0.2);
   color: var(--brand-blue);
 }
 
@@ -245,9 +245,9 @@
   flex: 1;
   padding: 3px 6px;
   font-size: 16px; /* Prevents iOS zoom on focus */
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.4);
   border-radius: 3px;
   outline: none;
   font-family: var(--font-mono, ui-monospace, monospace);
@@ -255,7 +255,7 @@
 
 .editInput:focus {
   border-color: var(--brand-blue);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 1px rgba(var(--brand-blue-rgb), 0.2);
 }
 
 .editInput::placeholder {
@@ -288,7 +288,7 @@
 }
 
 .editActionBtn:last-child:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   color: var(--brand-error);
 }
 
@@ -332,16 +332,16 @@
   font-size: 10px;
   font-weight: 500;
   color: var(--brand-blue);
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .addSpecsBtn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(var(--brand-blue-rgb), 0.2);
+  border-color: rgba(var(--brand-blue-rgb), 0.4);
 }
 
 /* Fitment Options */

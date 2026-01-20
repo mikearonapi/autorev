@@ -4,41 +4,78 @@
  * AskALButton Component
  * 
  * A small "Ask AL" quick action button for spec sections.
- * When clicked, opens the AI chat with a prefilled prompt about the component.
+ * When clicked, navigates to the /al page with a prefilled prompt.
  */
 
-import { useAIChat } from './AIChatContext';
-import { UI_IMAGES } from '@/lib/images';
+import { useRouter } from 'next/navigation';
 import styles from './AskALButton.module.css';
 
-// Small AL icon for the button
-const ALIcon = ({ size = 16 }) => (
-  <img 
-    src={UI_IMAGES.alMascot}
-    alt=""
+// Storage key for pending AL prompts
+const AL_PENDING_PROMPT_KEY = 'autorev_al_pending_prompt';
+
+/**
+ * Store a pending prompt for the AL page to pick up
+ */
+export function setPendingALPrompt(promptData) {
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem(AL_PENDING_PROMPT_KEY, JSON.stringify(promptData));
+  }
+}
+
+/**
+ * Get and clear the pending AL prompt
+ */
+export function getPendingALPrompt() {
+  if (typeof window !== 'undefined') {
+    const data = sessionStorage.getItem(AL_PENDING_PROMPT_KEY);
+    if (data) {
+      sessionStorage.removeItem(AL_PENDING_PROMPT_KEY);
+      try {
+        return JSON.parse(data);
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+// Sparkle icon for the button
+const SparkleIcon = ({ size = 16, className = '' }) => (
+  <svg 
     width={size} 
-    height={size}
-    className={styles.alIcon}
-  />
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+  </svg>
 );
 
 /**
- * AskALButton - Triggers AI chat with a contextual prompt
+ * AskALButton - Navigates to /al page with a contextual prompt
  * 
  * @param {string} category - The category/section name (e.g., "Fluids", "Brakes")
- * @param {string} prompt - The full question to ask AL
+ * @param {string} prompt - The full detailed question to ask AL
+ * @param {string} displayMessage - Short, clear question shown to user before sending (optional, falls back to prompt)
  * @param {string} carName - Optional car name for context
- * @param {string} variant - Button variant: 'icon' (just icon), 'compact' (icon + small text), 'full' (icon + full text)
+ * @param {string} carSlug - Optional car slug for context metadata
+ * @param {string} variant - Button variant: 'icon' (just icon), 'compact' (icon + small text), 'full' (icon + full text), 'header' (lime CTA for card headers)
  * @param {string} className - Additional CSS classes
+ * @param {object} metadata - Optional additional metadata to pass to chat context
  */
 export default function AskALButton({ 
   category,
   prompt,
+  displayMessage,
   carName,
+  carSlug,
   variant = 'icon',
   className = '',
+  metadata = {},
 }) {
-  const { openChatWithPrompt } = useAIChat();
+  const router = useRouter();
   
   const handleClick = (e) => {
     e.stopPropagation(); // Prevent triggering parent click handlers
@@ -46,13 +83,30 @@ export default function AskALButton({
     // Build the prompt
     const fullPrompt = prompt || `Tell me about ${category}${carName ? ` for my ${carName}` : ''}`;
     
-    openChatWithPrompt(fullPrompt, {
-      category,
-      carName,
+    // Display message should be short and clear for user preview
+    const preview = displayMessage || fullPrompt;
+    
+    // Store the prompt data for the AL page to pick up
+    setPendingALPrompt({
+      prompt: fullPrompt,
+      displayMessage: preview,
+      context: {
+        category,
+        carName,
+        carSlug,
+        ...metadata,
+      },
     });
+    
+    // Navigate to the AL page
+    router.push('/al');
   };
   
   const variantClass = styles[`variant${variant.charAt(0).toUpperCase() + variant.slice(1)}`] || '';
+  
+  // All variants show the AL icon now
+  const showIcon = true;
+  const showText = variant !== 'icon';
   
   return (
     <button
@@ -61,8 +115,8 @@ export default function AskALButton({
       title={`Ask AL about ${category}`}
       aria-label={`Ask AL about ${category}`}
     >
-      <ALIcon size={variant === 'icon' ? 16 : 14} />
-      {variant !== 'icon' && (
+      {showIcon && <SparkleIcon size={variant === 'icon' ? 14 : variant === 'header' ? 12 : 10} className={styles.sparkleIcon} />}
+      {showText && (
         <span className={styles.buttonText}>
           {variant === 'compact' ? 'Ask' : `Ask AL`}
         </span>
@@ -79,15 +133,25 @@ export function AskALInline({
   category,
   prompt,
   carName,
+  carSlug,
   children,
   className = '',
 }) {
-  const { openChatWithPrompt } = useAIChat();
+  const router = useRouter();
   
   const handleClick = (e) => {
     e.stopPropagation();
     const fullPrompt = prompt || `Tell me about ${category}${carName ? ` for my ${carName}` : ''}`;
-    openChatWithPrompt(fullPrompt, { category, carName });
+    
+    // Store the prompt data for the AL page to pick up
+    setPendingALPrompt({
+      prompt: fullPrompt,
+      displayMessage: fullPrompt,
+      context: { category, carName, carSlug },
+    });
+    
+    // Navigate to the AL page
+    router.push('/al');
   };
   
   return (
@@ -96,7 +160,7 @@ export function AskALInline({
       onClick={handleClick}
       title={`Ask AL about ${category}`}
     >
-      <ALIcon size={12} />
+      <SparkleIcon size={10} className={styles.sparkleIcon} />
       {children || 'Ask AL'}
     </button>
   );

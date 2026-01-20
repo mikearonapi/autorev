@@ -23,8 +23,8 @@
 }
 
 .variantHighlighted {
-  border-color: rgba(212, 168, 75, 0.2);
-  background: rgba(212, 168, 75, 0.03);
+  border-color: rgba(var(--brand-gold-rgb), 0.2);
+  background: rgba(var(--brand-gold-rgb), 0.03);
 }
 
 /* Header */

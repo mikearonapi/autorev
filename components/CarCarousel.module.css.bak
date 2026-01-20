@@ -1,0 +1,262 @@
+/**
+ * CarCarousel Component Styles
+ * Dual-row marquee with opposing scroll directions
+ */
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: var(--space-sm) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .carousel {
+    padding: var(--space-md) 0;
+    gap: var(--space-md);
+  }
+}
+
+.scrollContainer {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding: var(--space-xs) 0;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent text selection during scroll */
+  user-select: none;
+  -webkit-user-select: none;
+  /* Hide scrollbar but allow scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
+
+@media (min-width: 768px) {
+  .scrollContainer {
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+  }
+}
+
+/* Compact card sizes for dual-row layout */
+.carCard {
+  flex-shrink: 0;
+  width: 180px;
+  height: 110px;
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: var(--shadow-md);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x;
+}
+
+/* Active state for touch */
+.carCard:active {
+  transform: scale(0.98);
+}
+
+/* Only apply hover effects on devices with hover capability */
+@media (hover: hover) {
+  .carCard:hover {
+    transform: scale(1.08);
+    box-shadow: var(--shadow-xl);
+    z-index: 10;
+  }
+}
+
+@media (min-width: 480px) {
+  .carCard {
+    width: 200px;
+    height: 125px;
+  }
+}
+
+@media (min-width: 768px) {
+  .carCard {
+    width: 240px;
+    height: 150px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .carCard {
+    width: 280px;
+    height: 170px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .carCard {
+    width: 300px;
+    height: 185px;
+  }
+}
+
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.carImage {
+  transition: transform var(--transition-slow);
+}
+
+/* Only animate on hover for devices that support it */
+@media (hover: hover) {
+  .carCard:hover .carImage {
+    transform: scale(1.1);
+  }
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.2) 35%,
+    transparent 60%
+  );
+  transition: opacity var(--transition-base);
+}
+
+@media (hover: hover) {
+  .carCard:hover .imageOverlay {
+    opacity: 0.9;
+  }
+}
+
+.carInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .carInfo {
+    padding: var(--space-md);
+    gap: var(--space-xs);
+  }
+}
+
+.carName {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  /* Ensure text doesn't overflow on small cards */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 480px) {
+  .carName {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (min-width: 768px) {
+  .carName {
+    font-size: var(--font-size-lg);
+    white-space: normal;
+  }
+}
+
+.carMeta {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--sn-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .carMeta {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Edge gradient fade effects - smaller on mobile */
+.gradientLeft,
+.gradientRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.gradientLeft {
+  left: 0;
+  background: linear-gradient(to right, var(--color-gray-50), transparent);
+}
+
+.gradientRight {
+  right: 0;
+  background: linear-gradient(to left, var(--color-gray-50), transparent);
+}
+
+@media (min-width: 768px) {
+  .gradientLeft,
+  .gradientRight {
+    width: 80px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gradientLeft,
+  .gradientRight {
+    width: 100px;
+  }
+}
+
+/* Pause indicator - only on desktop */
+.carousel::after {
+  content: 'Hover to pause';
+  position: absolute;
+  bottom: calc(var(--space-xs) * -1);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+  display: none;
+}
+
+@media (hover: hover) and (min-width: 768px) {
+  .carousel::after {
+    display: block;
+  }
+  
+  .carousel:hover::after {
+    opacity: 1;
+  }
+}
+

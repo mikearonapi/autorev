@@ -9,7 +9,7 @@
  * - Experience Scores (Comfort, Reliability, Sound)
  */
 
-import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
@@ -21,10 +21,8 @@ import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import { fetchCars } from '@/lib/carsClient';
 import { useCarImages } from '@/hooks/useCarImages';
-import { 
-  getPerformanceProfile, 
-  calculateTotalCost 
-} from '@/lib/performance.js';
+import { getPerformanceProfile } from '@/lib/performance.js';
+import { useAIChat } from '@/components/AIChatContext';
 
 // ============================================================================
 // ICONS - Exact same as UpgradeCenter
@@ -72,6 +70,18 @@ const Icons = {
   wrench: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+  sparkle: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/>
+      <path d="M5 19L5.5 21.5L8 22L5.5 22.5L5 25L4.5 22.5L2 22L4.5 21.5L5 19Z" opacity="0.6"/>
+      <path d="M19 2L19.5 4.5L22 5L19.5 5.5L19 8L18.5 5.5L16 5L18.5 4.5L19 2Z" opacity="0.6"/>
+    </svg>
+  ),
+  star: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   ),
 };
@@ -194,6 +204,7 @@ function MyPerformanceContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, getBuildById } = useSavedBuilds();
+  const { openChatWithPrompt } = useAIChat();
   
   // Get user's hero image for this car
   const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
@@ -279,21 +290,6 @@ function MyPerformanceContent() {
     return basicProfile;
   }, [currentBuild, selectedCar, basicProfile]);
   
-  // Calculate total cost
-  const totalCost = useMemo(() => {
-    if (!selectedCar) return { low: 0, high: 0, confidence: 'estimated', confidencePercent: 0 };
-    // Use saved cost if available
-    if (currentBuild?.totalCostLow) {
-      return { 
-        low: currentBuild.totalCostLow, 
-        high: currentBuild.totalCostHigh || currentBuild.totalCostLow,
-        confidence: 'saved',
-        confidencePercent: 100 
-      };
-    }
-    return calculateTotalCost(basicProfile.selectedUpgrades, selectedCar);
-  }, [currentBuild, basicProfile.selectedUpgrades, selectedCar]);
-  
   // Use saved HP gain if available, otherwise calculate
   const hpGain = currentBuild?.totalHpGain ?? (profile.upgradedMetrics.hp - profile.stockMetrics.hp);
   const showUpgrade = effectiveModules.length > 0 || hpGain > 0;
@@ -301,6 +297,46 @@ function MyPerformanceContent() {
   const handleBack = () => {
     router.push('/garage');
   };
+  
+  // Create contextualized AL prompt handlers for performance sections
+  const askALAboutPerformance = useCallback((section) => {
+    if (!selectedCar) return;
+    
+    const carName = selectedCar.name;
+    const upgradeCount = effectiveModules.length;
+    const hasUpgrades = upgradeCount > 0 || hpGain > 0;
+    
+    // Detailed prompts sent to AL
+    const prompts = {
+      metrics: hasUpgrades 
+        ? `I have a ${carName} with ${upgradeCount} upgrades making +${hpGain} HP. How can I improve my performance numbers further? What upgrades give the best gains for 0-60, braking, and grip?`
+        : `Tell me about the performance metrics of my stock ${carName}. What are realistic goals for 0-60, braking, and grip improvements with modifications?`,
+      experience: hasUpgrades
+        ? `I have a ${carName} with upgrades. How will these modifications affect comfort, reliability, and sound? Are there tradeoffs I should expect?`
+        : `For my ${carName}, how do different types of upgrades (power, suspension, exhaust) typically affect comfort, reliability, and sound? What's the best balance?`,
+    };
+    
+    // Short, clear questions shown to user in the confirmation card
+    const displayMessages = {
+      metrics: hasUpgrades 
+        ? `With +${hpGain} HP, how can I improve 0-60, braking, and grip even more?`
+        : `What are realistic performance goals for my ${carName} with mods?`,
+      experience: hasUpgrades
+        ? `How will my upgrades affect daily driving, reliability, and sound?`
+        : `How do different mods affect comfort, reliability, and sound on my ${carName}?`,
+    };
+    
+    const prompt = prompts[section] || `Tell me about ${section} for my ${carName}`;
+    const displayMessage = displayMessages[section] || prompt;
+    
+    openChatWithPrompt(prompt, {
+      category: section === 'metrics' ? 'Performance Metrics' : 'Experience Scores',
+      carSlug: selectedCar.slug,
+      carName: carName,
+      upgradeCount,
+      hpGain,
+    }, displayMessage);
+  }, [selectedCar, effectiveModules, hpGain, openChatWithPrompt]);
   
   // Loading state
   const isLoading = authLoading || buildsLoading || (buildIdParam && allCars.length === 0);
@@ -352,23 +388,18 @@ function MyPerformanceContent() {
       {/* Performance Content - EXACT same layout as UpgradeCenter */}
       <div className={styles.content}>
         
-        {/* === PERFORMANCE METRICS CARD - Exact copy from UpgradeCenter === */}
+        {/* === PERFORMANCE METRICS CARD === */}
         <div className={styles.performanceCard}>
           <div className={styles.performanceHeader}>
-            <h3 className={styles.performanceTitle}>
-              <Icons.bolt size={18} />
-              Performance Metrics
-            </h3>
-            {showUpgrade && totalCost.low > 0 && (
-              <div className={styles.buildStats}>
-                <span 
-                  className={`${styles.costBadge} ${totalCost.confidence === 'verified' ? styles.costVerified : totalCost.confidence === 'high' ? styles.costHigh : styles.costEstimated}`}
-                  title={`${totalCost.confidence === 'verified' ? 'Verified pricing' : totalCost.confidence === 'high' ? 'High confidence estimate' : 'Estimated pricing'}`}
-                >
-                  ${(totalCost.low || 0).toLocaleString()}
-                </span>
-              </div>
-            )}
+            <h3 className={styles.performanceTitle}>Performance Metrics</h3>
+            <button 
+              className={styles.askAlBtn}
+              onClick={() => askALAboutPerformance('metrics')}
+              title="Ask AL about performance metrics"
+            >
+              <Icons.sparkle size={12} />
+              Ask AL
+            </button>
           </div>
           <div className={styles.performanceMetrics}>
             <MetricRow 
@@ -404,9 +435,19 @@ function MyPerformanceContent() {
           </div>
         </div>
         
-        {/* === EXPERIENCE SCORES - Exact copy from UpgradeCenter === */}
+        {/* === EXPERIENCE SCORES === */}
         <div className={styles.section}>
-          <h4 className={styles.sectionTitle}>Experience Scores</h4>
+          <div className={styles.sectionHeader}>
+            <h4 className={styles.sectionTitle}>Experience Scores</h4>
+            <button 
+              className={styles.askAlBtn}
+              onClick={() => askALAboutPerformance('experience')}
+              title="Ask AL about experience scores"
+            >
+              <Icons.sparkle size={12} />
+              Ask AL
+            </button>
+          </div>
           <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
           <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
           <ScoreBar label="Sound" stockScore={profile?.stockScores?.soundEmotion ?? 8} upgradedScore={profile?.upgradedScores?.soundEmotion ?? 8} />

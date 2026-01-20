@@ -1,109 +1,222 @@
 /* ===========================================
    CALCULATED PERFORMANCE
-   Standalone component for Data tab
-   Physics-based 0-60, 1/4 mile, braking estimates
+   Matches garage/my-performance styling with progress bars
+   
+   Brand Colors:
+   - Teal (#10b981): Section headers, improved values, upgrade fills
+   - Blue (#3b82f6): Stock/baseline values, stock fills
    =========================================== */
 
 .calcPerformance {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* ===========================================
+   SECTION CARDS
+   =========================================== */
+
+.section {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
 }
 
-.calcHeader {
-  margin-bottom: 16px;
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.calcTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--brand-text-primary);
-  display: block;
-  margin-bottom: 4px;
+.sectionTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
 }
 
-.calcSubtitle {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+/* ===========================================
+   METRICS GRID
+   =========================================== */
+
+.metricsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.calcGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.scoresGrid {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.calcMetric {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  padding: 14px;
+/* ===========================================
+   METRIC ROW - With progress bar
+   =========================================== */
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.calcMetricHeader {
-  font-size: 10px;
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 8px;
 }
 
-.calcMetricValues {
+.metricLabel svg {
+  opacity: 0.6;
+}
+
+.metricValues {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
-}
-
-.calcStock {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: line-through;
-}
-
-.calcArrow {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.calcModded {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--brand-text-primary);
-}
-
-.calcDelta {
-  font-size: 12px;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--brand-teal);
 }
 
-/* Responsive */
+.stockVal {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.arrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+}
+
+.upgradedVal {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.currentVal {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gain {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  margin-left: 4px;
+}
+
+/* ===========================================
+   PROGRESS TRACK BARS
+   =========================================== */
+
+.track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fillStock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-blue, #3b82f6) 0%, #60a5fa 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.fillUpgrade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-teal, #10b981) 0%, #34d399 100%);
+  border-radius: 4px;
+  transition: all 0.4s ease;
+}
+
+/* ===========================================
+   SCORE ROW - Experience scores
+   =========================================== */
+
+.scoreRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scoreHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scoreLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.scoreValues {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+
 @media (max-width: 600px) {
-  .calcPerformance {
+  .section {
     padding: 16px;
+    border-radius: 14px;
   }
 
-  .calcGrid {
-    gap: 8px;
+  /* Title keeps same size on mobile for consistency with garage specs */
+
+  .metricsGrid {
+    gap: 12px;
   }
 
-  .calcMetric {
-    padding: 10px;
+  .metricLabel {
+    font-size: 0.75rem;
   }
-  
-  .calcModded {
-    font-size: 16px;
-  }
-  
-  .calcStock {
-    font-size: 12px;
-  }
-}
 
-@media (max-width: 400px) {
-  .calcGrid {
-    grid-template-columns: 1fr;
+  .metricValues {
+    font-size: 0.8125rem;
+  }
+
+  .gain {
+    font-size: 11px;
+    padding: 2px 5px;
+  }
+
+  .track {
+    height: 6px;
   }
 }

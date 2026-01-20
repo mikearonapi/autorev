@@ -24,7 +24,7 @@
   background: var(--bg-card, #161616);
   border-radius: 50%;
   margin-bottom: var(--space-xl, 24px);
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .title {
@@ -78,7 +78,7 @@
   content: '→';
   position: absolute;
   left: 0;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }
 
 .footer {
@@ -109,5 +109,5 @@
 }
 
 .accent {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-gold);
 }

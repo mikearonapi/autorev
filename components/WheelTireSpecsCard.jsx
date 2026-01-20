@@ -188,6 +188,7 @@ export default function WheelTireSpecsCard({
           <h4 className={styles.title}>
             <span>Tires & Wheels</span>
             <AskALButton 
+              variant="header"
               category="Tires & Wheels"
               prompt={`What are the best tire and wheel options for my ${carName || 'car'}? Include sizes, recommended brands, and any fitment considerations.`}
               carName={carName}
@@ -223,6 +224,7 @@ export default function WheelTireSpecsCard({
               {hasAnyCustom && <span className={styles.customBadge}>Your Specs</span>}
             </span>
             <AskALButton 
+              variant="header"
               category="Tires & Wheels"
               prompt={`What are the best tire and wheel options for my ${carName || 'car'}? Include sizes, recommended brands, and any fitment considerations.`}
               carName={carName}

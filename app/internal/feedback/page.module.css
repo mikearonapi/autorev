@@ -45,7 +45,7 @@
 .retryButton {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   color: white;
   border: none;
   border-radius: 8px;
@@ -211,11 +211,11 @@
 .refreshButton:hover,
 .exportButton:hover {
   background: var(--surface-secondary, rgba(255, 255, 255, 0.05));
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 .exportButton {
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   background-opacity: 0.1;
 }
 
@@ -225,7 +225,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   border-radius: 8px;
   margin-bottom: 1rem;
   animation: slideDown 0.2s ease;
@@ -301,12 +301,12 @@
 }
 
 .feedbackCard:hover {
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 .feedbackCardSelected {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: var(--accent-primary, var(--brand-blue));
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border-color: var(--brand-blue);
 }
 
 .feedbackSelectColumn {
@@ -414,7 +414,7 @@
 }
 
 .feedbackEmail {
-  color: var(--accent-primary, var(--brand-blue));
+  color: var(--brand-blue);
   text-decoration: none;
 }
 
@@ -428,7 +428,7 @@
 }
 
 .feedbackPageUrl:hover {
-  color: var(--accent-primary, var(--brand-blue));
+  color: var(--brand-blue);
 }
 
 .feedbackDate {

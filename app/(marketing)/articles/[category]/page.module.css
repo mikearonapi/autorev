@@ -96,8 +96,8 @@
 }
 
 .filterLink.active {
-  background: rgba(233, 69, 96, 0.15);
-  border-color: rgba(233, 69, 96, 0.4);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border-color: rgba(var(--brand-error-rgb), 0.4);
   color: var(--brand-error);
 }
 
@@ -118,8 +118,8 @@
 }
 
 .allArticlesBtn:hover {
-  background: rgba(233, 69, 96, 0.1);
-  border-color: rgba(233, 69, 96, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
   color: var(--brand-error);
 }
 
@@ -160,7 +160,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: rgba(233, 69, 96, 0.1);
+  background: rgba(var(--brand-error-rgb), 0.1);
   border-radius: 6px;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.8);
@@ -213,12 +213,12 @@
 
 .card:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(233, 69, 96, 0.3);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
   transform: translateY(-2px);
 }
 
 .card.featured {
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: rgba(var(--brand-warning-rgb), 0.3);
 }
 
 .cardImage {

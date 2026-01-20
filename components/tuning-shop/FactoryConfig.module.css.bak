@@ -1,0 +1,452 @@
+/* ============================================
+   FACTORY CONFIGURATION - Clean Editable Design
+   ============================================ */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.container.hasChanges {
+  border-color: rgba(212, 168, 75, 0.3);
+}
+
+/* Compact Mode */
+.compact {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.headerToggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 16px 0 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerLeft svg {
+  color: rgba(212, 168, 75, 0.8);
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.modifiedBadge {
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--brand-teal);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 16px;
+  flex-shrink: 0;
+}
+
+.headerEditBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.headerEditBtn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.headerEditBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.headerEditBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--brand-teal);
+}
+
+.headerEditLabel {
+  display: inline;
+}
+
+.chevronBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Content */
+.content {
+  padding: 0 20px 20px;
+}
+
+/* Edit Toggle Row - only shows reset button when editing */
+.editToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.editBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--brand-teal);
+}
+
+.editBtnActive:hover {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.resetBtn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: rgba(239, 68, 68, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: var(--brand-error);
+}
+
+/* Configuration Grid */
+.configGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* Config Field */
+.configField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.fieldValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fieldValueTBD {
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+}
+
+/* Input Styling */
+.fieldInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.fieldInput {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: rgba(212, 168, 75, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.fieldInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.fieldSuffix {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.fieldSelect {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+  box-sizing: border-box;
+}
+
+.fieldSelect:focus {
+  outline: none;
+  border-color: rgba(212, 168, 75, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.fieldSelect option {
+  background: var(--brand-bg-secondary);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Info Note */
+.infoNote {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 768px) {
+  .configGrid {
+    gap: 12px;
+  }
+  
+  .content {
+    padding: 0 16px 14px;
+  }
+  
+  .editToggle {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .infoNote {
+    margin-top: 12px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 640px) {
+  /* Keep 2-column grid on mobile for compactness */
+  .configGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .headerToggle {
+    padding: 10px 0 10px 12px;
+  }
+  
+  .headerRight {
+    gap: 6px;
+    padding-right: 12px;
+  }
+  
+  .headerEditBtn {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  
+  .headerEditBtn svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .chevronBtn {
+    padding: 6px;
+  }
+  
+  .content {
+    padding: 0 14px 12px;
+  }
+  
+  .editToggle {
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .editBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
+  }
+  
+  .resetBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .headerTitle {
+    font-size: 14px;
+  }
+  
+  .configField {
+    gap: 3px;
+  }
+  
+  .fieldLabel {
+    font-size: 9px;
+  }
+  
+  .fieldValue {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+  
+  .fieldInput {
+    padding: 6px 8px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  .fieldSelect {
+    padding: 6px 8px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding-right: 26px;
+    background-position: right 6px center;
+  }
+  
+  /* Hide info note on mobile to save space */
+  .infoNote {
+    display: none;
+  }
+}
+
+/* Compact Mode Overrides */
+.compact .header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.compact .content {
+  padding: 16px;
+}
+
+.compact .configGrid {
+  gap: 12px;
+}
+
+.compact .fieldLabel {
+  font-size: 10px;
+}
+
+.compact .fieldValue {
+  font-size: 14px;
+  padding: 8px 0;
+}

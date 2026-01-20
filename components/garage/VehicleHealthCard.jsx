@@ -432,11 +432,10 @@ export default function VehicleHealthCard({
               Save Changes
             </button>
             <AskALButton
-              variant="compact"
+              variant="header"
               category="Vehicle Health"
               prompt={alPrompt}
               carName={vehicleName}
-              className={styles.ghostButton}
             />
           </>
         )}

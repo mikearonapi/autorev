@@ -68,21 +68,53 @@ async function handleGet(request) {
     }
     // 'latest' is default from the RPC (ordered by published_at DESC)
 
-    // Enrich builds with car image fallback if needed
+    // Enrich builds with car data (image, performance specs) and build data (modified metrics)
     const enrichedBuilds = await Promise.all(
       builds.map(async (build) => {
-        // If no images, try to get car image as fallback
-        if ((!build.images || build.images.length === 0) && build.car_slug) {
+        // Fetch car specs (stock values) for fallback
+        if (build.car_slug) {
           const { data: carData } = await supabaseAdmin
             .from('cars')
-            .select('hero_image')
+            .select('image_hero_url, hp, torque, zero_to_sixty, top_speed')
             .eq('slug', build.car_slug)
             .single();
           
-          if (carData?.hero_image) {
-            build.car_image_url = carData.hero_image;
+          if (carData) {
+            // Image fallback if build has no images
+            if (!build.images || build.images.length === 0) {
+              build.car_image_url = carData.image_hero_url;
+            }
+            
+            // Add car specs for performance display (stock values as fallback)
+            build.car_specs = {
+              hp: carData.hp,
+              torque: carData.torque,
+              zero_to_sixty: carData.zero_to_sixty,
+              top_speed: carData.top_speed,
+            };
           }
         }
+        
+        // Fetch user's build data with modified performance metrics if available
+        // The build.id is the community_post id, we need to get user_build_id first
+        const { data: postData } = await supabaseAdmin
+          .from('community_posts')
+          .select('user_build_id')
+          .eq('id', build.id)
+          .single();
+        
+        if (postData?.user_build_id) {
+          const { data: buildData } = await supabaseAdmin
+            .from('user_projects')
+            .select('final_hp, total_hp_gain, final_zero_to_sixty, final_braking_60_0, final_lateral_g')
+            .eq('id', postData.user_build_id)
+            .single();
+          
+          if (buildData) {
+            build.build_data = buildData;
+          }
+        }
+        
         return build;
       })
     );

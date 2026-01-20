@@ -1,0 +1,160 @@
+/* FinalStep - Action-focused completion screen */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-lg);
+  overflow-y: auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 var(--space-sm);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* Action Button List - Horizontal buttons */
+.actionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 400px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+}
+
+.actionButton:active {
+  transform: translateX(0);
+}
+
+.actionEmoji {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.actionContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionLabel {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-white);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.actionDesc {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  display: block;
+}
+
+/* Arrow indicator */
+.actionArrow {
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.actionButton:hover .actionArrow {
+  color: rgba(255, 255, 255, 0.6);
+  transform: translateX(2px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+    justify-content: center;
+  }
+
+  .header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .actionGrid {
+    gap: var(--space-sm);
+    max-width: 100%;
+  }
+
+  .actionButton {
+    padding: var(--space-md) var(--space-lg);
+    gap: var(--space-md);
+  }
+
+  .actionEmoji {
+    font-size: 30px;
+  }
+
+  .actionLabel {
+    font-size: var(--font-size-base);
+  }
+
+  .actionDesc {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .actionButton {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .actionEmoji {
+    font-size: 26px;
+  }
+  
+  .actionLabel {
+    font-size: var(--font-size-sm);
+  }
+}
+

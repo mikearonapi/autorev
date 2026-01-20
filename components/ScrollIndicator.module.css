@@ -55,7 +55,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--sn-accent, var(--accent-primary, #ff4d00));
+  color: var(--sn-accent, var(--brand-teal));
   opacity: 0.9;
 }
 
@@ -71,7 +71,7 @@
 .mouse {
   width: clamp(12px, 0.6rem + 0.5vw, 16px);
   height: clamp(18px, 1rem + 0.8vw, 24px);
-  border: 1.5px solid var(--sn-accent, var(--accent-primary, #ff4d00));
+  border: 1.5px solid var(--sn-accent, var(--brand-teal));
   border-radius: 6px;
   position: relative;
   display: flex;
@@ -83,7 +83,7 @@
 .wheel {
   width: 2px;
   height: 4px;
-  background: var(--sn-accent, var(--accent-primary, #ff4d00));
+  background: var(--sn-accent, var(--brand-teal));
   border-radius: 1px;
   animation: scrollWheel 2s ease-in-out infinite;
 }
@@ -125,7 +125,7 @@
 }
 
 .chevron {
-  color: var(--sn-accent, var(--accent-primary, #ff4d00));
+  color: var(--sn-accent, var(--brand-teal));
   opacity: 0;
   animation: chevronBounce 2s ease-in-out infinite;
   width: 10px;
@@ -185,7 +185,7 @@
 
 /* Focus state for accessibility */
 .scrollIndicator:focus-visible {
-  outline: 2px solid var(--sn-accent, var(--accent-primary, #ff4d00));
+  outline: 2px solid var(--sn-accent, var(--brand-teal));
   outline-offset: 4px;
   border-radius: 8px;
 }

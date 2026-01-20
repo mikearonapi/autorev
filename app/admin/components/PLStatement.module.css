@@ -119,7 +119,7 @@
 }
 
 .netIncome .totalRow {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.1), rgba(var(--brand-purple-rgb), 0.1));
   font-size: 14px;
 }
 
@@ -143,8 +143,8 @@
 .breakdown {
   margin-top: 12px;
   padding: 12px;
-  background: rgba(239, 68, 68, 0.05);
-  border: 1px solid rgba(239, 68, 68, 0.1);
+  background: rgba(var(--brand-error-rgb), 0.05);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.1);
   border-radius: 8px;
 }
 

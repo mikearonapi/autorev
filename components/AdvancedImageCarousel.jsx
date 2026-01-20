@@ -88,7 +88,16 @@ export default function AdvancedImageCarousel({
     link.as = 'image';
     link.href = images[nextIdx];
     document.head.appendChild(link);
-    return () => link.parentNode?.removeChild(link);
+    return () => {
+      // Safe cleanup - check both link and parentNode exist
+      if (link && link.parentNode) {
+        try {
+          link.parentNode.removeChild(link);
+        } catch (e) {
+          // Ignore - element may have been removed by HMR or browser extension
+        }
+      }
+    };
   }, [currentIndex, images]);
 
   if (!images || images.length === 0) {

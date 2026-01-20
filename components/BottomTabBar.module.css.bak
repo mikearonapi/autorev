@@ -1,0 +1,267 @@
+/* ==========================================================================
+   BottomTabBar - Native iOS/Android Style Tab Navigation
+   
+   GRAVL-Inspired Glass Design:
+   - Frosted glass transparency with strong blur
+   - Clean, minimal icons
+   - Generous touch targets (56px)
+   - Subtle active state with accent color
+   - Safe area support for notched devices
+   - Premium depth with subtle shadows
+   ========================================================================== */
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  
+  /* Prevent horizontal overflow */
+  width: 100%;
+  max-width: 100vw;
+  max-width: 100dvw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  
+  /* Consistent frosted look - solid base with white frost overlay */
+  background: 
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.08) 100%
+    ),
+    var(--color-bg-base);
+  
+  /* Glass edge highlight */
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  
+  /* Subtle depth shadow */
+  box-shadow: 
+    0 -4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  
+  /* Safe area padding - frosted background extends through this */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Extend solid background below tab bar to prevent any content showing beneath */
+.tabBar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Extra tall to cover any possible overscroll/elastic bounce */
+  height: 200px;
+  transform: translateY(100%);
+  /* Solid background - matches tab bar base color */
+  background: var(--color-bg-base);
+  z-index: -1;
+  /* Prevent any interaction with this extension */
+  pointer-events: none;
+}
+
+.tabContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  
+  /* Generous touch target - 56px minimum */
+  min-width: 56px;
+  min-height: 56px;
+  padding: 8px 12px;
+  
+  /* Reset */
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  
+  /* Default state - more visible inactive color */
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 0.2s ease, transform 0.15s ease;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* Touch feedback */
+  -webkit-tap-highlight-color: transparent;
+  
+  position: relative;
+}
+
+.tab:active {
+  transform: scale(0.92);
+}
+
+.tabActive {
+  color: var(--color-accent-lime);
+}
+
+.tabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.tabIcon svg {
+  width: 24px;
+  height: 24px;
+  transition: stroke-width 0.15s ease;
+}
+
+/* AL Mascot Icon */
+.alMascot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  /* Subtle ring around mascot */
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.alMascotActive {
+  opacity: 1;
+  border-color: var(--color-accent-lime);
+  box-shadow: var(--shadow-lime);
+}
+
+.tabLabel {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.tabActive .tabLabel {
+  font-weight: 600;
+}
+
+/* Active indicator - subtle bar at top */
+.activeIndicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-accent-lime);
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    width: 0;
+  }
+  to {
+    opacity: 1;
+    width: 20px;
+  }
+}
+
+/* Hover state for non-touch devices */
+@media (hover: hover) {
+  .tab:hover:not(.tabActive) {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* Hide on desktop - use header nav instead */
+@media (min-width: 1024px) {
+  .tabBar {
+    display: none;
+  }
+}
+
+/* Tablet: slightly larger touch targets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tabContainer {
+    max-width: 600px;
+    padding: 10px 0;
+  }
+  
+  .tab {
+    min-width: 72px;
+    min-height: 60px;
+    gap: 6px;
+  }
+  
+  .tabIcon svg {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .tabLabel {
+    font-size: 11px;
+  }
+}
+
+/* Small phones: tighter layout */
+@media (max-width: 374px) {
+  .tabContainer {
+    padding: 6px 0;
+  }
+  
+  .tab {
+    min-width: 48px;
+    padding: 6px 8px;
+    gap: 2px;
+  }
+  
+  .tabIcon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .tabLabel {
+    font-size: 9px;
+  }
+}
+
+/* Landscape orientation: horizontal layout */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tabBar {
+    padding-bottom: 0;
+  }
+  
+  .tabContainer {
+    padding: 4px 0;
+  }
+  
+  .tab {
+    flex-direction: row;
+    gap: 6px;
+    min-height: 44px;
+    padding: 6px 16px;
+  }
+  
+  .tabLabel {
+    font-size: 11px;
+  }
+  
+  .activeIndicator {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

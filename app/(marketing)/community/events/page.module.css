@@ -63,9 +63,9 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: var(--space-xs) var(--space-sm);
-  background: rgba(255, 77, 0, 0.15);
+  background: rgba(16, 185, 129, 0.15);
   color: var(--sn-gold);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-sm);
 }
@@ -714,5 +714,5 @@
 
 .upgradeBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 77, 110, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-teal-dark-rgb), 0.3);
 }

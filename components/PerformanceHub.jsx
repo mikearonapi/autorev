@@ -980,11 +980,19 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   // Owned vehicles for "Apply to My Vehicle" feature
   const { vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
   
-  // Find user's vehicles that match this car
-  const matchingVehicles = useMemo(() => 
-    getVehiclesByCarSlug(car.slug),
-    [getVehiclesByCarSlug, car.slug]
-  );
+  // Find user's vehicles that match this car, enriched with build data for accurate HP gain
+  const matchingVehicles = useMemo(() => {
+    const vehicles = getVehiclesByCarSlug(car.slug);
+    // Enrich each vehicle with its active build data for accurate HP gain display
+    return vehicles.map(vehicle => {
+      const activeBuild = vehicle.activeBuildId ? getBuildById(vehicle.activeBuildId) : null;
+      return {
+        ...vehicle,
+        // Use build's HP gain if available (more accurate), otherwise fall back to cached value
+        displayHpGain: activeBuild?.totalHpGain ?? vehicle.totalHpGain ?? 0,
+      };
+    });
+  }, [getVehiclesByCarSlug, car.slug, getBuildById]);
   const hasMatchingVehicle = matchingVehicles.length > 0;
 
   // Initialize to stock - users can select their preferred package
@@ -1842,7 +1850,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                             </span>
                             {vehicle.isModified && (
                               <span className={styles.applyVehicleModified}>
-                                Modified • +{vehicle.totalHpGain} HP
+                                Modified • +{vehicle.displayHpGain} HP
                               </span>
                             )}
                           </div>

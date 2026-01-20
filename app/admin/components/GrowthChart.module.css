@@ -113,7 +113,7 @@
 .dotActive {
   opacity: 1;
   transform: translateX(-50%) scale(1.2);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 8px rgba(var(--brand-blue-rgb), 0.6);
 }
 
 .xAxis {

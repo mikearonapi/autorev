@@ -483,10 +483,10 @@ function CarCatalogContent() {
                 }}
                 className={styles.askAlBtn}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
                 </svg>
-                Ask AL to Help
+                Ask AL
               </button>
               <button 
                 onClick={() => openCarRequest(`I was searching for "${searchQuery}" but couldn't find it.`)}

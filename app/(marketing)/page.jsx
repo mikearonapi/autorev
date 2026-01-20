@@ -1,135 +1,196 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import IPhoneFrame from '@/components/IPhoneFrame';
-import { ONBOARDING_IMAGES } from '@/lib/images';
+import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
 import styles from './page.module.css';
 
 /**
- * AutoRev Homepage - Premium Automotive Build Platform
- * 
- * Brand: Performance Orange (#ff4d00) + Tech Blue (#00d4ff) on Carbon Black
- * See: /docs/BRAND.md for full brand guidelines
+ * AutoRev Homepage - GRAVL-Inspired Design
  * 
  * Structure:
- * 1. Hero - App showcase with phone mockups
- * 2. Features Strip - Quick stats (300+ cars, 700+ parts, AI)
- * 3. Highlight Card - Value proposition
- * 4. FAQ Accordion - Common questions
- * 5. Why AutoRev - 4 core features (Garage, Data, Community, AL)
- * 6. Final CTA
- * 7. Footer
+ * 1. Hero - Logo centered, punchy headline, 3-phone display
+ * 2. Feature sections alternating text + single phone
+ * 3. Why Use AutoRev section
+ * 4. Final CTA
+ * 5. Footer
  * 
- * Core Focus: Build, upgrade, and optimize car performance
+ * All images served from Vercel Blob CDN for optimal page speed
  */
 
-// FAQ Data
-const FAQ_ITEMS = [
+// Feature sections data - 7 sections in order
+const FEATURES = [
+  // 1. My Garage - Your car cards and ownership
   {
-    id: 'free',
-    question: 'START FOR FREE',
-    answer: 'Start building for free, no credit card required. Explore the platform, browse cars, and plan your first build without any commitment.'
+    id: 'my-garage',
+    title: 'YOUR GARAGE',
+    titleAccent: 'YOUR COMMAND CENTER',
+    description: 'Add the cars you own and love. Track specs, mileage, and ownership history. Your garage is always ready when you are.',
+    screen: SITE_DESIGN_IMAGES.garageOverview  // Car card with stats
   },
+  // 2. My Garage Upgrades / Parts
   {
-    id: 'garage',
-    question: 'WHAT CAN I DO IN MY GARAGE?',
-    answer: 'Track cars you own with VIN decoding, get variant-specific specs and fluid capacities, log maintenance, monitor recalls, and track market values. Your garage is your personal command center for every vehicle you own.'
+    id: 'garage-upgrades',
+    title: 'PLAN YOUR BUILD',
+    titleAccent: 'PARTS THAT FIT',
+    description: 'Curated upgrade paths for track, street, or daily driving. See exactly what each mod delivers — power gains, real-world feel, and compatibility.',
+    screen: SITE_DESIGN_IMAGES.tuningOverview  // Upgrade categories
   },
+  // 3. My Garage Performance
   {
-    id: 'data',
-    question: 'WHERE DOES THE DATA COME FROM?',
-    answer: 'Our database includes 300+ sports cars with verified specs, 700+ parts with real fitment data, dyno results, lap times, and expert video reviews. We aggregate data from manufacturer specs, enthusiast communities, and performance shops.'
+    id: 'garage-performance',
+    title: 'KNOW YOUR NUMBERS',
+    titleAccent: 'PERFORMANCE METRICS',
+    description: 'See calculated 0-60, quarter mile, and experience scores. Understand exactly how your mods translate to real-world performance.',
+    screen: SITE_DESIGN_IMAGES.performanceMetrics  // Performance metrics experience scores
   },
+  // 4. My Data Dyno
+  {
+    id: 'data-dyno',
+    title: 'VIRTUAL DYNO',
+    titleAccent: 'SEE YOUR POWER',
+    description: 'Visualize estimated HP and torque curves based on your modifications. Track gains from each upgrade and log real dyno results.',
+    screen: SITE_DESIGN_IMAGES.garageData  // Virtual dyno chart
+  },
+  // 5. My Data Track
+  {
+    id: 'data-track',
+    title: 'LAP TIME ESTIMATOR',
+    titleAccent: 'TRACK YOUR TIMES',
+    description: 'Predict lap times at popular tracks based on your build. Log real sessions and compare your progress over time.',
+    screen: SITE_DESIGN_IMAGES.lapTimeEstimator  // Lap time estimator
+  },
+  // 6. Community
+  {
+    id: 'community',
+    title: 'COMMUNITY BUILDS',
+    titleAccent: 'REAL ENTHUSIASTS',
+    description: 'Get inspiration from real builds. Share your progress, find local events, and connect with owners who share your passion.',
+    screen: SITE_DESIGN_IMAGES.communityFeed  // Community builds feed
+  },
+  // 7. AI AL
   {
     id: 'al',
-    question: 'HOW DOES AL WORK?',
-    answer: 'AL is your AI co-pilot with access to our entire database. Ask about specs, reliability issues, mod recommendations, or maintenance schedules. AL searches our data and expert reviews to give you accurate, car-specific answers.'
+    title: 'ASK AL ANYTHING',
+    titleAccent: 'YOUR AI EXPERT',
+    description: 'No more hours of forum searching. AL knows your car, your mods, and your goals. Get instant answers to any question.',
+    screen: SITE_DESIGN_IMAGES.alChatResponse  // AL chat response
   }
 ];
 
-// Chevron Icon
-const ChevronIcon = ({ isOpen }) => (
-  <svg 
-    className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2"
-  >
-    <polyline points="6 9 12 15 18 9" />
-  </svg>
-);
+// Sample questions for typing animation - complex questions that showcase AL's depth
+const AL_SAMPLE_QUESTIONS = [
+  "What wheel fitment can I run without rubbing?",
+  "If I upgrade my fuel pump, do I need a tune?",
+  "What are the common failure points on this engine?",
+  "What torque specs and tools do I need for this job?",
+  "Can I run E85 with my current fuel system?",
+  "What's the best mod order for a $5k budget?",
+];
 
-// Download Icon
-const DownloadIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-);
+// Icons
+const Icons = {
+  arrow: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  ),
+  camera: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  ),
+  arrowUp: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+    </svg>
+  )
+};
 
 export default function Home() {
   const authModal = useAuthModal();
-  const [openFaq, setOpenFaq] = useState('free');
+  const [typedText, setTypedText] = useState('');
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
   
-  const toggleFaq = (id) => {
-    setOpenFaq(openFaq === id ? null : id);
-  };
+  // Typing animation effect
+  useEffect(() => {
+    const currentQuestion = AL_SAMPLE_QUESTIONS[questionIndex];
+    let charIndex = 0;
+    let timeout;
+    
+    if (isTyping) {
+      // Type characters one by one
+      const typeChar = () => {
+        if (charIndex <= currentQuestion.length) {
+          setTypedText(currentQuestion.slice(0, charIndex));
+          charIndex++;
+          timeout = setTimeout(typeChar, 50 + Math.random() * 30); // Natural typing speed
+        } else {
+          // Pause at end of question, then clear and move to next
+          timeout = setTimeout(() => {
+            setIsTyping(false);
+          }, 2000);
+        }
+      };
+      typeChar();
+    } else {
+      // Clear text and move to next question
+      timeout = setTimeout(() => {
+        setTypedText('');
+        setQuestionIndex((prev) => (prev + 1) % AL_SAMPLE_QUESTIONS.length);
+        setIsTyping(true);
+      }, 500);
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [questionIndex, isTyping]);
   
   return (
-    <div className={styles.landingPage}>
-      {/* Minimal Header */}
-      <header className={styles.minimalHeader}>
-        <div className={styles.logo}>
-          <span className={styles.logoText}>Auto</span>
-          <span className={styles.logoAccent}>Rev</span>
-        </div>
-        <button 
-          className={styles.loginBtn}
-          onClick={() => authModal.openSignIn()}
-        >
-          Log In
-        </button>
-      </header>
-
+    <div className={styles.page}>
       {/* Hero Section */}
-      <main className={styles.hero}>
-        {/* Headline - GRAVL-style mixed accent/muted */}
+      <section className={styles.hero}>
+        {/* Centered Logo */}
+        <div className={styles.logo}>
+          <span className={styles.logoAuto}>AUTO</span>
+          <span className={styles.logoRev}>REV</span>
+        </div>
+
+        {/* Punchy Headline - 2 colors only: white and lime */}
         <h1 className={styles.headline}>
-          <span className={styles.headlineAccent}>TAKE</span> <span className={styles.headlineMuted}>YOUR</span>
+          <span className={styles.headlineAccent}>OPTIMIZE</span>
+          <span className={styles.headlineWhite}> YOUR CAR,</span>
           <br />
-          <span className={styles.headlineAccent}>BUILDS</span> <span className={styles.headlineMuted}>TO THE</span>
-          <br />
-          <span className={styles.headlineAccent}>NEXT LEVEL</span>
+          <span className={styles.headlineAccent}>MAXIMIZE</span>
+          <span className={styles.headlineWhite}> YOUR GAINS</span>
         </h1>
 
-        {/* Subheadline - Softer gray */}
-        <p className={styles.subheadline}>
-          Get faster, build smarter, or track your mods with personalized tuning guides that adapt as you progress.
+        {/* Subtext */}
+        <p className={styles.subtext}>
+          Research mods for your car, compare different brands, find deals, 
+          get straight answers — all in one app built for speed.
         </p>
 
-        {/* Single CTA - Clean like GRAVL */}
+        {/* CTA Button - slimmer */}
         <button 
-          className={styles.primaryCta}
-          onClick={() => authModal.openSignUp()}
+          className={styles.ctaButton}
+          onClick={() => authModal.openSignIn()}
         >
-          GET STARTED
+          LOGIN / GET STARTED FREE
         </button>
 
-        {/* Phone Mockup Section - 3 phones fanned like GRAVL */}
-        <div className={styles.phoneStack}>
-          {/* Back Left Phone */}
-          <div className={`${styles.stackedPhone} ${styles.phoneBackLeft}`}>
+        {/* 3 iPhone Display - smaller phones */}
+        <div className={styles.phoneDisplay}>
+          {/* Left Phone (behind) - Upgrade Recommendations */}
+          <div className={styles.phoneLeft}>
             <IPhoneFrame size="small">
               <Image
-                src={ONBOARDING_IMAGES.garageDetails}
-                alt="AutoRev Garage Details"
+                src={SITE_DESIGN_IMAGES.heroLeft}
+                alt="Upgrade Recommendations"
                 fill
                 className={styles.screenImage}
                 priority
@@ -137,12 +198,12 @@ export default function Home() {
             </IPhoneFrame>
           </div>
 
-          {/* Center Phone (Front) */}
-          <div className={`${styles.stackedPhone} ${styles.phoneFront}`}>
+          {/* Center Phone (front) - HERO: Most compelling image */}
+          <div className={styles.phoneCenter}>
             <IPhoneFrame size="small">
               <Image
-                src={ONBOARDING_IMAGES.tuningShopOverview}
-                alt="AutoRev Tuning Shop"
+                src={SITE_DESIGN_IMAGES.heroCenter}
+                alt="Your Garage - Track Your Build"
                 fill
                 className={styles.screenImage}
                 priority
@@ -150,197 +211,161 @@ export default function Home() {
             </IPhoneFrame>
           </div>
 
-          {/* Back Right Phone */}
-          <div className={`${styles.stackedPhone} ${styles.phoneBackRight}`}>
+          {/* Right Phone (behind) - AL Chat */}
+          <div className={styles.phoneRight}>
             <IPhoneFrame size="small">
               <Image
-                src={ONBOARDING_IMAGES.aiAlResponseMods}
-                alt="AutoRev AL Assistant"
+                src={SITE_DESIGN_IMAGES.heroRight}
+                alt="AL - Your AI Car Expert"
                 fill
                 className={styles.screenImage}
                 priority
               />
             </IPhoneFrame>
           </div>
-        </div>
-      </main>
-
-      {/* Highlight Card - Value Prop */}
-      <section className={styles.highlightSection}>
-        <div className={styles.highlightCard}>
-          <p className={styles.highlightSubtext}>Build with confidence</p>
-          <h2 className={styles.highlightHeadline}>
-            <span className={styles.highlightAccent}>SMARTER BUILDS</span>
-            <br />
-            THAT LEAD TO RESULTS
-          </h2>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className={styles.faqSection}>
-        {FAQ_ITEMS.map((item) => (
-          <div key={item.id} className={styles.faqItem}>
-            <button 
-              className={styles.faqQuestion}
-              onClick={() => toggleFaq(item.id)}
-              aria-expanded={openFaq === item.id}
-            >
-              <span className={styles.faqQuestionText}>{item.question}</span>
-              <ChevronIcon isOpen={openFaq === item.id} />
+      {/* AL Introduction Section */}
+      <section className={styles.alIntro}>
+        <div className={styles.alAvatar}>
+          <Image
+            src={UI_IMAGES.alMascotFull}
+            alt="AL - Your AI Assistant"
+            width={80}
+            height={80}
+            className={styles.alAvatarImage}
+          />
+        </div>
+        <p className={styles.alGreeting}>
+          Hi, I'm <span className={styles.alName}>AL</span>, your AutoRev AI.
+        </p>
+        <p className={styles.alTagline}>
+          Tony Stark had Jarvis. <span className={styles.alHighlight}>You have AL.</span>
+        </p>
+        
+        {/* Simulated Input Box */}
+        <div className={styles.alInputDemo}>
+          <div className={styles.alInputWrapper}>
+            <button className={styles.alAttachmentBtn} aria-label="Add attachment">
+              <Icons.camera />
             </button>
-            <div 
-              className={`${styles.faqAnswer} ${openFaq === item.id ? styles.faqAnswerOpen : ''}`}
-            >
-              <p>{item.answer}</p>
+            <div className={styles.alInputText}>
+              {typedText || <span className={styles.alInputPlaceholder}>Ask AL anything...</span>}
+              <span className={styles.alCursor} />
             </div>
+            <button 
+              className={`${styles.alSendBtn} ${typedText ? styles.alSendBtnActive : ''}`} 
+              aria-label="Send"
+            >
+              <Icons.arrowUp />
+            </button>
           </div>
-        ))}
+        </div>
+        
+        {/* AL Data Access List */}
+        <div className={styles.alDataAccess}>
+          <p className={styles.alDataLabel}>AL has instant access to:</p>
+          <ul className={styles.alDataList}>
+            <li>Platform-specific specs & known issues</li>
+            <li>Modification compatibility & gains</li>
+            <li>Torque specs & service intervals</li>
+            <li>Real dyno results & owner experiences</li>
+            <li>Part fitment & current pricing</li>
+          </ul>
+        </div>
       </section>
 
-      {/* Why AutoRev Section */}
-      <section className={styles.whySection}>
-        <h2 className={styles.whySectionTitle}>
-          <span className={styles.highlightAccent}>WHY USE</span> AUTOREV
+      {/* Feature Card Section */}
+      <section className={styles.featureCard}>
+        <p className={styles.featureCardLabel}>Built for enthusiasts who want more</p>
+        <h2 className={styles.featureCardTitle}>
+          <span className={styles.featureCardBold}>SMARTER BUILDS</span>
+          <br />
+          THAT LEAD TO RESULTS
         </h2>
-
-        {/* Feature 1: Your Garage */}
-        <div className={styles.featureBlock}>
-          <div className={styles.featureContent}>
-            <h3 className={styles.featureTitle}>
-              <span className={styles.highlightAccent}>YOUR PERSONAL GARAGE</span>
-            </h3>
-            <p className={styles.featureDescription}>
-              Add vehicles you own or dream about. Track favorites, save research, 
-              and keep everything organized. Your garage is your home base for 
-              planning builds, tracking maintenance, and monitoring your car's health.
-            </p>
-          </div>
-          <div className={styles.featurePhones}>
-            <IPhoneFrame size="small">
-              <Image
-                src={ONBOARDING_IMAGES.garageDetails}
-                alt="Your Garage - Vehicle management"
-                fill
-                className={styles.screenImage}
-                loading="lazy"
-              />
-            </IPhoneFrame>
-          </div>
-        </div>
-
-        {/* Feature 2: Garage Data */}
-        <div className={styles.featureBlock}>
-          <div className={styles.featureContent}>
-            <h3 className={styles.featureTitle}>
-              <span className={styles.highlightAccent}>REAL DATA</span> FOR REAL BUILDS
-            </h3>
-            <p className={styles.featureDescription}>
-              VIN decode to get your exact variant. Access fluid capacities, 
-              torque specs, and maintenance schedules. Track market values, 
-              view recall alerts, and log every service. Data-driven ownership.
-            </p>
-          </div>
-          <div className={styles.featurePhones}>
-            <IPhoneFrame size="small">
-              <Image
-                src={ONBOARDING_IMAGES.garageReference}
-                alt="Garage Data - Specs and maintenance"
-                fill
-                className={styles.screenImage}
-                loading="lazy"
-              />
-            </IPhoneFrame>
-          </div>
-        </div>
-
-        {/* Feature 3: Community */}
-        <div className={styles.featureBlock}>
-          <div className={styles.featureContent}>
-            <h3 className={styles.featureTitle}>
-              <span className={styles.highlightAccent}>JOIN THE COMMUNITY</span>
-            </h3>
-            <p className={styles.featureDescription}>
-              Share your builds, discover events, and connect with enthusiasts. 
-              Find Cars & Coffee meets, track days, and car shows near you. 
-              Get inspired by what others are building.
-            </p>
-          </div>
-          <div className={styles.featurePhones}>
-            <IPhoneFrame size="small">
-              <Image
-                src={ONBOARDING_IMAGES.communityEventsList}
-                alt="Community - Builds and events"
-                fill
-                className={styles.screenImage}
-                loading="lazy"
-              />
-            </IPhoneFrame>
-          </div>
-        </div>
-
-        {/* Feature 4: AI AL */}
-        <div className={styles.featureBlock}>
-          <div className={styles.featureContent}>
-            <h3 className={styles.featureTitle}>
-              <span className={styles.highlightAccent}>ASK AL</span> ANYTHING
-            </h3>
-            <p className={styles.featureDescription}>
-              Your AI co-pilot with full access to specs, known issues, 
-              expert reviews, and mod recommendations. Ask about reliability, 
-              compare options, or get build advice. AL learns from our entire database.
-            </p>
-          </div>
-          <div className={styles.featurePhones}>
-            <IPhoneFrame size="small">
-              <Image
-                src={ONBOARDING_IMAGES.aiAlResponseAnalysis}
-                alt="AL AI Assistant"
-                fill
-                className={styles.screenImage}
-                loading="lazy"
-              />
-            </IPhoneFrame>
-          </div>
-        </div>
       </section>
 
-      {/* Second Highlight Card */}
-      <section className={styles.highlightSection}>
-        <div className={styles.highlightCard}>
-          <p className={styles.highlightSubtext}>Plan. Build. Optimize.</p>
-          <h2 className={styles.highlightHeadline}>
-            <span className={styles.highlightAccent}>BUILD MORE</span> AND
-            <br />
-            GET <span className={styles.highlightAccent}>RESULTS</span>
-          </h2>
-        </div>
-      </section>
+      {/* Feature Sections - Alternating text and phone */}
+      {FEATURES.map((feature, index) => (
+        <section key={feature.id} className={styles.featureSection}>
+          <div className={styles.featureText}>
+            <h3 className={styles.featureTitle}>
+              <span className={styles.featureTitleAccent}>{feature.title}</span>
+              {feature.titleAccent && (
+                <>
+                  <br />
+                  <span className={styles.featureTitleWhite}>{feature.titleAccent}</span>
+                </>
+              )}
+            </h3>
+            <p className={styles.featureDescription}>{feature.description}</p>
+          </div>
+          <div className={styles.featurePhone}>
+            <IPhoneFrame size="small">
+              <Image
+                src={feature.screen}
+                alt={feature.title}
+                fill
+                className={styles.screenImage}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+            </IPhoneFrame>
+          </div>
+        </section>
+      ))}
 
-      {/* Final CTA */}
-      <section className={styles.finalCta}>
-        <p className={styles.finalCtaSubtext}>100% free to start, no credit card needed</p>
+      {/* Final CTA Section */}
+      <section className={styles.finalSection}>
+        <h2 className={styles.finalHeadline}>
+          STOP GUESSING.
+          <br />
+          <span className={styles.finalAccent}>START BUILDING.</span>
+        </h2>
+        <p className={styles.finalSubtext}>
+          100% free to start. No credit card required.
+        </p>
         <button 
-          className={styles.finalCtaButton}
+          className={styles.finalCta}
           onClick={() => authModal.openSignUp()}
         >
-          GET STARTED <DownloadIcon />
+          GET STARTED FREE <Icons.arrow />
         </button>
       </section>
 
       {/* Footer */}
       <footer className={styles.footer}>
+        {/* Social Icons */}
+        <div className={styles.footerSocial}>
+          <a 
+            href="https://www.instagram.com/autorev.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.socialIcon}
+            aria-label="Follow us on Instagram"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+          <a 
+            href="https://www.facebook.com/profile.php?id=61585868463925" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.socialIcon}
+            aria-label="Follow us on Facebook"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+        </div>
+
         <div className={styles.footerLinks}>
           <div className={styles.footerSection}>
             <h4 className={styles.footerSectionTitle}>INFO</h4>
             <Link href="/terms">Terms & Conditions</Link>
             <Link href="/privacy">Privacy Policy</Link>
-          </div>
-          <div className={styles.footerSection}>
-            <h4 className={styles.footerSectionTitle}>EXPLORE</h4>
-            <Link href="/browse-cars">Browse Cars</Link>
-            <Link href="/encyclopedia">Encyclopedia</Link>
-            <Link href="/community/events">Events</Link>
           </div>
           <div className={styles.footerSection}>
             <h4 className={styles.footerSectionTitle}>CONTACT</h4>

@@ -77,10 +77,10 @@
   border-left: 3px solid;
 }
 
-.alertItem.critical { border-color: var(--brand-error); background: rgba(239, 68, 68, 0.1); }
+.alertItem.critical { border-color: var(--brand-error); background: rgba(var(--brand-error-rgb), 0.1); }
 .alertItem.high { border-color: #f97316; background: rgba(249, 115, 22, 0.08); }
-.alertItem.medium { border-color: var(--brand-warning); background: rgba(245, 158, 11, 0.08); }
-.alertItem.low { border-color: var(--brand-blue); background: rgba(59, 130, 246, 0.08); }
+.alertItem.medium { border-color: var(--brand-warning); background: rgba(var(--brand-warning-rgb), 0.08); }
+.alertItem.low { border-color: var(--brand-blue); background: rgba(var(--brand-blue-rgb), 0.08); }
 
 .alertIcon {
   font-size: 12px;
@@ -195,9 +195,9 @@
   text-transform: uppercase;
 }
 
-.severityBadge.blocking { background: rgba(239, 68, 68, 0.2); color: var(--brand-error); }
+.severityBadge.blocking { background: rgba(var(--brand-error-rgb), 0.2); color: var(--brand-error); }
 .severityBadge.major { background: rgba(249, 115, 22, 0.2); color: #f97316; }
-.severityBadge.minor { background: rgba(245, 158, 11, 0.2); color: var(--brand-warning); }
+.severityBadge.minor { background: rgba(var(--brand-warning-rgb), 0.2); color: var(--brand-warning); }
 .severityBadge.unknown { background: rgba(100, 116, 139, 0.2); color: var(--brand-text-tertiary); }
 
 .errorStatus {
@@ -268,10 +268,10 @@
   text-transform: uppercase;
 }
 
-.jobStatus.completed { background: rgba(34, 197, 94, 0.2); color: var(--brand-success); }
-.jobStatus.pending { background: rgba(245, 158, 11, 0.2); color: var(--brand-warning); }
-.jobStatus.failed { background: rgba(239, 68, 68, 0.2); color: var(--brand-error); }
-.jobStatus.in_progress { background: rgba(59, 130, 246, 0.2); color: var(--brand-blue); }
+.jobStatus.completed { background: rgba(var(--brand-success-rgb), 0.2); color: var(--brand-success); }
+.jobStatus.pending { background: rgba(var(--brand-warning-rgb), 0.2); color: var(--brand-warning); }
+.jobStatus.failed { background: rgba(var(--brand-error-rgb), 0.2); color: var(--brand-error); }
+.jobStatus.in_progress { background: rgba(var(--brand-blue-rgb), 0.2); color: var(--brand-blue); }
 
 .jobType {
   color: var(--admin-text-secondary, #94a3b8);

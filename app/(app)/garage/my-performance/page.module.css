@@ -47,18 +47,14 @@
   margin-bottom: 20px;
 }
 
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .performanceTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: var(--brand-text-primary);
+  color: var(--brand-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin: 0;
-}
-
-.performanceTitle svg {
-  color: var(--brand-gold, var(--brand-gold));
 }
 
 .buildStats {
@@ -67,14 +63,15 @@
   gap: 8px;
 }
 
+/* Cost badge uses neutral styling (not a warning or positive) */
 .costBadge {
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
-  background: rgba(212, 168, 75, 0.15);
-  border: 1px solid rgba(212, 168, 75, 0.3);
-  color: var(--brand-gold, var(--brand-gold));
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--brand-text-primary);
 }
 
 .costVerified {
@@ -84,15 +81,16 @@
 }
 
 .costHigh {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
   color: var(--brand-blue, var(--brand-blue));
 }
 
+/* Estimated cost uses muted styling */
 .costEstimated {
-  background: rgba(212, 168, 75, 0.15);
-  border-color: rgba(212, 168, 75, 0.3);
-  color: var(--brand-gold, var(--brand-gold));
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .performanceMetrics {
@@ -117,11 +115,12 @@
   align-items: center;
 }
 
+/* Body content is SMALLER than section headers */
 .metricLabel {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
@@ -136,7 +135,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -208,13 +207,68 @@
   padding: 20px;
 }
 
+/* Section header row with title + Ask AL button - matches Specs page */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 12px;
+  gap: 8px;
+}
+
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .sectionTitle {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--brand-teal);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 16px 0;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+/* Ask AL CTA button - LIME per brand guidelines
+   MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
+.askAlBtn {
+  /* Fixed dimensions for consistency */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  
+  /* Appearance */
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #0d1b2a);
+  border: none;
+  border-radius: 14px;
+  
+  /* Typography - use fixed px for consistency */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  
+  /* Layout */
+  gap: 4px;
+  flex-shrink: 0;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.askAlBtn:hover {
+  background: var(--brand-lime-dark, #bfe600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.askAlBtn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 /* ===========================================
@@ -238,8 +292,9 @@
   align-items: center;
 }
 
+/* Body content - SMALLER than section headers */
 .scoreLabel {
-  font-size: 14px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
 }
@@ -248,7 +303,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -293,7 +348,7 @@
 .ctaButton:hover {
   transform: translateY(-2px);
   background: var(--brand-lime-dark, #bfe600);
-  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.3);
 }
 
 /* ===========================================

@@ -1,6 +1,6 @@
 # AutoRev Brand Guidelines
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Last Updated:** January 2026  
 **Design Philosophy:** Mobile-First, Premium Dark Theme, Performance-Focused
 
@@ -18,54 +18,204 @@
 
 ## Color System
 
-### Core Brand Colors
+### Design Philosophy
+
+AutoRev uses a **4-color accent system** with clear, non-overlapping semantic purposes. Each color has ONE job — this creates instant user comprehension and a cohesive visual language.
+
+### Background Colors
 
 | Role | Hex | CSS Variable | Usage |
 |------|-----|--------------|-------|
 | **Background Primary** | `#0d1b2a` | `--brand-bg-primary` | Main page backgrounds, app shell |
-| **Background Secondary** | `#1b263b` | `--brand-bg-secondary` | Cards, elevated surfaces |
-| **Primary Text** | `#ffffff` | `--brand-text-primary` | Headlines, body text, important content |
-| **Secondary Text** | `#94a3b8` | `--brand-text-secondary` | Labels, descriptions, metadata (Slate-400) |
-| **Tertiary Text** | `#64748b` | `--brand-text-tertiary` | Disabled text, placeholders (Slate-500) |
+| **Background Secondary** | `#1b263b` | `--brand-bg-elevated` | Cards, elevated surfaces |
+| **Card Background** | `rgba(255,255,255,0.04)` | `--brand-bg-card` | Card fills, subtle surfaces |
+| **Card Hover** | `rgba(255,255,255,0.08)` | `--brand-bg-card-hover` | Interactive card states |
 
-### Accent Colors
+> **RULE:** Never use pure black (`#000000`). Our navy creates depth and premium feel.
 
-| Role | Hex | CSS Variable | Usage |
-|------|-----|--------------|-------|
-| **Lime Yellow (PRIMARY CTA)** | `#d4ff00` | `--brand-lime` | Primary buttons, headlines, emphasized text, badges |
-| **Teal/Emerald (Improvements)** | `#10b981` | `--brand-teal` | Gains, improvements, selections, active filters, positive changes |
-| **Blue (Baseline)** | `#3b82f6` | `--brand-blue` | Stock values, baseline data, original specs |
-| **Gold (Labels/Accent)** | `#d4a84b` | `--brand-gold` | Category labels, secondary buttons, brand accent on dark |
-
-> **IMPORTANT:** Lime (#d4ff00) is our PRIMARY CTA color. Use it for all main action buttons across the site.
-
-### Semantic Colors
+### Text Colors
 
 | Role | Hex | CSS Variable | Usage |
 |------|-----|--------------|-------|
-| **Success** | `#22c55e` | `--brand-success` | Completed actions, positive feedback |
-| **Warning** | `#f59e0b` | `--brand-warning` | Caution states, alerts |
-| **Error** | `#ef4444` | `--brand-error` | Errors, destructive actions |
-| **Info** | `#3b82f6` | `--brand-info` | Informational messages |
+| **Primary** | `#ffffff` | `--brand-text-primary` | Headlines, body text, important content |
+| **Secondary** | `#94a3b8` | `--brand-text-secondary` | Labels, descriptions, metadata |
+| **Tertiary** | `#64748b` | `--brand-text-tertiary` | Subtle text, placeholders |
+| **Muted** | `#475569` | `--brand-text-muted` | Disabled text, very subtle elements |
+
+### Accent Colors (The Core 4)
+
+| Color | Hex | Purpose | Think of it as... |
+|-------|-----|---------|-------------------|
+| **Lime** | `#d4ff00` | USER ACTIONS | "Do this" |
+| **Teal** | `#10b981` | POSITIVE DATA | "This is good" |
+| **Blue** | `#3b82f6` | BASELINE DATA | "This is stock" |
+| **Amber** | `#f59e0b` | CAUTION | "Watch out" (use sparingly) |
+
+---
+
+### LIME (`#d4ff00`) — User Actions & Emphasis
+
+**Use lime when you want the user to DO something.**
+
+✅ **USE FOR:**
+- Primary CTA buttons ("Start Build", "Save", "Upgrade Now")
+- Primary navigation elements that drive action
+- Emphasized headlines that announce features
+- Premium/highlighted badges (sparingly)
+- Hover states on secondary buttons
+- Focus states on inputs
+
+❌ **NEVER USE FOR:**
+- Data display (use teal or blue)
+- Status indicators
+- Body text
+- Large background areas
+
+```css
+/* Lime Button */
+.btn-primary {
+  background: #d4ff00;
+  color: #0a1628;
+}
+
+/* Lime Focus State */
+:focus-visible {
+  outline: 2px solid #d4ff00;
+  outline-offset: 2px;
+}
+```
+
+---
+
+### TEAL (`#10b981`) — Positive Data & Improvements
+
+**Use teal when showing something GOOD happened to data.**
+
+✅ **USE FOR:**
+- HP/torque gains (`+99 HP`)
+- Upgrade counts ("4 upgrades")
+- Performance improvements
+- Modified/upgraded values in comparisons
+- Active selections (filter pills, tabs)
+- Success confirmations
+- Positive status badges
+
+❌ **NEVER USE FOR:**
+- User action buttons (use lime)
+- Baseline/stock data (use blue)
+- Warnings or cautions
+- Decorative labels
+
+```css
+/* Teal for improvements */
+.stat-improved { color: #10b981; }
+.badge-gain { 
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+/* Teal for active states */
+.filter-active {
+  background: #10b981;
+  color: #ffffff;
+}
+```
+
+---
+
+### BLUE (`#3b82f6`) — Baseline & Stock Data
+
+**Use blue for ORIGINAL values before modification.**
+
+✅ **USE FOR:**
+- Stock/factory specifications
+- Baseline values in comparisons
+- Original data points
+- Informational badges
+- Links (text links, not buttons)
+
+❌ **NEVER USE FOR:**
+- Modified/upgraded data (use teal)
+- CTAs or buttons (use lime)
+- Warnings
+
+```css
+/* Blue for baseline */
+.stat-stock { color: #3b82f6; }
+.progress-stock { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+```
+
+---
+
+### AMBER (`#f59e0b`) — Caution Only (Use Sparingly!)
+
+**Use amber ONLY for genuine warnings. This color should be rare in the UI.**
+
+✅ **USE FOR:**
+- "Watch Out" / "Caution" sections
+- Known issues warnings
+- Compatibility warnings
+- Risk indicators
+
+❌ **NEVER USE FOR:**
+- Labels or categories (use muted white text)
+- Badges that aren't warnings
+- Decorative elements
+- Data display
+
+```css
+/* Amber warning card */
+.warning-card {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.warning-text {
+  color: #f59e0b;
+}
+```
+
+---
+
+### Semantic Colors (System States)
+
+| Purpose | Hex | CSS Variable |
+|---------|-----|--------------|
+| **Success** | `#22c55e` | `--brand-success` |
+| **Warning** | `#f59e0b` | `--brand-warning` (same as amber) |
+| **Error** | `#ef4444` | `--brand-error` |
+| **Info** | `#3b82f6` | `--brand-info` (same as blue) |
+
+---
 
 ### Chart & Visualization Colors
 
 | Role | Hex | CSS Variable | Usage |
 |------|-----|--------------|-------|
-| **Chart Outline** | `rgba(255, 255, 255, 0.15)` | `--brand-chart-outline` | Grid lines, axis lines |
-| **Chart Border** | `rgba(255, 255, 255, 0.08)` | `--brand-chart-border` | Card borders, dividers |
-| **Stock Line** | `#3b82f6` | `--brand-chart-stock` | Baseline/stock data on charts |
-| **Modified Line** | `#10b981` | `--brand-chart-modified` | Modified/improved data on charts |
-| **Fill Gradient (Stock)** | `#3b82f6 → #60a5fa` | - | Progress bars, area fills |
-| **Fill Gradient (Modified)** | `#10b981 → #34d399` | - | Improvement progress bars |
+| **Grid Lines** | `rgba(255,255,255,0.08)` | `--brand-chart-grid` | Chart backgrounds |
+| **Axis Lines** | `rgba(255,255,255,0.15)` | `--brand-chart-axis` | Chart axes |
+| **Stock Data** | `#3b82f6` | `--brand-chart-stock` | Baseline/original line |
+| **Modified Data** | `#10b981` | `--brand-chart-modified` | Improved/modified line |
 
-### Color Usage Rules
+---
 
-1. **Never use pure black** - Use `#0d1b2a` for backgrounds
-2. **Teal (#10b981) = Improvements** - Use exclusively for positive changes/gains
-3. **Blue (#3b82f6) = Baseline** - Use exclusively for stock/original values
-4. **Lime (#d4ff00) = Emphasis** - Use sparingly for maximum impact
-5. **Gold (#d4a84b) = Interactive** - Buttons, links, actionable elements
+### Comparison Pattern
+
+When showing stock vs modified comparisons, ALWAYS follow this pattern:
+
+| Data Type | Color | Example |
+|-----------|-------|---------|
+| Stock/Baseline | Blue `#3b82f6` | `444 HP` |
+| Modified/Upgraded | Teal `#10b981` | `543 HP` |
+| Gain Badge | Teal on teal bg | `+99` |
+
+```tsx
+// CORRECT comparison pattern
+<span className="text-[#3b82f6]">444 HP</span>     {/* Stock = Blue */}
+<span className="text-white">→</span>
+<span className="text-[#10b981]">543 HP</span>     {/* Modified = Teal */}
+<span className="bg-[rgba(16,185,129,0.15)] text-[#10b981]">+99</span>
+```
 
 ---
 
@@ -76,8 +226,8 @@
 | Role | Font | CSS Variable | Weights |
 |------|------|--------------|---------|
 | **Display** | Oswald | `--font-display` | 600 |
-| **Body** | Inter | `--font-body` | 400, 500, 600 |
-| **Monospace** | JetBrains Mono, SF Mono | `--font-mono` | 400, 600, 700 |
+| **Body** | Inter | `--font-body` | 400, 500, 600, 700 |
+| **Monospace** | JetBrains Mono, SF Mono | `--font-mono` | 400, 600, 700, 800 |
 
 ### Type Scale (Mobile-First)
 
@@ -116,8 +266,6 @@
 
 ### Data/Stats Typography
 
-For important numeric data (HP, 0-60, etc.):
-
 ```css
 /* Large Stats - "Metallic Silver" Effect */
 .stat-value-hero {
@@ -129,12 +277,6 @@ For important numeric data (HP, 0-60, etc.):
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-@media (min-width: 768px) {
-  .stat-value-hero {
-    font-size: 28px;
-  }
 }
 
 /* Standard Data Values */
@@ -150,16 +292,23 @@ For important numeric data (HP, 0-60, etc.):
   font-weight: 700;
   color: #10b981;
 }
+
+/* Baseline Values (Blue) */
+.stat-value-baseline {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: #3b82f6;
+}
 ```
 
 ### Labels
 
 ```css
-/* Uppercase Labels */
-.label {
+/* Uppercase Labels - Use muted white, NOT colored */
+.label-uppercase {
   font-size: 10px;
   font-weight: 600;
-  color: var(--brand-gold);
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -191,7 +340,7 @@ For important numeric data (HP, 0-60, etc.):
 
 /* Active/Interactive Icon */
 .icon-active {
-  color: var(--brand-gold);
+  color: var(--brand-lime);
 }
 
 /* Accent Icon (used with teal improvements) */
@@ -248,7 +397,6 @@ For important numeric data (HP, 0-60, etc.):
 
 ### Image Placeholders
 
-Use navy background with subtle border:
 ```css
 .image-placeholder {
   background: rgba(0, 0, 0, 0.3);
@@ -265,8 +413,8 @@ Use navy background with subtle border:
 **Primary Button (Lime - MAIN CTA)**
 ```css
 .btn-primary {
-  background: #d4ff00;  /* Lime */
-  color: #0a1628;       /* Navy */
+  background: #d4ff00;
+  color: #0a1628;
   font-weight: 700;
   padding: 16px 32px;
   border-radius: 100px;
@@ -275,7 +423,7 @@ Use navy background with subtle border:
 }
 
 .btn-primary:hover {
-  background: #bfe600;  /* Lime Dark */
+  background: #bfe600;
   transform: translateY(-2px);
   box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
 }
@@ -297,14 +445,18 @@ Use navy background with subtle border:
 }
 ```
 
-**Accent Button (Gold)**
+**Teal Button (Positive Actions)**
 ```css
-.btn-accent {
-  background: #d4a84b;
-  color: #000;
+.btn-teal {
+  background: #10b981;
+  color: #ffffff;
   font-weight: 600;
   padding: 12px 24px;
   border-radius: 10px;
+}
+
+.btn-teal:hover {
+  background: #34d399;
 }
 ```
 
@@ -332,14 +484,6 @@ Use navy background with subtle border:
   background: #10b981;
   border-color: #10b981;
   color: #ffffff;
-}
-```
-
-**Active Toggle Button**
-```css
-.toggle-active {
-  background: #d4a84b;
-  color: #000;
 }
 ```
 
@@ -393,6 +537,15 @@ Use navy background with subtle border:
 }
 ```
 
+**Warning Badge (use sparingly)**
+```css
+.badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+```
+
 ---
 
 ## Spacing & Layout
@@ -428,21 +581,42 @@ Use navy background with subtle border:
 
 ## Quick Reference
 
+### The 4-Color Decision Tree
+
+```
+Is this a button/CTA the user clicks?
+  → YES: Use LIME (#d4ff00)
+  → NO: Continue...
+
+Is this showing improved/upgraded data?
+  → YES: Use TEAL (#10b981)
+  → NO: Continue...
+
+Is this showing original/stock data?
+  → YES: Use BLUE (#3b82f6)
+  → NO: Continue...
+
+Is this a genuine warning/caution?
+  → YES: Use AMBER (#f59e0b) - sparingly!
+  → NO: Use white or secondary text
+```
+
 ### Do's ✅
 - Use `#10b981` (teal) for ALL improvements and gains
 - Use `#3b82f6` (blue) for ALL baseline/stock values
-- Use `#d4ff00` (lime) sparingly for maximum emphasis
-- Use `#d4a84b` (gold) for interactive elements
+- Use `#d4ff00` (lime) for primary CTAs and emphasis
+- Use `#f59e0b` (amber) sparingly for genuine warnings
+- Use muted white for labels (NOT colored)
 - Use monospace fonts for numeric data
-- Maintain consistent spacing with the scale
 - Design mobile-first, then enhance for desktop
 
 ### Don'ts ❌
 - Don't use pure black (#000000) for backgrounds
 - Don't mix teal and blue for the same type of data
 - Don't overuse lime yellow (loses impact)
-- Don't use gray for interactive elements
-- Don't use light backgrounds (we're a dark theme app)
+- Don't use amber for non-warning content
+- Don't use gold (#d4a84b) — removed from palette
+- Don't use orange (#ff4d00) — not in our palette
 - Don't make text smaller than 10px on mobile
 
 ---
@@ -451,25 +625,26 @@ Use navy background with subtle border:
 
 ```css
 :root {
-  /* Brand Colors */
+  /* Brand Backgrounds */
   --brand-bg-primary: #0d1b2a;
-  --brand-bg-secondary: #1b263b;
+  --brand-bg-elevated: #1b263b;
   --brand-bg-card: rgba(255, 255, 255, 0.04);
   
+  /* Brand Text */
   --brand-text-primary: #ffffff;
-  --brand-text-secondary: #94a3b8;   /* Slate-400 */
-  --brand-text-tertiary: #64748b;    /* Slate-500 */
-  --brand-text-muted: #475569;       /* Slate-600 */
+  --brand-text-secondary: #94a3b8;
+  --brand-text-tertiary: #64748b;
+  --brand-text-muted: #475569;
   
-  /* Accent Colors */
-  --brand-lime: #d4ff00;             /* PRIMARY CTA */
+  /* Accent Colors (The Core 4) */
+  --brand-lime: #d4ff00;          /* User actions, CTAs */
   --brand-lime-dark: #bfe600;
-  --brand-teal: #10b981;             /* Improvements */
+  --brand-teal: #10b981;          /* Improvements, gains */
   --brand-teal-light: #34d399;
-  --brand-blue: #3b82f6;             /* Baseline */
+  --brand-blue: #3b82f6;          /* Baseline, stock */
   --brand-blue-light: #60a5fa;
-  --brand-gold: #d4a84b;             /* Labels/Secondary */
-  --brand-gold-hover: #e8c875;
+  --brand-amber: #f59e0b;         /* Warnings only */
+  --brand-amber-light: #fbbf24;
   
   /* Semantic Colors */
   --brand-success: #22c55e;
@@ -478,8 +653,7 @@ Use navy background with subtle border:
   --brand-info: #3b82f6;
   
   /* Chart Colors */
-  --brand-chart-outline: rgba(255, 255, 255, 0.15);
-  --brand-chart-border: rgba(255, 255, 255, 0.08);
+  --brand-chart-grid: rgba(255, 255, 255, 0.08);
   --brand-chart-stock: var(--brand-blue);
   --brand-chart-modified: var(--brand-teal);
   
@@ -489,3 +663,25 @@ Use navy background with subtle border:
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 }
 ```
+
+---
+
+## Pre-Flight Checklist
+
+Before submitting ANY UI code:
+
+| Check | Question |
+|-------|----------|
+| ☐ Background | Using `#0d1b2a` (not pure black)? |
+| ☐ Primary CTA | Using lime `#d4ff00`? |
+| ☐ Improvements/Gains | Using teal `#10b981`? |
+| ☐ Baseline/Stock | Using blue `#3b82f6`? |
+| ☐ Warnings | Using amber `#f59e0b` (sparingly)? |
+| ☐ Labels | Using muted white (not colored)? |
+| ☐ Stats | Using monospace font? |
+| ☐ No banned colors | No gold, no orange? |
+| ☐ Touch targets | Buttons/links min 44px? |
+
+---
+
+*Brand guidelines maintained by AutoRev Design System v2.0*

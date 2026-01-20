@@ -70,8 +70,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
   border-radius: 16px;
   color: var(--admin-negative);
   margin-bottom: 4px;
@@ -111,7 +111,7 @@
 
 .backButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 24px rgba(var(--brand-blue-rgb), 0.4);
 }
 
 /* Header - Compact */
@@ -144,7 +144,7 @@
   height: 36px;
   background: linear-gradient(135deg, var(--admin-accent-blue), var(--admin-accent-purple));
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(var(--brand-blue-rgb), 0.3);
   color: white;
 }
 
@@ -226,8 +226,8 @@
   max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 8px;
   color: var(--admin-negative);
   font-size: 13px;
@@ -279,8 +279,8 @@
 
 /* Summary Card */
 .summaryCard {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.02) 100%);
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  background: linear-gradient(135deg, rgba(var(--brand-error-rgb), 0.08) 0%, rgba(var(--brand-error-rgb), 0.02) 100%);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.15);
   border-radius: 12px;
   padding: 16px;
 }
@@ -481,12 +481,12 @@
 }
 
 .financialQuickLink.revenueLink {
-  border-color: rgba(34, 197, 94, 0.3);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
 }
 
 .financialQuickLink.revenueLink:hover {
   border-color: var(--admin-positive);
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+  box-shadow: 0 8px 24px rgba(var(--brand-success-rgb), 0.15);
 }
 
 .financialQuickLink.revenueLink .quickLinkHeader svg {
@@ -494,12 +494,12 @@
 }
 
 .financialQuickLink.costsLink {
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: rgba(var(--brand-warning-rgb), 0.3);
 }
 
 .financialQuickLink.costsLink:hover {
   border-color: var(--admin-warning);
-  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 8px 24px rgba(var(--brand-warning-rgb), 0.15);
 }
 
 .financialQuickLink.costsLink .quickLinkHeader svg {
@@ -828,7 +828,7 @@
 
 .addButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.3);
 }
 
 /* Form Wrapper */
@@ -910,13 +910,13 @@
 
 /* Stripe-specific quick link styling */
 .quickLink.stripeLink {
-  background: linear-gradient(135deg, rgba(99, 91, 255, 0.15), rgba(139, 92, 246, 0.1));
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.15), rgba(var(--brand-purple-rgb), 0.1));
   border-color: rgba(99, 91, 255, 0.3);
   color: #a5b4fc;
 }
 
 .quickLink.stripeLink:hover {
-  background: linear-gradient(135deg, rgba(99, 91, 255, 0.25), rgba(139, 92, 246, 0.2));
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.25), rgba(var(--brand-purple-rgb), 0.2));
   border-color: #635BFF;
   box-shadow: 0 2px 8px rgba(99, 91, 255, 0.2);
 }

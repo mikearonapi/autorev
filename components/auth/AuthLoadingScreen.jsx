@@ -44,26 +44,26 @@ const StepStatus = {
   TIMEOUT: 'timeout',
 };
 
-// Friendly Robot/Wrench Icon for loading
+// Friendly Robot/Wrench Icon for loading - Brand teal color
 function LoadingIcon({ size = 64 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Gear/cog background */}
-      <circle cx="50" cy="50" r="40" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      <circle cx="50" cy="50" r="40" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
       {/* Wrench icon */}
       <path 
         d="M35 65 L45 55 L55 55 L65 65 L60 70 L55 65 L45 65 L40 70 Z" 
-        fill="#ef4444" 
+        fill="#10b981" 
         opacity="0.3"
       />
       {/* Car silhouette */}
       <path 
         d="M30 50 L35 40 L65 40 L70 50 L75 50 L75 60 L70 60 L70 55 L30 55 L30 60 L25 60 L25 50 Z" 
-        fill="#ef4444"
+        fill="#10b981"
       />
       {/* Wheels */}
-      <circle cx="38" cy="55" r="5" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
-      <circle cx="62" cy="55" r="5" fill="#1a1a1a" stroke="#ef4444" strokeWidth="2"/>
+      <circle cx="38" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
+      <circle cx="62" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
       {/* Shine effect */}
       <path d="M40 45 L60 45" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
     </svg>

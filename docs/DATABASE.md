@@ -1,8 +1,8 @@
 # AutoRev Database Schema
 
-> Complete reference for all **119 database tables** and **26 views**
+> Complete reference for all **121 database tables** and **26 views**
 >
-> **Last Verified:** January 11, 2026 — MCP-verified live query (Row counts audited)
+> **Last Verified:** January 20, 2026 — MCP-verified live query (Row counts audited)
 
 ---
 
@@ -66,11 +66,11 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Event Coverage | 1 | 1 | 1 | 0 |
 | Featured Content | 2 | 0 | 2 | 0 |
 | Image Library | 2 | 0 | 0 | 2 |
-| Community & Social | 4 | 0 | 2 | 2 |
+| Community & Social | 6 | 0 | 4 | 2 |
 | Analytics & Tracking | 15 | 1 | 7 | 8 |
 | Financial System | 12 | 8 | 5 | 7 |
 | System & Config | 5 | 4 | 4 | 1 |
-| **Total** | **119** | **26** | **85** | **34** |
+| **Total** | **121** | **26** | **87** | **34** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 
@@ -894,7 +894,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 ---
 
-## Community & Social (4 tables)
+## Community & Social (6 tables)
 
 > User-generated content and social features
 
@@ -902,9 +902,30 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | Status | **7 rows** |
 |--------|----------|
 | **Purpose** | User-submitted builds, questions, and content |
-| **Columns** | 21 |
-| **Key Fields** | `user_id`, `post_type`, `title`, `content`, `car_id`, `car_slug`, `status`, `is_featured` |
+| **Columns** | 22 |
+| **Key Fields** | `user_id`, `post_type`, `title`, `content`, `car_id`, `status`, `is_featured`, `like_count`, `comment_count` |
 | **Used By** | Community builds page |
+
+### `community_post_likes` — User likes on posts
+| Status | **Active** ✅ |
+|--------|---------------|
+| **Purpose** | Track user likes on community posts (one like per user per post) |
+| **Columns** | 4 |
+| **Key Fields** | `id`, `post_id`, `user_id`, `created_at` |
+| **Constraints** | Unique(post_id, user_id) |
+| **Triggers** | Auto-updates `like_count` on `community_posts` |
+| **Used By** | Community builds page like button |
+
+### `community_post_comments` — AI-moderated comments
+| Status | **Active** ✅ |
+|--------|---------------|
+| **Purpose** | Comments on community posts with AI moderation |
+| **Columns** | 14 |
+| **Key Fields** | `id`, `post_id`, `user_id`, `parent_comment_id`, `content`, `moderation_status`, `moderation_reason`, `moderation_score`, `moderated_at`, `moderated_by`, `like_count`, `created_at`, `updated_at`, `deleted_at` |
+| **Moderation Statuses** | `pending`, `approved`, `rejected`, `flagged` |
+| **Triggers** | Auto-updates `comment_count` on `community_posts` when status changes to/from `approved` |
+| **AI Moderation** | Uses Claude Haiku to review comments before approval |
+| **Used By** | Community builds page comments sheet |
 
 ### `community_post_parts` — Parts in posts
 | Status | **0 rows** ⬜ |

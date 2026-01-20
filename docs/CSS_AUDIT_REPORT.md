@@ -89,7 +89,7 @@ These need to be evaluated case-by-case:
 Border radius values vary wildly across the codebase:
 - 4px, 5px, 6px, 8px, 10px, 12px, 14px, 16px, 20px, 24px, 32px, 999px, 9999px
 
-### Brand Standard (from BRAND.md)
+### Brand Standard (from BRAND_GUIDELINES.md)
 ```css
 --radius-sm: 6px;   /* Small elements */
 --radius-md: 10px;  /* Default */

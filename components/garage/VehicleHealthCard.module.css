@@ -3,7 +3,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 16px;
-  color: var(--color-white, #ffffff);
+  color: var(--color-white, var(--brand-text-primary));
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -51,20 +51,20 @@
 }
 
 .badge.good {
-  background: rgba(46, 204, 113, 0.15);
-  border: 1px solid rgba(46, 204, 113, 0.35);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.35);
   color: var(--brand-teal);
 }
 
 .badge.warn {
-  background: rgba(234, 179, 8, 0.18);
-  border: 1px solid rgba(234, 179, 8, 0.35);
-  color: #fcd34d;
+  background: rgba(var(--brand-warning-rgb), 0.18);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.35);
+  color: var(--brand-warning);
 }
 
 .badge.urgent {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.4);
   color: var(--brand-error-light);
 }
 
@@ -181,8 +181,8 @@
 .primaryButton {
   padding: 10px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 77, 0, 0.45);
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.16), rgba(255, 77, 0, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0.08));
   color: #f6e7c7;
   font-weight: 700;
   cursor: pointer;
@@ -191,8 +191,8 @@
 }
 
 .primaryButton:hover {
-  border-color: rgba(255, 77, 0, 0.7);
-  background: linear-gradient(135deg, rgba(255, 77, 0, 0.22), rgba(255, 77, 0, 0.12));
+  border-color: rgba(16, 185, 129, 0.7);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.12));
 }
 
 .ghostButton {
@@ -304,23 +304,23 @@
 }
 
 .alertItem[data-type="urgent"] {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(var(--brand-error-rgb), 0.12);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.25);
   color: var(--brand-error-light);
 }
 
 .alertItem[data-type="warn"] {
-  background: rgba(234, 179, 8, 0.12);
-  border: 1px solid rgba(234, 179, 8, 0.25);
-  color: #fcd34d;
+  background: rgba(var(--brand-warning-rgb), 0.12);
+  border: 1px solid rgba(var(--brand-warning-rgb), 0.25);
+  color: var(--brand-warning);
 }
 
 /* Maintenance Schedule Box */
 .scheduleBox {
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(255, 77, 0, 0.06);
-  border: 1px solid rgba(255, 77, 0, 0.15);
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .scheduleTitle {

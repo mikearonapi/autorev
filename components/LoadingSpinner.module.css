@@ -4,6 +4,10 @@
  * Two variants:
  * - Simple: Three concentric spinning rings (for inline/component loading)
  * - Branded: AutoRev logo with spinning ring (for full-page loading)
+ * 
+ * Brand colors used:
+ * - Teal (#10b981) - Primary loading color (positive/improvements)
+ * - Lime (#d4ff00) - Optional accent for CTAs
  */
 
 /* ==============================================
@@ -61,25 +65,25 @@
   border-width: 4px;
 }
 
-/* Three concentric rings with AutoRev brand colors */
+/* Three concentric rings with AutoRev brand colors (teal) */
 .ring:nth-child(1) {
   width: 100%;
   height: 100%;
-  border-top-color: var(--accent-primary, #d4a84b);
+  border-top-color: var(--color-accent-teal, #10b981);
   animation-delay: 0s;
 }
 
 .ring:nth-child(2) {
   width: 75%;
   height: 75%;
-  border-right-color: var(--accent-secondary, #b8922f);
+  border-right-color: #0d9668; /* Darker teal for depth */
   animation-delay: 0.15s;
 }
 
 .ring:nth-child(3) {
   width: 50%;
   height: 50%;
-  border-bottom-color: rgba(212, 168, 75, 0.4);
+  border-bottom-color: rgba(16, 185, 129, 0.4); /* Teal at 40% opacity */
   animation-delay: 0.3s;
 }
 
@@ -120,35 +124,84 @@
   justify-content: center;
   text-align: center;
   padding: 48px 24px;
-  /* Subtle radial gradient for premium feel */
+  /* Subtle radial gradient with teal for premium feel */
   background: radial-gradient(
     ellipse 60% 40% at 50% 45%,
-    rgba(212, 168, 75, 0.04) 0%,
+    rgba(16, 185, 129, 0.06) 0%,
     transparent 70%
   );
 }
 
-.logoWrapper {
+/* ==============================================
+   BRANDED LOGO LOADER
+   ============================================== */
+
+.brandedLoaderWrapper {
   position: relative;
-  width: 100px;
-  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 32px;
 }
 
-.logoImage {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
+/* Teal perimeter ring SVG */
+.perimeterRing {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+}
+
+/* Main teal ring - rotates clockwise */
+.tealRingAnimated {
+  animation: ringRotate 3s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes ringRotate {
+  0% { 
+    transform: rotate(0deg);
+  }
+  100% { 
+    transform: rotate(360deg);
+  }
+}
+
+/* Secondary teal ring - rotates counter-clockwise */
+.tealRingCounter {
+  animation: ringRotateCounter 4s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes ringRotateCounter {
+  0% { 
+    transform: rotate(0deg);
+  }
+  100% { 
+    transform: rotate(-360deg);
+  }
+}
+
+/* Logo center container */
+.logoCenter {
+  position: relative;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: logoPulse 2s ease-in-out infinite;
+}
+
+/* AutoRev logo image */
+.logoImage {
+  width: 50px !important;
+  height: auto !important;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4));
 }
 
 @keyframes logoPulse {
   0%, 100% { 
-    opacity: 0.8;
+    opacity: 0.9;
     transform: scale(1);
   }
   50% { 
@@ -157,36 +210,11 @@
   }
 }
 
-.logoRing {
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-top-color: var(--accent-primary, #d4a84b);
-  border-radius: 50%;
-  animation: spin 1.2s linear infinite;
-}
-
-.logoRing::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border: 1px solid rgba(212, 168, 75, 0.15);
-  border-radius: 50%;
-}
-
-.logoRing::after {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(212, 168, 75, 0.1);
-  border-radius: 50%;
-}
-
 .brandedTitle {
   font-family: var(--font-display, system-ui);
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-white, #ffffff);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -194,7 +222,7 @@
 
 .brandedSubtext {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.5));
   margin: 0;
   animation: textFade 2s ease-in-out infinite;
 }

@@ -5,12 +5,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/components/providers/AuthProvider';
 import BuildDetailSheet from './BuildDetailSheet';
+import CommentsSheet from './CommentsSheet';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './page.module.css';
 
 /**
  * Community Page - TikTok/Reels-style Full-Screen Feed
  * Immersive, content-first design with minimal UI
+ * 
+ * Features:
+ * - Persistent likes via API (stored in database)
+ * - AI-moderated comments
+ * - Share functionality
  */
 
 // Minimal Icons
@@ -35,13 +41,6 @@ const CommentIcon = () => (
   </svg>
 );
 
-const SpinnerIcon = () => (
-  <svg className={styles.spinner} width="32" height="32" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2"/>
-    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-  </svg>
-);
-
 const ChevronIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
     <polyline points="9 18 15 12 9 6"/>
@@ -59,9 +58,11 @@ export default function CommunityPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [likedItems, setLikedItems] = useState(new Set());
+  const [likedItems, setLikedItems] = useState(new Map()); // Map of postId -> { liked, count }
   const [showDetails, setShowDetails] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
   
   const containerRef = useRef(null);
   const touchStartY = useRef(0);
@@ -88,6 +89,32 @@ export default function CommunityPage() {
     fetchBuilds();
   }, [activeTab]);
   
+  // Fetch like status for current build when user is logged in
+  useEffect(() => {
+    async function fetchLikeStatus() {
+      if (!currentBuild?.id) return;
+      
+      // If we already have like status for this post, don't refetch
+      if (likedItems.has(currentBuild.id)) return;
+      
+      try {
+        const res = await fetch(`/api/community/posts/${currentBuild.id}/like`);
+        if (res.ok) {
+          const data = await res.json();
+          setLikedItems(prev => new Map(prev).set(currentBuild.id, {
+            liked: data.liked,
+            count: data.likeCount,
+          }));
+        }
+      } catch (err) {
+        // Silently fail - will show local count
+        console.error('[Community] Failed to fetch like status:', err);
+      }
+    }
+    
+    fetchLikeStatus();
+  }, [currentIndex, builds]); // eslint-disable-line react-hooks/exhaustive-deps
+  
   const currentBuild = builds[currentIndex];
   
   const buildImages = currentBuild?.images?.length > 0 
@@ -105,6 +132,7 @@ export default function CommunityPage() {
     if (currentIndex < builds.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setShowDetails(false);
+      setShowComments(false);
     }
   }, [currentIndex, builds.length]);
   
@@ -112,6 +140,7 @@ export default function CommunityPage() {
     if (currentIndex > 0) {
       setCurrentIndex(prev => prev - 1);
       setShowDetails(false);
+      setShowComments(false);
     }
   }, [currentIndex]);
   
@@ -131,20 +160,22 @@ export default function CommunityPage() {
     setCurrentIndex(0);
     setCurrentImageIndex(0);
     setShowDetails(false);
+    setShowComments(false);
   }, [activeTab]);
   
   // Keyboard
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (showComments) return; // Don't navigate when comments are open
       if (e.key === 'ArrowDown') { e.preventDefault(); goToNext(); }
       else if (e.key === 'ArrowUp') { e.preventDefault(); goToPrev(); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); goToNextImage(); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); goToPrevImage(); }
-      else if (e.key === 'Escape') { setShowDetails(false); }
+      else if (e.key === 'Escape') { setShowDetails(false); setShowComments(false); }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToNext, goToPrev, goToNextImage, goToPrevImage]);
+  }, [goToNext, goToPrev, goToNextImage, goToPrevImage, showComments]);
   
   // Touch handling
   const handleTouchStart = useCallback((e) => {
@@ -173,11 +204,11 @@ export default function CommunityPage() {
     if (swipeDirection.current === 'horizontal' && (Math.abs(deltaX) > 50 || Math.abs(deltaX) / deltaTime > 0.5)) {
       if (deltaX > 0) goToNextImage();
       else goToPrevImage();
-    } else if (swipeDirection.current === 'vertical' && !showDetails && (Math.abs(deltaY) > 50 || Math.abs(deltaY) / deltaTime > 0.5)) {
+    } else if (swipeDirection.current === 'vertical' && !showDetails && !showComments && (Math.abs(deltaY) > 50 || Math.abs(deltaY) / deltaTime > 0.5)) {
       if (deltaY > 0) goToNext();
       else goToPrev();
     }
-  }, [goToNext, goToPrev, goToNextImage, goToPrevImage, showDetails]);
+  }, [goToNext, goToPrev, goToNextImage, goToPrevImage, showDetails, showComments]);
   
   // Mouse wheel
   useEffect(() => {
@@ -185,7 +216,7 @@ export default function CommunityPage() {
     if (!container) return;
     let isScrolling = false;
     const handleWheel = (e) => {
-      if (showDetails) return;
+      if (showDetails || showComments) return;
       e.preventDefault();
       if (isScrolling) return;
       isScrolling = true;
@@ -195,25 +226,59 @@ export default function CommunityPage() {
     };
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => container.removeEventListener('wheel', handleWheel);
-  }, [goToNext, goToPrev, showDetails]);
+  }, [goToNext, goToPrev, showDetails, showComments]);
   
-  // Like
-  const toggleLike = useCallback((buildId) => {
-    setLikedItems(prev => {
-      const next = new Set(prev);
-      if (next.has(buildId)) next.delete(buildId);
-      else next.add(buildId);
-      localStorage.setItem('likedBuilds', JSON.stringify([...next]));
-      return next;
-    });
-  }, []);
-  
-  useEffect(() => {
+  // Toggle Like - now uses API for persistence
+  const toggleLike = useCallback(async (buildId) => {
+    if (isLikeProcessing) return;
+    
+    // Get current state
+    const currentState = likedItems.get(buildId) || { 
+      liked: false, 
+      count: builds.find(b => b.id === buildId)?.like_count || 0 
+    };
+    
+    // Optimistic update
+    const newLiked = !currentState.liked;
+    const newCount = newLiked ? currentState.count + 1 : Math.max(currentState.count - 1, 0);
+    
+    setLikedItems(prev => new Map(prev).set(buildId, {
+      liked: newLiked,
+      count: newCount,
+    }));
+    
+    // If user is not logged in, show the local state but warn on next interaction
+    if (!user) {
+      // Keep the optimistic update but it won't persist
+      return;
+    }
+    
+    setIsLikeProcessing(true);
+    
     try {
-      const liked = JSON.parse(localStorage.getItem('likedBuilds') || '[]');
-      setLikedItems(new Set(liked));
-    } catch (e) {}
-  }, []);
+      const res = await fetch(`/api/community/posts/${buildId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Update with actual server state
+        setLikedItems(prev => new Map(prev).set(buildId, {
+          liked: data.liked,
+          count: data.likeCount,
+        }));
+      } else if (res.status === 401) {
+        // User not logged in - revert optimistic update
+        setLikedItems(prev => new Map(prev).set(buildId, currentState));
+      }
+    } catch (err) {
+      // On error, keep the optimistic state for better UX
+      console.error('[Community] Like error:', err);
+    } finally {
+      setIsLikeProcessing(false);
+    }
+  }, [user, likedItems, builds, isLikeProcessing]);
   
   // Share
   const shareBuild = useCallback(async (build) => {
@@ -227,10 +292,36 @@ export default function CommunityPage() {
     }
   }, []);
   
+  // Open comments
+  const openComments = useCallback(() => {
+    setShowComments(true);
+  }, []);
+  
+  // Handle comment added
+  const handleCommentAdded = useCallback(() => {
+    // Update the comment count in the builds array
+    setBuilds(prev => prev.map(build => 
+      build.id === currentBuild?.id 
+        ? { ...build, comment_count: (build.comment_count || 0) + 1 }
+        : build
+    ));
+  }, [currentBuild?.id]);
+  
+  // Format number helper
   const formatNumber = (num) => {
     if (!num) return '0';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
     return num.toString();
+  };
+  
+  // Get like display data for current build
+  const getLikeData = (buildId) => {
+    const state = likedItems.get(buildId);
+    if (state) {
+      return { liked: state.liked, count: state.count };
+    }
+    const build = builds.find(b => b.id === buildId);
+    return { liked: false, count: build?.like_count || 0 };
   };
 
   // Events placeholder
@@ -312,49 +403,100 @@ export default function CommunityPage() {
             </div>
           )}
           
-          {/* Right Side Actions */}
+          {/* Right Side Actions - Heart, Comment, Share */}
           <div className={styles.actions}>
-            <button className={`${styles.actionBtn} ${likedItems.has(currentBuild.id) ? styles.liked : ''}`} onClick={() => toggleLike(currentBuild.id)}>
-              <HeartIcon filled={likedItems.has(currentBuild.id)} />
-              <span>{formatNumber((currentBuild.like_count || 0) + (likedItems.has(currentBuild.id) ? 1 : 0))}</span>
+            {/* Like Button */}
+            <button 
+              className={`${styles.actionBtn} ${getLikeData(currentBuild.id).liked ? styles.liked : ''}`} 
+              onClick={() => toggleLike(currentBuild.id)}
+              disabled={isLikeProcessing}
+            >
+              <HeartIcon filled={getLikeData(currentBuild.id).liked} />
+              <span>{formatNumber(getLikeData(currentBuild.id).count)}</span>
             </button>
-            <button className={styles.actionBtn} onClick={() => setShowDetails(true)}>
+            
+            {/* Comment Button */}
+            <button 
+              className={styles.actionBtn} 
+              onClick={openComments}
+            >
               <CommentIcon />
-              <span>Details</span>
+              <span>{formatNumber(currentBuild.comment_count || 0)}</span>
             </button>
-            <button className={`${styles.actionBtn} ${showCopied ? styles.copied : ''}`} onClick={() => shareBuild(currentBuild)}>
+            
+            {/* Share Button */}
+            <button 
+              className={`${styles.actionBtn} ${showCopied ? styles.copied : ''}`} 
+              onClick={() => shareBuild(currentBuild)}
+            >
               <ShareIcon />
               <span>{showCopied ? 'Copied!' : 'Share'}</span>
             </button>
           </div>
           
-          {/* Bottom Info - Minimal */}
-          <div className={styles.info} onClick={() => setShowDetails(true)}>
-            <div className={styles.userRow}>
+          {/* Bottom Build Card - Visual Performance Display */}
+          <div className={styles.buildCard} onClick={() => setShowDetails(true)}>
+            {/* User & Build Header */}
+            <div className={styles.cardHeader}>
               <div className={styles.avatar}>
                 {currentBuild.author?.avatar_url ? (
-                  <Image src={currentBuild.author.avatar_url} alt="" width={32} height={32} />
+                  <Image src={currentBuild.author.avatar_url} alt="" width={40} height={40} />
                 ) : (
                   <span>{currentBuild.author?.display_name?.charAt(0) || 'A'}</span>
                 )}
               </div>
-              <span className={styles.username}>{currentBuild.author?.display_name || 'Anonymous'}</span>
-              {currentBuild.author?.tier === 'admin' && <span className={styles.badge}>Staff</span>}
-            </div>
-            <h2 className={styles.title}>{currentBuild.title}</h2>
-            <div className={styles.meta}>
-              <span className={styles.carName}>{currentBuild.car_name}</span>
-              {currentBuild.build_data?.hp_gain > 0 && (
-                <span className={styles.stat}>+{currentBuild.build_data.hp_gain} HP</span>
-              )}
-              {currentBuild.build_data?.mod_count > 0 && (
-                <span className={styles.stat}>{currentBuild.build_data.mod_count} mods</span>
-              )}
-            </div>
-            <div className={styles.seeMore}>
-              <span>See build details</span>
+              <div className={styles.headerText}>
+                <div className={styles.userLine}>
+                  <span className={styles.username}>{currentBuild.author?.display_name || 'Anonymous'}</span>
+                  {currentBuild.author?.tier === 'admin' && <span className={styles.badge}>Staff</span>}
+                </div>
+                <h2 className={styles.buildTitle}>{currentBuild.title}</h2>
+                <span className={styles.carName}>{currentBuild.car_name}</span>
+              </div>
               <ChevronIcon />
             </div>
+            
+            {/* Performance Stats Row - Clean minimal design */}
+            {(currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp) && (
+              <div className={styles.statsRow}>
+                {/* HP - Final HP from build, or stock HP from car */}
+                <div className={styles.stat}>
+                  <span className={styles.statValue}>
+                    {currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp || '—'}
+                  </span>
+                  <span className={styles.statLabel}>HP</span>
+                </div>
+                
+                {/* Torque - from car specs */}
+                {currentBuild.car_specs?.torque && (
+                  <div className={styles.stat}>
+                    <span className={styles.statValue}>
+                      {currentBuild.car_specs.torque}
+                    </span>
+                    <span className={styles.statLabel}>LB-FT</span>
+                  </div>
+                )}
+                
+                {/* 0-60 Time - use build's modified value if available, else stock from car specs */}
+                {(currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty) && (
+                  <div className={styles.stat}>
+                    <span className={styles.statValue}>
+                      {currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty}
+                      <span className={styles.statSuffix}>s</span>
+                    </span>
+                    <span className={styles.statLabel}>0-60</span>
+                  </div>
+                )}
+                
+                {/* Top Speed - from car specs */}
+                {currentBuild.car_specs?.top_speed && (
+                  <div className={styles.stat}>
+                    <span className={styles.statValue}>{currentBuild.car_specs.top_speed}</span>
+                    <span className={styles.statLabel}>MPH</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           
           {/* Premium Build Detail Sheet */}
@@ -367,6 +509,17 @@ export default function CommunityPage() {
                 setCurrentImageIndex(idx);
               }}
               onClose={() => setShowDetails(false)}
+            />
+          )}
+          
+          {/* Comments Sheet */}
+          {showComments && (
+            <CommentsSheet
+              postId={currentBuild.id}
+              postTitle={currentBuild.title}
+              commentCount={currentBuild.comment_count || 0}
+              onClose={() => setShowComments(false)}
+              onCommentAdded={handleCommentAdded}
             />
           )}
         </>

@@ -225,7 +225,7 @@
 }
 
 .statusBadge.inProgress {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(var(--brand-blue-rgb), 0.15);
   color: var(--brand-blue);
 }
 
@@ -235,7 +235,7 @@
 }
 
 .statusBadge.blocked {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--brand-error-rgb), 0.15);
   color: var(--brand-error);
 }
 
@@ -292,7 +292,7 @@
 }
 
 .phasePill.partial {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--brand-warning-rgb), 0.1);
   color: var(--brand-warning);
 }
 
@@ -349,8 +349,8 @@
 .error {
   text-align: center;
   padding: 2rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 8px;
   color: var(--brand-error);
 }
@@ -454,8 +454,8 @@
 }
 
 .aiModalDesc {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   border-radius: 6px;
   padding: 1rem;
   margin-bottom: 1.5rem;

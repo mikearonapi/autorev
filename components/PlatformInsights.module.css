@@ -1,0 +1,359 @@
+/* Platform Insights */
+.platformInsights {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.header svg {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.carLabel {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.tab.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.tab svg {
+  opacity: 0.7;
+}
+
+.tab.active svg {
+  opacity: 1;
+}
+
+/* Tab Content */
+.tabContent {
+  min-height: 100px;
+}
+
+/* Insights List */
+.insightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.insightCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+
+.insightCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.insightCard.strength {
+  border-left: 3px solid var(--color-accent-teal, #10b981);
+}
+
+.insightCard.weakness {
+  border-left: 3px solid var(--color-warning, #f59e0b);
+}
+
+.insightHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+
+.insightCard.strength .insightHeader svg:first-child {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.insightCard.weakness .insightHeader svg:first-child {
+  color: var(--color-warning, #f59e0b);
+}
+
+.insightTitle {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+.insightDescription {
+  padding: 0 14px 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 12px;
+  margin-top: -4px;
+}
+
+/* YouTube Section */
+.youtubeSection {
+  background: rgba(255, 0, 0, 0.06);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.youtubeSection.cons {
+  background: rgba(245, 158, 11, 0.06);
+  border-color: rgba(245, 158, 11, 0.1);
+}
+
+.youtubeSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.youtubeSectionHeader svg {
+  color: #ff0000;
+}
+
+.videoCount {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 10px;
+}
+
+.youtubeList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.youtubePro,
+.youtubeCon {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+  font-style: italic;
+  padding-left: 12px;
+  position: relative;
+}
+
+.youtubePro::before {
+  content: '+';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.youtubeCon::before {
+  content: '−';
+  position: absolute;
+  left: 0;
+  color: var(--color-warning, #f59e0b);
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Owner Section */
+.ownerSection {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.ownerSection.notIdeal {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.15);
+}
+
+.ownerHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ownerSection:not(.notIdeal) .ownerHeader svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.ownerSection.notIdeal .ownerHeader svg {
+  color: var(--color-warning, #f59e0b);
+}
+
+.ownerText {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Tips List */
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tipCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(212, 255, 0, 0.05);
+  border: 1px solid rgba(212, 255, 0, 0.1);
+  border-radius: 10px;
+}
+
+.tipCard svg:first-child {
+  flex-shrink: 0;
+  color: var(--color-accent-lime, #d4ff00);
+  margin-top: 2px;
+}
+
+.tipText {
+  flex: 1;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.tipSource {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 0, 0, 0.2);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.tipSource svg {
+  color: #ff6666;
+}
+
+/* Source Note */
+.sourceNote {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+/* No Data State */
+.noData {
+  text-align: center;
+  padding: 32px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .platformInsights {
+    padding: 16px;
+  }
+  
+  .tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .insightHeader {
+    padding: 12px;
+  }
+  
+  .insightTitle {
+    font-size: 12px;
+  }
+  
+  .insightDescription {
+    padding: 0 12px 12px;
+    font-size: 11px;
+  }
+}

@@ -30,3 +30,9 @@ export {
   HpGainStat,
   PartsCountStat,
 } from './VehicleInfoBar';
+
+// Objective banner for build goals
+export { default as ObjectiveBanner } from './ObjectiveBanner';
+
+// Build guidance card with conditional trust signals
+export { default as BuildGuidanceCard } from './BuildGuidanceCard';

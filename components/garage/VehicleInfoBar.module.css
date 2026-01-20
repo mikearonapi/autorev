@@ -89,23 +89,30 @@
   flex-shrink: 0;
 }
 
-/* Color variants */
-.statBadge[data-color="orange"] {
-  background: rgba(255, 107, 53, 0.12);
-  border-color: rgba(255, 107, 53, 0.25);
-  color: #ff6b35;
-}
+/* Color variants - Brand compliant */
 
+/* Teal: Improvements, gains, upgrades (positive data) */
+.statBadge[data-color="teal"],
 .statBadge[data-color="green"] {
   background: rgba(16, 185, 129, 0.12);
   border-color: rgba(16, 185, 129, 0.25);
-  color: var(--brand-teal);
+  color: #10b981;
 }
 
+/* Amber: Warnings only (use sparingly) */
+.statBadge[data-color="amber"],
+.statBadge[data-color="warning"],
 .statBadge[data-color="yellow"] {
-  background: rgba(251, 191, 36, 0.12);
-  border-color: rgba(251, 191, 36, 0.25);
-  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+/* Blue: Baseline/stock data */
+.statBadge[data-color="blue"] {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #3b82f6;
 }
 
 .statBadge[data-color="neutral"] {

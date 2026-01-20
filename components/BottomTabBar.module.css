@@ -1,267 +1,352 @@
 /* ==========================================================================
-   BottomTabBar - Native iOS/Android Style Tab Navigation
+   BottomTabBar - Premium Minimal Navigation
    
-   GRAVL-Inspired Glass Design:
-   - Frosted glass transparency with strong blur
-   - Clean, minimal icons
-   - Generous touch targets (56px)
-   - Subtle active state with accent color
-   - Safe area support for notched devices
-   - Premium depth with subtle shadows
+   Philosophy: Elegance through restraint
+   - Clean stroke icons
+   - Color change only for active state
+   - Special treatment for AL mascot
+   - Vertically centered in visible space
    ========================================================================== */
 
-.tabBar {
+.nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   
-  /* Prevent horizontal overflow */
+  /* Dimensions */
   width: 100%;
-  max-width: 100vw;
   max-width: 100dvw;
-  overflow-x: hidden;
-  box-sizing: border-box;
   
-  /* Consistent frosted look - solid base with white frost overlay */
-  background: 
-    linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.12) 0%,
-      rgba(255, 255, 255, 0.08) 100%
-    ),
-    var(--color-bg-base);
+  /* Premium dark glass */
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 42, 0.92) 0%,
+    rgba(13, 27, 42, 0.98) 100%
+  );
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
   
-  /* Glass edge highlight */
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  /* Subtle top edge */
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   
-  /* Subtle depth shadow */
-  box-shadow: 
-    0 -4px 20px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  
-  /* Safe area padding - frosted background extends through this */
+  /* Safe area at bottom - content sits above this */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
-/* Extend solid background below tab bar to prevent any content showing beneath */
-.tabBar::after {
+/* Clean separator line */
+.nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.08) 80%,
+    transparent 100%
+  );
+}
+
+/* Solid extension for overscroll */
+.nav::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  /* Extra tall to cover any possible overscroll/elastic bounce */
-  height: 200px;
+  height: 100px;
   transform: translateY(100%);
-  /* Solid background - matches tab bar base color */
-  background: var(--color-bg-base);
-  z-index: -1;
-  /* Prevent any interaction with this extension */
+  background: #0a1420;
   pointer-events: none;
 }
 
-.tabContainer {
+.container {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  max-width: 500px;
+  max-width: 400px;
   margin: 0 auto;
-  padding: 8px 0;
+  
+  /* Taller to allow vertical centering */
+  height: 62px;
+  
+  /* Push content down slightly to center in visible area */
+  padding: 6px 8px 0;
 }
+
+/* ==========================================================================
+   Tab Item
+   ========================================================================== */
 
 .tab {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   
-  /* Generous touch target - 56px minimum */
-  min-width: 56px;
-  min-height: 56px;
-  padding: 8px 12px;
+  /* More gap between icon and label */
+  gap: 5px;
+  
+  position: relative;
+  
+  /* Touch target */
+  min-width: 60px;
+  min-height: 44px;
+  padding: 4px 8px;
   
   /* Reset */
   background: none;
   border: none;
-  cursor: pointer;
   text-decoration: none;
+  cursor: pointer;
   
-  /* Default state - more visible inactive color */
-  color: rgba(255, 255, 255, 0.45);
-  transition: color 0.2s ease, transform 0.15s ease;
+  /* Inactive state */
+  color: rgba(255, 255, 255, 0.4);
   
-  /* Prevent text selection */
-  user-select: none;
-  -webkit-user-select: none;
+  /* Smooth transition */
+  transition: color 0.2s ease;
   
-  /* Touch feedback */
+  /* No highlight */
   -webkit-tap-highlight-color: transparent;
-  
-  position: relative;
+  user-select: none;
 }
 
 .tab:active {
-  transform: scale(0.92);
+  transform: scale(0.95);
 }
 
-.tabActive {
-  color: var(--color-accent-lime);
+/* Active state - just teal color */
+.active {
+  color: var(--color-accent-teal, #10b981);
 }
 
-.tabIcon {
+/* ==========================================================================
+   Icon
+   ========================================================================== */
+
+.icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
+  transition: transform 0.15s ease, filter 0.2s ease;
 }
 
-.tabIcon svg {
-  width: 24px;
-  height: 24px;
-  transition: stroke-width 0.15s ease;
+.tab:active .icon {
+  transform: scale(0.9);
 }
 
-/* AL Mascot Icon */
-.alMascot {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  object-fit: cover;
-  opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-  /* Subtle ring around mascot */
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+/* Active glow - matches AL's glow effect */
+.active .icon {
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
 }
 
-.alMascotActive {
-  opacity: 1;
-  border-color: var(--color-accent-lime);
-  box-shadow: var(--shadow-lime);
-}
+/* ==========================================================================
+   Label
+   ========================================================================== */
 
-.tabLabel {
+.label {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
   line-height: 1;
+  text-transform: uppercase;
 }
 
-.tabActive .tabLabel {
+.active .label {
   font-weight: 600;
 }
 
-/* Active indicator - subtle bar at top */
-.activeIndicator {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--color-accent-lime);
-  animation: slideIn 0.25s ease-out;
+/* ==========================================================================
+   AL Mascot - Premium Treatment
+   ========================================================================== */
+
+.alTab {
+  /* Extra gap for AL since mascot is larger */
+  gap: 6px;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    width: 0;
-  }
-  to {
-    opacity: 1;
-    width: 20px;
-  }
+.alWrapper {
+  position: relative;
+  
+  /* Force perfect circle */
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  flex-shrink: 0;
+  
+  overflow: hidden;
+  
+  /* Subtle ring */
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+  
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover state for non-touch devices */
+.alImage {
+  /* Force perfect circle */
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  
+  /* Slightly dimmed when inactive */
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+/* AL Active State */
+.alWrapperActive {
+  /* Teal ring with glow */
+  box-shadow: 
+    0 0 0 2px var(--color-accent-teal, #10b981),
+    0 0 12px rgba(16, 185, 129, 0.4),
+    0 0 24px rgba(16, 185, 129, 0.15);
+}
+
+.alWrapperActive .alImage {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Hover States (Desktop/Trackpad)
+   ========================================================================== */
+
 @media (hover: hover) {
-  .tab:hover:not(.tabActive) {
-    color: rgba(255, 255, 255, 0.7);
+  .tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  
+  .tab:hover .alWrapper:not(.alWrapperActive) {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.2);
+  }
+  
+  .tab:hover .alImage {
+    opacity: 0.8;
   }
 }
 
-/* Hide on desktop - use header nav instead */
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Hide on desktop */
 @media (min-width: 1024px) {
-  .tabBar {
+  .nav {
     display: none;
   }
 }
 
-/* Tablet: slightly larger touch targets */
+/* Tablet */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .tabContainer {
-    max-width: 600px;
-    padding: 10px 0;
+  .container {
+    max-width: 480px;
+    height: 68px;
+    padding: 8px 8px 0;
   }
   
   .tab {
     min-width: 72px;
-    min-height: 60px;
     gap: 6px;
   }
   
-  .tabIcon svg {
-    width: 26px;
-    height: 26px;
+  .alTab {
+    gap: 7px;
   }
   
-  .tabLabel {
+  .icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .label {
     font-size: 11px;
+  }
+  
+  .alWrapper {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
   }
 }
 
-/* Small phones: tighter layout */
+/* Small phones */
 @media (max-width: 374px) {
-  .tabContainer {
-    padding: 6px 0;
+  .container {
+    height: 56px;
+    padding: 4px 4px 0;
   }
   
   .tab {
-    min-width: 48px;
-    padding: 6px 8px;
-    gap: 2px;
+    min-width: 52px;
+    padding: 4px 6px;
+    gap: 4px;
   }
   
-  .tabIcon svg {
-    width: 22px;
-    height: 22px;
+  .alTab {
+    gap: 5px;
   }
   
-  .tabLabel {
+  .icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .label {
     font-size: 9px;
+  }
+  
+  .alWrapper {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
   }
 }
 
-/* Landscape orientation: horizontal layout */
+/* Landscape */
 @media (max-height: 500px) and (orientation: landscape) {
-  .tabBar {
+  .nav {
     padding-bottom: 0;
   }
   
-  .tabContainer {
-    padding: 4px 0;
+  .container {
+    max-width: 100%;
+    height: 48px;
+    padding: 0 8px;
   }
   
   .tab {
     flex-direction: row;
     gap: 6px;
-    min-height: 44px;
-    padding: 6px 16px;
+    min-width: auto;
+    padding: 4px 12px;
   }
   
-  .tabLabel {
-    font-size: 11px;
+  .alTab {
+    gap: 6px;
   }
-  
-  .activeIndicator {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .icon,
+  .alWrapper,
+  .alImage {
+    transition: none;
   }
 }

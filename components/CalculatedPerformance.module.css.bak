@@ -1,0 +1,109 @@
+/* ===========================================
+   CALCULATED PERFORMANCE
+   Standalone component for Data tab
+   Physics-based 0-60, 1/4 mile, braking estimates
+   =========================================== */
+
+.calcPerformance {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.calcHeader {
+  margin-bottom: 16px;
+}
+
+.calcTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.calcSubtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.calcGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.calcMetric {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.calcMetricHeader {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.calcMetricValues {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.calcStock {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+}
+
+.calcArrow {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.calcModded {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+}
+
+.calcDelta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-teal);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .calcPerformance {
+    padding: 16px;
+  }
+
+  .calcGrid {
+    gap: 8px;
+  }
+
+  .calcMetric {
+    padding: 10px;
+  }
+  
+  .calcModded {
+    font-size: 16px;
+  }
+  
+  .calcStock {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .calcGrid {
+    grid-template-columns: 1fr;
+  }
+}

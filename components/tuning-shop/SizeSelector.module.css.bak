@@ -1,0 +1,213 @@
+/**
+ * Size Selector Styles
+ * 
+ * Mobile-first design for size variant selection.
+ */
+
+/* Standard Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Options Grid */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 80px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--brand-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.option:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.option:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.optionSelected {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.optionSelected:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+.optionUnavailable {
+  opacity: 0.4;
+}
+
+.optionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.optionPrice {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.optionStock {
+  font-size: 10px;
+  color: var(--brand-error);
+  text-transform: uppercase;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+/* Compact Mode (Dropdown) */
+.compactContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compactLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.compactSelect {
+  flex: 1;
+  padding: 6px 28px 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--brand-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.compactSelect:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.compactSelect:focus {
+  outline: none;
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.compactSelect:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.compactSelect option {
+  background: var(--brand-bg-primary);
+  color: var(--brand-text-primary);
+}
+
+/* Inline Selector (for part cards) */
+.inlineContainer {
+  width: 100%;
+}
+
+.inlineSelect {
+  width: 100%;
+  padding: 8px 30px 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--brand-text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: all 0.15s ease;
+}
+
+.inlineSelect:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.inlineSelect:focus {
+  outline: none;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.inlineSelect:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.inlineSelect option {
+  background: var(--brand-bg-primary);
+  color: var(--brand-text-primary);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .options {
+    gap: 6px;
+  }
+  
+  .option {
+    min-width: 70px;
+    padding: 8px 10px;
+  }
+  
+  .optionTitle {
+    font-size: 12px;
+  }
+  
+  .optionPrice {
+    font-size: 10px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

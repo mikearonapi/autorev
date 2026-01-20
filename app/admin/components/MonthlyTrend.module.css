@@ -60,7 +60,7 @@
 }
 
 .currentRow {
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(var(--brand-blue-rgb), 0.05);
 }
 
 .currentRow td {
@@ -146,7 +146,7 @@
 }
 
 .compactRow.currentRow {
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(var(--brand-blue-rgb), 0.08);
 }
 
 .compactPeriod {

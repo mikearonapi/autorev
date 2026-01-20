@@ -147,8 +147,8 @@
 }
 
 .success {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.3);
 }
 
 .success p {
@@ -156,8 +156,8 @@
 }
 
 .error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
 }
 
 .error p {

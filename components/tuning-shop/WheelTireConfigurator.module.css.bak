@@ -1,0 +1,892 @@
+/* ============================================
+   WHEEL & TIRE CONFIGURATOR - Clean Design
+   ============================================ */
+
+.container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Compact Mode */
+.compact {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.headerToggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 16px 0 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerLeft svg {
+  color: rgba(34, 211, 238, 0.8);
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.performanceBadge {
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--brand-teal);
+}
+
+.headerHint {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+/* Hide on mobile - shown in badge already */
+@media (max-width: 640px) {
+  .headerHint {
+    display: none;
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 16px;
+  flex-shrink: 0;
+}
+
+.headerEditBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.headerEditBtn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.headerEditBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.headerEditBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--brand-teal);
+}
+
+.headerEditLabel {
+  display: inline;
+}
+
+.chevronBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Content */
+.content {
+  padding: 0 16px 16px;
+}
+
+/* Loading & Error */
+.loading, .errorState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(34, 211, 238, 0.8);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorState {
+  color: rgba(239, 68, 68, 0.8);
+}
+
+/* Edit Toggle Row - only shows reset button when editing */
+.editToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.editBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--brand-teal);
+}
+
+.resetBtn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Specs Section */
+.specsSection {
+  margin-bottom: 14px;
+}
+
+/* Staggered Toggle */
+.staggeredToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.toggleLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.toggleButtons {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.toggleBtn {
+  padding: 6px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.toggleBtnActive {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--brand-teal);
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Specs Grid */
+.specsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.specGroup {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.specGroupTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 8px;
+}
+
+.specRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tireSpecRow {
+  margin-top: 6px;
+}
+
+/* Spec Field */
+.specField {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.specFieldFull {
+  grid-column: 1 / -1;
+}
+
+.specLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.specValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 0;
+}
+
+.specInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.specInput {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.specInput:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.specInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.specSuffix {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Tire Compound Section */
+.compoundSection {
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+}
+
+.performanceTag {
+  padding: 2px 5px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--brand-teal);
+}
+
+/* Compound Icon Row */
+.compoundIconRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.compoundIconBtn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.compoundIconBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.compoundIconBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.compoundIconBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+.compoundIconEmoji {
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* Selected Compound Info */
+.compoundInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.compoundInfoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.compoundInfoDesc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  flex: 1;
+}
+
+.compoundInfoGrip {
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--brand-teal);
+}
+
+.compoundInfoStock {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Apply Button */
+.applyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 8px;
+  color: var(--brand-teal);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+}
+
+.applyBtn:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.2) 100%);
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+/* Responsive - Tablet */
+@media (max-width: 900px) {
+  .compoundIconEmoji {
+    font-size: 18px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 640px) {
+  .headerToggle {
+    padding: 10px 0 10px 12px;
+  }
+  
+  .headerRight {
+    gap: 6px;
+    padding-right: 12px;
+  }
+  
+  .headerEditBtn {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  
+  .headerEditBtn svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .chevronBtn {
+    padding: 6px;
+  }
+  
+  .headerTitle {
+    font-size: 14px;
+  }
+  
+  .performanceBadge {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+  
+  .content {
+    padding: 0 12px 12px;
+  }
+  
+  .editToggle {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .resetBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .specsSection {
+    margin-bottom: 10px;
+  }
+  
+  .staggeredToggle {
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  
+  .toggleLabel {
+    font-size: 11px;
+  }
+  
+  .toggleBtn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  
+  .specsGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .specGroup {
+    padding: 8px 10px;
+  }
+  
+  .specGroupTitle {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  
+  .specRow {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  
+  .specLabel {
+    font-size: 9px;
+  }
+  
+  .specValue {
+    font-size: 13px;
+    padding: 4px 0;
+  }
+  
+  .specInput {
+    padding: 5px 6px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  .compoundSection {
+    margin-bottom: 10px;
+  }
+  
+  .sectionTitle {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .compoundIconRow {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .compoundIconBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+  
+  .compoundIconEmoji {
+    font-size: 22px;
+  }
+  
+  .compoundInfo {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  
+  .compoundInfoLabel {
+    font-size: 11px;
+  }
+  
+  .compoundInfoDesc {
+    font-size: 10px;
+  }
+  
+  .compoundInfoGrip {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+  
+  .applyBtn {
+    padding: 8px;
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+}
+
+/* Compact Mode Overrides */
+.compact .header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.compact .content {
+  padding: 16px;
+}
+
+.compact .compoundIconRow {
+  gap: 10px;
+}
+
+.compact .compoundIconBtn {
+  padding: 12px 10px;
+}
+
+.compact .compoundInfo {
+  padding: 10px 12px;
+}
+
+/* Lightweight Wheels Upgrade Toggle */
+.upgradeSection {
+  margin-top: 14px;
+}
+
+.upgradeSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+}
+
+.upgradeToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.upgradeToggle:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.upgradeToggleActive {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+.upgradeCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.upgradeCheckboxActive {
+  background: linear-gradient(135deg, #a855f7, var(--brand-purple-accent));
+  border-color: transparent;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+.upgradeCheckbox svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.15s ease;
+}
+
+.upgradeCheckboxActive svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.upgradeInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.upgradeName {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 3px;
+}
+
+.upgradeDesc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}
+
+.upgradeMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.upgradeCost {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(34, 197, 94, 0.9);
+}
+
+.upgradeGain {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(34, 211, 238, 0.8);
+  padding: 2px 6px;
+  background: rgba(34, 211, 238, 0.1);
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  /* Container overflow control */
+  .container {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  
+  .upgradeSection {
+    margin-top: 12px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .upgradeSectionTitle {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .upgradeToggle {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 8px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  
+  .upgradeCheckbox {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .upgradeCheckbox svg {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .upgradeInfo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .upgradeName {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .upgradeDesc {
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .upgradeMeta {
+    flex-shrink: 0;
+    max-width: 80px;
+    text-align: right;
+  }
+  
+  .upgradeCost {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  
+  .upgradeGain {
+    font-size: 8px;
+    padding: 1px 5px;
+    white-space: nowrap;
+  }
+}

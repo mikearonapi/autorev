@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import AskALButton from './AskALButton';
 import styles from './VirtualDynoChart.module.css';
 
 export default function VirtualDynoChart({ 
@@ -18,7 +19,9 @@ export default function VirtualDynoChart({
   stockTorque, 
   estimatedTq, 
   peakRpm = 6500,
-  compact = false 
+  compact = false,
+  carName = null,
+  carSlug = null,
 }) {
   // Guard against invalid values
   const safeStockHp = (typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0) ? stockHp : 300;
@@ -27,8 +30,8 @@ export default function VirtualDynoChart({
   // Generate dyno curve data points
   const generateCurve = (peakPower, peakTq, isStock = false) => {
     const points = [];
-    const startRpm = 2000;
-    const endRpm = 7500;
+    const startRpm = 1000;
+    const endRpm = 9000;
     const step = 250;
 
     for (let rpm = startRpm; rpm <= endRpm; rpm += step) {
@@ -58,21 +61,42 @@ export default function VirtualDynoChart({
 
   const maxHp = Math.max(safeEstimatedHp, safeStockHp) * 1.15;
   const hpGain = safeEstimatedHp - safeStockHp;
-  const gainPercent = ((hpGain / safeStockHp) * 100).toFixed(0);
+
+  // Calculate HP gain for prompt context
+  const hpGainForPrompt = safeEstimatedHp - safeStockHp;
+  const hasGains = hpGainForPrompt > 0;
+  
+  // Build contextual prompt for AL
+  const alPrompt = carName 
+    ? `Explain my ${carName}'s dyno curve. ${hasGains ? `I've gained ${hpGainForPrompt} HP from ${safeStockHp} to ${safeEstimatedHp} HP.` : `It's currently stock at ${safeStockHp} HP.`} What does the power curve tell me about how my car delivers power? Where is the powerband and how can I optimize my driving for it?`
+    : `Explain this dyno curve showing ${safeStockHp} HP stock to ${safeEstimatedHp} HP modified. What does the power curve shape tell me about power delivery and how to drive it?`;
+  
+  const alDisplayMessage = hasGains 
+    ? `Explain my dyno curve (+${hpGainForPrompt} HP)`
+    : 'Explain my power curve';
 
   return (
     <div className={`${styles.virtualDyno} ${compact ? styles.compact : ''}`}>
-      {/* Header with clear gain summary */}
+      {/* Header */}
       <div className={styles.dynoHeader}>
         <div className={styles.dynoTitleSection}>
           <span className={styles.dynoTitle}>Virtual Dyno</span>
           <span className={styles.dynoSubtitle}>Estimated power curve based on your modifications</span>
         </div>
-        <div className={styles.dynoGainBadge}>
-          <span className={styles.dynoGainValue}>+{hpGain}</span>
-          <span className={styles.dynoGainUnit}>HP</span>
-          <span className={styles.dynoGainPercent}>({gainPercent}% gain)</span>
-        </div>
+        <AskALButton
+          category="Virtual Dyno"
+          prompt={alPrompt}
+          displayMessage={alDisplayMessage}
+          carName={carName}
+          carSlug={carSlug}
+          variant="header"
+          metadata={{ 
+            section: 'virtual-dyno',
+            stockHp: safeStockHp,
+            estimatedHp: safeEstimatedHp,
+            hpGain: hpGainForPrompt,
+          }}
+        />
       </div>
       
       {/* Legend */}
@@ -119,12 +143,12 @@ export default function VirtualDynoChart({
             <path
               d={
                 modCurve.map((p, i) => {
-                  const x = ((p.rpm - 2000) / 5500) * 100;
+                  const x = ((p.rpm - 1000) / 8000) * 100;
                   const y = 100 - (p.hp / maxHp) * 100;
                   return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
                 }).join(' ') +
                 stockCurve.slice().reverse().map((p) => {
-                  const x = ((p.rpm - 2000) / 5500) * 100;
+                  const x = ((p.rpm - 1000) / 8000) * 100;
                   const y = 100 - (p.hp / maxHp) * 100;
                   return `L ${x} ${y}`;
                 }).join(' ') + ' Z'
@@ -137,14 +161,14 @@ export default function VirtualDynoChart({
           <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
               d={stockCurve.map((p, i) => {
-                const x = ((p.rpm - 2000) / 5500) * 100;
+                const x = ((p.rpm - 1000) / 8000) * 100;
                 const y = 100 - (p.hp / maxHp) * 100;
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
               }).join(' ')}
               fill="none"
               stroke="rgba(255,255,255,0.4)"
-              strokeWidth="2"
-              strokeDasharray="6 4"
+              strokeWidth="1"
+              strokeDasharray="4 2"
             />
           </svg>
           
@@ -152,13 +176,13 @@ export default function VirtualDynoChart({
           <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
               d={modCurve.map((p, i) => {
-                const x = ((p.rpm - 2000) / 5500) * 100;
+                const x = ((p.rpm - 1000) / 8000) * 100;
                 const y = 100 - (p.hp / maxHp) * 100;
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
               }).join(' ')}
               fill="none"
               stroke="#10b981"
-              strokeWidth="3"
+              strokeWidth="1.5"
             />
           </svg>
           
@@ -166,7 +190,7 @@ export default function VirtualDynoChart({
           <div
             className={styles.dynoPeakMarkerStock}
             style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              left: `${((peakRpm - 1000) / 8000) * 100}%`,
               bottom: `${(safeStockHp / maxHp) * 100}%`
             }}
           >
@@ -177,7 +201,7 @@ export default function VirtualDynoChart({
           <div
             className={styles.dynoPeakMarkerMod}
             style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              left: `${((peakRpm - 1000) / 8000) * 100}%`,
               bottom: `${(safeEstimatedHp / maxHp) * 100}%`
             }}
           >
@@ -189,7 +213,7 @@ export default function VirtualDynoChart({
           <div
             className={styles.dynoGainLine}
             style={{
-              left: `${((peakRpm - 2000) / 5500) * 100}%`,
+              left: `${((peakRpm - 1000) / 8000) * 100}%`,
               bottom: `${(safeStockHp / maxHp) * 100}%`,
               height: `${((safeEstimatedHp - safeStockHp) / maxHp) * 100}%`
             }}
@@ -200,11 +224,11 @@ export default function VirtualDynoChart({
         
         {/* X-Axis Labels */}
         <div className={styles.dynoXAxis}>
-          <span>2,000</span>
-          <span>3,500</span>
-          <span>5,000</span>
-          <span>6,500</span>
-          <span>7,500 RPM</span>
+          <span>1k</span>
+          <span>3k</span>
+          <span>5k</span>
+          <span>7k</span>
+          <span>9k RPM</span>
         </div>
       </div>
     </div>

@@ -168,12 +168,12 @@
 }
 
 .categoryActive {
-  background: rgba(255, 77, 0, 0.15);
-  border-color: rgba(255, 77, 0, 0.5);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .categoryActive:hover {
-  background: rgba(255, 77, 0, 0.2);
+  background: rgba(16, 185, 129, 0.2);
 }
 
 .categoryIcon {
@@ -189,7 +189,7 @@
 }
 
 .categoryActive .categoryLabel {
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 /* Form Grid */
@@ -243,7 +243,7 @@
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--accent-primary, #ff4d00);
+  border-color: var(--brand-teal);
   background: rgba(0, 0, 0, 0.4);
 }
 
@@ -284,7 +284,7 @@
 .checkbox {
   width: 16px;
   height: 16px;
-  accent-color: var(--accent-primary, #ff4d00);
+  accent-color: var(--brand-teal);
 }
 
 /* Cost Section */
@@ -299,7 +299,7 @@
 .sectionTitle {
   font-size: 12px;
   font-weight: 700;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0 0 12px;
@@ -345,9 +345,9 @@
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  background: rgba(255, 77, 0, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   border-radius: 8px;
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .totalLabel {
@@ -360,7 +360,7 @@
 .totalValue {
   font-size: 18px;
   font-weight: 700;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
   font-family: var(--font-mono, monospace);
 }
 
@@ -386,10 +386,10 @@
 
 .autoCalcBtn {
   padding: 6px 10px;
-  background: rgba(255, 77, 0, 0.15);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 6px;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -397,7 +397,7 @@
 }
 
 .autoCalcBtn:hover {
-  background: rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.25);
 }
 
 .reminderGrid {
@@ -409,8 +409,8 @@
 /* Submit Error */
 .submitError {
   padding: 12px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 8px;
   color: var(--brand-error);
   font-size: 13px;
@@ -445,7 +445,7 @@
 
 .saveBtn {
   padding: 10px 24px;
-  background: var(--accent-primary, #ff4d00);
+  background: var(--brand-teal);
   border: none;
   border-radius: 8px;
   color: var(--brand-border-subtle);
@@ -456,7 +456,7 @@
 }
 
 .saveBtn:hover {
-  background: #d4b574;
+  background: var(--brand-gold);
 }
 
 .saveBtn:disabled {

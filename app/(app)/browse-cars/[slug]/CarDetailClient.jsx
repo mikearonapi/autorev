@@ -828,10 +828,10 @@ export default function CarDetailClient({ car: rawCar }) {
                   <Icons.check size={22} />
                   <h2>Best Years to Buy</h2>
                   <AskALButton 
+                    variant="header"
                     category="Buying Guide"
                     prompt={`What should I look for when buying a ${car.name}? Include best model years, must-have options, red flags to watch for during a PPI, and negotiation tips.`}
                     carName={car.name}
-                    variant="icon"
                   />
                 </div>
                 <div className={styles.yearsList}>
@@ -1129,10 +1129,10 @@ export default function CarDetailClient({ car: rawCar }) {
                   <Icons.tool size={22} />
                   <h2>Major Service Costs</h2>
                   <AskALButton 
+                    variant="header"
                     category="Maintenance"
                     prompt={`What is the recommended maintenance schedule for the ${car.name} (${car.years})? Include service intervals, fluid specifications, and typical costs for both dealer and independent shops.`}
                     carName={car.name}
-                    variant="icon"
                   />
                 </div>
                 <div className={styles.serviceGrid}>
@@ -1175,10 +1175,10 @@ export default function CarDetailClient({ car: rawCar }) {
                   <Icons.alertCircle size={22} />
                   <h2>Known Issues</h2>
                   <AskALButton 
+                    variant="header"
                     category="Known Issues"
                     prompt={`What are the most critical known issues with the ${car.name} (${car.years})? Include severity, affected model years, typical repair costs, and how to prevent or detect them early.`}
                     carName={car.name}
-                    variant="icon"
                   />
                 </div>
                 <div className={styles.issuesList}>
@@ -1324,10 +1324,10 @@ export default function CarDetailClient({ car: rawCar }) {
                 <Icons.play size={22} />
                 <h2>Expert Reviews</h2>
                 <AskALButton 
+                  variant="header"
                   category="Expert Reviews"
                   prompt={`What do automotive experts and reviewers agree on about the ${car.name} (${car.years})? Summarize the consensus on its strengths, weaknesses, and who it's best suited for.`}
                   carName={car.name}
-                  variant="icon"
                 />
               </div>
               <ExpertReviews carSlug={car.slug} car={car} />
@@ -1378,10 +1378,10 @@ export default function CarDetailClient({ car: rawCar }) {
                 <Icons.gauge size={22} />
                 <h2>Performance Scores</h2>
                 <AskALButton 
+                  variant="header"
                   category="Performance"
                   prompt={`How does the ${car.name} (${car.years}) compare to its direct competitors in terms of performance? Include 0-60 times, lap times, handling characteristics, and what makes it stand out.`}
                   carName={car.name}
-                  variant="icon"
                 />
               </div>
               

@@ -8,8 +8,8 @@
 }
 
 .container.editMode {
-  border-color: rgba(245, 158, 11, 0.3);
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border-color: rgba(var(--brand-warning-rgb), 0.3);
+  background: linear-gradient(135deg, rgba(var(--brand-warning-rgb), 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 }
 
 .header {
@@ -54,14 +54,14 @@
 }
 
 .successMessage {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   color: var(--admin-positive, #22c55e);
 }
 
 .errorMessage {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
   color: var(--admin-negative, #ef4444);
 }
 
@@ -201,7 +201,7 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-blue-rgb), 0.3);
 }
 
 .submitButton:disabled {

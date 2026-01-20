@@ -11,7 +11,7 @@
 }
 
 .container.hasChanges {
-  border-color: rgba(212, 168, 75, 0.3);
+  border-color: rgba(var(--brand-gold-rgb), 0.3);
 }
 
 /* Compact Mode */
@@ -53,7 +53,7 @@
 }
 
 .headerLeft svg {
-  color: rgba(212, 168, 75, 0.8);
+  color: rgba(var(--brand-gold-rgb), 0.8);
 }
 
 .headerTitle {
@@ -186,9 +186,9 @@
 .resetBtn {
   padding: 8px 14px;
   background: transparent;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 8px;
-  color: rgba(239, 68, 68, 0.8);
+  color: rgba(var(--brand-error-rgb), 0.8);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -196,8 +196,8 @@
 }
 
 .resetBtn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border-color: rgba(var(--brand-error-rgb), 0.5);
   color: var(--brand-error);
 }
 
@@ -263,7 +263,7 @@
 
 .fieldInput:focus {
   outline: none;
-  border-color: rgba(212, 168, 75, 0.5);
+  border-color: rgba(var(--brand-gold-rgb), 0.5);
   background: rgba(0, 0, 0, 0.4);
 }
 
@@ -298,7 +298,7 @@
 
 .fieldSelect:focus {
   outline: none;
-  border-color: rgba(212, 168, 75, 0.5);
+  border-color: rgba(var(--brand-gold-rgb), 0.5);
   background-color: rgba(0, 0, 0, 0.4);
 }
 

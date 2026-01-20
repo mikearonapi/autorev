@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './BuildWizard.module.css';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import CarImage from '@/components/CarImage';
 
 /**
@@ -111,6 +112,7 @@ export default function BuildWizard({
 }) {
   const router = useRouter();
   const { vehicles } = useOwnedVehicles();
+  const { getBuildById } = useSavedBuilds();
   const [mounted, setMounted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -126,10 +128,17 @@ export default function BuildWizard({
   const [currentSetup, setCurrentSetup] = useState(null);
   const [budgetRange, setBudgetRange] = useState(null);
   
-  // Match vehicles with car data from database
+  // Match vehicles with car data and build data from database
+  // Include active build data for accurate HP gain display
   const vehiclesWithCars = vehicles.map(v => {
     const car = allCars.find(c => c.slug === v.matchedCarSlug);
-    return { vehicle: v, car };
+    const activeBuild = v.activeBuildId ? getBuildById(v.activeBuildId) : null;
+    return { 
+      vehicle: v, 
+      car,
+      // Use build's HP gain if available (more accurate), otherwise fall back to cached value
+      displayHpGain: activeBuild?.totalHpGain ?? v.totalHpGain ?? 0,
+    };
   });
   
   // Mount check for portal
@@ -370,9 +379,9 @@ export default function BuildWizard({
                         {selectedVehicle.vehicle.nickname || selectedVehicle.car?.name || 
                           `${selectedVehicle.vehicle.year} ${selectedVehicle.vehicle.make} ${selectedVehicle.vehicle.model}`}
                       </span>
-                      {selectedVehicle.vehicle.totalHpGain > 0 && (
+                      {selectedVehicle.displayHpGain > 0 && (
                         <span className={styles.selectedCarYear}>
-                          +{selectedVehicle.vehicle.totalHpGain} HP from existing build
+                          +{selectedVehicle.displayHpGain} HP from existing build
                         </span>
                       )}
                     </div>
@@ -409,9 +418,9 @@ export default function BuildWizard({
                           {item.vehicle.nickname || item.car?.name || 
                             `${item.vehicle.year} ${item.vehicle.make} ${item.vehicle.model}`}
                         </span>
-                        {item.vehicle.totalHpGain > 0 ? (
+                        {item.displayHpGain > 0 ? (
                           <span className={styles.vehicleCardHp}>
-                            +{item.vehicle.totalHpGain} HP
+                            +{item.displayHpGain} HP
                           </span>
                         ) : (
                           <span className={styles.vehicleCardStock}>Stock</span>
@@ -453,7 +462,7 @@ export default function BuildWizard({
           {STEPS[currentStep] === 'goal' && (
             <div className={styles.step}>
               <h1 className={styles.stepTitle}>What's Your Goal?</h1>
-              <p className={styles.stepSubtitle}>We'll tailor recommendations to your build style</p>
+              <p className={styles.stepSubtitle}>We'll prioritize upgrades that match your driving style — no more endless forum searching</p>
               
               <div className={styles.goalGrid}>
                 {BUILD_GOALS.map((goal) => (
@@ -476,7 +485,7 @@ export default function BuildWizard({
           {STEPS[currentStep] === 'setup' && (
             <div className={styles.step}>
               <h1 className={styles.stepTitle}>Current Setup</h1>
-              <p className={styles.stepSubtitle}>Where is your car at today?</p>
+              <p className={styles.stepSubtitle}>We'll recommend next steps based on what you already have</p>
               
               <div className={styles.setupList}>
                 {CURRENT_SETUPS.map((setup) => (
@@ -501,7 +510,7 @@ export default function BuildWizard({
           {STEPS[currentStep] === 'budget' && (
             <div className={styles.step}>
               <h1 className={styles.stepTitle}>Budget Range</h1>
-              <p className={styles.stepSubtitle}>Help us find parts within your budget</p>
+              <p className={styles.stepSubtitle}>We'll filter recommendations to fit your budget — no sticker shock</p>
               
               <div className={styles.budgetGrid}>
                 {BUDGET_RANGES.map((budget) => (

@@ -6,11 +6,11 @@
 .container[data-theme='light'] {
   --btn-bg: rgba(0, 0, 0, 0.5); /* 50% opacity for better visibility */
   --btn-border: rgba(0, 0, 0, 0.1);
-  --btn-text: #ffffff; /* White text for contrast on dark background */
+  --btn-text: var(--brand-text-primary); /* White text for contrast on dark background */
   --btn-hover-bg: rgba(0, 0, 0, 0.7);
   --btn-hover-border: rgba(0, 0, 0, 0.2);
-  --btn-hover-text: #ffffff;
-  --menu-bg: #ffffff;
+  --btn-hover-text: var(--brand-text-primary);
+  --menu-bg: var(--brand-text-primary);
   --menu-border: rgba(0, 0, 0, 0.1);
   --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   --divider: rgba(0, 0, 0, 0.08);
@@ -19,11 +19,11 @@
 .container[data-theme='dark'] {
   --btn-bg: rgba(255, 255, 255, 0.5); /* 50% opacity */
   --btn-border: rgba(255, 255, 255, 0.12);
-  --btn-text: #000000; /* Black text for contrast */
+  --btn-text: var(--brand-bg-primary); /* Black text for contrast */
   --btn-hover-bg: rgba(255, 255, 255, 0.7);
   --btn-hover-border: rgba(255, 255, 255, 0.2);
-  --btn-hover-text: #000000;
-  --menu-bg: #1a1b1e;
+  --btn-hover-text: var(--brand-bg-primary);
+  --menu-bg: var(--brand-bg-card-dark);
   --menu-border: rgba(255, 255, 255, 0.12);
   --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   --divider: rgba(255, 255, 255, 0.08);
@@ -34,11 +34,11 @@
   .container:not([data-theme]) {
     --btn-bg: rgba(0, 0, 0, 0.5);
     --btn-border: rgba(0, 0, 0, 0.1);
-    --btn-text: #ffffff;
+    --btn-text: var(--brand-text-primary);
     --btn-hover-bg: rgba(0, 0, 0, 0.7);
     --btn-hover-border: rgba(0, 0, 0, 0.2);
-    --btn-hover-text: #ffffff;
-    --menu-bg: #ffffff;
+    --btn-hover-text: var(--brand-text-primary);
+    --menu-bg: var(--brand-text-primary);
     --menu-border: rgba(0, 0, 0, 0.1);
     --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     --divider: rgba(0, 0, 0, 0.08);
@@ -49,11 +49,11 @@
   .container:not([data-theme]) {
     --btn-bg: rgba(255, 255, 255, 0.5);
     --btn-border: rgba(255, 255, 255, 0.12);
-    --btn-text: #000000;
+    --btn-text: var(--brand-bg-primary);
     --btn-hover-bg: rgba(255, 255, 255, 0.7);
     --btn-hover-border: rgba(255, 255, 255, 0.2);
-    --btn-hover-text: #000000;
-    --menu-bg: #1a1b1e;
+    --btn-hover-text: var(--brand-bg-primary);
+    --menu-bg: var(--brand-bg-card-dark);
     --menu-border: rgba(255, 255, 255, 0.12);
     --menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     --divider: rgba(255, 255, 255, 0.08);
@@ -139,22 +139,22 @@
 }
 
 .actionBtn.activeFavorite {
-  background: rgba(239, 68, 68, 0.9);
-  border-color: rgba(239, 68, 68, 1);
+  background: rgba(var(--brand-error-rgb), 0.9);
+  border-color: rgba(var(--brand-error-rgb), 1);
   color: var(--brand-text-primary);
   transform: translateZ(0);
 }
 
 .actionBtn.modBtn {
-  background: rgba(255, 77, 0, 0.1);
-  border-color: rgba(255, 77, 0, 0.25);
-  color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--sn-gold, var(--brand-teal));
 }
 
 .actionBtn.modBtn:hover:not(:disabled) {
-  background: rgba(255, 77, 0, 0.15);
-  border-color: rgba(255, 77, 0, 0.3);
-  color: var(--sn-gold, var(--accent-primary, #ff4d00));
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--sn-gold, var(--brand-teal));
 }
 
 /* Compact Menu */
@@ -218,8 +218,8 @@
 }
 
 .compactBtn.activeFavorite {
-  background: rgba(239, 68, 68, 0.9);
-  border-color: rgba(239, 68, 68, 1);
+  background: rgba(var(--brand-error-rgb), 0.9);
+  border-color: rgba(var(--brand-error-rgb), 1);
   color: var(--brand-text-primary);
   transform: translateZ(0);
 }

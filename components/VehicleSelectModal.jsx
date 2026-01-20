@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, forwardRef } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './VehicleSelectModal.module.css';
 
-export default function VehicleSelectModal({ vehicles, selectedId, onSelect, onClose }) {
+const VehicleSelectModal = forwardRef(function VehicleSelectModal({ vehicles, selectedId, onSelect, onClose }, ref) {
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e) => {
@@ -38,7 +38,7 @@ export default function VehicleSelectModal({ vehicles, selectedId, onSelect, onC
       />
       
       {/* Modal - sibling, not child of backdrop */}
-      <div className={styles.modal} role="dialog" aria-modal="true">
+      <div ref={ref} className={styles.modal} role="dialog" aria-modal="true">
         {/* Header */}
         <div className={styles.header}>
           <div>
@@ -110,4 +110,6 @@ export default function VehicleSelectModal({ vehicles, selectedId, onSelect, onC
     </>,
     document.body
   );
-}
+});
+
+export default VehicleSelectModal;

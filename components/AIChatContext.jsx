@@ -16,15 +16,18 @@
  * - Use a tiny module-level store (useSyncExternalStore) for state + actions.
  * - Mount a small `AIChatHost` client component in `app/layout.jsx`.
  * - Dynamically load the heavy chat UI only after the user opens chat.
+ * 
+ * UPDATE: openChatWithPrompt now navigates to /al page instead of opening popup.
+ * The floating launcher still opens the popup for quick access.
  */
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { UI_IMAGES } from '@/lib/images';
 import styles from './AIChatLauncher.module.css';
-import { isAppRoute } from '@/lib/appRoutes';
+import { setPendingALPrompt } from '@/components/AskALButton';
 
 const AIMechanicChat = dynamic(() => import('@/components/AIMechanicChat'), {
   ssr: false,
@@ -63,55 +66,63 @@ function getSnapshot() {
 /**
  * Hook used throughout the app (Header, AskALButton, etc.)
  * Keeps the same surface area as the previous provider-based API.
+ * 
+ * NOTE: openChatWithPrompt now navigates to /al page instead of opening popup.
+ * Use openChat/toggleChat for the popup behavior.
  */
 export function useAIChat() {
   const snap = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const router = useRouter();
 
-  return useMemo(() => {
-    const openChat = () => {
-      setState({ hasLoadedChat: true, isOpen: true });
-    };
+  // Stable function references that don't depend on snap state
+  const openChat = () => {
+    setState({ hasLoadedChat: true, isOpen: true });
+  };
 
-    const closeChat = () => {
-      setState({ isOpen: false });
-    };
+  const closeChat = () => {
+    setState({ isOpen: false });
+  };
 
-    const toggleChat = () => {
-      setState({ hasLoadedChat: true, isOpen: !snap.isOpen });
-    };
+  const toggleChat = () => {
+    setState({ hasLoadedChat: true, isOpen: !state.isOpen });
+  };
 
-    const openChatWithPrompt = (prompt, context = {}, displayMessage = null, extra = {}) => {
-      if (typeof prompt !== 'string' || !prompt.trim()) {
-        console.warn('[useAIChat] openChatWithPrompt called without a valid prompt');
-        return;
-      }
-      setState({
-        hasLoadedChat: true,
-        isOpen: true,
-        pendingPrompt: {
-          prompt,
-          context,
-          displayMessage,
-          options: extra?.options,
-        },
-      });
-    };
+  /**
+   * Navigate to the /al page with a pre-filled prompt.
+   * This replaces the old popup behavior for a better UX.
+   */
+  const openChatWithPrompt = (prompt, context = {}, displayMessage = null, extra = {}) => {
+    if (typeof prompt !== 'string' || !prompt.trim()) {
+      console.warn('[useAIChat] openChatWithPrompt called without a valid prompt');
+      return;
+    }
+    
+    // Store the prompt in sessionStorage for the AL page to pick up
+    setPendingALPrompt({
+      prompt,
+      displayMessage: displayMessage || prompt,
+      context,
+      options: extra?.options,
+    });
+    
+    // Navigate to the AL page
+    router.push('/al');
+  };
 
-    const clearPendingPrompt = () => {
-      setState({ pendingPrompt: null });
-    };
+  const clearPendingPrompt = () => {
+    setState({ pendingPrompt: null });
+  };
 
-    return {
-      isOpen: snap.isOpen,
-      hasLoadedChat: snap.hasLoadedChat,
-      pendingPrompt: snap.pendingPrompt,
-      openChat,
-      closeChat,
-      toggleChat,
-      openChatWithPrompt,
-      clearPendingPrompt,
-    };
-  }, [snap.isOpen, snap.hasLoadedChat, snap.pendingPrompt]);
+  return {
+    isOpen: snap.isOpen,
+    hasLoadedChat: snap.hasLoadedChat,
+    pendingPrompt: snap.pendingPrompt,
+    openChat,
+    closeChat,
+    toggleChat,
+    openChatWithPrompt,
+    clearPendingPrompt,
+  };
 }
 
 /**
@@ -127,8 +138,9 @@ export function AIChatHost() {
   const [isHydrated, setIsHydrated] = useState(false);
   const pathname = usePathname();
   
-  // Hide floating launcher on app routes (bottom tab bar has AL button)
-  const showFloatingLauncher = !isAppRoute(pathname);
+  // DISABLED: Floating AL launcher removed from all pages
+  // App routes have AL in bottom tab bar, marketing pages don't need it
+  const showFloatingLauncher = false;
 
   useEffect(() => {
     setIsHydrated(true);
@@ -136,7 +148,7 @@ export function AIChatHost() {
 
   return (
     <>
-      {/* Floating launcher - hidden on app routes where bottom tab bar exists */}
+      {/* Floating launcher - DISABLED (removed from site) */}
       {showFloatingLauncher && (
         <button
           type="button"

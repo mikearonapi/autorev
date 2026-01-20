@@ -180,7 +180,7 @@
 }
 
 .clearButton:hover {
-  background: rgba(231, 76, 60, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   border-color: var(--brand-error);
   color: var(--brand-error);
 }
@@ -272,7 +272,7 @@
 }
 
 .removeButton:hover {
-  background: rgba(231, 76, 60, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.2);
   color: var(--brand-error);
 }
 

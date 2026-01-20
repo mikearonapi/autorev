@@ -35,8 +35,8 @@
 }
 
 .vehicleSelectorTriggerActive {
-  background: rgba(212, 168, 75, 0.15);
-  border-color: var(--accent-primary, var(--brand-gold));
+  background: rgba(var(--brand-gold-rgb), 0.15);
+  border-color: var(--brand-gold);
 }
 
 .vehicleSelectorIcon {
@@ -63,7 +63,7 @@
 .vehicleSelectorLabel {
   font-size: 10px;
   font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 2px;
@@ -139,8 +139,8 @@
 }
 
 .vehicleSelectorMenuItemActive {
-  background: rgba(212, 168, 75, 0.15);
-  border-left: 3px solid var(--accent-primary, var(--brand-gold));
+  background: rgba(var(--brand-gold-rgb), 0.15);
+  border-left: 3px solid var(--brand-gold);
 }
 
 .vehicleSelectorMenuItemImage {
@@ -176,7 +176,7 @@
 }
 
 .vehicleSelectorMenuItemCheck {
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   flex-shrink: 0;
 }
 
@@ -203,8 +203,8 @@
 }
 
 .vehicleSelectorAddItem:hover {
-  background: rgba(212, 168, 75, 0.1);
-  border-color: var(--accent-primary, var(--brand-gold));
+  background: rgba(var(--brand-gold-rgb), 0.1);
+  border-color: var(--brand-gold);
 }
 
 .vehicleSelectorAddIcon {
@@ -213,13 +213,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
 }
 
 .vehicleSelectorAddText {
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
 }
 
 /* ===========================================
@@ -264,15 +264,15 @@
 }
 
 .quickActionBtnActive {
-  background: var(--accent-primary, var(--brand-gold));
-  border-color: var(--accent-primary, var(--brand-gold));
-  color: #000;
+  background: var(--brand-gold);
+  border-color: var(--brand-gold);
+  color: var(--brand-bg-primary);
 }
 
 .quickActionBtnActive:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
-  border-color: var(--accent-primary-hover, var(--brand-gold-light));
-  color: #000;
+  background: var(--brand-gold-light);
+  border-color: var(--brand-gold-light);
+  color: var(--brand-bg-primary);
 }
 
 .quickActionIcon {
@@ -314,7 +314,7 @@
 
 .circularGaugeProgress {
   fill: none;
-  stroke: var(--gauge-color, var(--accent-primary, var(--brand-gold)));
+  stroke: var(--gauge-color, var(--brand-gold));
   stroke-linecap: round;
   transition: stroke-dashoffset 0.5s ease;
 }
@@ -345,7 +345,7 @@
   margin-top: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--gauge-color, var(--accent-primary, var(--brand-gold)));
+  color: var(--gauge-color, var(--brand-gold));
 }
 
 /* Gauge Sizes */
@@ -400,7 +400,7 @@
   height: 3px;
   background: linear-gradient(
     90deg,
-    var(--accent-primary, var(--brand-gold)) 0%,
+    var(--brand-gold) 0%,
     transparent 100%
   );
   opacity: 0.8;
@@ -416,7 +416,7 @@
 .premiumCardTitle {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin: 0;
@@ -427,11 +427,11 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  background: rgba(212, 168, 75, 0.15);
+  background: rgba(var(--brand-gold-rgb), 0.15);
   border-radius: 20px;
   font-size: 10px;
   font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -525,24 +525,24 @@
   justify-content: center;
   gap: 10px;
   padding: 16px 24px;
-  background: var(--accent-primary, var(--brand-gold));
+  background: var(--brand-gold);
   border: none;
   border-radius: 14px;
   font-size: 15px;
   font-weight: 700;
-  color: #000;
+  color: var(--brand-bg-primary);
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 
-    0 4px 20px rgba(212, 168, 75, 0.4),
+    0 4px 20px rgba(var(--brand-gold-rgb), 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .floatingCtaPrimary:hover {
-  background: var(--accent-primary-hover, var(--brand-gold-light));
+  background: var(--brand-gold-light);
   transform: translateY(-2px);
   box-shadow: 
-    0 6px 24px rgba(212, 168, 75, 0.5),
+    0 6px 24px rgba(var(--brand-gold-rgb), 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
 
@@ -624,7 +624,7 @@
 
 /* Status colors */
 .healthSummaryItemGood {
-  border-color: rgba(74, 222, 128, 0.3);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
 }
 
 .healthSummaryItemGood .healthSummaryIcon {
@@ -632,15 +632,15 @@
 }
 
 .healthSummaryItemWarning {
-  border-color: rgba(251, 191, 36, 0.3);
+  border-color: rgba(var(--brand-warning-rgb), 0.3);
 }
 
 .healthSummaryItemWarning .healthSummaryIcon {
-  color: #fbbf24;
+  color: var(--brand-warning);
 }
 
 .healthSummaryItemDanger {
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
 }
 
 .healthSummaryItemDanger .healthSummaryIcon {
@@ -707,10 +707,10 @@
   padding: 8px 14px;
   background: linear-gradient(
     135deg,
-    rgba(212, 168, 75, 0.2) 0%,
-    rgba(212, 168, 75, 0.1) 100%
+    rgba(var(--brand-gold-rgb), 0.2) 0%,
+    rgba(var(--brand-gold-rgb), 0.1) 100%
   );
-  border: 1px solid rgba(212, 168, 75, 0.3);
+  border: 1px solid rgba(var(--brand-gold-rgb), 0.3);
   border-radius: 20px;
   flex-shrink: 0;
 }
@@ -718,13 +718,13 @@
 .achievementBadgeIcon {
   width: 18px;
   height: 18px;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
 }
 
 .achievementBadgeText {
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   white-space: nowrap;
 }
 
@@ -764,7 +764,7 @@
 .premiumPanelTitle {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-gold);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 4px;

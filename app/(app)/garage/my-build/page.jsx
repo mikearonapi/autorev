@@ -106,6 +106,8 @@ function MyBuildContent() {
     upgradeCount: 0,
     selectedUpgrades: [],
   });
+  // Build goal (track, street, show, daily) - determines which upgrade categories are prioritized
+  const [currentGoal, setCurrentGoal] = useState(null);
 
   // Hooks
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -155,6 +157,8 @@ function MyBuildContent() {
             setCurrentBuildId(build.id);
             if (build.factoryConfig) setFactoryConfig(build.factoryConfig);
             if (build.wheelFitment) selectFitment(build.wheelFitment);
+            // Load build goal if set
+            if (build.goal) setCurrentGoal(build.goal);
           });
         }
       }
@@ -176,6 +180,7 @@ function MyBuildContent() {
     setSelectedCar(car);
     setCurrentBuildId(null);
     setFactoryConfig(null);
+    setCurrentGoal(null);
     clearFitmentSelection();
     window.history.pushState({}, '', `/garage/my-build?car=${car.slug}`);
     setShowCarPicker(false);
@@ -187,6 +192,8 @@ function MyBuildContent() {
       setSelectedCar(result.car);
       if (result.factoryConfig) setFactoryConfig(result.factoryConfig);
       if (result.wheelFitment) selectFitment(result.wheelFitment);
+      // Set the build goal if provided by the wizard
+      if (result.goal) setCurrentGoal(result.goal);
       window.history.pushState({}, '', `/garage/my-build?car=${result.car.slug}`);
     }
     setShowBuildWizard(false);
@@ -315,6 +322,8 @@ function MyBuildContent() {
           factoryConfig={factoryConfig}
           wheelFitment={selectedFitment}
           onBuildSummaryUpdate={handleBuildSummaryUpdate}
+          goal={currentGoal}
+          onGoalChange={setCurrentGoal}
         />
       </div>
 

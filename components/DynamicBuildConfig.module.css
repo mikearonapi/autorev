@@ -29,9 +29,9 @@
 .configSummaryCount {
   font-size: 11px;
   padding: 3px 8px;
-  background: rgba(255, 77, 0, 0.15);
+  background: rgba(16, 185, 129, 0.15);
   border-radius: 10px;
-  color: var(--accent-primary, #ff4d00);
+  color: var(--brand-teal);
 }
 
 /* List of upgrades - clean spacing */

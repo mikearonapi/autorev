@@ -1,0 +1,909 @@
+/* ===========================================
+   DYNO LOG MODAL
+   Part of "My Data" feedback loop system
+   Optimized for mobile-first experience
+   
+   Brand Typography:
+   - Labels: 10px min, uppercase, Inter
+   - Inputs: 14px body, JetBrains Mono for data
+   - Section titles: 12px, Inter bold
+   =========================================== */
+
+/* CF-003: Mobile-first modal overlay - full screen coverage */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-base, #0d1b2a);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  z-index: 9999; /* Above everything including tab bar */
+  padding: 0;
+  animation: fadeIn 0.2s ease;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Center modal on tablet+ */
+@media (min-width: 641px) {
+  .overlay {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(12px);
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* CF-003: Full-screen modal on mobile - positioned above PWA menu */
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  /* True fullscreen - no gap at top */
+  height: 100vh;
+  height: 100dvh;
+  /* Account for PWA bottom nav (80px) + safe area */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  background: var(--color-bg-base, #0d1b2a);
+  border-radius: 0;
+  border: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease-out;
+}
+
+@media (min-width: 641px) {
+  .modal {
+    max-width: 560px;
+    height: auto;
+    max-height: 85vh;
+    padding-bottom: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, rgba(20, 24, 32, 1), rgba(13, 17, 23, 1));
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header - Full width with status bar padding */
+.header {
+  padding: calc(env(safe-area-inset-top, 20px) + 8px) 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  flex-shrink: 0;
+  background: var(--color-bg-elevated, #1b263b);
+}
+
+/* Drag handle indicator for mobile */
+.header::before {
+  content: '';
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 20px) + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+@media (min-width: 641px) {
+  .header {
+    padding: 20px 24px;
+    background: transparent;
+  }
+  
+  .header::before {
+    display: none;
+  }
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (min-width: 641px) {
+  .titleRow {
+    margin-top: 0;
+  }
+}
+
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 8px;
+  color: var(--color-accent-teal, #10b981);
+}
+
+@media (min-width: 641px) {
+  .titleIcon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Brand: H3 size - 18px mobile, 28px desktop */
+.title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 641px) {
+  .title {
+    font-size: 22px;
+  }
+}
+
+/* Brand: Small text - 11px mobile */
+.vehicleInfo {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 12px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 4px 0 0 38px;
+}
+
+@media (min-width: 641px) {
+  .vehicleInfo {
+    font-size: 13px;
+    margin: 6px 0 0 42px;
+  }
+}
+
+/* CF-001: Touch target compliance - minimum 44px */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-primary, #ffffff);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .closeBtn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+}
+
+/* Form - Scrollable content area */
+.form {
+  flex: 1;
+  min-height: 0; /* Important for flex scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 16px;
+  /* Smooth scroll on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent overscroll bounce affecting parent */
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 641px) {
+  .form {
+    padding: 16px 24px;
+  }
+}
+
+/* Prediction Banner - Teal accent for data improvements */
+.predictionBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 641px) {
+  .predictionBanner {
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+}
+
+.predictionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Brand: Uppercase label - 10px min */
+.predictionLabel {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+@media (min-width: 641px) {
+  .predictionLabel {
+    font-size: 11px;
+  }
+}
+
+/* Brand: Monospace for data values, teal for improvements */
+.predictionValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+@media (min-width: 641px) {
+  .predictionValue {
+    font-size: 20px;
+  }
+}
+
+.predictionDiff {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+@media (min-width: 641px) {
+  .predictionDiff {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+}
+
+.predictionDiff.positive {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.predictionDiff.negative {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning, #f59e0b);
+}
+
+/* Sections - Compact spacing on mobile */
+.section {
+  margin-bottom: 12px;
+}
+
+@media (min-width: 641px) {
+  .section {
+    margin-bottom: 18px;
+  }
+}
+
+/* Brand: Section title - 12px, Inter bold, white */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 8px;
+}
+
+@media (min-width: 641px) {
+  .sectionTitle {
+    font-size: 12px;
+    margin: 0 0 10px;
+  }
+}
+
+.sectionTitle svg {
+  color: var(--color-accent-teal, #10b981);
+  width: 18px;
+  height: 18px;
+}
+
+/* Power Numbers Grid - All 3 fields visible on mobile */
+.powerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  align-items: end; /* Align inputs at bottom regardless of label height */
+}
+
+@media (min-width: 480px) {
+  .powerGrid {
+    gap: 10px;
+  }
+}
+
+/* Labels in power grid - fixed height to prevent misalignment */
+.powerGrid .label {
+  min-height: 24px;
+  display: flex;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+/* Form Grid */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 8px;
+}
+
+@media (min-width: 480px) {
+  .formGrid {
+    gap: 8px 12px;
+  }
+}
+
+/* Smaller text for form grid inputs/selects */
+.formGrid .input,
+.formGrid .select {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
+@media (min-width: 641px) {
+  .formGrid .input,
+  .formGrid .select {
+    font-size: 13px;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Brand: Label style - 10px min, uppercase, muted white */
+.label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 641px) {
+  .label {
+    font-size: 10px;
+    gap: 5px;
+  }
+}
+
+.label svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
+}
+
+@media (min-width: 641px) {
+  .label svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Brand: Base input/select - consistent 14px with Inter font */
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: var(--color-text-primary, #ffffff);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  /* Minimum touch target height */
+  min-height: 42px;
+}
+
+@media (min-width: 641px) {
+  .input,
+  .select,
+  .textarea {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 42px;
+  }
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-teal, #10b981);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 400;
+}
+
+/* Large input for hero power numbers - monospace for data */
+.largeInput {
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 18px;
+  min-height: 44px;
+}
+
+@media (min-width: 480px) {
+  .largeInput {
+    font-size: 22px;
+    padding: 8px 6px;
+    min-height: 48px;
+  }
+}
+
+.inputWithSuffix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithSuffix .input {
+  padding-right: 42px;
+}
+
+@media (min-width: 641px) {
+  .inputWithSuffix .input {
+    padding-right: 50px;
+  }
+}
+
+.inputWithSuffix .largeInput {
+  padding-right: 46px;
+}
+
+@media (min-width: 480px) {
+  .inputWithSuffix .largeInput {
+    padding-right: 60px;
+  }
+}
+
+/* Brand: Suffix text - muted, Inter */
+.suffix {
+  position: absolute;
+  right: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+@media (min-width: 641px) {
+  .suffix {
+    right: 12px;
+    font-size: 12px;
+  }
+}
+
+.inputWithSuffix:has(.largeInput) .suffix {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (min-width: 480px) {
+  .inputWithSuffix:has(.largeInput) .suffix {
+    font-size: 14px;
+  }
+}
+
+.select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  /* iOS native select styling */
+  -webkit-appearance: none;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 56px;
+}
+
+@media (min-width: 641px) {
+  .textarea {
+    min-height: 70px;
+  }
+}
+
+.error {
+  font-size: 11px;
+  color: var(--color-error, #ef4444);
+}
+
+/* Collapsible Details Section - Compact on mobile */
+.detailsSection {
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (min-width: 641px) {
+  .detailsSection {
+    margin-bottom: 14px;
+    border-radius: 10px;
+  }
+}
+
+/* Brand: Collapsible section header - Inter, 12px */
+.detailsSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: all 0.2s ease;
+  min-height: 40px;
+}
+
+@media (min-width: 641px) {
+  .detailsSummary {
+    padding: 12px 14px;
+    font-size: 12px;
+    min-height: 44px;
+  }
+}
+
+.detailsSummary::-webkit-details-marker {
+  display: none;
+}
+
+.detailsSummary::after {
+  content: '▼';
+  margin-left: auto;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+details[open] .detailsSummary::after {
+  transform: rotate(180deg);
+}
+
+.detailsSummary:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.detailsIcon {
+  display: flex;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.conditionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 641px) {
+  .conditionsGrid {
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+/* Optional content inside collapsible sections */
+.optionalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 641px) {
+  .optionalContent {
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+/* Upload area within optional content - no extra margin */
+.optionalContent .uploadArea {
+  margin-top: 0;
+}
+
+/* Upload Section - Compact on mobile */
+.uploadSection {
+  margin-bottom: 12px;
+}
+
+@media (min-width: 641px) {
+  .uploadSection {
+    margin-bottom: 16px;
+  }
+}
+
+.uploadArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+  min-height: 60px;
+}
+
+@media (min-width: 641px) {
+  .uploadArea {
+    padding: 20px;
+    gap: 6px;
+    border-radius: 10px;
+    margin-top: 6px;
+    min-height: 80px;
+  }
+}
+
+.uploadArea:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.uploadArea svg {
+  color: rgba(255, 255, 255, 0.4);
+  width: 24px;
+  height: 24px;
+}
+
+.uploadText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+@media (min-width: 641px) {
+  .uploadText {
+    font-size: 13px;
+  }
+}
+
+.uploadHint {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (min-width: 641px) {
+  .uploadHint {
+    font-size: 11px;
+  }
+}
+
+.uploadedFile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.uploadedIcon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 6px;
+  color: var(--color-accent-teal, #10b981);
+  font-size: 14px;
+}
+
+.uploadedText {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.removeFileBtn {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 32px;
+}
+
+.removeFileBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--color-error, #ef4444);
+}
+
+.fileInput {
+  display: none;
+}
+
+/* Submit Error */
+.submitError {
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: var(--color-error, #ef4444);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 641px) {
+  .submitError {
+    padding: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Actions - Fixed at bottom, positioned above PWA menu */
+.actions {
+  display: flex;
+  justify-content: stretch;
+  gap: 12px;
+  padding: 14px 16px;
+  /* No extra bottom padding - modal already has padding for PWA nav */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-elevated, #1b263b);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 641px) {
+  .actions {
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 14px 24px;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Brand: Secondary button - outline style */
+.cancelBtn {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 641px) {
+  .cancelBtn {
+    flex: none;
+    padding: 10px 20px;
+    border-radius: 100px;
+    min-height: 44px;
+  }
+}
+
+.cancelBtn:hover {
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+/* Brand: Primary CTA - lime button */
+.saveBtn {
+  flex: 1.5;
+  padding: 12px 20px;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 100px;
+  color: var(--color-bg-base, #0d1b2a);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 641px) {
+  .saveBtn {
+    flex: none;
+    padding: 10px 24px;
+    border-radius: 100px;
+    min-height: 44px;
+  }
+}
+
+.saveBtn:hover {
+  background: #bfe600;
+  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

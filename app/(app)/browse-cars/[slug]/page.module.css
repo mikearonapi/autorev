@@ -354,7 +354,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, var(--accent-primary, var(--brand-gold)) 0%, var(--accent-primary, var(--brand-gold)) 100%);
+  background: linear-gradient(135deg, var(--brand-gold) 0%, var(--brand-gold) 100%);
   color: var(--brand-bg-primary);
   border-radius: 10px;
   text-decoration: none;
@@ -363,13 +363,13 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(212, 168, 75, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-gold-rgb), 0.3);
 }
 
 .modCtaButton:hover {
   background: linear-gradient(135deg, var(--brand-gold-light) 0%, var(--brand-gold) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 168, 75, 0.4);
+  box-shadow: 0 6px 20px rgba(var(--brand-gold-rgb), 0.4);
 }
 
 .modCtaButton:active {
@@ -825,14 +825,14 @@
 }
 
 .badgeWarn {
-  border-color: rgba(245, 158, 11, 0.25);
-  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(var(--brand-warning-rgb), 0.25);
+  background: rgba(var(--brand-warning-rgb), 0.12);
   color: var(--brand-warning);
 }
 
 .badgePrice {
-  border-color: rgba(212, 168, 75, 0.35);
-  background: rgba(212, 168, 75, 0.16);
+  border-color: rgba(var(--brand-gold-rgb), 0.35);
+  background: rgba(var(--brand-gold-rgb), 0.16);
   color: var(--brand-gold);
 }
 
@@ -1211,7 +1211,7 @@
 }
 
 .marketBadge.stable {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--brand-blue-rgb), 0.1);
   color: var(--score-good);
 }
 
@@ -1578,12 +1578,12 @@
 }
 
 .issueCard.minor {
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(var(--brand-blue-rgb), 0.05);
   border-color: var(--score-good);
 }
 
 .issueCard.moderate {
-  background: rgba(245, 158, 11, 0.05);
+  background: rgba(var(--brand-warning-rgb), 0.05);
   border-color: var(--score-average);
 }
 
@@ -1620,8 +1620,8 @@
   text-transform: uppercase;
 }
 
-.severityBadge.minor { background: rgba(59, 130, 246, 0.15); color: var(--score-good); }
-.severityBadge.moderate { background: rgba(245, 158, 11, 0.15); color: var(--score-average); }
+.severityBadge.minor { background: rgba(var(--brand-blue-rgb), 0.15); color: var(--score-good); }
+.severityBadge.moderate { background: rgba(var(--brand-warning-rgb), 0.15); color: var(--score-average); }
 .severityBadge.major { background: rgba(185, 28, 28, 0.15); color: var(--score-poor); }
 
 .frequencyBadge {
@@ -1656,12 +1656,12 @@
 }
 
 .trackBadge.needs-prep {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(var(--brand-warning-rgb), 0.12);
   color: var(--score-average);
 }
 
 .trackBadge.weekend-warrior {
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(var(--brand-blue-rgb), 0.12);
   color: var(--score-good);
 }
 
@@ -1671,7 +1671,7 @@
 }
 
 .trackBadge.race-bred {
-  background: rgba(139, 92, 246, 0.12);
+  background: rgba(var(--brand-purple-rgb), 0.12);
   color: var(--brand-purple-accent);
 }
 
@@ -1720,7 +1720,7 @@
 }
 
 .priorityBadge.essential { background: rgba(21, 128, 61, 0.12); color: var(--score-excellent); }
-.priorityBadge.recommended { background: rgba(59, 130, 246, 0.12); color: var(--score-good); }
+.priorityBadge.recommended { background: rgba(var(--brand-blue-rgb), 0.12); color: var(--score-good); }
 .priorityBadge.optional { background: var(--color-gray-200); color: var(--color-gray-600); }
 
 .trackPrepCost {

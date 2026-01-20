@@ -3,6 +3,14 @@
    Single Source of Truth for all colors
    
    RULE: Never hardcode hex values in component CSS. Always use these tokens.
+   
+   THE CORE 4 COLOR SYSTEM (see docs/BRAND_GUIDELINES.md):
+   - LIME (#d4ff00)  → User actions, CTAs, focus states
+   - TEAL (#10b981)  → Positive data, improvements, gains, active states
+   - BLUE (#3b82f6)  → Baseline, stock data, informational
+   - AMBER (#f59e0b) → Warnings only (use sparingly!)
+   
+   DEPRECATED: Gold (#d4a84b) removed - use amber for warnings, muted white for labels
    ========================================================================== */
 
 :root {
@@ -30,29 +38,33 @@
      ACCENT COLORS - Each has ONE specific purpose
      ======================================================================= */
   
-  /* Lime - PRIMARY CTAs & Emphasis */
+  /* LIME - User Actions & CTAs
+     Use when you want user to DO something (buttons, CTAs) */
   --color-accent-lime: #d4ff00;
   --color-accent-lime-dark: #bfe600;
   --color-accent-lime-muted: rgba(212, 255, 0, 0.1);
   --color-accent-lime-border: rgba(212, 255, 0, 0.3);
   
-  /* Teal - IMPROVEMENTS & Positive Changes */
+  /* TEAL - Improvements & Positive Data
+     Use for gains, upgrades, modified values, active selections */
   --color-accent-teal: #10b981;
   --color-accent-teal-light: #34d399;
   --color-accent-teal-muted: rgba(16, 185, 129, 0.15);
   --color-accent-teal-border: rgba(16, 185, 129, 0.3);
   
-  /* Blue - BASELINE & Stock Values */
+  /* BLUE - Baseline & Stock Data
+     Use for original/factory values, informational content */
   --color-accent-blue: #3b82f6;
   --color-accent-blue-light: #60a5fa;
   --color-accent-blue-muted: rgba(59, 130, 246, 0.15);
   --color-accent-blue-border: rgba(59, 130, 246, 0.3);
   
-  /* Gold - LABELS & Secondary Actions */
-  --color-accent-gold: #d4a84b;
-  --color-accent-gold-hover: #e8c875;
-  --color-accent-gold-muted: rgba(212, 168, 75, 0.15);
-  --color-accent-gold-border: rgba(212, 168, 75, 0.3);
+  /* AMBER - Warnings Only (USE SPARINGLY)
+     Only for genuine caution/warning states */
+  --color-accent-amber: #f59e0b;
+  --color-accent-amber-light: #fbbf24;
+  --color-accent-amber-muted: rgba(245, 158, 11, 0.1);
+  --color-accent-amber-border: rgba(245, 158, 11, 0.2);
   
   /* =======================================================================
      SEMANTIC COLORS - Status & Feedback
@@ -62,17 +74,29 @@
   --color-success-muted: rgba(34, 197, 94, 0.15);
   --color-success-border: rgba(34, 197, 94, 0.3);
   
-  --color-warning: #f59e0b;
-  --color-warning-muted: rgba(245, 158, 11, 0.15);
-  --color-warning-border: rgba(245, 158, 11, 0.3);
+  /* Warning uses amber */
+  --color-warning: var(--color-accent-amber);
+  --color-warning-muted: var(--color-accent-amber-muted);
+  --color-warning-border: var(--color-accent-amber-border);
   
   --color-error: #ef4444;
   --color-error-muted: rgba(239, 68, 68, 0.15);
   --color-error-border: rgba(239, 68, 68, 0.3);
   
-  --color-info: #3b82f6;
-  --color-info-muted: rgba(59, 130, 246, 0.15);
-  --color-info-border: rgba(59, 130, 246, 0.3);
+  /* Info uses blue */
+  --color-info: var(--color-accent-blue);
+  --color-info-muted: var(--color-accent-blue-muted);
+  --color-info-border: var(--color-accent-blue-border);
+  
+  /* =======================================================================
+     DEPRECATED - DO NOT USE (kept for backwards compatibility)
+     Migrate to amber for warnings, muted white for labels
+     ======================================================================= */
+  
+  --color-accent-gold: var(--color-accent-amber);
+  --color-accent-gold-hover: var(--color-accent-amber-light);
+  --color-accent-gold-muted: var(--color-accent-amber-muted);
+  --color-accent-gold-border: var(--color-accent-amber-border);
   
   /* =======================================================================
      BORDER COLORS
@@ -89,9 +113,9 @@
   
   --color-chart-grid: rgba(255, 255, 255, 0.08);
   --color-chart-axis: rgba(255, 255, 255, 0.15);
-  --color-chart-stock: var(--color-accent-blue);
-  --color-chart-modified: var(--color-accent-teal);
-  --color-chart-gain: var(--color-accent-teal);
+  --color-chart-stock: var(--color-accent-blue);      /* Baseline = Blue */
+  --color-chart-modified: var(--color-accent-teal);   /* Improved = Teal */
+  --color-chart-gain: var(--color-accent-teal);       /* Gains = Teal */
   
   /* =======================================================================
      GRADIENTS

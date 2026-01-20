@@ -11,6 +11,7 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './UpgradeCenter.module.css';
 import {
   getPerformanceProfile,
@@ -55,13 +56,20 @@ import {
   hasObjectiveData
 } from '@/hooks/useTuningProfile';
 // Import shared upgrade category definitions (single source of truth)
-import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCategories.js';
+import { 
+  UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES,
+  GOAL_CATEGORY_MAP,
+  sortCategoriesByGoal,
+  isCategoryPrimaryForGoal,
+  getCategoriesForGoal,
+} from '@/lib/upgradeCategories.js';
 // TEMPORARILY HIDDEN: Dyno & Lap Times components hidden from UI per product decision.
 // To restore, uncomment: import { DynoDataSection, LapTimesSection } from './PerformanceData';
 
 // Mobile-first tuning shop components
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
+import { useAIChat } from './AIChatContext';
 // Image management moved to Garage Photos section for cleaner UX
 import VideoPlayer from './VideoPlayer';
 import UpgradeConfigPanel, { 
@@ -282,6 +290,13 @@ const Icons = {
   zap: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  ),
+  sparkle: ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/>
+      <path d="M5 19L5.5 21.5L8 22L5.5 22.5L5 25L4.5 22.5L2 22L4.5 21.5L5 19Z" opacity="0.6"/>
+      <path d="M19 2L19.5 4.5L22 5L19.5 5.5L19 8L18.5 5.5L16 5L18.5 4.5L19 2Z" opacity="0.6"/>
     </svg>
   ),
 };
@@ -1091,6 +1106,17 @@ function CategoryPopup({
                   </button>
                 </div>
                 
+                {/* Inline performance preview - shows on selection */}
+                {isSelected && totalHpGain > 0 && (
+                  <div className={styles.inlinePreview}>
+                    <span className={styles.previewLabel}>This upgrade adds:</span>
+                    <span className={styles.previewValue}>+{totalHpGain} HP</span>
+                    {upgrade.metricChanges?.torqueGain > 0 && (
+                      <span className={styles.previewValue}>+{upgrade.metricChanges.torqueGain} lb-ft</span>
+                    )}
+                  </div>
+                )}
+                
                 {/* Inline config panel - shows when upgrade is selected and has configOptions */}
                 {isSelected && hasConfigOptions && (
                   <UpgradeConfigPanel
@@ -1124,11 +1150,15 @@ export default function UpgradeCenter({
   onWheelFitmentChange = null,
   openSaveModalOnMount = false,
   onSaveModalOpened = null,
+  // Build goal (track, street, show, daily) - used to prioritize upgrade categories
+  goal = null,
+  onGoalChange = null,
 }) {
   const { isAuthenticated, user } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
   const { vehicles, applyModifications, addVehicle } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
+  const { openChatWithPrompt } = useAIChat();
   
   // Vehicle-specific tuning profile (safe additive enhancement)
   const { profile: tuningProfile, hasProfile: hasTuningProfile, loading: tuningProfileLoading } = useTuningProfile(car);
@@ -2078,6 +2108,29 @@ export default function UpgradeCenter({
     return result;
   }, [upgradesByCategory, effectiveModules]);
   
+  // Goal-filtered and sorted categories
+  const goalInfo = useMemo(() => {
+    if (!goal) return null;
+    return GOAL_CATEGORY_MAP[goal] || null;
+  }, [goal]);
+  
+  // Categories sorted by goal priority (goal-aligned categories first)
+  const sortedCategories = useMemo(() => {
+    // Filter to categories with available upgrades
+    const availableCats = UPGRADE_CATEGORIES.filter(cat => 
+      cat.key !== 'wheels' && 
+      (upgradesByCategory[cat.key]?.length || 0) > 0
+    );
+    
+    if (!goal) return availableCats;
+    
+    // Sort with goal-aligned categories first
+    const catKeys = availableCats.map(c => c.key);
+    const sortedKeys = sortCategoriesByGoal(catKeys, goal);
+    
+    return sortedKeys.map(key => availableCats.find(c => c.key === key)).filter(Boolean);
+  }, [upgradesByCategory, goal]);
+  
   // Notify parent of build summary changes
   useEffect(() => {
     if (onBuildSummaryUpdate) {
@@ -2143,6 +2196,58 @@ export default function UpgradeCenter({
     setSelectedPackage(pkgKey);
     if (pkgKey !== 'custom') setSelectedModules([]);
   };
+  
+  // Create contextualized AL prompts based on build context
+  const askALAboutBuild = useCallback((section) => {
+    if (!car) return;
+    
+    const carName = car.name;
+    const upgradeCount = effectiveModules.length;
+    const currentHpGain = hpGain;
+    const buildType = selectedPackage !== 'custom' && selectedPackage !== 'stock' 
+      ? selectedPackage.charAt(0).toUpperCase() + selectedPackage.slice(1) 
+      : null;
+    
+    // Detailed prompts sent to AL
+    const prompts = {
+      recommendation: upgradeCount > 0
+        ? `I have a ${carName} with ${upgradeCount} upgrades (+${currentHpGain} HP). What else would you recommend for my ${buildType ? buildType + ' build' : 'current setup'}?`
+        : `Give me detailed upgrade recommendations for my ${carName}. What are the best bang-for-buck mods, and what should I prioritize?`,
+      buildType: buildType
+        ? `Help me optimize my ${buildType} build for my ${carName}. What upgrades work best together for this style?`
+        : `What build should I do for my ${carName}? Should I focus on street, track, or something else?`,
+      upgrades: upgradeCount > 0
+        ? `I have these upgrades on my ${carName}: ${effectiveModules.slice(0, 5).join(', ')}${upgradeCount > 5 ? ` and ${upgradeCount - 5} more` : ''}. What should I add next for the best gains?`
+        : `What upgrades should I do first on my ${carName}? I want the best power gains without reliability issues.`,
+      configure: `Help me configure my upgrades for my ${carName}. I have ${upgradeCount} mods (+${currentHpGain} HP). What tuning settings and configurations will give me the best results?`,
+    };
+    
+    // Short, clear questions shown to user in the confirmation card
+    const displayMessages = {
+      recommendation: upgradeCount > 0
+        ? `What upgrades should I add next to my ${carName}? (+${currentHpGain} HP so far)`
+        : `What are the best upgrades for my ${carName}? Where should I start?`,
+      buildType: buildType
+        ? `How do I optimize my ${buildType} build on my ${carName}?`
+        : `Should I build my ${carName} for street, track, or both?`,
+      upgrades: upgradeCount > 0
+        ? `What should I add next? (${upgradeCount} mods selected)`
+        : `What upgrades give the best gains on my ${carName}?`,
+      configure: `How should I configure my ${upgradeCount} mods for the best results?`,
+    };
+    
+    const prompt = prompts[section] || `Tell me about ${section} for my ${carName}`;
+    const displayMessage = displayMessages[section] || prompt;
+    
+    openChatWithPrompt(prompt, {
+      category: section.charAt(0).toUpperCase() + section.slice(1),
+      carSlug: car.slug,
+      carName,
+      upgradeCount,
+      hpGain: currentHpGain,
+      buildType,
+    }, displayMessage);
+  }, [car, effectiveModules, hpGain, selectedPackage, openChatWithPrompt]);
   
   const handleModuleToggle = useCallback((moduleKey, moduleName, replacementInfo, upgrade) => {
     // When switching from a package to Custom, preserve the package's upgrades
@@ -2266,6 +2371,24 @@ export default function UpgradeCenter({
         tunerMode: tunerMode,
         advancedSpecs: hasAdvancedData ? advancedSpecs : null,
         // Note: Hero image is now stored as is_primary on user_uploaded_images
+        
+        // Performance metrics snapshot (for consistent community display)
+        stockHp: profile.stockMetrics.hp || car.hp || null,
+        stockZeroToSixty: profile.stockMetrics.zeroToSixty || car.zero_to_sixty || null,
+        stockBraking60To0: profile.stockMetrics.braking60To0 || car.braking_60_0 || null,
+        stockLateralG: profile.stockMetrics.lateralG || car.lateral_g || null,
+        finalZeroToSixty: profile.upgradedMetrics.zeroToSixty || null,
+        finalBraking60To0: profile.upgradedMetrics.braking60To0 || null,
+        finalLateralG: profile.upgradedMetrics.lateralG || null,
+        zeroToSixtyImprovement: profile.stockMetrics.zeroToSixty && profile.upgradedMetrics.zeroToSixty 
+          ? Math.round((profile.stockMetrics.zeroToSixty - profile.upgradedMetrics.zeroToSixty) * 100) / 100 
+          : null,
+        brakingImprovement: profile.stockMetrics.braking60To0 && profile.upgradedMetrics.braking60To0
+          ? Math.round(profile.stockMetrics.braking60To0 - profile.upgradedMetrics.braking60To0)
+          : null,
+        lateralGImprovement: profile.stockMetrics.lateralG && profile.upgradedMetrics.lateralG
+          ? Math.round((profile.upgradedMetrics.lateralG - profile.stockMetrics.lateralG) * 1000) / 1000
+          : null,
       };
       
       const result = currentBuildId 
@@ -2450,10 +2573,18 @@ export default function UpgradeCenter({
         <div className={styles.recommendationBannerFull}>
           <div className={styles.recommendationHeaderFull}>
             <span className={styles.recommendationTitleFull}>AUTOREV RECOMMENDATION</span>
-            {detailedRecommendation.focusArea && (
-              <span className={styles.focusTagFull}>Focus: {detailedRecommendation.focusArea}</span>
-            )}
+            <button 
+              className={styles.askAlBtn}
+              onClick={() => askALAboutBuild('recommendation')}
+              title="Ask AL for upgrade recommendations"
+            >
+              <Icons.sparkle size={12} />
+              Ask AL
+            </button>
           </div>
+          {detailedRecommendation.focusArea && (
+            <span className={styles.focusTagFull}>Focus: {detailedRecommendation.focusArea}</span>
+          )}
           <p className={styles.recommendationTextFull}>{detailedRecommendation.primaryText}</p>
           
           {/* Popular Mods & Watch Outs - Side by side cards */}
@@ -2530,32 +2661,42 @@ export default function UpgradeCenter({
           ═══════════════════════════════════════════════════════════════════════ */}
       {tunerMode === 'basic' && (
         <div className={styles.buildRecommendationsSection}>
-          <div className={styles.buildRecommendationsHeader}>
-            <Icons.settings size={16} />
-            <span>BUILD RECOMMENDATIONS</span>
-          </div>
-          {/* Street, Track, Drag on first row */}
-          <div className={styles.buildRecommendationsGrid}>
-            {BUILD_RECOMMENDATIONS.map(pkg => (
-              <button
-                key={pkg.key}
-                className={`${styles.buildRecBtn} ${selectedPackage === pkg.key ? styles.buildRecBtnActive : ''}`}
-                onClick={() => handlePackageSelect(pkg.key)}
+          <div className={styles.buildRecommendationsCard}>
+            <div className={styles.buildRecommendationsHeader}>
+              <Icons.settings size={16} />
+              <span>BUILD RECOMMENDATIONS</span>
+              <button 
+                className={styles.askAlBtn}
+                onClick={() => askALAboutBuild('buildType')}
+                title="Ask AL what build to do"
               >
-                {pkg.label}
+                <Icons.sparkle size={12} />
+                Ask AL
               </button>
-            ))}
-          </div>
-          {/* Custom on second row */}
-          <div className={styles.buildRecommendationsCustomRow}>
-            <button
-              className={`${styles.buildRecBtnCustomFull} ${selectedPackage === 'custom' ? styles.buildRecBtnActive : ''}`}
-              onClick={() => handlePackageSelect('custom')}
-            >
-              <Icons.settings size={14} />
-              <span>Custom Build</span>
-              <span className={styles.customBuildHint}>Pick your own upgrades</span>
-            </button>
+            </div>
+            {/* Street, Track, Drag on first row */}
+            <div className={styles.buildRecommendationsGrid}>
+              {BUILD_RECOMMENDATIONS.map(pkg => (
+                <button
+                  key={pkg.key}
+                  className={`${styles.buildRecBtn} ${selectedPackage === pkg.key ? styles.buildRecBtnActive : ''}`}
+                  onClick={() => handlePackageSelect(pkg.key)}
+                >
+                  {pkg.label}
+                </button>
+              ))}
+            </div>
+            {/* Custom on second row */}
+            <div className={styles.buildRecommendationsCustomRow}>
+              <button
+                className={`${styles.buildRecBtnCustomFull} ${selectedPackage === 'custom' ? styles.buildRecBtnActive : ''}`}
+                onClick={() => handlePackageSelect('custom')}
+              >
+                <Icons.settings size={14} />
+                <span>Custom Build</span>
+                <span className={styles.customBuildHint}>Pick your own upgrades</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -2579,25 +2720,40 @@ export default function UpgradeCenter({
               <div className={styles.sidebarCardHeader}>
                 <Icons.bolt size={16} />
                 <span className={styles.sidebarCardTitle}>Add Upgrades</span>
+                <button 
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutBuild('upgrades')}
+                  title="Ask AL about upgrades"
+                >
+                  <Icons.sparkle size={12} />
+                  Ask AL
+                </button>
               </div>
               <div className={styles.sidebarCardContent}>
+                {/* Goal indicator if goal is set */}
+                {goalInfo && (
+                  <div className={styles.goalIndicator}>
+                    <span className={styles.goalLabel}>Building for: {goalInfo.label}</span>
+                  </div>
+                )}
                 <div className={styles.categoryList}>
-                  {UPGRADE_CATEGORIES.filter(cat => 
-                    cat.key !== 'wheels' && 
-                    (upgradesByCategory[cat.key]?.length || 0) > 0
-                  ).map(cat => {
+                  {sortedCategories.map(cat => {
                     const Icon = cat.icon;
                     const count = selectedByCategory[cat.key] || 0;
+                    const isPrimaryForGoal = goal && isCategoryPrimaryForGoal(cat.key, goal);
                     
                     return (
                       <button
                         key={cat.key}
-                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''} ${isPrimaryForGoal ? styles.catBtnRecommended : ''}`}
                         onClick={() => setActiveCategory(cat.key)}
                         style={{ '--cat-color': cat.color }}
                       >
                         <Icon size={16} />
                         <span>{cat.label}</span>
+                        {isPrimaryForGoal && (
+                          <span className={styles.recommendedBadge} title={`Recommended for ${goalInfo?.label}`}>★</span>
+                        )}
                         {count > 0 && (
                           <span className={styles.catBadge}>{count}</span>
                         )}
@@ -2616,6 +2772,14 @@ export default function UpgradeCenter({
               <div className={styles.sidebarCardHeader}>
                 <Icons.settings size={16} />
                 <span className={styles.sidebarCardTitle}>Configure Upgrades</span>
+                <button 
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutBuild('configure')}
+                  title="Ask AL about configuration"
+                >
+                  <Icons.sparkle size={12} />
+                  Ask AL
+                </button>
               </div>
               <div className={styles.sidebarCardContent}>
                 <DynamicBuildConfig
@@ -2638,25 +2802,40 @@ export default function UpgradeCenter({
               <div className={styles.sidebarCardHeader}>
                 <Icons.bolt size={16} />
                 <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
+                <button 
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutBuild('upgrades')}
+                  title="Ask AL about upgrades"
+                >
+                  <Icons.sparkle size={12} />
+                  Ask AL
+                </button>
               </div>
               <div className={styles.sidebarCardContent}>
+                {/* Goal indicator if goal is set */}
+                {goalInfo && (
+                  <div className={styles.goalIndicator}>
+                    <span className={styles.goalLabel}>Building for: {goalInfo.label}</span>
+                  </div>
+                )}
                 <div className={styles.categoryList}>
-                  {UPGRADE_CATEGORIES.filter(cat => 
-                    cat.key !== 'wheels' && 
-                    (upgradesByCategory[cat.key]?.length || 0) > 0
-                  ).map(cat => {
+                  {sortedCategories.map(cat => {
                     const Icon = cat.icon;
                     const count = selectedByCategory[cat.key] || 0;
+                    const isPrimaryForGoal = goal && isCategoryPrimaryForGoal(cat.key, goal);
                     
                     return (
                       <button
                         key={cat.key}
-                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''}`}
+                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''} ${isPrimaryForGoal ? styles.catBtnRecommended : ''}`}
                         onClick={() => setActiveCategory(cat.key)}
                         style={{ '--cat-color': cat.color }}
                       >
                         <Icon size={16} />
                         <span>{cat.label}</span>
+                        {isPrimaryForGoal && (
+                          <span className={styles.recommendedBadge} title={`Recommended for ${goalInfo?.label}`}>★</span>
+                        )}
                         {count > 0 && (
                           <span className={styles.catBadge}>{count}</span>
                         )}
@@ -4002,21 +4181,7 @@ export default function UpgradeCenter({
             ═══════════════════════════════════════════════════════════════ */}
       </div>
       
-      {/* Save Build Button - Outside workspace for proper fixed positioning on mobile */}
-      <button
-        className={styles.saveBtn}
-        onClick={() => { 
-          // Use existing build name if editing, otherwise default to car name
-          if (!buildName) {
-            setBuildName(`${car.name} Build`);
-          }
-          setShowSaveModal(true); 
-        }}
-        disabled={!showUpgrade}
-      >
-        <Icons.save size={16} />
-        <span>Save Build</span>
-      </button>
+      {/* NOTE: Save Build button removed from bottom - now located in top nav (MyGarageSubNav) */}
       
       {/* Popups */}
       {activeCategory && activeCategoryData && (

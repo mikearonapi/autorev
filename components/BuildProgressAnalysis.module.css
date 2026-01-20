@@ -1,0 +1,380 @@
+/* Build Progress Analysis */
+.buildProgress {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.header svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.maxedBadge {
+  margin-left: auto;
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.2), rgba(212, 255, 0, 0.1));
+  border: 1px solid rgba(212, 255, 0, 0.3);
+  color: var(--color-accent-lime, #d4ff00);
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Stage Track Visual */
+.stageTrack {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding: 0 10px;
+  position: relative;
+}
+
+.stageNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex: 1;
+}
+
+.stageNumber {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.stageNode.current .stageNumber {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--color-accent-teal, #10b981);
+  color: var(--color-accent-teal, #10b981);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.stageNode.complete .stageNumber {
+  background: var(--color-accent-teal, #10b981);
+  border-color: var(--color-accent-teal, #10b981);
+  color: white;
+}
+
+.stageName {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stageNode.current .stageName,
+.stageNode.complete .stageName {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stageConnector {
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 18px);
+  width: calc(100% - 36px);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.stageConnector.complete {
+  background: var(--color-accent-teal, #10b981);
+}
+
+/* Current Stage Card */
+.currentStageCard {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.currentStageHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.currentStageHeader svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.currentStageTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.currentStageProgress {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.stageNotes {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* Progress Bar */
+.progressBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-teal, #10b981), #34d399);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+/* Components List */
+.componentsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.componentItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.componentItem.completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.componentItem.pending {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+/* Completion Estimate */
+.completionEstimate {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.estimateItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.estimateLabel {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.estimateValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* Completed State */
+.completedCard {
+  text-align: center;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.08), rgba(16, 185, 129, 0.08));
+  border-radius: 12px;
+  border: 1px solid rgba(212, 255, 0, 0.15);
+}
+
+.completedIcon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.completedText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin-bottom: 8px;
+}
+
+.completedSubtext {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Stages Overview */
+.stagesOverview {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+
+.overviewHeader {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.overviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.overviewRow:last-child {
+  border-bottom: none;
+}
+
+.overviewRow.complete {
+  opacity: 0.6;
+}
+
+.overviewRow.current {
+  background: rgba(16, 185, 129, 0.05);
+  margin: 0 -16px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border-bottom: none;
+}
+
+.overviewStage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overviewStageName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.overviewRow.complete .overviewStageName {
+  text-decoration: line-through;
+  text-decoration-color: rgba(16, 185, 129, 0.5);
+}
+
+.overviewStage svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.overviewStats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+
+.overviewHp {
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 600;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.overviewCost {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* No Data State */
+.noData {
+  text-align: center;
+  padding: 32px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .buildProgress {
+    padding: 16px;
+  }
+  
+  .stageTrack {
+    padding: 0;
+  }
+  
+  .stageNumber {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  
+  .stageName {
+    font-size: 9px;
+  }
+  
+  .stageConnector {
+    top: 12px;
+    left: calc(50% + 14px);
+    width: calc(100% - 28px);
+  }
+  
+  .componentsList {
+    gap: 6px;
+  }
+  
+  .componentItem {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  
+  .completionEstimate {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .overviewStats {
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+  }
+}

@@ -1,0 +1,295 @@
+/**
+ * Sticky Car Header Styles
+ * 
+ * Mobile-first sticky header for selected car display.
+ */
+
+/* Sentinel for intersection observer */
+.sentinel {
+  height: 1px;
+  width: 100%;
+  margin-bottom: -1px;
+}
+
+/* Spacer to prevent content jump when sticky */
+.spacer {
+  height: 64px;
+}
+
+/* Header Container */
+.header {
+  background: rgba(26, 27, 30, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.headerSticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.headerExpanded {
+  background: rgba(26, 27, 30, 0.98);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Car Info Button */
+.carInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px 4px 4px;
+  background: transparent;
+  border: none;
+  color: var(--brand-text-primary);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.carInfo:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.carImage {
+  width: 44px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.carImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.carName {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.carYear {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.carInfo svg {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+/* Quick Stats */
+.quickStats {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.statValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-teal);
+}
+
+.statLabel {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Change Car Button */
+.changeCarBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.changeCarBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--brand-text-primary);
+}
+
+.changeCarText {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .changeCarText {
+    display: inline;
+  }
+}
+
+/* Expanded Content */
+.expandedContent {
+  padding: 0 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 8px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expandedStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-top: 12px;
+}
+
+@media (min-width: 480px) {
+  .expandedStats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.expandedStatRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.expandedStatLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.expandedStatValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+}
+
+.buildSummary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summaryValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+}
+
+.summaryGain {
+  font-size: 12px;
+  color: var(--brand-teal);
+  margin-left: 4px;
+}
+
+/* Desktop adjustments */
+@media (min-width: 768px) {
+  .headerContent {
+    padding: 12px 24px;
+  }
+  
+  .carImage {
+    width: 56px;
+    height: 40px;
+  }
+  
+  .carName {
+    font-size: 15px;
+  }
+  
+  .quickStats {
+    gap: 24px;
+  }
+  
+  .statValue {
+    font-size: 16px;
+  }
+  
+  .spacer {
+    height: 72px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

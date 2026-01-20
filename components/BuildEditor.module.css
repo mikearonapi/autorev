@@ -36,12 +36,12 @@
 }
 
 .modeButton:hover {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   background: var(--bg-tertiary, #252525);
 }
 
 .modeButton.active {
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   color: white;
 }
 
@@ -90,12 +90,12 @@
 }
 
 .modifiedHp {
-  color: var(--accent-success, #22c55e);
+  color: var(--accent-success, var(--brand-success));
 }
 
 .hpGain {
   font-size: 0.875rem;
-  color: var(--accent-success, #22c55e);
+  color: var(--accent-success, var(--brand-success));
   opacity: 0.8;
 }
 
@@ -115,7 +115,7 @@
 }
 
 .confidenceDot.high {
-  background: var(--accent-success, #22c55e);
+  background: var(--accent-success, var(--brand-success));
 }
 
 .confidenceDot.medium {
@@ -171,7 +171,7 @@
 .categoryLabel {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .modGrid {
@@ -196,15 +196,15 @@
 }
 
 .modButton:hover {
-  background: var(--bg-hover, #2a2a2a);
-  color: var(--text-primary, #fff);
+  background: var(--bg-hover, var(--brand-border-default));
+  color: var(--text-primary, var(--brand-text-primary));
   border-color: var(--border-color, #333);
 }
 
 .modButton.selected {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: var(--accent-primary, var(--brand-blue));
-  color: var(--accent-primary, var(--brand-blue));
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  border-color: var(--brand-blue);
+  color: var(--brand-blue);
 }
 
 .modCheck {
@@ -220,8 +220,8 @@
 }
 
 .modButton.selected .modCheck {
-  background: var(--accent-primary, var(--brand-blue));
-  border-color: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
   color: white;
 }
 
@@ -255,7 +255,7 @@
   border-bottom: 1px solid var(--border-color, #333);
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 .sectionIcon {
@@ -305,7 +305,7 @@
 }
 
 .radioLabel:hover {
-  background: var(--bg-hover, #2a2a2a);
+  background: var(--bg-hover, var(--brand-border-default));
 }
 
 .radioLabel input {
@@ -313,12 +313,12 @@
 }
 
 .radioLabel input:checked + .radioText {
-  color: var(--accent-primary, var(--brand-blue));
+  color: var(--brand-blue);
 }
 
 .radioLabel:has(input:checked) {
-  background: rgba(59, 130, 246, 0.15);
-  outline: 1px solid var(--accent-primary, var(--brand-blue));
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  outline: 1px solid var(--brand-blue);
 }
 
 .radioText {
@@ -333,7 +333,7 @@
   background: var(--bg-tertiary, #252525);
   border: 1px solid var(--border-color, #333);
   border-radius: 8px;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
   font-size: 0.875rem;
   transition: border-color 0.15s ease;
 }
@@ -341,7 +341,7 @@
 .input:focus,
 .select:focus {
   outline: none;
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 .input::placeholder {
@@ -375,7 +375,7 @@
 .checkboxLabel input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--accent-primary, var(--brand-blue));
+  accent-color: var(--brand-blue);
 }
 
 .compactModGrid {
@@ -397,11 +397,11 @@
 .compactModLabel input {
   width: 14px;
   height: 14px;
-  accent-color: var(--accent-primary, var(--brand-blue));
+  accent-color: var(--brand-blue);
 }
 
 .compactModLabel:has(input:checked) {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary, var(--brand-text-primary));
 }
 
 /* ============================================================================
@@ -444,7 +444,7 @@
 
 .saveButton {
   padding: 0.625rem 1.5rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   border: none;
   border-radius: 8px;
   color: white;
@@ -455,7 +455,7 @@
 }
 
 .saveButton:hover:not(:disabled) {
-  background: var(--accent-primary-hover, #2563eb);
+  background: var(--brand-blue-light);
   transform: translateY(-1px);
 }
 

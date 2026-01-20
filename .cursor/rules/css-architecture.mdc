@@ -41,11 +41,11 @@ border-radius: var(--radius-md);
 --color-text-secondary: #94a3b8
 --color-text-tertiary: #64748b
 
-/* Accents */
---color-accent-lime: #d4ff00     /* PRIMARY CTAs */
---color-accent-teal: #10b981     /* Improvements */
---color-accent-blue: #3b82f6     /* Baseline */
---color-accent-gold: #d4a84b     /* Labels */
+/* Accents (4-color system) */
+--color-accent-lime: #d4ff00     /* User actions, CTAs */
+--color-accent-teal: #10b981     /* Positive data, improvements */
+--color-accent-blue: #3b82f6     /* Baseline, stock data */
+--color-warning: #f59e0b         /* Warnings only (sparingly) */
 ```
 
 ### Spacing (4px base)
@@ -85,10 +85,9 @@ When creating buttons, cards, badges, or forms, FIRST check if a component style
 ## Available Component Classes
 
 ### Buttons (styles/components/buttons.css)
-- `.btn-primary` - Lime CTAs
+- `.btn-primary` - Lime CTAs (user actions)
 - `.btn-secondary` - Outline buttons
-- `.btn-accent` - Gold buttons
-- `.btn-teal` - Success actions
+- `.btn-teal` - Positive/success actions
 - `.btn-ghost` - Minimal/tertiary
 - `.btn-icon` - Icon-only buttons
 - `.btn-danger` - Destructive actions
@@ -101,11 +100,11 @@ When creating buttons, cards, badges, or forms, FIRST check if a component style
 - `.card-dashed` - Empty state
 
 ### Badges (styles/components/badges.css)
-- `.badge-success` - Teal
-- `.badge-gain` - For "+99" style gains
-- `.badge-gold` - Labels
-- `.badge-lime` - Emphasis
-- `.pill-active` - Active filters
+- `.badge-success` - Teal (completed/positive)
+- `.badge-gain` - Teal for "+99" style gains
+- `.badge-warning` - Amber (caution - sparingly)
+- `.badge-lime` - Emphasis (premium/featured)
+- `.pill-active` - Teal active filters
 
 ### Progress (styles/components/progress.css)
 - `.progress-track` - Bar background

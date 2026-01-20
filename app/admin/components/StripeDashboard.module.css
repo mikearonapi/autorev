@@ -428,8 +428,8 @@
 }
 
 .invoiceStat.overdue {
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
+  background: rgba(var(--brand-error-rgb), 0.05);
 }
 
 .invoiceStat.overdue .invoiceValue {
@@ -512,8 +512,8 @@
 }
 
 .chargeStat.netRevenue {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-  border-color: rgba(34, 197, 94, 0.2);
+  background: linear-gradient(135deg, rgba(var(--brand-success-rgb), 0.1), rgba(var(--brand-success-rgb), 0.05));
+  border-color: rgba(var(--brand-success-rgb), 0.2);
 }
 
 .chargeStat.netRevenue .chargeValue {
@@ -549,8 +549,8 @@
 }
 
 .disputeStat.urgent {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
 }
 
 .disputeStat.urgent .disputeValue {
@@ -558,8 +558,8 @@
 }
 
 .disputeStat.lost {
-  background: rgba(239, 68, 68, 0.05);
-  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.05);
+  border-color: rgba(var(--brand-error-rgb), 0.2);
 }
 
 .disputeStat.lost .disputeValue {
@@ -671,8 +671,8 @@
   gap: 12px;
   padding: 32px;
   text-align: center;
-  background: rgba(239, 68, 68, 0.05);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--brand-error-rgb), 0.05);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
   border-radius: 10px;
 }
 

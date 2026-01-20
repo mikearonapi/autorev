@@ -4,11 +4,12 @@
  * Performance Comparison - Professional Design
  * 
  * Matches the Tuning Shop's Performance Metrics component style.
- * Shows stock vs modified metrics with calculated improvements.
+ * Shows stock vs modified metrics using STORED values from user_projects.
+ * 
+ * ARCHITECTURE: No calculation here - just display stored values.
+ * Calculations happen only in the build flow (UpgradeCenter/PerformanceHub).
  */
 
-import { useMemo } from 'react';
-import { getUpgradeByKey } from '@/lib/upgrades';
 import styles from './PerformanceComparison.module.css';
 
 // SVG Icons matching the Tuning Shop style
@@ -64,35 +65,8 @@ function formatMetricValue(value, unit) {
   return Math.round(value).toLocaleString();
 }
 
-/**
- * Calculate performance improvements from upgrades
- * Matches the logic in lib/performance.js calculateUpgradedMetrics
- */
-function calculatePerformanceImprovements(carData, selectedUpgrades) {
-  let totalHpGain = 0;
-  let totalZeroToSixtyImprovement = 0;
-  let totalBrakingImprovement = 0;
-  let totalLateralGImprovement = 0;
-  
-  // Sum all metric changes from selected upgrades
-  for (const upgrade of selectedUpgrades) {
-    if (upgrade.metricChanges) {
-      totalHpGain += upgrade.metricChanges.hpGain || 0;
-      totalZeroToSixtyImprovement += upgrade.metricChanges.zeroToSixtyImprovement || 0;
-      totalBrakingImprovement += upgrade.metricChanges.brakingImprovement || 0;
-      totalLateralGImprovement += upgrade.metricChanges.lateralGImprovement || 0;
-    }
-  }
-  
-  const newHp = (carData.hp || 0) + totalHpGain;
-  
-  return {
-    hp: newHp,
-    zeroToSixty: carData.zero_to_sixty ? Math.max(2.0, carData.zero_to_sixty - totalZeroToSixtyImprovement) : null,
-    braking60To0: carData.braking_60_0 ? Math.max(70, carData.braking_60_0 - totalBrakingImprovement) : null,
-    lateralG: carData.lateral_g ? Math.min(1.6, parseFloat(carData.lateral_g) + totalLateralGImprovement) : null,
-  };
-}
+// NOTE: No calculation here. We use STORED values from user_projects.
+// These values were saved when the user created/updated their build.
 
 /**
  * Real Metric Row - Matches Tuning Shop UpgradeCenter exactly
@@ -180,30 +154,22 @@ export default function PerformanceComparison({
   buildData = {},
   totalCost = 0,
 }) {
-  // Load actual upgrade data with metricChanges
-  const selectedUpgrades = useMemo(() => {
-    if (!buildData?.selected_upgrades) return [];
-    
-    // Handle both array format and object with upgrades property
-    const upgradeKeys = Array.isArray(buildData.selected_upgrades)
-      ? buildData.selected_upgrades
-      : buildData.selected_upgrades?.upgrades || [];
-    
-    // Map keys to actual upgrade objects
-    return upgradeKeys
-      .map(key => typeof key === 'string' ? getUpgradeByKey(key) : key)
-      .filter(Boolean);
-  }, [buildData]);
-
-  // Calculate actual improvements based on upgrade deltas
-  const calculatedMetrics = useMemo(() => {
-    if (selectedUpgrades.length === 0 || !carData.hp) return null;
-    
-    return calculatePerformanceImprovements(carData, selectedUpgrades);
-  }, [carData, selectedUpgrades]);
-
+  // Use STORED values from buildData (user_projects table)
+  // These are the exact values the user saw when they saved their build
+  const stockHp = buildData?.stock_hp || carData.hp || 0;
+  const finalHp = buildData?.final_hp || stockHp;
+  
+  const stockZeroToSixty = buildData?.stock_zero_to_sixty || carData.zero_to_sixty || null;
+  const finalZeroToSixty = buildData?.final_zero_to_sixty || stockZeroToSixty;
+  
+  const stockBraking = buildData?.stock_braking_60_0 || carData.braking_60_0 || null;
+  const finalBraking = buildData?.final_braking_60_0 || stockBraking;
+  
+  const stockLateralG = buildData?.stock_lateral_g || carData.lateral_g || null;
+  const finalLateralG = buildData?.final_lateral_g || stockLateralG;
+  
   // Don't render if no meaningful data
-  if (!calculatedMetrics || !carData.hp) {
+  if (!stockHp) {
     return null;
   }
 
@@ -226,20 +192,20 @@ export default function PerformanceComparison({
         <MetricRow
           icon={Icons.bolt}
           label="HP"
-          stockValue={carData.hp}
-          upgradedValue={calculatedMetrics.hp}
+          stockValue={stockHp}
+          upgradedValue={finalHp}
           unit=" hp"
           improvementPrefix="+"
           isLowerBetter={false}
         />
 
         {/* 0-60 */}
-        {carData.zero_to_sixty && (
+        {stockZeroToSixty && (
           <MetricRow
             icon={Icons.stopwatch}
             label="0-60"
-            stockValue={carData.zero_to_sixty}
-            upgradedValue={calculatedMetrics.zeroToSixty}
+            stockValue={parseFloat(stockZeroToSixty)}
+            upgradedValue={parseFloat(finalZeroToSixty)}
             unit="s"
             improvementPrefix="-"
             isLowerBetter={true}
@@ -247,12 +213,12 @@ export default function PerformanceComparison({
         )}
 
         {/* Braking */}
-        {carData.braking_60_0 && (
+        {stockBraking && (
           <MetricRow
             icon={Icons.brake}
             label="BRAKING"
-            stockValue={carData.braking_60_0}
-            upgradedValue={calculatedMetrics.braking60To0}
+            stockValue={stockBraking}
+            upgradedValue={finalBraking}
             unit="ft"
             improvementPrefix="-"
             isLowerBetter={true}
@@ -260,12 +226,12 @@ export default function PerformanceComparison({
         )}
 
         {/* Grip (Lateral G) */}
-        {carData.lateral_g && (
+        {stockLateralG && (
           <MetricRow
             icon={Icons.gauge}
             label="GRIP"
-            stockValue={carData.lateral_g}
-            upgradedValue={calculatedMetrics.lateralG}
+            stockValue={parseFloat(stockLateralG)}
+            upgradedValue={parseFloat(finalLateralG)}
             unit="g"
             improvementPrefix="+"
             isLowerBetter={false}

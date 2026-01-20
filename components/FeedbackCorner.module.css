@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--brand-text-primary);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 50%;
   color: var(--color-gray-500, #6b7280);
@@ -26,7 +26,7 @@
 }
 
 .feedbackCorner:hover {
-  background: #ffffff;
+  background: var(--brand-text-primary);
   color: var(--sn-primary, #1a4d6e);
   border-color: var(--sn-primary, #1a4d6e);
   box-shadow: 
@@ -80,7 +80,7 @@
   position: absolute;
   inset: -3px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26, 77, 110, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--brand-teal-dark-rgb), 0.2) 0%, transparent 70%);
   animation: pulseGlow 0.8s ease-out;
   pointer-events: none;
 }

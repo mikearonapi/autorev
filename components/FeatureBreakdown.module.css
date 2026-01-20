@@ -116,11 +116,11 @@
 }
 
 .tierHeaderCollector .tierHeaderPrice {
-  color: #93c5fd;
+  color: var(--brand-blue-light);
 }
 
 .tierHeaderTuner .tierHeaderPrice {
-  color: #c4b5fd;
+  color: var(--brand-purple-accent);
 }
 
 /* Category rows */
@@ -218,7 +218,7 @@
   width: 24px;
   height: 24px;
   background: #dcfce7;
-  color: #16a34a;
+  color: var(--brand-success-dark);
   border-radius: 50%;
 }
 
@@ -235,7 +235,7 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--sn-accent-dark);
-  background: rgba(255, 77, 0, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   padding: 2px 8px;
   border-radius: var(--radius-full);
 }

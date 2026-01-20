@@ -56,11 +56,16 @@ function saveLocalBuilds(builds) {
 }
 
 /**
+ * @typedef {'track' | 'street' | 'show' | 'daily'} BuildGoal
+ */
+
+/**
  * @typedef {Object} SavedBuild
  * @property {string} id - Database ID
  * @property {string} carSlug - Car slug
  * @property {string} carName - Car display name
  * @property {string} name - Build name
+ * @property {BuildGoal|null} goal - Build objective (track, street, show, daily)
  * @property {string[]} upgrades - Array of upgrade keys
  * @property {Array} [parts] - Selected parts (snapshots)
  * @property {number} totalHpGain - Total HP gained
@@ -154,59 +159,61 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
         || uploadedImages.find(img => img.media_type !== 'video')
         || null;
       
-      return {
-        id: build.id,
-        carSlug: build.car_slug,
-        carName: build.car_name,
-        name: build.project_name,
-        upgrades: Array.isArray(build.selected_upgrades) 
-          ? build.selected_upgrades 
-          : (build.selected_upgrades?.upgrades || []),
-        factoryConfig: build.selected_upgrades?.factoryConfig || null,
-        wheelFitment: build.selected_upgrades?.wheelFitment || null,
-        sizeSelections: build.selected_upgrades?.sizeSelections || null,
-        heroSource: build.selected_upgrades?.heroSource || 'stock',
-        heroImageId: build.selected_upgrades?.heroImageId || null,
-        // Tuner mode ('basic' or 'advanced') - determines HP calculation source
-        tunerMode: build.selected_upgrades?.tunerMode || 'basic',
-        // Advanced specs if user was in advanced mode
-        advancedSpecs: build.selected_upgrades?.advancedSpecs || null,
-        // Include hero image URL for display in project cards
-        heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
-        uploadedImages: uploadedImages,
-        parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
-          id: p.id,
-          partId: p.part_id,
-          quantity: p.quantity,
-          partName: p.part_name,
-          brandName: p.brand_name,
-          partNumber: p.part_number,
-          category: p.category,
-          vendorName: p.vendor_name,
-          productUrl: p.product_url,
-          currency: p.currency,
-          priceCents: p.price_cents,
-          priceRecordedAt: p.price_recorded_at,
-          requiresTune: p.requires_tune,
-          installDifficulty: p.install_difficulty,
-          estimatedLaborHours: p.estimated_labor_hours,
-          fitmentVerified: p.fitment_verified,
-          fitmentConfidence: p.fitment_confidence,
-          fitmentNotes: p.fitment_notes,
-          fitmentSourceUrl: p.fitment_source_url,
-          metadata: p.metadata,
-          createdAt: p.created_at,
-          updatedAt: p.updated_at,
-        })) : [],
-        totalHpGain: build.total_hp_gain || 0,
-        totalCostLow: build.total_cost_low || 0,
-        totalCostHigh: build.total_cost_high || 0,
-        finalHp: build.final_hp,
-        notes: build.notes,
-        isFavorite: build.is_favorite || false,
-        createdAt: build.created_at,
-        updatedAt: build.updated_at,
-      };
+return {
+          id: build.id,
+          carSlug: build.car_slug,
+          carName: build.car_name,
+          name: build.project_name,
+          // Build objective (track, street, show, daily)
+          goal: build.selected_upgrades?.goal || null,
+          upgrades: Array.isArray(build.selected_upgrades) 
+            ? build.selected_upgrades 
+            : (build.selected_upgrades?.upgrades || []),
+          factoryConfig: build.selected_upgrades?.factoryConfig || null,
+          wheelFitment: build.selected_upgrades?.wheelFitment || null,
+          sizeSelections: build.selected_upgrades?.sizeSelections || null,
+          heroSource: build.selected_upgrades?.heroSource || 'stock',
+          heroImageId: build.selected_upgrades?.heroImageId || null,
+          // Tuner mode ('basic' or 'advanced') - determines HP calculation source
+          tunerMode: build.selected_upgrades?.tunerMode || 'basic',
+          // Advanced specs if user was in advanced mode
+          advancedSpecs: build.selected_upgrades?.advancedSpecs || null,
+          // Include hero image URL for display in project cards
+          heroImageUrl: heroImage?.blob_url || heroImage?.thumbnail_url || null,
+          uploadedImages: uploadedImages,
+          parts: Array.isArray(build.user_project_parts) ? build.user_project_parts.map(p => ({
+            id: p.id,
+            partId: p.part_id,
+            quantity: p.quantity,
+            partName: p.part_name,
+            brandName: p.brand_name,
+            partNumber: p.part_number,
+            category: p.category,
+            vendorName: p.vendor_name,
+            productUrl: p.product_url,
+            currency: p.currency,
+            priceCents: p.price_cents,
+            priceRecordedAt: p.price_recorded_at,
+            requiresTune: p.requires_tune,
+            installDifficulty: p.install_difficulty,
+            estimatedLaborHours: p.estimated_labor_hours,
+            fitmentVerified: p.fitment_verified,
+            fitmentConfidence: p.fitment_confidence,
+            fitmentNotes: p.fitment_notes,
+            fitmentSourceUrl: p.fitment_source_url,
+            metadata: p.metadata,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at,
+          })) : [],
+          totalHpGain: build.total_hp_gain || 0,
+          totalCostLow: build.total_cost_low || 0,
+          totalCostHigh: build.total_cost_high || 0,
+          finalHp: build.final_hp,
+          notes: build.notes,
+          isFavorite: build.is_favorite || false,
+          createdAt: build.created_at,
+          updatedAt: build.updated_at,
+        };
     });
     
     if (!cancelledRef.current) {
@@ -284,6 +291,8 @@ const fetchBuilds = useCallback(async (cancelledRef = { current: false }, forceR
           carSlug: build.car_slug,
           carName: build.car_name,
           name: build.project_name,
+          // Build objective (track, street, show, daily)
+          goal: build.selected_upgrades?.goal || null,
           // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
           upgrades: Array.isArray(build.selected_upgrades) 
             ? build.selected_upgrades 
@@ -475,6 +484,8 @@ useEffect(() => {
           carSlug: data.car_slug,
           carName: data.car_name,
           name: data.project_name,
+          // Build objective (track, street, show, daily)
+          goal: data.selected_upgrades?.goal || buildData?.goal || null,
           // Handle both old format (array) and new format (object with upgrades, factoryConfig, etc.)
           upgrades: Array.isArray(data.selected_upgrades) 
             ? data.selected_upgrades 
@@ -511,6 +522,8 @@ useEffect(() => {
       carSlug: buildData.carSlug,
       carName: buildData.carName,
       name: buildData.name || 'Untitled Build',
+      // Build objective (track, street, show, daily)
+      goal: buildData.goal || null,
       upgrades: buildData.selectedUpgrades || buildData.upgrades || [],
       factoryConfig: buildData.factoryConfig || null,
       wheelFitment: buildData.wheelFitment || null,
@@ -549,6 +562,8 @@ useEffect(() => {
             return {
               ...build,
               name: data.project_name,
+              // Build objective (track, street, show, daily)
+              goal: data.selected_upgrades?.goal || updates?.goal || build.goal || null,
               // Handle both old format (array) and new format (object)
               upgrades: Array.isArray(data.selected_upgrades) 
                 ? data.selected_upgrades 

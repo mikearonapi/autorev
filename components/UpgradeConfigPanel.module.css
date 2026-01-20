@@ -9,8 +9,8 @@
 .configPanel {
   margin: 8px 0 4px 28px;  /* Indent to align under checkbox label */
   padding: 12px 14px;
-  background: rgba(255, 77, 0, 0.08);
-  border: 1px solid rgba(255, 77, 0, 0.25);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 8px;
   animation: slideDown 0.2s ease-out;
 }
@@ -35,10 +35,10 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-gold, var(--accent-primary, #ff4d00));
+  color: var(--color-gold, var(--brand-teal));
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 77, 0, 0.15);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .configHeader svg {
@@ -49,7 +49,7 @@
   margin-left: auto;
   font-size: 10px;
   font-weight: 500;
-  color: var(--color-success, #4ade80);
+  color: var(--color-success, var(--brand-success-light));
   text-transform: none;
   letter-spacing: 0;
 }
@@ -118,8 +118,8 @@
 }
 
 .radioOption.selected {
-  background: rgba(255, 77, 0, 0.12);
-  border-color: rgba(255, 77, 0, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 /* Hidden radio input */
@@ -144,13 +144,13 @@
 }
 
 .radioOption.selected .radioButton {
-  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
+  border-color: var(--color-gold, var(--brand-teal));
 }
 
 .radioDot {
   width: 8px;
   height: 8px;
-  background: var(--color-gold, var(--accent-primary, #ff4d00));
+  background: var(--color-gold, var(--brand-teal));
   border-radius: 50%;
 }
 
@@ -203,8 +203,8 @@
   font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
-  background: rgba(74, 222, 128, 0.15);
-  color: var(--color-success, #4ade80);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  color: var(--color-success, var(--brand-success-light));
   border-radius: 4px;
   white-space: nowrap;
 }
@@ -214,7 +214,7 @@
   font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--brand-warning-rgb), 0.15);
   color: var(--color-warning, #f59e0b);
   border-radius: 4px;
   white-space: nowrap;
@@ -224,8 +224,8 @@
   font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
-  background: rgba(74, 222, 128, 0.15);
-  color: var(--color-success, #4ade80);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  color: var(--color-success, var(--brand-success-light));
   border-radius: 4px;
   white-space: nowrap;
 }
@@ -236,8 +236,8 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 6px;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.85);
@@ -247,7 +247,7 @@
 
 .configWarning svg {
   flex-shrink: 0;
-  color: var(--color-error, #ef4444);
+  color: var(--color-error, var(--brand-error));
   margin-top: 1px;
 }
 
@@ -257,8 +257,8 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.3);
   border-radius: 6px;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.85);
@@ -291,8 +291,8 @@
 }
 
 .checkboxOption.checked {
-  background: rgba(255, 77, 0, 0.12);
-  border-color: rgba(255, 77, 0, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .checkboxInput {
@@ -315,12 +315,12 @@
 }
 
 .checkboxOption.checked .checkboxBox {
-  background: var(--color-gold, var(--accent-primary, #ff4d00));
-  border-color: var(--color-gold, var(--accent-primary, #ff4d00));
+  background: var(--color-gold, var(--brand-teal));
+  border-color: var(--color-gold, var(--brand-teal));
 }
 
 .checkboxBox svg {
-  color: #000;
+  color: var(--brand-bg-primary);
 }
 
 .checkboxContent {

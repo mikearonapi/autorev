@@ -43,7 +43,7 @@
 
 .refreshButton:hover {
   background: var(--surface-hover, rgba(255, 255, 255, 0.1));
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 /* Stats Grid */
@@ -63,8 +63,8 @@
 }
 
 .statCardHighlight {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
 }
 
 .statValue {
@@ -240,7 +240,7 @@
 
 .filterRow select:focus {
   outline: none;
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 .searchRow {
@@ -260,12 +260,12 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--accent-primary, var(--brand-blue));
+  border-color: var(--brand-blue);
 }
 
 .searchButton {
   padding: 0.5rem 1rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   border: none;
   border-radius: 8px;
   color: white;
@@ -284,7 +284,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   border-radius: 8px;
   margin-bottom: 1rem;
   animation: slideDown 0.2s ease;
@@ -401,8 +401,8 @@
 }
 
 .errorCardSelected {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: var(--accent-primary, var(--brand-blue));
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border-color: var(--brand-blue);
 }
 
 .errorCheckbox {
@@ -457,8 +457,8 @@
 
 .occurrenceBadge {
   padding: 0.2rem 0.6rem;
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(var(--brand-error-rgb), 0.2);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.4);
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -499,7 +499,7 @@
   background: var(--surface-primary, rgba(0, 0, 0, 0.2));
   border-radius: 4px;
   font-size: 0.8rem;
-  color: var(--accent-primary, var(--brand-blue));
+  color: var(--brand-blue);
   text-decoration: none;
 }
 
@@ -521,7 +521,7 @@
 }
 
 .errorDetails summary:hover {
-  color: var(--accent-primary, var(--brand-blue));
+  color: var(--brand-blue);
 }
 
 .detailsContent {
@@ -597,7 +597,7 @@
 
 .retryButton {
   padding: 0.75rem 1.5rem;
-  background: var(--accent-primary, var(--brand-blue));
+  background: var(--brand-blue);
   color: white;
   border: none;
   border-radius: 8px;

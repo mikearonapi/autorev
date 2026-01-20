@@ -14,16 +14,17 @@ export const contentType = 'image/png';
 // Revalidate every 5 minutes to pick up new car counts
 export const revalidate = 300;
 
-// Build Pivot Brand Colors - Performance-focused dark theme
+// AutoRev Brand Colors - see /docs/BRAND_GUIDELINES.md
 const BRAND = {
-  primary: '#0a0a0a',
-  secondary: '#161616',
-  accent: '#ff4d00', // Performance orange
-  accentLight: '#ff6620',
-  accentDark: '#cc3d00',
-  teal: '#00d4ff', // Tech blue accent
+  primary: '#0d1b2a',      // Navy background
+  secondary: '#1b263b',     // Elevated background
+  accent: '#d4ff00',        // Lime - primary emphasis
+  accentLight: '#e4ff4d',
+  accentDark: '#bfe600',
+  teal: '#10b981',          // Teal - improvements/gains
+  gold: '#d4a84b',          // Gold - labels/secondary
   text: '#ffffff',
-  textSecondary: '#a0a0a0',
+  textSecondary: '#94a3b8',
 };
 
 // Fetch car count from database
@@ -51,7 +52,7 @@ async function getCarCount(): Promise<number> {
 
 /**
  * Open Graph Image for social sharing
- * Build Pivot: Performance-focused dark theme with orange accent
+ * AutoRev: Premium dark theme with lime accent
  */
 export default async function Image() {
   // Fetch car count dynamically
@@ -218,7 +219,7 @@ export default async function Image() {
                 style={{
                   padding: '10px 18px',
                   background: feature.highlight 
-                    ? `rgba(255,77,0,0.25)` 
+                    ? `rgba(212,255,0,0.2)` 
                     : `rgba(255,255,255,0.08)`,
                   borderRadius: '50px',
                   border: feature.highlight 

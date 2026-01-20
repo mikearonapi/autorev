@@ -83,7 +83,7 @@
 .emptyAction:hover {
   background: var(--brand-lime-dark, #bfe600);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.25);
 }
 
 /* Content */
@@ -100,10 +100,11 @@
   gap: 2px;
 }
 
+/* Stat values use white for emphasis */
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--accent-primary, var(--brand-gold));
+  color: var(--brand-text-primary);
 }
 
 .statLabel {
@@ -118,13 +119,14 @@
   margin-bottom: 12px;
 }
 
+/* Section titles use TEAL per brand guidelines - LARGER than body content */
 .sectionTitle {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--accent-primary, var(--brand-gold));
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0 0 8px;
+  margin: 0 0 12px;
 }
 
 /* Auth Prompt */
@@ -168,7 +170,7 @@
 .authButton:hover {
   background: var(--brand-lime-dark, #bfe600);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.25);
 }
 
 /* Gallery Section */

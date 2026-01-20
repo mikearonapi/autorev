@@ -10,14 +10,15 @@ export const size = {
 export const contentType = 'image/png';
 export const revalidate = 3600;
 
-// Build Pivot Brand Colors - Performance-focused dark theme
+// AutoRev Brand Colors - see /docs/BRAND_GUIDELINES.md
 const BRAND = {
-  primary: '#0a0a0a',
-  secondary: '#161616',
-  accent: '#ff4d00', // Performance orange
-  accentLight: '#ff6620',
-  accentDark: '#cc3d00',
-  teal: '#00d4ff', // Tech blue accent
+  primary: '#0d1b2a',      // Navy background
+  secondary: '#1b263b',     // Elevated background
+  accent: '#d4ff00',        // Lime - primary emphasis
+  accentLight: '#e4ff4d',
+  accentDark: '#bfe600',
+  teal: '#10b981',          // Teal - improvements/gains
+  gold: '#d4a84b',          // Gold - labels/secondary
 };
 
 export default async function Image() {
@@ -114,7 +115,7 @@ export default async function Image() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  background: 'rgba(255,77,0,0.2)',
+                  background: 'rgba(212,255,0,0.2)',
                   border: `2px solid ${BRAND.accent}`,
                   borderRadius: '50px',
                   padding: '8px 18px',

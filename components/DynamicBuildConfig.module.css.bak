@@ -1,0 +1,164 @@
+/**
+ * DynamicBuildConfig Styles
+ * 
+ * Clean, flat design for upgrade configuration.
+ * Uses spacing and typography instead of nested boxes.
+ */
+
+.dynamicConfigContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Removed the heavy bordered header - using simpler summary */
+.configSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.configSummaryText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.configSummaryCount {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(255, 77, 0, 0.15);
+  border-radius: 10px;
+  color: var(--accent-primary, #ff4d00);
+}
+
+/* List of upgrades - clean spacing */
+.configList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Individual upgrade item - minimal styling */
+.upgradeItem {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.upgradeItem:last-child {
+  border-bottom: none;
+}
+
+/* Upgrade header - clean and simple */
+.upgradeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+}
+
+.upgradeName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+}
+
+.upgradeCheck {
+  color: var(--brand-teal);
+  display: flex;
+  align-items: center;
+}
+
+/* Config options container - light background, no border */
+.upgradeConfig {
+  padding: 0 0 14px 0;
+  margin-top: -6px;
+}
+
+/* Simple card for upgrades without configuration options */
+.upgradeSimpleCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.upgradeSimpleCard:last-child {
+  border-bottom: none;
+}
+
+.selectedBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--brand-teal);
+}
+
+/* Footer hint */
+.configFooter {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 0 0;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.configFooter svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.emptyState svg {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 2px;
+}
+
+.emptyStateContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emptyStateTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.emptyStateText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.5;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .upgradeHeader {
+    padding: 12px 0;
+  }
+  
+  .upgradeName {
+    font-size: 13px;
+  }
+  
+  .upgradeSimpleCard {
+    padding: 12px 0;
+  }
+}

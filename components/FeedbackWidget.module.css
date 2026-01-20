@@ -149,13 +149,13 @@
   border-radius: 16px;
   color: var(--brand-text-primary);
   margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(26, 77, 110, 0.25);
+  box-shadow: 0 8px 24px rgba(var(--brand-teal-dark-rgb), 0.25);
 }
 
 .title {
   font-size: 26px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--brand-bg-primary-dark);
   margin: 0 0 16px 0;
   letter-spacing: -0.02em;
 }
@@ -163,7 +163,7 @@
 .betaMessage {
   font-size: 15px;
   line-height: 1.7;
-  color: #475569;
+  color: var(--brand-text-muted);
   margin: 0;
   max-width: 420px;
   margin-left: auto;
@@ -181,7 +181,7 @@
 /* Contextual Hint */
 .contextHint {
   font-size: 14px;
-  color: #475569;
+  color: var(--brand-text-muted);
   background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
   border: 1px solid #d0e3ed;
   border-left: 4px solid var(--sn-primary, #1a4d6e);
@@ -204,7 +204,7 @@
   gap: 6px;
   font-size: 15px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--brand-bg-secondary);
 }
 
 .label svg {
@@ -256,7 +256,7 @@
 }
 
 .categoryButton svg {
-  color: var(--cat-color, #64748b);
+  color: var(--cat-color, var(--brand-text-tertiary));
   flex-shrink: 0;
 }
 
@@ -267,7 +267,7 @@
 }
 
 .categoryButtonActive {
-  color: var(--cat-color, #1e293b);
+  color: var(--cat-color, var(--brand-bg-secondary));
   font-weight: 700;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -306,7 +306,7 @@
 .severityLabel {
   font-size: 14px;
   font-weight: 600;
-  color: var(--sev-color, #1e293b);
+  color: var(--sev-color, var(--brand-bg-secondary));
 }
 
 .severityDesc {
@@ -335,7 +335,7 @@
   border-radius: 14px;
   font-size: 15px;
   font-family: inherit;
-  color: #1e293b;
+  color: var(--brand-bg-secondary);
   resize: vertical;
   min-height: 120px;
   transition: all 0.2s ease;
@@ -344,8 +344,8 @@
 .textarea:focus {
   outline: none;
   border-color: var(--sn-primary, #1a4d6e);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(26, 77, 110, 0.1);
+  background: var(--brand-text-primary);
+  box-shadow: 0 0 0 4px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 .textarea::placeholder {
@@ -360,15 +360,15 @@
   border-radius: 14px;
   font-size: 16px; /* Prevents iOS zoom on focus */
   font-family: inherit;
-  color: #1e293b;
+  color: var(--brand-bg-secondary);
   transition: all 0.2s ease;
 }
 
 .input:focus {
   outline: none;
   border-color: var(--sn-primary, #1a4d6e);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(26, 77, 110, 0.1);
+  background: var(--brand-text-primary);
+  box-shadow: 0 0 0 4px rgba(var(--brand-teal-dark-rgb), 0.1);
 }
 
 .input::placeholder {
@@ -422,7 +422,7 @@
 .ratingText {
   margin-left: 10px;
   font-size: 14px;
-  color: #475569;
+  color: var(--brand-text-muted);
   font-weight: 500;
 }
 
@@ -476,14 +476,14 @@
   color: var(--brand-text-primary);
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 16px rgba(26, 77, 110, 0.25);
+  box-shadow: 0 4px 16px rgba(var(--brand-teal-dark-rgb), 0.25);
   margin-top: 8px;
 }
 
 .submitButton:hover:not(:disabled) {
   background: linear-gradient(135deg, #225a7e 0%, #3d7a9a 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(26, 77, 110, 0.35);
+  box-shadow: 0 8px 24px rgba(var(--brand-teal-dark-rgb), 0.35);
 }
 
 .submitButton:disabled {
@@ -532,7 +532,7 @@
 .successTitle {
   font-size: 28px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--brand-bg-primary-dark);
   margin: 8px 0 0 0;
 }
 
@@ -546,7 +546,7 @@
 .successSubtext {
   font-size: 15px !important;
   font-weight: 400 !important;
-  color: #64748b !important;
+  color: var(--brand-text-tertiary) !important;
   max-width: 320px;
   line-height: 1.6;
 }
@@ -884,12 +884,12 @@
 }
 
 .typeButton svg {
-  color: var(--type-color, #64748b);
+  color: var(--type-color, var(--brand-text-tertiary));
   flex-shrink: 0;
 }
 
 .typeButtonActive {
-  color: var(--type-color, #1e293b);
+  color: var(--type-color, var(--brand-bg-secondary));
 }
 
 .typeButtonActive svg {
@@ -919,7 +919,7 @@
   border-radius: 14px;
   font-size: 14px;
   font-weight: 600;
-  color: #475569;
+  color: var(--brand-text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -965,7 +965,7 @@
   height: auto;
   max-height: 200px;
   object-fit: contain;
-  background: #ffffff;
+  background: var(--brand-text-primary);
 }
 
 .screenshotOverlay {
@@ -1003,7 +1003,7 @@
 }
 
 .screenshotRemove {
-  background: #ef4444;
+  background: var(--brand-error);
   color: var(--brand-text-primary);
 }
 
@@ -1013,8 +1013,8 @@
 }
 
 .screenshotView {
-  background: #ffffff;
-  color: #1e293b;
+  background: var(--brand-text-primary);
+  color: var(--brand-bg-secondary);
 }
 
 .screenshotView:hover {

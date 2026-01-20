@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import AskALButton from './AskALButton';
 import styles from './LapTimeEstimator.module.css';
 
 // Icons
@@ -89,7 +90,7 @@ const DRIVER_SKILLS = {
       aero: 0.05,
       weight: 0.20,
     },
-    tip: '💡 The best mod for you is seat time! Consider a driving school before spending on parts.',
+    tip: 'The best mod for you is seat time! Consider a driving school before spending on parts.',
     insight: 'At your skill level, improving your driving will gain you 3-5x more time than any modification.',
   },
   intermediate: {
@@ -103,7 +104,7 @@ const DRIVER_SKILLS = {
       aero: 0.35,
       weight: 0.50,
     },
-    tip: '💡 Grip mods (tires, suspension) will help you most. Consider advanced driving instruction!',
+    tip: 'Grip mods (tires, suspension) will help you most. Consider advanced driving instruction!',
     insight: 'You can extract about half of what mods offer. More seat time will unlock the rest.',
   },
   advanced: {
@@ -117,7 +118,7 @@ const DRIVER_SKILLS = {
       aero: 0.75,
       weight: 0.80,
     },
-    tip: '💡 You can extract most performance from mods. Focus on balanced upgrades.',
+    tip: 'You can extract most performance from mods. Focus on balanced upgrades.',
     insight: 'Your skill extracts 80%+ of mod potential. Fine-tuning setup is your next step.',
   },
   professional: {
@@ -131,7 +132,7 @@ const DRIVER_SKILLS = {
       aero: 0.95,
       weight: 0.95,
     },
-    tip: '💡 You\'re extracting the car\'s full potential. Mods directly translate to lap time.',
+    tip: 'You\'re extracting the car\'s full potential. Mods directly translate to lap time.',
     insight: 'This represents the theoretical maximum - what the modifications can truly deliver.',
   }
 };
@@ -140,7 +141,7 @@ const DRIVER_SKILLS = {
 const FALLBACK_TRACKS = [
   {
     slug: 'laguna-seca', name: 'WeatherTech Raceway Laguna Seca', shortName: 'Laguna Seca',
-    length: 2.238, corners: 11, icon: '🏁', state: 'CA', city: 'Monterey', country: 'USA',
+    length: 2.238, corners: 11, state: 'CA', city: 'Monterey', country: 'USA',
     proTime: 95, powerGainMax: 4.0, gripGainMax: 5.0, suspGainMax: 3.5,
     brakeGainMax: 2.5, aeroGainMax: 2.0, weightGainMax: 2.0,
     beginnerPenalty: 25, intermediatePenalty: 10, advancedPenalty: 3, isPopular: true,
@@ -183,6 +184,7 @@ export default function LapTimeEstimator({
   driverWeight = 180,
   user = null,
   carSlug = null,
+  carName = null,
   modsSummary = null,
   compact = false,
   hideLogging = false,
@@ -460,6 +462,18 @@ export default function LapTimeEstimator({
     }
   };
 
+  // Build contextual prompt for Ask AL
+  const hasModifications = safeEstimatedHp > safeStockHp;
+  const timeImprovement = realizedTotal >= 0.01 ? realizedTotal.toFixed(2) : '0';
+  
+  const lapTimePrompt = carName
+    ? `Help me understand my ${carName}'s lap time estimates at ${selectedTrack?.name || 'track'}. ${hasModifications ? `With my mods, I'm estimated to gain ${timeImprovement}s per lap, going from ${formatTime(stockLapTime)} to ${formatTime(moddedLapTime)}.` : 'It\'s currently stock.'} As a ${skill.label.toLowerCase()} driver, what mods would help me most on this track? Should I focus on power, grip, or driver skill improvement?`
+    : `Explain these lap time estimates: ${formatTime(stockLapTime)} stock to ${formatTime(moddedLapTime)} modified at ${selectedTrack?.name || 'this track'}. What factors affect lap times most?`;
+  
+  const lapTimeDisplayMessage = hasModifications
+    ? `How can I get faster at ${selectedTrack?.shortName || 'track'}?`
+    : 'What mods help lap times most?';
+
   return (
     <div className={`${styles.lapTimeEstimator} ${compact ? styles.compact : ''}`}>
       <div className={styles.lapTimeHeader}>
@@ -474,6 +488,23 @@ export default function LapTimeEstimator({
             <Icons.info size={14} />
           </button>
         </div>
+        <AskALButton
+          category="Lap Time Estimator"
+          prompt={lapTimePrompt}
+          displayMessage={lapTimeDisplayMessage}
+          carName={carName}
+          carSlug={carSlug}
+          variant="header"
+          metadata={{
+            section: 'lap-time-estimator',
+            trackName: selectedTrack?.name,
+            trackSlug: selectedTrack?.slug,
+            stockLapTime,
+            moddedLapTime,
+            timeImprovement: realizedTotal,
+            driverSkill,
+          }}
+        />
       </div>
 
       {/* Info Panel - How it works */}
@@ -495,29 +526,12 @@ export default function LapTimeEstimator({
             <li><strong>Professional:</strong> ~95-98% of mod potential (theoretical max)</li>
           </ul>
           <p className={styles.lapTimeInfoHighlight}>
-            💡 The fastest path to quicker lap times is often improving YOUR skills, not adding parts!
+            The fastest path to quicker lap times is often improving YOUR skills, not adding parts!
           </p>
         </div>
       )}
 
-      {/* Driver Skill Selector */}
-      <div className={styles.skillSelector}>
-        <span className={styles.skillLabel}>Driver Skill:</span>
-        <div className={styles.skillBtns}>
-          {Object.entries(DRIVER_SKILLS).map(([key, skillDef]) => (
-            <button
-              key={key}
-              className={`${styles.skillBtn} ${driverSkill === key ? styles.skillBtnActive : ''}`}
-              onClick={() => setDriverSkill(key)}
-              title={skillDef.description}
-            >
-              {skillDef.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Track Selector */}
+      {/* Track Selector - WHERE are you racing? */}
       <div className={styles.trackSelectorWrapper}>
         <button 
           className={styles.trackSelectedBtn}
@@ -534,39 +548,6 @@ export default function LapTimeEstimator({
           </div>
           <Icons.chevronDown size={16} />
         </button>
-        
-        {/* Track Details */}
-        {selectedTrack && (
-          <div className={styles.trackDetails}>
-            <div className={styles.trackDetailGrid}>
-              {selectedTrack.longestStraight && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Straight</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.longestStraight.toLocaleString()} ft</span>
-                </div>
-              )}
-              {selectedTrack.elevationChange && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Elevation</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.elevationChange} ft</span>
-                </div>
-              )}
-              {selectedTrack.surfaceType && (
-                <div className={styles.trackDetailItem}>
-                  <span className={styles.trackDetailLabel}>Surface</span>
-                  <span className={styles.trackDetailValue}>{selectedTrack.surfaceType}</span>
-                </div>
-              )}
-            </div>
-            {selectedTrack.characterTags?.length > 0 && (
-              <div className={styles.trackTags}>
-                {selectedTrack.characterTags.slice(0, 4).map(tag => (
-                  <span key={tag} className={styles.trackTag}>{tag}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         
         {/* Dropdown */}
         {showTrackSelector && (
@@ -642,6 +623,23 @@ export default function LapTimeEstimator({
         )}
       </div>
 
+      {/* Driver Skill Selector - WHO is driving? */}
+      <div className={styles.skillSelector}>
+        <span className={styles.skillLabel}>Driver Skill:</span>
+        <div className={styles.skillBtns}>
+          {Object.entries(DRIVER_SKILLS).map(([key, skillDef]) => (
+            <button
+              key={key}
+              className={`${styles.skillBtn} ${driverSkill === key ? styles.skillBtnActive : ''}`}
+              onClick={() => setDriverSkill(key)}
+              title={skillDef.description}
+            >
+              {skillDef.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Lap Time Comparison */}
       <div className={styles.lapTimeBody}>
         <div className={styles.lapTimeComparison}>
@@ -660,91 +658,12 @@ export default function LapTimeEstimator({
             <span className={styles.lapTimeMod}>{formatTime(moddedLapTime)}</span>
           </div>
         </div>
-
-        <div className={styles.lapTimeTrackInfo}>
-          <span>{track.name}</span>
-          <span>•</span>
-          <span>{track.length} mi</span>
-          <span>•</span>
-          <span>{track.corners} corners</span>
-        </div>
-      </div>
-
-      {/* Gains Breakdown */}
-      {theoreticalTotal > 0.1 && (
-        <div className={styles.lapTimeBreakdown}>
-          <div className={styles.lapTimeBreakdownRow}>
-            <span>Theoretical mod gains (Pro driver):</span>
-            <span className={styles.lapTimeTheoretical}>-{theoreticalTotal.toFixed(2)}s</span>
-          </div>
-          <div className={styles.lapTimeBreakdownRow}>
-            <span>Your realized gains ({Math.round(avgUtilization)}%):</span>
-            <span className={styles.lapTimeRealized}>-{realizedTotal.toFixed(2)}s</span>
-          </div>
-          {unrealizedGains > 0.3 && (
-            <div className={styles.lapTimeBreakdownRow}>
-              <span>Left on table (skill limit):</span>
-              <span className={styles.lapTimeUnrealized}>{unrealizedGains.toFixed(2)}s</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Category Breakdown */}
-      {theoreticalTotal > 0.5 && (
-        <div className={styles.lapTimeCategoryBreakdown}>
-          <div className={styles.lapTimeCategoryTitle}>Where your gains come from:</div>
-          <div className={styles.lapTimeCategoryGrid}>
-            {modImprovements.power > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Power</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.power.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.grip > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Tires</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.grip.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.suspension > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Suspension</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.suspension.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.brakes > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Brakes</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.brakes.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.aero > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Aero</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.aero.toFixed(1)}s</span>
-              </div>
-            )}
-            {modImprovements.weight > 0.1 && (
-              <div className={styles.lapTimeCategoryItem}>
-                <span className={styles.lapTimeCategoryLabel}>Weight</span>
-                <span className={styles.lapTimeCategoryValue}>-{realizedByCategory.weight.toFixed(1)}s</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      
-      {/* Driver Skill Tip */}
-      <div className={styles.lapTimeTip}>
-        <span>{skill.tip}</span>
       </div>
       
-      {/* Insight when leaving gains on table */}
-      {unrealizedGains > 1.0 && driverSkill !== 'professional' && (
-        <div className={styles.lapTimeInsight}>
-          <Icons.info size={12} />
-          <span>{skill.insight}</span>
+      {/* Contextual tip - only show when there's significant unrealized potential */}
+      {unrealizedGains > 1.5 && driverSkill !== 'professional' && (
+        <div className={styles.lapTimeTip}>
+          <span>{skill.tip}</span>
         </div>
       )}
       

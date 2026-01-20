@@ -194,11 +194,11 @@
 }
 
 .table tbody tr.rAndDRow {
-  background: rgba(139, 92, 246, 0.05);
+  background: rgba(var(--brand-purple-rgb), 0.05);
 }
 
 .table tbody tr.rAndDRow:hover {
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(var(--brand-purple-rgb), 0.08);
 }
 
 .table td {
@@ -284,14 +284,14 @@
 }
 
 .editButton:hover {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(var(--brand-blue-rgb), 0.15);
+  border-color: rgba(var(--brand-blue-rgb), 0.3);
   color: var(--admin-accent-blue, var(--brand-blue));
 }
 
 .deleteButton:hover {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
   color: var(--admin-negative, #ef4444);
 }
 
@@ -315,13 +315,13 @@
 }
 
 .confirmYes {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   color: var(--admin-negative, #ef4444);
 }
 
 .confirmYes:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(var(--brand-error-rgb), 0.25);
 }
 
 .confirmNo {

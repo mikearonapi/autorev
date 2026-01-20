@@ -63,6 +63,16 @@ async function handleGet(request, { params }) {
     const result = postData[0];
     const post = result.post;
     const buildData = result.build_data;
+    
+    // DEBUG: Log what we receive from RPC
+    console.log('[Build API DEBUG] Raw RPC buildData metrics:', {
+      slug,
+      final_zero_to_sixty: buildData?.final_zero_to_sixty,
+      stock_zero_to_sixty: buildData?.stock_zero_to_sixty,
+      final_hp: buildData?.final_hp,
+      stock_hp: buildData?.stock_hp,
+      buildDataKeys: buildData ? Object.keys(buildData) : 'null',
+    });
 
     // Fetch car data for performance calculations if we have a car_slug
     let carData = null;
@@ -145,6 +155,17 @@ async function handleGet(request, { params }) {
       }
     }
 
+    // Log build data for debugging performance metrics issue
+    if (buildData) {
+      console.log('[Build Detail API] Performance metrics:', {
+        slug,
+        stock_zero_to_sixty: buildData.stock_zero_to_sixty,
+        final_zero_to_sixty: buildData.final_zero_to_sixty,
+        stock_braking_60_0: buildData.stock_braking_60_0,
+        final_braking_60_0: buildData.final_braking_60_0,
+      });
+    }
+
     return NextResponse.json({
       build: {
         ...post,
@@ -156,7 +177,8 @@ async function handleGet(request, { params }) {
       parts,
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        // Disable caching temporarily to ensure fresh data
+        'Cache-Control': 'no-store, max-age=0',
       },
     });
 

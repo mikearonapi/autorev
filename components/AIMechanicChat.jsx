@@ -26,6 +26,8 @@ import {
   getBookmarkByContent,
   addKnownCar
 } from '../lib/stores/alPreferencesStore';
+import ALPreferencesPanel from './ALPreferencesPanel';
+import ALAttachmentMenu, { ALAttachmentsBar } from './ALAttachmentMenu';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { trackALConversationStart } from '@/lib/ga4';
 import { isAppRoute } from '@/lib/appRoutes';
@@ -236,7 +238,7 @@ const PAGE_CONTEXT_CONFIG = {
 
 // AL Mascot Avatar - The AutoRev AI Assistant
 // useFull: use high-res image for larger displays (avoids light background ring at small sizes)
-const ALMascot = ({ size = 24, className = '', useFull = false }) => (
+const ALMascot = ({ size = 24, className = '', useFull = false, showTealRing = true }) => (
   <img 
     src={useFull ? UI_IMAGES.alMascotFull : UI_IMAGES.alMascot}
     alt="AL - AutoRev AI"
@@ -248,6 +250,10 @@ const ALMascot = ({ size = 24, className = '', useFull = false }) => (
       height: size, 
       borderRadius: '50%',
       objectFit: 'cover',
+      ...(showTealRing && {
+        border: '3px solid #10b981', // Brand teal - matches AL page
+        boxShadow: '0 4px 20px rgba(16, 185, 129, 0.3)',
+      }),
     }}
   />
 );
@@ -296,6 +302,18 @@ const Icons = {
   messageSquare: ({ size = 18 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  ),
+  camera: ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  ),
+  settings: ({ size = 18 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
   ),
   sparkle: ({ size = 16 }) => (
@@ -598,6 +616,13 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
   const [alPreferences, setAlPreferences] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
+  
+  // Attachment state
+  const [attachments, setAttachments] = useState([]);
+  const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
+  
+  // Preferences panel state
+  const [showPreferencesPanel, setShowPreferencesPanel] = useState(false);
   
   // Copy button state
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
@@ -1140,14 +1165,27 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     };
   }, []);
   
+  // Handle attachment added
+  const handleAttachmentAdd = useCallback((attachment) => {
+    setAttachments(prev => [...prev, attachment]);
+    setShowAttachmentMenu(false);
+  }, []);
+  
+  // Handle attachment removed
+  const handleAttachmentRemove = useCallback((attachmentId) => {
+    setAttachments(prev => prev.filter(a => a.id !== attachmentId));
+  }, []);
+  
   const sendMessage = async (messageText = input, options = {}) => {
     if (!messageText.trim() || isLoading) return;
     
     const userMessage = messageText.trim();
     // displayMessage is what the user sees in chat; defaults to the actual message
     const displayMessage = options.displayMessage?.trim() || userMessage;
+    const messageAttachments = [...attachments]; // Capture current attachments
     
     setInput('');
+    setAttachments([]); // Clear attachments after sending
     setError(null);
     setSuggestions([]);
     setQuickReplies([]);
@@ -1175,7 +1213,11 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
     }
     
     // Show the display message to the user, but send the full message to AL
-    const newMessages = [...messages, { role: 'user', content: displayMessage }];
+    const newMessages = [...messages, { 
+      role: 'user', 
+      content: displayMessage,
+      attachments: messageAttachments, // Store attachments with message
+    }];
     setMessages(newMessages);
     setIsLoading(true);
     
@@ -1204,6 +1246,12 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           history: messages.slice(-6),
           stream: true,
           prefetchedContext: prefetchedContext,
+          attachments: messageAttachments.map(a => ({
+            public_url: a.public_url,
+            file_type: a.file_type,
+            file_name: a.file_name,
+            analysis_context: a.source,
+          })),
         }),
         signal,
       });
@@ -1462,7 +1510,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
           aria-label="Chat with AI AL"
         >
           <span className={styles.glowRing}></span>
-          <ALMascot size={56} className={styles.floatingIcon} useFull />
+          <ALMascot size={56} className={styles.floatingIcon} useFull showTealRing={false} />
           <span className={styles.tooltip}>Chat with AI AL</span>
         </button>
       )}
@@ -1562,6 +1610,16 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                   <span className={styles.headerTitle}>Chat with AL</span>
                 </div>
                 <div className={styles.headerActions}>
+                  {/* Settings Button */}
+                  <button 
+                    onClick={() => setShowPreferencesPanel(!showPreferencesPanel)} 
+                    className={`${styles.headerBtn} ${showPreferencesPanel ? styles.headerBtnActive : ''}`}
+                    aria-label="AL preferences"
+                    title="AL preferences"
+                  >
+                    <Icons.settings size={16} />
+                  </button>
+                  
                   {messages.length > 0 && (
                     <button 
                       onClick={clearChat} 
@@ -1614,6 +1672,20 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                 </div>
               </div>
 
+              {/* Preferences Panel - slides over content when shown */}
+              {showPreferencesPanel && (
+                <div className={styles.preferencesPanel}>
+                  <ALPreferencesPanel
+                    isOpen={showPreferencesPanel}
+                    onClose={() => setShowPreferencesPanel(false)}
+                    userTier={user?.tier || 'free'}
+                    initialPreferences={alPreferences}
+                    onPreferencesChange={setAlPreferences}
+                    compact
+                  />
+                </div>
+              )}
+              
               {/* Bookmarks Panel - slides over content when shown */}
               {showBookmarks && (
                 <div className={styles.bookmarksPanel}>
@@ -1786,12 +1858,14 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                       /* Single prompt mode: show one card */
                       <div className={styles.quickActionCard}>
                         <div className={styles.quickActionIcon}>
-                          <ALMascot size={32} />
+                          <ALMascot size={36} />
                         </div>
                         <div className={styles.quickActionContent}>
-                          <p className={styles.quickActionLabel}>
-                            {quickActionPrompt.context?.category ? `Ask about ${quickActionPrompt.context.category}` : 'Quick Question'}
-                          </p>
+                          {quickActionPrompt.context?.carName && (
+                            <p className={styles.quickActionLabel}>
+                              {quickActionPrompt.context.carName}
+                            </p>
+                          )}
                           <p className={styles.quickActionText}>{quickActionPrompt.displayMessage || quickActionPrompt.prompt}</p>
                         </div>
                         <div className={styles.quickActionButtons}>
@@ -1800,7 +1874,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                             onClick={handleQuickActionConfirm}
                           >
                             <Icons.arrowUp size={16} />
-                            Ask AL
+                            Send
                           </button>
                           <button 
                             className={styles.quickActionDismiss}
@@ -2015,9 +2089,44 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
 
               {/* Cost Preview - Removed per user request. Credit limits are handled when credits run out. */}
 
+              {/* Attachments Bar (above input) */}
+              {attachments.length > 0 && (
+                <ALAttachmentsBar
+                  attachments={attachments}
+                  onRemove={handleAttachmentRemove}
+                  onAddClick={() => setShowAttachmentMenu(true)}
+                  maxAttachments={5}
+                />
+              )}
+              
               {/* Input Area */}
               <div className={styles.inputArea}>
                 <div className={styles.inputWrapper}>
+                  {/* Attachment Button */}
+                  <div className={styles.attachmentBtnWrapper}>
+                    <button
+                      className={styles.attachmentBtn}
+                      onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
+                      title="Add photo or file"
+                      aria-label="Add attachment"
+                    >
+                      <Icons.camera size={16} />
+                    </button>
+                    
+                    {/* Attachment Menu */}
+                    {showAttachmentMenu && (
+                      <div className={styles.attachmentMenuWrapper}>
+                        <ALAttachmentMenu
+                          isOpen={showAttachmentMenu}
+                          onClose={() => setShowAttachmentMenu(false)}
+                          onAttachmentAdd={handleAttachmentAdd}
+                          currentAttachments={attachments}
+                          maxAttachments={5}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
                   <textarea
                     ref={inputRef}
                     value={input}
@@ -2035,7 +2144,7 @@ export default function AIMechanicChat({ showFloatingButton = false, externalOpe
                   />
                   <button
                     onClick={() => sendMessage()}
-                    disabled={!input.trim() || isLoading}
+                    disabled={(!input.trim() && attachments.length === 0) || isLoading}
                     className={styles.sendBtn}
                     aria-label="Send"
                   >

@@ -1,11 +1,14 @@
 /* ==========================================================================
    LAP TIME ESTIMATOR - Standalone Component
    Physics-based track lap time estimation with driver skill modeling
+   
+   Design: Matches specs page card styling - dark background, subtle borders
+   Teal is used for DATA HIGHLIGHTS only (values, gains), not card chrome
    ========================================================================== */
 
 .lapTimeEstimator {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 20px;
 }
@@ -27,9 +30,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--brand-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 0; /* Allow shrinking for flex */
 }
 
 .lapTimeTitleRow svg {
@@ -49,7 +56,7 @@
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-left: auto;
+  /* Removed margin-left: auto since Ask AL button is now in header */
 }
 
 .lapTimeInfoBtn:hover {
@@ -59,8 +66,8 @@
 
 /* Info Panel */
 .lapTimeInfoPanel {
-  background: rgba(52, 199, 89, 0.08);
-  border: 1px solid rgba(52, 199, 89, 0.2);
+  background: rgba(var(--brand-success-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
@@ -91,12 +98,13 @@
 }
 
 .lapTimeInfoHighlight {
-  background: rgba(255, 204, 0, 0.1);
+  background: rgba(212, 255, 0, 0.08);
+  border: 1px solid rgba(212, 255, 0, 0.15);
   border-radius: 8px;
   padding: 10px 12px;
   margin: 0;
   font-weight: 500;
-  color: var(--color-accent-gold);
+  color: var(--color-accent-lime, #d4ff00);
 }
 
 /* Driver Skill Selector */
@@ -138,8 +146,8 @@
 }
 
 .skillBtnActive {
-  background: rgba(52, 199, 89, 0.15);
-  border-color: rgba(52, 199, 89, 0.4);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  border-color: rgba(var(--brand-success-rgb), 0.4);
   color: var(--color-success);
 }
 
@@ -244,11 +252,11 @@
 
 .trackTag {
   padding: 3px 8px;
-  background: rgba(255, 77, 0, 0.12);
+  background: rgba(16, 185, 129, 0.12);
   border-radius: 4px;
   font-size: 10px;
   font-weight: 500;
-  color: var(--accent-primary, var(--color-accent-lime));
+  color: var(--brand-teal);
   text-transform: capitalize;
 }
 
@@ -544,9 +552,9 @@
   flex-direction: column;
   align-items: center;
   padding: 8px 6px;
-  background: rgba(52, 199, 89, 0.08);
+  background: rgba(var(--brand-success-rgb), 0.08);
   border-radius: 8px;
-  border: 1px solid rgba(52, 199, 89, 0.15);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.15);
 }
 
 .lapTimeCategoryLabel {
@@ -562,16 +570,16 @@
   font-family: 'SF Mono', 'Monaco', monospace;
 }
 
-/* Lap Time Tip */
+/* Lap Time Tip - Yellow for emphasis */
 .lapTimeTip {
   margin-top: 14px;
-  padding: 10px 14px;
-  background: rgba(255, 204, 0, 0.06);
-  border: 1px solid rgba(255, 204, 0, 0.15);
+  padding: 12px 14px;
+  background: rgba(212, 255, 0, 0.06);
+  border: 1px solid rgba(212, 255, 0, 0.15);
   border-radius: 8px;
   font-size: 12px;
-  color: rgba(255, 204, 0, 0.9);
-  line-height: 1.4;
+  color: var(--color-accent-lime, #d4ff00);
+  line-height: 1.5;
 }
 
 /* Lap Time Insight */
@@ -581,11 +589,11 @@
   gap: 8px;
   margin-top: 10px;
   padding: 10px 14px;
-  background: rgba(52, 199, 89, 0.06);
-  border: 1px solid rgba(52, 199, 89, 0.15);
+  background: rgba(var(--brand-success-rgb), 0.06);
+  border: 1px solid rgba(var(--brand-success-rgb), 0.15);
   border-radius: 8px;
   font-size: 12px;
-  color: rgba(52, 199, 89, 0.9);
+  color: rgba(var(--brand-success-rgb), 0.9);
   line-height: 1.4;
 }
 
@@ -633,8 +641,8 @@
 }
 
 .trackTimeBtnActive {
-  background: rgba(52, 199, 89, 0.12);
-  border-color: rgba(52, 199, 89, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.12);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
   color: var(--color-success);
 }
 
@@ -703,7 +711,7 @@
 
 .logTimeInput:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeInputLabel {
@@ -725,7 +733,7 @@
 .logTimeDateInput:focus,
 .logTimeSelect:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeTextarea {
@@ -742,7 +750,7 @@
 
 .logTimeTextarea:focus {
   outline: none;
-  border-color: rgba(52, 199, 89, 0.5);
+  border-color: rgba(var(--brand-success-rgb), 0.5);
 }
 
 .logTimeTextarea::placeholder {
@@ -792,7 +800,7 @@
 
 .logTimeSaveBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand-success-rgb), 0.3);
 }
 
 .logTimeSaveBtn:disabled {
@@ -1010,13 +1018,23 @@
 
 @media (max-width: 600px) {
   .lapTimeEstimator {
-    padding: 14px;
+    padding: 16px;
+    border-radius: 14px;
   }
   
+  /* Title keeps same size on mobile for consistency with garage specs */
+  /* Header stays horizontal - Ask AL button aligned right */
+  
   .lapTimeHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
+  }
+  
+  .lapTimeTitleRow {
+    gap: 6px;
+  }
+  
+  .lapTimeTitleRow span {
+    white-space: nowrap;
   }
   
   .skillSelector {

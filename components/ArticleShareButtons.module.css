@@ -90,15 +90,15 @@
 }
 
 .shareButton.copy:hover {
-  background: rgba(233, 69, 96, 0.15);
-  border-color: rgba(233, 69, 96, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.15);
+  border-color: rgba(var(--brand-error-rgb), 0.3);
   color: var(--brand-error);
 }
 
 /* Copied state */
 .shareButton.copied {
-  background: rgba(74, 222, 128, 0.15);
-  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(var(--brand-success-rgb), 0.15);
+  border-color: rgba(var(--brand-success-rgb), 0.4);
   color: var(--brand-teal);
 }
 

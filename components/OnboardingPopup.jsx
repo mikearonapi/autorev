@@ -324,81 +324,156 @@ export const OnboardingIcons = {
 
 /**
  * Garage Page Onboarding Steps
- * Focus: How to use Collection and Favorites, with clear value differentiation
+ * Focus: Research-to-action engine — from "I want to upgrade" to "here are the exact parts"
+ * 
+ * Key value props:
+ * - Research already done for you (hours saved)
+ * - Objective-driven (your goal: track/street/daily)
+ * - Vehicle-specific (your car, not generic)
+ * - Navigation simplified (from 47 options to "the right one")
+ * - Bridge to action (not just info)
+ * - Trust (no trolls, no BS)
  */
 export const garageOnboardingSteps = [
   {
     icon: OnboardingIcons.garage,
     title: 'Welcome to Your Garage',
-    description: 'Your Garage has two sections: "My Collection" for vehicles you own, and "Favorites" for cars you\'re researching or dreaming about.',
-  },
-  {
-    icon: OnboardingIcons.car,
-    title: 'My Collection',
-    description: 'Add cars you actually own to unlock premium owner features. Click "Add to Collection" on any car page.',
+    description: 'Your Garage does all the research so you don\'t have to. Get curated upgrade paths with the exact parts you should buy—and why.',
     features: [
-      'VIN-specific safety recall alerts',
-      'Personalized maintenance schedules',
-      'Service history tracking',
-      'Owner-only insights & recommendations',
+      'No forum trolls or marketing BS',
+      'Research already done for you',
+      'Trusted, vehicle-specific advice',
     ],
   },
   {
-    icon: OnboardingIcons.heart,
-    title: 'Favorites',
-    description: 'Click the ♥ heart icon on any car to save it for later. Perfect for researching your next purchase.',
+    icon: OnboardingIcons.car,
+    title: 'Add Your Car',
+    description: 'Start by adding your vehicle. Everything that follows is tailored to YOUR specific car—not generic advice.',
     features: [
-      'Save any car to your wishlist',
-      'Compare specs side-by-side',
-      'Track prices & market trends',
+      'Vehicle-specific insights & data',
+      'VIN decoding & recall alerts',
+      'Your car\'s unique characteristics',
     ],
   },
   {
     icon: OnboardingIcons.sparkles,
-    title: 'Why Add to Collection?',
-    description: 'Collection unlocks features designed for actual owners—maintenance alerts, recall notifications, and insights tailored to your specific vehicle.',
+    title: 'Set Your Goals',
+    description: 'Tell us what you want: track weapon, daily driver, or weekend show car. The right upgrades depend on YOUR objective.',
+    features: [
+      'Track car ≠ Daily driver ≠ Show car',
+      'Upgrades adapt to your intent',
+      'No one-size-fits-all recommendations',
+    ],
   },
-];
-
-/**
- * Tuning Shop Onboarding Steps
- * Focus: Step-by-step process for using the tuning features
- */
-export const tuningShopOnboardingSteps = [
   {
     icon: OnboardingIcons.wrench,
-    title: 'Welcome to the Tuning Shop',
-    description: 'Plan and visualize performance upgrades for any vehicle. Create build projects, compare setups, and see estimated power gains.',
-  },
-  {
-    icon: OnboardingIcons.car,
-    title: 'Step 1: Select a Car',
-    description: 'Click the ⚙ gear "Tune" icon on any car across the site—or select one here—to open the Upgrade Center.',
+    title: 'Get the Right Upgrades',
+    description: 'See exactly what upgrades make sense for your car AND your goals. Not "all possible upgrades"—the RIGHT upgrades.',
     features: [
-      'Click the gear icon on any car page',
-      'Or select from your Collection/Favorites',
-      'Browse our full car catalog here',
+      'Curated recommendations, not overwhelming lists',
+      'Why each upgrade matters for your build',
+      'Stage-by-stage progression paths',
     ],
   },
   {
     icon: OnboardingIcons.gauge,
-    title: 'Step 2: Build Your Setup',
-    description: 'In the Upgrade Center, choose from preset packages or build custom. See real-time HP/torque gains and cost estimates.',
+    title: 'See the Impact First',
+    description: 'Visualize what each upgrade actually does to your car BEFORE you buy. HP gains, torque curves, lap time predictions.',
     features: [
-      'Select upgrade packages or go custom',
-      'View performance gains instantly',
-      'Track total build cost as you go',
+      'Real-time performance estimates',
+      'Virtual dyno with HP/TQ curves',
+      'Track time impact predictions',
     ],
   },
   {
-    icon: OnboardingIcons.save,
-    title: 'Step 3: Save & Compare',
-    description: 'Save your build as a Project. Create multiple projects per car, compare different setups, and revisit anytime.',
+    icon: OnboardingIcons.shield,
+    title: 'Find the Exact Parts',
+    description: '"I need an intake" → but which one? There are 47 options. We show you which ones work, offer best value, and why.',
     features: [
-      'Save unlimited build projects',
-      'Compare projects side-by-side',
-      'Update or delete projects anytime',
+      'Navigate from upgrade to specific parts',
+      'Value clarity: best bang for your buck',
+      'Premium vs budget—and when it matters',
     ],
   },
 ];
 
+/**
+ * Data Page Onboarding Steps
+ * Focus: Bridge the gap between "theoretical gains" and "real-world experience"
+ * 
+ * Key value props:
+ * - The Visualization Problem: What does 20 HP actually mean? Is 0.2s worth $500?
+ * - The Feedback Loop: Predictions → Actuals → Gap analysis → What to do next
+ * - Personalized Progression: Log observations, get tailored recommendations
+ * - Challenge/Gamification: "Did you hit that number?" — validation mechanism
+ * - Credibility: Benchmarked against real tuning data, not made up
+ * - Nothing like this exists: Personalized, data-driven guidance
+ */
+export const dataOnboardingSteps = [
+  {
+    icon: OnboardingIcons.chart,
+    title: 'Welcome to My Data',
+    description: 'My Data turns your modifications into insights. See what your upgrades should deliver, log what you actually experience, and get personalized guidance on what to do next.',
+    features: [
+      'The feedback loop car enthusiasts never had',
+      'Predictions → Actuals → Better advice',
+      'Not generic—tailored to YOUR results',
+    ],
+  },
+  {
+    icon: OnboardingIcons.gauge,
+    title: 'See What Gains Really Mean',
+    description: '20 HP sounds cool—but will you actually notice it? We translate abstract numbers into real-world impact. "Is 0.2 seconds worth $500?"',
+    features: [
+      'Virtual dyno with HP/TQ curves',
+      'Real-world impact translation',
+      'Helps you decide: worth it or not?',
+    ],
+  },
+  {
+    icon: OnboardingIcons.save,
+    title: 'Log Your Real Results',
+    description: 'You\'ve done the mods—here\'s what you should have. Now log what you actually got. Compare predictions vs. reality.',
+    features: [
+      'Log dyno runs & track times',
+      'Compare against our estimates',
+      'Gap analysis: what\'s different & why',
+    ],
+  },
+  {
+    icon: OnboardingIcons.sparkles,
+    title: 'Did You Hit That Number?',
+    description: 'We predict "You should hit X." You log your results. Did you hit it? Track your progress like a challenge—and celebrate your wins.',
+    features: [
+      'Validation: predictions vs. reality',
+      'Track progression over time',
+      'Realistic expectation-setting',
+    ],
+  },
+  {
+    icon: OnboardingIcons.wrench,
+    title: 'What Should You Do Next?',
+    description: '"I\'ve done these mods, here\'s what I\'m experiencing—what do I do next?" Your data drives personalized recommendations.',
+    features: [
+      'Tailored to YOUR actual situation',
+      'Not generic forum advice',
+      'Data-driven guidance',
+    ],
+  },
+  {
+    icon: OnboardingIcons.shield,
+    title: 'Calibrated Against Real Data',
+    description: 'Our estimates aren\'t perfect—but they\'re not made up either. Benchmarked against real dyno data and track times from our database.',
+    features: [
+      'Validated against real tuning data',
+      'Continuously improved accuracy',
+      'Honest about limitations',
+    ],
+  },
+];
+
+/**
+ * @deprecated Use dataOnboardingSteps instead
+ * Kept for backwards compatibility
+ */
+export const tuningShopOnboardingSteps = dataOnboardingSteps;

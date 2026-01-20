@@ -78,7 +78,7 @@
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, var(--brand-text-primary));
 }
 
 /* CF-001: Touch target compliance - minimum 44px */
@@ -101,7 +101,7 @@
 
 .closeButton:hover {
   background: var(--color-surface-elevated, #1a1a1a);
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, var(--brand-text-primary));
 }
 
 /* Active state for touch devices */
@@ -144,7 +144,7 @@
   background: var(--color-surface-elevated, #1a1a1a);
   border: 1px solid var(--color-border, #333);
   border-radius: 0.5rem;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, var(--brand-text-primary));
   font-size: max(16px, 1rem); /* Prevents iOS zoom */
   transition: all 0.2s ease;
   -webkit-appearance: none;
@@ -157,8 +157,8 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--accent-primary, #ff4d00);
-  box-shadow: 0 0 0 3px var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
 .searchClear {
@@ -179,7 +179,7 @@
 }
 
 .searchClear:hover {
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, var(--brand-text-primary));
   background: var(--color-surface-hover, #252525);
 }
 
@@ -235,7 +235,7 @@
 
 .carOption:hover:not(:disabled) {
   background: var(--color-surface-hover, #252525);
-  border-color: var(--accent-primary, #ff4d00);
+  border-color: var(--brand-teal);
 }
 
 .carOption:disabled {
@@ -243,35 +243,20 @@
 }
 
 .carOptionAdded {
-  background: rgba(74, 222, 128, 0.08);
-  border-color: rgba(74, 222, 128, 0.3);
+  background: rgba(var(--brand-success-rgb), 0.08);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
 }
 
 .carOptionAdded:hover {
-  background: rgba(74, 222, 128, 0.08);
-  border-color: rgba(74, 222, 128, 0.3);
-}
-
-.carOptionImage {
-  width: 72px;
-  height: 48px;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: var(--color-surface, #111);
-}
-
-.carOptionImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background: rgba(var(--brand-success-rgb), 0.08);
+  border-color: rgba(var(--brand-success-rgb), 0.3);
 }
 
 .carOptionInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.25rem;
   min-width: 0;
 }
 
@@ -285,49 +270,62 @@
 }
 
 .carOptionMeta {
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.4;
+}
+
+.metaItem {
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.metaItem:not(:last-child)::after {
+  content: '•';
+  margin: 0 0.375rem;
+  opacity: 0.5;
 }
 
 .carOptionAction {
   flex-shrink: 0;
 }
 
+/* LIME CTA button - per brand guidelines for user actions */
 .addBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
-  background: var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
-  border: 1px solid rgba(255, 77, 0, 0.4);
+  background: rgba(212, 255, 0, 0.15);
+  border: 1px solid rgba(212, 255, 0, 0.4);
   border-radius: 1rem;
-  color: var(--accent-primary, #ff4d00);
+  color: #d4ff00;
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .carOption:hover:not(:disabled) .addBadge {
-  background: var(--accent-primary, #ff4d00);
-  border-color: var(--accent-primary, #ff4d00);
-  color: var(--brand-text-primary);
+  background: #d4ff00;
+  border-color: #d4ff00;
+  color: #0a1628;
 }
 
 .addingBadge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 0.375rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(212, 255, 0, 0.1);
+  border: 1px solid rgba(212, 255, 0, 0.3);
   border-radius: 1rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  font-weight: 500;
+  color: #d4ff00;
+  min-width: 52px;
 }
 
+/* Teal for "Added" state - positive data per brand guidelines */
 .addedBadge {
   display: inline-flex;
   align-items: center;
@@ -364,7 +362,7 @@
   justify-content: space-between;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-border, #333);
-  background: rgba(74, 222, 128, 0.05);
+  background: rgba(var(--brand-success-rgb), 0.05);
 }
 
 .addedCount {
@@ -376,12 +374,13 @@
   font-weight: 500;
 }
 
+/* LIME CTA for Done button - per brand guidelines */
 .doneButton {
   padding: 0.625rem 1.25rem;
-  background: var(--brand-teal);
+  background: #d4ff00;
   border: none;
   border-radius: 0.5rem;
-  color: var(--brand-bg-primary);
+  color: #0a1628;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -389,340 +388,17 @@
 }
 
 .doneButton:hover {
-  background: var(--brand-teal-light);
+  background: #bfe600;
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
 }
 
 /* ============================================
-   TABS
-   ============================================ */
-.tabs {
-  display: flex;
-  gap: 0.25rem;
-  padding: 0 1.5rem;
-  background: var(--color-surface, #141414);
-  border-bottom: 1px solid var(--color-border, #333);
-}
-
-.tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1rem;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--color-text-secondary, #888);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.tab:hover {
-  color: var(--color-text-primary, #fff);
-  background: var(--color-surface-elevated, #1a1a1a);
-}
-
-.tabActive {
-  color: var(--accent-primary, #ff4d00);
-  border-bottom-color: var(--accent-primary, #ff4d00);
-}
-
-.tabActive:hover {
-  color: var(--accent-primary, #ff4d00);
-}
-
-/* ============================================
-   NO RESULTS - SWITCH TAB PROMPT
+   NO RESULTS
    ============================================ */
 .noResultsHint {
   color: var(--color-text-muted, #666);
   font-size: 0.8125rem;
   margin-top: 0.25rem;
-}
-
-.switchTabButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
-  border: 1px solid rgba(255, 77, 0, 0.4);
-  border-radius: 0.5rem;
-  color: var(--accent-primary, #ff4d00);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.switchTabButton:hover {
-  background: var(--accent-primary, #ff4d00);
-  border-color: var(--accent-primary, #ff4d00);
-  color: var(--brand-text-primary);
-}
-
-/* ============================================
-   MANUAL ENTRY SECTION
-   ============================================ */
-.manualEntrySection {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.sectionLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  color: var(--color-text-primary, #fff);
-  margin-bottom: 0.25rem;
-}
-
-.sectionHint {
-  font-size: 0.8125rem;
-  color: var(--color-text-muted, #666);
-  margin-bottom: 0.75rem;
-}
-
-/* ============================================
-   VIN SECTION
-   ============================================ */
-.vinSection {
-  background: var(--color-surface-elevated, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-}
-
-.vinInputWrapper {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.vinInput {
-  flex: 1;
-  min-height: 48px;
-  padding: 0.875rem 1rem;
-  background: var(--color-surface, #141414);
-  border: 1px solid var(--color-border, #333);
-  border-radius: 0.5rem;
-  color: var(--color-text-primary, #fff);
-  font-size: max(16px, 1rem);
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-.vinInput::placeholder {
-  color: var(--color-text-muted, #666);
-  text-transform: none;
-  letter-spacing: normal;
-}
-
-.vinInput:focus {
-  outline: none;
-  border-color: var(--accent-primary, #ff4d00);
-  box-shadow: 0 0 0 3px var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
-}
-
-.vinDecodeButton {
-  min-width: 80px;
-  padding: 0.875rem 1rem;
-  background: var(--accent-primary, #ff4d00);
-  border: none;
-  border-radius: 0.5rem;
-  color: var(--brand-text-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vinDecodeButton:hover:not(:disabled) {
-  background: var(--accent-primary-hover, #ff6a2a);
-}
-
-.vinDecodeButton:disabled {
-  background: var(--color-surface-hover, #252525);
-  color: var(--color-text-muted, #666);
-  cursor: not-allowed;
-}
-
-.vinError {
-  margin-top: 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--brand-error);
-}
-
-.vinSuccess {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 0.5rem;
-  color: var(--brand-teal);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-/* ============================================
-   DIVIDER
-   ============================================ */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--color-text-muted, #666);
-  font-size: 0.8125rem;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--color-border, #333);
-}
-
-/* ============================================
-   FORM SECTION
-   ============================================ */
-.formSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-@media (max-width: 480px) {
-  .formRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-.formField {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-
-.fieldLabel {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-text-secondary, #888);
-}
-
-.formInput,
-.formSelect {
-  min-height: 48px;
-  padding: 0.875rem 1rem;
-  background: var(--color-surface-elevated, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
-  border-radius: 0.5rem;
-  color: var(--color-text-primary, #fff);
-  font-size: max(16px, 1rem);
-  transition: all 0.2s ease;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.formSelect {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-
-.formInput::placeholder {
-  color: var(--color-text-muted, #666);
-}
-
-.formInput:focus,
-.formSelect:focus {
-  outline: none;
-  border-color: var(--accent-primary, #ff4d00);
-  box-shadow: 0 0 0 3px var(--accent-primary-muted, rgba(255, 77, 0, 0.15));
-}
-
-.formError {
-  font-size: 0.8125rem;
-  color: var(--brand-error);
-  padding: 0.5rem;
-  background: rgba(239, 68, 68, 0.1);
-  border-radius: 0.375rem;
-}
-
-.formSuccess {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 0.5rem;
-  color: var(--brand-teal);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-/* ============================================
-   ADD MANUAL BUTTON
-   ============================================ */
-.addManualButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  min-height: 52px;
-  padding: 0.875rem 1.5rem;
-  background: var(--accent-primary, #ff4d00);
-  border: none;
-  border-radius: 0.5rem;
-  color: var(--brand-text-primary);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 0.5rem;
-  /* Ensure button is not cut off on mobile devices with safe areas */
-  margin-bottom: 0.5rem;
-}
-
-.addManualButton:hover:not(:disabled) {
-  background: var(--accent-primary-hover, #ff6a2a);
-  transform: translateY(-1px);
-}
-
-.addManualButton:disabled {
-  background: var(--color-surface-hover, #252525);
-  color: var(--color-text-muted, #666);
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Success state */
-.addManualButton:disabled:has(.formSuccess + &) {
-  background: rgba(74, 222, 128, 0.2);
-  color: var(--brand-teal);
 }
 
 /* ============================================
@@ -738,17 +414,17 @@
 }
 
 /* ============================================
-   DATABASE ADD ERROR (performance cars tab)
+   ERROR MESSAGE
    ============================================ */
-.dbAddError {
+.addError {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   margin: 0 0 0.75rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--brand-error-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 0.5rem;
   color: var(--brand-error);
   font-size: 0.875rem;

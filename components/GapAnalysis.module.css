@@ -1,0 +1,239 @@
+/* ===========================================
+   GAP ANALYSIS
+   Feedback loop component showing predicted vs actual gaps
+   
+   Brand Colors:
+   - Teal (#10b981): Positive/exceeding
+   - Blue (#3b82f6): Neutral/on-target
+   - Amber (#f59e0b): Warnings/underperforming
+   =========================================== */
+
+.gapAnalysis {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid;
+}
+
+/* Status-based styling */
+.gapAnalysis.positive {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.gapAnalysis.negative {
+  background: rgba(245, 158, 11, 0.06);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.gapAnalysis.neutral {
+  background: rgba(59, 130, 246, 0.06);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.statusIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.positive .statusIcon {
+  color: var(--color-accent-teal);
+}
+
+.negative .statusIcon {
+  color: var(--color-warning, #f59e0b);
+}
+
+.neutral .statusIcon {
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  margin: 0;
+}
+
+.gapSummary {
+  font-size: 13px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.positive .gapSummary {
+  color: var(--color-accent-teal);
+}
+
+.negative .gapSummary {
+  color: var(--color-warning, #f59e0b);
+}
+
+.neutral .gapSummary {
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+/* Sections */
+.section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 10px 0;
+}
+
+/* Causes List */
+.causesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.causeItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+.causeItem.warning {
+  color: var(--color-warning, #f59e0b);
+}
+
+.causeItem.positive {
+  color: var(--color-accent-teal);
+}
+
+.causeItem.info {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.causeBullet {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* Recommendations List */
+.recommendationsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recommendationItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.recIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--color-accent-teal);
+}
+
+/* ===========================================
+   COMPACT GAP INDICATOR
+   =========================================== */
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.indicator.positive {
+  color: var(--color-accent-teal);
+}
+
+.indicator.negative {
+  color: var(--color-warning, #f59e0b);
+}
+
+.indicator.neutral {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.indicatorPercent {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ===========================================
+   RESPONSIVE - Mobile
+   =========================================== */
+
+@media (max-width: 600px) {
+  .gapAnalysis {
+    padding: 16px;
+  }
+
+  .header {
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .gapSummary {
+    font-size: 12px;
+  }
+
+  .section {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .causeItem,
+  .recommendationItem {
+    font-size: 12px;
+  }
+
+  .recommendationItem {
+    padding: 8px 10px;
+  }
+}
