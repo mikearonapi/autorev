@@ -15,7 +15,7 @@
  *    - Future: OBD2 data, telemetry uploads, acceleration runs
  */
 
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -104,7 +104,7 @@ const DATA_CATEGORIES = [
   { id: 'analysis', label: 'Analysis' },    // Power Limits, Handling, Aero
 ];
 
-export default function DataPage() {
+function DataPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
@@ -1098,5 +1098,23 @@ export default function DataPage() {
         accentColor="var(--sn-accent)"
       />
     </div>
+  );
+}
+
+// Wrap in Suspense for useSearchParams (required for Next.js 14 static generation)
+export default function DataPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.container}>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Your Data" 
+          subtext="Fetching performance insights..."
+          fullPage 
+        />
+      </div>
+    }>
+      <DataPageContent />
+    </Suspense>
   );
 }

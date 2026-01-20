@@ -9,10 +9,10 @@
  * Redirects preserve URL parameters for seamless transition.
  */
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function TuningShopRedirect() {
+function TuningShopRedirectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -27,4 +27,12 @@ export default function TuningShopRedirect() {
   
   // Return null while redirecting (instant redirect, no flash)
   return null;
+}
+
+export default function TuningShopRedirect() {
+  return (
+    <Suspense fallback={null}>
+      <TuningShopRedirectContent />
+    </Suspense>
+  );
 }
