@@ -10,61 +10,7 @@
 import React from 'react';
 import AskALButton from './AskALButton';
 import styles from './CalculatedPerformance.module.css';
-
-// ============================================================================
-// ICONS - Same as Performance tab
-// ============================================================================
-const Icons = {
-  bolt: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-    </svg>
-  ),
-  stopwatch: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="13" r="8"/>
-      <path d="M12 9v4l2 2"/>
-      <path d="M9 2h6"/>
-    </svg>
-  ),
-  target: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="6"/>
-      <circle cx="12" cy="12" r="2"/>
-    </svg>
-  ),
-  disc: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="2"/>
-    </svg>
-  ),
-  speed: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v4"/>
-      <path d="m4.93 10.93 2.83 2.83"/>
-      <path d="M2 18h2"/>
-      <path d="M20 18h2"/>
-      <path d="m19.07 10.93-2.83 2.83"/>
-      <path d="M22 22H2"/>
-      <path d="m16 6-4 4"/>
-      <circle cx="12" cy="18" r="4"/>
-    </svg>
-  ),
-  weight: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="5" r="3"/>
-      <path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.9-2.5l-2.495-9.04A2 2 0 0 0 17.5 8h-11Z"/>
-    </svg>
-  ),
-  gauge: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m12 14 4-4"/>
-      <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
-    </svg>
-  ),
-};
+import { Icons } from '@/components/ui/Icons';
 
 // ============================================================================
 // METRIC ROW - With progress bar (same as Performance tab)
