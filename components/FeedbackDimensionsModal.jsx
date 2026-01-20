@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './FeedbackDimensionsModal.module.css';
+import { Icons } from '@/components/ui/Icons';
 
 // Quick feedback tags
 const POSITIVE_TAGS = [
@@ -58,35 +59,6 @@ const DIMENSIONS = [
   },
 ];
 
-// Icons
-const Icons = {
-  close: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  ),
-  thumbsUp: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-    </svg>
-  ),
-  thumbsDown: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
-    </svg>
-  ),
-  star: (filled) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-    </svg>
-  ),
-  check: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  ),
-};
-
 /**
  * Star Rating Component
  */
@@ -106,7 +78,7 @@ function StarRating({ value, onChange, disabled = false }) {
           disabled={disabled}
           aria-label={`Rate ${star} stars`}
         >
-          {Icons.star(star <= (hoverValue || value))}
+          <Icons.star size={20} filled={star <= (hoverValue || value)} />
         </button>
       ))}
     </div>
@@ -199,14 +171,14 @@ export default function FeedbackDimensionsModal({
         {/* Close button */}
         {!isSubmitting && (
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-            {Icons.close}
+            <Icons.close size={20} />
           </button>
         )}
 
         <div className={styles.content}>
           {/* Header */}
           <div className={`${styles.iconContainer} ${isPositive ? styles.iconPositive : styles.iconNegative}`}>
-            {isPositive ? Icons.thumbsUp : Icons.thumbsDown}
+            {isPositive ? <Icons.thumbsUp size={24} /> : <Icons.thumbsDown size={24} />}
           </div>
           
           <h2 className={styles.title}>
@@ -231,7 +203,7 @@ export default function FeedbackDimensionsModal({
                   onClick={() => toggleTag(tag.id)}
                   disabled={disabled || isSubmitting}
                 >
-                  {selectedTags.includes(tag.id) && <span className={styles.tagCheck}>{Icons.check}</span>}
+                  {selectedTags.includes(tag.id) && <span className={styles.tagCheck}><Icons.check size={14} /></span>}
                   {tag.label}
                 </button>
               ))}
