@@ -12,75 +12,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import styles from './ALPreferencesPanel.module.css';
-
-// SVG Icons
-const Icons = {
-  // Settings/Gear icon
-  settings: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  ),
-  // Close/X icon
-  close: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  ),
-  // Quick/Bolt icon
-  bolt: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-    </svg>
-  ),
-  // Deep/Search icon
-  search: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      <line x1="11" y1="8" x2="11" y2="14"/>
-      <line x1="8" y1="11" x2="14" y2="11"/>
-    </svg>
-  ),
-  // Full AL/Database icon
-  database: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="5" rx="9" ry="3"/>
-      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-    </svg>
-  ),
-  // Web/Globe icon
-  globe: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="2" y1="12" x2="22" y2="12"/>
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-    </svg>
-  ),
-  // Forum/Chat icon
-  chat: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-    </svg>
-  ),
-  // YouTube/Video icon
-  video: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="23 7 16 12 23 17 23 7"/>
-      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-    </svg>
-  ),
-  // Event/Flag icon
-  flag: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-      <line x1="4" y1="22" x2="4" y2="15"/>
-    </svg>
-  ),
-};
+import { Icons } from '@/components/ui/Icons';
 
 // Tool toggle configuration
 // Note: All tools are available to all users during beta (IS_BETA mode)
@@ -272,7 +204,7 @@ export default function ALPreferencesPanel({
     <div className={`${styles.panel} ${compact ? styles.compact : ''}`}>
       <div className={styles.header}>
         <h3 className={styles.title}>
-          <span className={styles.titleIcon}>{Icons.settings}</span>
+          <span className={styles.titleIcon}><Icons.settings size={16} /></span>
           AL Preferences
         </h3>
         <button 
@@ -280,7 +212,7 @@ export default function ALPreferencesPanel({
           onClick={onClose}
           aria-label="Close preferences"
         >
-          {Icons.close}
+          <Icons.close size={14} />
         </button>
       </div>
 
@@ -301,7 +233,7 @@ export default function ALPreferencesPanel({
                   className={`${styles.modeCard} ${preferences.response_mode === mode.key ? styles.modeCardActive : ''}`}
                   onClick={() => handleModeChange(mode.key)}
                 >
-                  <span className={styles.modeIcon}>{mode.icon}</span>
+                  <span className={styles.modeIcon}>{mode.icon({ size: 18 })}</span>
                   <div className={styles.modeText}>
                     <span className={styles.modeLabel}>
                       {mode.label}
@@ -337,7 +269,7 @@ export default function ALPreferencesPanel({
                     role={available ? "button" : undefined}
                     tabIndex={available ? 0 : undefined}
                   >
-                    <span className={styles.toggleIcon}>{toggle.icon}</span>
+                    <span className={styles.toggleIcon}>{toggle.icon({ size: 16 })}</span>
                     <div className={styles.toggleText}>
                       <span className={styles.toggleLabel}>{toggle.label}</span>
                     </div>
