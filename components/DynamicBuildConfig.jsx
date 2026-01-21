@@ -12,6 +12,7 @@ import UpgradeConfigPanel, { getDefaultConfig } from './UpgradeConfigPanel';
 import { getUpgradeDetail } from '@/data/upgradeEducation';
 import styles from './DynamicBuildConfig.module.css';
 import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 /**
  * Get upgrade data by key using the upgradeEducation lookup
@@ -57,15 +58,12 @@ export default function DynamicBuildConfig({
   // If no upgrades selected, show helpful message
   if (allSelectedUpgrades.length === 0) {
     return (
-      <div className={styles.emptyState}>
-        <Icons.info size={18} />
-        <div className={styles.emptyStateContent}>
-          <span className={styles.emptyStateTitle}>No Upgrades Selected</span>
-          <span className={styles.emptyStateText}>
-            Select upgrades from the categories above to start building.
-          </span>
-        </div>
-      </div>
+      <EmptyState
+        icon={Icons.info}
+        title="No Upgrades Selected"
+        description="Select upgrades from the categories above to start building."
+        variant="inline"
+      />
     );
   }
 

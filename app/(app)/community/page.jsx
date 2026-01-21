@@ -7,6 +7,8 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import BuildDetailSheet from './BuildDetailSheet';
 import CommentsSheet from './CommentsSheet';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
 import { useFeedTracking } from '@/hooks/useFeedTracking';
 import styles from './page.module.css';
 
@@ -467,10 +469,13 @@ export default function CommunityPage() {
       
       {/* Error/Empty */}
       {!isLoading && (error || builds.length === 0) && (
-        <div className={styles.emptyState}>
-          <p>{error || 'No builds yet'}</p>
-          <Link href="/garage" className={styles.primaryBtn}>Share Your Build</Link>
-        </div>
+        <EmptyState
+          icon={error ? Icons.alertTriangle : Icons.car}
+          title={error ? 'Something went wrong' : 'No builds yet'}
+          description={error || 'Be the first to share a build with the community!'}
+          action={{ label: 'Share Your Build', href: '/garage' }}
+          variant="centered"
+        />
       )}
       
       {/* Main Content - Fixed Viewport Layout */}

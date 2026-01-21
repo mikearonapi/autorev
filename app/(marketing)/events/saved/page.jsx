@@ -10,6 +10,7 @@ import AuthModal from '@/components/AuthModal';
 import PremiumGate from '@/components/PremiumGate';
 import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
 import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function SavedEventsPage() {
   const { isAuthenticated, user, profile, session, isLoading: authLoading } = useAuth();
@@ -231,18 +232,14 @@ export default function SavedEventsPage() {
         
         {/* Empty State */}
         {!loading && !error && savedEvents.length === 0 && (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>
-              <Icons.calendar size={48} />
-            </div>
-            <h3>No saved events yet</h3>
-            <p>
-              Browse events and click the heart icon to save them for later.
-            </p>
-            <Link href="/community/events" className={styles.browseButton}>
-              Browse Events
-            </Link>
-          </div>
+          <EmptyState
+            icon={Icons.calendar}
+            title="No saved events yet"
+            description="Browse events and click the heart icon to save them for later."
+            action={{ label: "Browse Events", href: "/community/events" }}
+            variant="centered"
+            size="lg"
+          />
         )}
         
         {/* Events Grid */}

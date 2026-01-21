@@ -15,6 +15,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import styles from './page.module.css';
 import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 // Status colors
 const statusColors = {
@@ -445,9 +446,11 @@ export default function FeedbackAdminPage() {
         )}
 
         {filteredFeedback.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>No feedback matching your filters</p>
-          </div>
+          <EmptyState.NoResults onClear={() => {
+            setTypeFilter('all');
+            setCategoryFilter('all');
+            setStatusFilter('all');
+          }} />
         ) : (
           filteredFeedback.map((item) => (
             <div 

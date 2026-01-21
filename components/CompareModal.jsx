@@ -21,6 +21,7 @@ import { fetchCars } from '@/lib/carsClient';
 import { loadPreferences, hasUserPreferences, checkCarAgainstPreferences } from '@/lib/stores/userPreferencesStore';
 import { calculateWeightedScore } from '@/lib/scoring';
 import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 // Comparison attributes with formatting and scoring
 const COMPARE_ATTRIBUTES = [
@@ -270,9 +271,12 @@ export default function CompareModal({ isOpen, onClose }) {
         {/* Content */}
         <div className={styles.content}>
           {carsWithFullData.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>No cars to compare. Add cars from the catalog to get started.</p>
-            </div>
+            <EmptyState
+              icon={Icons.car}
+              title="No cars to compare"
+              description="Add cars from the catalog to get started."
+              variant="centered"
+            />
           ) : (
             <>
               {/* Recommendation Banner */}

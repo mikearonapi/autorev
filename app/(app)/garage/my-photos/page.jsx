@@ -30,31 +30,8 @@ import ImageUploader from '@/components/ImageUploader';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
 import { useCarImages } from '@/hooks/useCarImages';
 import { fetchCars } from '@/lib/carsClient';
-
-// Icons
-const Icons = {
-  camera: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  ),
-  car: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
-    </svg>
-  ),
-  image: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <circle cx="8.5" cy="8.5" r="1.5"/>
-      <path d="M21 15l-5-5L5 21"/>
-    </svg>
-  ),
-};
+import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 // Stat component for VehicleInfoBar
 function PhotoCountStat({ count }) {
@@ -168,19 +145,14 @@ function MyPhotosContent() {
           buildId={buildIdParam}
           onBack={handleBack}
         />
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>
-            <Icons.camera size={48} />
-          </div>
-          <h2 className={styles.emptyTitle}>Select a Vehicle</h2>
-          <p className={styles.emptyText}>
-            Choose a vehicle from your garage to manage photos
-          </p>
-          <Link href="/garage" className={styles.emptyAction}>
-            <Icons.car size={18} />
-            Go to My Garage
-          </Link>
-        </div>
+        <EmptyState
+          icon={Icons.camera}
+          title="Select a Vehicle"
+          description="Choose a vehicle from your garage to manage photos"
+          action={{ label: "Go to My Garage", href: "/garage" }}
+          variant="centered"
+          size="lg"
+        />
         <AuthModal {...authModal.props} />
       </div>
     );

@@ -17,6 +17,8 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import SlideUpPanel from '@/components/SlideUpPanel';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
 import styles from './page.module.css';
 
 // Part categories with display names and icons
@@ -194,20 +196,13 @@ function PartsContent() {
 
       {/* Parts List */}
       {filteredParts.length === 0 ? (
-        <div className={styles.emptyState}>
-          <span className={styles.emptyIcon}>🔍</span>
-          <h3>No parts found</h3>
-          <p>Try adjusting your search or filters</p>
-          <button 
-            className={styles.clearBtn}
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-            }}
-          >
-            Clear Filters
-          </button>
-        </div>
+        <EmptyState.NoResults
+          query={searchQuery}
+          onClear={() => {
+            setSearchQuery('');
+            setSelectedCategory('all');
+          }}
+        />
       ) : (
         <div className={styles.partsList}>
           {filteredParts.map(part => (

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { Icons } from '@/components/ui/Icons';
+import EmptyState from '@/components/ui/EmptyState';
 
 // Static icon elements for event metadata (pre-rendered at fixed size)
 const StaticIcons = {
@@ -254,9 +255,12 @@ export default function EventModerationPage() {
       {/* Submissions List */}
       <div className={styles.submissionsList}>
         {submissions.length === 0 && !loading ? (
-          <div className={styles.emptyState}>
-            {canLoad ? 'No submissions found.' : 'Enter admin key to load submissions.'}
-          </div>
+          <EmptyState
+            icon={Icons.calendar}
+            title={canLoad ? 'No submissions found' : 'Authentication required'}
+            description={canLoad ? 'No event submissions to review.' : 'Enter admin key to load submissions.'}
+            variant="centered"
+          />
         ) : (
           submissions.map(sub => (
             <div key={sub.id} className={styles.submissionCard}>
