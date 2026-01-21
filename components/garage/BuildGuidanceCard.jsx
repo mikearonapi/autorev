@@ -19,9 +19,10 @@
 import React from 'react';
 import styles from './BuildGuidanceCard.module.css';
 import { GOAL_CATEGORY_MAP } from '@/lib/upgradeCategories';
+import { Icons } from '@/components/ui/Icons';
 
-// Icons for trust signals
-const Icons = {
+// Local icons for trust signals with YouTube and chart that don't exist in shared lib
+const LocalIcons = {
   youtube: ({ size = 14 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
       <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
@@ -35,26 +36,9 @@ const Icons = {
       <path d="M8 17v-3"/>
     </svg>
   ),
-  alert: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/>
-      <line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-  ),
-  parts: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  ),
-  sparkles: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
-      <path d="M5 15l.5 1.5L7 17l-1.5.5L5 19l-.5-1.5L3 17l1.5-.5L5 15z"/>
-      <path d="M19 12l.5 1.5L21 14l-1.5.5L19 16l-.5-1.5L17 14l1.5-.5L19 12z"/>
-    </svg>
-  ),
+  alert: Icons.alertTriangle,
+  parts: Icons.settings,
+  sparkles: Icons.sparkles,
 };
 
 /**
@@ -94,7 +78,7 @@ export default function BuildGuidanceCard({
     return (
       <div className={styles.card}>
         <div className={styles.fallback}>
-          <Icons.sparkles size={20} />
+          <LocalIcons.sparkles size={20} />
           <p>Select a build goal above to see tailored guidance for your {car?.name}.</p>
         </div>
       </div>
@@ -106,7 +90,7 @@ export default function BuildGuidanceCard({
   
   if (youtubeVideoCount > 0) {
     trustBadges.push({
-      icon: <Icons.youtube size={12} />,
+      icon: <LocalIcons.youtube size={12} />,
       text: `${youtubeVideoCount} expert videos`,
       type: 'youtube',
     });
@@ -114,7 +98,7 @@ export default function BuildGuidanceCard({
   
   if (dynoRunCount > 0) {
     trustBadges.push({
-      icon: <Icons.chart size={12} />,
+      icon: <LocalIcons.chart size={12} />,
       text: `${dynoRunCount} dyno runs`,
       type: 'dyno',
     });
@@ -123,7 +107,7 @@ export default function BuildGuidanceCard({
   // Issues are always available (100% coverage)
   if (issueCount > 0) {
     trustBadges.push({
-      icon: <Icons.alert size={12} />,
+      icon: <LocalIcons.alert size={12} />,
       text: `${issueCount} issues documented`,
       type: 'issues',
     });
@@ -131,7 +115,7 @@ export default function BuildGuidanceCard({
   
   if (fitmentCount >= 5) {
     trustBadges.push({
-      icon: <Icons.parts size={12} />,
+      icon: <LocalIcons.parts size={12} />,
       text: `${fitmentCount} verified parts`,
       type: 'parts',
     });
@@ -168,7 +152,7 @@ export default function BuildGuidanceCard({
           <p>Browse upgrade categories below, or ask AL for personalized recommendations.</p>
           {onAskAL && (
             <button className={styles.askAlBtn} onClick={onAskAL}>
-              <Icons.sparkles size={14} />
+              <LocalIcons.sparkles size={14} />
               Ask AL for recommendations
             </button>
           )}

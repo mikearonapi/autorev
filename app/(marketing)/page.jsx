@@ -92,24 +92,13 @@ const AL_SAMPLE_QUESTIONS = [
   "What's the best mod order for a $5k budget?",
 ];
 
-// Icons
-const Icons = {
-  arrow: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-    </svg>
-  ),
-  camera: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  ),
-  arrowUp: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
-    </svg>
-  )
+import { Icons } from '@/components/ui/Icons';
+
+// Local aliases for icons used in this file
+const LocalIcons = {
+  arrow: () => <Icons.arrowRight size={20} />,
+  camera: () => <Icons.camera size={18} />,
+  arrowUp: () => <Icons.arrowUp size={18} />
 };
 
 export default function Home() {
@@ -282,7 +271,7 @@ export default function Home() {
         <div className={styles.alInputDemo}>
           <div className={styles.alInputWrapper}>
             <button className={styles.alAttachmentBtn} aria-label="Add attachment">
-              <Icons.camera />
+              <LocalIcons.camera />
             </button>
             <div className={styles.alInputText}>
               {typedText || <span className={styles.alInputPlaceholder}>Ask AL anything...</span>}
@@ -292,7 +281,7 @@ export default function Home() {
               className={`${styles.alSendBtn} ${typedText ? styles.alSendBtnActive : ''}`} 
               aria-label="Send"
             >
-              <Icons.arrowUp />
+              <LocalIcons.arrowUp />
             </button>
           </div>
         </div>
@@ -363,7 +352,7 @@ export default function Home() {
           className={styles.finalCta}
           onClick={() => authModal.openSignUp()}
         >
-          GET STARTED FREE <Icons.arrow />
+          GET STARTED FREE <LocalIcons.arrow />
         </button>
       </section>
 

@@ -6,27 +6,8 @@ import Button from '@/components/Button';
 import styles from './page.module.css';
 import legalStyles from '@/styles/legal-page.module.css';
 import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient.js';
+import { Icons } from '@/components/ui/Icons';
 
-// Icons (Lucide style - matches community/AL pages)
-const Icons = {
-  messageCircle: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-    </svg>
-  ),
-  checkCircle: ({ size = 24 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="m9 12 2 2 4-4"/>
-    </svg>
-  ),
-  arrowRight: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  ),
-};
 
 const interests = [
   { id: 'al-question', label: 'Question about AL (AI)' },
@@ -293,7 +274,7 @@ export default function Contact() {
                     >
                       {isSubmitting ? (
                         <>
-                          <Icons.messageCircle size={18} />
+                          <Icons.message size={18} />
                           Sending...
                         </>
                       ) : (

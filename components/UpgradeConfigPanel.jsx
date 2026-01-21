@@ -12,28 +12,13 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import styles from './UpgradeConfigPanel.module.css';
+import { Icons } from '@/components/ui/Icons';
 
-// Icons for the config panel
-const Icons = {
-  check: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  ),
-  warning: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/>
-      <line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-  ),
-  info: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="16" x2="12" y2="12"/>
-      <line x1="12" y1="8" x2="12.01" y2="8"/>
-    </svg>
-  ),
+// Local volume icons (not in shared lib)
+const LocalIcons = {
+  check: Icons.check,
+  warning: Icons.warning,
+  info: Icons.info,
   volumeLow: ({ size = 14 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
@@ -45,31 +30,21 @@ const Icons = {
       <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
     </svg>
   ),
-  volumeHigh: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-    </svg>
-  ),
-  settings: ({ size = 14 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  ),
+  volumeHigh: Icons.sound,
+  settings: Icons.settings,
 };
 
 // Get icon component by name
 function getIcon(iconName, size = 14) {
   const iconMap = {
-    'check': Icons.check,
-    'warning': Icons.warning,
-    'info': Icons.info,
-    'volume-low': Icons.volumeLow,
-    'volume-medium': Icons.volumeMedium,
-    'volume-high': Icons.volumeHigh,
+    'check': LocalIcons.check,
+    'warning': LocalIcons.warning,
+    'info': LocalIcons.info,
+    'volume-low': LocalIcons.volumeLow,
+    'volume-medium': LocalIcons.volumeMedium,
+    'volume-high': LocalIcons.volumeHigh,
   };
-  const IconComponent = iconMap[iconName] || Icons.settings;
+  const IconComponent = iconMap[iconName] || LocalIcons.settings;
   return <IconComponent size={size} />;
 }
 

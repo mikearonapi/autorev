@@ -133,63 +133,20 @@ const ALMascot = ({ size = 80 }) => (
   />
 );
 
-// Simple icons
-const Icons = {
-  send: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  thumbsUp: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-    </svg>
-  ),
-  thumbsDown: ({ size = 16 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
-    </svg>
-  ),
-  arrowUp: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  newChat: ({ size = 18 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 5v14M5 12h14"/>
-    </svg>
-  ),
-  history: ({ size = 18 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <polyline points="12 6 12 12 16 14"/>
-    </svg>
-  ),
-  sparkles: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4l1.4-1.4m10-10l1.4-1.4"/>
-      <circle cx="12" cy="12" r="4"/>
-    </svg>
-  ),
-  attachment: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-    </svg>
-  ),
-  settings: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
-  ),
-  camera: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  ),
+import { Icons } from '@/components/ui/Icons';
+
+// Local aliases for icons with newChat and history mappings
+const LocalIcons = {
+  send: Icons.send,
+  thumbsUp: Icons.thumbsUp,
+  thumbsDown: Icons.thumbsDown,
+  arrowUp: Icons.arrowUp,
+  newChat: Icons.plus,
+  history: Icons.clock,
+  sparkles: Icons.sparkles,
+  attachment: Icons.attachment,
+  settings: Icons.settings,
+  camera: Icons.camera,
 };
 
 // Suggested prompts for new users - no emojis, clean design
@@ -580,7 +537,7 @@ export default function ALPageClient() {
       <div className={styles.container}>
         <div className={styles.historyView}>
           <div className={styles.historyHeader}>
-            <Icons.history size={18} />
+            <LocalIcons.history size={18} />
             <span>HISTORY</span>
             <button 
               className={styles.closeHistoryBtn}
@@ -634,7 +591,7 @@ export default function ALPageClient() {
           }}
           title="Chat history"
         >
-          <Icons.history size={20} />
+          <LocalIcons.history size={20} />
         </button>
         
         <div className={styles.headerRight}>
@@ -643,7 +600,7 @@ export default function ALPageClient() {
             onClick={() => setShowPreferences(!showPreferences)}
             title="AL preferences"
           >
-            <Icons.settings size={20} />
+            <LocalIcons.settings size={20} />
           </button>
           
           <button 
@@ -651,7 +608,7 @@ export default function ALPageClient() {
             onClick={startNewChat}
             title="New chat"
           >
-            <Icons.newChat size={20} />
+            <LocalIcons.newChat size={20} />
           </button>
         </div>
       </div>
@@ -776,8 +733,8 @@ export default function ALPageClient() {
                       {feedbackGiven[i] ? (
                         <span className={styles.feedbackThanks}>
                           {feedbackGiven[i] === 'positive' 
-                            ? <><Icons.thumbsUp size={14} /> Thanks!</> 
-                            : <><Icons.thumbsDown size={14} /> Thanks for the feedback</>
+                            ? <><LocalIcons.thumbsUp size={14} /> Thanks!</> 
+                            : <><LocalIcons.thumbsDown size={14} /> Thanks for the feedback</>
                           }
                         </span>
                       ) : (
@@ -787,14 +744,14 @@ export default function ALPageClient() {
                             onClick={() => handleFeedback(i, 'positive')}
                             title="Good response"
                           >
-                            <Icons.thumbsUp size={14} />
+                            <LocalIcons.thumbsUp size={14} />
                           </button>
                           <button
                             className={styles.feedbackBtn}
                             onClick={() => handleFeedback(i, 'negative')}
                             title="Bad response"
                           >
-                            <Icons.thumbsDown size={14} />
+                            <LocalIcons.thumbsDown size={14} />
                           </button>
                         </>
                       )}
@@ -862,7 +819,7 @@ export default function ALPageClient() {
               title="Add photo or file"
               aria-label="Add attachment"
             >
-              <Icons.camera size={18} />
+              <LocalIcons.camera size={18} />
             </button>
             
             {/* Attachment Menu */}
@@ -900,7 +857,7 @@ export default function ALPageClient() {
             className={styles.sendBtn}
             aria-label="Send"
           >
-            <Icons.arrowUp size={18} />
+            <LocalIcons.arrowUp size={18} />
           </button>
         </div>
       </div>
