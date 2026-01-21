@@ -10,6 +10,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Modal from '@/components/ui/Modal';
+import { Icons } from '@/components/ui/Icons';
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
 import styles from './ShareBuildModal.module.css';
 
@@ -130,26 +132,17 @@ export default function ShareBuildModal({
     }
   };
 
-  if (!isOpen) return null;
-
   // Get hero image from existing images
   const heroImage = existingImages.find(img => img.is_primary) || existingImages[0];
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>
-            {step === 'success' ? '🎉 Shared!' : 'Share Your Build'}
-          </h2>
-          <button className={styles.closeBtn} onClick={onClose}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={step === 'success' ? '🎉 Shared!' : 'Share Your Build'}
+      size="md"
+      className={styles.modal}
+    >
 
         {/* Content */}
         <div className={styles.content}>
@@ -348,7 +341,6 @@ export default function ShareBuildModal({
             </>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

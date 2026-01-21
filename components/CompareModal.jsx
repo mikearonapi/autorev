@@ -11,9 +11,9 @@
  */
 
 import { useMemo, useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
+import Modal from '@/components/ui/Modal';
 import styles from './CompareModal.module.css';
 import { useCompare } from '@/components/providers/CompareProvider';
 import { getCarHeroImage } from '@/lib/images';
@@ -240,27 +240,32 @@ export default function CompareModal({ isOpen, onClose }) {
     return groups;
   }, []);
 
-  // Don't render until mounted (client-side) or if not open
-  if (!mounted || !isOpen) return null;
+  // Don't render until mounted (client-side)
+  if (!mounted) return null;
 
-  const modalContent = (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <h2 className={styles.title}>Compare Cars</h2>
-            <span className={styles.carCount}>{carsWithFullData.length}/{maxCars} cars</span>
-          </div>
-          <div className={styles.headerActions}>
-            <button onClick={clearAll} className={styles.clearButton}>
-              Clear All
-            </button>
-            <button onClick={onClose} className={styles.closeButton}>
-              <Icons.x size={24} />
-            </button>
-          </div>
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="full"
+      showCloseButton={false}
+      className={styles.modal}
+    >
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h2 className={styles.title}>Compare Cars</h2>
+          <span className={styles.carCount}>{carsWithFullData.length}/{maxCars} cars</span>
         </div>
+        <div className={styles.headerActions}>
+          <button onClick={clearAll} className={styles.clearButton}>
+            Clear All
+          </button>
+          <button onClick={onClose} className={styles.closeButton}>
+            <Icons.x size={24} />
+          </button>
+        </div>
+      </div>
 
         {/* Content */}
         <div className={styles.content}>
@@ -416,11 +421,6 @@ export default function CompareModal({ isOpen, onClose }) {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
-
-  // Use portal to render modal at document body level
-  // This ensures it's not constrained by the CompareBar's fixed positioning
-  return createPortal(modalContent, document.body);
 }
