@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark text version for light backgrounds (clothing) -->
+  <text 
+    x="50%" 
+    y="52%" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', 'Arial Black', Impact, sans-serif"
+    font-weight="700"
+    font-size="92px"
+    letter-spacing="0"
+  >
+    <tspan fill="#0d1b2a">AUTO</tspan><tspan fill="#d4ff00">REV</tspan>
+  </text>
+</svg>
