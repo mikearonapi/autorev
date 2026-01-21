@@ -1,227 +1,209 @@
+'use client';
+
 /**
  * EmptyState Component
  * 
- * A reusable component for displaying empty states across the app.
- * Provides consistent styling for "no data" scenarios.
+ * A reusable component for displaying empty states throughout the app.
+ * Supports different variants for various use cases.
+ * 
+ * Variants:
+ * - default: Standard empty state with icon, title, description
+ * - inline: Compact version for use within lists/tables
+ * - centered: Large centered display for full-page empty states
  * 
  * Usage:
- *   import EmptyState from '@/components/ui/EmptyState';
+ *   import { EmptyState } from '@/components/ui/EmptyState';
  *   
- *   <EmptyState 
- *     variant="no-results"
- *     description="Try adjusting your filters"
- *     action={{ label: 'Clear filters', onClick: handleClear }}
- *   />
- * 
- * Or with custom content:
  *   <EmptyState
- *     icon={<MyIcon />}
- *     title="No vehicles yet"
- *     description="Add your first vehicle to get started"
+ *     icon={Icons.search}
+ *     title="No results found"
+ *     description="Try adjusting your search or filters"
+ *     action={{ label: "Clear filters", onClick: handleClear }}
  *   />
  */
 
 import { Icons } from './Icons';
 import styles from './EmptyState.module.css';
 
-// =============================================================================
-// VARIANT CONFIGURATIONS
-// =============================================================================
-
-const VARIANTS = {
-  // Search & filtering
-  'no-results': {
-    icon: Icons.search,
-    title: 'No results found',
-    description: 'Try adjusting your search or filters',
-  },
-  
-  // Empty lists
-  'no-data': {
-    icon: Icons.layers,
-    title: 'No data available',
-    description: 'There is nothing to display here yet',
-  },
-  
-  'no-vehicles': {
-    icon: Icons.car,
-    title: 'No vehicles yet',
-    description: 'Add your first vehicle to get started',
-  },
-  
-  'no-builds': {
-    icon: Icons.wrench,
-    title: 'No builds yet',
-    description: 'Create your first build to track modifications',
-  },
-  
-  'no-events': {
-    icon: Icons.calendar,
-    title: 'No events found',
-    description: 'Check back later for upcoming events',
-  },
-  
-  'no-favorites': {
-    icon: Icons.heart,
-    title: 'No favorites yet',
-    description: 'Save items to access them quickly',
-  },
-  
-  // Errors & states
-  'error': {
-    icon: Icons.alertCircle,
-    title: 'Something went wrong',
-    description: 'Please try again or contact support',
-  },
-  
-  'offline': {
-    icon: Icons.alertTriangle,
-    title: 'You are offline',
-    description: 'Check your internet connection',
-  },
-  
-  // Onboarding
-  'get-started': {
-    icon: Icons.sparkles,
-    title: 'Get started',
-    description: 'Take the first step to begin',
-  },
-  
-  'welcome': {
-    icon: Icons.home,
-    title: 'Welcome!',
-    description: 'Let\'s set things up for you',
-  },
-  
-  // Default
-  'default': {
-    icon: Icons.layers,
-    title: 'Nothing here',
-    description: 'This section is empty',
-  },
-};
-
-// =============================================================================
-// COMPONENT
-// =============================================================================
-
 /**
  * EmptyState Component
  * 
- * @param {'no-results' | 'no-data' | 'no-vehicles' | 'no-builds' | 'no-events' | 'no-favorites' | 'error' | 'offline' | 'get-started' | 'welcome' | 'default'} variant - Preset variant
- * @param {React.ReactNode} icon - Custom icon (overrides variant)
- * @param {string} title - Custom title (overrides variant)
- * @param {string} description - Custom description (overrides variant)
- * @param {{ label: string, onClick: function, variant?: string }} action - Primary action button
- * @param {{ label: string, onClick: function }} secondaryAction - Secondary action button
- * @param {'sm' | 'md' | 'lg'} size - Component size
+ * @param {React.ComponentType | React.ReactNode} icon - Icon component or element
+ * @param {string} title - Primary title text
+ * @param {string | React.ReactNode} description - Description or helper text
+ * @param {object} action - Optional CTA { label: string, onClick: function, href?: string }
+ * @param {'default' | 'inline' | 'centered'} variant - Display variant
+ * @param {'sm' | 'md' | 'lg'} size - Icon size variant
  * @param {string} className - Additional CSS class
  */
 export default function EmptyState({
-  variant = 'default',
-  icon: customIcon,
-  title: customTitle,
-  description: customDescription,
+  icon: IconProp,
+  title,
+  description,
   action,
-  secondaryAction,
+  variant = 'default',
   size = 'md',
   className = '',
 }) {
-  const config = VARIANTS[variant] || VARIANTS.default;
-  
-  // Use custom props if provided, otherwise use variant config
-  const IconComponent = customIcon ? () => customIcon : config.icon;
-  const title = customTitle ?? config.title;
-  const description = customDescription ?? config.description;
+  // Determine icon size based on size prop
+  const iconSizes = {
+    sm: 16,
+    md: 24,
+    lg: 48,
+  };
+  const iconSize = iconSizes[size];
+
+  // Render the icon
+  const renderIcon = () => {
+    if (!IconProp) return null;
+    
+    // If it's a React element (already rendered), just return it
+    if (typeof IconProp !== 'function') {
+      return <div className={styles.icon}>{IconProp}</div>;
+    }
+    
+    // If it's a component (function), render it with size
+    return (
+      <div className={styles.icon}>
+        <IconProp size={iconSize} />
+      </div>
+    );
+  };
+
+  const renderAction = () => {
+    if (!action) return null;
+
+    if (action.href) {
+      return (
+        <a href={action.href} className={styles.action}>
+          {action.label}
+        </a>
+      );
+    }
+
+    return (
+      <button onClick={action.onClick} className={styles.action}>
+        {action.label}
+      </button>
+    );
+  };
 
   return (
-    <div className={`${styles.container} ${styles[size]} ${className}`}>
-      {/* Icon */}
-      <div className={styles.iconWrapper}>
-        <IconComponent size={size === 'lg' ? 56 : size === 'sm' ? 36 : 48} />
+    <div className={`${styles.emptyState} ${styles[variant]} ${styles[`size-${size}`]} ${className}`}>
+      {renderIcon()}
+      <div className={styles.content}>
+        {title && <h3 className={styles.title}>{title}</h3>}
+        {description && <p className={styles.description}>{description}</p>}
+        {renderAction()}
       </div>
-      
-      {/* Title */}
-      {title && (
-        <h3 className={styles.title}>{title}</h3>
-      )}
-      
-      {/* Description */}
-      {description && (
-        <p className={styles.description}>{description}</p>
-      )}
-      
-      {/* Actions */}
-      {(action || secondaryAction) && (
-        <div className={styles.actions}>
-          {action && (
-            <button 
-              className={`${styles.actionButton} ${action.variant === 'secondary' ? styles.secondary : styles.primary}`}
-              onClick={action.onClick}
-              type="button"
-            >
-              {action.label}
-            </button>
-          )}
-          {secondaryAction && (
-            <button 
-              className={`${styles.actionButton} ${styles.secondary}`}
-              onClick={secondaryAction.onClick}
-              type="button"
-            >
-              {secondaryAction.label}
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
 
 // =============================================================================
-// COMPOUND COMPONENTS (for more flexibility)
+// PRESET VARIANTS (Common patterns)
 // =============================================================================
 
 /**
- * EmptyState.Icon - Custom icon container
+ * EmptyState.NoResults - Search/filter with no results
  */
-EmptyState.Icon = function EmptyStateIcon({ children, className = '' }) {
+EmptyState.NoResults = function NoResults({ query, onClear }) {
   return (
-    <div className={`${styles.iconWrapper} ${className}`}>
-      {children}
-    </div>
+    <EmptyState
+      icon={Icons.search}
+      title="No results found"
+      description={query ? `No results for "${query}"` : "Try adjusting your search or filters"}
+      action={onClear ? { label: "Clear filters", onClick: onClear } : undefined}
+      variant="centered"
+    />
   );
 };
 
 /**
- * EmptyState.Title - Custom title
+ * EmptyState.NoData - Empty list/collection
  */
-EmptyState.Title = function EmptyStateTitle({ children, className = '' }) {
+EmptyState.NoData = function NoData({ itemType = "items", action }) {
   return (
-    <h3 className={`${styles.title} ${className}`}>
-      {children}
-    </h3>
+    <EmptyState
+      icon={Icons.inbox}
+      title={`No ${itemType} yet`}
+      description={`When you add ${itemType}, they'll appear here`}
+      action={action}
+      variant="centered"
+    />
   );
 };
 
 /**
- * EmptyState.Description - Custom description
+ * EmptyState.Error - Error state with retry
  */
-EmptyState.Description = function EmptyStateDescription({ children, className = '' }) {
+EmptyState.Error = function ErrorState({ message, onRetry }) {
   return (
-    <p className={`${styles.description} ${className}`}>
-      {children}
-    </p>
+    <EmptyState
+      icon={Icons.alertTriangle}
+      title="Something went wrong"
+      description={message || "An error occurred while loading data"}
+      action={onRetry ? { label: "Try again", onClick: onRetry } : undefined}
+      variant="centered"
+    />
   );
 };
 
 /**
- * EmptyState.Actions - Action buttons container
+ * EmptyState.Loading - Placeholder loading state
  */
-EmptyState.Actions = function EmptyStateActions({ children, className = '' }) {
+EmptyState.Loading = function Loading({ message = "Loading..." }) {
   return (
-    <div className={`${styles.actions} ${className}`}>
-      {children}
-    </div>
+    <EmptyState
+      icon={Icons.spinner}
+      title={message}
+      variant="inline"
+      size="sm"
+    />
+  );
+};
+
+/**
+ * EmptyState.NotFound - 404/item not found
+ */
+EmptyState.NotFound = function NotFound({ itemType = "item", action }) {
+  return (
+    <EmptyState
+      icon={Icons.searchSlash}
+      title={`${itemType} not found`}
+      description={`The ${itemType.toLowerCase()} you're looking for doesn't exist or has been removed`}
+      action={action}
+      variant="centered"
+      size="lg"
+    />
+  );
+};
+
+/**
+ * EmptyState.Premium - Upsell for premium features
+ */
+EmptyState.Premium = function Premium({ feature, action }) {
+  return (
+    <EmptyState
+      icon={Icons.crown}
+      title="Premium Feature"
+      description={feature ? `${feature} is available to premium members` : "Upgrade to unlock this feature"}
+      action={action}
+      variant="centered"
+    />
+  );
+};
+
+/**
+ * EmptyState.ComingSoon - Feature not yet available
+ */
+EmptyState.ComingSoon = function ComingSoon({ feature }) {
+  return (
+    <EmptyState
+      icon={Icons.clock}
+      title="Coming Soon"
+      description={feature ? `${feature} is currently under development` : "This feature is coming soon"}
+      variant="centered"
+    />
   );
 };

@@ -1,184 +1,205 @@
 /* ==========================================================================
    EmptyState Component Styles
+   
+   Variants: default, inline, centered
+   Sizes: sm, md, lg (affects icon and text)
    ========================================================================== */
 
 /* ==========================================================================
-   CONTAINER
+   BASE STYLES
    ========================================================================== */
 
-.container {
+.emptyState {
   display: flex;
+  align-items: flex-start;
+  gap: var(--space-3, 12px);
+  padding: var(--space-4, 16px);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.4));
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-body, 14px);
+  font-weight: 600;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  line-height: 1.4;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--text-small, 13px);
+  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.5));
+  line-height: 1.5;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 4px);
+  margin-top: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  font-size: var(--text-small, 13px);
+  font-weight: 500;
+  color: var(--color-accent-teal, #10b981);
+  
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md, 8px);
+  
+  cursor: pointer;
+  transition: var(--transition-fast, 0.15s ease);
+  text-decoration: none;
+}
+
+.action:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* ==========================================================================
+   VARIANT: inline (compact for lists/tables)
+   ========================================================================== */
+
+.inline {
+  align-items: center;
+  padding: var(--space-3, 12px) 0;
+  gap: var(--space-2, 8px);
+}
+
+.inline .content {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.inline .title {
+  font-size: var(--text-small, 13px);
+}
+
+.inline .description {
+  font-size: var(--text-xs, 12px);
+}
+
+/* ==========================================================================
+   VARIANT: centered (full-page/section empty states)
+   ========================================================================== */
+
+.centered {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-8, 32px) var(--space-6, 24px);
+  padding: var(--space-8, 32px) var(--space-4, 16px);
+  min-height: 200px;
+}
+
+.centered .icon {
+  margin-bottom: var(--space-2, 8px);
+}
+
+.centered .content {
+  align-items: center;
+  max-width: 320px;
+}
+
+.centered .title {
+  font-size: var(--text-h3, 18px);
+  color: var(--color-text-primary, rgba(255, 255, 255, 0.8));
+}
+
+.centered .description {
+  font-size: var(--text-body, 14px);
 }
 
 /* ==========================================================================
    SIZE VARIANTS
    ========================================================================== */
 
-.sm {
-  padding: var(--space-6, 24px) var(--space-4, 16px);
+/* Small */
+.size-sm .icon svg {
+  width: 16px;
+  height: 16px;
 }
 
-.sm .title {
-  font-size: var(--text-body, 16px);
+.size-sm .title {
+  font-size: var(--text-small, 13px);
 }
 
-.sm .description {
-  font-size: var(--text-sm, 14px);
+.size-sm .description {
+  font-size: var(--text-xs, 12px);
 }
 
-.md {
-  /* Default - uses base styles */
+/* Medium (default) */
+.size-md .icon svg {
+  width: 24px;
+  height: 24px;
 }
 
-.lg {
-  padding: var(--space-12, 48px) var(--space-8, 32px);
+/* Large */
+.size-lg .icon svg {
+  width: 48px;
+  height: 48px;
 }
 
-.lg .title {
+.size-lg .title {
   font-size: var(--text-h2, 24px);
-}
-
-.lg .description {
-  font-size: var(--text-body, 16px);
-  max-width: 400px;
-}
-
-/* ==========================================================================
-   ICON
-   ========================================================================== */
-
-.iconWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  margin-bottom: var(--space-4, 16px);
-  
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
-  border-radius: 50%;
-  
-  color: var(--color-text-tertiary, #64748b);
-}
-
-.sm .iconWrapper {
-  width: 56px;
-  height: 56px;
-  margin-bottom: var(--space-3, 12px);
-}
-
-.lg .iconWrapper {
-  width: 96px;
-  height: 96px;
-  margin-bottom: var(--space-6, 24px);
-}
-
-/* ==========================================================================
-   TITLE
-   ========================================================================== */
-
-.title {
-  margin: 0 0 var(--space-2, 8px) 0;
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: var(--text-h3, 20px);
-  font-weight: 600;
-  color: var(--color-text-primary, #fff);
-  line-height: 1.3;
+}
+
+.size-lg .description {
+  font-size: var(--text-body, 16px);
 }
 
 /* ==========================================================================
-   DESCRIPTION
+   ANIMATION FOR LOADING STATE
    ========================================================================== */
 
-.description {
-  margin: 0;
-  font-size: var(--text-sm, 14px);
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
-  line-height: 1.5;
-  max-width: 300px;
+.emptyState .icon svg {
+  /* Spinner animation if icon has animation class */
 }
 
-/* ==========================================================================
-   ACTIONS
-   ========================================================================== */
-
-.actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3, 12px);
-  margin-top: var(--space-6, 24px);
-  width: 100%;
-  max-width: 280px;
-}
-
-@media (min-width: 480px) {
-  .actions {
-    flex-direction: row;
-    justify-content: center;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
+/* Apply spin animation to spinner icons */
+.icon :global(.spinner) {
+  animation: spin 1s linear infinite;
+}
+
 /* ==========================================================================
-   ACTION BUTTONS
+   RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 
-.actionButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2, 8px);
-  min-height: var(--touch-target-min, 44px);
-  padding: 12px 24px;
-  
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: var(--text-sm, 14px);
-  font-weight: 600;
-  text-decoration: none;
-  
-  border: none;
-  border-radius: var(--radius-button, 9999px);
-  cursor: pointer;
-  transition: var(--transition-button, 0.2s ease);
-  
-  width: 100%;
-}
-
-@media (min-width: 480px) {
-  .actionButton {
-    width: auto;
+@media (max-width: 640px) {
+  .centered {
+    padding: var(--space-6, 24px) var(--space-4, 16px);
+    min-height: 160px;
   }
-}
-
-/* Primary button */
-.primary {
-  background: var(--color-accent-lime, #d4ff00);
-  color: var(--color-text-inverted, #0a1628);
-}
-
-.primary:hover {
-  background: var(--color-accent-lime-dark, #bfe600);
-  transform: translateY(-1px);
-}
-
-.primary:active {
-  transform: translateY(0);
-}
-
-/* Secondary button */
-.secondary {
-  background: transparent;
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
-  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.2));
-}
-
-.secondary:hover {
-  border-color: var(--color-accent-lime, #d4ff00);
-  color: var(--color-accent-lime, #d4ff00);
+  
+  .centered .title {
+    font-size: var(--text-h4, 16px);
+  }
+  
+  .size-lg .icon svg {
+    width: 36px;
+    height: 36px;
+  }
 }
