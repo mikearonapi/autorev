@@ -1,0 +1,50 @@
+# Todo Format Requirements
+
+## When Creating Todos
+
+Every todo MUST include verification criteria in the content field.
+
+### Required Format:
+
+```
+[Priority] Task description
+VERIFY: [How to prove it's done]
+```
+
+### Examples:
+
+**❌ BAD todos (vague, no verification):**
+```
+- Create validation layer
+- Update scripts
+- Fix data issues
+```
+
+**✅ GOOD todos (specific, verifiable):**
+```
+- [P1] Create lib/dataValidation.js with validateCarReference export
+  VERIFY: file exists AND grep shows "export.*validateCarReference"
+
+- [P1] Update seedLapTimes.mjs to use validateCarReference
+  VERIFY: grep shows import line AND usage line (both required)
+
+- [P1] Fix NULL car_id in community_insights (68 records)
+  VERIFY: SELECT COUNT(*) WHERE car_id IS NULL returns 0
+```
+
+## When Completing Todos
+
+Before changing status to "completed":
+
+1. Run the VERIFY check stated in the todo
+2. Include the result in your response
+3. Only then mark complete
+
+## "All X" Rule
+
+If a task involves multiple items:
+- Create SEPARATE todos for each item, OR
+- List every item explicitly in one todo
+
+**Never:** "Update all scripts"
+**Always:** "Update scripts: A.mjs, B.mjs, C.mjs (3 total)"

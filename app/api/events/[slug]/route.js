@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEventBySlug } from '@/lib/eventsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 /**
  * GET /api/events/[slug]
@@ -21,10 +22,7 @@ async function handleGet(request, { params }) {
     const { slug } = await params;
     
     if (!slug) {
-      return NextResponse.json(
-        { error: 'Event slug is required', code: 'MISSING_SLUG' },
-        { status: 400 }
-      );
+      return errors.missingField('slug');
     }
     
     const event = await getEventBySlug(slug);
@@ -39,10 +37,7 @@ async function handleGet(request, { params }) {
     return NextResponse.json({ event });
   } catch (err) {
     console.error('[API/events/[slug]] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch event', code: 'EVENT_FETCH_ERROR' },
-      { status: 500 }
-    );
+    return errors.internal('Failed to fetch event');
   }
 }
 

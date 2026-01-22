@@ -2,6 +2,7 @@ import { getServiceClient } from '@/lib/supabaseServer';
 import { notifyFeedback } from '@/lib/discord';
 import { notifyAggregatedError } from '@/lib/discord';
 import { resolveCarId } from '@/lib/carResolver';
+import { errors } from '@/lib/apiErrors';
 
 /**
  * Feedback API - Handles TWO separate concerns:
@@ -48,10 +49,7 @@ export async function POST(request) {
     const isAutoError = categoryToInsert === 'auto-error';
 
     if (!normalizedMessage) {
-      return Response.json(
-        { success: false, error: 'message is required' },
-        { status: 400 }
-      );
+      return errors.missingField('message');
     }
 
     // Get shared Supabase client (service role for bypassing RLS)

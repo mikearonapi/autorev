@@ -28,6 +28,11 @@ const WelcomeToast = dynamic(() => import('@/components/WelcomeToast'), {
   ssr: false,
 });
 
+// Dynamically import SplashScreen for post-login branded loading
+const SplashScreen = dynamic(() => import('@/components/SplashScreen'), {
+  ssr: false,
+});
+
 /**
  * Auth Context
  * Provides authentication state and methods throughout the app
@@ -216,6 +221,7 @@ const defaultAuthState = {
   sessionExpired: false, // True when session was invalidated (token expired)
   sessionRevoked: false, // True when session was revoked (e.g., logout from another device)
   showWelcomeToast: false, // True to show welcome toast after fresh login
+  showSplashScreen: false, // True to show branded splash screen on fresh login
 };
 
 /**
@@ -543,11 +549,62 @@ export function AuthProvider({ children }) {
   const lastVisibilityChangeRef = useRef(Date.now());
   const isAuthenticatedRef = useRef(false);
   const isFreshLoginRef = useRef(false); // Tracks if current session is from a fresh login
+  const wasAuthenticatedOnMountRef = useRef(null); // null = not checked yet, true/false = initial auth state
+  const hasShownSplashRef = useRef(false); // Tracks if splash was shown this session
+  
+  // Refs for values used in auth state change listener to avoid stale closures
+  const resetProgressRef = useRef(resetProgress);
+  const stateProfileRef = useRef(state.profile);
+  
+  // Keep refs in sync with values
+  useEffect(() => {
+    resetProgressRef.current = resetProgress;
+  }, [resetProgress]);
+  
+  useEffect(() => {
+    stateProfileRef.current = state.profile;
+  }, [state.profile]);
   
   // Keep the ref in sync with state
   useEffect(() => {
     isAuthenticatedRef.current = state.isAuthenticated;
   }, [state.isAuthenticated]);
+
+  // =============================================================================
+  // SPLASH SCREEN: Show on EVERY login
+  // =============================================================================
+  // This is the SINGLE source of truth for showing the splash screen.
+  // It detects when user transitions from unauthenticated → authenticated.
+  // The splash gives us 1.5 seconds to preload data for a better UX.
+  // =============================================================================
+  useEffect(() => {
+    // Skip while still loading initial auth state
+    if (state.isLoading) return;
+    
+    // Record initial auth state on first check (after loading completes)
+    if (wasAuthenticatedOnMountRef.current === null) {
+      wasAuthenticatedOnMountRef.current = state.isAuthenticated;
+      console.log('[AuthProvider] Initial auth state recorded:', state.isAuthenticated);
+      // Don't return here - continue to check if we should show splash
+    }
+    
+    // Show splash when:
+    // 1. User is now authenticated
+    // 2. User was NOT authenticated when we first checked (fresh login, not page refresh)
+    // 3. We haven't already shown the splash this session
+    // 4. Splash isn't already showing
+    const shouldShowSplash = 
+      state.isAuthenticated && 
+      wasAuthenticatedOnMountRef.current === false && 
+      !hasShownSplashRef.current &&
+      !state.showSplashScreen;
+    
+    if (shouldShowSplash) {
+      console.log('[AuthProvider] 🚀 Showing splash screen (user just logged in)');
+      hasShownSplashRef.current = true;
+      setState(prev => ({ ...prev, showSplashScreen: true }));
+    }
+  }, [state.isAuthenticated, state.isLoading, state.showSplashScreen]);
 
   // Fetch user profile when authenticated
   // Returns profile data on success, or a minimal profile object on failure
@@ -877,17 +934,14 @@ export function AuthProvider({ children }) {
           // Check for fresh OAuth signals (for welcome toast)
           const { isFresh: isFreshOAuth, hasAuthTs } = checkFreshOAuthSignals();
           
-          // Fresh OAuth login - show welcome toast
+          // Fresh OAuth login detected - mark for onboarding
+          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
           if (isFreshOAuth) {
-            console.log('[AuthProvider] Fresh OAuth login detected - will show welcome toast');
+            console.log('[AuthProvider] Fresh OAuth login detected');
             consumeOAuthSignals();
             consumeLoginIntent();
             // Mark as fresh login for onboarding
             isFreshLoginRef.current = true;
-            // Defer toast to after profile loads so we have the user's name
-            setTimeout(() => {
-              setState(prev => ({ ...prev, showWelcomeToast: true }));
-            }, 500);
             
             // GA4 tracking: Check if new signup vs returning user
             const userCreatedAt = new Date(user.created_at);
@@ -992,12 +1046,10 @@ export function AuthProvider({ children }) {
         scheduleSessionRefresh(session);
         
         // Fresh login - show welcome toast, load data silently in background
-        if (isFreshLogin) {
-          console.log('[AuthProvider] Fresh login via SIGNED_IN - will show welcome toast');
-          // Defer toast slightly so profile loads first (for user's name)
-          setTimeout(() => {
-            setState(prev => ({ ...prev, showWelcomeToast: true }));
-          }, 500);
+        // Fresh login via explicit sign-in (email/password, button click)
+          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
+          if (isFreshLogin) {
+            console.log('[AuthProvider] Fresh login via SIGNED_IN detected');
           
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);
@@ -1063,7 +1115,7 @@ export function AuthProvider({ children }) {
         // Clear session cache to ensure fresh check on next login
         clearSessionCache();
         // Reset loading progress screen state
-        resetProgress();
+        resetProgressRef.current();
         // NOTE: isDataFetchReady must be TRUE so child providers can clear their user data
         setState({
           ...defaultAuthState,
@@ -1077,7 +1129,7 @@ export function AuthProvider({ children }) {
         // IMPORTANT: Also update user and isAuthenticated in case initial auth failed
         // but token refresh succeeded (auth recovery scenario)
         const wasAuthenticated = isAuthenticatedRef.current;
-        const needsProfileLoad = !wasAuthenticated || !state.profile;
+        const needsProfileLoad = !wasAuthenticated || !stateProfileRef.current;
         
         // Mark as authenticated
         isAuthenticatedRef.current = true;
@@ -1161,11 +1213,10 @@ export function AuthProvider({ children }) {
         
         // Fresh login via INITIAL_SESSION - show welcome toast
         if (hasFreshSignals) {
-          console.log('[AuthProvider] INITIAL_SESSION is fresh login - will show welcome toast');
+          // Fresh login via INITIAL_SESSION
+          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
+          console.log('[AuthProvider] INITIAL_SESSION is fresh login');
           isFreshLoginRef.current = true;
-          setTimeout(() => {
-            setState(prev => ({ ...prev, showWelcomeToast: true }));
-          }, 500);
           
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);
@@ -1395,6 +1446,8 @@ export function AuthProvider({ children }) {
     // Reset refs immediately
     isAuthenticatedRef.current = false;
     initAttemptRef.current = 0;
+    wasAuthenticatedOnMountRef.current = null; // Reset so next login shows splash
+    hasShownSplashRef.current = false;
     
     // Reset loading progress immediately
     resetProgress();
@@ -1681,13 +1734,29 @@ export function AuthProvider({ children }) {
     triggerOnboarding,
   ]);
 
+  // Handler for when splash screen finishes - show welcome toast afterwards
+  const handleSplashComplete = useCallback(() => {
+    setState(prev => ({ 
+      ...prev, 
+      showSplashScreen: false,
+      showWelcomeToast: true, // Show welcome toast after splash fades
+    }));
+  }, []);
+
   return (
     <AuthContext.Provider value={value}>
       {children}
       
+      {/* Splash Screen - full-screen branded loading shown on fresh login */}
+      {state.showSplashScreen && (
+        <SplashScreen
+          duration={1500}
+          onComplete={handleSplashComplete}
+        />
+      )}
       
-      {/* Welcome Toast - shown briefly after fresh login */}
-      {state.showWelcomeToast && (
+      {/* Welcome Toast - shown briefly after splash completes */}
+      {state.showWelcomeToast && !state.showSplashScreen && (
         <WelcomeToast
           userName={state.profile?.display_name || state.user?.user_metadata?.name || state.user?.email?.split('@')[0]}
           onDismiss={() => setState(prev => ({ ...prev, showWelcomeToast: false }))}

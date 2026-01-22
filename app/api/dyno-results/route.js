@@ -8,34 +8,18 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
+import { awardPoints } from '@/lib/pointsService';
 
 /**
- * Create Supabase client for route handlers
+ * Create Supabase client for route handlers (supports both cookie and Bearer token)
  */
-async function createSupabaseClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Can fail in Server Components, that's okay
-          }
-        },
-      },
-    }
-  );
+async function createSupabaseClient(request) {
+  const bearerToken = getBearerToken(request);
+  return bearerToken 
+    ? { supabase: createAuthenticatedClient(bearerToken), bearerToken }
+    : { supabase: await createServerSupabaseClient(), bearerToken: null };
 }
 
 /**
@@ -48,12 +32,18 @@ async function createSupabaseClient() {
  */
 export async function GET(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
     
     const { searchParams } = new URL(request.url);
@@ -110,12 +100,18 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
     
     const body = await request.json();
@@ -169,6 +165,9 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Failed to save dyno result' }, { status: 500 });
     }
     
+    // Award points for logging dyno data (non-blocking)
+    awardPoints(user.id, 'data_log_dyno', { dynoResultId: data.id, whp: body.whp }).catch(() => {});
+    
     return NextResponse.json({ result: data }, { status: 201 });
   } catch (err) {
     console.error('[API/dyno-results] POST error:', err);
@@ -188,12 +187,18 @@ export async function POST(request) {
  */
 export async function PUT(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
     
     const body = await request.json();
@@ -254,12 +259,18 @@ export async function PUT(request) {
  */
 export async function DELETE(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
     
     const { searchParams } = new URL(request.url);

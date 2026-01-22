@@ -2,20 +2,22 @@
 
 > Test strategy, test files, and how to run tests
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 
 ## Overview
 
-AutoRev uses Node.js built-in test runner for unit and integration tests. Test files are located alongside their source files or in the `scripts/` directory.
+AutoRev uses Node.js built-in test runner for unit/integration tests and Playwright for E2E tests. Tests are organized in the `tests/` directory.
 
 | Test Type | Count | Location |
 |-----------|-------|----------|
-| Unit Tests | 6 | `lib/**/*.test.js` |
+| Unit Tests | 1 | `tests/unit/` |
+| Integration Tests | 24 | `tests/integration/` |
+| E2E Tests | 7 | `tests/e2e/` |
+| Root-level Tests | 4 | `tests/` |
 | Script Tests | 2 | `scripts/**/*.test.js` |
 | Regression Tests | 2 | `scripts/` |
-| Smoke Tests | 1 | `scripts/` |
 
 ---
 
@@ -222,16 +224,23 @@ npm run smoke:parts-search-api
 
 ### Test File Location
 
-Tests should be co-located with source files:
+Tests are organized in the `tests/` directory:
 
 ```
-lib/
-├── recallService.js
-├── recallService.test.js    # ← Test file
-├── forumScraper/
-│   ├── adapters/
-│   │   ├── vbulletinAdapter.js
-│   │   └── vbulletinAdapter.test.js  # ← Test file
+tests/
+├── unit/                    # Unit tests
+│   └── nhtsa-normalization.test.js
+├── integration/             # Integration tests (24 files)
+│   ├── api-cars-complete.test.js
+│   ├── api-cron.test.js
+│   ├── api-events-complete.test.js
+│   ├── journey1-car-shopper.test.js
+│   └── ...
+├── e2e/                     # Playwright E2E tests (7 files)
+│   ├── landing-pages.spec.js
+│   ├── mobile-audit.screenshots.spec.js
+│   └── ...
+└── *.test.js               # Root-level tests
 ```
 
 ### Naming Convention

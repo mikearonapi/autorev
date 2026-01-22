@@ -17,11 +17,11 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { sendReferralInviteEmail } from '@/lib/email';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -44,30 +44,13 @@ const MILESTONES = [
 ];
 
 /**
- * Create Supabase client for route handlers
+ * Create Supabase client for route handlers (supports both cookie and Bearer token)
  */
-async function createSupabaseClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch (error) {
-            // Ignore errors when called from server component
-          }
-        },
-      },
-    }
-  );
+async function createSupabaseClient(request) {
+  const bearerToken = getBearerToken(request);
+  return bearerToken 
+    ? { supabase: createAuthenticatedClient(bearerToken), bearerToken }
+    : { supabase: await createServerSupabaseClient(), bearerToken: null };
 }
 
 /**
@@ -76,11 +59,18 @@ async function createSupabaseClient() {
  * Get user's referral code, stats, milestone progress, and list of referrals
  */
 async function handleGet(request) {
-    const supabase = await createSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+    
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     // Get user's referral code and referral tier info
@@ -92,7 +82,7 @@ async function handleGet(request) {
 
     if (profileError) {
       console.error('[Referrals] Profile error:', profileError);
-      return NextResponse.json({ error: 'Failed to get profile' }, { status: 500 });
+      return errors.database('Failed to get profile');
     }
 
     // Get all referrals for this user (for the list)
@@ -162,28 +152,35 @@ async function handleGet(request) {
  * - email: Friend's email address
  */
 async function handlePost(request) {
-    const supabase = await createSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+    
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const { email } = await request.json();
 
     if (!email) {
-      return NextResponse.json({ error: 'Friend email is required' }, { status: 400 });
+      return errors.missingField('email');
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+      return errors.invalidInput('Invalid email format', { field: 'email' });
     }
 
     // Don't allow self-referrals
     if (email.toLowerCase() === user.email.toLowerCase()) {
-      return NextResponse.json({ error: 'Cannot refer yourself' }, { status: 400 });
+      return errors.badRequest('Cannot refer yourself');
     }
 
     // Check if already referred this email
@@ -269,17 +266,24 @@ async function handlePost(request) {
  * - referral_id: ID of the referral to resend
  */
 async function handlePatch(request) {
-    const supabase = await createSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+    
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const { referral_id } = await request.json();
 
     if (!referral_id) {
-      return NextResponse.json({ error: 'Referral ID is required' }, { status: 400 });
+      return errors.missingField('referral_id');
     }
 
     // Get the referral (must belong to this user and be pending)
@@ -291,11 +295,11 @@ async function handlePatch(request) {
       .single();
 
     if (refError || !referral) {
-      return NextResponse.json({ error: 'Referral not found' }, { status: 404 });
+      return errors.notFound('Referral');
     }
 
     if (referral.status !== 'pending') {
-      return NextResponse.json({ error: 'Can only resend to pending referrals' }, { status: 400 });
+      return errors.badRequest('Can only resend to pending referrals');
     }
 
     // Get referrer's profile info

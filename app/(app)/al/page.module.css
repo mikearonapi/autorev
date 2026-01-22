@@ -37,16 +37,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 12px;
   background: #ffffff;
   border-bottom: 1px solid rgba(13, 27, 42, 0.08);
   flex-shrink: 0;
+  position: relative;
+}
+
+/* Left and right sections take equal space to center the query counter */
+.historyBtn {
+  flex: 0 0 auto;
 }
 
 .headerRight {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .historyBtn,
@@ -55,11 +61,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   background: rgba(13, 27, 42, 0.04);
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -76,6 +82,97 @@
 .newChatHeaderBtn:active,
 .settingsBtn:active {
   transform: scale(0.95);
+}
+
+/* ===========================================
+   Query Counter - Daily usage display
+   =========================================== */
+
+.queryCounter {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(13, 27, 42, 0.04);
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.queryCountNumber {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-weight: 700;
+  color: #0d1b2a;
+  font-size: 14px;
+}
+
+.queryCountLabel {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.betaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.unlimitedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Mobile adjustments for query counter */
+@media (max-width: 480px) {
+  .queryCounter {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 10px;
+    gap: 4px;
+    font-size: 12px;
+  }
+  
+  .queryCountNumber {
+    font-size: 13px;
+  }
+  
+  .queryCountLabel {
+    /* Hide "queries today" on very small screens, show just number + badge */
+    display: none;
+  }
+  
+  .betaBadge,
+  .unlimitedBadge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .historyBtn,
+  .newChatHeaderBtn,
+  .settingsBtn {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 /* ===========================================
@@ -170,6 +267,98 @@
 }
 
 /* ===========================================
+   Processing Status (phases + tools)
+   =========================================== */
+
+.processingStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.phaseIndicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #334155;
+  animation: fadeInSlide 0.2s ease;
+}
+
+.phaseDot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: phasePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes phasePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.phaseLabel {
+  color: #334155;
+}
+
+/* ===========================================
+   Tool Activity Indicators (real-time)
+   =========================================== */
+
+.toolActivity {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.toolActivityItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748b;
+  animation: fadeInSlide 0.2s ease;
+}
+
+.toolActivityItem.toolCompleted {
+  color: #10b981;
+}
+
+.toolSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.toolCheckmark {
+  width: 14px;
+  height: 14px;
+  position: relative;
+}
+
+.toolCheckmark::after {
+  content: '✓';
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================================
    Formatted AL Message Styles
    =========================================== */
 
@@ -216,13 +405,197 @@
 }
 
 .errorMessage {
-  background: rgba(239, 68, 68, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.errorText {
   color: #dc2626;
   font-size: 14px;
-  text-align: center;
+  line-height: 1.5;
+}
+
+.retryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #ef4444;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.retryBtn:hover {
+  background: #dc2626;
+  transform: scale(1.02);
+}
+
+.retryBtn:active {
+  transform: scale(0.98);
+}
+
+/* ===========================================
+   Voice Input Button
+   =========================================== */
+
+.voiceBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.voiceBtn:hover:not(:disabled) {
+  background: rgba(13, 27, 42, 0.06);
+  color: #0d1b2a;
+}
+
+.voiceBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.voiceBtnActive {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  animation: voicePulse 1s ease-in-out infinite;
+}
+
+.voiceBtnActive:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+@keyframes voicePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ===========================================
+   Share Modal
+   =========================================== */
+
+.shareModal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.shareModalContent {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.shareModalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 27, 42, 0.06);
+  border: none;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.shareModalClose:hover {
+  background: rgba(13, 27, 42, 0.1);
+  color: #0d1b2a;
+}
+
+.shareModalContent h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.shareModalContent p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.shareUrlBox {
+  display: flex;
+  gap: 8px;
+}
+
+.shareUrlInput {
+  flex: 1;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #0d1b2a;
+  min-width: 0;
+}
+
+.shareUrlInput:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.copyUrlBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  background: #10b981;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.copyUrlBtn:hover {
+  background: #059669;
+}
+
+.copyUrlBtn:active {
+  transform: scale(0.98);
 }
 
 /* ===========================================
@@ -907,68 +1280,670 @@
 }
 
 /* ===========================================
-   Feedback Row & Buttons
+   Feedback Row & Buttons (Scale AI / RLHF)
+   
+   Prominent thumbs up/down for AL responses.
+   Critical for collecting training data.
    =========================================== */
 
-.feedbackRow {
+/* ===========================================
+   Message Actions (copy, regenerate, feedback)
+   =========================================== */
+
+.messageActions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(13, 27, 42, 0.06);
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(13, 27, 42, 0.1);
 }
 
-.feedbackBtn {
+.actionBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
   background: transparent;
-  border: 1px solid rgba(13, 27, 42, 0.15);
+  border: none;
   border-radius: 8px;
-  color: #64748b;
+  color: #94a3b8;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.feedbackBtn:hover {
-  background: rgba(13, 27, 42, 0.05);
-  border-color: rgba(13, 27, 42, 0.25);
-  color: #0d1b2a;
+.actionBtn:hover {
+  background: rgba(13, 27, 42, 0.06);
+  color: #475569;
 }
 
-.feedbackBtn:active {
-  transform: scale(0.95);
+.actionBtn:active {
+  transform: scale(0.92);
+}
+
+.actionBtnActive {
+  color: #10b981;
+}
+
+.actionBtnActive:hover {
+  color: #10b981;
+}
+
+.copiedCheck {
+  font-size: 14px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.actionDivider {
+  width: 1px;
+  height: 20px;
+  background: rgba(13, 27, 42, 0.1);
+  margin: 0 4px;
 }
 
 .feedbackThanks {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #64748b;
-  font-style: italic;
+  gap: 5px;
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 500;
+  padding: 0 4px;
 }
 
 .feedbackThanks svg {
   color: #10b981;
 }
 
-/* Mobile adjustments */
+/* Message timestamp */
+.messageTimestamp {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+/* Mobile adjustments for message actions */
 @media (max-width: 480px) {
-  .feedbackRow {
-    margin-top: 10px;
-    gap: 6px;
+  .messageActions {
+    margin-top: 12px;
+    padding-top: 10px;
+    gap: 4px;
   }
   
-  .feedbackBtn {
+  .actionBtn {
     width: 36px;
     height: 36px;
   }
   
   .feedbackThanks {
-    font-size: 12px;
+    font-size: 11px;
+  }
+}
+
+/* ===========================================
+   Stop Button (during generation)
+   =========================================== */
+
+.stopBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #ef4444;
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  animation: stopPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes stopPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+.stopBtn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.stopBtn:active {
+  transform: scale(0.95);
+}
+
+/* ===========================================
+   History Search
+   =========================================== */
+
+.historySearch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+  color: #64748b;
+}
+
+.historySearchInput {
+  flex: 1;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  color: #0d1b2a;
+  outline: none;
+}
+
+.historySearchInput::placeholder {
+  color: #94a3b8;
+}
+
+.clearSearchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(13, 27, 42, 0.08);
+  border: none;
+  border-radius: 50%;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clearSearchBtn:hover {
+  background: rgba(13, 27, 42, 0.12);
+  color: #0d1b2a;
+}
+
+/* ===========================================
+   Conversation Item (updated for delete button)
+   =========================================== */
+
+.conversationItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  transition: all 0.15s ease;
+}
+
+.conversationItem:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.conversationItemActive {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.conversationContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.conversationMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.deleteConversationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #94a3b8;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.conversationItem:hover .deleteConversationBtn {
+  opacity: 1;
+}
+
+.deleteConversationBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* ===========================================
+   Delete Confirmation Modal
+   =========================================== */
+
+.deleteModal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.deleteModalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.deleteModalContent h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.deleteModalContent p {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.deleteModalActions {
+  display: flex;
+  gap: 12px;
+}
+
+.deleteModalCancel,
+.deleteModalConfirm {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.deleteModalCancel {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.deleteModalCancel:hover {
+  background: #e2e8f0;
+}
+
+.deleteModalConfirm {
+  background: #ef4444;
+  border: none;
+  color: #ffffff;
+}
+
+.deleteModalConfirm:hover {
+  background: #dc2626;
+}
+
+/* Legacy feedback styles (for backward compat) */
+.feedbackRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(13, 27, 42, 0.12);
+}
+
+.feedbackLabel {
+  font-size: 12px;
+  color: #64748b;
+  margin-right: 4px;
+}
+
+.feedbackBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(13, 27, 42, 0.06);
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  border-radius: 10px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.feedbackBtn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  transform: scale(1.05);
+}
+
+.feedbackBtn:active {
+  transform: scale(0.95);
+}
+
+/* ===========================================
+   Message Actions Row (Copy, Regenerate, Feedback)
+   =========================================== */
+
+.messageActionsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(13, 27, 42, 0.08);
+  flex-wrap: wrap;
+}
+
+.messageActionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(13, 27, 42, 0.04);
+  border: 1px solid rgba(13, 27, 42, 0.08);
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.messageActionBtn:hover {
+  background: rgba(13, 27, 42, 0.08);
+  color: #0d1b2a;
+}
+
+.messageActionBtn:active {
+  transform: scale(0.97);
+}
+
+.messageActionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.messageActionBtnSuccess {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.feedbackSection {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+/* ===========================================
+   Stop Button (replaces send during generation)
+   =========================================== */
+
+.stopBtn {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.stopBtn:hover:not(:disabled) {
+  background: #dc2626 !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* ===========================================
+   History Search
+   =========================================== */
+
+.historySearch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  margin: 0 12px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+}
+
+.historySearchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: #0d1b2a;
+  outline: none;
+}
+
+.historySearchInput::placeholder {
+  color: #94a3b8;
+}
+
+.clearSearchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(13, 27, 42, 0.08);
+  border: none;
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.clearSearchBtn:hover {
+  background: rgba(13, 27, 42, 0.12);
+  color: #0d1b2a;
+}
+
+/* ===========================================
+   Conversation Item Updates (for delete button)
+   =========================================== */
+
+.conversationMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.deleteConversationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #94a3b8;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.conversationItem:hover .deleteConversationBtn {
+  opacity: 1;
+}
+
+.deleteConversationBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Update conversation item to be a div container */
+.conversationItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  transition: all 0.15s ease;
+  min-height: 100px;
+}
+
+.conversationItem .conversationContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* ===========================================
+   Delete Confirmation Modal
+   =========================================== */
+
+.deleteModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+
+.deleteModalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  width: calc(100% - 48px);
+  max-width: 360px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.deleteModalContent h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0d1b2a;
+  margin: 0 0 12px;
+}
+
+.deleteModalContent p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.deleteModalActions {
+  display: flex;
+  gap: 12px;
+}
+
+.deleteModalCancel {
+  flex: 1;
+  padding: 12px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.deleteModalCancel:hover {
+  background: #e2e8f0;
+  color: #0d1b2a;
+}
+
+.deleteModalConfirm {
+  flex: 1;
+  padding: 12px;
+  background: #ef4444;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.deleteModalConfirm:hover {
+  background: #dc2626;
+}
+
+/* ===========================================
+   Message Timestamps
+   =========================================== */
+
+.messageTimestamp {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+/* ===========================================
+   Mobile Adjustments for New Features
+   =========================================== */
+
+@media (max-width: 480px) {
+  .messageActionsRow {
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  
+  .messageActionBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .historySearch {
+    margin: 0 8px 12px;
+    padding: 8px 12px;
+  }
+  
+  .deleteConversationBtn {
+    opacity: 1; /* Always visible on mobile for touch */
+  }
+  
+  .deleteModalContent {
+    padding: 20px;
+    width: calc(100% - 32px);
   }
 }

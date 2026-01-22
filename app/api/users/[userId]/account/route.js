@@ -17,6 +17,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken, getServiceClient } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

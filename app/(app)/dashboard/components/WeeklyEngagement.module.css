@@ -1,0 +1,353 @@
+/* WeeklyEngagement.module.css - Mobile-first compact design */
+
+.container {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f59e0b;
+}
+
+.streakCount {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.viewIndicator {
+  display: flex;
+  gap: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s ease;
+}
+
+.dotActive {
+  background: var(--color-accent-blue, #3b82f6);
+}
+
+.content {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 92px; /* Fixed height: 72px bars + 6px margin + 14px label */
+}
+
+/* Score View */
+.ringContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.svg {
+  transform: rotate(-90deg);
+}
+
+.ringProgress {
+  transition: stroke-dashoffset 0.3s ease-out;
+}
+
+.ringCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ringScore {
+  font-family: var(--font-mono, monospace);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1;
+}
+
+.ringLabel {
+  font-size: 9px;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+}
+
+.activities {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  min-width: 0;
+}
+
+.activity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.activityIcon {
+  color: var(--color-text-tertiary, #64748b);
+  display: flex;
+}
+
+.activityValue {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.activityComplete .activityIcon {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.activityComplete .activityValue {
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* ===========================================
+   BAR CHART VIEWS - Unified Dimensions
+   All three views share identical heights
+   =========================================== */
+
+/* Shared chart container */
+.chartContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- SHARED CHART LAYOUT ----
+   All charts: same height, same structure
+   Only bar width and gap vary by view */
+
+.weeklyChart,
+.monthlyChart,
+.yearlyChart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 92px; /* Fixed bar area height: 72px bars + 6px margin + 14px label */
+}
+
+/* Weekly: 7 bars - widest bars, largest gap */
+.weeklyChart {
+  gap: 6px;
+}
+
+/* Monthly: ~30 bars - thin bars, minimal gap */
+.monthlyChart {
+  gap: 1px;
+}
+
+/* Yearly: 12 bars - medium bars, medium gap */
+.yearlyChart {
+  gap: 4px;
+}
+
+/* ---- SHARED BAR COLUMN ----
+   All columns: identical structure */
+
+.weekBarColumn,
+.monthBarColumn,
+.yearBarColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+/* ---- SHARED BAR STACK ----
+   All stacks: identical height, only width varies */
+
+.weekBarStack,
+.monthBarStack,
+.yearBarStack {
+  height: 72px; /* FIXED height for all bars - taller to fill more space */
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Weekly bars: widest */
+.weekBarStack {
+  max-width: 28px;
+  border-radius: 4px;
+  gap: 2px;
+}
+
+/* Monthly bars: thinnest */
+.monthBarStack {
+  max-width: 8px;
+  border-radius: 2px;
+  gap: 1px;
+}
+
+/* Yearly bars: medium */
+.yearBarStack {
+  max-width: 18px;
+  border-radius: 3px;
+  gap: 2px;
+}
+
+/* ---- SHARED LABELS ----
+   All labels: identical positioning and height */
+
+.barLabel {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+  margin-top: 6px; /* Consistent spacing from bar to label */
+  line-height: 1;
+  height: 14px; /* Fixed height so all columns are same total height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hidden labels still take up space for alignment */
+.barLabelHidden {
+  visibility: hidden;
+}
+
+/* Current day/month highlight */
+.barLabelToday {
+  color: var(--color-accent-lime, #d4ff00);
+  font-weight: 700;
+}
+
+/* ---- BAR SEGMENTS ---- */
+
+.barSegment {
+  width: 100%;
+  min-height: 0;
+  border-radius: 2px;
+  transition: height 0.3s ease-out;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.legendDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+}
+
+/* View 2: Achievements - 4 cards in a row */
+.achievementsContainer {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.achievementCard {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.achievementCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.achievementCardEmpty {
+  opacity: 0.6;
+}
+
+.achievementIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievementValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.achievementLabel {
+  font-size: 9px;
+  color: var(--color-text-secondary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Tablet - slightly more spacing */
+@media (min-width: 480px) {
+  .achievementsContainer {
+    gap: 10px;
+  }
+  
+  .achievementValue {
+    font-size: 14px;
+  }
+  
+  .achievementLabel {
+    font-size: 10px;
+  }
+}

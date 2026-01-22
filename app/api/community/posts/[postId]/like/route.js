@@ -9,9 +9,11 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
+import { trackActivity } from '@/lib/dashboardScoreService';
+import { awardPoints } from '@/lib/pointsService';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -19,24 +21,19 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -47,7 +44,7 @@ async function getAuthenticatedUser() {
 async function handleGet(request, context) {
   const { postId } = await context.params;
   
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   
   // Get the post's current like count
   const { data: post, error: postError } = await supabaseAdmin
@@ -57,7 +54,7 @@ async function handleGet(request, context) {
     .single();
 
   if (postError) {
-    return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    return errors.notFound('Post');
   }
 
   // If user is not logged in, just return the count
@@ -90,9 +87,9 @@ async function handlePost(request, context) {
   const { postId } = await context.params;
   
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized. Please sign in to like posts.' }, { status: 401 });
+    return errors.unauthorized('Please sign in to like posts');
   }
 
   // Verify post exists
@@ -103,7 +100,7 @@ async function handlePost(request, context) {
     .single();
 
   if (postError || !post) {
-    return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    return errors.notFound('Post');
   }
 
   // Check if already liked
@@ -126,7 +123,7 @@ async function handlePost(request, context) {
 
     if (deleteError) {
       console.error('[Like API] Delete error:', deleteError);
-      return NextResponse.json({ error: 'Failed to unlike post' }, { status: 500 });
+      return errors.database('Failed to unlike post');
     }
 
     liked = false;
@@ -149,11 +146,16 @@ async function handlePost(request, context) {
         });
       }
       console.error('[Like API] Insert error:', insertError);
-      return NextResponse.json({ error: 'Failed to like post' }, { status: 500 });
+      return errors.database('Failed to like post');
     }
 
     liked = true;
     newLikeCount = (post.like_count || 0) + 1;
+    
+    // Track community activity for dashboard engagement (non-blocking)
+    trackActivity(user.id, 'community_likes_given').catch(() => {});
+    // Award points for liking (non-blocking)
+    awardPoints(user.id, 'community_like_post', { postId }).catch(() => {});
   }
 
   return NextResponse.json({

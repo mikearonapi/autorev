@@ -1,8 +1,8 @@
 # AutoRev API Reference
 
-> Complete reference for all 99 API routes
+> Complete reference for all 160 API routes
 >
-> **Last Verified:** December 28, 2024 — Updated with Stripe routes + admin dashboard routes
+> **Last Verified:** January 21, 2026 — Full audit and update
 
 ---
 
@@ -10,22 +10,25 @@
 
 | Category | Routes | Auth Required |
 |----------|--------|---------------|
-| Car Data | 18 | No |
-| Parts | 3 | No |
-| Events | 6 | Mixed |
-| Users/AL | 9 | Yes |
-| VIN | 3 | Yes |
+| Car Data | 22 | No |
+| Parts | 4 | No |
+| Events | 8 | Mixed |
+| Users & Garage | 18 | Yes |
+| AL (AI Assistant) | 10 | Yes |
+| VIN | 3 | Mixed |
+| Community | 10 | Mixed |
+| Analytics | 9 | No |
 | Payments (Stripe) | 4 | Yes |
 | Webhooks | 4 | Varies |
-| Admin Dashboard | 14 | Admin |
-| Internal Tools | 12 | Admin |
-| Cron Jobs | 12 | API Key |
+| Admin Dashboard | 28 | Admin |
+| Internal Tools | 18 | Admin |
+| Cron Jobs | 19 | API Key |
 | Other | 14 | Varies |
-| **Total** | **99** | |
+| **Total** | **160** | |
 
 ---
 
-## Car Data Routes (18)
+## Car Data Routes (22)
 
 ### `GET /api/cars`
 **Purpose:** List all cars with basic info
@@ -47,9 +50,11 @@
       "tier": "premium",
       "category": "Mid-Engine",
       "hp": 414,
-      "price_avg": 95000
+      "priceAvg": 95000
     }
-  ]
+  ],
+  "count": 150,
+  "source": "supabase"
 }
 ```
 
@@ -102,19 +107,8 @@
     "has_open_recalls": false,
     "has_open_investigations": false,
     "iihs_overall": "Good",
-    "iihs_small_overlap_front": "Good",
-    "iihs_moderate_overlap_front": "Good",
-    "iihs_side": "Good",
-    "iihs_roof_strength": "Good",
-    "iihs_head_restraints": "Good",
-    "iihs_front_crash_prevention": "Superior",
-    "iihs_headlight_rating": "Acceptable",
-    "iihs_top_safety_pick": false,
-    "iihs_top_safety_pick_plus": false,
     "safety_score": 85,
-    "safety_grade": "A",
-    "nhtsa_fetched_at": "2024-12-15T00:00:00.000Z",
-    "iihs_fetched_at": "2024-12-15T00:00:00.000Z"
+    "safety_grade": "A"
   }
 }
 ```
@@ -155,22 +149,15 @@
     "bat_avg": 46000,
     "bat_median": 45500,
     "carscom_avg": 44000,
-    "carscom_median": 43500,
     "hagerty_concours": 65000,
     "hagerty_excellent": 52000,
     "hagerty_good": 45000,
     "hagerty_fair": 38000,
     "trend_direction": "stable",
-    "confidence": "high",
-    "updated_at": "2024-12-15T00:00:00.000Z"
+    "confidence": "high"
   }
 }
 ```
-
-**Notes:**
-- Returns `null` for `marketValue` if no pricing data available
-- `trend_direction` can be: "rising", "stable", "falling"
-- `confidence` can be: "high", "medium", "low"
 
 **Table:** `car_market_pricing`
 
@@ -241,6 +228,30 @@
 
 ---
 
+### `GET /api/cars/[slug]/issues`
+**Purpose:** Get known issues for a specific car
+
+**Response:**
+```json
+{
+  "issues": [
+    {
+      "id": "uuid",
+      "category": "Engine",
+      "title": "IMS Bearing Failure",
+      "description": "...",
+      "severity": "major",
+      "affected_years": [2000, 2001, 2002],
+      "source_url": "https://..."
+    }
+  ]
+}
+```
+
+**Table:** `car_issues`
+
+---
+
 ### `GET /api/cars/[slug]/expert-reviews`
 **Purpose:** Get YouTube reviews for a car
 
@@ -297,8 +308,6 @@
 ### `GET /api/cars/[slug]/fuel-economy`
 **Purpose:** Fetch live EPA data (enrichment)
 
-**Note:** Different from `/efficiency` (cached DB read)
-
 ---
 
 ### `GET /api/cars/[slug]/pricing`
@@ -306,20 +315,37 @@
 
 ---
 
-### `GET /api/cars/[slug]/manual-data`
-**Purpose:** Get manually entered car data
+### `GET /api/cars/[slug]/ai-context`
+**Purpose:** Get comprehensive AI context for a car (used by AL)
 
-### `POST /api/cars/[slug]/manual-data`
-**Purpose:** Add manual car data
-
-**Auth:** Admin
-
-**Request:**
+**Response:**
 ```json
 {
-  "field": "value"
+  "car": { ... },
+  "tuningProfile": { ... },
+  "issues": [...],
+  "maintenanceSpecs": { ... },
+  "dynoRuns": [...],
+  "lapTimes": [...]
 }
 ```
+
+---
+
+### `GET /api/cars/[slug]/factory-options`
+**Purpose:** Get factory option packages and codes
+
+---
+
+### `GET /api/cars/[slug]/fitments`
+**Purpose:** Get parts fitments for a car
+
+---
+
+### `GET|POST /api/cars/[slug]/manual-data`
+**Purpose:** Get/add manually entered car data
+
+**Auth:** POST requires Admin
 
 ---
 
@@ -333,99 +359,26 @@
 
 **Query Params:**
 - `limit` - Max recalls (default 50, max 200)
-- `includeIncomplete` - Include incomplete records (default true, set to "false" to filter)
-
-**Response:**
-```json
-{
-  "recalls": [
-    {
-      "car_slug": "718-cayman-gt4",
-      "recall_campaign_number": "24V123",
-      "recall_date": "2024-01-15",
-      "component": "ELECTRICAL SYSTEM",
-      "summary": "...",
-      "consequence": "...",
-      "remedy": "...",
-      "manufacturer": "Porsche",
-      "notes": "Additional recall notes",
-      "source_url": "https://...",
-      "is_incomplete": false
-    }
-  ],
-  "count": 5
-}
-```
+- `includeIncomplete` - Include incomplete records (default true)
 
 **Table:** `car_recalls`
 
 ---
 
-## Parts Routes (3)
+## Parts Routes (4)
 
 ### `GET /api/parts/search`
 **Purpose:** Search parts catalog
 
 **Query Params:**
-- `q` - Search query (optional if carSlug/carVariantKey provided)
+- `q` - Search query
 - `carSlug` - Filter by car fitment
 - `carVariantKey` - Filter by specific car variant
 - `category` - Part category
-- `verified` - Filter to verified fitments only (boolean)
+- `verified` - Filter to verified fitments only
 - `limit` - Max results (default 12, max 30)
 
-**Response:**
-```json
-{
-  "query": "intake",
-  "carSlug": "718-cayman-gt4",
-  "carVariantKey": null,
-  "count": 5,
-  "results": [
-    {
-      "id": "uuid",
-      "name": "Cold Air Intake",
-      "brand_name": "AFE",
-      "part_number": "54-12202",
-      "category": "intake",
-      "description": "High-flow cold air intake system",
-      "quality_tier": "premium",
-      "street_legal": true,
-      "source_urls": ["https://..."],
-      "confidence": 0.95,
-      "fitment": {
-        "part_id": "uuid",
-        "car_id": "uuid",
-        "car_variant_id": null,
-        "car_slug": "718-cayman-gt4",
-        "fitment_notes": "Direct bolt-on",
-        "requires_tune": false,
-        "install_difficulty": "easy",
-        "estimated_labor_hours": 1,
-        "verified": true,
-        "confidence": 0.95,
-        "source_url": "https://...",
-        "updated_at": "2024-12-15T00:00:00.000Z"
-      },
-      "latest_price": {
-        "part_id": "uuid",
-        "vendor_name": "MAPerformance",
-        "product_url": "https://...",
-        "price_cents": 35000,
-        "currency": "USD",
-        "recorded_at": "2024-12-15T00:00:00.000Z"
-      }
-    }
-  ]
-}
-```
-
-**Notes:**
-- If `carSlug` or `carVariantKey` provided but no fitments found, returns empty results
-- Fitments are ranked by verified status, confidence, and recency
-- Maximum of 60 part IDs can be searched at once
-
-**Tables:** `parts`, `part_fitments`, `part_pricing_snapshots`
+**Table:** `parts`, `part_fitments`, `part_pricing_snapshots`
 
 ---
 
@@ -439,11 +392,7 @@
 ---
 
 ### `POST /api/parts/relationships`
-**Purpose:** Get part compatibility relationships for multiple parts
-
-**Method:** POST (requires body with part IDs)
-
-> **Note:** This is POST, not GET, because it requires an array of part IDs in the request body.
+**Purpose:** Get part compatibility relationships
 
 **Request:**
 ```json
@@ -457,119 +406,45 @@
 {
   "edges": [
     {
-      "id": "uuid",
       "relation_type": "requires",
       "reason": "Intake requires tune for optimal performance",
-      "metadata": {},
-      "part": {
-        "id": "uuid",
-        "name": "Cold Air Intake",
-        "brand_name": "AFE",
-        "part_number": "54-12202",
-        "category": "intake"
-      },
-      "related_part": {
-        "id": "uuid",
-        "name": "Stage 1 Tune",
-        "brand_name": "COBB",
-        "part_number": "AP3-POR-001",
-        "category": "tune"
-      }
+      "part": { ... },
+      "related_part": { ... }
     }
   ]
 }
 ```
 
-**Notes:**
-- `relation_type` can be: `requires`, `suggests`, `conflicts`
-- Maximum of 60 part IDs per request
-- Returns all edges where either `part_id` or `related_part_id` is in the request
-
 **Table:** `part_relationships`
 
 ---
 
-## Events Routes (6)
+### `GET /api/parts/turbos`
+**Purpose:** Get turbo parts catalog
+
+---
+
+## Events Routes (8)
 
 ### `GET /api/events`
 **Purpose:** List/search upcoming car events with filtering
 
 **Query Params:**
+- `query` - Text search for event name
+- `location` - ZIP code or "City, State"
 - `zip` - ZIP code for location filtering
-- `radius` - Radius in miles for distance search (requires zip, default 50, max 500)
-- `city` - City name (supports partial match)
-- `state` - State code (e.g., "CA", "TX")
-- `region` - Region name (Northeast, Southeast, Midwest, Southwest, West)
+- `lat`, `lng` - Direct coordinates (skips geocoding)
+- `radius` - Radius in miles (default 50, max 500)
+- `city`, `state`, `region` - Location filters
 - `scope` - Event scope (local, regional, national)
-- `type` - Event type slug (e.g., "cars-and-coffee", "track-day")
-- `is_track_event` - Filter to track events only (boolean)
-- `is_free` - Filter to free events only (boolean)
-- `brand` - Filter by car brand affinity
-- `car_slug` - Filter by specific car affinity
-- `start_after` - ISO date string, events after this date
-- `start_before` - ISO date string, events before this date
-- `limit` - Max results (default 20, max 100)
-- `offset` - Pagination offset (default 0)
-- `sort` - Sort order: "date", "featured", or "distance" (default "date")
-
-**Response:**
-```json
-{
-  "events": [
-    {
-      "id": "uuid",
-      "slug": "cars-coffee-malibu-jan-2025",
-      "name": "Malibu Cars & Coffee",
-      "description": "Monthly morning meetup...",
-      "distance_miles": 12.5,
-      "event_type": {
-        "slug": "cars-and-coffee",
-        "name": "Cars & Coffee",
-        "icon": "☕",
-        "is_track_event": false
-      },
-      "start_date": "2025-01-18",
-      "end_date": null,
-      "start_time": "07:30:00",
-      "end_time": "10:00:00",
-      "timezone": "America/Los_Angeles",
-      "venue_name": "PCH Meetup Spot",
-      "city": "Malibu",
-      "state": "CA",
-      "zip": "90265",
-      "region": "West",
-      "scope": "local",
-      "source_url": "https://...",
-      "source_name": "Malibu Cars & Coffee",
-      "registration_url": null,
-      "image_url": "https://...",
-      "cost_text": "Free",
-      "is_free": true,
-      "featured": true,
-      "car_affinities": [
-        { "car_id": null, "car_slug": null, "car_name": null, "brand": "Porsche", "affinity_type": "featured" }
-      ]
-    }
-  ],
-  "total": 15,
-  "limit": 20,
-  "offset": 0,
-  "searchCenter": {
-    "latitude": 38.8977,
-    "longitude": -77.0365,
-    "radius": 50,
-    "zip": "22033"
-  }
-}
-```
-
-**Notes:**
-- Only returns events where `status='approved'` AND `start_date >= today`
-- Sorted by `featured DESC, start_date ASC` by default
-- When `zip` and `radius` are provided, performs geocoded radius search
-- `distance_miles` field included in events when radius search is used
-- `searchCenter` object included in response when radius search is used
-- Events without latitude/longitude are excluded from radius search results
+- `type` - Event type slug
+- `is_track_event` - Filter to track events only
+- `is_free` - Filter to free events only
+- `brand`, `car_slug` - Filter by car affinity
+- `start_after`, `start_before` - Date filters
+- `limit`, `offset` - Pagination
+- `sort` - Sort order: "date", "featured", or "distance"
+- `group_recurring` - Group recurring events
 
 **Tables:** `events`, `event_types`, `event_car_affinities`
 
@@ -578,98 +453,22 @@
 ### `GET /api/events/[slug]`
 **Purpose:** Get single event details by slug
 
-**Response:**
-```json
-{
-  "event": {
-    "id": "uuid",
-    "slug": "cars-coffee-malibu-jan-2025",
-    "name": "Malibu Cars & Coffee",
-    "description": "...",
-    "event_type": { "slug": "cars-and-coffee", "name": "Cars & Coffee", "description": "...", "icon": "☕", "is_track_event": false },
-    "start_date": "2025-01-18",
-    "end_date": null,
-    "start_time": "07:30:00",
-    "end_time": "10:00:00",
-    "timezone": "America/Los_Angeles",
-    "venue_name": "PCH Meetup Spot",
-    "address": "22000 Pacific Coast Hwy",
-    "city": "Malibu",
-    "state": "CA",
-    "zip": "90265",
-    "country": "USA",
-    "latitude": 34.0259,
-    "longitude": -118.7798,
-    "region": "West",
-    "scope": "local",
-    "source_url": "https://...",
-    "source_name": "Malibu Cars & Coffee",
-    "registration_url": null,
-    "image_url": "https://...",
-    "cost_text": "Free",
-    "is_free": true,
-    "featured": true,
-    "car_affinities": [...]
-  }
-}
-```
-
-**Error Responses:**
-- `404` - Event not found or not approved
-
-**Tables:** `events`, `event_types`, `event_car_affinities`
-
 ---
 
 ### `GET /api/events/types`
 **Purpose:** Get all event types for filtering
 
-**Response:**
-```json
-{
-  "types": [
-    { "slug": "cars-and-coffee", "name": "Cars & Coffee", "description": "Morning car meetups", "icon": "☕", "is_track_event": false, "sort_order": 1 },
-    { "slug": "track-day", "name": "Track Day / HPDE", "description": "High Performance Driver Education", "icon": "🏁", "is_track_event": true, "sort_order": 6 }
-  ]
-}
-```
+---
 
-**Table:** `event_types`
+### `GET /api/events/featured`
+**Purpose:** Get featured events
 
 ---
 
 ### `POST /api/events/submit`
-**Purpose:** Submit an event for review (user submission)
+**Purpose:** Submit an event for review
 
 **Auth:** Required
-
-**Request:**
-```json
-{
-  "name": "Sunset Cars & Coffee",
-  "event_type_slug": "cars-and-coffee",
-  "source_url": "https://example.com/event",
-  "start_date": "2025-03-15",
-  "end_date": null,
-  "venue_name": "Downtown Plaza",
-  "city": "Austin",
-  "state": "TX",
-  "description": "Monthly morning meetup for car enthusiasts"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "submissionId": "uuid",
-  "message": "Event submitted successfully. It will be reviewed within 48 hours."
-}
-```
-
-**Error Responses:**
-- `400` - Validation error (missing fields, invalid URL, past date)
-- `401` - Authentication required
 
 **Table:** `event_submissions`
 
@@ -678,38 +477,80 @@
 ### `POST /api/events/[slug]/save`
 **Purpose:** Save (bookmark) an event
 
-**Auth:** Required (Enthusiast+ tier)
-
-**Response:**
-```json
-{
-  "saved": true,
-  "alreadySaved": false
-}
-```
-
-**Error Responses:**
-- `401` - Authentication required
-- `403` - Requires Enthusiast tier
-- `404` - Event not found or not approved
+**Auth:** Required
 
 **Table:** `event_saves`
 
 ---
 
 ### `DELETE /api/events/[slug]/save`
-**Purpose:** Unsave (remove bookmark from) an event
+**Purpose:** Unsave an event
 
 **Auth:** Required
+
+---
+
+## Users & Garage Routes (18)
+
+### `GET /api/users/[userId]/garage`
+**Purpose:** Fetch user's vehicles
+
+**Auth:** Required (must be own user ID)
 
 **Response:**
 ```json
 {
-  "saved": false
+  "vehicles": [
+    {
+      "id": "uuid",
+      "vin": "WP0AB29986S731234",
+      "year": 2020,
+      "make": "Porsche",
+      "model": "718 Cayman",
+      "trim": "GT4",
+      "matchedCarSlug": "718-cayman-gt4",
+      "nickname": "My GT4",
+      "color": "Racing Yellow",
+      "mileage": 15000,
+      "isPrimary": true,
+      "installedModifications": [...],
+      "totalHpGain": 25,
+      "enrichment": { ... }
+    }
+  ],
+  "count": 2
 }
 ```
 
-**Table:** `event_saves`
+**Table:** `user_vehicles`
+
+---
+
+### `GET|DELETE|PATCH /api/users/[userId]/vehicles/[vehicleId]`
+**Purpose:** Get, delete, or update a specific vehicle
+
+**Auth:** Required (must be own user ID)
+
+---
+
+### `GET|POST|PUT|DELETE /api/users/[userId]/vehicles/[vehicleId]/modifications`
+**Purpose:** Manage vehicle modifications
+
+**Auth:** Required
+
+---
+
+### `GET|POST|PUT|DELETE /api/users/[userId]/vehicles/[vehicleId]/custom-specs`
+**Purpose:** Manage custom vehicle specifications
+
+**Auth:** Required
+
+---
+
+### `PUT /api/users/[userId]/vehicles/reorder`
+**Purpose:** Reorder vehicles in garage
+
+**Auth:** Required
 
 ---
 
@@ -718,43 +559,66 @@
 
 **Auth:** Required (must be own user ID)
 
-**Query Params:**
-- `includeExpired` (boolean, default: false): Include events with past start dates
+---
 
-**Response:**
-```json
-{
-  "savedEvents": [
-    {
-      "saved_at": "2025-01-15T10:30:00Z",
-      "notes": "Don't forget to bring the 911",
-      "event": {
-        "id": "uuid",
-        "slug": "cars-coffee-malibu-jan-2025",
-        "name": "Malibu Cars & Coffee",
-        "event_type": { "slug": "cars-and-coffee", "name": "Cars & Coffee", "icon": "☕" },
-        "start_date": "2025-01-18",
-        "city": "Malibu",
-        "state": "CA",
-        "...": "full event object"
-      }
-    }
-  ]
-}
-```
+### `GET|POST|PATCH /api/users/[userId]/onboarding`
+**Purpose:** Manage user onboarding state
 
-**Error Responses:**
-- `401` - Authentication required
-- `403` - Cannot access other user's saved events
-
-**Tables:** `event_saves`, `events`
+**Auth:** Required
 
 ---
 
-## Users/AL Routes (4)
+### `POST /api/users/[userId]/onboarding/dismiss`
+**Purpose:** Dismiss onboarding overlay
+
+**Auth:** Required
+
+---
+
+### `GET|POST|DELETE /api/users/[userId]/track-times`
+**Purpose:** Manage user's track times
+
+**Auth:** Required
+
+---
+
+### `POST /api/users/[userId]/track-times/analyze`
+**Purpose:** AI analysis of track times
+
+**Auth:** Required
+
+---
+
+### `GET|PUT /api/users/[userId]/car-images`
+**Purpose:** Manage user's car images
+
+**Auth:** Required
+
+---
+
+### `POST /api/users/[userId]/clear-data`
+**Purpose:** Clear user data (GDPR compliance)
+
+**Auth:** Required
+
+---
+
+### `DELETE /api/users/[userId]/account`
+**Purpose:** Delete user account
+
+**Auth:** Required
+
+---
+
+### `GET|POST /api/garage/enrich`
+**Purpose:** Enrich garage vehicle with external data
+
+---
+
+## AL (AI Assistant) Routes (10)
 
 ### `POST /api/ai-mechanic`
-**Purpose:** Send message to AL assistant
+**Purpose:** Send message to AL assistant (streaming supported)
 
 **Auth:** Required
 
@@ -763,67 +627,91 @@
 {
   "message": "What's wrong with the E46 M3?",
   "conversationId": "optional-uuid",
-  "carContext": { "slug": "bmw-m3-e46" }
+  "carSlug": "bmw-m3-e46",
+  "stream": true,
+  "attachments": [
+    { "public_url": "...", "file_type": "image/jpeg" }
+  ]
 }
 ```
 
-**Response:**
+**Response (non-streaming):**
 ```json
 {
   "response": "The E46 M3 is known for...",
   "conversationId": "uuid",
-  "usage": { "inputTokens": 1500, "outputTokens": 400, "costCents": 1.5 }
+  "usage": {
+    "costCents": 1.5,
+    "inputTokens": 1500,
+    "outputTokens": 400
+  }
 }
 ```
+
+**Streaming:** Returns SSE stream with events: `connected`, `text`, `tool_start`, `tool_result`, `done`, `error`
+
+---
+
+### `GET /api/ai-mechanic`
+**Purpose:** Get contextual suggestions for AL
+
+---
+
+### `GET|POST /api/ai-mechanic/feedback`
+**Purpose:** Get/submit AL conversation feedback
 
 ---
 
 ### `GET /api/users/[userId]/al-conversations`
 **Purpose:** List user's AL conversations
 
-**Auth:** User must match userId
+**Auth:** Required
 
 ---
 
-### `GET /api/users/[userId]/al-conversations/[conversationId]`
-**Purpose:** Get specific conversation with messages
+### `GET|DELETE|PATCH /api/users/[userId]/al-conversations/[conversationId]`
+**Purpose:** Get, delete, or rename a conversation
+
+**Auth:** Required
 
 ---
 
 ### `GET /api/users/[userId]/al-credits`
-**Purpose:** Get user's AL credit balance (token-based billing)
+**Purpose:** Get user's AL credit balance
 
 **Response:**
 ```json
 {
   "balanceCents": 75,
   "balanceFormatted": "$0.75",
-  "balanceCompact": "75¢",
   "plan": "collector",
-  "planName": "Enthusiast",
   "monthlyAllocationCents": 200,
-  "monthlyAllocationFormatted": "$2.00",
   "spentThisMonthCents": 125,
-  "spentThisMonthFormatted": "$1.25",
-  "purchasedCents": 0,
-  "inputTokensThisMonth": 15000,
-  "outputTokensThisMonth": 5000,
-  "messagesThisMonth": 12,
   "tank": {
     "level": "medium",
     "percentage": 37.5
-  },
-  "lastRefillDate": "2024-12-01T00:00:00.000Z",
-  "isUnlimited": false,
-  "credits": 75,
-  "usedThisMonth": 125
+  }
 }
 ```
 
-**Notes:**
-- `tank.level` can be: "full", "high", "medium", "low", "empty"
-- `credits` and `usedThisMonth` are legacy fields for backward compatibility
-- `isUnlimited` is true for Founder tier users
+---
+
+### `GET|PUT /api/al/preferences`
+**Purpose:** Get/update AL preferences (tool toggles)
+
+**Auth:** Required
+
+---
+
+### `GET /api/al/stats`
+**Purpose:** Get AL usage statistics
+
+---
+
+### `GET|POST /api/al/upload`
+**Purpose:** Upload images for AL analysis
+
+**Auth:** Required
 
 ---
 
@@ -834,38 +722,6 @@
 
 **Auth:** No (public endpoint)
 
-**Methods:**
-- `GET` with query param: `?vin=WP0AB29986S731234`
-- `POST` with JSON body: `{ "vin": "WP0AB29986S731234" }`
-
-**Response:**
-```json
-{
-  "success": true,
-  "vin": "WP0AB29986S731234",
-  "decoded": {
-    "year": 2020,
-    "make": "Porsche",
-    "model": "718 Cayman",
-    "trim": "GT4",
-    "engine": "4.0L H6",
-    "bodyClass": "Coupe",
-    "driveType": "RWD",
-    "fuelType": "Gasoline",
-    "plantCountry": "Germany"
-  }
-}
-```
-
-**Error Response:**
-```json
-{
-  "success": false,
-  "error": "Invalid VIN format. VIN must be 17 alphanumeric characters (excluding I, O, Q).",
-  "vin": "INVALID"
-}
-```
-
 ---
 
 ### `POST /api/vin/resolve`
@@ -874,586 +730,598 @@
 ---
 
 ### `POST /api/vin/safety`
-**Purpose:** Fetch VIN safety data from NHTSA (server-side proxy)
+**Purpose:** Fetch VIN safety data from NHTSA
 
-**Auth:** No (proxy for CORS bypass)
+---
+
+## Community Routes (10)
+
+### `GET /api/community/posts`
+**Purpose:** List community posts
+
+**Query Params:**
+- `type` - Post type filter (garage, build, vehicle)
+- `car` - Filter by car slug
+- `buildId` - Get linked post for build
+- `limit`, `offset` - Pagination
+- `featured` - Filter to featured posts
+
+---
+
+### `POST /api/community/posts`
+**Purpose:** Create a new community post
+
+**Auth:** Required
 
 **Request:**
 ```json
 {
-  "vin": "WP0AB29986S731234",
-  "year": 2020,
-  "make": "Porsche",
-  "model": "718 Cayman"
-}
-```
-
-**Response:**
-```json
-{
-  "recalls": [...],
-  "complaints": [...],
-  "investigations": [...],
-  "safetyRatings": {...},
-  "error": null
+  "postType": "build",
+  "title": "My GT4 Track Build",
+  "description": "...",
+  "vehicleId": "uuid",
+  "buildId": "uuid",
+  "carSlug": "718-cayman-gt4",
+  "imageIds": ["uuid-1", "uuid-2"]
 }
 ```
 
 ---
 
-## Internal Routes (10)
+### `PATCH /api/community/posts`
+**Purpose:** Update a community post
 
-All require admin authentication.
-
-### Event Moderation
-
-### `GET /api/internal/events/submissions`
-**Purpose:** List event submissions for moderation
-
-**Query Params:**
-- `status` (string): Filter by status (`pending`, `approved`, `rejected`, `all`)
-- `limit` (number, default: 20): Max results
-- `offset` (number, default: 0): Pagination offset
-
-**Response:**
-```json
-{
-  "submissions": [
-    {
-      "id": "uuid",
-      "user_id": "uuid",
-      "name": "Sunset Cars & Coffee",
-      "event_type_slug": "cars-and-coffee",
-      "source_url": "https://...",
-      "start_date": "2025-03-15",
-      "city": "Austin",
-      "state": "TX",
-      "status": "pending",
-      "created_at": "2025-01-10T14:00:00Z",
-      "user_profiles": {
-        "email": "user@example.com",
-        "display_name": "John D."
-      }
-    }
-  ],
-  "total": 15
-}
-```
-
-**Table:** `event_submissions`
+**Auth:** Required (must own post)
 
 ---
 
-### `POST /api/internal/events/submissions`
-**Purpose:** Approve a submission and create an event
+### `GET /api/community/builds`
+**Purpose:** List community builds
+
+---
+
+### `GET /api/community/builds/[slug]`
+**Purpose:** Get specific build details
+
+---
+
+### `GET|POST|DELETE|PATCH /api/community/posts/[postId]/comments`
+**Purpose:** Manage post comments
+
+**Auth:** Required for POST/DELETE/PATCH
+
+---
+
+### `GET|POST /api/community/posts/[postId]/like`
+**Purpose:** Get/toggle like status on a post
+
+**Auth:** Required for POST
+
+---
+
+### `POST /api/community/feed/recalculate`
+**Purpose:** Recalculate community feed rankings
+
+**Auth:** Admin
+
+---
+
+### `POST /api/community/feed/track`
+**Purpose:** Track feed engagement
+
+---
+
+## Analytics Routes (9)
+
+### `GET|POST /api/analytics/track`
+**Purpose:** Track page views
 
 **Request:**
 ```json
 {
-  "submissionId": "uuid",
-  "eventData": {
-    "name": "Sunset Cars & Coffee",
-    "event_type_id": "uuid",
-    "start_date": "2025-03-15",
-    "city": "Austin",
-    "state": "TX",
-    "source_url": "https://...",
-    "is_free": true,
-    "featured": false
-  },
-  "carAffinities": [
-    { "brand": "Porsche", "affinity_type": "welcome" }
-  ]
+  "path": "/browse-cars/718-cayman-gt4",
+  "route": "/browse-cars/[slug]",
+  "sessionId": "uuid",
+  "visitorId": "uuid",
+  "referrer": "https://google.com",
+  "pageLoadTime": 1250
 }
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "event": {
-    "id": "uuid",
-    "slug": "sunset-cars-coffee-austin"
-  }
-}
-```
-
-**Tables:** `events`, `event_submissions`, `event_car_affinities`
+**Note:** Bot traffic is automatically filtered
 
 ---
 
-### `POST /api/internal/events/submissions/[id]/reject`
-**Purpose:** Reject a submission
-
-**Request:**
-```json
-{
-  "reason": "Duplicate event"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true
-}
-```
-
-**Table:** `event_submissions`
+### `POST /api/analytics/event`
+**Purpose:** Track custom events
 
 ---
 
-| Route | Purpose |
-|-------|---------|
-| `POST /api/internal/car-variants` | Manage car variants |
-| `POST /api/internal/dyno/runs` | Add dyno data |
-| `POST /api/internal/track/lap-times` | Add lap times |
-| `POST /api/internal/parts/fitments` | Manage fitments |
-| `POST /api/internal/knowledge/ingest` | Ingest documents |
-| `POST /api/internal/maintenance/variant-overrides` | Variant-specific maintenance |
-| `GET /api/internal/qa-report` | Generate QA report |
-
-### Internal Route Method Variants
-
-#### `/api/internal/car-variants`
-| Method | Purpose |
-|--------|---------|
-| POST | Create car variant |
-| GET | List variants (with optional filters) |
-| PUT | Update existing variant |
-| DELETE | Delete variant by ID |
-
-#### `/api/internal/dyno/runs`
-| Method | Purpose |
-|--------|---------|
-| POST | Add dyno run |
-| GET | List dyno runs (with optional filters) |
-| PUT | Update existing dyno run |
-| DELETE | Delete dyno run by ID |
-
-#### `/api/internal/track/lap-times`
-| Method | Purpose |
-|--------|---------|
-| POST | Add lap time |
-| GET | List lap times (with optional filters) |
-| PUT | Update existing lap time |
-| DELETE | Delete lap time by ID |
-
-#### `/api/internal/parts/fitments`
-| Method | Purpose |
-|--------|---------|
-| POST | Create fitment |
-| GET | List fitments (with optional filters) |
-| PUT | Update existing fitment |
-| DELETE | Delete fitment by ID |
+### `POST /api/analytics/click`
+**Purpose:** Track click events
 
 ---
 
-## Cron Routes (7 unique, 10 scheduled)
-
-Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
-
-| Route | Purpose | Schedule |
-|-------|---------|----------|
-| `/api/cron/schedule-ingestion` | Queue parts ingestion jobs | Weekly (Sun 2:00 AM UTC) |
-| `/api/cron/process-scrape-jobs` | Process scrape queue | Every 15 min (`*/15 * * * *`) |
-| `/api/cron/process-scrape-jobs` | Weekly batch processing | Weekly (Sun 3:00 AM UTC) |
-| `/api/cron/refresh-recalls` | Refresh NHTSA recall data | Weekly (Sun 2:30 AM UTC) |
-| `/api/cron/refresh-complaints` | Refresh NHTSA complaint data | Weekly (Sun 4:00 AM UTC) |
-| `/api/cron/youtube-enrichment` | Process YouTube queue | Weekly (Mon 4:00 AM UTC) |
-| `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Tue 5:00 AM UTC) |
-| `/api/cron/forum-scrape` | Forum scraping + insight extraction | Bi-weekly (Fri 5:00 AM UTC) |
-| `/api/cron/refresh-events` | Fetch events from external sources | Daily (6:00 AM UTC) |
-
-### `GET /api/cron/schedule-ingestion`
-**Purpose:** Queue parts ingestion jobs from vendor APIs (MAPerformance Shopify, etc.)
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `source` - Specific vendor to process (default: all configured)
-- `limit` - Max products per vendor (default: 100)
-- `dryRun` - If "true", don't create jobs
-
-**Response:**
-```json
-{
-  "success": true,
-  "jobsCreated": 15,
-  "sources": ["maperformance"],
-  "timestamp": "2024-12-15T02:00:00.000Z"
-}
-```
-
-**Flow:** Creates `scrape_jobs` entries → consumed by `process-scrape-jobs`
-
-**Table:** `scrape_jobs`
+### `POST /api/analytics/search`
+**Purpose:** Track search queries
 
 ---
 
-### `GET /api/cron/process-scrape-jobs`
-**Purpose:** Process queued scrape/enrichment jobs
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `max` - Max jobs to process (default: 3 for 15-min, 10 for weekly)
-- `delay` - Delay between jobs in ms (default: 15000 for 15-min, 5000 for weekly)
-- `type` - Job type filter (parts, knowledge, enrichment)
-
-**Response:**
-```json
-{
-  "processed": 3,
-  "succeeded": 3,
-  "failed": 0,
-  "remaining": 12,
-  "jobs": [
-    { "id": "uuid", "type": "parts", "status": "completed" }
-  ],
-  "durationMs": 45000
-}
-```
-
-**Notes:**
-- Runs every 15 min with `max=3` (incremental processing)
-- Runs weekly Sun 3am with `max=10` (batch catch-up)
-- Supports parts ingestion, knowledge base updates, car enrichment
-
-**Tables:** `scrape_jobs`, `parts`, `part_fitments`, `part_pricing_snapshots`
+### `POST /api/analytics/feature`
+**Purpose:** Track feature usage
 
 ---
 
-### `GET /api/cron/youtube-enrichment`
-**Purpose:** Discover new YouTube videos and process AI summaries
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `channel` - Specific channel to process (default: all active)
-- `limit` - Max videos to discover per channel (default: 10)
-- `processLimit` - Max videos to AI-process (default: 5)
-- `skipDiscovery` - If "true", only process existing queue
-
-**Response:**
-```json
-{
-  "discovery": {
-    "channelsChecked": 12,
-    "videosDiscovered": 8,
-    "videosQueued": 5
-  },
-  "processing": {
-    "videosProcessed": 5,
-    "summariesGenerated": 5,
-    "carLinksCreated": 7
-  },
-  "durationMs": 120000
-}
-```
-
-**Flow:**
-1. Checks trusted channels in `youtube_channels` for new uploads
-2. Queues new videos in `youtube_ingestion_queue`
-3. Processes queue: transcribes → AI summarizes → extracts pros/cons/quotes
-4. Creates car links in `youtube_video_car_links`
-
-**Tables:** `youtube_channels`, `youtube_ingestion_queue`, `youtube_videos`, `youtube_video_car_links`
+### `POST /api/analytics/engagement`
+**Purpose:** Track engagement metrics
 
 ---
 
-### `GET /api/cron/refresh-recalls`
-**Purpose:** Refresh NHTSA recall data for all cars
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `limitCars` - Max cars to process (default: all)
-- `skipCars` - Skip first N cars
-- `maxYearsPerCar` - Years to search per car (default: 25)
-- `concurrency` - Parallel requests (default: 3, max: 8)
-
-**Response:**
-```json
-{
-  "startedAt": "2024-12-14T02:30:00.000Z",
-  "totalCars": 98,
-  "processed": 98,
-  "newRecalls": 12,
-  "durationMs": 45000
-}
-```
-
-**Table:** `car_recalls`
+### `POST /api/analytics/attribution`
+**Purpose:** Track marketing attribution
 
 ---
 
-### `GET /api/cron/refresh-complaints`
-**Purpose:** Refresh NHTSA complaint data for all cars
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `limitCars` - Max cars to process (default: all)
-- `skipCars` - Skip first N cars
-- `concurrency` - Parallel requests (default: 3)
-
-**Response:**
-```json
-{
-  "startedAt": "2024-12-14T04:00:00.000Z",
-  "totalCars": 98,
-  "processed": 98,
-  "totalComplaints": 125,
-  "durationMs": 30000
-}
-```
-
-**Updates:** `car_safety_data.complaint_count`
+### `POST /api/analytics/goal`
+**Purpose:** Track goal completions
 
 ---
 
-### `GET /api/cron/refresh-events`
-**Purpose:** Fetch events from external sources, deduplicate, geocode, and insert into database
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `source` - Specific source name to run (default: all active)
-- `limit` - Max events per source (default: 100)
-- `dryRun` - If "true", don't write to DB
-- `skipGeocode` - If "true", skip geocoding step
-
-**Response:**
-```json
-{
-  "success": true,
-  "dryRun": false,
-  "sourcesProcessed": 1,
-  "eventsDiscovered": 45,
-  "eventsCreated": 12,
-  "eventsUpdated": 0,
-  "eventsExpired": 3,
-  "eventsDeduplicated": 30,
-  "eventsGeocoded": 10,
-  "errors": [],
-  "sourceResults": [
-    {
-      "name": "MotorsportReg",
-      "eventsDiscovered": 45,
-      "eventsCreated": 12,
-      "eventsDeduplicated": 30,
-      "errors": []
-    }
-  ],
-  "durationMs": 65000,
-  "ranAt": "2024-12-16T06:00:00.000Z"
-}
-```
-
-**Notes:**
-- Fetches from configured sources in `event_sources` table
-- Deduplicates by source_url and name+date+city similarity
-- Geocodes events missing latitude/longitude
-- Auto-approves events from trusted sources
-- Marks past events as expired
-
-**Tables:** `events`, `event_sources`, `event_types`
-
----
-
-### `GET /api/cron/forum-scrape`
-**Purpose:** Forum Intelligence Pipeline - scrape forums and extract insights
-
-**Auth:** Bearer token or `x-vercel-cron: true`
-
-**Query Params:**
-- `mode` - Pipeline mode: `scrape`, `extract`, or `both` (default: `both`)
-- `forum` - Specific forum slug (default: all active)
-- `maxThreads` - Max threads to scrape per forum (default: 20)
-- `maxExtract` - Max threads to extract insights from (default: 10)
-
-**Response:**
-```json
-{
-  "mode": "both",
-  "startedAt": "2024-12-15T05:00:00.000Z",
-  "scrape": {
-    "forums": ["rennlist", "bimmerpost"],
-    "threadsFound": 45,
-    "threadsScraped": 20,
-    "postsScraped": 340
-  },
-  "extract": {
-    "threadsProcessed": 10,
-    "insightsExtracted": 25,
-    "errors": 0
-  },
-  "completedAt": "2024-12-15T05:04:30.000Z",
-  "success": true
-}
-```
-
-**Tables:** `forum_sources`, `forum_scrape_runs`, `forum_scraped_threads`, `community_insights`
-
----
-
-### `GET /api/internal/forum-insights`
-**Purpose:** Get Forum Intelligence stats and recent activity
-
-**Auth:** Bearer token (CRON_SECRET)
-
-**Response:**
-```json
-{
-  "overview": {
-    "forumSources": 6,
-    "activeSources": 6,
-    "totalThreadsScraped": 150,
-    "pendingThreads": 25,
-    "totalInsights": 340
-  },
-  "forums": [...],
-  "recentRuns": [...],
-  "insightTypes": {
-    "known_issue": 120,
-    "maintenance_tip": 85,
-    "modification_guide": 45
-  },
-  "topCarsWithInsights": {
-    "911-992": 45,
-    "m3-g80": 38
-  }
-}
-```
-
----
-
-### `POST /api/internal/forum-insights`
-**Purpose:** Trigger manual forum operations
-
-**Auth:** Bearer token (CRON_SECRET)
-
-**Request (scrape action):**
-```json
-{
-  "action": "scrape",
-  "forum": "rennlist",
-  "maxThreads": 10
-}
-```
-
-**Request (extract action):**
-```json
-{
-  "action": "extract",
-  "maxExtract": 5
-}
-```
-
-**Request (reprocess action):**
-```json
-{
-  "action": "reprocess",
-  "threadId": "uuid-of-thread"
-}
-```
-
-**Response:** Varies by action
+### `POST /api/activity`
+**Purpose:** Track user activity
 
 ---
 
 ## Payments (Stripe) Routes (4)
 
 ### `POST /api/checkout`
-**Purpose:** Create Stripe checkout session for subscriptions, credit packs, or donations
+**Purpose:** Create Stripe checkout session
 
-**Authentication:** Required (authenticated users only)
+**Auth:** Required
 
 **Request:**
 ```json
 {
-  "type": "subscription",  // or "credits" or "donation"
-  "tier": "collector",     // for subscriptions: "collector" or "tuner"
-  "pack": "medium",        // for credits: "small", "medium", or "large"
-  "amount": 10,            // for donations: 5, 10, 25, or 50
-  "donationAmount": 1500   // for custom donations (cents, min $1.00)
+  "type": "subscription",
+  "tier": "collector"
 }
 ```
-
-**Response:**
-```json
-{
-  "url": "https://checkout.stripe.com/c/pay/cs_test_...",
-  "sessionId": "cs_test_..."
-}
-```
-
-**Actions:**
-1. Gets or creates Stripe customer for user
-2. Creates checkout session based on type
-3. Returns checkout URL for redirect
-
-**See:** [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md)
 
 ---
 
 ### `POST /api/billing/portal`
-**Purpose:** Create Stripe Customer Portal session for billing management
+**Purpose:** Create Stripe Customer Portal session
 
-**Authentication:** Required (must have `stripe_customer_id`)
-
-**Request:** Empty body
-
-**Response:**
-```json
-{
-  "url": "https://billing.stripe.com/p/session/..."
-}
-```
-
-**Actions:**
-- User can cancel/upgrade subscription
-- Update payment method
-- View billing history
+**Auth:** Required
 
 ---
 
 ### `POST /api/webhooks/stripe`
 **Purpose:** Process Stripe webhook events
 
-**Authentication:** Verified via `STRIPE_WEBHOOK_SECRET` signature
+**Auth:** Verified via `STRIPE_WEBHOOK_SECRET`
 
 **Events Handled:**
-- `checkout.session.completed` - New subscription or credit pack purchase
-- `customer.subscription.created` - Subscription started
-- `customer.subscription.updated` - Subscription changed
-- `customer.subscription.deleted` - Subscription canceled
-- `invoice.paid` - Subscription renewed
-- `invoice.payment_failed` - Payment issue
-
-**Table:** `user_profiles` (updates tier, subscription status, AL credits)
+- `checkout.session.completed`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+- `invoice.paid`
+- `invoice.payment_failed`
 
 ---
 
 ### `GET /api/admin/stripe`
 **Purpose:** Get Stripe metrics for admin dashboard
 
-**Authentication:** Admin only
+**Auth:** Admin
+
+---
+
+## Webhooks (4)
+
+### `POST /api/webhooks/stripe`
+See Payments section above.
+
+---
+
+### `GET|POST /api/webhooks/resend`
+**Purpose:** Handle Resend email webhooks
+
+---
+
+### `GET|POST /api/webhooks/vercel`
+**Purpose:** Handle Vercel deployment webhooks
+
+---
+
+### `GET|POST /api/webhooks/speed-insights`
+**Purpose:** Handle Vercel Speed Insights webhooks
+
+---
+
+## Admin Dashboard Routes (28)
+
+All admin routes require admin authentication.
+
+### `GET /api/admin/dashboard`
+**Purpose:** Get comprehensive admin dashboard stats
+
+**Query Params:**
+- `range` - Time range: "day", "week", "month", "all"
 
 **Response:**
 ```json
 {
-  "metrics": {
-    "totalRevenue": 12345,
-    "activeSubscriptions": 10,
-    "mrr": 99,
-    "recentPayments": [...]
-  }
+  "timeRange": "week",
+  "users": {
+    "total": 1500,
+    "newThisPeriod": 45,
+    "growthPercent": 12,
+    "byTier": { "free": 1200, "collector": 250, "tuner": 50 }
+  },
+  "engagement": {
+    "weeklyActiveUsers": 350,
+    "wauPercent": 23,
+    "alConversations": 890
+  },
+  "costs": { ... },
+  "system": {
+    "database": "healthy",
+    "api": "healthy",
+    "cron": "healthy"
+  },
+  "alerts": [...]
 }
 ```
 
-**Used By:** Admin dashboard StripeDashboard component
+---
+
+### `GET /api/admin/users`
+**Purpose:** List users with admin filters
+
+---
+
+### `GET /api/admin/site-analytics`
+**Purpose:** Get site analytics data
+
+---
+
+### `GET /api/admin/marketing-analytics`
+**Purpose:** Get marketing analytics
+
+---
+
+### `GET /api/admin/advanced-analytics`
+**Purpose:** Get advanced analytics data
+
+---
+
+### `GET /api/admin/beta-dashboard`
+**Purpose:** Get beta program dashboard
+
+---
+
+### `GET /api/admin/retention`
+**Purpose:** Get user retention metrics
+
+---
+
+### `GET /api/admin/content-growth`
+**Purpose:** Get content growth metrics
+
+---
+
+### `GET /api/admin/al-usage`
+**Purpose:** Get AL usage metrics
+
+---
+
+### `GET /api/admin/al-trends`
+**Purpose:** Get AL usage trends
+
+---
+
+### `GET|POST /api/admin/al-evaluations`
+**Purpose:** Manage AL evaluation runs
+
+---
+
+### `GET /api/admin/ai-cost-summary`
+**Purpose:** Get AI cost summary
+
+---
+
+### `GET /api/admin/external-costs`
+**Purpose:** Get external service costs
+
+---
+
+### `GET|POST|DELETE|PATCH /api/admin/financials`
+**Purpose:** Manage financial records
+
+---
+
+### `GET|POST /api/admin/insights`
+**Purpose:** Manage community insights
+
+---
+
+### `GET|POST /api/admin/emails`
+**Purpose:** Manage email campaigns
+
+---
+
+### `GET /api/admin/emails/preview`
+**Purpose:** Preview email template
+
+---
+
+### `GET|POST /api/admin/feedback/resolve`
+**Purpose:** Resolve feedback items
+
+---
+
+### `GET|POST /api/admin/feedback/resolve-batch`
+**Purpose:** Batch resolve feedback items
+
+---
+
+### `GET /api/admin/usage`
+**Purpose:** Get usage metrics
+
+---
+
+### `GET /api/admin/alerts`
+**Purpose:** Get system alerts
+
+---
+
+### `GET /api/admin/system-health`
+**Purpose:** Get system health status
+
+---
+
+### `GET /api/admin/vercel-status`
+**Purpose:** Get Vercel deployment status
+
+---
+
+### `GET /api/admin/web-vitals`
+**Purpose:** Get web vitals metrics
+
+---
+
+### `GET /api/admin/export`
+**Purpose:** Export data
+
+---
+
+### `GET|POST /api/admin/auth-cleanup`
+**Purpose:** Clean up orphaned auth records
+
+---
+
+### `POST /api/admin/run-action`
+**Purpose:** Run admin actions
+
+---
+
+## Internal Routes (18)
+
+All internal routes require admin authentication.
+
+### Event Moderation
+
+### `GET|POST /api/internal/events/submissions`
+**Purpose:** List/approve event submissions
+
+---
+
+### `POST /api/internal/events/submissions/[id]/reject`
+**Purpose:** Reject an event submission
+
+---
+
+### Car Pipeline
+
+### `GET|POST /api/internal/car-pipeline`
+**Purpose:** Manage car ingestion pipeline
+
+---
+
+### `GET|DELETE|PATCH /api/internal/car-pipeline/[slug]`
+**Purpose:** Manage specific car in pipeline
+
+---
+
+### `GET|POST /api/internal/add-car-ai`
+**Purpose:** AI-assisted car data generation
+
+---
+
+### `GET /api/internal/car-variants`
+**Purpose:** List car variants
+
+---
+
+### Data Management
+
+### `GET|POST /api/internal/dyno/runs`
+**Purpose:** Manage dyno data
+
+---
+
+### `GET|POST /api/internal/track/lap-times`
+**Purpose:** Manage lap time data
+
+---
+
+### `GET|PATCH /api/internal/parts/fitments`
+**Purpose:** Manage part fitments
+
+---
+
+### `POST /api/internal/knowledge/ingest`
+**Purpose:** Ingest documents into knowledge base
+
+---
+
+### `GET|POST /api/internal/maintenance/variant-overrides`
+**Purpose:** Manage variant-specific maintenance data
+
+---
+
+### Monitoring
+
+### `GET|POST /api/internal/errors`
+**Purpose:** View/log errors
+
+---
+
+### `GET /api/internal/errors/stats`
+**Purpose:** Get error statistics
+
+---
+
+### `GET|POST /api/internal/forum-insights`
+**Purpose:** Manage forum intelligence
+
+---
+
+### `GET /api/internal/qa-report`
+**Purpose:** Generate QA report
+
+---
+
+### `GET /api/internal/test-discord`
+**Purpose:** Test Discord webhook
+
+---
+
+## Cron Routes (19)
+
+All cron routes are triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
+
+### Content Pipeline
+
+### `GET /api/cron/youtube-enrichment`
+**Purpose:** Discover new YouTube videos and process AI summaries
+
+---
+
+### `GET /api/cron/forum-scrape`
+**Purpose:** Forum Intelligence Pipeline
+
+---
+
+### `GET /api/cron/schedule-ingestion`
+**Purpose:** Queue parts ingestion jobs
+
+---
+
+### `GET|POST /api/cron/process-scrape-jobs`
+**Purpose:** Process queued scrape jobs
+
+---
+
+### Article Generation
+
+### `GET /api/cron/article-research`
+**Purpose:** Research topics for articles
+
+---
+
+### `GET /api/cron/article-write`
+**Purpose:** Write article drafts
+
+---
+
+### `GET|POST /api/cron/article-qa`
+**Purpose:** QA article content
+
+---
+
+### `GET /api/cron/article-images`
+**Purpose:** Generate article images
+
+---
+
+### `GET /api/cron/article-publish`
+**Purpose:** Publish approved articles
+
+---
+
+### Data Refresh
+
+### `GET /api/cron/refresh-recalls`
+**Purpose:** Refresh NHTSA recall data
+
+---
+
+### `GET /api/cron/refresh-complaints`
+**Purpose:** Refresh NHTSA complaint data
+
+---
+
+### `GET /api/cron/refresh-events`
+**Purpose:** Fetch events from external sources
+
+---
+
+### `GET /api/cron/weekly-car-expansion`
+**Purpose:** Expand car database
+
+---
+
+### Analytics & Engagement
+
+### `GET /api/cron/daily-metrics`
+**Purpose:** Calculate daily metrics
+
+---
+
+### `GET /api/cron/calculate-engagement`
+**Purpose:** Calculate engagement scores
+
+---
+
+### `GET /api/cron/daily-digest`
+**Purpose:** Generate daily digest
+
+---
+
+### User Engagement
+
+### `GET /api/cron/retention-alerts`
+**Purpose:** Send retention alerts
+
+---
+
+### `GET /api/cron/schedule-inactivity-emails`
+**Purpose:** Schedule inactivity emails
+
+---
+
+### `GET /api/cron/process-email-queue`
+**Purpose:** Process email queue
+
+---
+
+### System Maintenance
+
+### `GET /api/cron/al-evaluation`
+**Purpose:** Run AL evaluation suite
+
+---
+
+### `GET /api/cron/al-optimization`
+**Purpose:** Optimize AL performance
+
+---
+
+### `GET|POST /api/cron/flush-error-aggregates`
+**Purpose:** Flush error aggregates
 
 ---
 
@@ -1462,115 +1330,29 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 ### `POST /api/contact`
 **Purpose:** Submit contact form
 
-**Request:**
-```json
-{
-  "email": "user@example.com",
-  "name": "John",
-  "interest": "services",
-  "message": "..."
-}
-```
-
 **Table:** `leads`
 
 ---
 
-### `POST /api/feedback`
-**Purpose:** Submit user feedback (enhanced for beta)
-
-**Request:**
-```json
-{
-  "message": "Description of feedback",
-  "category": "bug|feature|data|general|praise",
-  "severity": "blocking|major|minor",
-  "rating": 4,
-  "email": "optional@email.com",
-  "pageUrl": "/browse-cars/718-cayman-gt4",
-  "featureContext": "browse-cars",
-  "carContext": "718-cayman-gt4",
-  "browserInfo": { "browser": "Chrome", "os": "macOS" }
-}
-```
-
-**Auto-Captured (server-side):**
-- `userTier` from authenticated session
-- `carContext` extracted from URL if not provided
-
-**Validation:**
-- `message` required
-- `category` must be valid enum
-- `severity` required if `category='bug'`
-- `rating` must be 1-5 if provided
-
-**Response:**
-```json
-{
-  "success": true,
-  "feedbackId": "uuid",
-  "message": "Thank you for your feedback!"
-}
-```
+### `GET|POST /api/feedback`
+**Purpose:** Submit/get user feedback
 
 **Table:** `user_feedback`
 
 ---
 
-### `GET /api/feedback`
-**Purpose:** Get feedback with filters (admin)
-
-**Query Params:**
-- `category` - Filter by category
-- `severity` - Filter by severity
-- `status` - Filter by status
-- `unresolved` - If 'true', only show unresolved
-- `limit` - Max results (default 50)
-
-**Response:**
-```json
-{
-  "counts": [...],
-  "categoryStats": {...},
-  "recent": [...]
-}
-```
-
----
-
-### `PATCH /api/feedback`
-**Purpose:** Update feedback status (admin)
-
-**Auth:** Required (admin tier)
-
-**Request:**
-```json
-{
-  "feedbackId": "uuid",
-  "status": "resolved",
-  "resolved": true,
-  "internalNotes": "Fixed in v1.2"
-}
-```
+### `GET|POST /api/feedback/screenshot`
+**Purpose:** Upload feedback screenshots
 
 ---
 
 ### `GET /api/health`
-**Purpose:** Health check endpoint for monitoring and uptime checks
+**Purpose:** Health check endpoint
 
 **Query Params:**
-- `deep` (boolean): If "true", includes database connectivity check
+- `deep` - Include database connectivity check
 
 **Response:**
-```json
-{
-  "status": "ok",
-  "timestamp": "2024-12-18T00:00:00.000Z",
-  "version": "1.0.0"
-}
-```
-
-**Deep Health Check Response (with `?deep=true`):**
 ```json
 {
   "status": "ok",
@@ -1580,57 +1362,75 @@ Triggered by Vercel cron jobs. Schedules defined in `vercel.json`.
 }
 ```
 
-**Degraded Response (when database unavailable):**
-```json
-{
-  "status": "degraded",
-  "timestamp": "2024-12-18T00:00:00.000Z",
-  "database": "disconnected",
-  "version": "1.0.0"
-}
-```
+---
 
-**HTTP Status:** 200 (ok) or 503 (degraded)
+### `GET /api/stats`
+**Purpose:** Get platform statistics
 
 ---
 
-### `GET /auth/callback`
-**Purpose:** Supabase auth callback handler
+### `GET /api/tracks`
+**Purpose:** List race tracks
 
 ---
 
-## External API Dependencies
+### `GET|POST /api/dyno-results`
+**Purpose:** Manage dyno results
 
-AutoRev routes integrate with external APIs for data enrichment. See [GOOGLE_CLOUD_APIS.md](GOOGLE_CLOUD_APIS.md) for complete documentation.
+---
 
-### Google Cloud APIs
+### `PUT|DELETE /api/dyno-results`
+**Purpose:** Update/delete dyno results
 
-| External API | Internal Routes Using It | Status |
-|--------------|-------------------------|--------|
-| YouTube Data API v3 | `/api/cron/youtube-enrichment` | ✅ Integrated |
-| Places API | Future: track venue enrichment | 🔲 Enabled |
-| Maps JavaScript API | Future: client-side maps | 🔲 Enabled |
-| Geocoding API | Future: `/api/events` radius search | 🔲 Enabled |
-| Custom Search API | Future: AL `search_forums` tool | 🔲 Enabled |
-| Cloud Vision API | Future: `/api/vin/decode` image upload | 🔲 Enabled |
-| Cloud Natural Language | Future: YouTube enrichment | 🔲 Enabled |
-| Cloud Speech-to-Text | Future: transcript generation | 🔲 Enabled |
-| Sheets API | Future: admin import/export | 🔲 Enabled |
+---
 
-### Government APIs
+### `GET|POST|DELETE /api/user/location`
+**Purpose:** Manage user location preferences
 
-| External API | Internal Routes Using It |
-|--------------|-------------------------|
-| NHTSA Recalls API | `/api/cron/refresh-recalls`, `/api/cars/[slug]/safety` |
-| NHTSA Ratings API | `/api/cars/[slug]/safety-ratings` |
-| EPA Fuel Economy API | `/api/cars/[slug]/fuel-economy` |
+---
 
-### Third-Party Services
+### `GET /api/locations/search`
+**Purpose:** Search locations (Google Places proxy)
 
-| Service | Internal Routes Using It |
-|---------|-------------------------|
-| Anthropic Claude | `/api/ai-mechanic` |
-| OpenAI Embeddings | `/api/internal/knowledge/ingest` |
+---
+
+### `POST|DELETE|PATCH /api/uploads`
+**Purpose:** Manage file uploads
+
+---
+
+### `POST /api/uploads/client-token`
+**Purpose:** Get client upload token
+
+---
+
+### `POST /api/uploads/save-metadata`
+**Purpose:** Save upload metadata
+
+---
+
+### `GET /api/builds/[buildId]/images`
+**Purpose:** Get build images
+
+---
+
+### `GET|POST|PUT /api/vehicles/[vehicleId]/build`
+**Purpose:** Manage vehicle builds
+
+---
+
+### `GET|POST /api/v2/performance`
+**Purpose:** Performance calculator v2
+
+---
+
+### `GET|POST|PATCH /api/referrals`
+**Purpose:** Manage referral program
+
+---
+
+### `GET|POST /api/email/unsubscribe`
+**Purpose:** Email unsubscribe handling
 
 ---
 
@@ -1651,9 +1451,37 @@ Common status codes:
 - `403` - Forbidden (tier restriction)
 - `404` - Not found
 - `500` - Server error
+- `503` - Service unavailable
+
+---
+
+## External API Dependencies
+
+### Google Cloud APIs
+
+| External API | Internal Routes Using It |
+|--------------|-------------------------|
+| YouTube Data API v3 | `/api/cron/youtube-enrichment` |
+| Places API | `/api/locations/search` |
+| Geocoding API | `/api/events` radius search |
+
+### Government APIs
+
+| External API | Internal Routes Using It |
+|--------------|-------------------------|
+| NHTSA Recalls API | `/api/cron/refresh-recalls`, `/api/cars/[slug]/safety` |
+| NHTSA Ratings API | `/api/cars/[slug]/safety-ratings` |
+| EPA Fuel Economy API | `/api/cars/[slug]/fuel-economy` |
+
+### Third-Party Services
+
+| Service | Internal Routes Using It |
+|---------|-------------------------|
+| Anthropic Claude | `/api/ai-mechanic` |
+| OpenAI Embeddings | `/api/internal/knowledge/ingest` |
+| Stripe | `/api/checkout`, `/api/billing/portal`, `/api/webhooks/stripe` |
+| Resend | `/api/cron/process-email-queue` |
 
 ---
 
 *See [DATABASE.md](DATABASE.md) for table schemas.*
-
-

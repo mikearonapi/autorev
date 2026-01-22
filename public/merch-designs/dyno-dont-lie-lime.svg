@@ -1,0 +1,15 @@
+<svg width="850" height="200" viewBox="0 0 850 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- DYNO DON'T LIE - lime -->
+  <text 
+    x="425" 
+    y="100" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', sans-serif"
+    font-weight="700"
+    font-size="64px"
+    letter-spacing="4"
+  >
+    <tspan fill="#d4ff00">DYNO </tspan><tspan fill="#d4ff00">DON'T </tspan><tspan fill="#d4ff00">LIE</tspan>
+  </text>
+</svg>

@@ -13,8 +13,9 @@
  * - Gray vs Orange for 2-category comparison ✓
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styles from './ALUserUsage.module.css';
+import { useAdminALUsage } from '@/hooks/useAdminData';
 
 // SVG Icons
 const ChevronDownIcon = ({ size = 16 }) => (
@@ -233,39 +234,16 @@ function SummaryStats({ totals, topUser }) {
 
 // Main Component
 export function ALUserUsage({ token, range = 'month', loading: externalLoading }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(false);
   
-  useEffect(() => {
-    async function fetchData() {
-      if (!token) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`/api/admin/al-usage?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error('[ALUserUsage] Error:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchData();
-  }, [token, range]);
+  // Use React Query hook for AL usage
+  const { 
+    data, 
+    isLoading: loading, 
+    error: queryError,
+  } = useAdminALUsage(range);
+  
+  const error = queryError?.message || null;
   
   // Determine which users to show
   const displayUsers = useMemo(() => {

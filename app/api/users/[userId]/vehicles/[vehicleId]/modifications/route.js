@@ -10,8 +10,10 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { awardPoints } from '@/lib/pointsService';
 
 /**
  * POST /api/users/[userId]/vehicles/[vehicleId]/modifications
@@ -120,6 +122,17 @@ async function handlePost(request, { params }) {
         { error: 'Vehicle not found' },
         { status: 404 }
       );
+    }
+
+    // Award points for adding modifications (only for new mods, not resets)
+    if (upgrades.length > 0) {
+      // Award points per modification added (non-blocking)
+      for (let i = 0; i < upgrades.length; i++) {
+        awardPoints(userId, 'garage_add_modification', { 
+          vehicleId, 
+          modificationKey: upgrades[i] 
+        }).catch(() => {});
+      }
     }
 
     return NextResponse.json({

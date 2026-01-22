@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 // Cache for 30 seconds, revalidate in background
 // Shorter cache to pick up new cars faster
@@ -15,10 +16,7 @@ export const revalidate = 30;
 
 async function handleGet() {
   if (!isSupabaseConfigured || !supabase) {
-    return NextResponse.json({ 
-      error: 'Database not configured',
-      cars: [] 
-    }, { status: 503 });
+    return errors.serviceUnavailable('Database not configured');
   }
 
   try {
@@ -70,10 +68,7 @@ async function handleGet() {
 
     if (error) {
       console.error('[/api/cars] Database error:', error);
-      return NextResponse.json({ 
-        error: 'Failed to fetch cars',
-        cars: [] 
-      }, { status: 500 });
+      return errors.database('Failed to fetch cars');
     }
 
     // Transform snake_case to camelCase for frontend compatibility
@@ -123,18 +118,20 @@ async function handleGet() {
       honestWeaknesses: car.honest_weaknesses || [],
     }));
 
+    // Return with cache headers for CDN optimization
     return NextResponse.json({
       cars: transformedCars,
       count: transformedCars.length,
       source: 'supabase'
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      }
     });
 
   } catch (err) {
     console.error('[/api/cars] Error:', err);
-    return NextResponse.json({ 
-      error: 'Internal server error',
-      cars: [] 
-    }, { status: 500 });
+    return errors.internal('Internal server error');
   }
 }
 

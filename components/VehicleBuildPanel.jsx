@@ -9,9 +9,10 @@
  * - Displaying the current build status
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import BuildEditor from './BuildEditor';
 import styles from './VehicleBuildPanel.module.css';
+import { useVehicleBuild, useUpdateVehicleBuild } from '@/hooks/useUserData';
 
 export default function VehicleBuildPanel({
   vehicleId,
@@ -23,34 +24,16 @@ export default function VehicleBuildPanel({
   onUpdateBuild,
   onEstimateChange,
 }) {
-  const [turboOptions, setTurboOptions] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Fetch turbo options on mount
-  useEffect(() => {
-    async function fetchTurboOptions() {
-      try {
-        const response = await fetch(`/api/vehicles/${vehicleId}/build`);
-        if (response.ok) {
-          const data = await response.json();
-          setTurboOptions(data.turboOptions || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch turbo options:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (vehicleId) {
-      fetchTurboOptions();
-    } else {
-      setLoading(false);
-    }
-  }, [vehicleId]);
+  // Fetch turbo options via React Query
+  const { data: buildData, isLoading: loading } = useVehicleBuild(vehicleId);
+  const turboOptions = buildData?.turboOptions || [];
+  
+  // Mutation for saving build
+  const updateBuildMutation = useUpdateVehicleBuild();
+  const saving = updateBuildMutation.isPending;
 
   // Handle save
   const handleSave = useCallback(async (buildData) => {
@@ -59,22 +42,11 @@ export default function VehicleBuildPanel({
       return;
     }
 
-    setSaving(true);
     setError(null);
     setSaveSuccess(false);
 
     try {
-      const response = await fetch(`/api/vehicles/${vehicleId}/build`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save build');
-      }
-
-      const result = await response.json();
+      const result = await updateBuildMutation.mutateAsync({ vehicleId, buildData });
       
       // Notify parent of the update
       if (onUpdateBuild) {
@@ -85,10 +57,8 @@ export default function VehicleBuildPanel({
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setSaving(false);
     }
-  }, [vehicleId, onUpdateBuild]);
+  }, [vehicleId, onUpdateBuild, updateBuildMutation]);
 
   if (loading) {
     return (

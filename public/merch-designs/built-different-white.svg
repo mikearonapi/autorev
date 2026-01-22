@@ -1,0 +1,15 @@
+<svg width="850" height="200" viewBox="0 0 850 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- BUILT DIFFERENT - white -->
+  <text 
+    x="425" 
+    y="100" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', sans-serif"
+    font-weight="700"
+    font-size="68px"
+    letter-spacing="4"
+  >
+    <tspan fill="#ffffff">BUILT </tspan><tspan fill="#ffffff">DIFFERENT</tspan>
+  </text>
+</svg>

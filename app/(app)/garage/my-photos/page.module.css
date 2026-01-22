@@ -117,6 +117,23 @@
 /* Upload Section - Compact */
 .uploadSection {
   margin-bottom: 12px;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+}
+
+/* Highlight animation when navigated to via action=upload */
+.uploadSection.highlight {
+  box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 20px rgba(212, 255, 0, 0.3);
+  animation: uploadHighlight 2s ease-out;
+}
+
+@keyframes uploadHighlight {
+  0%, 100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 30px rgba(212, 255, 0, 0.4);
+  }
 }
 
 /* Section titles use TEAL per brand guidelines - LARGER than body content */

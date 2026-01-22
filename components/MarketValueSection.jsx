@@ -5,12 +5,15 @@
  * 
  * Displays market pricing data from BaT, Hagerty, and Cars.com
  * Enthusiast tier feature - shows what your car is worth.
+ * 
+ * Uses React Query for cached data fetching.
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PremiumGate, { usePremiumAccess } from './PremiumGate';
 import styles from './MarketValueSection.module.css';
 import { Icons } from '@/components/ui/Icons';
+import { useCarMarketValue, useCarPriceByYear } from '@/hooks/useCarData';
 
 /**
  * Format price as currency
@@ -24,46 +27,31 @@ function formatPrice(price) {
  * Market Value Section Component
  */
 export default function MarketValueSection({ carSlug, carName }) {
-  const [marketData, setMarketData] = useState(null);
-  const [priceHistory, setPriceHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
   const { hasAccess } = usePremiumAccess('marketValue');
   
-  useEffect(() => {
-    const fetchMarketData = async () => {
-      if (!carSlug) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Fetch both market value and price history in parallel
-        const [marketRes, historyRes] = await Promise.all([
-          fetch(`/api/cars/${carSlug}/market-value`),
-          fetch(`/api/cars/${carSlug}/price-by-year`),
-        ]);
-        
-        if (marketRes.ok) {
-          const marketJson = await marketRes.json();
-          setMarketData(marketJson.pricing || null);
-        }
-        
-        if (historyRes.ok) {
-          const historyJson = await historyRes.json();
-          setPriceHistory(historyJson.priceHistory || []);
-        }
-      } catch (err) {
-        console.error('[MarketValueSection] Error:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchMarketData();
-  }, [carSlug]);
+  // Use React Query hooks for data fetching with caching
+  const { 
+    data: marketData, 
+    isLoading: marketLoading, 
+    error: marketError,
+    refetch: refetchMarket,
+  } = useCarMarketValue(carSlug, { enabled: !!carSlug });
+  
+  const { 
+    data: priceHistoryData, 
+    isLoading: historyLoading,
+    refetch: refetchHistory,
+  } = useCarPriceByYear(carSlug, { enabled: !!carSlug });
+  
+  const priceHistory = priceHistoryData?.priceHistory || [];
+  const loading = marketLoading || historyLoading;
+  const error = marketError?.message || null;
+  
+  // Refetch function for retry
+  const refetchMarketData = () => {
+    refetchMarket();
+    refetchHistory();
+  };
   
   if (loading) {
     return (
@@ -79,28 +67,6 @@ export default function MarketValueSection({ carSlug, carName }) {
       </div>
     );
   }
-  
-  // Refetch function for retry
-  const refetchMarketData = () => {
-    setError(null);
-    setLoading(true);
-    Promise.all([
-      fetch(`/api/cars/${carSlug}/market-value`),
-      fetch(`/api/cars/${carSlug}/price-by-year`),
-    ])
-      .then(async ([marketRes, historyRes]) => {
-        if (marketRes.ok) {
-          const marketJson = await marketRes.json();
-          setMarketData(marketJson.pricing || null);
-        }
-        if (historyRes.ok) {
-          const historyJson = await historyRes.json();
-          setPriceHistory(historyJson.priceHistory || []);
-        }
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  };
 
   if (error) {
     return (

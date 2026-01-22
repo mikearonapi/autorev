@@ -11,26 +11,18 @@
  * and metadata is stored in al_attachments table.
  */
 
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
 
 /**
- * Create Supabase client for route handlers
+ * Create Supabase client for route handlers (supports both cookie and Bearer token)
  */
-async function createSupabaseClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function createSupabaseClient(request) {
+  const bearerToken = getBearerToken(request);
+  return bearerToken 
+    ? { supabase: createAuthenticatedClient(bearerToken), bearerToken }
+    : { supabase: await createServerSupabaseClient(), bearerToken: null };
 }
 
 // File constraints
@@ -53,16 +45,19 @@ const ALLOWED_TYPES = {
  */
 export async function POST(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
     
     // Parse multipart form data
@@ -73,10 +68,7 @@ export async function POST(request) {
     const context = formData.get('context'); // Optional context about what the file is
     
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      return errors.missingField('file');
     }
     
     // Validate file type

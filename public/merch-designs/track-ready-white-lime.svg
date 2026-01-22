@@ -1,0 +1,15 @@
+<svg width="750" height="200" viewBox="0 0 750 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- TRACK READY - white-lime -->
+  <text 
+    x="375" 
+    y="100" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', sans-serif"
+    font-weight="700"
+    font-size="72px"
+    letter-spacing="4"
+  >
+    <tspan fill="#ffffff">TRACK </tspan><tspan fill="#d4ff00">READY</tspan>
+  </text>
+</svg>

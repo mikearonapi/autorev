@@ -1,0 +1,40 @@
+# VERIFICATION GATE (Priority: HIGHEST)
+
+> **STOP. Before marking ANY todo complete, you MUST complete this gate.**
+
+## Before Setting `status: "completed"` on ANY Todo:
+
+```
+□ I have DEFINED success criteria (not just "do X")
+□ I have RUN a verification query/check (not assumed)
+□ I can CITE the evidence (line numbers, row counts, query results)
+□ If I said "all X", I have LISTED every X explicitly
+```
+
+**If ANY box is unchecked → DO NOT mark complete.**
+
+## Verification Evidence Format
+
+When marking a todo complete, include in your response:
+
+```
+VERIFIED: [todo description]
+Evidence:
+- [Specific proof: query result, line number, file check]
+```
+
+## Examples
+
+**❌ WRONG:**
+> Marking task complete.
+
+**✅ RIGHT:**
+> VERIFIED: Add pipelineLogger to expandFitments.mjs
+> Evidence:
+> - Import: line 37 `import { PipelineRun } from '../lib/pipelineLogger.js'`
+> - Usage: 7 occurrences of `pipelineRun` in file
+> - Grep output confirms both import and usage present
+
+---
+
+**This gate is NON-NEGOTIABLE. Speed is not an excuse to skip verification.**

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPublicClient, isConfigured } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,7 @@ function parseBool(v) {
  */
 async function handleGet(request) {
   const client = getPublicClient();
-  if (!client) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+  if (!client) return errors.serviceUnavailable('Database not configured');
 
     const { searchParams } = new URL(request.url);
     const q = (searchParams.get('q') || '').trim();
@@ -37,7 +38,7 @@ async function handleGet(request) {
     const limit = clampInt(searchParams.get('limit'), 1, 30, 12);
 
     if (!q && !carSlug && !carVariantKey) {
-      return NextResponse.json({ error: 'Provide q or carSlug/carVariantKey' }, { status: 400 });
+      return errors.badRequest('Provide q or carSlug/carVariantKey');
     }
 
     // Resolve car_variant_id if needed.

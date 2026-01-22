@@ -42,6 +42,7 @@ import PlatformInsights from '@/components/PlatformInsights';
 import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
 import { useTuningProfile } from '@/hooks/useTuningProfile';
 import { useCarImages } from '@/hooks/useCarImages';
+import { useUserTrackTimes, useAddTrackTime, useDynoResults } from '@/hooks/useUserData';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
 import styles from './page.module.css';
@@ -107,15 +108,25 @@ const DATA_CATEGORIES = [
 function DataPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, profile } = useAuth();
   const { vehicles, isLoading: vehiclesLoading, refreshVehicles } = useOwnedVehicles();
+  
+  // Get user's first name for personalized title
+  const firstName = profile?.display_name?.split(' ')[0] || 
+                    user?.user_metadata?.full_name?.split(' ')[0] ||
+                    user?.email?.split('@')[0] || 
+                    'My';
   const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
   const { data: carsData } = useCarsList();
   const allCars = useMemo(() => carsData?.cars || [], [carsData]);
   const authModal = useAuthModal();
   
   
-  const [activeFilter, setActiveFilter] = useState('power');
+  // Get URL params for action handling
+  const filterFromUrl = searchParams.get('filter');
+  const actionFromUrl = searchParams.get('action');
+  
+  const [activeFilter, setActiveFilter] = useState(filterFromUrl || 'power');
   const [showVehicleDropdown, setShowVehicleDropdown] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
   const dropdownRef = useRef(null);
@@ -123,15 +134,14 @@ function DataPageContent() {
   
   // Dyno logging state
   const [showDynoModal, setShowDynoModal] = useState(false);
-  const [dynoResults, setDynoResults] = useState([]);
-  const [dynoResultsLoading, setDynoResultsLoading] = useState(false);
   const [editingDynoResult, setEditingDynoResult] = useState(null);
   
   // Track time logging state
   const [showTrackTimeModal, setShowTrackTimeModal] = useState(false);
-  const [trackTimes, setTrackTimes] = useState([]);
-  const [trackTimesLoading, setTrackTimesLoading] = useState(false);
   const [editingTrackTime, setEditingTrackTime] = useState(null);
+  
+  // Track if we've processed the action param (to avoid re-opening modal on re-renders)
+  const [actionProcessed, setActionProcessed] = useState(false);
   
   // Get vehicle ID from URL params or localStorage for persistence
   const vehicleIdFromUrl = searchParams.get('vehicle');
@@ -183,6 +193,13 @@ function DataPageContent() {
     // Default to first vehicle
     return userVehicles[0]?.id || null;
   }, [userVehicles, vehicleIdFromUrl]);
+  
+  // Dyno results via React Query - MUST be after selectedVehicleId is defined
+  const { 
+    data: dynoResults = [], 
+    isLoading: dynoResultsLoading,
+    refetch: refetchDynoResults,
+  } = useDynoResults(selectedVehicleId, { enabled: isAuthenticated && !!selectedVehicleId });
   
   // Handler for selecting a new vehicle - updates URL and localStorage
   const handleSelectVehicle = useCallback((vehicleId) => {
@@ -243,6 +260,30 @@ function DataPageContent() {
       setSelectedCar(null);
     }
   }, [selectedVehicle]);
+  
+  // Handle action=log param to auto-open track time modal
+  // This runs when the page loads with ?action=log&filter=track
+  useEffect(() => {
+    if (actionFromUrl === 'log' && !actionProcessed && selectedVehicle && isAuthenticated) {
+      // Set filter to track if specified
+      if (filterFromUrl === 'track') {
+        setActiveFilter('track');
+      }
+      
+      // Slight delay to ensure everything is mounted
+      const timer = setTimeout(() => {
+        setShowTrackTimeModal(true);
+        setActionProcessed(true);
+        
+        // Clear the action param from URL to prevent re-opening on navigation
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('action');
+        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [actionFromUrl, filterFromUrl, actionProcessed, selectedVehicle, isAuthenticated, router]);
   
   // Fetch tuning profile for the selected car (includes power_limits, stage_progressions, platform_insights)
   const { profile: tuningProfile, loading: tuningProfileLoading } = useTuningProfile(selectedCar);
@@ -372,34 +413,7 @@ function DataPageContent() {
     };
   }, [installedUpgrades]);
   
-  // Fetch dyno results when vehicle changes
-  const fetchDynoResults = useCallback(async (vehicleId) => {
-    if (!vehicleId || !isAuthenticated) return;
-    
-    setDynoResultsLoading(true);
-    try {
-      const response = await fetch(`/api/dyno-results?vehicleId=${vehicleId}&limit=10`);
-      if (response.ok) {
-        const data = await response.json();
-        setDynoResults(data.results || []);
-      } else {
-        console.error('[DataPage] Failed to fetch dyno results');
-        setDynoResults([]);
-      }
-    } catch (err) {
-      console.error('[DataPage] Error fetching dyno results:', err);
-      setDynoResults([]);
-    } finally {
-      setDynoResultsLoading(false);
-    }
-  }, [isAuthenticated]);
-  
-  // Fetch dyno results when selected vehicle changes
-  useEffect(() => {
-    if (selectedVehicleId && isAuthenticated) {
-      fetchDynoResults(selectedVehicleId);
-    }
-  }, [selectedVehicleId, isAuthenticated, fetchDynoResults]);
+  // Note: Dyno results are now fetched via useDynoResults hook above
   
   // Save dyno result handler
   const handleSaveDynoResult = useCallback(async (dynoData) => {
@@ -422,52 +436,31 @@ function DataPageContent() {
       }
       
       // Refresh dyno results
-      await fetchDynoResults(selectedVehicleId);
+      await refetchDynoResults();
       setShowDynoModal(false);
       setEditingDynoResult(null);
     } catch (err) {
       console.error('[DataPage] Error saving dyno result:', err);
       throw err; // Re-throw so modal can show error
     }
-  }, [selectedVehicleId, editingDynoResult, fetchDynoResults]);
+  }, [selectedVehicleId, editingDynoResult, refetchDynoResults]);
   
   // Get the latest dyno result for comparison
   const latestDynoResult = useMemo(() => {
     return dynoResults.length > 0 ? dynoResults[0] : null;
   }, [dynoResults]);
   
-  // Fetch track times when vehicle changes
-  const fetchTrackTimes = useCallback(async (userId) => {
-    if (!userId || !isAuthenticated) return;
-    
-    setTrackTimesLoading(true);
-    try {
-      const carSlug = selectedVehicle?.matchedCarSlug;
-      const url = carSlug 
-        ? `/api/users/${userId}/track-times?carSlug=${carSlug}&limit=10`
-        : `/api/users/${userId}/track-times?limit=10`;
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setTrackTimes(data.times || []);
-      } else {
-        console.error('[DataPage] Failed to fetch track times');
-        setTrackTimes([]);
-      }
-    } catch (err) {
-      console.error('[DataPage] Error fetching track times:', err);
-      setTrackTimes([]);
-    } finally {
-      setTrackTimesLoading(false);
-    }
-  }, [isAuthenticated, selectedVehicle?.matchedCarSlug]);
+  // React Query hooks for track times
+  const carSlugForTracks = selectedVehicle?.matchedCarSlug;
+  const { 
+    data: trackTimes = [], 
+    isLoading: trackTimesLoading,
+  } = useUserTrackTimes(user?.id, carSlugForTracks, { 
+    enabled: isAuthenticated && !!user?.id,
+    limit: 10,
+  });
   
-  // Fetch track times when vehicle or user changes
-  useEffect(() => {
-    if (user?.id && isAuthenticated) {
-      fetchTrackTimes(user.id);
-    }
-  }, [user?.id, isAuthenticated, fetchTrackTimes]);
+  const addTrackTime = useAddTrackTime();
   
   // Save track time handler
   const handleSaveTrackTime = useCallback(async (trackData) => {
@@ -482,25 +475,14 @@ function DataPageContent() {
         modsSummary: vehicleBuildData?.selectedUpgrades || {},
       };
       
-      const response = await fetch(`/api/users/${user.id}/track-times`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save track time');
-      }
-      
-      // Refresh track times
-      await fetchTrackTimes(user.id);
+      await addTrackTime.mutateAsync({ userId: user.id, trackTime: payload });
       setShowTrackTimeModal(false);
       setEditingTrackTime(null);
     } catch (err) {
       console.error('[DataPage] Error saving track time:', err);
       throw err; // Re-throw so modal can show error
     }
-  }, [user?.id, selectedVehicle, estimatedHp, vehicleBuildData, fetchTrackTimes]);
+  }, [user?.id, selectedVehicle, estimatedHp, vehicleBuildData, addTrackTime]);
   
   // Calculate predicted WHP (with ~15% drivetrain loss)
   const predictedWhp = useMemo(() => {
@@ -566,7 +548,7 @@ function DataPageContent() {
     return (
       <div className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.title}>My Data</h1>
+          <h1 className={styles.title}>{firstName}&apos;s Data</h1>
           <p className={styles.subtitle}>Performance insights for your vehicles</p>
         </header>
         
@@ -593,7 +575,7 @@ function DataPageContent() {
       {/* Header with Vehicle Selector */}
       <header className={styles.header}>
         <div className={styles.headerRow}>
-          <h1 className={styles.title}>My Data</h1>
+          <h1 className={styles.title}>{firstName}&apos;s Data</h1>
           
           {/* Vehicle Selector - inline with title */}
           <div className={styles.vehicleSelectorWrapper} ref={dropdownRef}>

@@ -19,6 +19,15 @@ import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
  */
 
 // Refined icons - consistent 1.5px stroke, cleaner paths
+const DashboardIcon = ({ active }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+    strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <circle cx="12" cy="12" r="5"/>
+    <circle cx="12" cy="12" r="1"/>
+  </svg>
+);
+
 const GarageIcon = ({ active }) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
     strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -72,6 +81,13 @@ const ProfileIcon = ({ active }) => (
 
 const tabs = [
   { 
+    id: 'dashboard', 
+    label: 'Dashboard', 
+    href: '/dashboard', 
+    Icon: DashboardIcon,
+    matchPaths: ['/dashboard']
+  },
+  { 
     id: 'garage', 
     label: 'Garage', 
     href: '/garage', 
@@ -99,13 +115,6 @@ const tabs = [
     Icon: ALIcon,
     isAL: true,
     matchPaths: ['/al']
-  },
-  { 
-    id: 'profile', 
-    label: 'Profile', 
-    href: '/profile', 
-    Icon: ProfileIcon,
-    matchPaths: ['/profile', '/settings']
   },
 ];
 

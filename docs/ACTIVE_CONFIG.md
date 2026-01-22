@@ -1,6 +1,6 @@
 # AutoRev Active Configuration
 
-**Last Generated:** December 15, 2024
+**Last Generated:** January 21, 2026
 
 ## Purpose
 Documents the actual configuration state of the AutoRev application, including build tools, environment variables, and feature flags.
@@ -38,46 +38,22 @@ Documents the actual configuration state of the AutoRev application, including b
 
 **File:** `next.config.js`
 
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'abqnp7qrs0nhv5pw.public.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https', 
-        hostname: '**.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.googleusercontent.com',
-      },
-    ],
-  },
-
-  async redirects() {
-    return [];
-  },
-};
-```
-
 **Key Settings:**
 - **React Strict Mode:** Enabled (development checks)
-- **Image Optimization:** Configured for Vercel Blob Storage, Supabase, Google
-- **Redirects:** Empty array (placeholder for future redirects)
+- **Experimental Features:**
+  - `optimizePackageImports`: Smaller bundles for Supabase, Recharts, date-fns, OpenAI, Anthropic
+  - `optimizeCss`: Reduced render-blocking CSS
+- **Compiler Optimizations:**
+  - `removeConsole`: Removes console.log in production (keeps error/warn)
+- **Webpack Chunking:** Custom cache groups for Supabase, React Query, and utility libraries
+- **Image Optimization:**
+  - Formats: AVIF, WebP
+  - Remote patterns: Vercel Blob, Supabase, Google, Unsplash
+- **Redirects:** Active redirects for route consolidation:
+  - `/car-selector` → `/garage`
+  - `/mod-planner` → `/garage`
+  - `/join` → `/`
+  - Various `/features/*` routes deprecated
 
 ## Environment Variables
 
@@ -93,6 +69,13 @@ SUPABASE_SERVICE_ROLE_KEY        # Server-only - Full access key
 **Cron/Automation:**
 ```
 CRON_SECRET                      # Server-only - Cron job authentication
+```
+
+**External Scraping Services:**
+```
+APIFY_API_TOKEN                  # Server-only - Apify scraper fallback for BaT/Reddit
+                                 # Get from: https://console.apify.com/account/integrations
+                                 # Used by: lib/apifyClient.js, lib/redditInsightService.js
 ```
 
 **Alternative Supabase Config (for scripts):**

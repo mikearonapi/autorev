@@ -296,7 +296,7 @@ export default function NextUpgradeRecommendation({
       .slice(0, 3);
     
     return available;
-  }, [installedUpgrades, aspiration, currentHp]);
+  }, [installedUpgrades, aspiration]);
 
   // Build link for tuning shop with this upgrade
   const getBuildLink = (upgradeId) => {

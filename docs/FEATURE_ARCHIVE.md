@@ -213,7 +213,7 @@ These features are the focus of the pivot.
 
 ## Navigation Changes
 
-### Previous Navigation
+### Previous Navigation (Pre-Pivot)
 ```
 Home | Articles | Vehicles > | My Garage | Tuning Shop | Community > | AutoRev AI
                     |                                        |
@@ -223,23 +223,37 @@ Home | Articles | Vehicles > | My Garage | Tuning Shop | Community > | AutoRev A
                                                             +-- Submit Event
 ```
 
-### New Build-Focused Navigation
+### Current Navigation (January 2026 - 5-Tab Structure)
+
+**Bottom Tab Bar (Mobile-First):**
 ```
-Builds | My Projects | Parts | Community | Encyclopedia | AL Assistant
+┌─────────────────────────────────────────────────────────┐
+│  Garage   │   Data    │ Community │    AL     │ Profile │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Header Navigation (Desktop):**
+```
+My Garage | My Data | Community | AL
 ```
 
 ### Route Mapping
-| Old Route | New Route | Action |
-|-----------|-----------|--------|
-| `/` | `/` | Update messaging |
-| `/browse-cars` | `/browse-cars` | Accessible, not in nav |
-| `/car-selector` | `/car-selector` | Accessible, not in nav |
-| `/compare` | `/compare` | Accessible, not in nav |
-| `/garage` | `/my-builds` | Renamed, refocused |
-| `/tuning-shop` | `/tuning-shop` | Promoted as "Builds" |
-| `/community/builds` | `/community/builds` | Promoted |
-| `/encyclopedia` | `/encyclopedia` | Promoted |
-| `/al` | `/al` | Renamed to "AL Assistant" |
+| Old Route | Current Status | Notes |
+|-----------|----------------|-------|
+| `/` | ✅ Active | Homepage with login CTA |
+| `/browse-cars` | ⚠️ Archived | Accessible, NOT in nav |
+| `/car-selector` | ⚠️ Archived | Accessible, NOT in nav |
+| `/compare` | ⚠️ Archived | Accessible, NOT in nav |
+| `/garage` | ✅ Active | Primary tab - vehicle & build management |
+| `/data` | ✅ Active | NEW - Performance data hub |
+| `/tuning-shop` | ⚠️ Legacy | Consolidated into /garage |
+| `/mod-planner` | ⚠️ Legacy | Consolidated into /garage |
+| `/community` | ✅ Active | Social build feed |
+| `/community/builds` | ⚠️ Archived | Moved to /community main feed |
+| `/encyclopedia` | ⚠️ Archived | Accessible, NOT in nav |
+| `/join` | ⚠️ Archived | Auth modal used instead |
+| `/al` | ✅ Active | Full-page AL chat |
+| `/profile` | ✅ Active | User settings |
 
 ---
 

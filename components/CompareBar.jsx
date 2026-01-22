@@ -171,7 +171,7 @@ export default function CompareBar() {
 
             {/* Add More Slot */}
             {count < maxCars && (
-              <Link href="/browse-cars" className={styles.addMore}>
+              <Link href="/garage" className={styles.addMore}>
                 <Icons.plus size={20} />
                 <span>Add Car ({maxCars - count} slots left)</span>
               </Link>

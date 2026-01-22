@@ -209,7 +209,7 @@ After migration, visually verify these key pages:
 
 1. **Homepage** (`/`) - Lime CTAs, navy background
 2. **My Garage** (`/garage`) - Teal gains, blue baselines
-3. **Tuning Shop** (`/tuning-shop`) - Gold accents, teal active states
+3. **My Data** (`/data`) - Performance metrics, teal active states
 4. **AL Chat** (`/al`) - Consistent dark theme
 5. **Profile** (`/profile`) - Proper button colors
 6. **Community** (`/community`) - White text on dark cards

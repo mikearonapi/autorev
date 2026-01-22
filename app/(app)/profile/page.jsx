@@ -21,6 +21,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import usePWAInstall from '@/hooks/usePWAInstall';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
+import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
 
 // Compact Icons
 const Icon = {
@@ -105,10 +106,16 @@ export default function ProfilePage() {
   const [locationCity, setLocationCity] = useState('');
   const [locationState, setLocationState] = useState('');
   const [isLookingUpZip, setIsLookingUpZip] = useState(false);
-  const [alBalance, setAlBalance] = useState({ fuel: 0, isUnlimited: false });
   const [referralCode, setReferralCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [showClearModal, setShowClearModal] = useState(null);
+  
+  // React Query hooks
+  const { data: alBalance = { fuel: 0, isUnlimited: false } } = useUserCredits(user?.id);
+  const clearUserData = useClearUserData();
+  const zipLookupMutation = useZipLookup();
+  const saveLocationMutation = useSaveLocation();
+  const billingPortalMutation = useBillingPortal();
 
   const currentTier = profile?.subscription_tier || 'free';
   const planName = PLAN_NAMES[currentTier] || 'Free';
@@ -128,17 +135,6 @@ export default function ProfilePage() {
     if (profile?.referral_code) setReferralCode(profile.referral_code);
   }, [profile, user]);
 
-  useEffect(() => {
-    async function fetchFuel() {
-      if (!user?.id) return;
-      try {
-        const res = await fetch(`/api/users/${user.id}/al-credits`);
-        const data = await res.json();
-        if (res.ok) setAlBalance({ fuel: data.balanceCents || 0, isUnlimited: data.isUnlimited || false });
-      } catch (e) { console.error(e); }
-    }
-    fetchFuel();
-  }, [user?.id]);
 
   const handleSave = async () => {
     if (!displayName.trim()) return;
@@ -153,9 +149,8 @@ export default function ProfilePage() {
     if (!/^\d{5}$/.test(zip)) { setLocationCity(''); setLocationState(''); return; }
     setIsLookingUpZip(true);
     try {
-      const res = await fetch(`/api/user/location?zip=${zip}`);
-      const data = await res.json();
-      if (res.ok && data.city) { setLocationCity(data.city); setLocationState(data.state); }
+      const data = await zipLookupMutation.mutateAsync({ zip });
+      if (data.city) { setLocationCity(data.city); setLocationState(data.state); }
     } catch (e) { console.error(e); }
     finally { setIsLookingUpZip(false); }
   };
@@ -163,7 +158,7 @@ export default function ProfilePage() {
   const handleSaveLocation = async () => {
     if (!/^\d{5}$/.test(locationZip)) return;
     try {
-      await fetch('/api/user/location', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ zip: locationZip }) });
+      await saveLocationMutation.mutateAsync({ zip: locationZip });
     } catch (e) { console.error(e); }
   };
 
@@ -185,7 +180,7 @@ export default function ProfilePage() {
 
   const handleClearData = async (scope) => {
     try {
-      await fetch(`/api/users/${user.id}/clear-data`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scope }) });
+      await clearUserData.mutateAsync({ userId: user.id, scope });
       setShowClearModal(null);
       window.location.reload();
     } catch (e) { alert('Failed'); }
@@ -219,7 +214,7 @@ export default function ProfilePage() {
       {/* AL Fuel Card */}
       <section className={styles.fuelCard}>
         <div className={styles.fuelTop}>
-          <img src={UI_IMAGES.alMascot} alt="AL" className={styles.fuelAvatar} />
+          <Image src={UI_IMAGES.alMascot} alt="AL" width={40} height={40} className={styles.fuelAvatar} />
           <div className={styles.fuelInfo}>
             <span className={styles.fuelLabel}>AL Fuel</span>
             <span className={styles.fuelValue}>
@@ -388,9 +383,10 @@ export default function ProfilePage() {
           {profile?.stripe_customer_id && !IS_BETA && (
             <button 
               onClick={async () => { 
-                const res = await fetch('/api/billing/portal', { method: 'POST' }); 
-                const d = await res.json(); 
-                if (d.url) window.location.href = d.url; 
+                try {
+                  const d = await billingPortalMutation.mutateAsync();
+                  if (d.url) window.location.href = d.url;
+                } catch (e) { console.error('Failed to open billing portal:', e); }
               }} 
               className={styles.billingLink}
             >

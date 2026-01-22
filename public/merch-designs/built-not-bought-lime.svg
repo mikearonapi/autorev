@@ -1,0 +1,15 @@
+<svg width="950" height="200" viewBox="0 0 950 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- BUILT NOT BOUGHT - lime -->
+  <text 
+    x="475" 
+    y="100" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', sans-serif"
+    font-weight="700"
+    font-size="64px"
+    letter-spacing="4"
+  >
+    <tspan fill="#d4ff00">BUILT </tspan><tspan fill="#d4ff00">NOT </tspan><tspan fill="#d4ff00">BOUGHT</tspan>
+  </text>
+</svg>

@@ -5,6 +5,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';
 
 // Create Supabase client

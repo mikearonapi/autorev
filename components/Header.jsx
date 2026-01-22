@@ -39,22 +39,24 @@ const ChevronIcon = () => (
   </svg>
 );
 
-// Navigation links - Simplified 5-Tab Structure (January 2026)
-// 1. My Garage - Vehicles, Builds, Upgrades, Performance (all in one)
-// 2. Data - Track sessions, OBD2, telemetry, analytics
-// 3. Community - TikTok/IG style build feed
-// 4. AL - AI assistant + search
-// 5. Profile - Settings, account
+// Navigation links - 5-Tab Structure with Dashboard (January 2026)
+// 1. Dashboard - Gamification, scores, achievements
+// 2. Garage - Vehicles, Builds, Upgrades
+// 3. Data - Track sessions, OBD2, telemetry
+// 4. Community - TikTok/IG style build feed
+// 5. AL - AI assistant + search
+// Profile - Settings, account (in avatar dropdown, not main nav)
 const navLinks = [
-  { href: '/garage', label: 'My Garage' },
-  { href: '/data', label: 'My Data' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/garage', label: 'Garage' },
+  { href: '/data', label: 'Data' },
   { href: '/community', label: 'Community' },
   { href: '/al', label: 'AL' },
-  { href: '/encyclopedia', label: 'Encyclopedia' }, // Reference resource
 ];
 
 // App routes where tab bar is shown (header should be minimal on mobile)
 const APP_ROUTES = [
+  '/dashboard',
   '/garage',
   '/data',
   '/community',
@@ -64,8 +66,7 @@ const APP_ROUTES = [
   '/build',
   '/performance',
   '/parts',
-  '/encyclopedia',
-  // Legacy routes (redirect but still match)
+  // Legacy routes (redirect but still match for tab bar)
   '/tuning-shop',
   '/my-builds',
   '/track', // Legacy - redirects to /data
@@ -73,7 +74,7 @@ const APP_ROUTES = [
 
 // AL Mascot Avatar for mobile menu
 const ALMascotIcon = ({ size = 20 }) => (
-  <img 
+  <Image 
     src={UI_IMAGES.alMascot}
     alt="AL"
     width={size} 
@@ -400,9 +401,12 @@ export default function Header() {
                 >
                   Log In
                 </button>
-                <Link href="/join" className={styles.joinButton}>
+                <button 
+                  className={styles.joinButton}
+                  onClick={() => authModal.openSignUp()}
+                >
                   Join
-                </Link>
+                </button>
               </>
             )}
           </div>
@@ -541,13 +545,15 @@ export default function Header() {
               >
                 Log In
               </button>
-              <Link 
-                href="/join" 
+              <button 
                 className={styles.mobileJoinBtn}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  authModal.openSignUp();
+                }}
               >
                 Join
-              </Link>
+              </button>
             </div>
           )}
           

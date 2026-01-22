@@ -47,6 +47,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { useCarImages } from '@/hooks/useCarImages';
 import ImageUploader from '@/components/ImageUploader';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
+// GarageScoreCard moved to Dashboard tab - January 2026
 
 // Icon wrapper to prevent browser extension DOM conflicts
 // Wrapping SVGs in a span prevents "removeChild" errors when extensions modify the DOM
@@ -2852,6 +2853,12 @@ function GarageContent() {
   
   const { isAuthenticated, user, profile, isLoading: authLoading, isDataFetchReady, sessionExpired, authError } = useAuth();
   const authModal = useAuthModal();
+  
+  // Get user's first name for personalized title
+  const firstName = profile?.display_name?.split(' ')[0] || 
+                    user?.user_metadata?.full_name?.split(' ')[0] ||
+                    user?.email?.split('@')[0] || 
+                    'My';
   const { favorites, addFavorite, removeFavorite, isLoading: favoritesLoading } = useFavorites();
   const { builds, deleteBuild, getBuildById, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles, addVehicle, updateVehicle, removeVehicle, clearModifications, updateCustomSpecs, clearCustomSpecs, reorderVehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
@@ -3354,7 +3361,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
       {/* Page Header - Title on left, Add Vehicle on right */}
       <header className={styles.pageHeader}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.pageTitle}>My Garage</h1>
+          <h1 className={styles.pageTitle}>{firstName}&apos;s Garage</h1>
         </div>
         <div className={styles.headerRight}>
           {/* Add Vehicle Button */}
@@ -3393,6 +3400,8 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
           </button>
         </div>
       </div>
+
+      {/* Garage Score moved to Dashboard tab - January 2026 */}
 
       {/* Main Content Area - with swipe support for mobile navigation */}
       <div 

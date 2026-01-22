@@ -14,7 +14,7 @@
  * URL: /garage/my-specs?car=<carSlug> or ?build=<buildId>
  */
 
-import React, { useState, useEffect, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -98,14 +98,78 @@ function MySpecsContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [allCars, setAllCars] = useState([]);
+  const [specsConfirmed, setSpecsConfirmed] = useState(false);
+  const [confirmingSpecs, setConfirmingSpecs] = useState(false);
+  const [confirmSuccess, setConfirmSuccess] = useState(false);
+  const confirmButtonRef = useRef(null);
   
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
+  const { vehicles, refreshVehicles } = useOwnedVehicles();
   const { openChatWithPrompt } = useAIChat();
+  
+  // Check for action=confirm query param and scroll to confirm button
+  const actionParam = searchParams.get('action');
   
   // Get user's hero image for this car
   const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  
+  // Find the user's vehicle for this car (to get specs_confirmed status and vehicle ID)
+  const userVehicle = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
+  
+  // Initialize specs_confirmed state from vehicle data
+  useEffect(() => {
+    if (userVehicle) {
+      setSpecsConfirmed(!!userVehicle.specsConfirmed || !!userVehicle.specs_confirmed);
+    }
+  }, [userVehicle]);
+  
+  // Scroll to confirm button when action=confirm
+  useEffect(() => {
+    if (actionParam === 'confirm' && confirmButtonRef.current && selectedCar) {
+      // Wait for content to render
+      setTimeout(() => {
+        confirmButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Pulse animation to draw attention
+        confirmButtonRef.current?.classList.add(styles.highlight);
+        setTimeout(() => {
+          confirmButtonRef.current?.classList.remove(styles.highlight);
+        }, 2000);
+      }, 500);
+    }
+  }, [actionParam, selectedCar]);
+  
+  // Handler to confirm specs
+  const handleConfirmSpecs = useCallback(async () => {
+    if (!user?.id || !userVehicle?.id) return;
+    
+    setConfirmingSpecs(true);
+    try {
+      const response = await fetch(`/api/users/${user.id}/vehicles/${userVehicle.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ specs_confirmed: true }),
+      });
+      
+      if (response.ok) {
+        setSpecsConfirmed(true);
+        setConfirmSuccess(true);
+        // Refresh vehicles to update the provider
+        if (refreshVehicles) {
+          await refreshVehicles();
+        }
+        // Clear success message after 3 seconds
+        setTimeout(() => setConfirmSuccess(false), 3000);
+      } else {
+        console.error('[MySpecs] Failed to confirm specs');
+      }
+    } catch (err) {
+      console.error('[MySpecs] Error confirming specs:', err);
+    } finally {
+      setConfirmingSpecs(false);
+    }
+  }, [user?.id, userVehicle?.id, refreshVehicles]);
   
   // Create contextualized AL prompt handlers for each section
   // Each section has a detailed prompt (sent to AL) and a short displayMessage (shown to user)
@@ -399,6 +463,50 @@ function MySpecsContent() {
                     <li key={i}>✗ {con}</li>
                   ))}
                 </ul>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Confirm Specs Section */}
+        {isAuthenticated && userVehicle && (
+          <div className={styles.confirmSection} ref={confirmButtonRef}>
+            {specsConfirmed ? (
+              <div className={styles.confirmedBanner}>
+                <span className={styles.confirmedIcon}>✓</span>
+                <div className={styles.confirmedText}>
+                  <strong>Specs Confirmed</strong>
+                  <span>You&apos;ve verified these specifications are accurate for your vehicle</span>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.confirmPrompt}>
+                <div className={styles.confirmText}>
+                  <strong>Are these specs accurate?</strong>
+                  <span>Review the specs above and confirm they match your {selectedCar.name}</span>
+                </div>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={handleConfirmSpecs}
+                  disabled={confirmingSpecs}
+                >
+                  {confirmingSpecs ? (
+                    <>
+                      <span className={styles.spinner} />
+                      Confirming...
+                    </>
+                  ) : (
+                    <>
+                      <span className={styles.checkIcon}>✓</span>
+                      Yes, These Specs Are Accurate
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+            {confirmSuccess && (
+              <div className={styles.successToast}>
+                Specs confirmed! Your garage score has been updated.
               </div>
             )}
           </div>

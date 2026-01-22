@@ -14,7 +14,7 @@
  * URL: /garage/my-photos?car=<carSlug> or ?build=<buildId>
  */
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -50,11 +50,15 @@ function MyPhotosContent() {
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [allCars, setAllCars] = useState([]);
   const [vehicleId, setVehicleId] = useState(null);
+  const uploadSectionRef = useRef(null);
   
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
+  
+  // Check for action=upload query param
+  const actionParam = searchParams.get('action');
   
   // Get images for this car
   const { 
@@ -112,6 +116,21 @@ function MyPhotosContent() {
       }
     }
   }, [selectedCar, vehicles]);
+  
+  // Handle action=upload to scroll to and highlight upload section
+  useEffect(() => {
+    if (actionParam === 'upload' && selectedCar && uploadSectionRef.current) {
+      // Wait for content to render
+      setTimeout(() => {
+        uploadSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add highlight class for visual feedback
+        uploadSectionRef.current?.classList.add(styles.highlight);
+        setTimeout(() => {
+          uploadSectionRef.current?.classList.remove(styles.highlight);
+        }, 2000);
+      }, 500);
+    }
+  }, [actionParam, selectedCar]);
 
   const handleBack = () => {
     router.push('/garage');
@@ -180,7 +199,7 @@ function MyPhotosContent() {
       <div className={styles.content}>
         {/* Upload Section */}
         {canUpload ? (
-          <div className={styles.uploadSection}>
+          <div className={styles.uploadSection} ref={uploadSectionRef}>
             <ImageUploader
               onUploadComplete={(media) => {
                 refreshCarImages();

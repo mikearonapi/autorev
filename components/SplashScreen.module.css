@@ -1,0 +1,112 @@
+/**
+ * SplashScreen Styles
+ * 
+ * Full-screen branded splash with centered AUTOREV logo.
+ * Covers entire viewport including safe areas (notch, home indicator).
+ */
+
+.splash {
+  position: fixed;
+  /* Cover entire viewport including safe areas */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Use viewport units that include safe areas */
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height - respects keyboard, etc. */
+  
+  /* Navy background matching app theme */
+  background-color: var(--brand-bg-primary, #0d1b2a);
+  
+  /* Center the logo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Above everything else */
+  z-index: 99999;
+  
+  /* Smooth fade-out */
+  opacity: 1;
+  transition: opacity 500ms ease-out;
+  
+  /* Block all interaction */
+  pointer-events: all;
+  
+  /* Ensure it covers safe areas on iOS */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  box-sizing: border-box;
+  
+  /* Prevent any scrolling underneath */
+  overflow: hidden;
+}
+
+.splash.exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Logo container - centered with subtle entrance animation */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: logoEnter 400ms ease-out forwards;
+}
+
+@keyframes logoEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Logo text styling - matches marketing page */
+.logo {
+  font-family: var(--font-oswald, 'Oswald'), sans-serif;
+  font-size: clamp(48px, 12vw, 72px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* "AUTO" - white */
+.auto {
+  color: var(--brand-text-primary, #ffffff);
+}
+
+/* "REV" - lime accent */
+.rev {
+  color: var(--brand-lime, #d4ff00);
+}
+
+/* Handle notch/safe area on iOS by extending background */
+@supports (padding: env(safe-area-inset-top)) {
+  .splash {
+    /* Extend background behind notch */
+    margin: calc(-1 * env(safe-area-inset-top)) calc(-1 * env(safe-area-inset-right)) calc(-1 * env(safe-area-inset-bottom)) calc(-1 * env(safe-area-inset-left));
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    width: calc(100vw + env(safe-area-inset-left) + env(safe-area-inset-right));
+    height: calc(100dvh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+  }
+}
+
+/* Ensure proper rendering on all devices */
+@media screen and (max-width: 480px) {
+  .logo {
+    font-size: clamp(40px, 14vw, 56px);
+  }
+}

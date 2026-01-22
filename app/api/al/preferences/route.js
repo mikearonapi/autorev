@@ -12,26 +12,18 @@
  * - event_search_enabled: boolean
  */
 
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
 
 /**
- * Create Supabase client for route handlers
+ * Create Supabase client for route handlers (supports both cookie and Bearer token)
  */
-async function createSupabaseClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function createSupabaseClient(request) {
+  const bearerToken = getBearerToken(request);
+  return bearerToken 
+    ? { supabase: createAuthenticatedClient(bearerToken), bearerToken }
+    : { supabase: await createServerSupabaseClient(), bearerToken: null };
 }
 
 // Default preferences for new users
@@ -48,18 +40,21 @@ const DEFAULT_PREFERENCES = {
  * GET /api/al/preferences
  * Fetch user's AL preferences (creates defaults if none exist)
  */
-export async function GET() {
+export async function GET(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
     
     // Fetch user preferences
@@ -80,19 +75,13 @@ export async function GET() {
     
     if (fetchError) {
       console.error('Error fetching AL preferences:', fetchError);
-      return NextResponse.json(
-        { error: 'Failed to fetch preferences' },
-        { status: 500 }
-      );
+      return errors.database('Failed to fetch preferences');
     }
     
     return NextResponse.json(preferences);
   } catch (error) {
     console.error('AL preferences GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errors.internal();
   }
 }
 
@@ -102,16 +91,19 @@ export async function GET() {
  */
 export async function PUT(request) {
   try {
-    const supabase = await createSupabaseClient();
+    const { supabase, bearerToken } = await createSupabaseClient(request);
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
     
     // Parse request body
@@ -122,10 +114,7 @@ export async function PUT(request) {
     
     if (body.response_mode !== undefined) {
       if (!['quick', 'deep', 'database'].includes(body.response_mode)) {
-        return NextResponse.json(
-          { error: 'Invalid response_mode. Must be quick, deep, or database' },
-          { status: 400 }
-        );
+        return errors.invalidInput('Invalid response_mode. Must be quick, deep, or database', { field: 'response_mode' });
       }
       updates.response_mode = body.response_mode;
     }
@@ -168,18 +157,12 @@ export async function PUT(request) {
     
     if (upsertError) {
       console.error('Error upserting AL preferences:', upsertError);
-      return NextResponse.json(
-        { error: 'Failed to update preferences' },
-        { status: 500 }
-      );
+      return errors.database('Failed to update preferences');
     }
     
     return NextResponse.json(preferences);
   } catch (error) {
     console.error('AL preferences PUT error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errors.internal();
   }
 }

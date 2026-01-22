@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react';
 import Modal from '@/components/ui/Modal';
 import styles from './DeleteAccountModal.module.css';
 import { Icons } from '@/components/ui/Icons';
+import { useDeleteAccount } from '@/hooks/useUserData';
 
 // Deletion reason options
 const DELETION_REASONS = [
@@ -34,8 +35,11 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
   const [selectedReason, setSelectedReason] = useState('');
   const [details, setDetails] = useState('');
   const [confirmText, setConfirmText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
+  
+  // React Query mutation for account deletion
+  const deleteAccountMutation = useDeleteAccount();
+  const isDeleting = deleteAccountMutation.isPending;
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -70,25 +74,15 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
       return;
     }
 
-    setIsDeleting(true);
     setError('');
 
     try {
-      const response = await fetch(`/api/users/${userId}/account`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reason: selectedReason,
-          details: details.trim() || null,
-          confirmText: confirmText,
-        }),
+      await deleteAccountMutation.mutateAsync({
+        userId,
+        reason: selectedReason,
+        details: details.trim() || null,
+        confirmText,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to delete account');
-      }
 
       // Success - call the onDeleted callback
       if (onDeleted) {
@@ -97,7 +91,6 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
     } catch (err) {
       console.error('[DeleteAccountModal] Error:', err);
       setError(err.message || 'Something went wrong. Please try again.');
-      setIsDeleting(false);
     }
   };
 

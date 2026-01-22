@@ -486,7 +486,7 @@ export default function EventFilters({
             </p>
             <div className={styles.upgradeModalActions}>
               <Link 
-                href="/join" 
+                href="/profile" 
                 className={styles.upgradeModalUpgradeBtn}
               >
                 Upgrade to Enthusiast

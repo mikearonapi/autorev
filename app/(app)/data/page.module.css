@@ -43,13 +43,13 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 16px 0 0;
+  padding: 16px 0 4px;
 }
 
 /* Mobile: Tighter header */
 @media (max-width: 767px) {
   .header {
-    padding: 12px 0 0;
+    padding: 12px 0 4px;
   }
 }
 

@@ -11,6 +11,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { errors } from '@/lib/apiErrors';
 import { headers } from 'next/headers';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

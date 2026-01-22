@@ -11,6 +11,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { fetchCarBySlug } from '@/lib/carsClient';
 import * as nhtsaService from '@/lib/nhtsaSafetyService';
 import * as iihsScraper from '@/lib/scrapers/iihsScraper';

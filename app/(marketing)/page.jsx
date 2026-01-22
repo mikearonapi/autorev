@@ -164,7 +164,7 @@ export default function Home() {
   }, [questionIndex, isTyping]);
   
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
       <section className={styles.hero}>
         {/* Centered Logo */}

@@ -98,7 +98,7 @@ export default function PillarsSection({ carCount = 100 }) {
       href: '/community/builds',
       accent: 'primary'
     }
-  ], [carCount]);
+  ], []);
 
   return (
     <section className={styles.pillars}>

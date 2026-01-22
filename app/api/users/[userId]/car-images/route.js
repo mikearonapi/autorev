@@ -15,29 +15,24 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -52,18 +47,18 @@ async function handleGet(request, context) {
   const carSlug = searchParams.get('carSlug');
 
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return errors.unauthorized();
   }
 
   // Verify user is accessing their own data
   if (user.id !== userId) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    return errors.forbidden();
   }
 
   if (!carSlug) {
-    return NextResponse.json({ error: 'carSlug parameter required' }, { status: 400 });
+    return errors.missingField('carSlug');
   }
 
   const supabase = createClient(
@@ -130,21 +125,21 @@ async function handlePut(request, context) {
   const { userId } = params;
   
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return errors.unauthorized();
   }
 
   // Verify user is accessing their own data
   if (user.id !== userId) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    return errors.forbidden();
   }
 
   const body = await request.json();
   const { carSlug, imageId } = body;
 
   if (!carSlug) {
-    return NextResponse.json({ error: 'carSlug is required' }, { status: 400 });
+    return errors.missingField('carSlug');
   }
 
   const supabase = createClient(

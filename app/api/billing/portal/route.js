@@ -9,39 +9,30 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function handlePost(request) {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
-      },
-    }
-  );
+  // Support both cookie and Bearer token auth
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
+
+  if (!supabase) {
+    return errors.serviceUnavailable('Authentication service');
+  }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   
   if (authError || !user) {
-    return NextResponse.json(
-      { error: 'Authentication required' },
-      { status: 401 }
-    );
+    return errors.unauthorized();
   }
 
   // Get user's Stripe customer ID
@@ -52,10 +43,7 @@ async function handlePost(request) {
     .single();
 
   if (!profile?.stripe_customer_id) {
-    return NextResponse.json(
-      { error: 'No billing account found. Subscribe to a plan first.' },
-      { status: 400 }
-    );
+    return errors.badRequest('No billing account found. Subscribe to a plan first.');
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://autorev.app';

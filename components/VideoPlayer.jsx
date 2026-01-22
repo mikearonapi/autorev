@@ -112,6 +112,19 @@ export default function VideoPlayer({
     };
   }, [autoPlay]);
   
+  // Toggle play/pause - defined before keyboard shortcuts that use it
+  const togglePlay = useCallback(() => {
+    const videoEl = videoRef.current;
+    if (!videoEl) return;
+    
+    if (isPlaying) {
+      videoEl.pause();
+    } else {
+      videoEl.play();
+    }
+    resetControlsTimer();
+  }, [isPlaying, resetControlsTimer]);
+  
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -162,7 +175,7 @@ export default function VideoPlayer({
     
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [duration, isFullscreen, onClose, resetControlsTimer]);
+  }, [duration, isFullscreen, onClose, resetControlsTimer, togglePlay]);
   
   // Sync volume with video element
   useEffect(() => {
@@ -195,18 +208,6 @@ export default function VideoPlayer({
       }
     };
   }, []);
-  
-  const togglePlay = () => {
-    const videoEl = videoRef.current;
-    if (!videoEl) return;
-    
-    if (isPlaying) {
-      videoEl.pause();
-    } else {
-      videoEl.play();
-    }
-    resetControlsTimer();
-  };
   
   const handleProgressClick = (e) => {
     const videoEl = videoRef.current;

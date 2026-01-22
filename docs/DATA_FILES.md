@@ -2,7 +2,7 @@
 
 > Reference for static data files in `data/` directory
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 
@@ -12,12 +12,12 @@ The `data/` directory contains static JavaScript data files that power major fea
 
 | File | Purpose | Records |
 |------|---------|---------|
-| `cars.js` | Core car data and categories | 98 cars, 7 categories |
+| `cars.js` | Core car data and categories | 310 cars, 7 categories |
 | `upgradeEducation.js` | Modification articles | 49 entries |
 | `upgradePackages.js` | Performance packages | 15+ packages |
+| `tuningTemplates.js` | Tuning profile templates | Per-platform |
 | `connectedTissueMatrix.js` | Encyclopedia legacy data | 14 systems |
 | `carUpgradeRecommendations.js` | Car-specific mod recommendations | Per-car |
-| `selectorDescriptors.js` | Car Selector UI text | 7 categories |
 | `performanceCategories.js` | Performance bar definitions | 6 categories |
 | `upgradeConflicts.js` | Part conflict rules | (stub) |
 | `upgradePricing.js` | Cost estimates by tier | 3 tiers |
@@ -64,7 +64,7 @@ Array of all car brands in the database for filtering.
 
 ### `cars` — Fallback Car Data
 
-Static car array used as fallback when database is unavailable. Contains basic specs for all 98 cars.
+Static car array used as fallback when database is unavailable. Contains basic specs for all 310 cars.
 
 **Used By:**
 - `lib/scoring.js` — Category definitions

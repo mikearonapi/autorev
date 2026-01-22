@@ -102,6 +102,21 @@
 }
 
 /* ===========================================
+   GARAGE SCORE SECTION
+   =========================================== */
+
+.garageScoreSection {
+  padding: 0 var(--padding-page-x, 16px);
+  margin-bottom: var(--space-4, 16px);
+}
+
+@media (min-width: 768px) {
+  .garageScoreSection {
+    max-width: 400px;
+  }
+}
+
+/* ===========================================
    CONTROLS BAR - Legacy, now in header
    =========================================== */
 

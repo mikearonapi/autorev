@@ -3,10 +3,18 @@
  *
  * This intentionally marks rows as unverified (verified=false) with moderate confidence.
  * Use /internal/lap-times and /api/internal/track/lap-times (admin) to review/verify.
+ * 
+ * UPDATED 2026-01-21: Uses centralized data validation layer
  */
 
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import { 
+  validateCarReference, 
+  validateTrackBySlug,
+  DataValidationError,
+  logValidationResults 
+} from '../lib/dataValidation.js';
 
 config({ path: '.env.local' });
 
@@ -77,17 +85,32 @@ function parseFastestLapsTestPage(html) {
   return { title: t, carName, trackName, lapTimeText };
 }
 
-async function resolveCarId(carSlug) {
-  const { data, error } = await supabase.from('cars').select('id,slug').eq('slug', carSlug).single();
-  if (error) throw error;
-  return data.id;
+/**
+ * Resolve car ID using centralized validation layer
+ * @param {string} carSlug 
+ * @returns {Promise<string>} car_id
+ * @throws {DataValidationError} if car not found
+ */
+async function resolveCarIdValidated(carSlug) {
+  return validateCarReference(carSlug, { throwOnNotFound: true });
 }
 
-async function upsertTrackVenue(trackName) {
+/**
+ * Upsert track to the unified tracks table (formerly track_venues)
+ * NOTE: As of 2026-01-21, tracks and track_venues are consolidated.
+ * @param {string} trackName 
+ * @returns {Promise<{id: string, slug: string, name: string}>}
+ */
+async function upsertTrack(trackName) {
   const trackSlug = slugify(trackName);
   const { data, error } = await supabase
-    .from('track_venues')
-    .upsert({ slug: trackSlug, name: trackName }, { onConflict: 'slug' })
+    .from('tracks')
+    .upsert({ 
+      slug: trackSlug, 
+      name: trackName,
+      is_active: true,
+      data_source: 'fastestlaps'
+    }, { onConflict: 'slug' })
     .select('id,slug,name')
     .single();
   if (error) throw error;
@@ -169,71 +192,90 @@ async function main() {
 
   let inserted = 0;
   let skipped = 0;
+  let validationErrors = [];
 
   for (const seed of SEEDS) {
     const { carSlug, url } = seed;
 
-    const carId = await resolveCarId(carSlug);
-    const res = await fetch(url, { headers: { 'User-Agent': 'AutoRev/1.0' } });
-    if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${url}`);
-    const html = await res.text();
+    try {
+      // Validate car reference using centralized validation layer
+      const carId = await resolveCarIdValidated(carSlug);
+      
+      const res = await fetch(url, { headers: { 'User-Agent': 'AutoRev/1.0' } });
+      if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${url}`);
+      const html = await res.text();
 
-    const parsed = parseFastestLapsTestPage(html);
-    if (!parsed.trackName || !parsed.lapTimeText) {
-      throw new Error(`Could not parse trackName/lapTimeText for ${url}`);
+      const parsed = parseFastestLapsTestPage(html);
+      if (!parsed.trackName || !parsed.lapTimeText) {
+        throw new Error(`Could not parse trackName/lapTimeText for ${url}`);
+      }
+
+      // Track + layout - using unified tracks table
+      const track = await upsertTrack(parsed.trackName);
+      const { trackLayoutId } = await maybeUpsertLayout(track.id, parsed.trackName);
+
+      const lapTimeMs = parseLapTimeToMs(parsed.lapTimeText);
+      if (!lapTimeMs) throw new Error(`Could not parse lap time "${parsed.lapTimeText}" for ${url}`);
+
+      const exists = await alreadyExists({
+        carSlug,
+        trackId: track.id,
+        trackLayoutId,
+        lapTimeMs,
+        sourceUrl: url,
+      });
+      if (exists) {
+        skipped++;
+        continue;
+      }
+
+      const notes = [
+        'Seeded from FastestLaps test page.',
+        parsed.carName ? `Page car: ${parsed.carName}` : null,
+        parsed.title ? `Page title: ${parsed.title}` : null,
+      ].filter(Boolean).join(' ');
+
+      const { error } = await supabase.from('car_track_lap_times').insert({
+        car_id: carId,
+        car_slug: carSlug,
+        car_variant_id: null,
+        track_id: track.id,
+        track_layout_id: trackLayoutId,
+        lap_time_ms: lapTimeMs,
+        lap_time_text: parsed.lapTimeText,
+        session_date: null,
+        is_stock: true,
+        tires: null,
+        fuel: null,
+        transmission: null,
+        conditions: { source: 'fastestlaps', fetched_at: new Date().toISOString() },
+        modifications: {},
+        notes,
+        source_url: url,
+        source_document_id: null,
+        confidence: 0.65,
+        verified: false,
+      });
+      if (error) throw error;
+      inserted++;
+    } catch (err) {
+      if (err instanceof DataValidationError) {
+        validationErrors.push({ carSlug, url, reason: err.message });
+        console.warn(`[Validation] Skipped ${carSlug}: ${err.message}`);
+      } else {
+        throw err;
+      }
     }
-
-    // Track + layout
-    const trackVenue = await upsertTrackVenue(parsed.trackName);
-    const { trackLayoutId } = await maybeUpsertLayout(trackVenue.id, parsed.trackName);
-
-    const lapTimeMs = parseLapTimeToMs(parsed.lapTimeText);
-    if (!lapTimeMs) throw new Error(`Could not parse lap time "${parsed.lapTimeText}" for ${url}`);
-
-    const exists = await alreadyExists({
-      carSlug,
-      trackId: trackVenue.id,
-      trackLayoutId,
-      lapTimeMs,
-      sourceUrl: url,
-    });
-    if (exists) {
-      skipped++;
-      continue;
-    }
-
-    const notes = [
-      'Seeded from FastestLaps test page.',
-      parsed.carName ? `Page car: ${parsed.carName}` : null,
-      parsed.title ? `Page title: ${parsed.title}` : null,
-    ].filter(Boolean).join(' ');
-
-    const { error } = await supabase.from('car_track_lap_times').insert({
-      car_id: carId,
-      car_slug: carSlug,
-      car_variant_id: null,
-      track_id: trackVenue.id,
-      track_layout_id: trackLayoutId,
-      lap_time_ms: lapTimeMs,
-      lap_time_text: parsed.lapTimeText,
-      session_date: null,
-      is_stock: true,
-      tires: null,
-      fuel: null,
-      transmission: null,
-      conditions: { source: 'fastestlaps', fetched_at: new Date().toISOString() },
-      modifications: {},
-      notes,
-      source_url: url,
-      source_document_id: null,
-      confidence: 0.65,
-      verified: false,
-    });
-    if (error) throw error;
-    inserted++;
   }
 
-  console.log(`Done. Inserted: ${inserted}. Skipped (already existed): ${skipped}.`);
+  // Log validation results
+  logValidationResults('seedLapTimesFastestLaps', {
+    total: SEEDS.length,
+    valid: SEEDS.filter((_, i) => !validationErrors.find(e => e.carSlug === SEEDS[i].carSlug)),
+    invalid: validationErrors,
+  });
+
+  console.log(`Done. Inserted: ${inserted}. Skipped (already existed): ${skipped}. Validation errors: ${validationErrors.length}`);
 }
 
 main().catch((err) => {

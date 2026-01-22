@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useCarSelection } from '@/components/providers/CarSelectionProvider';
@@ -33,6 +34,9 @@ import ALPreferencesPanel, { useALPreferences } from '@/components/ALPreferences
 import ALAttachmentMenu, { ALAttachmentsBar } from '@/components/ALAttachmentMenu';
 import { getPendingALPrompt } from '@/components/AskALButton';
 import FeedbackDimensionsModal from '@/components/FeedbackDimensionsModal';
+import { useUserConversations, useUserConversation } from '@/hooks/useUserData';
+import ALSourcesList from '@/components/ALSourcesList';
+import { parseALResponseWithCitations, collectSourcesFromToolResults } from '@/lib/alCitationParser';
 
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
@@ -117,7 +121,7 @@ const FormattedMessage = ({ content }) => {
 
 // AL Mascot component - Teal ring for brand consistency
 const ALMascot = ({ size = 80 }) => (
-  <img 
+  <Image 
     src={UI_IMAGES.alMascotFull}
     alt="AL - AutoRev AI"
     width={size} 
@@ -147,6 +151,58 @@ const LocalIcons = {
   attachment: Icons.attachment,
   settings: Icons.settings,
   camera: Icons.camera,
+  // New icons for enhanced features
+  stop: Icons.stop,
+  copy: Icons.copy,
+  refresh: Icons.refresh,
+  trash: Icons.trash,
+  search: Icons.search,
+  mic: Icons.mic,
+  share: Icons.share,
+  download: Icons.download,
+  x: Icons.x,
+};
+
+// Helper to format relative time for timestamps
+const formatRelativeTime = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// Helper to copy text to clipboard
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return true;
+    } catch (e) {
+      document.body.removeChild(textArea);
+      return false;
+    }
+  }
 };
 
 // Suggested prompts for new users - no emojis, clean design
@@ -157,6 +213,100 @@ const SUGGESTED_PROMPTS = [
   { text: "What's the best oil for my car?" },
 ];
 
+// Helper to get source type from tool name
+const getSourceTypeFromTool = (toolName) => {
+  const typeMap = {
+    get_expert_reviews: 'youtube',
+    get_known_issues: 'database',
+    get_car_ai_context: 'database',
+    get_car_details: 'database',
+    search_community_insights: 'forum',
+    search_forums: 'forum',
+    search_knowledge: 'reference',
+    get_track_lap_times: 'database',
+    get_dyno_runs: 'database',
+    search_encyclopedia: 'encyclopedia',
+    search_parts: 'database',
+    get_maintenance_schedule: 'database',
+    search_events: 'database',
+    search_web: 'web',
+    compare_cars: 'database',
+  };
+  return typeMap[toolName] || 'database';
+};
+
+// Helper to get source label from tool name
+const getSourceLabelFromTool = (toolName) => {
+  const labelMap = {
+    get_expert_reviews: 'YouTube Reviews',
+    get_known_issues: 'Known Issues Database',
+    get_car_ai_context: 'AutoRev Database',
+    get_car_details: 'Car Specifications',
+    search_community_insights: 'Forum Insights',
+    search_forums: 'Forum Search',
+    search_knowledge: 'Knowledge Base',
+    get_track_lap_times: 'Lap Times Database',
+    get_dyno_runs: 'Dyno Database',
+    search_encyclopedia: 'AutoRev Encyclopedia',
+    search_parts: 'Parts Catalog',
+    get_maintenance_schedule: 'Maintenance Database',
+    search_events: 'Events Database',
+    search_web: 'Web Search',
+    compare_cars: 'Car Comparison',
+    analyze_vehicle_health: 'Vehicle Health Analysis',
+    get_upgrade_info: 'Upgrade Information',
+    recommend_build: 'Build Recommendations',
+  };
+  return labelMap[toolName] || 'AutoRev';
+};
+
+// Helper to get real-time activity label for tool (shown during streaming)
+const getToolActivityLabel = (toolName) => {
+  const labels = {
+    get_car_ai_context: 'Loading vehicle data...',
+    search_cars: 'Searching car database...',
+    search_community_insights: 'Searching forum discussions...',
+    get_expert_reviews: 'Finding expert reviews...',
+    search_web: 'Searching the web...',
+    search_encyclopedia: 'Checking encyclopedia...',
+    get_known_issues: 'Looking up known issues...',
+    search_parts: 'Searching parts catalog...',
+    get_maintenance_schedule: 'Loading maintenance info...',
+    search_events: 'Finding events...',
+    compare_cars: 'Comparing vehicles...',
+    get_track_lap_times: 'Loading lap times...',
+    get_dyno_runs: 'Loading dyno data...',
+    search_knowledge: 'Searching knowledge base...',
+    get_car_details: 'Loading car details...',
+    analyze_vehicle_health: 'Analyzing vehicle health...',
+    get_upgrade_info: 'Finding upgrade info...',
+    recommend_build: 'Generating recommendations...',
+  };
+  return labels[toolName] || 'Researching...';
+};
+
+// Daily usage counter component - shows "X queries today" with beta badge
+const ALQueryCounter = ({ queriesToday, isBeta, isUnlimited }) => {
+  return (
+    <div className={styles.queryCounter}>
+      <span className={styles.queryCountNumber}>{queriesToday}</span>
+      <span className={styles.queryCountLabel}>
+        {queriesToday === 1 ? 'query today' : 'queries today'}
+      </span>
+      {isBeta && (
+        <span className={styles.betaBadge}>
+          Unlimited (Beta)
+        </span>
+      )}
+      {isUnlimited && !isBeta && (
+        <span className={styles.unlimitedBadge}>
+          Unlimited
+        </span>
+      )}
+    </div>
+  );
+};
+
 export default function ALPageClient() {
   const router = useRouter();
   const [messages, setMessages] = useState([]);
@@ -164,11 +314,19 @@ export default function ALPageClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [streamingContent, setStreamingContent] = useState('');
+  const [currentPhase, setCurrentPhase] = useState(null); // Current processing phase (understanding, thinking, researching, formulating)
+  const [activeTools, setActiveTools] = useState([]); // Track tools being queried in real-time
   const [showHistory, setShowHistory] = useState(false);
-  const [conversations, setConversations] = useState([]);
   const [currentConversationId, setCurrentConversationId] = useState(null);
-  const [conversationsLoading, setConversationsLoading] = useState(false);
+  const [selectedConversationId, setSelectedConversationId] = useState(null); // For loading a conversation
   const [showSuggestions, setShowSuggestions] = useState(true);
+  
+  // Daily usage counter state (for "X queries today" display)
+  const [dailyUsage, setDailyUsage] = useState({
+    queriesToday: 0,
+    isBeta: true,
+    isUnlimited: false,
+  });
   
   // Pending prompt from AskALButton navigation
   const [pendingPrompt, setPendingPrompt] = useState(null);
@@ -185,6 +343,19 @@ export default function ALPageClient() {
   const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
   const [feedbackModal, setFeedbackModal] = useState({ isOpen: false, messageIndex: null, type: null });
   
+  // New feature states
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null); // For copy confirmation
+  const [lastUserMessage, setLastUserMessage] = useState(null); // For regenerate feature
+  const [historySearchQuery, setHistorySearchQuery] = useState(''); // For conversation search
+  const [isSearchingHistory, setIsSearchingHistory] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // { conversationId, title }
+  const [isListening, setIsListening] = useState(false); // For voice input
+  const [voiceSupported, setVoiceSupported] = useState(false); // Check for Speech API support
+  const [showShareModal, setShowShareModal] = useState(false); // Share modal
+  const [shareUrl, setShareUrl] = useState(null); // Share URL
+  const [isSharing, setIsSharing] = useState(false); // Loading state for sharing
+  
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const abortControllerRef = useRef(null);
@@ -193,6 +364,20 @@ export default function ALPageClient() {
   const { selectedCar } = useCarSelection();
   const authModal = useAuthModal();
   const { trackEvent } = useAnalytics();
+  
+  // React Query hooks for conversations
+  const { 
+    data: conversations = [], 
+    isLoading: conversationsLoading,
+    refetch: refetchConversations,
+  } = useUserConversations(user?.id, { enabled: isAuthenticated && showHistory });
+  
+  // Load a specific conversation when selected
+  const { data: selectedConversationData } = useUserConversation(
+    user?.id, 
+    selectedConversationId,
+    { enabled: !!selectedConversationId }
+  );
   
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -206,6 +391,42 @@ export default function ALPageClient() {
     }
   }, [isAuthenticated, pendingPrompt]);
   
+  // Check for voice input support
+  const speechRecognitionRef = useRef(null);
+  useEffect(() => {
+    // Check if Speech Recognition is supported
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setVoiceSupported(true);
+      speechRecognitionRef.current = new SpeechRecognition();
+      speechRecognitionRef.current.continuous = false;
+      speechRecognitionRef.current.interimResults = true;
+      speechRecognitionRef.current.lang = 'en-US';
+      
+      speechRecognitionRef.current.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        setInput(transcript);
+      };
+      
+      speechRecognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+      
+      speechRecognitionRef.current.onerror = (event) => {
+        console.warn('[AL] Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+    }
+    
+    return () => {
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.abort();
+      }
+    };
+  }, []);
+  
   // Check for pending prompt from AskALButton navigation
   useEffect(() => {
     const pending = getPendingALPrompt();
@@ -213,6 +434,31 @@ export default function ALPageClient() {
       setPendingPrompt(pending);
     }
   }, []);
+  
+  // Fetch initial daily usage on mount
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return;
+    
+    const fetchDailyUsage = async () => {
+      try {
+        const response = await fetch(`/api/users/${user.id}/al-credits`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.dailyUsage) {
+            setDailyUsage({
+              queriesToday: data.dailyUsage.queriesToday || 0,
+              isBeta: data.dailyUsage.isBeta ?? true,
+              isUnlimited: data.dailyUsage.isUnlimited ?? false,
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('[AL] Failed to fetch initial daily usage:', err);
+      }
+    };
+    
+    fetchDailyUsage();
+  }, [isAuthenticated, user?.id]);
   
   // Auto-hide suggestions after 3 seconds
   useEffect(() => {
@@ -224,49 +470,23 @@ export default function ALPageClient() {
     }
   }, [messages.length, showSuggestions]);
   
-  // Load conversation history
-  const loadConversations = useCallback(async () => {
-    if (!user?.id) return;
-    
-    setConversationsLoading(true);
-    try {
-      const response = await fetch(`/api/users/${user.id}/al-conversations?limit=20`);
-      if (response.ok) {
-        const data = await response.json();
-        setConversations(data.conversations || []);
-      }
-    } catch (err) {
-      console.error('Failed to load conversations:', err);
-    } finally {
-      setConversationsLoading(false);
-    }
-  }, [user?.id]);
-  
+  // Handle loaded conversation data from React Query
   useEffect(() => {
-    if (isAuthenticated) {
-      loadConversations();
+    if (selectedConversationData?.messages) {
+      setMessages(selectedConversationData.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      })));
+      setCurrentConversationId(selectedConversationId);
+      setSelectedConversationId(null); // Reset to prevent refetching
+      setShowHistory(false);
     }
-  }, [isAuthenticated, loadConversations]);
+  }, [selectedConversationData, selectedConversationId]);
   
-  // Load a specific conversation
-  const loadConversation = useCallback(async (conversationId) => {
-    if (!user?.id) return;
-    
-    try {
-      const response = await fetch(`/api/users/${user.id}/al-conversations/${conversationId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data.messages?.map(msg => ({
-          role: msg.role,
-          content: msg.content,
-        })) || []);
-        setCurrentConversationId(conversationId);
-        setShowHistory(false);
-      }
-    } catch (err) {
-      console.error('Failed to load conversation:', err);
-    }
-  }, [user?.id]);
+  // Load a specific conversation (triggers React Query fetch)
+  const loadConversation = useCallback((conversationId) => {
+    setSelectedConversationId(conversationId);
+  }, []);
   
   // Start new chat
   const startNewChat = useCallback(() => {
@@ -276,15 +496,193 @@ export default function ALPageClient() {
     setInput('');
     setAttachments([]);
     setPendingPrompt(null);
+    setLastUserMessage(null);
     inputRef.current?.focus();
   }, []);
   
+  // Stop generation - abort the current streaming request
+  const stopGeneration = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsLoading(false);
+      setStreamingContent('');
+      setCurrentPhase(null);
+      setActiveTools([]);
+    }
+  }, []);
+  
+  // Toggle voice input
+  const toggleVoiceInput = useCallback(() => {
+    if (!speechRecognitionRef.current) return;
+    
+    if (isListening) {
+      speechRecognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setIsListening(true);
+      speechRecognitionRef.current.start();
+    }
+  }, [isListening]);
+  
+  // Export conversation as markdown
+  const exportConversation = useCallback(() => {
+    if (messages.length === 0) return;
+    
+    const carContext = selectedCar ? `Car: ${selectedCar.name}` : '';
+    const date = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    
+    let markdown = `# AL Conversation\n\n`;
+    markdown += `**Date:** ${date}\n`;
+    if (carContext) markdown += `**${carContext}**\n`;
+    markdown += `\n---\n\n`;
+    
+    messages.forEach((msg) => {
+      const role = msg.role === 'user' ? '**You:**' : '**AL:**';
+      const timestamp = msg.timestamp 
+        ? ` _(${new Date(msg.timestamp).toLocaleTimeString()})_` 
+        : '';
+      markdown += `${role}${timestamp}\n\n${msg.content}\n\n---\n\n`;
+    });
+    
+    // Create and download file
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `al-conversation-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [messages, selectedCar]);
+  
+  // Generate share link for conversation
+  const generateShareLink = useCallback(async () => {
+    if (!user?.id || !currentConversationId) return;
+    
+    setIsSharing(true);
+    try {
+      const response = await fetch(
+        `/api/users/${user.id}/al-conversations/${currentConversationId}/share`,
+        { method: 'POST' }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setShareUrl(data.shareUrl);
+        setShowShareModal(true);
+      }
+    } catch (err) {
+      console.error('[AL] Failed to generate share link:', err);
+    } finally {
+      setIsSharing(false);
+    }
+  }, [user?.id, currentConversationId]);
+  
+  // Copy share URL to clipboard
+  const copyShareUrl = useCallback(async () => {
+    if (!shareUrl) return;
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      // Show brief confirmation
+      setTimeout(() => setShowShareModal(false), 1500);
+    }
+  }, [shareUrl]);
+  
+  // Copy message to clipboard
+  const handleCopyMessage = useCallback(async (messageIndex) => {
+    const message = messages[messageIndex];
+    if (!message) return;
+    
+    const success = await copyToClipboard(message.content);
+    if (success) {
+      setCopiedMessageIndex(messageIndex);
+      // Reset after 2 seconds
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
+    }
+  }, [messages]);
+  
+  // Regenerate last response
+  const handleRegenerate = useCallback(() => {
+    if (!lastUserMessage || isLoading) return;
+    
+    // Remove the last assistant message
+    setMessages(prev => {
+      const newMessages = [...prev];
+      // Find and remove the last assistant message
+      for (let i = newMessages.length - 1; i >= 0; i--) {
+        if (newMessages[i].role === 'assistant') {
+          newMessages.splice(i, 1);
+          break;
+        }
+      }
+      return newMessages;
+    });
+    
+    // Resend the last user message
+    if (sendMessageRef.current) {
+      sendMessageRef.current(lastUserMessage);
+    }
+  }, [lastUserMessage, isLoading]);
+  
+  // Delete a conversation
+  const handleDeleteConversation = useCallback(async (conversationId) => {
+    if (!user?.id || !conversationId) return;
+    
+    try {
+      const response = await fetch(`/api/users/${user.id}/al-conversations/${conversationId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        refetchConversations();
+        // If we deleted the current conversation, start a new chat
+        if (conversationId === currentConversationId) {
+          startNewChat();
+        }
+      }
+    } catch (err) {
+      console.error('[AL] Failed to delete conversation:', err);
+    } finally {
+      setDeleteConfirm(null);
+    }
+  }, [user?.id, currentConversationId, refetchConversations, startNewChat]);
+  
+  // Search conversations
+  const handleSearchConversations = useCallback(async (query) => {
+    if (!user?.id || !query.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    
+    setIsSearchingHistory(true);
+    try {
+      const response = await fetch(
+        `/api/users/${user.id}/al-conversations?search=${encodeURIComponent(query)}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data.conversations || []);
+      }
+    } catch (err) {
+      console.error('[AL] Search failed:', err);
+    } finally {
+      setIsSearchingHistory(false);
+    }
+  }, [user?.id]);
+  
   // Handle sending pending prompt (from AskALButton navigation)
+  // Note: sendMessage is defined below, use ref pattern to avoid circular dependency
+  const sendMessageRef = useRef(null);
+  
   const handleSendPendingPrompt = useCallback(() => {
-    if (pendingPrompt) {
+    if (pendingPrompt && sendMessageRef.current) {
       const promptText = pendingPrompt.prompt;
       setPendingPrompt(null);
-      sendMessage(promptText);
+      sendMessageRef.current(promptText);
     }
   }, [pendingPrompt]);
   
@@ -335,14 +733,18 @@ export default function ALPageClient() {
       trackALConversationStart(user?.id || 'anonymous', userMessage, selectedCar?.slug);
     }
     
-    // Build user message with attachment indicators
+    // Build user message with attachment indicators and timestamp
     const newMessages = [...messages, { 
       role: 'user', 
       content: userMessage,
       attachments: messageAttachments, // Store attachments with message
+      timestamp: new Date().toISOString(),
     }];
     setMessages(newMessages);
+    setLastUserMessage(userMessage); // Track for regenerate feature
     setIsLoading(true);
+    setActiveTools([]); // Clear any previous tool activity indicators
+    setCurrentPhase(null); // Clear any previous phase
     
     abortControllerRef.current = new AbortController();
     
@@ -379,6 +781,8 @@ export default function ALPageClient() {
       const decoder = new TextDecoder();
       let fullContent = '';
       let newConversationId = currentConversationId;
+      let collectedToolResults = []; // Track tool results for sources
+      let toolsUsed = []; // Track which tools were used
       
       while (true) {
         const { done, value } = await reader.read();
@@ -387,25 +791,133 @@ export default function ALPageClient() {
         const chunk = decoder.decode(value);
         const lines = chunk.split('\n');
         
+        let currentEventType = '';
         for (const line of lines) {
+          // Parse SSE event type
+          if (line.startsWith('event: ')) {
+            currentEventType = line.slice(7).trim();
+            continue;
+          }
+          
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6));
               
-              if (data.conversationId) {
-                newConversationId = data.conversationId;
-              }
-              
-              if (data.content) {
-                fullContent += data.content;
-                setStreamingContent(fullContent);
-              }
-              
-              if (data.done) {
-                setMessages([...newMessages, { role: 'assistant', content: fullContent }]);
+              // Handle different event types
+              if (currentEventType === 'connected') {
+                if (data.conversationId) {
+                  newConversationId = data.conversationId;
+                }
+                // Update daily usage from connected event
+                if (data.dailyUsage) {
+                  setDailyUsage(prev => ({
+                    ...prev,
+                    queriesToday: data.dailyUsage.queriesToday,
+                    isBeta: data.dailyUsage.isBeta ?? prev.isBeta,
+                    isUnlimited: data.dailyUsage.isUnlimited ?? prev.isUnlimited,
+                  }));
+                }
+              } else if (currentEventType === 'text') {
+                if (data.content) {
+                  fullContent += data.content;
+                  setStreamingContent(fullContent);
+                  // Clear phase when text starts streaming (response is being generated)
+                  setCurrentPhase(null);
+                }
+              } else if (currentEventType === 'phase') {
+                // Update current processing phase (understanding, thinking, researching, formulating)
+                if (data.phase && data.label) {
+                  setCurrentPhase({ phase: data.phase, label: data.label });
+                }
+              } else if (currentEventType === 'tool_start') {
+                // A tool is about to be called - add to active tools list
+                if (data.tool && data.label) {
+                  setActiveTools(prev => {
+                    // Avoid duplicates
+                    if (prev.some(t => t.name === data.tool)) return prev;
+                    return [...prev, { name: data.tool, label: data.label, status: 'running' }];
+                  });
+                }
+              } else if (currentEventType === 'tool_result') {
+                // Tool completed - mark it as done
+                if (data.tool) {
+                  toolsUsed.push({
+                    name: data.tool,
+                    sources: data.sources || [], // Rich source data from backend (URLs, titles, etc.)
+                  });
+                  // Mark tool as completed in the UI
+                  setActiveTools(prev => prev.map(t => 
+                    t.name === data.tool ? { ...t, status: 'completed' } : t
+                  ));
+                }
+              } else if (currentEventType === 'done') {
+                if (data.conversationId) {
+                  newConversationId = data.conversationId;
+                }
+                // Update daily usage from done event
+                if (data.dailyUsage) {
+                  setDailyUsage(prev => ({
+                    ...prev,
+                    queriesToday: data.dailyUsage.queriesToday,
+                    isBeta: data.dailyUsage.isBeta ?? prev.isBeta,
+                    isUnlimited: data.dailyUsage.isUnlimited ?? prev.isUnlimited,
+                  }));
+                }
+                
+                // Extract sources from tool usage for citation display
+                // Use rich sources when available, fall back to generic labels
+                const sources = toolsUsed.flatMap((toolInfo, toolIdx) => {
+                  const toolName = typeof toolInfo === 'string' ? toolInfo : toolInfo.name;
+                  const toolSources = typeof toolInfo === 'object' ? toolInfo.sources : [];
+                  
+                  // Use rich sources if available (URLs, titles, etc.)
+                  if (toolSources && toolSources.length > 0) {
+                    return toolSources;
+                  }
+                  // Fall back to generic labels from tool name
+                  return [{
+                    id: toolIdx + 1,
+                    type: getSourceTypeFromTool(toolName),
+                    label: getSourceLabelFromTool(toolName),
+                    detail: toolName.replace(/_/g, ' '),
+                  }];
+                }).map((s, idx) => ({ ...s, id: idx + 1 })); // Re-index for display
+                
+                // Add message with sources and timestamp
+                // Extract tool names for backwards compatibility
+                const toolNames = toolsUsed.map(t => typeof t === 'string' ? t : t.name);
+                setMessages([...newMessages, { 
+                  role: 'assistant', 
+                  content: fullContent,
+                  sources: sources.length > 0 ? sources : undefined,
+                  toolsUsed: toolNames.length > 0 ? toolNames : undefined,
+                  timestamp: new Date().toISOString(),
+                }]);
                 setStreamingContent('');
                 setCurrentConversationId(newConversationId);
               }
+              
+              // Legacy fallback for non-typed events
+              if (!currentEventType) {
+                if (data.conversationId) {
+                  newConversationId = data.conversationId;
+                }
+                if (data.content) {
+                  fullContent += data.content;
+                  setStreamingContent(fullContent);
+                }
+                if (data.done) {
+                  setMessages([...newMessages, { 
+                    role: 'assistant', 
+                    content: fullContent,
+                    timestamp: new Date().toISOString(),
+                  }]);
+                  setStreamingContent('');
+                  setCurrentConversationId(newConversationId);
+                }
+              }
+              
+              currentEventType = ''; // Reset for next event
             } catch (e) {
               // Skip invalid JSON
             }
@@ -414,13 +926,33 @@ export default function ALPageClient() {
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
-        setError('Sorry, something went wrong. Please try again.');
+        // Determine error type for user-friendly message
+        let errorMessage = 'Sorry, something went wrong. Please try again.';
+        let errorType = 'unknown';
+        
+        if (err.message?.includes('rate limit') || err.message?.includes('429')) {
+          errorMessage = 'Rate limit reached. Please wait a moment before trying again.';
+          errorType = 'rate_limit';
+        } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+          errorType = 'network';
+        } else if (err.message?.includes('timeout')) {
+          errorMessage = 'Request timed out. Please try again.';
+          errorType = 'timeout';
+        }
+        
+        setError({ message: errorMessage, type: errorType, canRetry: true });
         console.error('AL error:', err);
       }
     } finally {
       setIsLoading(false);
+      setActiveTools([]); // Clear tool activity indicators
+      setCurrentPhase(null); // Clear phase indicator
     }
   };
+  
+  // Keep ref updated for useCallback that references sendMessage
+  sendMessageRef.current = sendMessage;
   
   // Format date for conversation list
   const formatDate = (dateString) => {
@@ -533,6 +1065,8 @@ export default function ALPageClient() {
   
   // History view
   if (showHistory) {
+    const displayedConversations = searchResults !== null ? searchResults : conversations;
+    
     return (
       <div className={styles.container}>
         <div className={styles.historyView}>
@@ -541,39 +1075,120 @@ export default function ALPageClient() {
             <span>HISTORY</span>
             <button 
               className={styles.closeHistoryBtn}
-              onClick={() => setShowHistory(false)}
+              onClick={() => {
+                setShowHistory(false);
+                setHistorySearchQuery('');
+                setSearchResults(null);
+              }}
             >
               ✕
             </button>
           </div>
           
+          {/* Search bar */}
+          <div className={styles.historySearch}>
+            <LocalIcons.search size={16} />
+            <input
+              type="text"
+              placeholder="Search conversations..."
+              value={historySearchQuery}
+              onChange={(e) => {
+                setHistorySearchQuery(e.target.value);
+                if (e.target.value.length > 2) {
+                  handleSearchConversations(e.target.value);
+                } else if (e.target.value.length === 0) {
+                  setSearchResults(null);
+                }
+              }}
+              className={styles.historySearchInput}
+            />
+            {historySearchQuery && (
+              <button
+                className={styles.clearSearchBtn}
+                onClick={() => {
+                  setHistorySearchQuery('');
+                  setSearchResults(null);
+                }}
+              >
+                <LocalIcons.x size={14} />
+              </button>
+            )}
+          </div>
+          
           <div className={styles.conversationsList}>
-            {conversationsLoading ? (
+            {conversationsLoading || isSearchingHistory ? (
               <div className={styles.loadingConversations}>Loading...</div>
-            ) : conversations.length === 0 ? (
+            ) : displayedConversations.length === 0 ? (
               <div className={styles.noConversations}>
-                <p>No conversations yet</p>
-                <p className={styles.noConversationsHint}>Start chatting with AL!</p>
+                {searchResults !== null ? (
+                  <>
+                    <p>No matching conversations</p>
+                    <p className={styles.noConversationsHint}>Try different keywords</p>
+                  </>
+                ) : (
+                  <>
+                    <p>No conversations yet</p>
+                    <p className={styles.noConversationsHint}>Start chatting with AL!</p>
+                  </>
+                )}
               </div>
             ) : (
-              conversations.map((conv) => (
-                <button
+              displayedConversations.map((conv) => (
+                <div
                   key={conv.id}
                   className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''}`}
-                  onClick={() => loadConversation(conv.id)}
                 >
-                  <div className={styles.conversationContent}>
+                  <button
+                    className={styles.conversationContent}
+                    onClick={() => loadConversation(conv.id)}
+                  >
                     <span className={styles.conversationTitle}>{conv.title || 'New conversation'}</span>
                     {conv.preview && (
                       <span className={styles.conversationPreview}>{conv.preview}</span>
                     )}
+                  </button>
+                  <div className={styles.conversationMeta}>
+                    <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
+                    <button
+                      className={styles.deleteConversationBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                      }}
+                      title="Delete conversation"
+                    >
+                      <LocalIcons.trash size={14} />
+                    </button>
                   </div>
-                  <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
-                </button>
+                </div>
               ))
             )}
           </div>
         </div>
+        
+        {/* Delete confirmation modal */}
+        {deleteConfirm && (
+          <div className={styles.deleteModal}>
+            <div className={styles.deleteModalContent}>
+              <h3>Delete conversation?</h3>
+              <p>"{deleteConfirm.title || 'This conversation'}" will be permanently deleted.</p>
+              <div className={styles.deleteModalActions}>
+                <button
+                  className={styles.deleteModalCancel}
+                  onClick={() => setDeleteConfirm(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={styles.deleteModalConfirm}
+                  onClick={() => handleDeleteConversation(deleteConfirm.conversationId)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -586,21 +1201,51 @@ export default function ALPageClient() {
         <button 
           className={styles.historyBtn}
           onClick={() => {
-            loadConversations();
+            refetchConversations();
             setShowHistory(true);
           }}
           title="Chat history"
         >
-          <LocalIcons.history size={20} />
+          <LocalIcons.history size={18} />
         </button>
         
+        {/* Daily query counter - centered in header */}
+        <ALQueryCounter 
+          queriesToday={dailyUsage.queriesToday}
+          isBeta={dailyUsage.isBeta}
+          isUnlimited={dailyUsage.isUnlimited}
+        />
+        
         <div className={styles.headerRight}>
+          {/* Share button - only show when there's a saved conversation */}
+          {messages.length > 0 && currentConversationId && (
+            <button 
+              className={styles.settingsBtn}
+              onClick={generateShareLink}
+              disabled={isSharing}
+              title="Share conversation"
+            >
+              <LocalIcons.share size={18} />
+            </button>
+          )}
+          
+          {/* Export button - only show when there are messages */}
+          {messages.length > 0 && (
+            <button 
+              className={styles.settingsBtn}
+              onClick={exportConversation}
+              title="Export conversation"
+            >
+              <LocalIcons.download size={18} />
+            </button>
+          )}
+          
           <button 
             className={styles.settingsBtn}
             onClick={() => setShowPreferences(!showPreferences)}
             title="AL preferences"
           >
-            <LocalIcons.settings size={20} />
+            <LocalIcons.settings size={18} />
           </button>
           
           <button 
@@ -608,7 +1253,7 @@ export default function ALPageClient() {
             onClick={startNewChat}
             title="New chat"
           >
-            <LocalIcons.newChat size={20} />
+            <LocalIcons.newChat size={18} />
           </button>
         </div>
       </div>
@@ -695,9 +1340,11 @@ export default function ALPageClient() {
                 className={`${styles.message} ${msg.role === 'user' ? styles.userMessage : styles.assistantMessage}`}
               >
                 {msg.role === 'assistant' && (
-                  <img 
+                  <Image 
                     src={UI_IMAGES.alMascotFull}
                     alt="AL"
+                    width={32}
+                    height={32}
                     className={styles.messageAvatar}
                   />
                 )}
@@ -722,34 +1369,72 @@ export default function ALPageClient() {
                     </div>
                   )}
                   {msg.role === 'assistant' ? (
-                    <FormattedMessage content={msg.content} />
+                    <>
+                      <FormattedMessage content={msg.content} />
+                      {/* Sources list - Perplexity-style citations */}
+                      {msg.sources && msg.sources.length > 0 && (
+                        <ALSourcesList sources={msg.sources} />
+                      )}
+                    </>
                   ) : (
                     msg.content
                   )}
                   
-                  {/* Feedback buttons for assistant messages */}
+                  {/* Action buttons for assistant messages */}
                   {msg.role === 'assistant' && (
-                    <div className={styles.feedbackRow}>
+                    <div className={styles.messageActions}>
+                      {/* Copy button */}
+                      <button
+                        className={`${styles.actionBtn} ${copiedMessageIndex === i ? styles.actionBtnActive : ''}`}
+                        onClick={() => handleCopyMessage(i)}
+                        title={copiedMessageIndex === i ? 'Copied!' : 'Copy message'}
+                        aria-label="Copy message"
+                      >
+                        {copiedMessageIndex === i ? (
+                          <span className={styles.copiedCheck}>✓</span>
+                        ) : (
+                          <LocalIcons.copy size={14} />
+                        )}
+                      </button>
+                      
+                      {/* Regenerate button - only on the last assistant message */}
+                      {i === messages.length - 1 && lastUserMessage && !isLoading && (
+                        <button
+                          className={styles.actionBtn}
+                          onClick={handleRegenerate}
+                          title="Regenerate response"
+                          aria-label="Regenerate response"
+                        >
+                          <LocalIcons.refresh size={14} />
+                        </button>
+                      )}
+                      
+                      {/* Divider */}
+                      <span className={styles.actionDivider} />
+                      
+                      {/* Feedback buttons */}
                       {feedbackGiven[i] ? (
                         <span className={styles.feedbackThanks}>
                           {feedbackGiven[i] === 'positive' 
                             ? <><LocalIcons.thumbsUp size={14} /> Thanks!</> 
-                            : <><LocalIcons.thumbsDown size={14} /> Thanks for the feedback</>
+                            : <><LocalIcons.thumbsDown size={14} /> Thanks</>
                           }
                         </span>
                       ) : (
                         <>
                           <button
-                            className={styles.feedbackBtn}
+                            className={styles.actionBtn}
                             onClick={() => handleFeedback(i, 'positive')}
                             title="Good response"
+                            aria-label="Thumbs up - good response"
                           >
                             <LocalIcons.thumbsUp size={14} />
                           </button>
                           <button
-                            className={styles.feedbackBtn}
+                            className={styles.actionBtn}
                             onClick={() => handleFeedback(i, 'negative')}
                             title="Bad response"
+                            aria-label="Thumbs down - bad response"
                           >
                             <LocalIcons.thumbsDown size={14} />
                           </button>
@@ -757,15 +1442,24 @@ export default function ALPageClient() {
                       )}
                     </div>
                   )}
+                  
+                  {/* Timestamp */}
+                  {msg.timestamp && (
+                    <span className={styles.messageTimestamp}>
+                      {formatRelativeTime(msg.timestamp)}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
             
             {streamingContent && (
               <div className={`${styles.message} ${styles.assistantMessage}`}>
-                <img 
+                <Image 
                   src={UI_IMAGES.alMascotFull}
                   alt="AL"
+                  width={32}
+                  height={32}
                   className={styles.messageAvatar}
                 />
                 <div className={styles.messageContent}>
@@ -776,20 +1470,66 @@ export default function ALPageClient() {
             
             {isLoading && !streamingContent && (
               <div className={`${styles.message} ${styles.assistantMessage}`}>
-                <img 
+                <Image 
                   src={UI_IMAGES.alMascotFull}
                   alt="AL"
+                  width={32}
+                  height={32}
                   className={styles.messageAvatar}
                 />
                 <div className={styles.messageContent}>
-                  <span className={styles.thinking}>Thinking...</span>
+                  <div className={styles.processingStatus}>
+                    {/* Show current phase */}
+                    {currentPhase && (
+                      <div className={styles.phaseIndicator}>
+                        <span className={styles.phaseDot} />
+                        <span className={styles.phaseLabel}>{currentPhase.label}</span>
+                      </div>
+                    )}
+                    
+                    {/* Show active tools with status */}
+                    {activeTools.length > 0 && (
+                      <div className={styles.toolActivity}>
+                        {activeTools.map((tool, idx) => (
+                          <div 
+                            key={`${tool.name}-${idx}`} 
+                            className={`${styles.toolActivityItem} ${tool.status === 'completed' ? styles.toolCompleted : ''}`}
+                          >
+                            <span className={tool.status === 'completed' ? styles.toolCheckmark : styles.toolSpinner} />
+                            <span>{tool.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Fallback when no phase or tools yet */}
+                    {!currentPhase && activeTools.length === 0 && (
+                      <span className={styles.thinking}>Thinking...</span>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
             
             {error && (
               <div className={styles.errorMessage}>
-                {error}
+                <span className={styles.errorText}>
+                  {typeof error === 'string' ? error : error.message}
+                </span>
+                {(typeof error === 'object' && error.canRetry && lastUserMessage) && (
+                  <button
+                    className={styles.retryBtn}
+                    onClick={() => {
+                      setError(null);
+                      if (sendMessageRef.current) {
+                        sendMessageRef.current(lastUserMessage);
+                      }
+                    }}
+                  >
+                    <LocalIcons.refresh size={14} />
+                    Try again
+                  </button>
+                )}
               </div>
             )}
             
@@ -836,14 +1576,48 @@ export default function ALPageClient() {
             )}
           </div>
           
+          {/* Voice Input Button */}
+          {voiceSupported && (
+            <button
+              className={`${styles.voiceBtn} ${isListening ? styles.voiceBtnActive : ''}`}
+              onClick={toggleVoiceInput}
+              title={isListening ? 'Stop listening' : 'Voice input'}
+              aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+              disabled={isLoading}
+            >
+              <LocalIcons.mic size={18} />
+            </button>
+          )}
+          
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
+              // Cmd/Ctrl + Enter or just Enter (without shift) to send
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendMessage();
+                if (!isLoading) {
+                  sendMessage();
+                }
+              }
+              // Escape to stop generation or clear input
+              if (e.key === 'Escape') {
+                if (isLoading) {
+                  stopGeneration();
+                } else if (input) {
+                  setInput('');
+                }
+              }
+              // Up arrow to edit last message (when input is empty)
+              if (e.key === 'ArrowUp' && !input && messages.length > 0) {
+                // Find last user message
+                for (let i = messages.length - 1; i >= 0; i--) {
+                  if (messages[i].role === 'user') {
+                    setInput(messages[i].content);
+                    break;
+                  }
+                }
               }
             }}
             placeholder={selectedCar ? `Ask about ${selectedCar.name}...` : "Ask AL anything..."}
@@ -851,14 +1625,27 @@ export default function ALPageClient() {
             rows={1}
             disabled={isLoading}
           />
-          <button
-            onClick={() => sendMessage()}
-            disabled={(!input.trim() && attachments.length === 0) || isLoading}
-            className={styles.sendBtn}
-            aria-label="Send"
-          >
-            <LocalIcons.arrowUp size={18} />
-          </button>
+          {/* Show stop button when loading, send button otherwise */}
+          {isLoading ? (
+            <button
+              onClick={stopGeneration}
+              className={styles.stopBtn}
+              aria-label="Stop generation"
+              title="Stop generation (Esc)"
+            >
+              <LocalIcons.stop size={16} />
+            </button>
+          ) : (
+            <button
+              onClick={() => sendMessage()}
+              disabled={!input.trim() && attachments.length === 0}
+              className={styles.sendBtn}
+              aria-label="Send"
+              title="Send message (Enter)"
+            >
+              <LocalIcons.arrowUp size={18} />
+            </button>
+          )}
         </div>
       </div>
       
@@ -875,6 +1662,37 @@ export default function ALPageClient() {
         onSubmit={submitEnhancedFeedback}
         feedbackType={feedbackModal.type || 'negative'}
       />
+      
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className={styles.shareModal}>
+          <div className={styles.shareModalContent}>
+            <button 
+              className={styles.shareModalClose}
+              onClick={() => setShowShareModal(false)}
+            >
+              <LocalIcons.x size={18} />
+            </button>
+            <h3>Share Conversation</h3>
+            <p>Anyone with this link can view this conversation.</p>
+            <div className={styles.shareUrlBox}>
+              <input 
+                type="text" 
+                value={shareUrl || ''} 
+                readOnly 
+                className={styles.shareUrlInput}
+              />
+              <button 
+                className={styles.copyUrlBtn}
+                onClick={copyShareUrl}
+              >
+                <LocalIcons.copy size={16} />
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

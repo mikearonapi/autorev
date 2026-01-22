@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { awardPoints } from '@/lib/pointsService';
 
 /**
  * GET /api/users/[userId]/track-times
@@ -235,6 +237,9 @@ export async function POST(request, { params }) {
       console.error('[TrackTimes] Error inserting track time:', error);
       return NextResponse.json({ error: 'Failed to save track time' }, { status: 500 });
     }
+    
+    // Award points for logging track time (non-blocking)
+    awardPoints(userId, 'data_log_track_time', { trackTimeId: data.id, trackName }).catch(() => {});
     
     return NextResponse.json({ success: true, trackTime: data });
     

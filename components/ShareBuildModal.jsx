@@ -13,6 +13,7 @@ import Image from 'next/image';
 import Modal from '@/components/ui/Modal';
 import { Icons } from '@/components/ui/Icons';
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
+import { platform } from '@/lib/platform';
 import styles from './ShareBuildModal.module.css';
 
 export default function ShareBuildModal({
@@ -94,40 +95,39 @@ export default function ShareBuildModal({
     }
   };
 
-  const copyShareLink = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
-  };
-
-  // Handle native share (for mobile devices)
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share(getNativeShareData({
-          title: title,
-          text: `Check out my ${title} on AutoRev!`,
-          url: shareUrl,
-        }));
-      } catch (err) {
-        // User cancelled or share failed - fall back to copy
-        if (err.name !== 'AbortError') {
-          copyShareLink();
-        }
-      }
-    } else {
-      copyShareLink();
+  const copyShareLink = async () => {
+    const success = await platform.copyToClipboard(shareUrl);
+    if (success) {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
     }
   };
 
-  // Handle Instagram share (copy link with instructions)
-  const handleInstagramShare = () => {
+  // Handle native share (for mobile devices) - using platform abstraction
+  const handleNativeShare = async () => {
+    const shareData = getNativeShareData({
+      title: title,
+      text: `Check out my ${title} on AutoRev!`,
+      url: shareUrl,
+    });
+    
+    const result = await platform.share(shareData);
+    if (result.method === 'clipboard') {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  // Handle Instagram share (copy link with instructions) - using platform abstraction
+  const handleInstagramShare = async () => {
     const instagramInfo = getInstagramShareInfo(shareUrl);
-    navigator.clipboard.writeText(instagramInfo.copyUrl);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
+    const success = await platform.copyToClipboard(instagramInfo.copyUrl);
+    if (success) {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
     // On mobile, try to open Instagram
-    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    if (platform.isIOS || platform.isAndroid) {
       window.location.href = instagramInfo.storiesUrl;
     }
   };
@@ -306,7 +306,7 @@ export default function ShareBuildModal({
                       </svg>
                     </a>
                     {/* Native Share for mobile */}
-                    {typeof navigator !== 'undefined' && navigator.share && (
+                    {platform.canShare && (
                       <button 
                         onClick={handleNativeShare}
                         className={styles.socialBtn}

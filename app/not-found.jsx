@@ -60,11 +60,11 @@ export default function NotFound() {
           <Link href="/" className={styles.homeLink}>
             🏁 Back to the Grid
           </Link>
-          <Link href="/car-selector" className={styles.advisoryLink}>
-            🚗 Find Your Match
+          <Link href="/garage" className={styles.advisoryLink}>
+            🚗 My Garage
           </Link>
-          <Link href="/browse-cars" className={styles.browseLink}>
-            🔍 Browse Cars
+          <Link href="/al" className={styles.browseLink}>
+            🤖 Ask AL
           </Link>
         </div>
 

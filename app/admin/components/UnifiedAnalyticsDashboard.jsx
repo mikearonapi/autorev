@@ -13,8 +13,14 @@
  * - Goal tracking
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import styles from './UnifiedAnalyticsDashboard.module.css';
+import { 
+  useAdminSiteAnalytics, 
+  useAdminMarketingAnalytics, 
+  useAdminAdvancedAnalytics, 
+  useAdminDashboard 
+} from '@/hooks/useAdminData';
 import {
   UsersIcon,
   FileTextIcon,
@@ -480,52 +486,32 @@ function formatGoalName(goalKey) {
 }
 
 export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState('overview');
   
-  const fetchData = useCallback(async () => {
-    if (!token) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const [siteRes, marketingRes, advancedRes, dashboardRes] = await Promise.all([
-        fetch(`/api/admin/site-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`/api/admin/marketing-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`/api/admin/advanced-analytics?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => ({ ok: false })),
-        fetch(`/api/admin/dashboard?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => ({ ok: false }))
-      ]);
-      
-      const site = siteRes.ok ? await siteRes.json() : null;
-      const marketing = marketingRes.ok ? await marketingRes.json() : null;
-      const advanced = advancedRes.ok ? await advancedRes.json() : null;
-      const dashboard = dashboardRes.ok ? await dashboardRes.json() : null;
-      
-      setData({ site, marketing, advanced, dashboard });
-    } catch (err) {
-      console.error('[UnifiedAnalytics] Error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, range]);
+  // Use React Query hooks - these run in parallel automatically
+  const { data: site, isLoading: siteLoading, error: siteError, refetch: refetchSite } = useAdminSiteAnalytics(range);
+  const { data: marketing, isLoading: marketingLoading, refetch: refetchMarketing } = useAdminMarketingAnalytics(range);
+  const { data: advanced, refetch: refetchAdvanced } = useAdminAdvancedAnalytics(range);
+  const { data: dashboard, refetch: refetchDashboard } = useAdminDashboard(range);
   
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+  // Combined refetch function
+  const fetchData = () => {
+    refetchSite();
+    refetchMarketing();
+    refetchAdvanced();
+    refetchDashboard();
+  };
+  
+  // Combine data for components that expect the old structure
+  const data = useMemo(() => ({
+    site,
+    marketing,
+    advanced,
+    dashboard,
+  }), [site, marketing, advanced, dashboard]);
+  
+  const loading = siteLoading || marketingLoading;
+  const error = siteError?.message || null;
   
   if (loading) {
     return (
@@ -549,7 +535,6 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     );
   }
   
-  const { site, marketing, advanced, dashboard } = data || {};
   const actualSignups = dashboard?.users?.newThisPeriod || 0;
   
   return (

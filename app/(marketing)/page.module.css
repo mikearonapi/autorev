@@ -10,13 +10,9 @@
   color: var(--color-text-primary, #ffffff);
   overflow-x: hidden;
   position: relative;
-  margin-top: calc(-1 * var(--content-offset-mobile, 88px));
-}
-
-@media (min-width: 768px) {
-  .page {
-    margin-top: calc(-1 * var(--content-offset, 100px));
-  }
+  /* Uses data-no-main-offset attribute to disable main padding.
+     This is cleaner than the previous negative margin hack which
+     could cause scroll calculation issues on Android. */
 }
 
 /* ==========================================================================

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import SaveEventButton from '@/components/SaveEventButton';
 import AddToCalendarButton from '@/components/AddToCalendarButton';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { EventTypeIcon, TrackEventBadgeIcon, FeaturedBadgeIcon } from '@/components/icons/EventIcons';
+import { useUserSavedEvents } from '@/hooks/useUserData';
 
 /**
  * Format date for display
@@ -125,9 +126,31 @@ export default function CommunityEventDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageError, setImageError] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSavedLocal, setIsSavedLocal] = useState(false); // Local state for optimistic updates
   
   const { isAuthenticated, user, isLoading: authLoading, session } = useAuth();
+  
+  // React Query hook for saved events
+  const { data: savedEventsData } = useUserSavedEvents(
+    user?.id, 
+    { includeExpired: true },
+    { enabled: isAuthenticated && !!user?.id && !authLoading }
+  );
+  
+  // Derive saved status from query data or local state
+  const savedSlugs = useMemo(() => {
+    const slugs = new Set(savedEventsData?.savedEvents?.map(se => se.event?.slug).filter(Boolean) || []);
+    return slugs;
+  }, [savedEventsData]);
+  
+  const isSaved = isSavedLocal !== null ? isSavedLocal : savedSlugs.has(slug);
+  
+  // Sync local state with query data
+  useEffect(() => {
+    if (savedEventsData && slug) {
+      setIsSavedLocal(savedSlugs.has(slug));
+    }
+  }, [savedEventsData, slug, savedSlugs]);
 
   // Fetch event data
   useEffect(() => {
@@ -185,35 +208,10 @@ export default function CommunityEventDetailPage() {
     fetchEvent();
   }, [slug]);
 
-  // Check saved status - only after auth is loaded
-  useEffect(() => {
-    async function checkSaved() {
-      // Wait for auth to finish loading before checking saved status
-      if (authLoading || !isAuthenticated || !user?.id || !slug) return;
-      
-      try {
-        const headers = {};
-        if (session?.access_token) {
-          headers.Authorization = `Bearer ${session.access_token}`;
-        }
-        
-        const res = await fetch(`/api/users/${user.id}/saved-events`, { headers });
-        if (res.ok) {
-          const data = await res.json();
-          const slugs = new Set(data.savedEvents?.map(se => se.event.slug) || []);
-          setIsSaved(slugs.has(slug));
-        }
-      } catch (err) {
-        console.error('[EventDetailPage] Error checking saved:', err);
-      }
-    }
-    checkSaved();
-  }, [isAuthenticated, authLoading, user?.id, slug, session?.access_token]);
-
   // Handle save change - called by SaveEventButton after it makes the API call
   // SaveEventButton passes (eventSlug, isSaved)
   const handleSaveChange = useCallback((eventSlug, newSavedState) => {
-    setIsSaved(newSavedState);
+    setIsSavedLocal(newSavedState);
   }, []);
 
   // Handle share

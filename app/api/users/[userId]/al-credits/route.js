@@ -6,7 +6,8 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getUserBalance } from '@/lib/alUsageService';
+import { errors } from '@/lib/apiErrors';
+import { getUserBalance, getDailyUsage } from '@/lib/alUsageService';
 import { formatCentsAsDollars, formatCentsCompact } from '@/lib/alConfig';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
@@ -20,7 +21,11 @@ async function handleGet(request, { params }) {
     );
   }
 
-  const balanceInfo = await getUserBalance(userId);
+  // Fetch both balance and daily usage in parallel
+  const [balanceInfo, dailyUsageInfo] = await Promise.all([
+    getUserBalance(userId),
+    getDailyUsage(userId),
+  ]);
 
   return NextResponse.json({
     // New token-based fields
@@ -41,6 +46,12 @@ async function handleGet(request, { params }) {
     lastRefillDate: balanceInfo.lastRefillDate,
     // Unlimited/Founder status
     isUnlimited: balanceInfo.isUnlimited || false,
+    // Daily usage for counter UI
+    dailyUsage: {
+      queriesToday: dailyUsageInfo.queriesToday || 0,
+      isBeta: dailyUsageInfo.isBeta ?? true,
+      isUnlimited: dailyUsageInfo.isUnlimited || balanceInfo.isUnlimited || false,
+    },
     // Legacy compatibility (for old UI during transition)
     credits: balanceInfo.balanceCents,
     usedThisMonth: Math.round(balanceInfo.spentThisMonthCents || 0),

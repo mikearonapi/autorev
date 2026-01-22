@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { getCarAIContext } from '@/lib/alTools';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

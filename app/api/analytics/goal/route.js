@@ -7,6 +7,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(

@@ -1,6 +1,6 @@
 # AutoRev File Structure
 
-**Last Generated:** December 15, 2024
+**Last Generated:** January 21, 2026
 
 ## Purpose
 Documents the actual file organization and structure of the AutoRev codebase, based on current state analysis.
@@ -25,7 +25,7 @@ Documents the actual file organization and structure of the AutoRev codebase, ba
 
 ## Detailed Structure
 
-### `/lib` Directory (98 files)
+### `/lib` Directory (177 files)
 Main business logic and services organized into:
 
 ```
@@ -47,7 +47,7 @@ lib/
 - `carsClient.js` - Car data service
 - `tierAccess.js` - Feature gating and permissions
 
-### `/components` Directory (104 files)
+### `/components` Directory (152 files)
 React components with CSS modules organized into:
 
 ```

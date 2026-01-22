@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { errors } from '@/lib/apiErrors';
 import { notifyContact } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

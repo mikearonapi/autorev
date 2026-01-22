@@ -1,0 +1,14 @@
+<svg width="800" height="200" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- MODIFIED - white -->
+  <text 
+    x="400" 
+    y="100" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    font-family="'Oswald', sans-serif"
+    font-weight="700"
+    font-size="80px"
+    letter-spacing="4"
+    fill="#ffffff"
+  >MODIFIED</text>
+</svg>

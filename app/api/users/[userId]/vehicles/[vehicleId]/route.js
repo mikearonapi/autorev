@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
@@ -242,6 +243,16 @@ async function handlePatch(request, { params }) {
     if (body.is_primary !== undefined) updates.is_primary = body.is_primary;
     if (body.notes !== undefined) updates.notes = body.notes;
 
+    // Specs confirmation - user confirms specs are accurate
+    if (body.specs_confirmed !== undefined) {
+      updates.specs_confirmed = body.specs_confirmed;
+      if (body.specs_confirmed) {
+        updates.specs_confirmed_at = new Date().toISOString();
+      } else {
+        updates.specs_confirmed_at = null;
+      }
+    }
+
     // Auto-compute next_oil_due_mileage if oil change is being logged
     if (body.last_oil_change_mileage !== undefined) {
       // Fetch vehicle to get matched_car_id (car_slug column no longer exists on maintenance tables)
@@ -320,6 +331,8 @@ async function handlePatch(request, { params }) {
         next_oil_due_mileage,
         owner_notes,
         health_last_analyzed_at,
+        specs_confirmed,
+        specs_confirmed_at,
         created_at,
         updated_at
       `)
@@ -339,10 +352,20 @@ async function handlePatch(request, { params }) {
       );
     }
 
+    // If specs were confirmed, trigger score recalculation
+    if (updates.specs_confirmed) {
+      try {
+        await supabase.rpc('update_garage_score', { p_vehicle_id: vehicleId });
+      } catch (scoreError) {
+        console.warn('[API/vehicles/[vehicleId]] Score update warning:', scoreError);
+        // Non-critical, don't fail the request
+      }
+    }
+
     return NextResponse.json({
       success: true,
       vehicle: data,
-      message: 'Vehicle updated successfully',
+      message: updates.specs_confirmed ? 'Specs confirmed successfully!' : 'Vehicle updated successfully',
     });
 }
 

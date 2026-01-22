@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPublicClient } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,7 @@ async function handleGet(request) {
     const carSlug = (searchParams.get('carSlug') || '').trim();
     const limit = clampInt(searchParams.get('limit'), 1, 20, 8);
 
-    if (!carSlug) return NextResponse.json({ error: 'carSlug is required' }, { status: 400 });
+    if (!carSlug) return errors.missingField('carSlug');
 
     const { data: carRow, error: cErr } = await client
       .from('cars')

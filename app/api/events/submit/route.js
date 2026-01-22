@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { notifyEventSubmission } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';

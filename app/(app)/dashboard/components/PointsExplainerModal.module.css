@@ -1,0 +1,203 @@
+/* PointsExplainerModal.module.css */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-base, #0d1b2a);
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--color-bg-base, #0d1b2a);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4, 16px);
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--space-4, 16px));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4, 16px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.intro {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.5;
+  margin: 0 0 var(--space-4, 16px) 0;
+}
+
+/* Categories */
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.category {
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: var(--space-3, 12px);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-bottom: var(--space-2, 8px);
+}
+
+.categoryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: currentColor;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.categoryLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.streakIntro {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
+  margin: 0 0 var(--space-2, 8px) 0;
+  line-height: 1.4;
+}
+
+/* Action list */
+.actionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.actionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.actionItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.actionLabel {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.actionPoints {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Footer */
+.footer {
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-3, 12px));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.gotItButton {
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0a1628;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gotItButton:hover {
+  background: #bfe600;
+  transform: translateY(-1px);
+}
+
+.gotItButton:active {
+  transform: translateY(0);
+}

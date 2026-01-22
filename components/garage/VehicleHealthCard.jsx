@@ -1,9 +1,10 @@
- 'use client';
+'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import AskALButton from '@/components/AskALButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './VehicleHealthCard.module.css';
+import { useUserVehicle, useUpdateVehicle } from '@/hooks/useUserData';
 
 const BATTERY_OPTIONS = ['good', 'fair', 'weak', 'dead', 'unknown'];
 
@@ -88,12 +89,9 @@ export default function VehicleHealthCard({
   initialMileage,
   maintenanceSpecs, // Car-specific maintenance specs from vehicle_maintenance_specs table
 }) {
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [expanded, setExpanded] = useState(false);
-  const [baseline, setBaseline] = useState(null);
   const [form, setForm] = useState({
     mileage: initialMileage || '',
     last_started_at: '',
@@ -105,46 +103,42 @@ export default function VehicleHealthCard({
     registration_due_date: '',
     inspection_due_date: '',
   });
+  
+  // React Query hooks
+  const { 
+    data: baseline,
+    isLoading: loading,
+    error: loadError,
+  } = useUserVehicle(userId, vehicleId);
+  
+  const updateVehicle = useUpdateVehicle();
+  const saving = updateVehicle.isPending;
+  
+  // Update form when vehicle data loads
+  useEffect(() => {
+    if (baseline) {
+      setForm({
+        mileage: baseline.mileage ?? '',
+        last_started_at: formatDateInput(baseline.last_started_at),
+        battery_status: baseline.battery_status || 'unknown',
+        last_oil_change_date: formatDateInput(baseline.last_oil_change_date),
+        last_oil_change_mileage: baseline.last_oil_change_mileage ?? '',
+        tire_installed_date: formatDateInput(baseline.tire_installed_date),
+        tire_tread_32nds: baseline.tire_tread_32nds ?? '',
+        registration_due_date: formatDateInput(baseline.registration_due_date),
+        inspection_due_date: formatDateInput(baseline.inspection_due_date),
+      });
+    }
+  }, [baseline]);
+  
+  // Set error from load error
+  useEffect(() => {
+    if (loadError) {
+      setError(loadError.message || 'Unable to load vehicle health');
+    }
+  }, [loadError]);
 
   const healthStatus = useMemo(() => computeHealth(baseline || {}, maintenanceSpecs), [baseline, maintenanceSpecs]);
-
-  useEffect(() => {
-    let ignore = false;
-    async function load() {
-      if (!userId || !vehicleId) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      setError('');
-      try {
-        const res = await fetch(`/api/users/${userId}/vehicles/${vehicleId}`);
-        const json = await res.json();
-        if (!res.ok) throw new Error(json?.error || 'Failed to load vehicle health');
-        if (ignore) return;
-        // API returns { vehicle: {...} } - extract vehicle data
-        const vehicleData = json.vehicle || json;
-        setBaseline(vehicleData);
-        setForm({
-          mileage: vehicleData.mileage ?? '',
-          last_started_at: formatDateInput(vehicleData.last_started_at),
-          battery_status: vehicleData.battery_status || 'unknown',
-          last_oil_change_date: formatDateInput(vehicleData.last_oil_change_date),
-          last_oil_change_mileage: vehicleData.last_oil_change_mileage ?? '',
-          tire_installed_date: formatDateInput(vehicleData.tire_installed_date),
-          tire_tread_32nds: vehicleData.tire_tread_32nds ?? '',
-          registration_due_date: formatDateInput(vehicleData.registration_due_date),
-          inspection_due_date: formatDateInput(vehicleData.inspection_due_date),
-        });
-      } catch (err) {
-        if (!ignore) setError(err.message || 'Unable to load vehicle health');
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-    load();
-    return () => { ignore = true; };
-  }, [userId, vehicleId]);
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -181,34 +175,13 @@ export default function VehicleHealthCard({
       return;
     }
 
-    setSaving(true);
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`/api/users/${userId}/vehicles/${vehicleId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Update failed');
-      setBaseline(json.vehicle || json);
-      setForm({
-        mileage: json.vehicle?.mileage ?? json.mileage ?? '',
-        last_started_at: formatDateInput(json.vehicle?.last_started_at || json.last_started_at),
-        battery_status: json.vehicle?.battery_status || json.battery_status || 'unknown',
-        last_oil_change_date: formatDateInput(json.vehicle?.last_oil_change_date || json.last_oil_change_date),
-        last_oil_change_mileage: json.vehicle?.last_oil_change_mileage ?? json.last_oil_change_mileage ?? '',
-        tire_installed_date: formatDateInput(json.vehicle?.tire_installed_date || json.tire_installed_date),
-        tire_tread_32nds: json.vehicle?.tire_tread_32nds ?? json.tire_tread_32nds ?? '',
-        registration_due_date: formatDateInput(json.vehicle?.registration_due_date || json.registration_due_date),
-        inspection_due_date: formatDateInput(json.vehicle?.inspection_due_date || json.inspection_due_date),
-      });
+      await updateVehicle.mutateAsync({ userId, vehicleId, updates: payload });
       setSuccess('Saved');
     } catch (err) {
       setError(err.message || 'Failed to save changes');
-    } finally {
-      setSaving(false);
     }
   };
 

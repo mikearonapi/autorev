@@ -21,8 +21,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { 
   enrichDailyDriver, 
   getExistingEnrichment, 
@@ -31,6 +30,7 @@ import {
 import { deductUsage, getUserBalance } from '@/lib/alUsageService';
 import { calculateTokenCost } from '@/lib/alConfig';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 // Service role client for database operations
 function getServiceClient() {
@@ -40,20 +40,12 @@ function getServiceClient() {
   return createClient(url, key);
 }
 
-// Auth client for user verification
-async function getAuthClient() {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-      },
-    }
-  );
+// Auth client for user verification (supports both cookie and Bearer token)
+async function getAuthClient(request) {
+  const bearerToken = getBearerToken(request);
+  return bearerToken 
+    ? { supabase: createAuthenticatedClient(bearerToken), bearerToken }
+    : { supabase: await createServerSupabaseClient(), bearerToken: null };
 }
 
 async function handlePost(request) {
@@ -61,21 +53,22 @@ async function handlePost(request) {
     const { vehicleId } = body;
 
     if (!vehicleId) {
-      return NextResponse.json(
-        { success: false, error: 'vehicleId is required' },
-        { status: 400 }
-      );
+      return errors.missingField('vehicleId');
     }
 
-    // Get authenticated user
-    const authClient = await getAuthClient();
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
+    // Get authenticated user (supports both cookie and Bearer token)
+    const { supabase: authClient, bearerToken } = await getAuthClient(request);
+    
+    if (!authClient) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+    
+    const { data: { user }, error: authError } = bearerToken
+      ? await authClient.auth.getUser(bearerToken)
+      : await authClient.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
 
     const userId = user.id;

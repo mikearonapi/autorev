@@ -6,19 +6,19 @@
 
 ## Overview
 
-AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 18 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, web search, and analyze user vehicle health.
+AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 23 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, web search, analyze user vehicle health, access user build projects and performance goals, and process uploaded images.
 
 | Attribute | Value |
 |-----------|-------|
 | **Model** | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
-| **Tools** | 18 |
-| **Knowledge Base** | 547 document chunks with vector embeddings |
+| **Tools** | 23 |
+| **Knowledge Base** | 7,447 document chunks with vector embeddings |
 | **Encyclopedia** | 136 topics with semantic search (vectorized) |
 | **Community Insights** | Forum-extracted insights (Rennlist, Bimmerpost, etc.) |
 | **Events** | Cars & Coffee, track days, car shows, and more |
 | **Pricing** | Token-based (mirrors Anthropic costs) |
 
-> **Last Verified:** December 29, 2024 — MCP-verified against `lib/alConfig.js` and `lib/alTools.js`
+> **Last Verified:** January 21, 2026 — Verified against `lib/alConfig.js` and `lib/alTools.js`
 
 ---
 
@@ -57,7 +57,7 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 
 ---
 
-## Tools (18 Total)
+## Tools (23 Total)
 
 ### Tool Access by Tier
 
@@ -81,6 +81,10 @@ Cost is based on actual token usage (Claude Sonnet 4 pricing):
 | `search_community_insights` | — | ✓ | ✓ |
 | `analyze_vehicle_health` | — | ✓ | ✓ |
 | `recommend_build` | — | — | ✓ |
+| `analyze_uploaded_content` | — | ✓ | ✓ |
+| `get_user_builds` | — | ✓ | ✓ |
+| `get_user_goals` | — | ✓ | ✓ |
+| `get_user_vehicle_details` | — | ✓ | ✓ |
 
 ---
 
@@ -344,6 +348,11 @@ Search the web using Exa AI for real-time automotive information.
 
 ---
 
+### 15. `search_forums` (Deprecated)
+**Deprecated** — Use `search_community_insights` instead. This tool is a legacy stub that redirects to community insights search.
+
+---
+
 ### 16. `get_track_lap_times`
 Get citeable track lap times.
 
@@ -372,7 +381,7 @@ Get citeable dyno data.
 ---
 
 ### 18. `search_community_insights` ⭐ PRIMARY FORUM TOOL
-Search community-sourced insights extracted from enthusiast forums. **This is the primary tool for forum/community data** — returns 1,226 curated insights from major car forums.
+Search community-sourced insights extracted from enthusiast forums. **This is the primary tool for forum/community data** — returns 1,252 curated insights from major car forums.
 
 **Parameters:**
 | Param | Type | Required | Description |
@@ -436,6 +445,128 @@ Analyze a user's specific vehicle and provide personalized maintenance recommend
 
 ---
 
+### 20. `analyze_uploaded_content` ⭐ NEW - Image Analysis
+Analyze uploaded images using Claude Vision for automotive diagnostics and identification.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `attachment_id` | string | No* | ID of uploaded attachment (*one of attachment_id or public_url required) |
+| `public_url` | string | No* | Direct URL to image (*one of attachment_id or public_url required) |
+| `analysis_type` | enum | No | Type of analysis: `general`, `diagnose`, `identify`, `estimate` |
+| `user_context` | string | No | Additional context from user about what they want analyzed |
+| `car_slug` | string | No | Car context for more relevant analysis |
+
+**Analysis Types:**
+| Type | Description |
+|------|-------------|
+| `general` | General description of vehicle/parts/condition |
+| `diagnose` | Identify damage, wear, leaks, corrosion, issues |
+| `identify` | Identify vehicle make/model/year or part name/number |
+| `estimate` | Estimate repair/modification costs |
+
+**Returns:** Analysis-ready object with file URL, analysis prompt, and context
+
+**Best Practice:** Use when user uploads an image asking "what's wrong with this?", "what car is this?", "can you identify this part?", or "how much would this cost to fix?".
+
+---
+
+### 21. `get_user_builds` - User Build Projects
+Access user's build projects from the Tuning Shop with planned upgrades, costs, and performance projections.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `vehicle_id` | string | No | Filter builds to a specific vehicle |
+| `include_parts` | boolean | No | Include detailed parts list for each build (default: false) |
+
+**Returns:**
+- `builds`: Array of build projects with:
+  - `name`, `car`, `car_slug`
+  - `stock_hp`, `final_hp`, `total_hp_gain`
+  - `stock_zero_to_sixty`, `final_zero_to_sixty`, `zero_to_sixty_improvement`
+  - `total_cost_low`, `total_cost_high`, `cost_range`
+  - `selected_upgrades`: Array of planned upgrades
+  - `parts`: Detailed parts list (if `include_parts: true`)
+- `total_count`: Number of builds
+- `has_favorite`: Whether user has a favorite build
+
+**Best Practice:** Use when user asks about their builds, upgrade plans, "what should I do next?", or when you need context about their modification goals. Enables build-aware recommendations.
+
+---
+
+### 22. `get_user_goals` - Performance Goals
+Access user's active performance goals (target lap times, 0-60 times, etc.).
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `vehicle_id` | string | No | Filter goals to a specific vehicle |
+| `status` | enum | No | `active`, `completed`, or `all` (default: `active`) |
+
+**Returns:**
+- `goals`: Array of performance goals with:
+  - `goal_type`: Type of goal (lap_time, zero_to_sixty, quarter_mile, etc.)
+  - `title`, `description`
+  - `target_value`, `achieved_value`, `progress_percent`
+  - `track_name`: For lap time goals
+  - `status`, `is_completed`, `deadline`
+- `active_count`, `completed_count`
+- `summary`: Human-readable summary of active goals
+
+**Best Practice:** Use when user asks about performance targets, wants to "get faster", or when recommending upgrades that should be aligned with their goals. Enables goal-oriented recommendations.
+
+---
+
+### 23. `get_user_vehicle_details` - Detailed Vehicle Info
+Get comprehensive details about a user's specific vehicle including installed mods, custom specs, and service history.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `vehicle_id` | string | No | Vehicle ID (uses primary if not specified) |
+| `include_service_history` | boolean | No | Include recent service logs (default: true) |
+
+**Returns:**
+- `vehicle`: Detailed vehicle object with:
+  - Basic info: `year`, `make`, `model`, `trim`, `vin`
+  - Ownership: `current_mileage`, `purchase_date`, `purchase_price`
+  - **Modifications**: `installed_modifications`, `mod_count`, `total_hp_gain`
+  - **Custom specs**: User-entered spec overrides
+  - **Maintenance status**: Oil change dates, registration, inspection due dates
+  - **Service history**: Recent service logs with dates, types, costs, shops
+- `has_modifications`, `has_custom_specs`, `has_service_history`: Flags
+
+**Best Practice:** Use when you need detailed info about the user's car beyond basic context, such as specific installed mods, their service history, or custom specs they've entered.
+
+---
+
+## Context Enhancements
+
+AL automatically receives enriched context about the user:
+
+### User Location
+If the user has set their location in their profile, AL receives:
+- City and state
+- ZIP code
+- Used as default for event searches ("find track days near me")
+
+### Installed Modifications
+For users with garage vehicles, AL sees:
+- Number of installed modifications per vehicle
+- Total HP gain from mods
+- Detailed mod list for primary vehicle
+- This enables personalized upgrade recommendations
+
+### Garage Context
+AL always knows:
+- All owned vehicles (up to 3 shown, with mod counts)
+- User's favorites (if no owned vehicles)
+- Currently viewed car (page context)
+- User's primary vehicle details
+
+---
+
 ## System Prompt
 
 **SINGLE SOURCE OF TRUTH**: AL's behavior is defined by `buildALSystemPrompt()` in `lib/alConfig.js`.
@@ -477,6 +608,8 @@ AL automatically detects which automotive domain a question relates to and prior
 | events | meetup, cars and coffee, track day, car show | search_events |
 | **education** | how, what, why, explain, work, learn | **search_encyclopedia**, get_upgrade_info, search_knowledge |
 | vehicle health | my car, health, due, overdue | **analyze_vehicle_health**, get_maintenance_schedule |
+| **user builds** | my build, my project, what's next, upgrade plan | **get_user_builds**, get_user_vehicle_details |
+| **user goals** | my goal, target time, get faster, improve | **get_user_goals**, get_user_builds |
 
 ---
 
@@ -560,6 +693,10 @@ Expensive tools are cached to reduce costs:
 | `compare_cars` | `cars` (local in-memory) | — |
 | `search_encyclopedia` | `search_document_chunks` RPC (filtered to encyclopedia) | — |
 | `get_upgrade_info` | Static files: `data/upgradeEducation.js` | — |
+| `analyze_uploaded_content` | `al_attachments` + Claude Vision API | — |
+| `get_user_builds` | `user_projects`, `user_project_parts`, `parts` | User build projects |
+| `get_user_goals` | `user_performance_goals` | Performance targets |
+| `get_user_vehicle_details` | `user_vehicles`, `user_service_logs` | Detailed vehicle info |
 
 ### RPC Functions Used by AL
 

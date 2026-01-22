@@ -34,6 +34,7 @@ import {
   PRIORITY_CARS,
   PLATFORM_TAG_PATTERNS,
 } from '../lib/vendorAdapters.js';
+import { PipelineRun } from '../lib/pipelineLogger.js';
 
 // ============================================================================
 // CONFIGURATION
@@ -250,6 +251,12 @@ function inferFitmentsFromPart(part, carsBySlug, existingFitmentSet, options) {
 async function main() {
   const options = parseArgs();
 
+  // Initialize pipeline logging (skip for dry runs)
+  const pipelineRun = options.dryRun ? null : new PipelineRun('expandFitments', {
+    params: { vendor: options.vendor, priority: options.priority, car: options.car, limit: options.limit },
+    triggeredBy: 'manual',
+  });
+
   console.log('========================================');
   console.log('FITMENT EXPANSION SCRIPT');
   console.log('========================================');
@@ -260,112 +267,127 @@ async function main() {
   console.log(`Part limit: ${options.limit}`);
   console.log('');
 
-  // Load data
-  console.log('Loading data...');
-  const [cars, existingFitments, parts, tagMappings] = await Promise.all([
-    getAllCars(),
-    getExistingFitments(),
-    getPartsWithTags(options),
-    getExistingTagMappings(),
-  ]);
+  // Start pipeline tracking
+  if (pipelineRun) await pipelineRun.start();
 
-  console.log(`  Cars in DB: ${cars.length}`);
-  console.log(`  Existing fitments: ${existingFitments.length}`);
-  console.log(`  Parts with tags: ${parts.length}`);
-  console.log(`  Tag mappings: ${tagMappings.length}`);
-  console.log('');
+  try {
+    // Load data
+    console.log('Loading data...');
+    const [cars, existingFitments, parts, tagMappings] = await Promise.all([
+      getAllCars(),
+      getExistingFitments(),
+      getPartsWithTags(options),
+      getExistingTagMappings(),
+    ]);
 
-  // Build lookup structures
-  const carsBySlug = new Map(cars.map((c) => [c.slug, c]));
-  const existingFitmentSet = new Set(
-    existingFitments.map((f) => `${f.part_id}:${f.car_id}`)
-  );
-
-  // Process parts
-  console.log('Processing parts...');
-  const allInferred = [];
-  const carStats = new Map();
-
-  for (const part of parts) {
-    const inferred = inferFitmentsFromPart(part, carsBySlug, existingFitmentSet, options);
-
-    for (const fit of inferred) {
-      allInferred.push(fit);
-
-      // Track stats by car
-      const count = carStats.get(fit.car_slug) || 0;
-      carStats.set(fit.car_slug, count + 1);
-
-      if (options.verbose) {
-        console.log(`  [NEW] ${part.brand_name} ${part.name} -> ${fit.car_slug} (conf: ${fit.confidence.toFixed(2)})`);
-      }
-    }
-  }
-
-  console.log('');
-  console.log('========================================');
-  console.log('SUMMARY');
-  console.log('========================================');
-  console.log(`Parts processed: ${parts.length}`);
-  console.log(`New fitments found: ${allInferred.length}`);
-  console.log(`Cars affected: ${carStats.size}`);
-  console.log('');
-
-  // Show per-car breakdown
-  if (carStats.size > 0) {
-    console.log('Fitments by car:');
-    const sorted = [...carStats.entries()].sort((a, b) => b[1] - a[1]);
-    for (const [slug, count] of sorted.slice(0, 20)) {
-      console.log(`  ${slug}: ${count}`);
-    }
-    if (sorted.length > 20) {
-      console.log(`  ... and ${sorted.length - 20} more cars`);
-    }
+    console.log(`  Cars in DB: ${cars.length}`);
+    console.log(`  Existing fitments: ${existingFitments.length}`);
+    console.log(`  Parts with tags: ${parts.length}`);
+    console.log(`  Tag mappings: ${tagMappings.length}`);
     console.log('');
-  }
 
-  // Write fitments if not dry run
-  if (!options.dryRun && allInferred.length > 0) {
-    console.log('Writing fitments to database...');
-    let written = 0;
-    let errors = 0;
+    // Build lookup structures
+    const carsBySlug = new Map(cars.map((c) => [c.slug, c]));
+    const existingFitmentSet = new Set(
+      existingFitments.map((f) => `${f.part_id}:${f.car_id}`)
+    );
 
-    for (const fit of allInferred) {
-      try {
-        const created = await createFitment({
-          part_id: fit.part_id,
-          car_id: fit.car_id,
-          fitment_notes: fit.fitment_notes,
-          requires_tune: fit.requires_tune,
-          install_difficulty: fit.install_difficulty,
-          estimated_labor_hours: fit.estimated_labor_hours,
-          verified: fit.verified,
-          confidence: fit.confidence,
-          source_url: fit.source_url,
-          metadata: fit.metadata,
-        });
+    // Process parts
+    console.log('Processing parts...');
+    const allInferred = [];
+    const carStats = new Map();
 
-        if (created) {
-          written++;
-          // Also mark as existing to avoid duplicates within this run
-          existingFitmentSet.add(`${fit.part_id}:${fit.car_id}`);
-        }
-      } catch (err) {
-        errors++;
+    for (const part of parts) {
+      const inferred = inferFitmentsFromPart(part, carsBySlug, existingFitmentSet, options);
+
+      for (const fit of inferred) {
+        allInferred.push(fit);
+
+        // Track stats by car
+        const count = carStats.get(fit.car_slug) || 0;
+        carStats.set(fit.car_slug, count + 1);
+
         if (options.verbose) {
-          console.error(`  [ERROR] ${fit.car_slug}: ${err.message}`);
+          console.log(`  [NEW] ${part.brand_name} ${part.name} -> ${fit.car_slug} (conf: ${fit.confidence.toFixed(2)})`);
         }
       }
     }
 
-    console.log(`  Written: ${written}`);
-    if (errors > 0) console.log(`  Errors: ${errors}`);
-  } else if (options.dryRun) {
-    console.log('[DRY RUN] No changes made. Remove --dry-run to write fitments.');
-  }
+    console.log('');
+    console.log('========================================');
+    console.log('SUMMARY');
+    console.log('========================================');
+    console.log(`Parts processed: ${parts.length}`);
+    console.log(`New fitments found: ${allInferred.length}`);
+    console.log(`Cars affected: ${carStats.size}`);
+    console.log('');
 
-  console.log('');
-  console.log('Done!');
+    // Show per-car breakdown
+    if (carStats.size > 0) {
+      console.log('Fitments by car:');
+      const sorted = [...carStats.entries()].sort((a, b) => b[1] - a[1]);
+      for (const [slug, count] of sorted.slice(0, 20)) {
+        console.log(`  ${slug}: ${count}`);
+      }
+      if (sorted.length > 20) {
+        console.log(`  ... and ${sorted.length - 20} more cars`);
+      }
+      console.log('');
+    }
+
+    // Write fitments if not dry run
+    if (!options.dryRun && allInferred.length > 0) {
+      console.log('Writing fitments to database...');
+      let written = 0;
+      let errors = 0;
+
+      for (const fit of allInferred) {
+        try {
+          const created = await createFitment({
+            part_id: fit.part_id,
+            car_id: fit.car_id,
+            fitment_notes: fit.fitment_notes,
+            requires_tune: fit.requires_tune,
+            install_difficulty: fit.install_difficulty,
+            estimated_labor_hours: fit.estimated_labor_hours,
+            verified: fit.verified,
+            confidence: fit.confidence,
+            source_url: fit.source_url,
+            metadata: fit.metadata,
+          });
+
+          if (created) {
+            written++;
+            pipelineRun?.recordCreated();
+            // Also mark as existing to avoid duplicates within this run
+            existingFitmentSet.add(`${fit.part_id}:${fit.car_id}`);
+          } else {
+            pipelineRun?.recordSkipped();
+          }
+        } catch (err) {
+          errors++;
+          pipelineRun?.recordFailed(1, err.message);
+          if (options.verbose) {
+            console.error(`  [ERROR] ${fit.car_slug}: ${err.message}`);
+          }
+        }
+      }
+
+      console.log(`  Written: ${written}`);
+      if (errors > 0) console.log(`  Errors: ${errors}`);
+    } else if (options.dryRun) {
+      console.log('[DRY RUN] No changes made. Remove --dry-run to write fitments.');
+    }
+
+    // Complete pipeline run
+    if (pipelineRun) await pipelineRun.complete();
+
+    console.log('');
+    console.log('Done!');
+  } catch (err) {
+    if (pipelineRun) await pipelineRun.fail(err);
+    throw err;
+  }
 }
 
 main().catch((err) => {

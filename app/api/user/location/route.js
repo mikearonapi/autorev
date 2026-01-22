@@ -4,8 +4,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
+import { createServerSupabaseClient, createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 // Simple ZIP code to city/state mapping for common US ZIPs
 // In production, could use a full database or external API
@@ -788,26 +789,30 @@ async function handleGet(request) {
  * Save user location to profile
  */
 async function handlePost(request) {
-  const supabase = await createServerSupabaseClient();
+  // Support both cookie and Bearer token auth
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
+    
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
     
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
     
     const body = await request.json();
     const { zip } = body;
     
     if (!zip) {
-      return NextResponse.json(
-        { error: 'ZIP code is required' },
-        { status: 400 }
-      );
+      return errors.missingField('zip');
     }
     
     // Lookup ZIP to get city/state

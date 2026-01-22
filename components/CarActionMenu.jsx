@@ -74,9 +74,14 @@ export default function CarActionMenu({
   const [isAdding, setIsAdding] = useState(false);
   
   // Safe hooks usage (in case providers aren't wrapped)
-  let favorites = [], addFavorite = () => {}, removeFavorite = () => {}, isFavorite = () => false;
-  let vehicles = [], addVehicle = async () => {};
-  let compareList = [], toggleCompare = () => {}, isCompareFull = false, isInCompare = () => false;
+  // Use refs to store callback functions to avoid dependency changes
+  const noopFn = useCallback(() => {}, []);
+  const noopAsyncFn = useCallback(async () => {}, []);
+  const noopCheckFn = useCallback(() => false, []);
+  
+  let favorites = [], addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
+  let vehicles = [], addVehicle = noopAsyncFn;
+  let compareList = [], toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
 
   try {
     const favUtils = useFavorites();
@@ -437,10 +442,14 @@ export default function CarActionMenu({
 export function QuickActionButton({ car, action, size = 'default', showLabel = false, theme = 'auto' }) {
   const router = useRouter();
   
-  // Safe hooks
-  let favorites = [], addFavorite = () => {}, removeFavorite = () => {}, isFavorite = () => false;
-  let vehicles = [], addVehicle = async () => {};
-  let compareList = [], toggleCompare = () => {}, isCompareFull = false, isInCompare = () => false;
+  // Safe hooks with stable default functions
+  const noopFn = useCallback(() => {}, []);
+  const noopAsyncFn = useCallback(async () => {}, []);
+  const noopCheckFn = useCallback(() => false, []);
+  
+  let favorites = [], addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
+  let vehicles = [], addVehicle = noopAsyncFn;
+  let compareList = [], toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
 
   try {
     const favUtils = useFavorites();

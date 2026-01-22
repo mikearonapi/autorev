@@ -7,10 +7,27 @@
  * All queries share a common cache, preventing redundant network requests
  * and enabling instant navigation between previously visited pages.
  * 
+ * Uses apiClient for standardized error handling and cross-platform support.
+ * 
  * @module hooks/useCarData
  */
 
 import { useQuery, useQueries } from '@tanstack/react-query';
+import apiClient from '@/lib/apiClient';
+
+// =============================================================================
+// FETCHER HELPER
+// =============================================================================
+// Simple wrapper around apiClient.get for consistency with existing code
+
+/**
+ * Fetch data from an API endpoint using apiClient
+ * @param {string} url - API URL to fetch
+ * @returns {Promise<any>} - Response data
+ */
+async function fetcher(url) {
+  return apiClient.get(url);
+}
 
 // =============================================================================
 // CACHING STRATEGY
@@ -41,42 +58,34 @@ export const carKeys = {
   all: ['cars'],
   lists: () => [...carKeys.all, 'list'],
   list: (filters) => [...carKeys.lists(), filters],
+  expertReviewedList: (limit) => [...carKeys.all, 'expert-reviewed', { limit }],
   details: () => [...carKeys.all, 'detail'],
   detail: (slug) => [...carKeys.details(), slug],
   enriched: (slug) => [...carKeys.detail(slug), 'enriched'],
   efficiency: (slug) => [...carKeys.detail(slug), 'efficiency'],
   safety: (slug) => [...carKeys.detail(slug), 'safety'],
   priceByYear: (slug) => [...carKeys.detail(slug), 'price-by-year'],
+  marketValue: (slug) => [...carKeys.detail(slug), 'market-value'],
   expertReviews: (slug) => [...carKeys.detail(slug), 'expert-reviews'],
   expertConsensus: (slug) => [...carKeys.detail(slug), 'expert-consensus'],
   lapTimes: (slug) => [...carKeys.detail(slug), 'lap-times'],
   popularParts: (slug) => [...carKeys.detail(slug), 'popular-parts'],
   recalls: (slug) => [...carKeys.detail(slug), 'recalls'],
   maintenance: (slug) => [...carKeys.detail(slug), 'maintenance'],
+  issues: (slug) => [...carKeys.detail(slug), 'issues'],
+};
+
+/**
+ * Query keys for parts data (not car-specific)
+ */
+export const partsKeys = {
+  all: ['parts'],
+  turbos: () => [...partsKeys.all, 'turbos'],
 };
 
 // =============================================================================
-// FETCHER FUNCTIONS
+// FETCHER FUNCTIONS (using apiClient)
 // =============================================================================
-
-/**
- * Generic API fetcher with error handling
- */
-async function fetcher(url) {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const error = new Error('Failed to fetch data');
-    error.status = res.status;
-    try {
-      const body = await res.json();
-      error.message = body.error || body.message || error.message;
-    } catch {
-      // Not JSON response
-    }
-    throw error;
-  }
-  return res.json();
-}
 
 /**
  * Fetch all cars list
@@ -89,7 +98,7 @@ async function fetchCarsList() {
  * Fetch fuel efficiency data for a car
  */
 async function fetchEfficiency(slug) {
-  const data = await fetcher(`/api/cars/${slug}/efficiency`);
+  const data = await apiClient.get(`/api/cars/${slug}/efficiency`);
   return data.efficiency;
 }
 
@@ -97,7 +106,7 @@ async function fetchEfficiency(slug) {
  * Fetch safety ratings for a car
  */
 async function fetchSafety(slug) {
-  const data = await fetcher(`/api/cars/${slug}/safety-ratings`);
+  const data = await apiClient.get(`/api/cars/${slug}/safety-ratings`);
   return data.safety;
 }
 
@@ -148,7 +157,7 @@ async function fetchDynoRuns(slug, options = {}) {
  * Fetch popular parts for a car
  */
 async function fetchPopularParts(slug, limit = 8) {
-  const data = await fetcher(`/api/parts/popular?carSlug=${encodeURIComponent(slug)}&limit=${limit}`);
+  const data = await apiClient.get(`/api/parts/popular?carSlug=${encodeURIComponent(slug)}&limit=${limit}`);
   return data.results || [];
 }
 
@@ -164,6 +173,30 @@ async function fetchRecalls(slug) {
  */
 async function fetchMaintenance(slug) {
   return fetcher(`/api/cars/${slug}/maintenance`);
+}
+
+/**
+ * Fetch known issues for a car
+ */
+async function fetchIssues(slug) {
+  const data = await apiClient.get(`/api/cars/${slug}/issues`);
+  return data.issues || [];
+}
+
+/**
+ * Fetch cars with expert reviews for homepage strip
+ */
+async function fetchExpertReviewedCars(limit = 8) {
+  const data = await apiClient.get(`/api/cars/expert-reviewed?limit=${limit}`);
+  return data.cars || [];
+}
+
+/**
+ * Fetch market value data for a car
+ */
+async function fetchMarketValue(slug) {
+  const data = await apiClient.get(`/api/cars/${slug}/market-value`);
+  return data.pricing || null;
 }
 
 // =============================================================================
@@ -352,6 +385,24 @@ export function useCarMaintenance(slug, options = {}) {
 }
 
 /**
+ * Hook to fetch known issues for a car
+ * 
+ * @param {string} slug - Car slug
+ * @param {Object} options - Additional query options
+ * @example
+ * const { data: issues, isLoading } = useCarIssues('bmw-m3-g80');
+ */
+export function useCarIssues(slug, options = {}) {
+  return useQuery({
+    queryKey: carKeys.issues(slug),
+    queryFn: () => fetchIssues(slug),
+    enabled: !!slug,
+    staleTime: CACHE_TIMES.SLOW, // 30 min - known issues rarely change
+    ...options,
+  });
+}
+
+/**
  * Hook to fetch all enriched data for a car in parallel
  * 
  * @deprecated Prefer `useCarEnrichedBundle` which makes 1 API request instead of 4.
@@ -476,6 +527,58 @@ export function usePrefetchCarData() {
   };
 }
 
+/**
+ * Hook to fetch expert-reviewed cars for homepage strip
+ * 
+ * @param {number} limit - Max number of cars to fetch
+ * @example
+ * const { data: cars, isLoading } = useExpertReviewedCars(8);
+ */
+export function useExpertReviewedCars(limit = 8, options = {}) {
+  return useQuery({
+    queryKey: carKeys.expertReviewedList(limit),
+    queryFn: () => fetchExpertReviewedCars(limit),
+    staleTime: CACHE_TIMES.STANDARD, // 10 min - expert reviews don't change frequently
+    ...options,
+  });
+}
+
+/**
+ * Hook to fetch market value data for a car
+ * 
+ * @param {string} slug - Car slug
+ * @example
+ * const { data: marketData, isLoading } = useCarMarketValue('porsche-911-gt3');
+ */
+export function useCarMarketValue(slug, options = {}) {
+  return useQuery({
+    queryKey: carKeys.marketValue(slug),
+    queryFn: () => fetchMarketValue(slug),
+    enabled: !!slug,
+    staleTime: CACHE_TIMES.SLOW, // 30 min - market data updates slowly
+    ...options,
+  });
+}
+
+/**
+ * Hook to fetch available turbo options
+ * Used by UpgradeCenter for turbo selection
+ * 
+ * @example
+ * const { data: turbos = [], isLoading } = useTurbos();
+ */
+export function useTurbos(options = {}) {
+  return useQuery({
+    queryKey: partsKeys.turbos(),
+    queryFn: async () => {
+      const data = await apiClient.get('/api/parts/turbos');
+      return data.turbos || [];
+    },
+    staleTime: CACHE_TIMES.SLOW, // 30 min - turbo list rarely changes
+    ...options,
+  });
+}
+
 export default {
   useCarsList,
   useCarEfficiency,
@@ -488,9 +591,14 @@ export default {
   useCarPopularParts,
   useCarRecalls,
   useCarMaintenance,
+  useCarIssues,
   useCarEnrichedData,
   useCarEnrichedBundle,
   usePrefetchCarData,
+  useExpertReviewedCars,
+  useCarMarketValue,
+  useTurbos,
   carKeys,
+  partsKeys,
 };
 

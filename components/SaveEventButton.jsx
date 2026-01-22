@@ -13,6 +13,7 @@ import styles from './SaveEventButton.module.css';
 import { useAuth } from './providers/AuthProvider';
 import { useAuthModal } from './AuthModal';
 import { hasAccess, getUpgradeCTA, IS_BETA } from '@/lib/tierAccess';
+import { useSaveEvent } from '@/hooks/useEventsData';
 
 // Heart Icon - matches CarActionMenu exactly
 const HeartIcon = ({ filled, size = 14 }) => (
@@ -80,8 +81,11 @@ export default function SaveEventButton({
   const userTier = profile?.subscription_tier || 'free';
   
   const [isSaved, setIsSaved] = useState(initialSaved);
-  const [isLoading, setIsLoading] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  
+  // React Query mutation for saving events
+  const saveEventMutation = useSaveEvent();
+  const isLoading = saveEventMutation.isPending;
 
   // Sync internal state with prop changes
   useEffect(() => {
@@ -132,42 +136,31 @@ export default function SaveEventButton({
     }
 
     // Perform save/unsave
-    setIsLoading(true);
     const newSavedState = !isSaved;
 
     // Optimistic update
     setIsSaved(newSavedState);
     onSaveChange?.(eventSlug, newSavedState);
 
-    try {
-      const headers = { 'Content-Type': 'application/json' };
-      // Important: our app uses supabase-js client auth (localStorage) in many flows.
-      // API routes may not have cookie-based sessions, so include Bearer token when available.
-      if (session?.access_token) {
-        headers.Authorization = `Bearer ${session.access_token}`;
-      }
+    // Build headers with auth token if available
+    const headers = { 'Content-Type': 'application/json' };
+    if (session?.access_token) {
+      headers.Authorization = `Bearer ${session.access_token}`;
+    }
 
-      const res = await fetch(`/api/events/${eventSlug}/save`, {
-        method: newSavedState ? 'POST' : 'DELETE',
+    try {
+      await saveEventMutation.mutateAsync({ 
+        eventSlug, 
+        save: newSavedState, 
         headers,
       });
-
-      if (!res.ok) {
-        // Revert on error
-        setIsSaved(!newSavedState);
-        onSaveChange?.(eventSlug, !newSavedState);
-        const text = await res.text().catch(() => '');
-        console.error('[SaveEventButton] Save failed', res.status, text);
-      }
     } catch (err) {
       // Revert on error
       setIsSaved(!newSavedState);
       onSaveChange?.(eventSlug, !newSavedState);
       console.error('[SaveEventButton] Error:', err);
-    } finally {
-      setIsLoading(false);
     }
-  }, [isAuthenticated, canSave, isSaved, isLoading, eventSlug, onSaveChange, openSignIn, session?.access_token]);
+  }, [isAuthenticated, canSave, isSaved, isLoading, eventSlug, onSaveChange, openSignIn, session?.access_token, saveEventMutation]);
 
   const iconSize = size === 'small' ? 12 : 14;
 

@@ -3,116 +3,23 @@
 /**
  * Lap Time Estimator Component
  * 
- * Uses physics simulation to estimate track lap times based on:
- * - Vehicle power, weight, drivetrain
- * - Modifications (tires, suspension, brakes, aero)
- * - Driver skill level
- * - Track characteristics
+ * Data-driven lap time estimation using real lap time data.
+ * Uses the centralized lapTimeService for all calculations.
  * 
- * Also allows users to log their actual track times for comparison.
+ * Features:
+ * - Real data from 3,800+ lap times across 340+ tracks
+ * - Driver skill-based estimation (beginner to pro)
+ * - Modification impact calculation
+ * - Track time logging and history
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import AskALButton from './AskALButton';
 import styles from './LapTimeEstimator.module.css';
 import { Icons } from '@/components/ui/Icons';
-
-// ==========================================================================
-// DRIVER SKILL DEFINITIONS
-// Key insight: Mods raise the ceiling, skill determines how much you use
-// ==========================================================================
-const DRIVER_SKILLS = {
-  beginner: {
-    label: 'Beginner',
-    description: '0-2 years track experience',
-    modUtilization: {
-      power: 0.10,
-      grip: 0.25,
-      suspension: 0.15,
-      brakes: 0.30,
-      aero: 0.05,
-      weight: 0.20,
-    },
-    tip: 'The best mod for you is seat time! Consider a driving school before spending on parts.',
-    insight: 'At your skill level, improving your driving will gain you 3-5x more time than any modification.',
-  },
-  intermediate: {
-    label: 'Intermediate',
-    description: '2-5 years, consistent laps',
-    modUtilization: {
-      power: 0.45,
-      grip: 0.60,
-      suspension: 0.50,
-      brakes: 0.55,
-      aero: 0.35,
-      weight: 0.50,
-    },
-    tip: 'Grip mods (tires, suspension) will help you most. Consider advanced driving instruction!',
-    insight: 'You can extract about half of what mods offer. More seat time will unlock the rest.',
-  },
-  advanced: {
-    label: 'Advanced',
-    description: '5+ years, pushing limits',
-    modUtilization: {
-      power: 0.80,
-      grip: 0.85,
-      suspension: 0.80,
-      brakes: 0.85,
-      aero: 0.75,
-      weight: 0.80,
-    },
-    tip: 'You can extract most performance from mods. Focus on balanced upgrades.',
-    insight: 'Your skill extracts 80%+ of mod potential. Fine-tuning setup is your next step.',
-  },
-  professional: {
-    label: 'Pro',
-    description: 'Instructor / racer',
-    modUtilization: {
-      power: 0.98,
-      grip: 0.98,
-      suspension: 0.95,
-      brakes: 0.98,
-      aero: 0.95,
-      weight: 0.95,
-    },
-    tip: 'You\'re extracting the car\'s full potential. Mods directly translate to lap time.',
-    insight: 'This represents the theoretical maximum - what the modifications can truly deliver.',
-  }
-};
-
-// Fallback tracks if API fails
-const FALLBACK_TRACKS = [
-  {
-    slug: 'laguna-seca', name: 'WeatherTech Raceway Laguna Seca', shortName: 'Laguna Seca',
-    length: 2.238, corners: 11, state: 'CA', city: 'Monterey', country: 'USA',
-    proTime: 95, powerGainMax: 4.0, gripGainMax: 5.0, suspGainMax: 3.5,
-    brakeGainMax: 2.5, aeroGainMax: 2.0, weightGainMax: 2.0,
-    beginnerPenalty: 25, intermediatePenalty: 10, advancedPenalty: 3, isPopular: true,
-    longestStraight: 2000, elevationChange: 180, surfaceType: 'Asphalt',
-    characterTags: ['Technical', 'Elevation', 'Iconic', 'Corkscrew'],
-  },
-  {
-    slug: 'road-atlanta', name: 'Road Atlanta', shortName: 'Road Atlanta',
-    length: 2.54, corners: 12, icon: '🍑', state: 'GA', country: 'USA',
-    proTime: 98, powerGainMax: 6.0, gripGainMax: 4.5, suspGainMax: 3.5,
-    brakeGainMax: 3.0, aeroGainMax: 3.0, weightGainMax: 2.0,
-    beginnerPenalty: 30, intermediatePenalty: 12, advancedPenalty: 4, isPopular: true,
-  },
-  {
-    slug: 'cota', name: 'Circuit of the Americas', shortName: 'COTA',
-    length: 3.426, corners: 20, icon: '⭐', state: 'TX', country: 'USA',
-    proTime: 135, powerGainMax: 8.0, gripGainMax: 5.0, suspGainMax: 4.0,
-    brakeGainMax: 3.5, aeroGainMax: 4.0, weightGainMax: 2.5,
-    beginnerPenalty: 40, intermediatePenalty: 16, advancedPenalty: 5, isPopular: true,
-  },
-  {
-    slug: 'autocross-standard', name: 'Autocross', shortName: 'Autocross',
-    length: 0.5, corners: 20, icon: '🔀', state: null, country: 'USA',
-    proTime: 48, powerGainMax: 0.5, gripGainMax: 4.0, suspGainMax: 2.5,
-    brakeGainMax: 1.5, aeroGainMax: 0.3, weightGainMax: 1.5,
-    beginnerPenalty: 15, intermediatePenalty: 6, advancedPenalty: 2, isPopular: true,
-  },
-];
+import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
+import { useTracks } from '@/hooks/useEventsData';
+import { useLapTimeEstimate, useTrackStats, DRIVER_SKILLS, formatLapTime } from '@/hooks/useLapTimeEstimate';
 
 export default function LapTimeEstimator({
   stockHp,
@@ -139,12 +46,26 @@ export default function LapTimeEstimator({
   const [showHistory, setShowHistory] = useState(false);
   const [showTrackSelector, setShowTrackSelector] = useState(false);
   const [trackSearch, setTrackSearch] = useState('');
-  const [trackHistory, setTrackHistory] = useState([]);
-  const [allTracks, setAllTracks] = useState([]);
-  const [tracksLoading, setTracksLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [analysis, setAnalysis] = useState(null);
+  
+  // Fetch tracks using React Query (cached)
+  const { data: allTracks = [], isLoading: tracksLoading } = useTracks();
+  
+  // React Query hooks for track times
+  const { 
+    data: trackHistory = [], 
+    isLoading: isLoadingHistory,
+    refetch: refetchHistory,
+  } = useUserTrackTimes(user?.id, carSlug, { 
+    enabled: showHistory && !!user?.id,
+    limit: 10,
+  });
+  
+  const addTrackTime = useAddTrackTime();
+  const analyzeTrackTimes = useAnalyzeTrackTimes();
+  
+  const isLoading = isLoadingHistory || analyzeTrackTimes.isPending;
+  const isSaving = addTrackTime.isPending;
   
   // Form state for logging a track time
   const [logForm, setLogForm] = useState({
@@ -155,49 +76,8 @@ export default function LapTimeEstimator({
     notes: ''
   });
   
-  // Fetch tracks from database on mount
-  useEffect(() => {
-    async function fetchTracks() {
-      try {
-        const res = await fetch('/api/tracks');
-        if (res.ok) {
-          const data = await res.json();
-          setAllTracks(data.tracks || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch tracks:', err);
-      } finally {
-        setTracksLoading(false);
-      }
-    }
-    fetchTracks();
-  }, []);
-  
-  // Fetch track history when history panel is opened
-  useEffect(() => {
-    if (showHistory && user?.id && carSlug) {
-      fetchTrackHistory();
-    }
-  }, [showHistory, user?.id, carSlug]);
-  
-  const fetchTrackHistory = async () => {
-    if (!user?.id) return;
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/users/${user.id}/track-times?carSlug=${carSlug || ''}&limit=10`);
-      if (res.ok) {
-        const data = await res.json();
-        setTrackHistory(data.times || []);
-      }
-    } catch (err) {
-      console.error('Failed to fetch track history:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  // Use database tracks or fallback
-  const tracks = allTracks.length > 0 ? allTracks : FALLBACK_TRACKS;
+  // Use database tracks
+  const tracks = allTracks;
   const popularTracks = tracks.filter(t => t.isPopular).slice(0, 6);
   
   // Get currently selected track data
@@ -221,112 +101,55 @@ export default function LapTimeEstimator({
   const safeWeight = (typeof weight === 'number' && !isNaN(weight) && weight > 0) ? weight : 3500;
 
   // ==========================================================================
-  // CALCULATE THEORETICAL MOD IMPROVEMENT
+  // DATA-DRIVEN LAP TIME ESTIMATION (via lapTimeService)
   // ==========================================================================
-  const calculateModImprovement = () => {
-    const track = selectedTrack;
-    const improvements = { power: 0, grip: 0, suspension: 0, brakes: 0, aero: 0, weight: 0 };
+  
+  // Build mods object for the service
+  const modsForEstimate = useMemo(() => ({
+    tireCompound,
+    suspension: suspensionSetup,
+    brakes: {
+      bbkFront: brakeSetup?.bbkFront,
+      pads: brakeSetup?.brakePads,
+      fluid: brakeSetup?.brakeFluid,
+      stainlessLines: brakeSetup?.stainlessLines,
+    },
+    aero: aeroSetup,
+    weightReduction: Math.abs(weightMod || 0),
+  }), [tireCompound, suspensionSetup, brakeSetup, aeroSetup, weightMod]);
+  
+  // Use the data-driven lap time estimation hook
+  const { 
+    data: lapTimeEstimate,
+    isLoading: isEstimateLoading,
+  } = useLapTimeEstimate({
+    trackSlug: selectedTrackSlug,
+    stockHp: safeStockHp,
+    currentHp: safeEstimatedHp,
+    weight: safeWeight,
+    driverSkill,
+    mods: modsForEstimate,
+  }, {
+    enabled: !!selectedTrackSlug,
+  });
+  
+  // Get track statistics for context
+  const { data: trackStats } = useTrackStats(selectedTrackSlug, {
+    enabled: !!selectedTrackSlug,
+  });
 
-    // Power gains
-    const hpGain = Math.max(0, safeEstimatedHp - safeStockHp);
-    const powerFactor = Math.min(1.0, hpGain / 200);
-    improvements.power = powerFactor * (track.powerGainMax || 4);
-
-    // Tire compound
-    const tireLevel = {
-      'all-season': 0,
-      'summer': 0.15,
-      'max-performance': 0.35,
-      'r-comp': 0.75,
-      'drag-radial': 0.10,
-      'slick': 1.0
-    }[tireCompound] || 0.15;
-    improvements.grip = tireLevel * (track.gripGainMax || 5);
-
-    // Suspension
-    const suspLevel = {
-      'stock': 0,
-      'lowering-springs': 0.25,
-      'coilovers': 0.60,
-      'coilovers-race': 1.0,
-      'air': 0.10
-    }[suspensionSetup?.type] || 0;
-    improvements.suspension = suspLevel * (track.suspGainMax || 3.5);
-
-    // Brakes
-    let brakeLevel = 0;
-    if (brakeSetup?.bbkFront) brakeLevel += 0.40;
-    if (brakeSetup?.brakePads === 'track') brakeLevel += 0.25;
-    if (brakeSetup?.brakePads === 'race') brakeLevel += 0.40;
-    if (brakeSetup?.brakeFluid === 'racing') brakeLevel += 0.10;
-    if (brakeSetup?.stainlessLines) brakeLevel += 0.05;
-    brakeLevel = Math.min(1.0, brakeLevel);
-    improvements.brakes = brakeLevel * (track.brakeGainMax || 2.5);
-
-    // Aero
-    let aeroLevel = 0;
-    if (aeroSetup?.rearWing === 'lip-spoiler') aeroLevel += 0.15;
-    if (aeroSetup?.rearWing === 'ducktail') aeroLevel += 0.25;
-    if (aeroSetup?.rearWing === 'gt-wing-low') aeroLevel += 0.60;
-    if (aeroSetup?.rearWing === 'gt-wing-high') aeroLevel += 1.0;
-    if (aeroSetup?.frontSplitter === 'lip') aeroLevel += 0.15;
-    if (aeroSetup?.frontSplitter === 'splitter-rods') aeroLevel += 0.40;
-    if (aeroSetup?.diffuser) aeroLevel += 0.25;
-    aeroLevel = Math.min(1.0, aeroLevel);
-    improvements.aero = aeroLevel * (track.aeroGainMax || 2);
-
-    // Weight reduction
-    const weightSaved = Math.abs(weightMod || 0);
-    const weightLevel = Math.min(1.0, weightSaved / 200);
-    improvements.weight = weightLevel * (track.weightGainMax || 2);
-
-    return improvements;
-  };
-
-  // ==========================================================================
-  // CALCULATE LAP TIMES
-  // ==========================================================================
-  const track = selectedTrack;
+  // Extract values from estimate (with fallbacks for loading state)
   const skill = DRIVER_SKILLS[driverSkill];
-  
-  const modImprovements = calculateModImprovement();
-  const theoreticalTotal = Object.values(modImprovements).reduce((sum, val) => sum + val, 0);
-  
-  const realizedByCategory = {
-    power: modImprovements.power * skill.modUtilization.power,
-    grip: modImprovements.grip * skill.modUtilization.grip,
-    suspension: modImprovements.suspension * skill.modUtilization.suspension,
-    brakes: modImprovements.brakes * skill.modUtilization.brakes,
-    aero: modImprovements.aero * skill.modUtilization.aero,
-    weight: modImprovements.weight * skill.modUtilization.weight,
-  };
-  const realizedTotal = Object.values(realizedByCategory).reduce((sum, val) => sum + val, 0);
-  
-  // Stock lap time calculation
-  const hpDifference = 400 - safeStockHp;
-  const trackLengthFactor = (track.length || 3.0) / 3.0;
-  const powerPenalty = hpDifference * 0.025 * trackLengthFactor;
-  
-  const skillPenalty = driverSkill === 'professional' 
-    ? 0 
-    : (track[`${driverSkill}Penalty`] || track.intermediatePenalty || 10);
-  
-  const stockLapTime = (track.proTime || 95) + powerPenalty + skillPenalty;
-  const moddedLapTime = stockLapTime - realizedTotal;
+  const hasRealData = lapTimeEstimate?.source === 'real_data';
+  const stockLapTime = lapTimeEstimate?.stockLapTime || 0;
+  const moddedLapTime = lapTimeEstimate?.moddedLapTime || 0;
+  const realizedTotal = lapTimeEstimate?.improvement || 0;
+  const theoreticalTotal = lapTimeEstimate?.theoreticalImprovement || 0;
   const unrealizedGains = theoreticalTotal - realizedTotal;
-  const avgUtilization = theoreticalTotal > 0 ? (realizedTotal / theoreticalTotal) * 100 : 0;
+  const sampleSize = lapTimeEstimate?.sampleSize || 0;
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = (seconds % 60).toFixed(2);
-    return `${mins}:${secs.padStart(5, '0')}`;
-  };
-
-  const formatLapTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = (seconds % 60).toFixed(2);
-    return `${mins}:${secs.padStart(5, '0')}`;
-  };
+  // Format time helper (use imported formatLapTime from hook)
+  const formatTime = formatLapTime;
 
   const handleLogTime = async () => {
     if (!user?.id) return;
@@ -340,68 +163,48 @@ export default function LapTimeEstimator({
       return;
     }
     
-    setIsSaving(true);
     try {
-      const res = await fetch(`/api/users/${user.id}/track-times`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          trackName: selectedTrack.name,
-          trackSlug: selectedTrack.slug,
-          trackLengthMiles: selectedTrack.length,
+      await addTrackTime.mutateAsync({
+        userId: user.id,
+        trackTime: {
+          trackName: selectedTrack?.name || 'Unknown Track',
+          trackSlug: selectedTrack?.slug || selectedTrackSlug,
+          trackLengthMiles: selectedTrack?.length,
           lapTimeSeconds: totalSeconds,
           sessionDate: logForm.sessionDate,
           conditions: logForm.conditions,
           tireCompound: tireCompound,
           modsSummary: modsSummary || {},
           estimatedHp: safeEstimatedHp,
-          estimatedTimeSeconds: moddedLapTime,
+          estimatedTimeSeconds: moddedLapTime || null,
           driverSkillLevel: driverSkill,
           notes: logForm.notes,
           carSlug: carSlug
-        })
+        }
       });
       
-      if (res.ok) {
-        setLogForm({
-          lapTimeMinutes: '',
-          lapTimeSeconds: '',
-          sessionDate: new Date().toISOString().split('T')[0],
-          conditions: 'dry',
-          notes: ''
-        });
-        setShowLogForm(false);
-        fetchTrackHistory();
-        setShowHistory(true);
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Failed to save track time');
-      }
+      setLogForm({
+        lapTimeMinutes: '',
+        lapTimeSeconds: '',
+        sessionDate: new Date().toISOString().split('T')[0],
+        conditions: 'dry',
+        notes: ''
+      });
+      setShowLogForm(false);
+      setShowHistory(true);
     } catch (err) {
       console.error('Failed to log track time:', err);
-      alert('Failed to save track time');
-    } finally {
-      setIsSaving(false);
+      alert(err.message || 'Failed to save track time');
     }
   };
 
   const requestAnalysis = async () => {
     if (!user?.id) return;
-    setIsLoading(true);
     try {
-      const res = await fetch(`/api/users/${user.id}/track-times/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAnalysis(data.analysis);
-      }
+      const data = await analyzeTrackTimes.mutateAsync({ userId: user.id, carSlug });
+      setAnalysis(data.analysis);
     } catch (err) {
       console.error('Failed to get analysis:', err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -454,19 +257,27 @@ export default function LapTimeEstimator({
       {showInfo && (
         <div className={styles.lapTimeInfoPanel}>
           <h4>How Lap Time Estimation Works</h4>
-          <p>
-            We calculate potential time gains from your modifications based on power, 
-            grip, suspension, brakes, aero, and weight. <strong>But here's the key insight:</strong>
-          </p>
-          <p>
-            Modifications raise the <em>ceiling</em> of what's possible, but your skill 
-            determines how much of that potential you can actually use.
-          </p>
+          {hasRealData ? (
+            <>
+              <p>
+                <strong>Data-driven estimates</strong> using {sampleSize.toLocaleString()}+ real lap times 
+                from this track. We analyze times from similar cars to estimate yours.
+              </p>
+              <p>
+                Modifications raise the <em>ceiling</em> of what's possible, but your skill 
+                determines how much of that potential you can actually use.
+              </p>
+            </>
+          ) : (
+            <p>
+              Limited data for this track. Log your times to help build our database!
+            </p>
+          )}
           <ul>
-            <li><strong>Beginner:</strong> ~15-25% of mod potential (skill is the limiting factor)</li>
-            <li><strong>Intermediate:</strong> ~45-55% of mod potential</li>
-            <li><strong>Advanced:</strong> ~75-85% of mod potential</li>
-            <li><strong>Professional:</strong> ~95-98% of mod potential (theoretical max)</li>
+            <li><strong>Beginner:</strong> ~20% of mod potential (skill is the limiting factor)</li>
+            <li><strong>Intermediate:</strong> ~50% of mod potential</li>
+            <li><strong>Advanced:</strong> ~80% of mod potential</li>
+            <li><strong>Professional:</strong> ~95% of mod potential (theoretical max)</li>
           </ul>
           <p className={styles.lapTimeInfoHighlight}>
             The fastest path to quicker lap times is often improving YOUR skills, not adding parts!
@@ -585,28 +396,46 @@ export default function LapTimeEstimator({
 
       {/* Lap Time Comparison */}
       <div className={styles.lapTimeBody}>
-        <div className={styles.lapTimeComparison}>
-          <div className={styles.lapTimeColumn}>
-            <span className={styles.lapTimeLabel}>Stock</span>
-            <span className={styles.lapTimeStock}>{formatTime(stockLapTime)}</span>
+        {isEstimateLoading ? (
+          <div className={styles.lapTimeLoading}>
+            <span>Calculating estimate...</span>
           </div>
-          <div className={styles.lapTimeDelta}>
-            <Icons.chevronsRight size={20} />
-            <span className={`${styles.lapTimeImprovement} ${realizedTotal > 0.5 ? styles.lapTimeGood : ''}`}>
-              {realizedTotal >= 0.01 ? `-${realizedTotal.toFixed(2)}s` : '0.00s'}
-            </span>
+        ) : !hasRealData ? (
+          <div className={styles.lapTimeNoData}>
+            <p>Limited lap time data for this track.</p>
+            <p className={styles.lapTimeNoDataHint}>Log your times to help build the database!</p>
           </div>
-          <div className={styles.lapTimeColumn}>
-            <span className={styles.lapTimeLabel}>Modified</span>
-            <span className={styles.lapTimeMod}>{formatTime(moddedLapTime)}</span>
+        ) : (
+          <div className={styles.lapTimeComparison}>
+            <div className={styles.lapTimeColumn}>
+              <span className={styles.lapTimeLabel}>Stock</span>
+              <span className={styles.lapTimeStock}>{formatTime(stockLapTime)}</span>
+            </div>
+            <div className={styles.lapTimeDelta}>
+              <Icons.chevronsRight size={20} />
+              <span className={`${styles.lapTimeImprovement} ${realizedTotal > 0.5 ? styles.lapTimeGood : ''}`}>
+                {realizedTotal >= 0.01 ? `-${realizedTotal.toFixed(2)}s` : '0.00s'}
+              </span>
+            </div>
+            <div className={styles.lapTimeColumn}>
+              <span className={styles.lapTimeLabel}>Modified</span>
+              <span className={styles.lapTimeMod}>{formatTime(moddedLapTime)}</span>
+            </div>
           </div>
-        </div>
+        )}
+        
+        {/* Data source indicator */}
+        {hasRealData && sampleSize > 0 && (
+          <div className={styles.lapTimeDataSource}>
+            Based on {sampleSize.toLocaleString()} real lap times
+          </div>
+        )}
       </div>
       
       {/* Contextual tip - only show when there's significant unrealized potential */}
-      {unrealizedGains > 1.5 && driverSkill !== 'professional' && (
+      {hasRealData && unrealizedGains > 1.5 && driverSkill !== 'professional' && (
         <div className={styles.lapTimeTip}>
-          <span>{skill.tip}</span>
+          <span>{skill?.tip}</span>
         </div>
       )}
       

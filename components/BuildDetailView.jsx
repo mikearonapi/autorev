@@ -413,8 +413,12 @@ function PartsListSection({ parts }) {
  * Main BuildDetailView Component
  */
 export default function BuildDetailView({ build, car, onBack }) {
-  const buildUpgrades = Array.isArray(build?.upgrades) ? build.upgrades : [];
-  const safeCar = car || {};
+  // Memoize derived values to prevent unnecessary recalculations
+  const buildUpgrades = useMemo(() => 
+    Array.isArray(build?.upgrades) ? build.upgrades : [], 
+    [build?.upgrades]
+  );
+  const safeCar = useMemo(() => car || {}, [car]);
 
   // Resolve upgrade keys to full upgrade objects
   const upgradeDetails = useMemo(() => {

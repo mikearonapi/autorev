@@ -13,10 +13,12 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { resolveCarId } from '@/lib/carResolver';
+import { errors } from '@/lib/apiErrors';
+import { trackActivity } from '@/lib/dashboardScoreService';
+import { awardPoints } from '@/lib/pointsService';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -24,24 +26,19 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -53,9 +50,26 @@ async function handleGet(request) {
     const { searchParams } = new URL(request.url);
     const postType = searchParams.get('type');
     const carSlug = searchParams.get('car');
+    const buildId = searchParams.get('buildId'); // Check for linked post by build ID
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
     const featured = searchParams.get('featured') === 'true';
+
+    // If buildId provided, fetch the linked post for that build
+    if (buildId) {
+      const { data, error } = await supabaseAdmin
+        .from('community_posts')
+        .select('id, slug, title, is_published')
+        .eq('user_build_id', buildId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('[CommunityPosts API] Build lookup error:', error);
+        return errors.database('Failed to fetch linked post');
+      }
+      
+      return NextResponse.json({ post: data });
+    }
 
     const { data, error } = await supabaseAdmin.rpc('get_community_posts', {
       p_post_type: postType || null,
@@ -66,7 +80,7 @@ async function handleGet(request) {
 
     if (error) {
       console.error('[CommunityPosts API] Error:', error);
-      return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
+      return errors.database('Failed to fetch posts');
     }
 
     let results = data || [];
@@ -89,9 +103,9 @@ async function handleGet(request) {
  */
 async function handlePost(request) {
     // Verify authentication
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const body = await request.json();
@@ -108,15 +122,11 @@ async function handlePost(request) {
 
     // Validate required fields
     if (!postType || !title) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: postType and title are required' 
-      }, { status: 400 });
+      return errors.badRequest('Missing required fields: postType and title are required');
     }
 
     if (!['garage', 'build', 'vehicle'].includes(postType)) {
-      return NextResponse.json({ 
-        error: 'Invalid postType. Must be: garage, build, or vehicle' 
-      }, { status: 400 });
+      return errors.invalidInput('Invalid postType. Must be: garage, build, or vehicle', { field: 'postType' });
     }
 
     // Generate slug
@@ -127,7 +137,7 @@ async function handlePost(request) {
 
     if (slugError) {
       console.error('[CommunityPosts API] Slug error:', slugError);
-      return NextResponse.json({ error: 'Failed to generate slug' }, { status: 500 });
+      return errors.database('Failed to generate slug');
     }
 
     const slug = slugResult || `post-${Date.now()}`;
@@ -156,7 +166,7 @@ async function handlePost(request) {
 
     if (postError) {
       console.error('[CommunityPosts API] Create error:', postError);
-      return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
+      return errors.database('Failed to create post');
     }
 
     // Attach images to post if provided
@@ -187,6 +197,11 @@ async function handlePost(request) {
       // Don't fail the request if revalidation fails
       console.warn('[CommunityPosts API] Cache revalidation warning:', revalidateError);
     }
+    
+    // Track community activity for dashboard engagement (non-blocking)
+    trackActivity(user.id, 'community_posts').catch(() => {});
+    // Award points for sharing build (non-blocking)
+    awardPoints(user.id, 'community_share_build', { postId: post.id, postType }).catch(() => {});
 
     return NextResponse.json({
       success: true,
@@ -201,16 +216,16 @@ async function handlePost(request) {
  */
 async function handlePatch(request) {
     // Verify authentication
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const body = await request.json();
     const { postId, isPublished, title, description } = body;
 
     if (!postId) {
-      return NextResponse.json({ error: 'postId is required' }, { status: 400 });
+      return errors.missingField('postId');
     }
 
     // Build update object
@@ -233,11 +248,11 @@ async function handlePatch(request) {
 
     if (updateError) {
       console.error('[CommunityPosts API] Update error:', updateError);
-      return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
+      return errors.database('Failed to update post');
     }
 
     if (!post) {
-      return NextResponse.json({ error: 'Post not found or not authorized' }, { status: 404 });
+      return errors.notFound('Post');
     }
 
     // Invalidate cache so changes appear immediately

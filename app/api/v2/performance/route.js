@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createClient } from '@supabase/supabase-js';
 import { calculateBuildPerformance, calculateSmartHpGainV2 } from '@/lib/performanceCalculatorV2';
 import { getUpgradeByKey } from '@/lib/upgrades';

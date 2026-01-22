@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from './page.module.css';
 
 const TOOLS = [
+  { href: '/internal/data-quality', title: 'Data Quality Dashboard', desc: 'Real-time monitoring of data linkage health across all tables.' },
   { href: '/internal/car-pipeline', title: 'Car Addition Pipeline', desc: 'Track the 8-phase process for adding new vehicles to AutoRev.' },
   { href: '/internal/qa', title: 'QA Dashboard', desc: 'Quick health checks and debugging helpers.' },
   { href: '/internal/knowledge', title: 'Knowledge Ingest', desc: 'Paste text to index into source_documents/document_chunks for citeable answers.' },

@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import styles from './ArticleShareButtons.module.css';
+import { platform } from '@/lib/platform';
 
 /**
  * Social Share Buttons for Articles
  * 
  * Optimized for Facebook, X (Twitter), LinkedIn, and copy-to-clipboard
  * Designed for maximum engagement when sharing to Facebook Groups
+ * Uses platform abstraction for cross-platform compatibility
  */
 export default function ArticleShareButtons({ title, description, url }) {
   const [copied, setCopied] = useState(false);
@@ -17,12 +19,10 @@ export default function ArticleShareButtons({ title, description, url }) {
   const encodedDesc = encodeURIComponent(description || '');
   
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
+    const success = await platform.copyToClipboard(url);
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
     }
   };
   

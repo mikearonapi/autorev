@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './CarEventsSection.module.css';
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
+import { useEvents } from '@/hooks/useEventsData';
 
 /**
  * CarEventsSection - Shows upcoming events for a specific car on its detail page
@@ -73,51 +74,28 @@ function EmptyState({ brand }) {
 }
 
 export default function CarEventsSection({ carSlug, carName, brand }) {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const fetchEvents = async () => {
-      if (!carSlug && !brand) {
-        setLoading(false);
-        return;
-      }
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Build query - prefer car_slug, fall back to brand
-        const params = new URLSearchParams();
-        
-        if (carSlug) {
-          params.set('car_slug', carSlug);
-        } else if (brand) {
-          params.set('brand', brand);
-        }
-        
-        params.set('limit', '3');
-        params.set('sort', 'date');
-        
-        const response = await fetch(`/api/events?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
-        }
-        
-        const data = await response.json();
-        setEvents(data.events || []);
-      } catch (err) {
-        console.error('[CarEventsSection] Error fetching events:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchEvents();
+  // Build filter params for the query
+  const filters = useMemo(() => {
+    const f = { limit: 3, sort: 'date' };
+    if (carSlug) {
+      f.carSlug = carSlug;
+    } else if (brand) {
+      f.brand = brand;
+    }
+    return f;
   }, [carSlug, brand]);
+  
+  // React Query hook for events
+  const { 
+    data: eventsData, 
+    isLoading: loading, 
+    error: queryError,
+  } = useEvents(filters, {
+    enabled: !!(carSlug || brand),
+  });
+  
+  const events = eventsData?.events || [];
+  const error = queryError?.message || null;
   
   // Build link for "find more events"
   const findMoreLink = brand 

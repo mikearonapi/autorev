@@ -1,0 +1,426 @@
+/**
+ * GarageScoreCard Styles
+ * 
+ * Following AutoRev brand guidelines:
+ * - Teal (#10b981) for complete/positive
+ * - Blue (#3b82f6) for in-progress
+ * - Secondary text (#94a3b8) for incomplete
+ */
+
+/* ===========================================
+   Card Container
+   =========================================== */
+
+.card {
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-5, 20px);
+  width: 100%;
+}
+
+.cardCompact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  padding: var(--space-2, 8px);
+}
+
+/* ===========================================
+   Header
+   =========================================== */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-4, 16px);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.vehicleName {
+  font-size: 12px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* ===========================================
+   Level Badge
+   =========================================== */
+
+.levelBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 4px);
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+  border-radius: var(--radius-full, 100px);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.levelteal {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.levelblue {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-accent-blue, #3b82f6);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.levelsecondary {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--color-text-secondary, #94a3b8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* ===========================================
+   Content Layout
+   =========================================== */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+/* ===========================================
+   Circular Progress Ring
+   =========================================== */
+
+.progressRing {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressSvg {
+  transform: rotate(-90deg);
+}
+
+.progressBg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.progressFill {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease-out, stroke 0.3s ease;
+}
+
+.progressCenter {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreNumber {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1;
+}
+
+.scoreLabel {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* ===========================================
+   Tip Button
+   =========================================== */
+
+.tipButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md, 10px);
+  color: var(--color-accent-teal, #10b981);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tipButton:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.tipIcon {
+  font-size: 14px;
+}
+
+.tipText {
+  flex: 1;
+}
+
+.tipArrow {
+  opacity: 0.7;
+}
+
+.completeMessage {
+  font-size: 14px;
+  color: var(--color-accent-teal, #10b981);
+  margin: 0;
+}
+
+/* ===========================================
+   Checklist Section
+   =========================================== */
+
+.checklistSection {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: var(--space-3, 12px);
+}
+
+.checklistToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-2, 8px) 0;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.checklistToggle:hover {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.toggleIcon {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.toggleIcon.expanded {
+  transform: rotate(180deg);
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+  padding-top: var(--space-2, 8px);
+}
+
+/* ===========================================
+   Checklist Item
+   =========================================== */
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.checklistItem:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.checklistItem:disabled {
+  cursor: default;
+}
+
+.checklistItem.complete {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.checklistItem.partial {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+.checklistIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.checklistItem.complete .checklistIcon {
+  background: var(--color-accent-teal, #10b981);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checklistLabel {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.checklistItem.complete .checklistLabel {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.checklistItem.partial .checklistLabel {
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+.checklistPoints {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.checklistItem.complete .checklistPoints {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.checklistItem.partial .checklistPoints {
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+/* ===========================================
+   Empty State
+   =========================================== */
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2, 8px);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  opacity: 0.6;
+}
+
+.emptyTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+  max-width: 200px;
+}
+
+.emptyButton {
+  margin-top: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+  border: none;
+  border-radius: var(--radius-full, 100px);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emptyButton:hover {
+  background: #bfe600;
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.2);
+}
+
+/* ===========================================
+   Compact Mode
+   =========================================== */
+
+.compactInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.compactScore {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.compactLevel {
+  font-size: 11px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* ===========================================
+   Responsive
+   =========================================== */
+
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-4, 16px);
+  }
+  
+  .scoreNumber {
+    font-size: 28px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: var(--space-2, 8px);
+  }
+  
+  .levelBadge {
+    align-self: flex-start;
+  }
+}

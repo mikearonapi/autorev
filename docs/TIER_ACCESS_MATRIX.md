@@ -2,22 +2,21 @@
 
 > Complete feature-by-tier access reference
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 20, 2026
 
 ---
 
 ## Tier Hierarchy
 
 ```
-free → collector → tuner → admin
+free → collector → tuner
 ```
 
-| Tier | Price | Target User | Monthly AL Budget |
-|------|-------|-------------|-------------------|
-| **Free** | $0 forever | Car shoppers, browsers | $0.25 (~25 chats) |
-| **Enthusiast** | $4.99/mo | Car owners | $1.00 (~75 chats) |
-| **Tuner** | $9.99/mo | Modifiers, track enthusiasts | $2.50 (~150 chats) |
-| **Admin** | Internal | Staff | Unlimited |
+| Tier | Internal ID | Display Name | Price | Monthly AL Budget |
+|------|-------------|--------------|-------|-------------------|
+| **Free** | `free` | Free | $0 forever | 25 chats |
+| **Collector** | `collector` | Enthusiast | $4.99/mo | 75 chats |
+| **Tuner** | `tuner` | Tuner | $9.99/mo | 150 chats |
 
 > **Beta Mode:** Currently `IS_BETA = true` — all features unlocked for authenticated users.
 
@@ -25,95 +24,69 @@ free → collector → tuner → admin
 
 ## Complete Feature Matrix
 
-### Discovery & Research
+### Discovery & Research (Free Tier)
 
-| Feature | Free | Collector | Tuner | Description |
-|---------|:----:|:---------:|:-----:|-------------|
-| Browse Cars | ✅ | ✅ | ✅ | Access 98-car database |
-| Car Detail Pages | ✅ | ✅ | ✅ | Full specs and buying guides |
-| Car Selector | ✅ | ✅ | ✅ | Personalized car matching |
-| Fuel Economy Data | ✅ | ✅ | ✅ | EPA mpg and emissions |
-| Safety Ratings | ✅ | ✅ | ✅ | NHTSA and IIHS ratings |
-| Price by Year | ✅ | ✅ | ✅ | Best value model years |
-| Expert Video Reviews | ✅ | ✅ | ✅ | YouTube reviews with AI summaries |
-| Encyclopedia | ✅ | ✅ | ✅ | Automotive education |
+| Feature Key | Name | Free | Collector | Tuner | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `carSelector` | Car Selector | ✅ | ✅ | ✅ | Find and compare sports cars |
+| `carDetailPages` | Car Detail Pages | ✅ | ✅ | ✅ | Full specs and buying guides |
+| `fuelEconomy` | Fuel Economy | ✅ | ✅ | ✅ | EPA fuel economy data |
+| `safetyRatings` | Safety Ratings | ✅ | ✅ | ✅ | NHTSA and IIHS safety ratings |
+| `priceByYear` | Price by Year | ✅ | ✅ | ✅ | Best value model years |
+| `partsTeaser` | Parts Preview | ✅ | ✅ | ✅ | See top 3 popular parts |
+| `lapTimesTeaser` | Lap Times Preview | ✅ | ✅ | ✅ | See top 2 lap times |
 
 ### My Garage
 
-| Feature | Free | Collector | Tuner | Description |
-|---------|:----:|:---------:|:-----:|-------------|
-| Save Favorites | ✅ | ✅ | ✅ | Save cars to garage |
-| VIN Decode | ❌ | ✅ | ✅ | Identify exact variant |
-| Owner's Reference | ❌ | ✅ | ✅ | Oil/fluid specs for your car |
-| Service Log | ❌ | ✅ | ✅ | Track maintenance history |
-| Service Reminders | ❌ | ✅ | ✅ | Upcoming service alerts |
-| Recall Alerts | ❌ | ✅ | ✅ | VIN-specific recalls |
-| Market Value | ❌ | ✅ | ✅ | Current value tracking |
-| Price History | ❌ | ✅ | ✅ | Value trends over time |
-| Collections | ❌ | ✅ | ✅ | Organize cars into groups |
-| Full Compare | ❌ | ✅ | ✅ | Side-by-side comparison |
-| Export Data | ❌ | ✅ | ✅ | Export garage data |
+| Feature Key | Name | Free | Collector | Tuner | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `basicGarage` | Basic Garage | ✅ | ✅ | ✅ | Save cars to your garage |
+| `favorites` | Favorites | ✅ | ✅ | ✅ | Save favorite cars |
+| `vinDecode` | VIN Decode | ❌ | ✅ | ✅ | Decode your exact vehicle variant |
+| `ownerReference` | Owner's Reference | ❌ | ✅ | ✅ | Maintenance specs for your car |
+| `serviceLog` | Service Log | ❌ | ✅ | ✅ | Track your maintenance history |
+| `serviceReminders` | Service Reminders | ❌ | ✅ | ✅ | Get notified when service is due |
+| `recallAlerts` | Recall Alerts | ❌ | ✅ | ✅ | Active recalls for YOUR VIN |
+| `safetyData` | Your Safety Data | ❌ | ✅ | ✅ | Recalls and complaints for your VIN |
+| `marketValue` | Market Value | ❌ | ✅ | ✅ | Track what your car is worth |
+| `priceHistory` | Price History | ❌ | ✅ | ✅ | Historical price trends |
+| `fullCompare` | Full Compare | ❌ | ✅ | ✅ | Side-by-side comparison tool |
+| `collections` | Collections | ❌ | ✅ | ✅ | Organize cars into collections |
+| `exportData` | Export Data | ❌ | ✅ | ✅ | Export your garage data |
 
 ### Events
 
-| Feature | Free | Collector | Tuner | Description |
-|---------|:----:|:---------:|:-----:|-------------|
-| Browse Events | ✅ | ✅ | ✅ | Find car events |
-| Map View | ✅ | ✅ | ✅ | Events on map |
-| Submit Events | ✅ | ✅ | ✅ | Submit new events |
-| Calendar View | ❌ | ✅ | ✅ | Monthly calendar layout |
-| Save Events | ❌ | ✅ | ✅ | Bookmark events |
-| Calendar Export | ❌ | ✅ | ✅ | Add to Google/Apple calendar |
-| Events for My Cars | ❌ | ✅ | ✅ | Filter by garage cars |
+| Feature Key | Name | Free | Collector | Tuner | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `eventsBrowse` | Browse Events | ✅ | ✅ | ✅ | Browse car events and meetups |
+| `eventsMapView` | Map View | ✅ | ✅ | ✅ | View events on a map |
+| `eventsSubmit` | Submit Events | ✅ | ✅ | ✅ | Submit new events for review |
+| `eventsCalendarView` | Calendar View | ❌ | ✅ | ✅ | Monthly calendar view of events |
+| `eventsSave` | Save Events | ❌ | ✅ | ✅ | Bookmark events for later |
+| `eventsCalendarExport` | Calendar Export | ❌ | ✅ | ✅ | Add events to your calendar |
+| `eventsForMyCars` | Events for My Cars | ❌ | ✅ | ✅ | Filter events by your garage vehicles |
 
-### Tuning Shop
+### Tuning Shop (Tuner Tier)
 
-| Feature | Free | Collector | Tuner | Description |
-|---------|:----:|:---------:|:-----:|-------------|
-| Browse Upgrades | ✅ | ✅ | ✅ | Explore upgrade options |
-| Parts Preview (3) | ✅ | ✅ | ✅ | See top 3 popular parts |
-| Lap Times Preview (2) | ✅ | ✅ | ✅ | See top 2 lap times |
-| Dyno Database | ❌ | ❌ | ✅ | Real dyno measurements |
-| Full Lap Times | ❌ | ❌ | ✅ | Complete track data |
-| Full Parts Catalog | ❌ | ❌ | ✅ | All parts with pricing |
-| Build Projects | ❌ | ❌ | ✅ | Save build plans |
-| Build Analytics | ❌ | ❌ | ✅ | Cost and HP projections |
-| Parts Compatibility | ❌ | ❌ | ✅ | Check what works together |
-| Mod Impact Analysis | ❌ | ❌ | ✅ | Before/after data |
-| PDF Export | ❌ | ❌ | ✅ | Export builds as PDF |
+| Feature Key | Name | Free | Collector | Tuner | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `dynoDatabase` | Dyno Database | ❌ | ❌ | ✅ | Real HP/torque from actual cars |
+| `fullLapTimes` | Lap Times Library | ❌ | ❌ | ✅ | Complete track benchmark data |
+| `fullPartsCatalog` | Parts Catalog | ❌ | ❌ | ✅ | Full parts database with pricing |
+| `buildProjects` | Build Projects | ❌ | ❌ | ✅ | Save and organize build plans |
+| `buildAnalytics` | Build Analytics | ❌ | ❌ | ✅ | Cost projections and HP gains |
+| `partsCompatibility` | Parts Compatibility | ❌ | ❌ | ✅ | Check what works together |
+| `modImpactAnalysis` | Mod Impact | ❌ | ❌ | ✅ | Before/after performance data |
+| `pdfExport` | PDF Export | ❌ | ❌ | ✅ | Export builds as PDF |
+| `earlyAccess` | Early Access | ❌ | ❌ | ✅ | First access to new features |
 
 ### AL Assistant
 
-| Feature | Free | Collector | Tuner | Description |
-|---------|:----:|:---------:|:-----:|-------------|
-| Basic AI Chat | ✅ | ✅ | ✅ | ~25 chats/month |
-| Enthusiast AI Chat | ❌ | ✅ | ✅ | ~75 chats/month |
-| Tuner AI Chat | ❌ | ❌ | ✅ | ~150 chats/month |
-| Early Access | ❌ | ❌ | ✅ | New features first |
-
----
-
-## AL Tool Access by Tier
-
-| Tool | Free | Collector | Tuner | Description |
-|------|:----:|:---------:|:-----:|-------------|
-| `search_cars` | ✅ | ✅ | ✅ | Find cars by criteria |
-| `get_car_details` | ✅ | ✅ | ✅ | Get car specifications |
-| `get_car_ai_context` | ✅ | ✅ | ✅ | Comprehensive car context |
-| `search_events` | ✅ | ✅ | ✅ | Find car events |
-| `get_expert_reviews` | ❌ | ✅ | ✅ | YouTube reviews |
-| `get_known_issues` | ❌ | ✅ | ✅ | Common problems |
-| `compare_cars` | ❌ | ✅ | ✅ | Side-by-side comparison |
-| `search_encyclopedia` | ❌ | ✅ | ✅ | Automotive education |
-| `get_upgrade_info` | ❌ | ✅ | ✅ | Modification details |
-| `search_forums` | ❌ | ✅ | ✅ | Forum search *(stub)* |
-| `search_parts` | ❌ | ✅ | ✅ | Parts catalog |
-| `get_maintenance_schedule` | ❌ | ✅ | ✅ | Service schedules |
-| `search_knowledge` | ❌ | ✅ | ✅ | Vector knowledge base |
-| `get_track_lap_times` | ❌ | ✅ | ✅ | Track benchmarks |
-| `get_dyno_runs` | ❌ | ✅ | ✅ | Dyno measurements |
-| `search_community_insights` | ❌ | ✅ | ✅ | Forum-extracted insights |
-| `recommend_build` | ❌ | ❌ | ✅ | Build recommendations |
+| Feature Key | Name | Free | Collector | Tuner | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `alBasic` | AL Basic | ✅ | ✅ | ✅ | 25 AI chats per month |
+| `alCollector` | AL Enthusiast | ❌ | ✅ | ✅ | 75 AI chats per month |
+| `alTuner` | AL Tuner | ❌ | ❌ | ✅ | 150 AI chats per month |
 
 ---
 
@@ -123,11 +96,27 @@ For free users, certain content shows a preview before prompting upgrade:
 
 | Content Type | Free Preview | Upgrade Prompt |
 |--------------|--------------|----------------|
-| Popular Parts | 3 parts | "See all 642 parts" |
+| Popular Parts | 3 parts | "See all parts" |
 | Lap Times | 2 times | "See all lap times" |
 | Dyno Runs | 0 (none) | "Unlock dyno data" |
-| Compare Cars | 2 cars | "Compare up to 4 cars" |
+| Compare Cars | 2 cars | "Compare more cars" |
 | Saved Projects | 0 (none) | "Save build projects" |
+
+**Code Reference:**
+```javascript
+export const TEASER_LIMITS = {
+  popularParts: 3,
+  lapTimes: 2,
+  dynoRuns: 0,
+  compareCars: 2,
+  savedProjects: 0,
+  aiChatsPerMonth: {
+    free: 25,
+    collector: 75,
+    tuner: 150,
+  },
+};
+```
 
 ---
 
@@ -138,7 +127,7 @@ For free users, certain content shows a preview before prompting upgrade:
 ```javascript
 import { hasFeatureAccess, hasAccess, FEATURES } from '@/lib/tierAccess';
 
-// Check if user can access feature
+// Check if user can access feature (ignores beta)
 const canAccessDyno = hasFeatureAccess(userTier, 'dynoDatabase');
 
 // During beta (respects IS_BETA flag)
@@ -166,7 +155,6 @@ import PremiumGate from '@/components/PremiumGate';
 ### API Route Protection
 
 ```javascript
-// In API route
 import { hasTierAccess } from '@/lib/tierAccess';
 
 export async function GET(request) {
@@ -210,19 +198,19 @@ After disabling:
 
 ## Upgrade Flows
 
-### Free → Enthusiast
+### Free → Collector (Enthusiast)
 
 Triggered by:
 - Clicking "Upgrade" on gated feature
-- Visiting `/join?upgrade=collector`
+- Visiting `/profile` (upgrade options shown)
 - Reaching AL chat limit
 
-### Free/Enthusiast → Tuner
+### Free/Collector → Tuner
 
 Triggered by:
 - Accessing dyno/lap time data
 - Trying to save build projects
-- Visiting `/join?upgrade=tuner`
+- Visiting `/profile` (upgrade options shown)
 
 ### CTA Generation
 
@@ -237,12 +225,12 @@ const cta = getUpgradeCTA('collector');
 
 ## Feature Categories Summary
 
-| Category | Free Features | Enthusiast Adds | Tuner Adds |
+| Category | Free Features | Collector Adds | Tuner Adds |
 |----------|---------------|----------------|------------|
-| **Discovery** | Full car database, selector, reviews | — | — |
-| **Ownership** | Save favorites | VIN decode, service log, market value | — |
+| **Discovery** | Car database, selector, specs, teasers | — | — |
+| **Ownership** | Basic garage, favorites | VIN decode, service log, market value, recalls | — |
 | **Events** | Browse, map, submit | Save, calendar, filter by cars | — |
-| **Tuning** | Preview parts/times | — | Full data, builds, analytics |
+| **Tuning** | Preview parts/times | — | Full dyno, lap times, builds, analytics |
 | **AI** | 25 chats/mo | 75 chats/mo | 150 chats/mo |
 
 ---
@@ -254,14 +242,8 @@ const cta = getUpgradeCTA('collector');
 | `lib/tierAccess.js` | Core tier logic and feature definitions |
 | `components/PremiumGate.jsx` | Feature gating component |
 | `components/TeaserPrompt.jsx` | Upgrade prompt component |
-| `app/(pages)/join/page.jsx` | Pricing/upgrade page |
+| `app/(app)/profile/page.jsx` | Profile with upgrade options |
 
 ---
 
-*See [FEATURES.md](FEATURES.md) for feature descriptions and [AL.md](AL.md) for AL tool documentation.*
-
-
-
-
-
-
+*See [AL.md](AL.md) for AL assistant documentation.*

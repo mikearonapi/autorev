@@ -1,0 +1,274 @@
+/* Dashboard Page Styles - Mobile-first compact design */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg-base, #0d1b2a);
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  box-sizing: border-box;
+}
+
+/* Mobile: Tighter horizontal padding to match Garage */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 12px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 4px;
+  gap: 12px;
+}
+
+/* Mobile: Tighter header */
+@media (max-width: 767px) {
+  .header {
+    padding: 12px 0 4px;
+  }
+}
+
+.pageTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.profileLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary, #94a3b8);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.profileLink:active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.profileAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Rings Section */
+.ringsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 24px;
+}
+
+/* Engagement Section */
+.engagementSection {
+  margin-bottom: 16px;
+}
+
+/* Achievements Section */
+.achievementsSection {
+  margin-bottom: 16px;
+}
+
+/* Actions Section - Improvement nudges */
+.actionsSection {
+  margin-bottom: 24px;
+}
+
+/* Tips Section - Action buttons at bottom */
+.tipsSection {
+  margin-bottom: 16px;
+}
+
+.tipsContainer {
+  /* wrapper for title + tips */
+}
+
+.tipsTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 10px 0;
+}
+
+.tips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.tip:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tipIcon {
+  color: var(--color-text-tertiary, #64748b);
+  display: flex;
+}
+
+.tipText {
+  flex: 1;
+  font-size: 12px;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.tipArrow {
+  color: var(--color-text-tertiary, #64748b);
+  display: flex;
+}
+
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent-lime, #d4ff00);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 24px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 6px 0;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+/* Error State */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 24px;
+  text-align: center;
+  gap: 12px;
+}
+
+.error p {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.retryButton {
+  padding: 8px 16px;
+  background: var(--color-accent-lime, #d4ff00);
+  color: #0a1628;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Skeleton */
+.skeleton {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.skeletonRings {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonCard {
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonCards {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.skeletonCardSmall {
+  flex: 1;
+  height: 80px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

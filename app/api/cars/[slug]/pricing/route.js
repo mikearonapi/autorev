@@ -12,6 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { fetchCarBySlug } from '@/lib/carsClient';
 import * as batScraper from '@/lib/scrapers/bringATrailerScraper';
 import * as hagertyScraper from '@/lib/scrapers/hagertyScraper';

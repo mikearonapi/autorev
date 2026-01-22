@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

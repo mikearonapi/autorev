@@ -1,6 +1,6 @@
 # Cron Job Schedule & Dependencies
 
-> **Last Updated:** December 31, 2024
+> **Last Updated:** January 21, 2026
 
 This document explains the AutoRev cron job schedule, dependencies, and rationale.
 
@@ -21,8 +21,14 @@ This document explains the AutoRev cron job schedule, dependencies, and rational
 │                                                                               │
 │  DAILY                                                                        │
 │  ├── 00:00 daily-metrics          (Start of day baseline)                    │
+│  ├── 00:00 article-research       (Research topics for AL articles)          │
+│  ├── 02:00 calculate-engagement   (Calculate user engagement scores)         │
+│  ├── 05:00 article-write          (AI writes article drafts)                 │
 │  ├── 06:00 refresh-events         (Automotive events from sources)           │
-│  ├── 10:00 schedule-inactivity-emails                                        │
+│  ├── 06:00 article-images         (Generate AI images for articles)          │
+│  ├── 08:00 article-publish        (Publish approved articles)                │
+│  ├── 10:00 retention-alerts       (Alert on user churn risk)                 │
+│  ├── 11:00 schedule-inactivity-emails                                        │
 │  └── 14:00 daily-digest           (Afternoon summary)                        │
 │                                                                               │
 │  ─────────────────────────────────────────────────────────────────────────── │
@@ -32,7 +38,7 @@ This document explains the AutoRev cron job schedule, dependencies, and rational
 │  ├── 01:30 ① schedule-ingestion     (Queue event source scrapes)             │
 │  ├── 02:00 ② refresh-recalls        (NHTSA recall data)                      │
 │  ├── 02:30 ② refresh-complaints     (NHTSA complaint data)                   │
-│  └── 03:00 ③ process-scrape-jobs    (Run car pipelines + event scrapes)      │
+│  └── 04:00 ③ process-scrape-jobs    (Run car pipelines + event scrapes)      │
 │                                                                               │
 │  MONDAY                                                                       │
 │  └── 04:00 youtube-enrichment       (Discover + transcribe + AI process)     │
@@ -113,9 +119,9 @@ PHASE 5: Knowledge Optimization (Saturday 3:00 AM) ⭐ MUST BE LAST
 │              AL is now fully optimized!               │
 │                                                        │
 │  Can semantically search:                             │
-│  • All 188+ cars with complete embeddings             │
-│  • 1,200+ community insights                          │
-│  • 7,000+ document chunks (YouTube, docs, etc.)       │
+│  • All 310 cars with complete embeddings              │
+│  • 1,252+ community insights                          │
+│  • 7,447+ document chunks (YouTube, docs, etc.)       │
 └───────────────────────────────────────────────────────┘
 ```
 
@@ -141,8 +147,14 @@ PHASE 5: Knowledge Optimization (Saturday 3:00 AM) ⭐ MUST BE LAST
 | Job | Time (UTC) | Purpose | Tables Affected |
 |-----|------------|---------|-----------------|
 | `daily-metrics` | 00:00 | Snapshot user/system metrics | `daily_metrics_snapshot` |
+| `article-research` | 00:00 | Research topics for AL articles | `article_pipeline` |
+| `calculate-engagement` | 02:00 | Calculate user engagement scores | `user_lifecycle`, analytics |
+| `article-write` | 05:00 | AI writes article drafts | `al_articles` |
 | `refresh-events` | 06:00 | Fetch automotive events | `events` |
-| `schedule-inactivity-emails` | 10:00 | Queue reminders for inactive users | `email_queue` |
+| `article-images` | 06:00 | Generate AI images for articles | `al_articles` |
+| `article-publish` | 08:00 | Publish approved articles | `al_articles` |
+| `retention-alerts` | 10:00 | Alert on user churn risk | `user_lifecycle`, Discord |
+| `schedule-inactivity-emails` | 11:00 | Queue reminders for inactive users | `email_queue` |
 | `daily-digest` | 14:00 | Send admin summary | Discord webhook |
 
 ### Weekly Jobs
@@ -153,7 +165,7 @@ PHASE 5: Knowledge Optimization (Saturday 3:00 AM) ⭐ MUST BE LAST
 | `schedule-ingestion` | Sun 01:30 | ~2 min | Queue event source scrapes |
 | `refresh-recalls` | Sun 02:00 | ~10 min | Fetch NHTSA recall data |
 | `refresh-complaints` | Sun 02:30 | ~15 min | Fetch NHTSA complaint data |
-| `process-scrape-jobs` | Sun 03:00 | ~45 min | Run car pipelines, event scrapes |
+| `process-scrape-jobs` | Sun 04:00 | ~45 min | Run car pipelines, event scrapes |
 | `youtube-enrichment` | Mon 04:00 | ~30 min | Discover videos, transcripts, AI |
 | `forum-scrape` | Tue/Fri 05:00 | ~30 min | Scrape forums, extract insights |
 | `al-optimization` | Sat 03:00 | ~30 min | Generate all embeddings |

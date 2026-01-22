@@ -13,8 +13,10 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { awardPoints } from '@/lib/pointsService';
 
 /**
  * Helper to clean custom specs object - remove empty strings and nulls
@@ -221,6 +223,12 @@ async function handlePost(request, { params }) {
         { error: 'Vehicle not found' },
         { status: 404 }
       );
+    }
+
+    // Award points for adding part details if specs were added (non-blocking)
+    const specCount = Object.keys(cleanedSpecs).length;
+    if (specCount > 0) {
+      awardPoints(userId, 'garage_add_part_details', { vehicleId, specCount }).catch(() => {});
     }
 
     return NextResponse.json({

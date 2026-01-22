@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePostComments, useAddComment, useUpdateComment, useDeleteComment } from '@/hooks/useCommunityData';
 import styles from './CommentsSheet.module.css';
 
 /**
@@ -48,13 +49,8 @@ const TrashIcon = () => (
 
 export default function CommentsSheet({ postId, postTitle, commentCount = 0, onClose, onCommentAdded }) {
   const { user } = useAuth();
-  const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [guidance, setGuidance] = useState(null);
   
   // Edit/Delete state
   const [editingCommentId, setEditingCommentId] = useState(null);
@@ -65,30 +61,23 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
   const inputRef = useRef(null);
   const editInputRef = useRef(null);
   const commentsEndRef = useRef(null);
-
-  // Fetch comments
-  useEffect(() => {
-    async function fetchComments() {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/community/posts/${postId}/comments`);
-        if (!res.ok) throw new Error('Failed to fetch comments');
-        const data = await res.json();
-        setComments(data.comments || []);
-        setGuidance(data.guidance);
-      } catch (err) {
-        setError('Unable to load comments');
-        console.error('[CommentsSheet] Fetch error:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    if (postId) {
-      fetchComments();
-    }
-  }, [postId]);
+  
+  // React Query hooks for comments
+  const { 
+    data: commentsData, 
+    isLoading, 
+    error: queryError,
+  } = usePostComments(postId);
+  
+  const comments = commentsData?.comments || [];
+  const guidance = commentsData?.guidance;
+  const error = queryError ? 'Unable to load comments' : null;
+  
+  const addCommentMutation = useAddComment();
+  const updateCommentMutation = useUpdateComment();
+  const deleteCommentMutation = useDeleteComment();
+  
+  const isSubmitting = addCommentMutation.isPending || updateCommentMutation.isPending || deleteCommentMutation.isPending;
 
   // Focus input when sheet opens
   useEffect(() => {
@@ -138,43 +127,20 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
       return;
     }
     
-    setIsSubmitting(true);
     setSubmitError(null);
     
     try {
-      const res = await fetch(`/api/community/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        if (data.rejected) {
-          setSubmitError(data.reason || 'Comment did not meet community standards');
-        } else if (data.requiresAuth) {
-          setSubmitError('Please sign in to comment');
-        } else if (data.rateLimited) {
-          setSubmitError('Please wait a moment before posting again');
-        } else {
-          setSubmitError(data.error || 'Failed to post comment');
-        }
-        return;
-      }
-      
-      // Success! Add comment to list
-      if (data.comment) {
-        setComments(prev => [...prev, data.comment]);
-        setNewComment('');
-        onCommentAdded?.();
-        setTimeout(scrollToBottom, 100);
-      }
+      await addCommentMutation.mutateAsync({ postId, content });
+      setNewComment('');
+      onCommentAdded?.();
+      setTimeout(scrollToBottom, 100);
     } catch (err) {
-      setSubmitError('Network error. Please try again.');
+      if (err.rejected) {
+        setSubmitError(err.reason || 'Comment did not meet community standards');
+      } else {
+        setSubmitError(err.message || 'Failed to post comment');
+      }
       console.error('[CommentsSheet] Submit error:', err);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -196,58 +162,28 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
     const content = editContent.trim();
     if (!content || content.length > 1000) return;
 
-    setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/community/posts/${postId}/comments`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId, content }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (data.rejected) {
-          setSubmitError(data.reason || 'Edited comment did not meet community standards');
-        } else {
-          setSubmitError(data.error || 'Failed to update comment');
-        }
-        return;
-      }
-
-      // Update comment in list
-      setComments(prev => prev.map(c => 
-        c.id === commentId ? { ...c, content, isPending: data.comment?.isPending } : c
-      ));
+      await updateCommentMutation.mutateAsync({ postId, commentId, content });
       setEditingCommentId(null);
       setEditContent('');
     } catch (err) {
-      setSubmitError('Failed to update comment');
+      if (err.rejected) {
+        setSubmitError(err.reason || 'Edited comment did not meet community standards');
+      } else {
+        setSubmitError(err.message || 'Failed to update comment');
+      }
       console.error('[CommentsSheet] Edit error:', err);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   // Delete comment
   const deleteComment = async (commentId) => {
     try {
-      const res = await fetch(`/api/community/posts/${postId}/comments?commentId=${commentId}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setSubmitError(data.error || 'Failed to delete comment');
-        return;
-      }
-
-      // Remove from list
-      setComments(prev => prev.filter(c => c.id !== commentId));
+      await deleteCommentMutation.mutateAsync({ postId, commentId });
       setDeleteConfirmId(null);
       setMenuOpenId(null);
     } catch (err) {
-      setSubmitError('Failed to delete comment');
+      setSubmitError(err.message || 'Failed to delete comment');
       console.error('[CommentsSheet] Delete error:', err);
     }
   };

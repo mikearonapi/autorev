@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { fetchAllSafetyData } from '@/lib/nhtsaSafetyService';
 import { isValidVIN, cleanVIN } from '@/lib/vinDecoder';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

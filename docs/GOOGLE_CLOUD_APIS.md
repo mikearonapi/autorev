@@ -2,7 +2,7 @@
 
 > APIs enabled for AutoRev. Integration status tracked here.
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 

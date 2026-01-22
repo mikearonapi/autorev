@@ -404,9 +404,9 @@ export default function CarDetailClient({ car: rawCar }) {
           <Icons.alertCircle size={48} />
           <h2>Vehicle not found</h2>
           <p>The vehicle you're looking for doesn't exist or couldn't be loaded.</p>
-          <Link href="/car-selector" className={styles.backButton}>
+          <Link href="/garage" className={styles.backButton}>
             <Icons.arrowLeft size={18} />
-            Back to Car Selector
+            Back to Garage
           </Link>
         </div>
       </div>

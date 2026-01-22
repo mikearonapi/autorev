@@ -18,7 +18,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { rankFeed, buildUserContext, getLearnedPreferences } from '@/lib/feedAlgorithm';
-import { cookies } from 'next/headers';
+import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
 
 // Mark route as dynamic since it uses request.url
 export const dynamic = 'force-dynamic';
@@ -99,13 +100,18 @@ async function handleGet(request) {
   const carSlug = searchParams.get('car');
   const sessionSeed = searchParams.get('seed') || null;
   
-  // Get user ID from auth if available
+  // Get user ID from auth if available (supports both cookie and Bearer token)
   let userId = null;
   try {
-    const cookieStore = cookies();
-    const supabaseAuthToken = cookieStore.get('sb-access-token')?.value;
-    if (supabaseAuthToken) {
-      const { data: { user } } = await supabaseAdmin.auth.getUser(supabaseAuthToken);
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+    
+    if (supabase) {
+      const { data: { user } } = bearerToken
+        ? await supabase.auth.getUser(bearerToken)
+        : await supabase.auth.getUser();
       userId = user?.id;
     }
   } catch (e) {

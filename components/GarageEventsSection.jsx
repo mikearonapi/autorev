@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './GarageEventsSection.module.css';
 import PremiumGate from '@/components/PremiumGate';
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
+import { useEvents } from '@/hooks/useEventsData';
 
 /**
  * GarageEventsSection - Shows upcoming events for user's owned vehicles or favorites
@@ -81,69 +82,42 @@ function EmptyState({ hasVehicles }) {
 }
 
 export default function GarageEventsSection({ vehicles = [], favorites = [] }) {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
   // Get unique brands from vehicles and favorites
-  const brands = [...new Set([
+  const brands = useMemo(() => [...new Set([
     ...vehicles.map(v => v.vehicle?.make || v.make).filter(Boolean),
     ...favorites.map(f => f.brand).filter(Boolean),
-  ])];
+  ])], [vehicles, favorites]);
   
   // Get car slugs from owned vehicles
-  const carSlugs = vehicles
+  const carSlugs = useMemo(() => vehicles
     .map(v => v.vehicle?.matchedCarSlug || v.matchedCarSlug)
-    .filter(Boolean);
+    .filter(Boolean), [vehicles]);
   
   const hasVehicles = vehicles.length > 0;
   const hasFavorites = favorites.length > 0;
   
-  useEffect(() => {
-    const fetchEvents = async () => {
-      // Don't fetch if no vehicles or favorites
-      if (brands.length === 0 && carSlugs.length === 0) {
-        setLoading(false);
-        return;
-      }
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Build query with brands (we'll search by brand since it matches more events)
-        const params = new URLSearchParams();
-        
-        // Prioritize car slugs if we have them
-        if (carSlugs.length > 0) {
-          // Use the first car slug (API supports one at a time)
-          params.set('car_slug', carSlugs[0]);
-        } else if (brands.length > 0) {
-          // Fall back to first brand
-          params.set('brand', brands[0]);
-        }
-        
-        params.set('limit', '5');
-        params.set('sort', 'date');
-        
-        const response = await fetch(`/api/events?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
-        }
-        
-        const data = await response.json();
-        setEvents(data.events || []);
-      } catch (err) {
-        console.error('[GarageEventsSection] Error fetching events:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchEvents();
-  }, [brands.join(','), carSlugs.join(',')]);
+  // Build filter params for the query
+  const filters = useMemo(() => {
+    const f = { limit: 5, sort: 'date' };
+    if (carSlugs.length > 0) {
+      f.carSlug = carSlugs[0];
+    } else if (brands.length > 0) {
+      f.brand = brands[0];
+    }
+    return f;
+  }, [carSlugs, brands]);
+  
+  // React Query hook for events
+  const { 
+    data: eventsData, 
+    isLoading: loading, 
+    error: queryError,
+  } = useEvents(filters, {
+    enabled: brands.length > 0 || carSlugs.length > 0,
+  });
+  
+  const events = eventsData?.events || [];
+  const error = queryError?.message || null;
   
   // If no vehicles and no favorites, show a minimal prompt
   if (!hasVehicles && !hasFavorites) {

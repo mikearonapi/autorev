@@ -70,7 +70,8 @@ export default function EventCalendarView({
   onEventClick,
 }) {
   // Initialize with current date or provided values
-  const today = new Date();
+  // Memoize today to prevent recalculation on every render
+  const today = useMemo(() => new Date(), []);
   const [currentYear, setCurrentYear] = useState(initialYear || today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(initialMonth ?? today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);

@@ -11,7 +11,7 @@
  * - Copy shopping list functionality
  */
 
-import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
@@ -67,6 +67,7 @@ function MyPartsContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [allCars, setAllCars] = useState([]);
+  const partsSelectorRef = useRef(null);
   
   // Parts state - for PartsSelector component
   const [selectedParts, setSelectedParts] = useState([]);
@@ -81,6 +82,7 @@ function MyPartsContent() {
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
+  const actionParam = searchParams.get('action');
   
   // Fetch all cars
   useEffect(() => {
@@ -165,6 +167,21 @@ function MyPartsContent() {
     }
   }, [currentBuildId, updateBuild]);
   
+  // Handle action=add to scroll to and highlight parts selector
+  useEffect(() => {
+    if (actionParam === 'add' && selectedCar && partsSelectorRef.current) {
+      // Wait for content to render
+      setTimeout(() => {
+        partsSelectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Add highlight class for visual feedback
+        partsSelectorRef.current?.classList.add(styles.highlight);
+        setTimeout(() => {
+          partsSelectorRef.current?.classList.remove(styles.highlight);
+        }, 2000);
+      }, 500);
+    }
+  }, [actionParam, selectedCar]);
+
   const handleBack = () => {
     router.push('/garage');
   };
@@ -220,7 +237,7 @@ function MyPartsContent() {
       />
       
       {/* Parts Content */}
-      <div className={styles.content}>
+      <div className={styles.content} ref={partsSelectorRef}>
         
         {/* If no upgrades, show prompt to configure build */}
         {effectiveModules.length === 0 ? (

@@ -11,10 +11,12 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { moderateComment, getModerationGuidance } from '@/lib/commentModerationService';
+import { errors } from '@/lib/apiErrors';
+import { trackActivity } from '@/lib/dashboardScoreService';
+import { awardPoints } from '@/lib/pointsService';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -22,24 +24,19 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -54,7 +51,7 @@ async function handleGet(request, context) {
   const offset = parseInt(searchParams.get('offset') || '0');
   
   // Get the current user (if logged in) to include their pending comments
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
 
   // Fetch approved comments
   let query = supabaseAdmin
@@ -141,12 +138,9 @@ async function handlePost(request, context) {
   const { postId } = await context.params;
   
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ 
-      error: 'Please sign in to comment',
-      requiresAuth: true,
-    }, { status: 401 });
+    return errors.unauthorized('Please sign in to comment');
   }
 
   // Parse request body
@@ -155,12 +149,12 @@ async function handlePost(request, context) {
 
   // Validate content
   if (!content || typeof content !== 'string') {
-    return NextResponse.json({ error: 'Comment content is required' }, { status: 400 });
+    return errors.missingField('content');
   }
 
   const trimmedContent = content.trim();
   if (trimmedContent.length < 1) {
-    return NextResponse.json({ error: 'Comment cannot be empty' }, { status: 400 });
+    return errors.badRequest('Comment cannot be empty');
   }
 
   if (trimmedContent.length > 1000) {
@@ -239,6 +233,11 @@ async function handlePost(request, context) {
 
   // Prepare response based on moderation result
   if (moderationResult.approved) {
+    // Track community activity for dashboard engagement (non-blocking)
+    trackActivity(user.id, 'community_comments').catch(() => {});
+    // Award points for commenting (non-blocking)
+    awardPoints(user.id, 'community_comment', { postId, commentId: comment.id }).catch(() => {});
+    
     // Get user profile for response (user_profiles uses 'id' as primary key)
     const { data: profile } = await supabaseAdmin
       .from('user_profiles')
@@ -283,25 +282,25 @@ async function handlePatch(request, context) {
   const { postId } = await context.params;
   
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return errors.unauthorized();
   }
 
   const body = await request.json();
   const { commentId, content } = body;
 
   if (!commentId) {
-    return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    return errors.missingField('commentId');
   }
 
   if (!content || typeof content !== 'string') {
-    return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+    return errors.missingField('content');
   }
 
   const trimmedContent = content.trim();
   if (trimmedContent.length < 1 || trimmedContent.length > 1000) {
-    return NextResponse.json({ error: 'Invalid comment length' }, { status: 400 });
+    return errors.badRequest('Invalid comment length');
   }
 
   // Verify comment exists and belongs to user
@@ -374,16 +373,16 @@ async function handleDelete(request, context) {
   const { postId } = await context.params;
   
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return errors.unauthorized();
   }
 
   const { searchParams } = new URL(request.url);
   const commentId = searchParams.get('commentId');
 
   if (!commentId) {
-    return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    return errors.missingField('commentId');
   }
 
   // Verify comment exists and belongs to user
@@ -397,7 +396,7 @@ async function handleDelete(request, context) {
     .single();
 
   if (findError || !existingComment) {
-    return NextResponse.json({ error: 'Comment not found or not authorized' }, { status: 404 });
+    return errors.notFound('Comment');
   }
 
   // Soft delete the comment
@@ -411,7 +410,7 @@ async function handleDelete(request, context) {
 
   if (deleteError) {
     console.error('[Comments API] Delete error:', deleteError);
-    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+    return errors.database('Failed to delete comment');
   }
 
   return NextResponse.json({

@@ -2,7 +2,7 @@
 
 > Reference for Supabase migration history and procedures
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 

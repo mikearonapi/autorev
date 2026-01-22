@@ -13,6 +13,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from './ALPreferencesPanel.module.css';
 import { Icons } from '@/components/ui/Icons';
+import { useALPreferences as useALPreferencesQuery, useUpdateALPreferences } from '@/hooks/useUserData';
 
 // Tool toggle configuration
 // Note: All tools are available to all users during beta (IS_BETA mode)
@@ -99,45 +100,31 @@ export default function ALPreferencesPanel({
   onPreferencesChange,
   compact = false,
 }) {
+  // Use React Query for fetching preferences
+  const { 
+    data: fetchedPreferences, 
+    isLoading: queryLoading 
+  } = useALPreferencesQuery({ 
+    enabled: isOpen && !initialPreferences 
+  });
+  
+  const updatePreferencesMutation = useUpdateALPreferences();
+  
   const [preferences, setPreferences] = useState(initialPreferences || DEFAULT_PREFERENCES);
-  const [loading, setLoading] = useState(!initialPreferences);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
+  
+  const loading = !initialPreferences && queryLoading;
+  const saving = updatePreferencesMutation.isPending;
 
-  // Fetch preferences from API if not provided
+  // Update local state when fetched preferences change
   useEffect(() => {
     if (initialPreferences) {
       setPreferences(initialPreferences);
-      setLoading(false);
-      return;
+    } else if (fetchedPreferences) {
+      setPreferences(fetchedPreferences);
     }
-    
-    const fetchPreferences = async () => {
-      try {
-        const response = await fetch('/api/al/preferences');
-        if (response.ok) {
-          const data = await response.json();
-          setPreferences({
-            response_mode: data.response_mode || 'database',
-            web_search_enabled: data.web_search_enabled ?? true,
-            forum_insights_enabled: data.forum_insights_enabled ?? true,
-            youtube_reviews_enabled: data.youtube_reviews_enabled ?? true,
-            event_search_enabled: data.event_search_enabled ?? true,
-          });
-        }
-      } catch (err) {
-        console.error('Failed to fetch AL preferences:', err);
-        // Use defaults on error
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isOpen) {
-      fetchPreferences();
-    }
-  }, [isOpen, initialPreferences]);
+  }, [initialPreferences, fetchedPreferences]);
 
   // Handle toggle change
   const handleToggle = useCallback((key) => {
@@ -159,19 +146,10 @@ export default function ALPreferencesPanel({
 
   // Save preferences
   const handleSave = useCallback(async () => {
-    setSaving(true);
     setError(null);
     
     try {
-      const response = await fetch('/api/al/preferences', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(preferences),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save preferences');
-      }
+      await updatePreferencesMutation.mutateAsync(preferences);
       
       setHasChanges(false);
       
@@ -187,10 +165,8 @@ export default function ALPreferencesPanel({
     } catch (err) {
       console.error('Failed to save AL preferences:', err);
       setError('Failed to save preferences. Please try again.');
-    } finally {
-      setSaving(false);
     }
-  }, [preferences, onPreferencesChange, onClose]);
+  }, [preferences, onPreferencesChange, onClose, updatePreferencesMutation]);
 
   // Check if a tool is available for the user's tier
   const isToolAvailable = useCallback((toolTier) => {
@@ -327,38 +303,17 @@ export default function ALPreferencesPanel({
 /**
  * Hook to fetch and manage AL preferences
  * Provides preferences state and handlers for use in chat components
+ * Uses React Query for caching and deduplication
  */
 export function useALPreferences() {
-  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const response = await fetch('/api/al/preferences');
-        if (response.ok) {
-          const data = await response.json();
-          setPreferences({
-            response_mode: data.response_mode || 'database',
-            web_search_enabled: data.web_search_enabled ?? true,
-            forum_insights_enabled: data.forum_insights_enabled ?? true,
-            youtube_reviews_enabled: data.youtube_reviews_enabled ?? true,
-            event_search_enabled: data.event_search_enabled ?? true,
-          });
-        }
-      } catch (err) {
-        console.error('Failed to fetch AL preferences:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPreferences();
-  }, []);
+  const { data: preferences = DEFAULT_PREFERENCES, isLoading: loading } = useALPreferencesQuery();
+  const [localOverrides, setLocalOverrides] = useState({});
+  
+  const mergedPreferences = { ...preferences, ...localOverrides };
 
   const updatePreferences = useCallback((newPrefs) => {
-    setPreferences(prev => ({ ...prev, ...newPrefs }));
+    setLocalOverrides(prev => ({ ...prev, ...newPrefs }));
   }, []);
 
-  return { preferences, loading, updatePreferences };
+  return { preferences: mergedPreferences, loading, updatePreferences };
 }

@@ -2,7 +2,7 @@
 
 > How the Car Selector recommendation engine works
 >
-> **Last Updated:** December 15, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 

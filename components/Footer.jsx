@@ -7,19 +7,20 @@ import styles from './Footer.module.css';
 // App routes where footer should be completely hidden (native app experience)
 // These pages use the bottom tab bar for navigation
 const APP_ROUTES = [
-  '/tuning-shop',
-  '/my-builds',
+  '/dashboard',
   '/garage',
-  '/parts',
+  '/data',
   '/community',
   '/al',
-  '/encyclopedia',
   '/profile',
-  '/data',
+  // Sub-routes and legacy
   '/build',
-  '/mod-planner',
-  '/browse-cars',
   '/performance',
+  '/parts',
+  '/tuning-shop',
+  '/my-builds',
+  '/mod-planner',
+  '/browse-cars', // Archived but still accessible
 ];
 
 // Social media links

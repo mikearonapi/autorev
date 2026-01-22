@@ -84,11 +84,7 @@ export default function ContinuousLearning({ token }) {
   const [runningEval, setRunningEval] = useState(false);
   
   // Fetch dashboard data
-  useEffect(() => {
-    fetchDashboardData();
-  }, [token]);
-  
-  async function fetchDashboardData() {
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -123,7 +119,12 @@ export default function ContinuousLearning({ token }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token]);
+  
+  // Fetch dashboard data on mount and when token changes
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
   
   async function runSpotCheck() {
     setRunningEval(true);

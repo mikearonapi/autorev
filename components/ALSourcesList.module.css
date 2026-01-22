@@ -1,0 +1,191 @@
+/* ===========================================
+   AL Sources List Component Styles
+   
+   Perplexity-style sources display below AL responses.
+   Uses light theme to match AL page.
+   =========================================== */
+
+.sourcesContainer {
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: rgba(13, 27, 42, 0.03);
+  border: 1px solid rgba(13, 27, 42, 0.08);
+  border-radius: 12px;
+  /* Add visual separator from response text */
+  border-top: 2px solid rgba(13, 27, 42, 0.06);
+}
+
+.sourcesHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.sourcesHeader svg {
+  opacity: 0.7;
+}
+
+.sourceCount {
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.sourcesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sourceItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(13, 27, 42, 0.06);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #475569;
+  transition: all 0.15s ease;
+}
+
+.sourceItemLink {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sourceItemLink:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.sourceItemLink:hover .sourceLabel {
+  color: #10b981;
+}
+
+.sourceContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sourceNumber {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.sourceIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.sourceLabel {
+  font-weight: 500;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceDomain,
+.sourceDetail {
+  font-size: 12px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+}
+
+.externalIcon {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #94a3b8;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.sourceItemLink:hover .externalIcon {
+  opacity: 1;
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background: transparent;
+  border: 1px dashed rgba(13, 27, 42, 0.12);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.expandButton:hover {
+  background: rgba(13, 27, 42, 0.04);
+  color: #475569;
+  border-color: rgba(13, 27, 42, 0.2);
+}
+
+/* Citation Badge - inline superscript */
+.citationBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+  margin: 0 1px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  vertical-align: super;
+}
+
+.citationBadge:hover {
+  background: rgba(16, 185, 129, 0.2);
+  transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .sourcesContainer {
+    padding: 10px;
+    margin-top: 12px;
+  }
+  
+  .sourceItem {
+    padding: 6px 8px;
+  }
+  
+  .sourceDomain {
+    display: none;
+  }
+  
+  .sourceLabel {
+    font-size: 12px;
+  }
+}

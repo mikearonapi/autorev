@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './ExpertReviewedStrip.module.css';
 import CarImage from './CarImage';
+import { useExpertReviewedCars } from '@/hooks/useCarData';
 
 // Icons
 const VerifiedIcon = ({ size = 16 }) => (
@@ -30,31 +30,11 @@ const PlayIcon = ({ size = 14 }) => (
  * 
  * Displays a horizontal strip of cars with expert reviews for the homepage.
  * Shows 6-8 cars with the highest expert review count.
+ * 
+ * Uses React Query for cached data fetching.
  */
 export default function ExpertReviewedStrip() {
-  const [cars, setCars] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchExpertCars() {
-      try {
-        // Fetch cars with expert review counts from the API
-        const response = await fetch('/api/cars/expert-reviewed?limit=8');
-        if (!response.ok) throw new Error('Failed to fetch');
-        
-        const data = await response.json();
-        setCars(data.cars || []);
-      } catch (err) {
-        console.error('[ExpertReviewedStrip] Error:', err);
-        // Don't show error state - just hide the strip if no data
-        setCars([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchExpertCars();
-  }, []);
+  const { data: cars = [], isLoading } = useExpertReviewedCars(8);
 
   // Don't render if no data or loading
   if (isLoading || cars.length === 0) {
@@ -73,7 +53,7 @@ export default function ExpertReviewedStrip() {
             </p>
           </div>
         </div>
-        <Link href="/car-selector" className={styles.viewAll}>
+        <Link href="/garage" className={styles.viewAll}>
           View All Cars
           <ArrowRightIcon size={14} />
         </Link>

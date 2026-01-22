@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { resolveCarId } from '@/lib/carResolver';
+import { errors } from '@/lib/apiErrors';
 
 /**
  * GET /api/cars/[slug]/dyno
@@ -15,10 +16,7 @@ async function handleGet(request, { params }) {
   const { slug } = await params;
   
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Car slug is required' },
-      { status: 400 }
-    );
+    return errors.missingField('slug');
   }
   
   if (!isSupabaseConfigured || !supabase) {
@@ -60,10 +58,7 @@ async function handleGet(request, { params }) {
     return NextResponse.json({ runs: data || [] });
   } catch (err) {
     console.error('[API/dyno] Error fetching dyno data:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch dyno data', details: err.message },
-      { status: 500 }
-    );
+    return errors.internal('Failed to fetch dyno data');
   }
 }
 

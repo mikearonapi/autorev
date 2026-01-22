@@ -16,6 +16,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { buildAIContext, formatContextForAI } from '@/lib/aiMechanicService';
 import { executeToolCall } from '@/lib/alTools';
 import { 
@@ -26,6 +27,7 @@ import {
   getPlan,
   formatCentsAsDollars,
   calculateTokenCost,
+  selectPromptVariant,
 } from '@/lib/alConfig';
 import { 
   getUserBalance, 
@@ -33,6 +35,8 @@ import {
   needsMonthlyRefill,
   processMonthlyRefill,
   estimateQueryCost,
+  incrementDailyQuery,
+  getDailyUsage,
 } from '@/lib/alUsageService';
 import {
   createConversation,
@@ -44,6 +48,9 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { notifyALConversation } from '@/lib/discord';
 import { logServerError } from '@/lib/serverErrorLogger';
+import { getAnthropicConfig } from '@/lib/observability';
+import { trackActivity } from '@/lib/dashboardScoreService';
+import { awardPoints } from '@/lib/pointsService';
 
 // Stream encoding helper
 const encoder = new TextEncoder();
@@ -155,6 +162,38 @@ const TOGGLEABLE_TOOLS = {
   youtube_reviews_enabled: ['get_expert_reviews'],
   event_search_enabled: ['search_events'],
 };
+
+/**
+ * Get a user-friendly label for a tool that's about to be called
+ * Used for real-time streaming indicators
+ */
+function getToolStartLabel(toolName) {
+  const labels = {
+    get_car_ai_context: 'Loading vehicle data...',
+    search_cars: 'Searching car database...',
+    search_community_insights: 'Reading forum discussions...',
+    get_expert_reviews: 'Finding expert YouTube reviews...',
+    search_web: 'Searching the web...',
+    search_encyclopedia: 'Checking encyclopedia...',
+    get_known_issues: 'Looking up known issues...',
+    search_parts: 'Searching parts catalog...',
+    get_maintenance_schedule: 'Loading maintenance info...',
+    search_events: 'Finding events...',
+    compare_cars: 'Comparing vehicles...',
+    get_track_lap_times: 'Loading lap times...',
+    get_dyno_runs: 'Loading dyno data...',
+    search_knowledge: 'Searching knowledge base...',
+    get_car_details: 'Loading car specifications...',
+    analyze_vehicle_health: 'Analyzing vehicle health...',
+    get_upgrade_info: 'Finding upgrade information...',
+    recommend_build: 'Generating build recommendations...',
+    get_user_builds: 'Loading your builds...',
+    get_user_goals: 'Loading your goals...',
+    get_user_vehicle_details: 'Loading your vehicle details...',
+    analyze_uploaded_content: 'Analyzing your image...',
+  };
+  return labels[toolName] || 'Researching...';
+}
 
 /**
  * Filter tools based on user preferences (toggles)
@@ -357,12 +396,22 @@ async function executeToolsInParallel({
     
     // Callback for streaming updates
     if (onToolResult) {
+      // Extract rich sources from the result content for citation display
+      let sources = [];
+      try {
+        const parsed = typeof result.content === 'string' 
+          ? JSON.parse(result.content) 
+          : result.content;
+        sources = parsed?.__sources || [];
+      } catch (e) { /* ignore parse errors */ }
+      
       onToolResult({
         tool: toolUse.name,
         id: toolUse.id,
         success,
         error: timing.error,
         cacheHit: timing.cacheHit,
+        sources, // Rich source data with URLs, titles, etc.
       });
     }
     
@@ -377,15 +426,17 @@ async function executeToolsInParallel({
 /**
  * Call Claude API with streaming enabled
  * Returns an async generator that yields events
+ * 
+ * @param {Object} params - Request parameters
+ * @param {Object} [params.observability] - Observability options for Helicone tracking
  */
-async function* streamClaudeResponse({ systemPrompt, messages, tools, maxTokens }) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+async function* streamClaudeResponse({ systemPrompt, messages, tools, maxTokens, observability = {} }) {
+  // Get API configuration with optional Helicone observability
+  const { apiUrl, headers } = getAnthropicConfig(observability);
+  
+  const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
+    headers,
     body: JSON.stringify({
       model: ANTHROPIC_MODEL,
       max_tokens: maxTokens,
@@ -448,28 +499,42 @@ async function handleStreamingResponse({
   userId,
   userPreferences = null,
   attachments = [],
+  dailyUsage = null,
+  history = [], // Client-provided history for conversation continuity
 }) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // Send initial connection event with detected domains
+        // Send initial connection event with detected domains and daily usage
         sendSSE(controller, 'connected', { 
           correlationId, 
           domains,
           conversationId: activeConversationId,
+          dailyUsage: dailyUsage ? {
+            queriesToday: dailyUsage.queriesToday,
+            isBeta: dailyUsage.isBeta,
+            isUnlimited: dailyUsage.isUnlimited,
+          } : null,
         });
+        
+        // Send initial phase: understanding the question
+        sendSSE(controller, 'phase', { phase: 'understanding', label: 'Understanding your question...' });
 
         // Filter tools based on user's plan, detected domains, AND user preferences
         // Domain filtering reduces token count by only including relevant tools
         const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan, userPreferences);
 
-        // Build system prompt from single source of truth
-        const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
+        // Get prompt version for A/B testing (uses consistent user hashing)
+        const { versionId: promptVersionId, systemPrompt: customPrompt } = await selectPromptVariant(userId);
+        
+        // Build system prompt - use custom DB prompt if available, otherwise use default
+        const systemPrompt = customPrompt || buildALSystemPrompt(plan.id || 'free', {
           currentCar: context.car,
           userVehicle: context.userVehicle,
           stats: context.stats,
           domains,
           balanceCents: userBalance.balanceCents,
+          userPreferences, // Pass user's data source preferences
           currentPage: context.currentPage,
           formattedContext: contextText,
         });
@@ -478,11 +543,18 @@ async function handleStreamingResponse({
         // Build user message content with attachments (for Claude Vision)
         const userMessageContent = buildMessageContentWithAttachments(message, attachments);
         
+        // CRITICAL: Use existing conversation messages OR client-provided history
+        // This ensures conversation continuity even for new conversations
         let messages;
         if (existingMessages.length > 0) {
+          // Use stored conversation history from database
           messages = formatMessagesForClaude(existingMessages);
           messages.push({ role: 'user', content: userMessageContent });
+        } else if (history && history.length > 0) {
+          // Fallback to client-provided history (for new conversations or backwards compat)
+          messages = formatMessagesForClaudeFromHistory(history, message, attachments);
         } else {
+          // Truly new conversation with no prior context
           messages = [{ role: 'user', content: userMessageContent }];
         }
 
@@ -499,6 +571,9 @@ async function handleStreamingResponse({
         // Stream the initial response
         let needsToolProcessing = true;
         
+        // Send thinking phase before first API call
+        sendSSE(controller, 'phase', { phase: 'thinking', label: 'Analyzing your question...' });
+        
         while (needsToolProcessing && iterationCount < maxIterations) {
           iterationCount++;
           fullResponse = '';
@@ -512,6 +587,19 @@ async function handleStreamingResponse({
             messages,
             tools: availableTools,
             maxTokens: plan.maxResponseTokens,
+            observability: {
+              userId: isInternalEval ? 'internal-eval' : userId,
+              sessionId: activeConversationId,
+              requestId: correlationId,
+              promptVersion: promptVersionId,
+              properties: {
+                tier: plan.id || 'free',
+                carSlug: carSlug || null,
+                domains: domains?.join(',') || null,
+                streaming: true,
+                promptVersionId,
+              },
+            },
           })) {
             // Handle different event types
             if (event.type === 'message_start') {
@@ -567,6 +655,15 @@ async function handleStreamingResponse({
 
           // Check if we need to process tools
           if (stopReason === 'tool_use' && toolUseBuffer.length > 0) {
+            // Send researching phase and tool_start events BEFORE executing tools
+            sendSSE(controller, 'phase', { phase: 'researching', label: 'Researching your question...' });
+            
+            // Send tool_start events for each tool we're about to call
+            for (const toolUse of toolUseBuffer) {
+              const toolLabel = getToolStartLabel(toolUse.name);
+              sendSSE(controller, 'tool_start', { tool: toolUse.name, label: toolLabel });
+            }
+            
             // Execute all tools in parallel for faster response
             const { results: toolResults, timings: newTimings, toolCallsUsed: newToolCalls } = 
               await executeToolsInParallel({
@@ -604,6 +701,9 @@ async function handleStreamingResponse({
               { role: 'assistant', content: assistantContent },
               { role: 'user', content: toolResults },
             ];
+            
+            // Send formulating phase before next API call
+            sendSSE(controller, 'phase', { phase: 'formulating', label: 'Formulating response...' });
           } else {
             // No more tools needed
             needsToolProcessing = false;
@@ -620,8 +720,13 @@ async function handleStreamingResponse({
             inputTokens: usageTotals.inputTokens,
             outputTokens: usageTotals.outputTokens,
             toolCalls: toolCallsUsed,
+            carSlug,
+            promptVersionId,
           });
           newBalanceCents = deductResult.newBalanceCents ?? userBalance.balanceCents;
+          
+          // Track AL activity for dashboard engagement (non-blocking)
+          trackActivity(userId, 'al_messages').catch(() => {});
         }
 
         // Store assistant response in conversation history
@@ -652,6 +757,11 @@ async function handleStreamingResponse({
             toolCalls: toolCallsUsed.length,
           },
           toolsUsed: toolCallsUsed,
+          dailyUsage: dailyUsage ? {
+            queriesToday: dailyUsage.queriesToday,
+            isBeta: dailyUsage.isBeta,
+            isUnlimited: dailyUsage.isUnlimited,
+          } : null,
         });
 
         controller.close();
@@ -750,8 +860,13 @@ export async function POST(request) {
     let plan = null;
     let costEstimate = null;
     let userPreferences = null;
+    let dailyUsage = null;
 
     if (!isInternalEval) {
+      // Increment daily query counter (tracks "X queries today")
+      dailyUsage = await incrementDailyQuery(userId);
+      console.info(`[AL:${correlationId}] Daily usage: ${dailyUsage.queriesToday} queries today (beta=${dailyUsage.isBeta})`);
+
       // Check and potentially refill user's balance
       if (await needsMonthlyRefill(userId)) {
         await processMonthlyRefill(userId);
@@ -844,6 +959,7 @@ export async function POST(request) {
         const convResult = await createConversation(userId, {
           carSlug,
           page: currentPage,
+          firstMessage: message, // Auto-generate title from first message
         });
         if (convResult.success) {
           return { id: convResult.conversation.id, messages: [] };
@@ -879,8 +995,15 @@ export async function POST(request) {
     await messageStoragePromise;
     // PARALLEL EXECUTION END
 
-    // Fire-and-forget Discord notification for new conversations only
+    // Track new conversation for dashboard engagement and send Discord notification
     if (createdNewConversation && body.message) {
+      // Track al_conversations for dashboard weekly engagement (non-blocking)
+      if (!isInternalEval) {
+        trackActivity(userId, 'al_conversations').catch(() => {});
+        // Award points for asking AL a question (non-blocking)
+        awardPoints(userId, 'al_ask_question', { conversationId }).catch(() => {});
+      }
+      
       const carContext = body.carContext?.name || body.carContext?.slug;
       notifyALConversation({
         id: activeConversationId,
@@ -909,6 +1032,8 @@ export async function POST(request) {
         userId,
         userPreferences,
         attachments,
+        dailyUsage,
+        history, // Pass client-provided history for conversation continuity
       });
     }
 
@@ -923,8 +1048,11 @@ export async function POST(request) {
     // Domain filtering reduces token count by only including relevant tools
     const availableTools = filterToolsByDomain(AL_TOOLS, domains, plan, userPreferences);
 
-    // Build system prompt from single source of truth
-    const systemPrompt = buildALSystemPrompt(plan.id || 'free', {
+    // Get prompt version for A/B testing (uses consistent user hashing)
+    const { versionId: promptVersionId, systemPrompt: customPrompt } = await selectPromptVariant(userId);
+    
+    // Build system prompt - use custom DB prompt if available, otherwise use default
+    const systemPrompt = customPrompt || buildALSystemPrompt(plan.id || 'free', {
       currentCar: context.car,
       userVehicle: context.userVehicle,
       stats: context.stats,
@@ -932,6 +1060,7 @@ export async function POST(request) {
       balanceCents: userBalance.balanceCents,
       currentPage,
       formattedContext: contextText,
+      userPreferences, // Pass user's data source preferences
     });
 
     // Format messages for Claude - use existing conversation history if available
@@ -960,11 +1089,27 @@ export async function POST(request) {
 
     const cacheScopeKey = `${(isInternalEval ? 'internal-eval' : userId)}:${activeConversationId || 'no_conversation'}`;
 
+    // Build observability context for Helicone tracking
+    const observabilityContext = {
+      userId: isInternalEval ? 'internal-eval' : userId,
+      sessionId: activeConversationId,
+      requestId: correlationId,
+      promptVersion: promptVersionId,
+      properties: {
+        tier: plan.id || 'free',
+        carSlug: carSlug || null,
+        domains: domains?.join(',') || null,
+        streaming: false,
+        promptVersionId,
+      },
+    };
+
     let response = await callClaudeWithTools({
       systemPrompt,
       messages,
       tools: availableTools,
       maxTokens: plan.maxResponseTokens,
+      observability: observabilityContext,
     });
     trackUsage(response);
 
@@ -1005,6 +1150,7 @@ export async function POST(request) {
         messages: newMessages,
         tools: availableTools,
         maxTokens: plan.maxResponseTokens,
+        observability: observabilityContext,
       });
       trackUsage(response);
     }
@@ -1120,6 +1266,13 @@ export async function POST(request) {
           messages: enforcementMessages,
           tools: undefined,
           maxTokens: plan.maxResponseTokens,
+          observability: {
+            ...observabilityContext,
+            properties: {
+              ...observabilityContext.properties,
+              citationEnforcement: true,
+            },
+          },
         });
         trackUsage(revised);
 
@@ -1144,11 +1297,16 @@ export async function POST(request) {
         inputTokens,
         outputTokens,
         toolCalls: toolCallsUsed,
+        carSlug,
+        promptVersionId,
       });
 
       if (!deductResult.success && deductResult.error === 'insufficient_balance') {
         console.warn('[AL] Balance check passed but deduction failed');
       }
+      
+      // Track AL activity for dashboard engagement (non-blocking)
+      trackActivity(userId, 'al_messages').catch(() => {});
     }
 
     // Store assistant response in conversation history
@@ -1187,6 +1345,11 @@ export async function POST(request) {
         toolCalls: toolCallsUsed.length,
         claudeCalls: usageTotals.callCount,
       },
+      dailyUsage: dailyUsage ? {
+        queriesToday: dailyUsage.queriesToday,
+        isBeta: dailyUsage.isBeta,
+        isUnlimited: dailyUsage.isUnlimited,
+      } : null,
     });
     res.headers.set('x-correlation-id', correlationId);
     return res;
@@ -1217,15 +1380,17 @@ export async function POST(request) {
 
 /**
  * Call Claude API with tool use
+ * 
+ * @param {Object} params - Request parameters
+ * @param {Object} [params.observability] - Observability options for Helicone tracking
  */
-async function callClaudeWithTools({ systemPrompt, messages, tools, maxTokens }) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+async function callClaudeWithTools({ systemPrompt, messages, tools, maxTokens, observability = {} }) {
+  // Get API configuration with optional Helicone observability
+  const { apiUrl, headers } = getAnthropicConfig(observability);
+  
+  const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
+    headers,
     body: JSON.stringify({
       model: ANTHROPIC_MODEL,
       max_tokens: maxTokens,

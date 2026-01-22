@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createClient } from '@supabase/supabase-js';
 import { decodeVIN, isValidVIN, cleanVIN } from '@/lib/vinDecoder';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

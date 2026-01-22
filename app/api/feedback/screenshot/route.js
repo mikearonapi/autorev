@@ -1,4 +1,5 @@
 import { put } from '@vercel/blob';
+import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';
 
 /**

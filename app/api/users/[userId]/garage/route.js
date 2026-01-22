@@ -10,6 +10,7 @@
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 /**
  * GET /api/users/[userId]/garage
@@ -22,10 +23,7 @@ async function handleGet(request, { params }) {
   const { userId } = await params;
     
     if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+      return errors.missingField('userId');
     }
     
     // Get authenticated user
@@ -35,10 +33,7 @@ async function handleGet(request, { params }) {
       : await createServerSupabaseClient();
 
     if (!supabase) {
-      return NextResponse.json(
-        { error: 'Authentication service not configured' },
-        { status: 503 }
-      );
+      return errors.serviceUnavailable('Authentication service');
     }
 
     const { data: { user }, error: authError } = bearerToken
@@ -46,21 +41,15 @@ async function handleGet(request, { params }) {
       : await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return errors.unauthorized();
     }
     
     // Verify the authenticated user matches the userId param
     if (user.id !== userId) {
-      return NextResponse.json(
-        { error: 'Not authorized to view this user\'s garage' },
-        { status: 403 }
-      );
+      return errors.forbidden('Not authorized to view this user\'s garage');
     }
 
-    // Fetch user's vehicles with enrichment data
+    // Fetch user's vehicles with enrichment data and garage score
     const { data: vehicles, error } = await supabase
       .from('user_vehicles')
       .select(`
@@ -91,6 +80,9 @@ async function handleGet(request, { params }) {
         enrichment_id,
         enrichment_status,
         display_order,
+        garage_score,
+        score_breakdown,
+        score_updated_at,
         daily_driver_enrichments (
           id,
           maintenance_specs,
@@ -108,10 +100,7 @@ async function handleGet(request, { params }) {
 
     if (error) {
       console.error('[API/users/garage] Error fetching vehicles:', error);
-      return NextResponse.json(
-        { error: error.message || 'Failed to fetch garage' },
-        { status: 500 }
-      );
+      return errors.database(error.message || 'Failed to fetch garage');
     }
 
     // Transform to client-friendly format
@@ -159,12 +148,29 @@ async function handleGet(request, { params }) {
           imageUrl: enrichment.image_url,
           status: enrichment.status,
         } : null,
+        // Garage score data (0-100 completeness)
+        garageScore: v.garage_score || 0,
+        scoreBreakdown: v.score_breakdown || { specs: 0, photos: 0, mods: 0, goals: 0, parts: 0 },
+        scoreUpdatedAt: v.score_updated_at,
       };
     });
+
+    // Calculate aggregate garage stats
+    const totalScore = transformedVehicles.reduce((sum, v) => sum + v.garageScore, 0);
+    const avgScore = transformedVehicles.length > 0 
+      ? Math.round(totalScore / transformedVehicles.length) 
+      : 0;
 
     return NextResponse.json({
       vehicles: transformedVehicles,
       count: transformedVehicles.length,
+      // Aggregate garage score stats
+      garageStats: {
+        averageScore: avgScore,
+        totalScore,
+        vehicleCount: transformedVehicles.length,
+        completeCount: transformedVehicles.filter(v => v.garageScore === 100).length,
+      },
     });
 }
 

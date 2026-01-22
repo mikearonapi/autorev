@@ -129,7 +129,7 @@ export default function ComparePage() {
           <p className={styles.emptyText}>
             Add cars to your compare list to see a side-by-side comparison.
           </p>
-          <Link href="/car-selector" className={styles.browseBtn}>
+          <Link href="/garage" className={styles.browseBtn}>
             Browse Cars
           </Link>
         </div>
@@ -181,7 +181,7 @@ export default function ComparePage() {
               ))}
               {cars.length < maxCars && (
                 <th className={styles.addMoreHeader}>
-                  <Link href="/car-selector" className={styles.addMoreBtn}>
+                  <Link href="/garage" className={styles.addMoreBtn}>
                     <Icons.plus size={20} />
                     <span>Add Car</span>
                   </Link>
@@ -214,7 +214,7 @@ export default function ComparePage() {
 
       {/* Quick Actions */}
       <div className={styles.quickActions}>
-        <Link href="/car-selector" className={styles.actionBtn}>
+        <Link href="/garage" className={styles.actionBtn}>
           <Icons.plus size={18} />
           Add More Cars
         </Link>

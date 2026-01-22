@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { getEventTypes } from '@/lib/eventsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

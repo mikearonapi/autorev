@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import * as enrichedDataService from '@/lib/enrichedDataService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

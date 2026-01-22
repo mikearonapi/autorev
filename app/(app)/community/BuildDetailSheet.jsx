@@ -14,6 +14,8 @@ import Image from 'next/image';
 import { getUpgradeByKey } from '@/lib/upgrades';
 import { mapCarToPerformanceScores } from '@/data/performanceCategories';
 import { applyUpgradeDeltas } from '@/lib/performance';
+import { useBuildDetail } from '@/hooks/useCommunityData';
+import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import styles from './BuildDetailSheet.module.css';
 
 // Icons
@@ -138,34 +140,13 @@ export default function BuildDetailSheet({
   onImageSelect,
   onClose 
 }) {
-  const [carData, setCarData] = useState(null);
-  const [buildData, setBuildData] = useState(null);
-  const [partsData, setPartsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch full build details
-  useEffect(() => {
-    async function fetchBuildDetails() {
-      if (!build?.slug) return;
-      
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/community/builds/${build.slug}`);
-        if (res.ok) {
-          const data = await res.json();
-          setBuildData(data.buildData);
-          setCarData(data.carData);
-          setPartsData(data.parts || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch build details:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    fetchBuildDetails();
-  }, [build?.slug]);
+  // React Query hook for build details
+  const { data: detailData, isLoading } = useBuildDetail(build?.slug);
+  
+  // Extract data from query response
+  const buildData = detailData?.buildData || null;
+  const carData = detailData?.carData || null;
+  const partsData = detailData?.parts || [];
 
   // Get upgrade keys for display (mods list)
   const allMods = useMemo(() => {
@@ -267,7 +248,17 @@ export default function BuildDetailSheet({
             )}
           </div>
           <div className={styles.userDetails}>
-            <span className={styles.userName}>{build.author?.display_name}</span>
+            <div className={styles.userNameRow}>
+              <span className={styles.userName}>{build.author?.display_name}</span>
+              {build.author?.selected_title && TITLES[build.author.selected_title] && (
+                <span 
+                  className={styles.userTitle}
+                  style={{ color: TITLES[build.author.selected_title].color }}
+                >
+                  {TITLES[build.author.selected_title].display}
+                </span>
+              )}
+            </div>
             <span className={styles.buildName}>{build.title}</span>
           </div>
         </div>

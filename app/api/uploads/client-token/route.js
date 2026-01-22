@@ -11,29 +11,24 @@
 
 import { NextResponse } from 'next/server';
 import { handleUpload } from '@vercel/blob/client';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -41,9 +36,9 @@ async function handlePost(request) {
   const body = await request.json();
 
   // Verify user is authenticated
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const jsonResponse = await handleUpload({

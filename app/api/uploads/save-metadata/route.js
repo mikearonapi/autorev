@@ -19,30 +19,26 @@
 import { NextResponse } from 'next/server';
 import { put, del } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { compressImage, isCompressible } from '@/lib/tinify';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
+import { awardPoints } from '@/lib/pointsService';
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -57,9 +53,9 @@ function getMediaType(contentType) {
 
 async function handlePost(request) {
   // Verify authentication
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(request);
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return errors.unauthorized();
   }
 
   const body = await request.json();
@@ -246,6 +242,11 @@ async function handlePost(request) {
     `[SaveMetadata] Saved: ${finalBlobPathname} ` +
     `(${(finalFileSize / 1024).toFixed(0)}KB${compressionApplied ? ', compressed' : ''})`
   );
+
+  // Award points for uploading a photo to garage (non-blocking)
+  if (vehicleId && mediaType === 'image') {
+    awardPoints(user.id, 'garage_upload_photo', { imageId: imageRecord.id, vehicleId }).catch(() => {});
+  }
 
   return NextResponse.json({
     success: true,

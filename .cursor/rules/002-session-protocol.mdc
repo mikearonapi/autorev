@@ -1,0 +1,72 @@
+# Session Protocol
+
+## At Session Start
+
+When beginning work on any multi-step task:
+
+1. **Understand scope fully** before creating todos
+2. **List ALL items** that need work (never say "all X" later)
+3. **Create todos with VERIFY criteria** for each item
+4. **Confirm with user** if scope is unclear
+
+## During Session
+
+For EACH todo:
+
+```
+1. Read the VERIFY criteria from the todo
+2. Do the implementation work
+3. Run the verification check
+4. Report evidence in response
+5. Only then mark complete
+```
+
+## Before Marking Complete
+
+Ask yourself:
+> "If the user ran `grep` or a SQL query right now to check this, would it pass?"
+
+If uncertain → run the check yourself first.
+
+## Todo Creation Template
+
+```javascript
+// When using TodoWrite, format content like this:
+{
+  id: "descriptive-id",
+  content: "[P1] Specific task for specific_file.js\nVERIFY: grep shows 'pattern' on line X",
+  status: "pending"
+}
+```
+
+## Completion Template
+
+```javascript
+// Before marking complete, verify and report:
+// 
+// VERIFIED: [task description]
+// Evidence:
+// - Line 47: import statement found
+// - Line 123: function usage found
+// - Query result: 0 rows with NULL
+
+{
+  id: "descriptive-id", 
+  status: "completed"  // Only after evidence shown
+}
+```
+
+## Red Flags (STOP and Verify)
+
+If you're about to:
+- Say "done" without running a check → STOP
+- Say "all X updated" without listing each → STOP
+- Assume a column/table exists → STOP and query schema
+- Mark multiple todos complete at once → STOP and verify each
+
+## End of Session
+
+Before ending:
+1. Review all todos marked complete
+2. Confirm each has verification evidence
+3. List any remaining work clearly

@@ -1,8 +1,8 @@
 # AutoRev Database Schema
 
-> Complete reference for all **121 database tables** and **26 views**
+> Complete reference for all **139 database tables** and **26 views**
 >
-> **Last Verified:** January 20, 2026 — MCP-verified live query (Row counts audited)
+> **Last Verified:** January 21, 2026 — MCP-verified live query (Row counts audited)
 
 ---
 
@@ -16,13 +16,13 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Real Dyno Data** | Actual wheel HP/TQ measurements from real cars with mods documented |
 | **Citeable Lap Times** | Track times with tire, weather, and driver context |
 | **AI-Ready Knowledge** | 7,448 vector-embedded chunks for semantic search |
-| **YouTube Intelligence** | 1,030 videos with AI-extracted pros/cons/summaries |
+| **YouTube Intelligence** | 2,261 videos with AI-extracted pros/cons/summaries |
 | **Parts + Fitments** | 723 parts with 930 verified car-specific fitments |
 | **Maintenance Specs** | 130 columns of oil, fluid, tire specs per car |
-| **Recall Data** | 507 NHTSA recall campaigns linked to cars |
+| **Recall Data** | 1,365 NHTSA recall campaigns linked to cars |
 | **Community Insights** | 1,252 forum-extracted insights |
-| **Events** | 8,331 car events |
-| **Tuning Profiles** | 309 car-specific tuning configurations |
+| **Events** | 8,615 car events |
+| **Tuning Profiles** | 323 car-specific tuning configurations |
 
 ---
 
@@ -31,20 +31,20 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Data Type | Coverage | Cars/Records | Gap Priority |
 |-----------|----------|--------------|--------------|
 | **Core Specs** | ✅ 100% | 309/309 | — |
-| **Fuel Economy** | ✅ ~32% | 98/309 | P2 |
-| **Safety Ratings** | ✅ ~32% | 98/309 | P2 |
+| **Fuel Economy** | ✅ ~78% | 241/310 | P2 |
+| **Safety Ratings** | ✅ ~62% | 191/310 | P2 |
 | **Maintenance Specs** | ✅ 100% | 305/309 | — |
 | **Service Intervals** | ✅ 100% | 3,093 records | — |
-| **Known Issues** | ✅ 100% | 6,202 records | — |
-| **Recall Data** | ~50% | 507 records | P2 |
+| **Known Issues** | ✅ 100% | 9,104 records | — |
+| **Recall Data** | ~50% | 1,365 records | P2 |
 | **Market Pricing** | ⚠️ 3% | 10/309 cars | P1 - Critical |
 | **Part Fitments** | ⚠️ ~15% | 930 fitments | P1 - Critical |
 | **Dyno Runs** | ⚠️ ~10% | 29 runs | P2 |
 | **Lap Times** | ⚠️ ~20% | 65 records | P2 |
 | **Community Insights** | ⚠️ ~15% cars | 1,252 insights | P1 |
-| **Events** | ✅ Strong | 8,331 events | — |
-| **YouTube Reviews** | ~60% | 1,030 videos | P3 |
-| **Tuning Profiles** | ✅ 100% | 309 profiles | — |
+| **Events** | ✅ Strong | 8,615 events | — |
+| **YouTube Reviews** | ~80% | 2,261 videos | P3 |
+| **Tuning Profiles** | ✅ 100% | 323 profiles | — |
 
 ---
 
@@ -70,7 +70,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | Analytics & Tracking | 15 | 1 | 7 | 8 |
 | Financial System | 12 | 8 | 5 | 7 |
 | System & Config | 5 | 4 | 4 | 1 |
-| **Total** | **121** | **26** | **87** | **34** |
+| **Total** | **139** | **26** | **~105** | **~34** |
 
 > **Note:** `upgrade_education` data is in static file `data/upgradeEducation.js`, not a database table.
 
@@ -79,7 +79,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 ## Core Car Data (18 tables, 1 view)
 
 ### `cars` — Main vehicle database
-| Status | **309 rows** |
+| Status | **310 rows** |
 |--------|------------|
 | **Purpose** | Primary car database with all specs and scores |
 | **Columns** | 140 columns |
@@ -102,7 +102,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 > **Note:** `category` = engine placement (Front/Mid/Rear/Electric), `vehicle_type` = body style classification
 
 ### `car_variants` — Year/trim variants
-| Status | **105 rows** |
+| Status | **1,169 rows** |
 |--------|-------------|
 | **Purpose** | Specific year/trim combinations for VIN matching |
 | **Columns** | 14 |
@@ -110,7 +110,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Used By** | VIN decode, variant-specific maintenance |
 
 ### `car_fuel_economy` — EPA fuel data
-| Status | **98 rows** ✅ |
+| Status | **241 rows** ✅ |
 |--------|--------------|
 | **Purpose** | EPA efficiency data |
 | **Columns** | 22 |
@@ -118,7 +118,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Used By** | Car detail Ownership tab, AL |
 
 ### `car_safety_data` — NHTSA/IIHS ratings
-| Status | **98 rows** ✅ |
+| Status | **191 rows** ✅ |
 |--------|--------------|
 | **Purpose** | Safety ratings from NHTSA and IIHS |
 | **Columns** | 29 |
@@ -126,7 +126,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Used By** | Car detail Buying tab, AL |
 
 ### `car_issues` — Known problems
-| Status | **6,202 rows** ✅ |
+| Status | **9,104 rows** ✅ |
 |--------|------------------|
 | **Purpose** | Documented known issues and common problems |
 | **Columns** | 23 |
@@ -189,7 +189,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Future Use** | Override/supplement automated data |
 
 ### `car_recalls` — Recall information
-| Status | **507 rows** ✅ |
+| Status | **1,365 rows** ✅ |
 |--------|----------------|
 | **Purpose** | NHTSA recall campaign data per car |
 | **Columns** | 16 |
@@ -213,7 +213,7 @@ AutoRev's database is a **curated, structured, enthusiast-focused data asset** t
 | **Used By** | URL redirects, search normalization |
 
 ### `car_tuning_profiles` — Tuning configurations
-| Status | **309 rows** ✅ |
+| Status | **323 rows** ✅ |
 |--------|-----------------|
 | **Purpose** | Car-specific tuning data, upgrade paths, and performance potential |
 | **Columns** | 25 |
@@ -321,7 +321,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ## User Data (15 tables)
 
 ### `user_profiles` — User settings
-| Status | **52 rows** |
+| Status | **62 rows** |
 |--------|----------|
 | **Purpose** | User preferences, subscription tier, Stripe billing, and onboarding data |
 | **Columns** | 44 |
@@ -349,7 +349,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | Tuning Shop builds (Tuner tier) |
 
 ### `user_feedback` — User feedback
-| Status | **39 rows** |
+| Status | **43 rows** |
 |--------|-----------|
 | **Purpose** | Beta and user feedback submitted through FeedbackWidget, plus automatic error logging |
 | **Columns** | 47 |
@@ -359,7 +359,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | FeedbackWidget, FeedbackCorner, internal admin page, ErrorBoundary |
 
 ### `user_vehicles` — Owned vehicles
-| Status | **25 rows** |
+| Status | **34 rows** |
 |--------|----------|
 | **Purpose** | User's owned vehicles with VIN and installed modifications |
 | **Columns** | 51 |
@@ -511,7 +511,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ## Maintenance (4 tables)
 
 ### `vehicle_maintenance_specs` — Fluid/capacity specs
-| Status | **305 rows** ✅ |
+| Status | **310 rows** ✅ |
 |--------|--------------|
 | **Purpose** | Oil, coolant, brake fluid, tire specs per car |
 | **Columns** | 130 columns (comprehensive!) |
@@ -528,7 +528,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Helper Function** | `get_wheel_tire_fitments(car_slug)` returns OEM specs + all fitment options as JSONB |
 
 ### `vehicle_service_intervals` — Service schedules
-| Status | **3,093 rows** ✅ |
+| Status | **6,089 rows** ✅ |
 |--------|---------------|
 | **Purpose** | When each service is due |
 | **Columns** | 17 |
@@ -555,7 +555,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ## AL/AI Assistant (6 tables, 1 view)
 
 ### `al_conversations` — Chat sessions
-| Status | **65 rows** |
+| Status | **74 rows** |
 |--------|----------|
 | **Purpose** | AL conversation metadata |
 | **Columns** | 15 |
@@ -563,14 +563,14 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Car Linkage** | `initial_car_id` UUID auto-populated from `initial_car_slug` via trigger |
 
 ### `al_messages` — Chat messages
-| Status | **325 rows** |
+| Status | **355 rows** |
 |--------|-----------|
 | **Purpose** | Individual messages in conversations |
 | **Columns** | 12 |
 | **Key Fields** | `conversation_id`, `role` (user/assistant), `content`, `tool_calls`, `credits_used`, `response_tokens`, `sequence_number` |
 
 ### `al_user_credits` — Credit balances
-| Status | **52 rows** |
+| Status | **62 rows** |
 |--------|----------|
 | **Purpose** | User's AL usage balance in cents |
 | **Columns** | 16 |
@@ -631,14 +631,14 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 ## YouTube (4 tables)
 
 ### `youtube_videos` — Video metadata
-| Status | **1,030 rows** ✅ |
+| Status | **2,261 rows** ✅ |
 |--------|----------------|
 | **Purpose** | YouTube video details and AI summaries |
 | **Columns** | 42 |
 | **Key Fields** | `video_id`, `url`, `title`, `channel_id`, `channel_name`, `duration_seconds`, `view_count`, `summary`, `one_line_take`, `key_points`, `pros_mentioned`, `cons_mentioned`, `notable_quotes`, `quality_score` |
 
 ### `youtube_video_car_links` — Video-to-car mapping
-| Status | **1,077 rows** |
+| Status | **2,306 rows** |
 |--------|-------------|
 | **Purpose** | Which videos are about which cars |
 | **Columns** | 25 |
@@ -745,7 +745,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | Events API, event filtering |
 
 ### `events` — Core event data
-| Status | **8,331 rows** ✅ |
+| Status | **8,615 rows** ✅ |
 |--------|------------------|
 | **Purpose** | Car events with location, dates, and details |
 | **Columns** | 37 |
@@ -959,7 +959,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 > User behavior, engagement, and performance analytics
 
 ### `click_events` — Click tracking
-| Status | **14,518 rows** |
+| Status | **21,985 rows** |
 |--------|----------------|
 | **Purpose** | Track user clicks on interactive elements |
 | **Columns** | 15 |
@@ -967,7 +967,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | Analytics, UX optimization |
 
 ### `page_views` — Page view tracking
-| Status | **4,769 rows** |
+| Status | **7,790 rows** |
 |--------|--------------|
 | **Purpose** | Track page visits |
 | **Columns** | 26 |
@@ -1069,7 +1069,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Future Use** | API analytics, rate limiting |
 
 ### `application_errors` — Error tracking
-| Status | **3,220 rows** |
+| Status | **3,792 rows** |
 |--------|----------------|
 | **Purpose** | Centralized application error logging |
 | **Columns** | 44 |
@@ -1301,27 +1301,27 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 - ✅ `cars` (309/309) — 100%
 - ✅ `car_tuning_profiles` (309/309) — 100%
 - ✅ `vehicle_maintenance_specs` (305/309) — ~99%
-- ✅ `vehicle_service_intervals` (3,093 records)
-- ✅ `car_issues` (6,202 records)
-- ✅ `car_recalls` (507 records)
-- ✅ `events` (8,331 events)
-- ✅ `youtube_videos` (1,030 videos)
-- ✅ `document_chunks` (7,448 chunks)
+- ✅ `vehicle_service_intervals` (6,089 records)
+- ✅ `car_issues` (9,104 records)
+- ✅ `car_recalls` (1,365 records)
+- ✅ `events` (8,615 events)
+- ✅ `youtube_videos` (2,261 videos)
+- ✅ `document_chunks` (7,447 chunks)
 
 ### Significantly Expanded
 - `parts` (723 records)
 - `part_fitments` (930 records)
 - `part_pricing_snapshots` (971 records)
-- `youtube_video_car_links` (1,077 records)
+- `youtube_video_car_links` (2,306 records)
 - `community_insights` (1,252 records)
 - `source_documents` (764 records)
 - `target_cities` (494 records)
 - `event_series` (437 records)
-- `application_errors` (3,220 records)
+- `application_errors` (3,792 records)
 
 ### Partially Populated
-- ⚠️ `car_safety_data` (98/309 cars)
-- ⚠️ `car_fuel_economy` (98/309 cars)
+- ⚠️ `car_safety_data` (191/310 cars)
+- ⚠️ `car_fuel_economy` (241/310 cars)
 - ⚠️ `car_market_pricing` (10/309 cars)
 - ⚠️ `car_market_pricing_years` (23 records)
 - ⚠️ `car_dyno_runs` (29 records)

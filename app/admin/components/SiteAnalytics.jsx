@@ -8,8 +8,9 @@
  * countries, devices, browsers, and OS breakdown.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import styles from './SiteAnalytics.module.css';
+import { useAdminSiteAnalytics } from '@/hooks/useAdminData';
 
 // Simple chart component for the time series
 function VisitorChart({ data, height = 200 }) {
@@ -132,39 +133,17 @@ function getCountryFlag(countryCode) {
 }
 
 export function SiteAnalytics({ token, range = '7d', loading: externalLoading }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('pages');
   
-  const fetchAnalytics = useCallback(async () => {
-    if (!token) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`/api/admin/site-analytics?range=${range}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch analytics: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      console.error('[SiteAnalytics] Error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, range]);
+  // Use React Query hook for site analytics
+  const { 
+    data, 
+    isLoading: loading, 
+    error: queryError,
+    refetch: fetchAnalytics,
+  } = useAdminSiteAnalytics(range);
   
-  useEffect(() => {
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+  const error = queryError?.message || null;
   
   if (loading || externalLoading) {
     return (

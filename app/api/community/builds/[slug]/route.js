@@ -13,6 +13,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { createClient } from '@supabase/supabase-js';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

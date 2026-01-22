@@ -20,6 +20,7 @@ import { getUpgradeByKey } from '@/lib/upgrades';
 import { useAIChat } from '@/components/AIChatContext';
 import { UI_IMAGES } from '@/lib/images';
 import { Icons } from '@/components/ui/Icons';
+import { platform } from '@/lib/platform';
 import styles from './PartsSelector.module.css';
 
 /**
@@ -270,7 +271,7 @@ export default function PartsSelector({
     onPartsChange(newParts);
   }, [selectedParts, onPartsChange]);
 
-  const handleCopyList = useCallback(() => {
+  const handleCopyList = useCallback(async () => {
     const lines = upgrades.map(upgrade => {
       const part = partsByUpgrade[upgrade.key];
       let line = `☐ ${upgrade.name}`;
@@ -290,9 +291,11 @@ export default function PartsSelector({
       ? `\n${'='.repeat(40)}\nTotal: $${totalCost.toLocaleString()} (${partsCount}/${upgrades.length} specified)`
       : `\n${'='.repeat(40)}\n${partsCount}/${upgrades.length} parts specified`;
 
-    navigator.clipboard.writeText(header + lines.join('\n\n') + footer);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
+    const success = await platform.copyToClipboard(header + lines.join('\n\n') + footer);
+    if (success) {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
   }, [upgrades, partsByUpgrade, carName, totalCost, partsCount]);
 
   // AL Build Review - comprehensive analysis of the entire build

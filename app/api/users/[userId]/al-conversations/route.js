@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { getUserConversations } from '@/lib/alConversationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

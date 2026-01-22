@@ -26,6 +26,23 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+}
+
+/* Highlight animation when navigated to via action=add */
+.content.highlight {
+  box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 20px rgba(212, 255, 0, 0.3);
+  animation: partsHighlight 2s ease-out;
+}
+
+@keyframes partsHighlight {
+  0%, 100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 30px rgba(212, 255, 0, 0.4);
+  }
 }
 
 /* ===========================================

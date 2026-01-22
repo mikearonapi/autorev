@@ -20,10 +20,11 @@
 import { NextResponse } from 'next/server';
 import { put, del } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { compressFile, isCompressible } from '@/lib/tinify';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
+import { awardPoints } from '@/lib/pointsService';
 
 // File size limits
 // NOTE: Vercel serverless has 4.5MB body limit, so this route can't handle large files
@@ -45,24 +46,19 @@ function getMediaType(contentType) {
 }
 
 /**
- * Get authenticated user from request
+ * Get authenticated user from request (supports both cookie and Bearer token)
  */
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+async function getAuthenticatedUser(request) {
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) return null;
+
+  const { data: { user } } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
   return user;
 }
 
@@ -72,9 +68,9 @@ async function getAuthenticatedUser() {
  */
 async function handlePost(request) {
     // Verify authentication
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     // Parse form data
@@ -199,6 +195,11 @@ async function handlePost(request) {
       return NextResponse.json({ error: 'Failed to save image' }, { status: 500 });
     }
 
+    // Award points for uploading a photo to garage (non-blocking)
+    if (vehicleId && mediaType === 'image') {
+      awardPoints(user.id, 'garage_upload_photo', { imageId: imageRecord.id, vehicleId }).catch(() => {});
+    }
+
     return NextResponse.json({
       success: true,
       image: imageRecord,
@@ -213,9 +214,9 @@ async function handlePost(request) {
  */
 async function handlePatch(request) {
     // Verify authentication
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const body = await request.json();
@@ -329,16 +330,16 @@ async function handlePatch(request) {
  */
 async function handleDelete(request) {
     // Verify authentication
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return errors.unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
     const imageId = searchParams.get('id');
 
     if (!imageId) {
-      return NextResponse.json({ error: 'Image ID required' }, { status: 400 });
+      return errors.missingField('id');
     }
 
     const supabase = createClient(

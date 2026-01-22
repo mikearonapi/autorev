@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import EventCard, { EventCardSkeleton } from '@/components/EventCard';
@@ -11,6 +11,7 @@ import PremiumGate from '@/components/PremiumGate';
 import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
+import { useUserSavedEvents } from '@/hooks/useUserData';
 
 export default function SavedEventsPage() {
   const { isAuthenticated, user, profile, session, isLoading: authLoading } = useAuth();
@@ -19,59 +20,30 @@ export default function SavedEventsPage() {
   const canAccessSavedEvents = IS_BETA || hasTierAccess(userTier, 'collector');
   
   // State
-  const [savedEvents, setSavedEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [includeExpired, setIncludeExpired] = useState(false);
   
-  // Fetch saved events
-  useEffect(() => {
-    async function fetchSavedEvents() {
-      if (!isAuthenticated || !user?.id || !canAccessSavedEvents) {
-        setLoading(false);
-        return;
-      }
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const params = new URLSearchParams();
-        if (includeExpired) {
-          params.set('includeExpired', 'true');
-        }
-
-        const headers = {};
-        // Include Bearer token when available (client auth may not be cookie-based).
-        if (session?.access_token) {
-          headers.Authorization = `Bearer ${session.access_token}`;
-        }
-
-        const res = await fetch(`/api/users/${user.id}/saved-events?${params.toString()}`, { headers });
-        
-        if (!res.ok) {
-          throw new Error('Failed to fetch saved events');
-        }
-        
-        const data = await res.json();
-        setSavedEvents(data.savedEvents || []);
-      } catch (err) {
-        console.error('[SavedEvents] Error fetching:', err);
-        setError('Unable to load saved events. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchSavedEvents();
-  }, [isAuthenticated, user?.id, canAccessSavedEvents, includeExpired, session?.access_token]);
+  // React Query hook for saved events
+  const { 
+    data: savedEventsData,
+    isLoading: loading,
+    error: queryError,
+    refetch,
+  } = useUserSavedEvents(
+    user?.id, 
+    { includeExpired },
+    { enabled: isAuthenticated && !!user?.id && canAccessSavedEvents }
+  );
+  
+  const savedEvents = savedEventsData?.savedEvents || [];
+  const error = queryError ? 'Unable to load saved events. Please try again.' : null;
   
   // Handle unsave - called by SaveEventButton after it makes the API call
   const handleSaveToggle = useCallback((eventSlug, isSaved) => {
     if (!isSaved) {
-      setSavedEvents(prev => prev.filter(se => se.event.slug !== eventSlug));
+      // Refetch to update the list (React Query will handle caching)
+      refetch();
     }
-  }, []);
+  }, [refetch]);
   
   // Loading state (auth)
   if (authLoading) {
@@ -132,9 +104,12 @@ export default function SavedEventsPage() {
               >
                 Sign In
               </button>
-              <Link href="/join" className={styles.joinButton}>
+              <button 
+                onClick={() => authModal.openSignUp()}
+                className={styles.joinButton}
+              >
                 Create Account
-              </Link>
+              </button>
             </div>
             <Link href="/community/events" className={styles.browseLink}>
               ← Browse Events

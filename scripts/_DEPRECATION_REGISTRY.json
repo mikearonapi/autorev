@@ -1,0 +1,286 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-01-21",
+  "description": "Registry of deprecated scripts and their replacements",
+  "categories": {
+    "deprecated": "Should not be used - superseded by newer scripts",
+    "archived": "One-time scripts that have completed their purpose",
+    "duplicate": "Duplicate functionality exists elsewhere",
+    "user_specific": "User-specific analysis scripts, not for general use"
+  },
+  "deprecated_scripts": {
+    "youtube-discovery.js": {
+      "status": "deprecated",
+      "reason": "Superseded by youtube-exa-discovery.js",
+      "replacement": "youtube-exa-discovery.js",
+      "notes": "Original YouTube API discovery, now using Exa for better results"
+    },
+    "youtube-browser-discovery.js": {
+      "status": "deprecated",
+      "reason": "Superseded by youtube-exa-discovery.js",
+      "replacement": "youtube-exa-discovery.js"
+    },
+    "youtube-fetch-channel-videos.js": {
+      "status": "deprecated",
+      "reason": "Functionality merged into youtube-channel-scanner.js",
+      "replacement": "youtube-channel-scanner.js"
+    },
+    "youtube-fetch-all-channel-videos.js": {
+      "status": "deprecated",
+      "reason": "Functionality merged into youtube-channel-scanner.js",
+      "replacement": "youtube-channel-scanner.js"
+    },
+    "youtube-fill-missing-cars.js": {
+      "status": "archived",
+      "reason": "One-time backfill script, no longer needed"
+    },
+    "youtube-process-from-urls.js": {
+      "status": "deprecated",
+      "reason": "Functionality in youtube-pipeline.js",
+      "replacement": "youtube-pipeline.js"
+    },
+    "youtube-transcripts.js": {
+      "status": "deprecated",
+      "reason": "Integrated into youtube-ai-processing.js",
+      "replacement": "youtube-ai-processing.js"
+    },
+    "enrich-cars-data.js": {
+      "status": "deprecated",
+      "reason": "Superseded by car-pipeline/enrich-car.js",
+      "replacement": "car-pipeline/enrich-car.js"
+    },
+    "enrichAllCars.js": {
+      "status": "deprecated",
+      "reason": "Superseded by car-pipeline/batch-enrich.js",
+      "replacement": "car-pipeline/batch-enrich.js"
+    },
+    "enrichCarsComValidatedPricing.js": {
+      "status": "archived",
+      "reason": "One-time pricing enrichment, complete"
+    },
+    "enrichEpaDirect.js": {
+      "status": "deprecated",
+      "reason": "Replaced by cron job api/cron/refresh-epa",
+      "replacement": "api/cron refresh job"
+    },
+    "enrichFreeApisDirect.js": {
+      "status": "deprecated",
+      "reason": "Split into individual cron jobs",
+      "replacement": "Various cron jobs"
+    },
+    "enrichSparkPlugsAI.js": {
+      "status": "archived",
+      "reason": "One-time AI enrichment, complete"
+    },
+    "enrichTransFluidAI.js": {
+      "status": "archived",
+      "reason": "One-time AI enrichment, complete"
+    },
+    "scrapeWorkingSources.js": {
+      "status": "deprecated",
+      "reason": "Replaced by specific Apify scrapers",
+      "replacement": "scripts/apify/*.mjs"
+    },
+    "scrapeWorkingSourcesV2.js": {
+      "status": "deprecated",
+      "reason": "Replaced by specific Apify scrapers",
+      "replacement": "scripts/apify/*.mjs"
+    },
+    "scrapeValidatedPricing.js": {
+      "status": "deprecated",
+      "reason": "Replaced by apify/backfill-bat-pricing.mjs",
+      "replacement": "apify/backfill-bat-pricing.mjs"
+    },
+    "testBaTBrowserFallback.js": {
+      "status": "archived",
+      "reason": "Test script, BaT now uses Apify"
+    },
+    "testBaTStealth.js": {
+      "status": "archived",
+      "reason": "Test script, BaT now uses Apify"
+    },
+    "testCarsComYearly.js": {
+      "status": "archived",
+      "reason": "Test script for cars.com scraper"
+    },
+    "debugCarsComScraper.js": {
+      "status": "archived",
+      "reason": "Debug script, no longer needed"
+    },
+    "testScrapers.js": {
+      "status": "archived",
+      "reason": "Old scraper tests"
+    },
+    "migrate-and-seed.js": {
+      "status": "archived",
+      "reason": "Initial database seeding, complete"
+    },
+    "migrate-scores-to-decimal.js": {
+      "status": "archived",
+      "reason": "One-time migration, complete"
+    },
+    "audit-vehicle-data.js": {
+      "status": "duplicate",
+      "reason": "Duplicate of audit-vehicle-data.mjs",
+      "replacement": "audit-vehicle-data.mjs"
+    },
+    "populate-maintenance-specs-batch2.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch3.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch4.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch5.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch6.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch7.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "populate-maintenance-specs-batch8.mjs": {
+      "status": "archived",
+      "reason": "One-time batch migration, complete"
+    },
+    "compare-cory-evo-actual.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "compare-cory-evo-models.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "compare-cory-evo-standalone.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "cory-evo-physics-projection.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "verify-cory-evo-tuning.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "rs5-final-review.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "rs5-forum-research-results.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "rs5-independent-analysis.mjs": {
+      "status": "user_specific",
+      "reason": "User-specific vehicle analysis"
+    },
+    "overnight-expansion.mjs": {
+      "status": "archived",
+      "reason": "One-time overnight expansion run, 2026-01-20"
+    }
+  },
+  "core_problems": {
+    "1": "What should I do to my car? (Upgrade Selection)",
+    "2": "Which parts should I buy? (Parts Navigation)",
+    "3": "What will this actually do for me? (Visualization)",
+    "4": "I did the mods — now what? (Progression)",
+    "5": "Where do I find my people? (Community)",
+    "6": "I just have a quick question (Knowledge Access)"
+  },
+  "active_pipelines": {
+    "parts": {
+      "problem": "#2",
+      "entry_point": "data-pipelines/parts/run-shopify-ingest.mjs",
+      "scripts": ["run-all-shopify-vendors.mjs", "run-shopify-ingest.mjs"],
+      "service": "lib/partsVendorIngestionService.js",
+      "priority": "CRITICAL"
+    },
+    "dyno": {
+      "problem": "#3",
+      "entry_point": "seedDynoRunsEstimated.mjs",
+      "scripts": ["seedDynoRunsEstimated.mjs", "forum-dyno-scraper.mjs"],
+      "priority": "CRITICAL"
+    },
+    "lap_times": {
+      "problem": "#3 & #4",
+      "entry_point": "scrape-lap-times.mjs",
+      "scripts": ["scrape-lap-times.mjs", "rescrape-lap-times.mjs", "seedLapTimesFastestLaps.mjs"],
+      "priority": "CRITICAL"
+    },
+    "tuning": {
+      "problem": "#1",
+      "entry_point": "tuning-pipeline/run-pipeline.mjs",
+      "scripts": [
+        "tuning-pipeline/create-profile.mjs",
+        "tuning-pipeline/validate-profile.mjs",
+        "tuning-pipeline/ai-research-tuning.mjs"
+      ],
+      "priority": "CRITICAL"
+    },
+    "youtube": {
+      "problem": "#6",
+      "entry_point": "youtube-pipeline.js",
+      "scripts": [
+        "youtube-pipeline.js",
+        "youtube-exa-discovery.js",
+        "youtube-channel-scanner.js",
+        "youtube-ai-processing.js",
+        "youtube-aggregate-consensus.js"
+      ],
+      "service": "lib/youtubeClient.js",
+      "priority": "IMPORTANT"
+    },
+    "community_insights": {
+      "problem": "#5 & #6",
+      "entry_point": "data-pipelines/community/run-reddit-ingest.mjs",
+      "scripts": ["apify/backfill-reddit-insights.mjs", "run-insight-extraction.js"],
+      "service": "lib/redditInsightService.js",
+      "priority": "IMPORTANT"
+    },
+    "recalls": {
+      "problem": "#6",
+      "entry_point": null,
+      "cron": "api/cron/refresh-recalls",
+      "service": "lib/recallService.js",
+      "priority": "SUPPORTING"
+    },
+    "complaints": {
+      "problem": "#6",
+      "entry_point": null,
+      "cron": "api/cron/refresh-complaints",
+      "service": "lib/complaintService.js",
+      "priority": "SUPPORTING"
+    },
+    "knowledge_base": {
+      "problem": "#6",
+      "entry_point": "indexKnowledgeBase.mjs",
+      "scripts": ["generate-embeddings.mjs", "vectorize-encyclopedia.mjs"],
+      "service": "lib/knowledgeIndexService.js",
+      "priority": "IMPORTANT"
+    },
+    "events": {
+      "problem": "#5",
+      "entry_point": "events/run-all-seeds.js",
+      "cron": "api/cron/refresh-events",
+      "service": "lib/eventsService.js",
+      "priority": "SUPPORTING"
+    }
+  },
+  "not_relevant_to_core": {
+    "market_pricing": {
+      "reason": "AutoRev helps users modify cars, not buy/sell them",
+      "scripts_deprecated": ["apify/backfill-bat-pricing.mjs", "api/cron/weekly-market-pricing"],
+      "status": "removed"
+    }
+  }
+}

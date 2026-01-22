@@ -162,15 +162,15 @@ export default function Contact() {
                   <h2 className={styles.successTitle}>Message Sent!</h2>
                   <p className={styles.successText}>
                     Thanks for reaching out. We&apos;ll get back to you within 48 hours.
-                    In the meantime, check out our Car Selector or Upgrade Planner.
+                    In the meantime, explore your garage or ask AL anything.
                   </p>
                   <div className={styles.successLinks}>
-                    <Button href="/car-selector" variant="secondary" size="lg">
-                      Your Sportscar Match
+                    <Button href="/garage" variant="secondary" size="lg">
+                      My Garage
                       <Icons.arrowRight size={16} />
                     </Button>
-                    <Button href="/browse-cars" variant="outlineLight" size="lg">
-                      Browse Cars
+                    <Button href="/al" variant="outlineLight" size="lg">
+                      Ask AL
                     </Button>
                   </div>
                 </div>

@@ -9,11 +9,40 @@
  * - Set/clear hero image (syncs across features)
  * - Optimistic updates for responsive UI
  * 
+ * Updated to use React Query for caching and deduplication.
+ * 
  * @module hooks/useCarImages
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { getPrefetchedHeroImage } from '@/lib/prefetch';
+
+// Cache time for car images (2 minutes)
+const CAR_IMAGES_STALE_TIME = 2 * 60 * 1000;
+
+// Query key factory
+const carImageKeys = {
+  all: ['car-images'],
+  byCarSlug: (userId, carSlug) => [...carImageKeys.all, userId, carSlug],
+};
+
+/**
+ * Fetch car images from API
+ */
+async function fetchCarImages(userId, carSlug) {
+  const response = await fetch(
+    `/api/users/${userId}/car-images?carSlug=${encodeURIComponent(carSlug)}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch images');
+  }
+
+  const data = await response.json();
+  return data.images || [];
+}
 
 /**
  * Hook to manage car images shared across Garage and Tuning Shop
@@ -25,52 +54,119 @@ import { useAuth } from '@/components/providers/AuthProvider';
  */
 export function useCarImages(carSlug, { enabled = true } = {}) {
   const { user, isAuthenticated } = useAuth();
-  const [images, setImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
-  // Fetch images when carSlug changes
-  const fetchImages = useCallback(async () => {
-    if (!enabled || !isAuthenticated || !user?.id || !carSlug) {
-      setImages([]);
-      return;
-    }
+  const queryKey = carImageKeys.byCarSlug(user?.id, carSlug);
 
-    setIsLoading(true);
-    setError(null);
+  // Use React Query for data fetching with caching
+  const {
+    data: images = [],
+    isLoading,
+    error: queryError,
+    refetch: refreshImages,
+  } = useQuery({
+    queryKey,
+    queryFn: () => fetchCarImages(user.id, carSlug),
+    staleTime: CAR_IMAGES_STALE_TIME,
+    enabled: enabled && isAuthenticated && !!user?.id && !!carSlug,
+  });
 
-    try {
-      const response = await fetch(
-        `/api/users/${user.id}/car-images?carSlug=${encodeURIComponent(carSlug)}`
-      );
+  // Mutation for setting hero image
+  const setHeroMutation = useMutation({
+    mutationFn: async (imageId) => {
+      const response = await fetch(`/api/users/${user.id}/car-images`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carSlug, imageId }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch images');
+        throw new Error('Failed to set hero image');
       }
 
-      const data = await response.json();
-      setImages(data.images || []);
-    } catch (err) {
-      console.error('[useCarImages] Fetch error:', err);
-      setError(err.message);
-      setImages([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [carSlug, enabled, isAuthenticated, user?.id]);
+      return response.json();
+    },
+    // Optimistic update
+    onMutate: async (imageId) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousImages = queryClient.getQueryData(queryKey);
 
-  // Fetch on mount and when dependencies change
-  useEffect(() => {
-    fetchImages();
-  }, [fetchImages]);
+      queryClient.setQueryData(queryKey, (old) =>
+        (old || []).map(img => ({
+          ...img,
+          is_primary: img.id === imageId,
+          isPrimary: img.id === imageId,
+        }))
+      );
 
-  // Get the current hero image (is_primary = true, and is an image not a video)
-  const heroImage = images.find(img => img.is_primary && img.media_type !== 'video') || null;
+      return { previousImages };
+    },
+    onError: (err, imageId, context) => {
+      console.error('[useCarImages] Set hero error:', err);
+      queryClient.setQueryData(queryKey, context?.previousImages);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
+  // Mutation for clearing hero image
+  const clearHeroMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/users/${user.id}/car-images`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carSlug, imageId: null }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear hero image');
+      }
+
+      return response.json();
+    },
+    // Optimistic update
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousImages = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, (old) =>
+        (old || []).map(img => ({
+          ...img,
+          is_primary: false,
+          isPrimary: false,
+        }))
+      );
+
+      return { previousImages };
+    },
+    onError: (err, variables, context) => {
+      console.error('[useCarImages] Clear hero error:', err);
+      queryClient.setQueryData(queryKey, context?.previousImages);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
+  // Check for prefetched hero image (instant, no loading)
+  const prefetchedHero = useMemo(
+    () => getPrefetchedHeroImage(carSlug, user?.id),
+    [carSlug, user?.id]
+  );
+
+  // Get the current hero image from API data (is_primary = true, and is an image not a video)
+  const heroImageFromApi = useMemo(
+    () => images.find(img => img.is_primary && img.media_type !== 'video') || null,
+    [images]
+  );
+  
+  // Use API data when available, otherwise fall back to prefetched
+  // This ensures we always have the most up-to-date hero image after API loads
+  const heroImage = heroImageFromApi;
 
   /**
    * Set a specific image as the hero image
-   * Optimistically updates UI, then syncs with server
-   * 
    * @param {string} imageId - The ID of the image to set as hero
    * @returns {Promise<boolean>} - Success status
    */
@@ -79,39 +175,16 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       return false;
     }
 
-    // Optimistic update
-    setImages(prev => prev.map(img => ({
-      ...img,
-      is_primary: img.id === imageId,
-      isPrimary: img.id === imageId,
-    })));
-
     try {
-      const response = await fetch(`/api/users/${user.id}/car-images`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug, imageId }),
-      });
-
-      if (!response.ok) {
-        // Revert on failure
-        await fetchImages();
-        return false;
-      }
-
+      await setHeroMutation.mutateAsync(imageId);
       return true;
-    } catch (err) {
-      console.error('[useCarImages] Set hero error:', err);
-      // Revert on failure
-      await fetchImages();
+    } catch {
       return false;
     }
-  }, [carSlug, fetchImages, isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, carSlug, setHeroMutation]);
 
   /**
    * Clear the hero image (revert to stock)
-   * Clears is_primary from all images for this car
-   * 
    * @returns {Promise<boolean>} - Success status
    */
   const clearHeroImage = useCallback(async () => {
@@ -119,68 +192,65 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       return false;
     }
 
-    // Optimistic update
-    setImages(prev => prev.map(img => ({
-      ...img,
-      is_primary: false,
-      isPrimary: false,
-    })));
-
     try {
-      const response = await fetch(`/api/users/${user.id}/car-images`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug, imageId: null }),
-      });
-
-      if (!response.ok) {
-        // Revert on failure
-        await fetchImages();
-        return false;
-      }
-
+      await clearHeroMutation.mutateAsync();
       return true;
-    } catch (err) {
-      console.error('[useCarImages] Clear hero error:', err);
-      // Revert on failure
-      await fetchImages();
+    } catch {
       return false;
     }
-  }, [carSlug, fetchImages, isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, carSlug, clearHeroMutation]);
 
   /**
-   * Add uploaded images to the local state
+   * Add uploaded images to the local cache
    * Called by ImageUploader after successful upload
    * 
    * @param {Array} newImages - Array of newly uploaded images
    */
   const addImages = useCallback((newImages) => {
-    setImages(prev => {
-      // Filter out any duplicates
-      const existingIds = new Set(prev.map(img => img.id));
+    queryClient.setQueryData(queryKey, (old) => {
+      const existingIds = new Set((old || []).map(img => img.id));
       const uniqueNew = newImages.filter(img => !existingIds.has(img.id));
-      return [...prev, ...uniqueNew];
+      return [...(old || []), ...uniqueNew];
     });
-  }, []);
+  }, [queryClient, queryKey]);
 
   /**
-   * Remove an image from local state
+   * Remove an image from local cache
    * 
    * @param {string} imageId - The ID of the image to remove
    */
   const removeImage = useCallback((imageId) => {
-    setImages(prev => prev.filter(img => img.id !== imageId));
-  }, []);
+    queryClient.setQueryData(queryKey, (old) =>
+      (old || []).filter(img => img.id !== imageId)
+    );
+  }, [queryClient, queryKey]);
+
+  // Compute the best available hero image URL
+  // Priority: API data > prefetched data
+  const heroImageUrl = useMemo(() => {
+    // If we have API data, use it (most up-to-date)
+    if (heroImage?.blob_url || heroImage?.blobUrl) {
+      return heroImage.blob_url || heroImage.blobUrl;
+    }
+    // While loading, use prefetched hero image URL (already in browser cache)
+    if (prefetchedHero?.url) {
+      return prefetchedHero.url;
+    }
+    return null;
+  }, [heroImage, prefetchedHero]);
 
   return {
     images,
     heroImage,
-    heroImageUrl: heroImage?.blob_url || heroImage?.blobUrl || null,
-    isLoading,
-    error,
+    heroImageUrl,
+    // Also expose prefetched URL separately for components that want to use it immediately
+    prefetchedHeroUrl: prefetchedHero?.url || null,
+    // isLoading is false if we have prefetched data
+    isLoading: isLoading && !prefetchedHero,
+    error: queryError?.message || null,
     setHeroImage,
     clearHeroImage,
-    refreshImages: fetchImages,
+    refreshImages,
     addImages,
     removeImage,
   };

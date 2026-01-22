@@ -11,15 +11,13 @@ import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { resolveCarId } from '@/lib/carResolver';
+import { errors } from '@/lib/apiErrors';
 
 async function handleGet(request, { params }) {
   const { slug } = await params;
 
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Car slug is required' },
-      { status: 400 }
-    );
+    return errors.missingField('slug');
   }
 
   // If Supabase isn't configured, return empty specs
@@ -98,10 +96,7 @@ async function handleGet(request, { params }) {
     });
   } catch (err) {
     console.error('[Maintenance API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch maintenance specs' },
-      { status: 500 }
-    );
+    return errors.internal('Failed to fetch maintenance specs');
   }
 }
 

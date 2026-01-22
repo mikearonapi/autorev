@@ -7,8 +7,9 @@
  * For marketing optimization and user journey understanding.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import styles from './MarketingAnalytics.module.css';
+import { useAdminMarketingAnalytics } from '@/hooks/useAdminData';
 
 // Funnel visualization component
 function FunnelChart({ funnel }) {
@@ -231,36 +232,16 @@ function EventsTable({ events }) {
 
 // Main component
 export function MarketingAnalytics({ token, range = '30d', loading: externalLoading }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState('funnel');
   
-  const fetchData = useCallback(async () => {
-    if (!token) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`/api/admin/marketing-analytics?range=${range}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (!response.ok) throw new Error(`Failed: ${response.status}`);
-      
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, range]);
+  // Use React Query hook for marketing analytics
+  const { 
+    data, 
+    isLoading: loading, 
+    error: queryError,
+  } = useAdminMarketingAnalytics(range);
   
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const error = queryError?.message || null;
   
   if (loading || externalLoading) {
     return (

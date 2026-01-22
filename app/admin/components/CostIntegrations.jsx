@@ -13,8 +13,9 @@
  * - Cost comparison between internal and external tracking
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './CostIntegrations.module.css';
+import { useAdminExternalCosts } from '@/hooks/useAdminData';
 
 // Icons
 const CheckCircleIcon = ({ size = 16 }) => (
@@ -193,36 +194,14 @@ function ManualTrackingCard({ service, reason, currentCost, recommendation }) {
 }
 
 export function CostIntegrations({ token, range = 'month', loading: externalLoading }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Use React Query hook for external costs
+  const { 
+    data, 
+    isLoading: loading, 
+    error: queryError,
+  } = useAdminExternalCosts(range);
   
-  useEffect(() => {
-    async function fetchIntegrations() {
-      if (!token) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`/api/admin/external-costs?range=${range}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (!response.ok) throw new Error('Failed to fetch cost integrations');
-        
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error('[CostIntegrations] Error:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchIntegrations();
-  }, [token, range]);
+  const error = queryError?.message || null;
   
   if (loading || externalLoading) {
     return (

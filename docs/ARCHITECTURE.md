@@ -1,30 +1,32 @@
 # AutoRev Architecture
 
-> How the system works
+> AI-powered research platform for sports car enthusiasts
 >
-> **Last Verified:** January 8, 2026 — Updated with route groups architecture + performance optimizations
+> **Last Verified:** January 21, 2026 — Updated with mobile readiness and route consolidation
 
 ---
 
 ## System Overview
 
+AutoRev is a web-first PWA (Progressive Web App) serving sports car enthusiasts with AI-powered research, modification planning, and community features. The platform is designed mobile-first with native app readiness built in.
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                           USERS                                  │
-│         Anonymous → Free → Collector → Tuner → Admin            │
+│              Anonymous → Free → Collector → Tuner                │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     NEXT.JS FRONTEND                             │
+│                     NEXT.JS FRONTEND (PWA)                       │
 │                                                                  │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
-│  │ Browse   │ │ Car      │ │ My       │ │ Tuning   │           │
-│  │ Cars     │ │ Selector │ │ Garage   │ │ Shop     │           │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐│
+│  │ Garage   │ │ Data     │ │Community │ │   AL     │ │Profile ││
+│  │ (mods)   │ │ (specs)  │ │ (social) │ │  (AI)    │ │(account)│
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └────────┘│
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │            COMPONENTS (70+ files)                        │    │
+│  │            COMPONENTS (192 files)                        │    │
 │  │  • Providers (Auth, Favorites, Compare, etc.)           │    │
 │  │  • UI Components (Header, Footer, CarImage, etc.)       │    │
 │  │  • Feature Components (PerformanceHub, ExpertReviews)   │    │
@@ -34,24 +36,26 @@
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     API LAYER (99 routes)                        │
+│                     API LAYER (160 routes)                       │
 │                                                                  │
 │  /api/cars/*          Car data (specs, safety, pricing)         │
 │  /api/parts/*         Parts catalog and search                  │
-│  /api/ai-mechanic     AL assistant                              │
-│  /api/users/*         User data and AL credits                  │
+│  /api/ai-mechanic     AL assistant (streaming)                  │
+│  /api/users/*         User data, garage, AL credits             │
+│  /api/community/*     Posts, builds, comments, likes            │
+│  /api/analytics/*     Page views, events, engagement            │
 │  /api/vin/*           VIN decode                                │
 │  /api/checkout        Stripe checkout sessions                  │
 │  /api/billing/*       Stripe customer portal                    │
-│  /api/webhooks/*      Stripe & other webhooks                   │
-│  /api/admin/*         Admin operations & dashboards             │
-│  /api/internal/*      Internal tools                            │
-│  /api/cron/*          Scheduled jobs (12 jobs)                  │
+│  /api/webhooks/*      Stripe, Resend, Vercel webhooks           │
+│  /api/admin/*         Admin dashboards (28 routes)              │
+│  /api/internal/*      Internal tools (18 routes)                │
+│  /api/cron/*          Scheduled jobs (20 jobs)                  │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   SERVICE LAYER (114 files)                      │
+│                   SERVICE LAYER (177 files)                      │
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
 │  │ tierAccess  │  │ carsClient  │  │ alTools     │             │
@@ -75,8 +79,8 @@
 │  │   SUPABASE      │  │   CLAUDE AI     │  │  EXTERNAL APIs  │ │
 │  │   (PostgreSQL)  │  │   (Anthropic)   │  │                 │ │
 │  │                 │  │                 │  │  • Stripe       │ │
-│  │   75 tables     │  │   AL Assistant  │  │  • YouTube API  │ │
-│  │   pgvector      │  │   17 tools      │  │  • NHTSA        │ │
+│  │   139 tables    │  │   AL Assistant  │  │  • YouTube API  │ │
+│  │   pgvector      │  │   20 tools      │  │  • NHTSA        │ │
 │  │   RLS enabled   │  │   token billing │  │  • EPA          │ │
 │  │                 │  │                 │  │  • Resend       │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
@@ -94,12 +98,8 @@ app/
 ├── (marketing)/          # Public-facing, lightweight layout
 │   ├── layout.jsx        # Minimal providers
 │   ├── page.jsx          # Home page
-│   ├── landing/          # Landing pages
-│   ├── join/             # Sign up page
-│   ├── features/         # Feature pages
 │   ├── articles/         # Blog/articles
-│   ├── car-selector/     # Car selector tool
-│   ├── community/        # Community pages
+│   ├── community/        # Community pages (events)
 │   ├── al/               # AL landing
 │   ├── compare/          # Comparison pages
 │   ├── contact/          # Contact form
@@ -111,18 +111,37 @@ app/
 │
 ├── (app)/                # Authenticated app, full providers
 │   ├── layout.jsx        # Full provider stack
-│   ├── browse-cars/      # Car browsing (needs Favorites, Compare)
-│   ├── garage/           # User's garage (needs OwnedVehicles)
-│   ├── tuning-shop/      # Tuning shop (needs SavedBuilds)
-│   ├── profile/          # User profile
-│   └── mod-planner/      # Mod planning tool
+│   ├── al/               # AL chat (AI assistant)
+│   ├── browse-cars/      # Car browsing
+│   ├── community/        # Community builds & posts
+│   ├── data/             # Performance data hub
+│   ├── garage/           # User's garage (builds + projects)
+│   └── profile/          # User profile & settings
 │
-├── admin/                # Admin routes (root layout)
-├── internal/             # Internal tools (root layout)
-├── auth/                 # Auth callbacks (root layout)
-├── api/                  # API routes (root layout)
+├── admin/                # Admin routes (role-protected)
+├── internal/             # Internal tools (role-protected)
+├── auth/                 # Auth callbacks
+├── api/                  # API routes (161 routes)
 └── layout.jsx            # Root layout (global providers)
 ```
+
+### Route Consolidation (January 2026)
+
+Several routes were consolidated to simplify navigation:
+
+| Old Route | New Route | Redirect Type |
+|-----------|-----------|---------------|
+| `/car-selector` | `/garage` | Permanent |
+| `/tuning-shop` | `/garage` | Permanent |
+| `/mod-planner` | `/garage` | Permanent |
+| `/my-builds` | `/garage` | Permanent |
+| `/build` | `/garage` | Permanent |
+| `/track` | `/data` | Permanent |
+| `/performance` | `/data` | Permanent |
+| `/community/builds` | `/community` | Permanent |
+| `/join` | `/` | Temporary |
+
+Redirects are configured in `next.config.js` and `vercel.json`.
 
 ### Provider Dependencies
 
@@ -141,6 +160,50 @@ app/
 ---
 
 ## Performance Optimizations
+
+### Build-Time Optimizations
+
+Configured in `next.config.js`:
+
+```javascript
+experimental: {
+  // Tree-shake these packages more aggressively
+  optimizePackageImports: [
+    '@supabase/supabase-js',
+    '@supabase/ssr',
+    'recharts',
+    'date-fns',
+    'openai',
+    '@anthropic-ai/sdk',
+  ],
+  // Inline critical CSS
+  optimizeCss: true,
+},
+
+compiler: {
+  // Strip console.log in production (keep warn/error)
+  removeConsole: process.env.NODE_ENV === 'production' 
+    ? { exclude: ['error', 'warn'] } 
+    : false,
+},
+
+// Vendor chunk splitting for better caching
+webpack: {
+  cacheGroups: {
+    supabase: { test: /@supabase/, priority: 30 },
+    reactQuery: { test: /@tanstack/, priority: 25 },
+    utils: { test: /(date-fns|lodash|uuid)/, priority: 20 },
+  }
+}
+```
+
+### Image Optimization
+
+| Feature | Configuration |
+|---------|---------------|
+| **Formats** | AVIF, WebP (auto-negotiated) |
+| **Device Sizes** | 640, 750, 828, 1080, 1200, 1920, 2048 |
+| **Thumbnail Sizes** | 16, 32, 48, 64, 96, 128, 256, 384 |
 
 ### Image Loading Strategy
 
@@ -208,19 +271,98 @@ Tests ensure:
 
 ## Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **Framework** | Next.js 14 (App Router) | React SSR/SSG |
-| **Database** | Supabase (PostgreSQL) | Primary data store |
-| **Vector Search** | pgvector | Knowledge base embeddings |
-| **AI** | Anthropic Claude Sonnet 4 | AL assistant |
-| **Embeddings** | OpenAI text-embedding-3-small | Document embeddings |
-| **Auth** | Supabase Auth | Authentication |
-| **Payments** | Stripe | Subscription billing & one-time purchases |
-| **Email** | Resend | Transactional email delivery |
-| **Images** | Vercel Blob | Car images & assets |
-| **Hosting** | Vercel | Deployment & edge functions |
-| **Styling** | CSS Modules | Component styles |
+| Layer | Technology | Version | Purpose |
+|-------|------------|---------|---------|
+| **Framework** | Next.js (App Router) | 14.2.35 | React SSR/SSG with PWA support |
+| **React** | React | 18.2.x | UI library |
+| **Database** | Supabase (PostgreSQL) | - | Primary data store |
+| **Vector Search** | pgvector | - | Knowledge base embeddings |
+| **AI Assistant** | Anthropic Claude Sonnet 4 | - | AL conversational AI |
+| **AI Images** | fal.ai | 1.8.x | Image generation |
+| **Embeddings** | OpenAI text-embedding-3-small | - | Document embeddings |
+| **Auth** | Supabase Auth | - | Authentication |
+| **Payments** | Stripe | 14.11.x | Subscription billing & credits |
+| **Email** | Resend | 6.5.x | Transactional email delivery |
+| **Images** | Vercel Blob | 2.0.x | Car images & assets |
+| **Server State** | TanStack Query | 5.90.x | API caching & synchronization |
+| **Hosting** | Vercel | - | Deployment & edge functions |
+| **Styling** | CSS Modules + Design Tokens | - | Component styles |
+| **Testing** | Playwright | 1.57.x | E2E & mobile testing |
+
+---
+
+## Mobile Readiness
+
+AutoRev follows a **PWA-first** strategy, delivering native-like experiences through Progressive Web App technology before pursuing native wrappers.
+
+### Current Status: PWA (Production Ready)
+
+| Feature | Status | Implementation |
+|---------|--------|----------------|
+| **Installable** | ✅ | Web app manifest with full icon set |
+| **Offline Support** | ✅ | Service worker with intelligent caching |
+| **App-like UI** | ✅ | Standalone display mode, portrait orientation |
+| **Touch Optimization** | ✅ | 44px minimum touch targets, gesture support |
+| **API Caching** | ✅ | Stale-while-revalidate for car data |
+| **Safe Area Insets** | ✅ | CSS env() for notch/home indicator |
+
+### Service Worker Features (v2.0)
+
+```javascript
+// Caching strategies by endpoint type
+CACHEABLE_API_PATTERNS = [
+  /\/api\/cars$/,                        // Car list
+  /\/api\/cars\/[^/]+\/enriched$/,       // Car enriched data
+  /\/api\/cars\/[^/]+\/efficiency$/,     // Fuel efficiency
+  /\/api\/cars\/[^/]+\/safety-ratings$/, // Safety ratings
+  /\/api\/cars\/[^/]+\/recalls$/,        // Recalls
+  /\/api\/cars\/[^/]+\/maintenance$/,    // Maintenance
+  /\/api\/parts\/popular$/,              // Popular parts
+  /\/api\/events$/,                      // Events list
+];
+
+// Stale-while-revalidate: Return cached immediately, update in background
+// Network-first: User data, auth, billing (always fresh)
+// Precached: Offline page, icons, manifest
+```
+
+### PWA Manifest Highlights
+
+```json
+{
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a1628",
+  "theme_color": "#1a4d6e",
+  "categories": ["automotive", "lifestyle", "sports"]
+}
+```
+
+### Native App Preparation (Future)
+
+When the time comes for App Store/Play Store distribution:
+
+| Approach | Consideration | Status |
+|----------|---------------|--------|
+| **Capacitor** | Wrap existing PWA with native shell | 🔲 Not started |
+| **React Native** | Full native rewrite | 🔲 Not planned |
+| **Push Notifications** | Service worker → native push | 🔲 Prepared |
+
+**Design Token System** — CSS variables in `styles/tokens.css` are structured for future React Native export:
+
+```css
+/* Web tokens (current) */
+--color-accent-lime: #d4ff00;
+--space-4: 16px;
+--touch-target-min: 44px;
+
+/* Maps directly to React Native */
+const tokens = {
+  accentLime: '#d4ff00',
+  space4: 16,
+  touchTargetMin: 44,
+};
+```
 
 ---
 
@@ -229,8 +371,18 @@ Tests ensure:
 ### Hierarchy
 
 ```
-free → collector → tuner → admin
+free → collector → tuner
 ```
+
+Admin access is handled separately via `user_profiles.role` column, not the tier hierarchy.
+
+### Pricing (Post-Beta)
+
+| Tier | Price | AI Credits/Month |
+|------|-------|------------------|
+| **Free** | $0 | 25 |
+| **Collector** (Enthusiast) | $4.99/mo | 75 |
+| **Tuner** | $9.99/mo | 150 |
 
 ### Implementation
 
@@ -240,20 +392,29 @@ free → collector → tuner → admin
 export const IS_BETA = true; // Bypasses all tier checks when true
 
 export const FEATURES = {
-  // Free tier
+  // Free tier - Discovery & buying research
   carSelector: { tier: 'free' },
+  carDetailPages: { tier: 'free' },
   fuelEconomy: { tier: 'free' },
   safetyRatings: { tier: 'free' },
+  alBasic: { tier: 'free' },           // 25 AI chats/month
   
-  // Enthusiast tier
+  // Collector tier - Ownership intelligence
   vinDecode: { tier: 'collector' },
+  ownerReference: { tier: 'collector' },
   marketValue: { tier: 'collector' },
   priceHistory: { tier: 'collector' },
+  serviceLog: { tier: 'collector' },
+  recallAlerts: { tier: 'collector' },
+  alCollector: { tier: 'collector' },  // 75 AI chats/month
   
-  // Tuner tier
+  // Tuner tier - Performance intelligence
   dynoDatabase: { tier: 'tuner' },
   fullLapTimes: { tier: 'tuner' },
+  fullPartsCatalog: { tier: 'tuner' },
   buildProjects: { tier: 'tuner' },
+  buildAnalytics: { tier: 'tuner' },
+  alTuner: { tier: 'tuner' },          // 150 AI chats/month
 };
 ```
 
@@ -272,7 +433,7 @@ import { PremiumGate } from '@/components/PremiumGate';
 When `IS_BETA = true`:
 - All authenticated users get full access
 - No tier restrictions enforced
-- Credit/usage still tracked
+- Credit/usage still tracked for analytics
 
 ---
 
@@ -380,11 +541,31 @@ Tier defaults to 'free'
 | Type | Solution | Location |
 |------|----------|----------|
 | **Auth State** | React Context | `AuthProvider` |
-| **Favorites** | React Context + Supabase | `FavoritesProvider` |
-| **Compare** | React Context + Zustand | `CompareProvider` |
+| **Server State** | TanStack Query | API caching & synchronization |
+| **Favorites** | Zustand + Supabase | `favoritesStore` |
+| **Compare** | Zustand | `compareStore` |
 | **Car Selection** | Zustand | `carSelectionStore` |
 | **User Preferences** | Zustand + localStorage | `userPreferencesStore` |
-| **Server State** | API routes | Supabase |
+| **AL Preferences** | Zustand + localStorage | `alPreferencesStore` |
+
+### Zustand Store Pattern
+
+```javascript
+// lib/stores/exampleStore.js
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export const useExampleStore = create(
+  persist(
+    (set, get) => ({
+      items: [],
+      addItem: (item) => set((s) => ({ items: [...s.items, item] })),
+      clear: () => set({ items: [] }),
+    }),
+    { name: 'autorev-example' }
+  )
+);
+```
 
 ---
 
@@ -432,6 +613,7 @@ AutoRev integrates with multiple external APIs for data enrichment. See [GOOGLE_
 |---------|---------|-------|
 | **Anthropic Claude** | AL assistant | Claude Sonnet 4 |
 | **OpenAI** | Embeddings | text-embedding-3-small |
+| **fal.ai** | Image generation | Various (article images) |
 
 ### Payment Processing
 
@@ -503,16 +685,40 @@ Critical indexes for performance:
 
 All scheduled via `vercel.json`. Auth requires `CRON_SECRET` Bearer token or `x-vercel-cron: true` header.
 
-| Job | Schedule | Cron Expression | Purpose |
-|-----|----------|-----------------|---------|
-| `schedule-ingestion` | Sun 2:00 AM UTC | `0 2 * * 0` | Queue parts ingestion from vendor APIs |
-| `process-scrape-jobs` | Every 15 min | `*/15 * * * *` | Process scrape queue (incremental) |
-| `process-scrape-jobs` | Sun 3:00 AM UTC | `0 3 * * 0` | Process scrape queue (weekly batch) |
-| `refresh-recalls` | Sun 2:30 AM UTC | `30 2 * * 0` | Fetch NHTSA recall data for all cars |
-| `refresh-complaints` | Sun 4:00 AM UTC | `0 4 * * 0` | Fetch NHTSA complaint data for all cars |
-| `youtube-enrichment` | Mon 4:00 AM UTC | `0 4 * * 1` | Discover videos, process AI summaries |
-| `forum-scrape` | Tue, Fri 5:00 AM UTC | `0 5 * * 2,5` | Scrape forums + extract community insights |
-| `refresh-events` | Daily 6:00 AM UTC | `0 6 * * *` | Fetch events from external sources |
+### High Frequency (Every 5-15 minutes)
+
+| Job | Schedule | Purpose |
+|-----|----------|---------|
+| `flush-error-aggregates` | Every 5 min | Aggregate and flush error metrics |
+| `process-email-queue` | Every 5 min | Send queued transactional emails |
+| `process-scrape-jobs` | Every 15 min | Process scrape queue (incremental) |
+
+### Daily Jobs
+
+| Job | Schedule (UTC) | Purpose |
+|-----|----------------|---------|
+| `daily-metrics` | 00:00 | Calculate daily platform metrics |
+| `calculate-engagement` | 02:00 | Calculate user engagement scores |
+| `refresh-events` | 06:00 | Fetch events from external sources |
+| `retention-alerts` | 10:00 | Check for at-risk users |
+| `schedule-inactivity-emails` | 11:00 | Queue re-engagement emails |
+| `daily-digest` | 14:00 | Send daily digest to Discord |
+| `article-research` | 00:00 | AI research for article topics |
+| `article-write` | 05:00 | AI writes draft articles |
+| `article-images` | 06:00 | Generate article images |
+| `article-publish` | 08:00 | Publish approved articles |
+
+### Weekly Jobs
+
+| Job | Day/Time (UTC) | Purpose |
+|-----|----------------|---------|
+| `weekly-car-expansion` | Sun 01:00 | Expand car database coverage |
+| `schedule-ingestion` | Sun 01:30 | Queue parts ingestion from vendors |
+| `refresh-recalls` | Sun 02:00 | Fetch NHTSA recall data |
+| `refresh-complaints` | Sun 02:30 | Fetch NHTSA complaint data |
+| `youtube-enrichment` | Mon 04:00 | Discover videos, AI summaries |
+| `forum-scrape` | Tue, Fri 05:00 | Scrape forums, extract insights |
+| `al-optimization` | Sat 03:00 | Optimize AL performance |
 
 **Data Flow:**
 ```
@@ -520,6 +726,7 @@ schedule-ingestion → creates scrape_jobs → process-scrape-jobs consumes
 youtube-enrichment → youtube_ingestion_queue → AI processing
 forum-scrape → forum_scraped_threads → community_insights
 refresh-events → events table (auto-approve, geocode, dedupe)
+article-* pipeline → article_queue → published articles
 ```
 
 ---
@@ -582,7 +789,7 @@ See [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md) for complete Stripe setup.
 
 See [DISCORD_CHANNEL_REFERENCE.md](DISCORD_CHANNEL_REFERENCE.md) for Discord setup.
 
-### Data Enrichment
+### Data Enrichment & AI
 
 | Variable | Purpose |
 |----------|---------|
@@ -590,6 +797,7 @@ See [DISCORD_CHANNEL_REFERENCE.md](DISCORD_CHANNEL_REFERENCE.md) for Discord set
 | `EXA_API_KEY` | Exa search for YouTube video discovery |
 | `SUPADATA_API_KEY` | Optional: Transcript fallback service |
 | `OPENAI_API_KEY` | Embeddings for knowledge base search |
+| `FAL_KEY` | fal.ai image generation for articles |
 | `CRON_SECRET` | Auth token for cron job endpoints |
 
 ### Optional / Google Cloud

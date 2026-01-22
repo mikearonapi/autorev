@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -10,6 +10,9 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { useFeedTracking } from '@/hooks/useFeedTracking';
+import { useCommunityBuilds, useToggleLike } from '@/hooks/useCommunityData';
+import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
+import LeaderboardView from './LeaderboardView';
 import styles from './page.module.css';
 
 /**
@@ -88,11 +91,8 @@ export default function CommunityPage() {
   const { user } = useAuth();
   
   const [activeTab, setActiveTab] = useState('builds');
-  const [builds, setBuilds] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [likedItems, setLikedItems] = useState(new Map()); // Map of postId -> { liked, count }
   const [showDetails, setShowDetails] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -129,9 +129,30 @@ export default function CommunityPage() {
     trackImageSwipe,
   } = useFeedTracking(sessionSeed);
   
+  // React Query hooks for community data
+  const { 
+    data: buildsData, 
+    isLoading, 
+    error: queryError,
+  } = useCommunityBuilds(
+    { limit: 20, sort: 'algorithm', seed: sessionSeed },
+    { enabled: activeTab === 'builds' }
+  );
+  const builds = useMemo(() => buildsData?.builds || [], [buildsData?.builds]);
+  const error = queryError ? 'Unable to load builds' : null;
+  
+  const toggleLikeMutation = useToggleLike();
+  
   // Track impressions ref to avoid dependency issues
   const trackImpressionsRef = useRef(trackImpressions);
   trackImpressionsRef.current = trackImpressions;
+  
+  // Track impressions when builds load
+  useEffect(() => {
+    if (builds.length > 0) {
+      trackImpressionsRef.current(builds);
+    }
+  }, [builds]);
   
   // Derived state - must be defined before useEffects that use it
   const currentBuild = builds[currentIndex];
@@ -142,30 +163,6 @@ export default function CommunityPage() {
       ? [{ blob_url: currentBuild.car_image_url }]
       : [{ blob_url: PLACEHOLDER_IMAGE }];
   
-  // Fetch builds with algorithmic ranking
-  useEffect(() => {
-    async function fetchBuilds() {
-      if (activeTab !== 'builds') return;
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/community/builds?limit=20&sort=algorithm&seed=${sessionSeed}`);
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        const fetchedBuilds = data.builds || [];
-        setBuilds(fetchedBuilds);
-        
-        // Track impressions for loaded builds
-        if (fetchedBuilds.length > 0) {
-          trackImpressionsRef.current(fetchedBuilds);
-        }
-      } catch (err) {
-        setError('Unable to load builds');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchBuilds();
-  }, [activeTab, sessionSeed]);
   
   // Fetch like status for current build when user is logged in
   useEffect(() => {
@@ -317,9 +314,9 @@ export default function CommunityPage() {
     return () => container.removeEventListener('wheel', handleWheel);
   }, [goToNext, goToPrev, showDetails, showComments]);
   
-  // Toggle Like - now uses API for persistence
+  // Toggle Like - now uses React Query mutation for persistence
   const toggleLike = useCallback(async (buildId) => {
-    if (isLikeProcessing) return;
+    if (isLikeProcessing || toggleLikeMutation.isPending) return;
     
     // Get current state
     const currentState = likedItems.get(buildId) || { 
@@ -349,29 +346,23 @@ export default function CommunityPage() {
     setIsLikeProcessing(true);
     
     try {
-      const res = await fetch(`/api/community/posts/${buildId}/like`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        // Update with actual server state
-        setLikedItems(prev => new Map(prev).set(buildId, {
-          liked: data.liked,
-          count: data.likeCount,
-        }));
-      } else if (res.status === 401) {
+      const result = await toggleLikeMutation.mutateAsync({ postId: buildId });
+      // Update with actual server state
+      setLikedItems(prev => new Map(prev).set(buildId, {
+        liked: result.liked,
+        count: result.likeCount,
+      }));
+    } catch (err) {
+      if (err.status === 401) {
         // User not logged in - revert optimistic update
         setLikedItems(prev => new Map(prev).set(buildId, currentState));
       }
-    } catch (err) {
       // On error, keep the optimistic state for better UX
       console.error('[Community] Like error:', err);
     } finally {
       setIsLikeProcessing(false);
     }
-  }, [user, likedItems, builds, isLikeProcessing, currentIndex, trackLike]);
+  }, [user, likedItems, builds, isLikeProcessing, currentIndex, trackLike, toggleLikeMutation]);
   
   // Share
   const shareBuild = useCallback(async (build) => {
@@ -426,20 +417,17 @@ export default function CommunityPage() {
     return { liked: false, count: build?.like_count || 0 };
   };
 
-  // Events placeholder
-  if (activeTab === 'events') {
+  // Leaderboard tab
+  if (activeTab === 'leaderboard') {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.tabBar}>
             <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
-            <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
+            <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
           </div>
         </div>
-        <div className={styles.centerState}>
-          <p>Events coming soon</p>
-          <Link href="/community/events" className={styles.primaryBtn}>Browse Events</Link>
-        </div>
+        <LeaderboardView />
       </div>
     );
   }
@@ -451,7 +439,7 @@ export default function CommunityPage() {
       <div className={styles.header}>
         <div className={styles.tabBar}>
           <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
-          <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
+          <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
         </div>
       </div>
       
@@ -498,13 +486,15 @@ export default function CommunityPage() {
                 <div className={styles.headerText}>
                 <div className={styles.userLine}>
                   <span className={styles.username}>{currentBuild.author?.display_name || 'Anonymous'}</span>
-                  {currentBuild.author?.tier === 'admin' && (
-                    <span className={styles.badge}>
-                      {currentBuild.author?.display_name?.toLowerCase().includes('cory') 
-                        ? 'Mod Samurai' 
-                        : currentBuild.author?.display_name?.toLowerCase().includes('mike') 
-                          ? 'AI Ronin'
-                          : 'Staff'}
+                  {currentBuild.author?.selected_title && TITLES[currentBuild.author.selected_title] && (
+                    <span 
+                      className={styles.badge}
+                      style={{ 
+                        color: TITLES[currentBuild.author.selected_title].color,
+                        background: `${TITLES[currentBuild.author.selected_title].color}15`,
+                      }}
+                    >
+                      {TITLES[currentBuild.author.selected_title].display}
                     </span>
                   )}
                 </div>

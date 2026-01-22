@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // US State name to abbreviation mapping

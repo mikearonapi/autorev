@@ -123,9 +123,9 @@ export default function JoinPage() {
   const handleJoin = async (tierId = 'free') => {
     // If user is already logged in
     if (user) {
-      // During beta or free tier, just go to garage
+      // During beta or free tier, just go to dashboard
       if (IS_BETA || tierId === 'free') {
-        window.location.href = '/garage';
+        window.location.href = '/dashboard';
         return;
       }
       // For paid tiers after beta, go to checkout
@@ -234,7 +234,7 @@ export default function JoinPage() {
                 {/* AL AI Mechanic - Compact */}
                 <div className={styles.alCompact}>
                   <div className={styles.alCompactHeader}>
-                    <img 
+                    <Image 
                       src={UI_IMAGES.alMascot}
                       alt="AL" 
                       className={styles.alAvatar}
@@ -294,8 +294,8 @@ export default function JoinPage() {
             <button className={styles.primaryCta} onClick={() => handleJoin('collector')}>
               Create Free Account
             </button>
-            <Link href="/car-selector" className={styles.secondaryCta}>
-              Explore Cars First
+            <Link href="/garage" className={styles.secondaryCta}>
+              Go to My Garage
             </Link>
           </div>
           <p className={styles.ctaNote}>No credit card required. Unsubscribe anytime.</p>

@@ -68,13 +68,24 @@ function ResetPasswordContent() {
         });
         
         // Give it a moment to process the URL hash
+        // Use a flag to track if we've received a response
+        let hasResponse = false;
+        const originalSubscription = subscription;
+        
+        const wrappedSubscription = {
+          unsubscribe: () => {
+            hasResponse = true;
+            originalSubscription.unsubscribe();
+          }
+        };
+        
         setTimeout(() => {
-          if (isValidSession === null) {
+          if (!hasResponse) {
             setIsValidSession(false);
           }
         }, 3000);
         
-        return () => subscription.unsubscribe();
+        return () => wrappedSubscription.unsubscribe();
       }
     }
     

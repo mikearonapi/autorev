@@ -141,7 +141,7 @@ export default function SelectedCarBanner() {
 
           {/* Change Car */}
           <Link 
-            href="/car-selector"
+            href="/garage"
             className={styles.actionBtn}
             title="Change car"
           >

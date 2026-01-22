@@ -96,24 +96,19 @@ const nextConfig = {
     ],
   },
 
-  // Redirects for route migrations
+  // Redirects for route migrations (Build pivot - January 2026)
   async redirects() {
     return [
-      // Migrate /compare to /articles/comparisons
+      // Deprecated Find features → Garage
       {
-        source: '/compare',
-        destination: '/articles/comparisons',
+        source: '/car-selector',
+        destination: '/garage',
         permanent: true,
       },
-      {
-        source: '/compare/:slug',
-        destination: '/articles/comparisons/:slug',
-        permanent: true,
-      },
-      // Build Pivot - Route restructuring
+      // Legacy Build routes → Garage
       {
         source: '/tuning-shop',
-        destination: '/build',
+        destination: '/garage',
         permanent: true,
       },
       {
@@ -121,7 +116,44 @@ const nextConfig = {
         destination: '/garage',
         permanent: true,
       },
-      // Community - keep existing routes, no redirect needed
+      {
+        source: '/mod-planner',
+        destination: '/garage',
+        permanent: true,
+      },
+      {
+        source: '/build',
+        destination: '/garage',
+        permanent: true,
+      },
+      // Legacy performance/track routes → Data
+      {
+        source: '/track',
+        destination: '/data',
+        permanent: true,
+      },
+      {
+        source: '/performance',
+        destination: '/data',
+        permanent: true,
+      },
+      // Community builds consolidated
+      {
+        source: '/community/builds',
+        destination: '/community',
+        permanent: true,
+      },
+      {
+        source: '/community/builds/:slug',
+        destination: '/community',
+        permanent: true,
+      },
+      // Join page → Homepage (auth modal handles signup now)
+      {
+        source: '/join',
+        destination: '/',
+        permanent: false, // Soft redirect - may reactivate
+      },
     ];
   },
 };

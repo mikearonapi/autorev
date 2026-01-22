@@ -1593,11 +1593,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
         
         {/* Footer Links */}
         <div className={styles.hubFooter}>
-          <Link href="/encyclopedia" className={styles.footerLink}>
-            Learn About Modifications <Icons.chevronRight size={14} />
+          <Link href="/al" className={styles.footerLink}>
+            Ask AL About Modifications <Icons.chevronRight size={14} />
           </Link>
-          <Link href="/encyclopedia?topic=systems" className={styles.footerLink}>
-            Explore Vehicle Systems <Icons.chevronRight size={14} />
+          <Link href="/community" className={styles.footerLink}>
+            Browse Community Builds <Icons.chevronRight size={14} />
           </Link>
           <Link href="/contact" className={styles.footerLink}>
             Have Questions? <Icons.chevronRight size={14} />

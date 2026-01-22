@@ -12,8 +12,9 @@
  * - Direct labeling ✓
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styles from './ALUsageTrends.module.css';
+import { useAdminALTrends } from '@/hooks/useAdminData';
 
 // SVG Icons
 const BrainIcon = ({ size = 20 }) => (
@@ -277,38 +278,17 @@ function BreakdownSection({ breakdown }) {
 
 // Main component
 export function ALUsageTrends({ token }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [days, setDays] = useState(30);
   const [selectedMetric, setSelectedMetric] = useState('tokens');
   
-  useEffect(() => {
-    async function fetchData() {
-      if (!token) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`/api/admin/al-trends?days=${days}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-        
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error('[ALUsageTrends] Error:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchData();
-  }, [token, days]);
+  // Use React Query hook for AL trends
+  const { 
+    data, 
+    isLoading: loading, 
+    error: queryError,
+  } = useAdminALTrends(days);
+  
+  const error = queryError?.message || null;
   
   const chartData = useMemo(() => data?.chartData || [], [data]);
   const selectedConfig = METRIC_TYPES.find(t => t.key === selectedMetric);

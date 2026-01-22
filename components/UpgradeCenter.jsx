@@ -45,7 +45,6 @@ import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
-import { supabase } from '@/lib/supabase';
 import { 
   useTuningProfile, 
   // Unused imports after hiding Vehicle-Specific Tuning section:
@@ -70,6 +69,8 @@ import {
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
 import { useAIChat } from './AIChatContext';
+import { useTurbos } from '@/hooks/useCarData';
+import { useLinkedPost } from '@/hooks/useCommunityData';
 // Image management moved to Garage Photos section for cleaner UX
 import VideoPlayer from './VideoPlayer';
 import UpgradeConfigPanel, { 
@@ -977,9 +978,12 @@ export default function UpgradeCenter({
   // Build photos - stored separately and linked to build ID
   const [buildImages, setBuildImages] = useState([]);
   
-  // Track if current build has a linked community post
-  const [linkedCommunityPost, setLinkedCommunityPost] = useState(null);
-  const [checkingCommunityPost, setCheckingCommunityPost] = useState(false);
+  // Track if current build has a linked community post (React Query)
+  const { 
+    data: linkedCommunityPost, 
+    isLoading: checkingCommunityPost,
+    refetch: refetchLinkedPost,
+  } = useLinkedPost(currentBuildId, { enabled: !!currentBuildId });
   
   // Toggle for whether to share to / keep in community when saving
   const [shareToNewCommunity, setShareToNewCommunity] = useState(false);
@@ -1171,9 +1175,10 @@ export default function UpgradeCenter({
     },
   });
   
-  // Turbo library options (loaded from database)
-  const [turboOptions, setTurboOptions] = useState([]);
-  const [loadingTurbos, setLoadingTurbos] = useState(false);
+  // Turbo library options (loaded via React Query)
+  const { data: turboOptions = [], isLoading: loadingTurbos } = useTurbos({
+    enabled: tunerMode === 'advanced',
+  });
   
   // Expandable detail sections in Advanced mode
   const [expandedSections, setExpandedSections] = useState({
@@ -1219,31 +1224,7 @@ export default function UpgradeCenter({
     });
   }, [safeCarSlug]);
   
-  // Load turbo options from database when advanced mode is enabled
-  useEffect(() => {
-    if (tunerMode !== 'advanced' || turboOptions.length > 0) return;
-    
-    async function loadTurboOptions() {
-      setLoadingTurbos(true);
-      try {
-        const { data, error } = await supabase
-          .from('turbo_models')
-          .select('*')
-          .order('brand')
-          .order('model');
-        
-        if (!error && data) {
-          setTurboOptions(data);
-        }
-      } catch (err) {
-        console.error('[UpgradeCenter] Error loading turbo options:', err);
-      } finally {
-        setLoadingTurbos(false);
-      }
-    }
-    
-    loadTurboOptions();
-  }, [tunerMode, turboOptions.length]);
+  // Turbos are now loaded via React Query (useTurbos hook above)
   
   // Load initial build if provided
   useEffect(() => {
@@ -1267,116 +1248,53 @@ export default function UpgradeCenter({
   }, [initialBuildId, getBuildById, safeCarSlug]);
   
   // Load build images when build ID changes
-  // Also attempts to load images by car_slug for sharing between garage and tuning shop
-  // (car_slug sharing requires migration 089_shared_car_images.sql to be run)
+  // Load build images via API route for native app compatibility
+  // Includes images linked by car_slug for cross-feature sharing with garage
   useEffect(() => {
     async function loadBuildImages() {
-      if (!currentBuildId || !supabase) {
+      if (!currentBuildId) {
         setBuildImages([]);
         return;
       }
       
       try {
-        // Fetch images linked to this build (original query - always works)
-        const { data: buildData, error: buildError } = await supabase
-          .from('user_uploaded_images')
-          .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height, media_type, duration_seconds, video_thumbnail_url')
-          .eq('user_build_id', currentBuildId)
-          .order('is_primary', { ascending: false })
-          .order('display_order', { ascending: true })
-          .order('created_at', { ascending: true });
+        // Build URL with optional carSlug for cross-feature sharing
+        let url = `/api/builds/${currentBuildId}/images`;
+        if (safeCarSlug) {
+          url += `?carSlug=${encodeURIComponent(safeCarSlug)}`;
+        }
         
-        if (buildError) {
-          console.error('[UpgradeCenter] Error loading build images:', buildError);
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error('[UpgradeCenter] Error loading build images:', response.statusText);
           setBuildImages([]);
           return;
         }
         
-        let allImages = buildData || [];
-        const imageIds = new Set(allImages.map(img => img.id));
-        
-        // Try to also fetch images linked by car_slug (for cross-feature sharing with garage)
-        // This query may fail if the migration hasn't been run yet - that's OK
-        if (safeCarSlug && user?.id) {
-          try {
-            const { data: carSlugData, error: carSlugError } = await supabase
-              .from('user_uploaded_images')
-              .select('id, blob_url, thumbnail_url, caption, is_primary, display_order, width, height, media_type, duration_seconds, video_thumbnail_url')
-              .eq('user_id', user.id)
-              .eq('car_slug', safeCarSlug)
-              .order('is_primary', { ascending: false })
-              .order('display_order', { ascending: true })
-              .order('created_at', { ascending: true });
-            
-            // Only add images not already in the list (avoid duplicates)
-            if (!carSlugError && carSlugData) {
-              carSlugData.forEach(img => {
-                if (!imageIds.has(img.id)) {
-                  allImages.push(img);
-                  imageIds.add(img.id);
-                }
-              });
-            }
-          } catch (carSlugErr) {
-            // car_slug column may not exist yet - migration not run, ignore
-            console.log('[UpgradeCenter] car_slug query skipped (migration not run)');
-          }
-        }
-        
-        // Sort by is_primary DESC, then display_order ASC
-        allImages.sort((a, b) => {
-          if (a.is_primary && !b.is_primary) return -1;
-          if (!a.is_primary && b.is_primary) return 1;
-          return (a.display_order || 0) - (b.display_order || 0);
-        });
-        
-        setBuildImages(allImages);
+        const { images } = await response.json();
+        setBuildImages(images || []);
       } catch (err) {
         console.error('[UpgradeCenter] Error loading build images:', err);
+        setBuildImages([]);
       }
     }
     
     loadBuildImages();
-  }, [currentBuildId, safeCarSlug, user?.id]);
+  }, [currentBuildId, safeCarSlug]);
 
-  // Check if current build has a linked community post
+  // Sync form state when linked community post data changes
   useEffect(() => {
-    async function checkLinkedPost() {
-      if (!currentBuildId || !supabase) {
-        setLinkedCommunityPost(null);
-        return;
+    if (linkedCommunityPost) {
+      setShareToNewCommunity(linkedCommunityPost.is_published !== false);
+      if (linkedCommunityPost.title) {
+        setCommunityTitle(linkedCommunityPost.title);
       }
-      
-      setCheckingCommunityPost(true);
-      try {
-        const { data, error } = await supabase
-          .from('community_posts')
-          .select('id, slug, title, is_published')
-          .eq('user_build_id', currentBuildId)
-          .maybeSingle();
-        
-        if (!error && data) {
-          setLinkedCommunityPost(data);
-          setShareToNewCommunity(data.is_published !== false); // Default to keeping shared
-          // Load community title from existing post
-          if (data.title) {
-            setCommunityTitle(data.title);
-          }
-        } else {
-          setLinkedCommunityPost(null);
-          setShareToNewCommunity(false); // Default off for new builds
-          setCommunityTitle(''); // Reset community title
-        }
-      } catch (err) {
-        console.error('[UpgradeCenter] Error checking linked community post:', err);
-        setLinkedCommunityPost(null);
-      } finally {
-        setCheckingCommunityPost(false);
-      }
+    } else if (!checkingCommunityPost && currentBuildId) {
+      // No linked post found - reset form state
+      setShareToNewCommunity(false);
+      setCommunityTitle('');
     }
-    
-    checkLinkedPost();
-  }, [currentBuildId]);
+  }, [linkedCommunityPost, checkingCommunityPost, currentBuildId]);
   
   // Open save modal on mount if requested (e.g., from Projects share button)
   // This unifies sharing through the save modal's community toggle
@@ -2246,8 +2164,8 @@ export default function UpgradeCenter({
             });
             
             if (response.ok) {
-              // Clear the linked post since it's now unpublished
-              setLinkedCommunityPost(null);
+              // Refetch to update the linked post state
+              refetchLinkedPost();
             } else {
               console.error('[UpgradeCenter] Error unpublishing community post');
             }

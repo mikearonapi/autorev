@@ -415,6 +415,7 @@ export default function LocationAutocomplete({
         <input
           ref={inputRef}
           type="text"
+          role="combobox"
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -426,6 +427,7 @@ export default function LocationAutocomplete({
           aria-autocomplete="list"
           aria-expanded={showSuggestions && suggestions.length > 0}
           aria-haspopup="listbox"
+          aria-controls="location-suggestions-listbox"
         />
         {isLoading && <div className={styles.loadingSpinner} />}
         {inputValue && !isLoading && (
@@ -446,6 +448,7 @@ export default function LocationAutocomplete({
       {/* Suggestions dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <ul
+          id="location-suggestions-listbox"
           ref={suggestionsRef}
           className={styles.suggestions}
           role="listbox"

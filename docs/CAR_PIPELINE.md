@@ -835,9 +835,9 @@ GROUP BY c.slug;
 
 ### Page Render Checklist
 
-- [ ] `/browse-cars/<slug>` loads without errors
-- [ ] Hero image displays correctly
-- [ ] All tabs render (Overview, Buying, Ownership, Expert Reviews)
+- [ ] Car data accessible via AL assistant
+- [ ] Hero image displays correctly in garage vehicle selection
+- [ ] Car specs render in garage build configuration
 - [ ] Scores display with correct values
 - [ ] Known issues section populated
 - [ ] Maintenance specs section populated
@@ -854,9 +854,9 @@ Test these queries in AL to verify data access:
 
 ### Search/Filter Verification
 
-- [ ] Car appears in `/browse-cars` list
-- [ ] Car appears when filtering by its tier
-- [ ] Car appears when filtering by its brand
+- [ ] Car appears in garage vehicle search
+- [ ] Car data available to AL assistant
+- [ ] Car tuning profile loaded correctly
 - [ ] Car appears when filtering by its category
 - [ ] Car appears in search results
 

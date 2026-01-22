@@ -11,8 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import {
   SUBSCRIPTION_TIERS,
   AL_CREDIT_PACKS,
@@ -20,6 +19,7 @@ import {
   DONATION_PRODUCT_ID,
 } from '@/lib/stripe';
 import { logServerError } from '@/lib/serverErrorLogger';
+import { errors } from '@/lib/apiErrors';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -58,26 +58,20 @@ async function getOrCreateStripeCustomer(supabase, user) {
 
 export async function POST(request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          },
-        },
-      }
-    );
+    // Support both cookie and Bearer token auth
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!supabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
 
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : await supabase.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json(

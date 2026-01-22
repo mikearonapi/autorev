@@ -3,10 +3,49 @@
  * 
  * Fetches vehicle-specific tuning profile from car_tuning_profiles table.
  * Falls back to generic upgrade data when no profile exists.
+ * 
+ * Updated to use React Query for caching and deduplication.
  */
 
-import { useState, useEffect } from 'react';
+import { useMemo, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+
+// Cache time for tuning profiles (5 minutes)
+const TUNING_PROFILE_STALE_TIME = 5 * 60 * 1000;
+
+// Query key factory
+const tuningKeys = {
+  all: ['tuning'],
+  profiles: (carId) => [...tuningKeys.all, 'profiles', carId],
+};
+
+/**
+ * Fetch tuning profiles from Supabase
+ */
+async function fetchTuningProfiles(carId) {
+  if (!carId || !supabase) {
+    return [];
+  }
+
+  const { data: profiles, error: fetchError } = await supabase
+    .from('car_tuning_profiles')
+    .select(`
+      *,
+      car_variants:car_variant_id (
+        id,
+        display_name,
+        engine
+      )
+    `)
+    .eq('car_id', carId);
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  return profiles || [];
+}
 
 /**
  * Hook to fetch and manage tuning profile for a car
@@ -16,86 +55,53 @@ import { supabase } from '@/lib/supabase';
  * @returns {Object} - { profile, loading, error, hasProfile }
  */
 export function useTuningProfile(car, variantId = null, tuningFocus = 'performance') {
-  const [profile, setProfile] = useState(null);
-  const [allProfiles, setAllProfiles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Use React Query for data fetching with caching
+  const {
+    data: allProfiles = [],
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
+    queryKey: tuningKeys.profiles(car?.id),
+    queryFn: () => fetchTuningProfiles(car?.id),
+    staleTime: TUNING_PROFILE_STALE_TIME,
+    enabled: !!car?.id && !!supabase,
+  });
 
-  useEffect(() => {
-    async function fetchProfile() {
-      if (!car?.id || !supabase) {
-        setProfile(null);
-        setAllProfiles([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        // Fetch all profiles for this car
-        const { data: profiles, error: fetchError } = await supabase
-          .from('car_tuning_profiles')
-          .select(`
-            *,
-            car_variants:car_variant_id (
-              id,
-              display_name,
-              engine
-            )
-          `)
-          .eq('car_id', car.id);
-
-        if (fetchError) {
-          throw fetchError;
-        }
-
-        setAllProfiles(profiles || []);
-
-        // Find the best matching profile
-        let bestMatch = null;
-
-        if (profiles && profiles.length > 0) {
-          // First, try exact match with variant and focus
-          if (variantId) {
-            bestMatch = profiles.find(p => 
-              p.car_variant_id === variantId && p.tuning_focus === tuningFocus
-            );
-          }
-
-          // If no variant match, find by focus
-          if (!bestMatch) {
-            bestMatch = profiles.find(p => p.tuning_focus === tuningFocus);
-          }
-
-          // If still no match, just take the first one
-          if (!bestMatch) {
-            bestMatch = profiles[0];
-          }
-        }
-
-        setProfile(bestMatch);
-      } catch (err) {
-        console.error('Error fetching tuning profile:', err);
-        setError(err.message);
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
+  // Memoize profile selection logic
+  const profile = useMemo(() => {
+    if (!allProfiles || allProfiles.length === 0) {
+      return null;
     }
 
-    fetchProfile();
-  }, [car?.id, variantId, tuningFocus]);
+    // First, try exact match with variant and focus
+    if (variantId) {
+      const exactMatch = allProfiles.find(p => 
+        p.car_variant_id === variantId && p.tuning_focus === tuningFocus
+      );
+      if (exactMatch) return exactMatch;
+    }
+
+    // If no variant match, find by focus
+    const focusMatch = allProfiles.find(p => p.tuning_focus === tuningFocus);
+    if (focusMatch) return focusMatch;
+
+    // If still no match, just take the first one
+    return allProfiles[0];
+  }, [allProfiles, variantId, tuningFocus]);
+
+  // Helper to get profile for specific variant
+  const getProfileForVariant = useCallback(
+    (vId) => allProfiles.find(p => p.car_variant_id === vId),
+    [allProfiles]
+  );
 
   return {
     profile,
     allProfiles,
     loading,
-    error,
+    error: queryError?.message || null,
     hasProfile: Boolean(profile),
-    // Helper to get profile for specific variant
-    getProfileForVariant: (vId) => allProfiles.find(p => p.car_variant_id === vId)
+    getProfileForVariant,
   };
 }
 

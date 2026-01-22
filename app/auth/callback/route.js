@@ -35,10 +35,9 @@ const VERIFICATION_RETRY_DELAY = 200; // ms
 
 /**
  * Default post-login destination
- * BUILD PIVOT: After login, users land directly in their Garage (the app entry point)
- * rather than the marketing homepage
+ * Users land on their Dashboard after login to see their progress and engagement
  */
-const DEFAULT_POST_LOGIN_PATH = '/garage';
+const DEFAULT_POST_LOGIN_PATH = '/dashboard';
 
 /**
  * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.
@@ -49,17 +48,17 @@ const DEFAULT_POST_LOGIN_PATH = '/garage';
  * - NOT containing a protocol (`https://`, `http://`, `javascript:`, etc.)
  * 
  * @param {string|null} next - The raw `next` query parameter
- * @returns {string} - A safe relative path, defaulting to /garage if invalid
+ * @returns {string} - A safe relative path, defaulting to /dashboard if invalid
  */
 function validateRedirectPath(next) {
-  // Default to garage (app entry point) if no next provided
+  // Default to dashboard if no next provided
   if (!next || typeof next !== 'string') {
     return DEFAULT_POST_LOGIN_PATH;
   }
   
   const trimmed = next.trim();
   
-  // Empty string → default to garage
+  // Empty string → default to dashboard
   if (trimmed === '') {
     return DEFAULT_POST_LOGIN_PATH;
   }
@@ -85,7 +84,7 @@ function validateRedirectPath(next) {
     return DEFAULT_POST_LOGIN_PATH;
   }
   
-  // If user is being redirected to homepage, send them to garage instead
+  // If user is being redirected to homepage, send them to dashboard instead
   // This ensures logged-in users always land in the app, not the marketing page
   if (trimmed === '/') {
     return DEFAULT_POST_LOGIN_PATH;

@@ -1,0 +1,157 @@
+/* UserGreeting.module.css */
+
+.container {
+  margin-bottom: 4px;
+  position: relative;
+}
+
+/* Clickable title button - "Mike, known as [Title]" format */
+.titleButton {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  margin: 0;
+  cursor: pointer;
+  min-height: 44px; /* Touch target */
+  transition: opacity 0.15s ease;
+  text-align: left;
+}
+
+.titleButton:active {
+  opacity: 0.7;
+}
+
+.nameText {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.knownAs {
+  font-size: 15px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-weight: 400;
+  margin-right: 5px;
+}
+
+.titleText {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--title-color, var(--color-accent-teal, #10b981));
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.15);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.titleChevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary, #64748b);
+  transition: transform 0.2s ease;
+  margin-left: 2px;
+}
+
+.titleButton[aria-expanded="true"] .titleChevron {
+  transform: rotate(180deg);
+}
+
+/* Title Picker Dropdown */
+.titlePicker {
+  margin-top: 8px;
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.titlePickerHeader {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.titlePickerHeader span {
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-style: italic;
+}
+
+.titleList {
+  max-height: 280px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.titleOption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  min-height: 44px; /* Touch target */
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.titleOption:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.titleOption:last-child {
+  border-bottom: none;
+}
+
+.titleOptionSelected {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.titleName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--title-color, var(--color-text-primary));
+  white-space: nowrap;
+}
+
+.titleDesc {
+  flex: 1;
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.checkmark {
+  font-size: 14px;
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 700;
+}
+
+.titlePickerFooter {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.lockedCount {
+  font-size: 11px;
+  color: var(--color-text-tertiary, #64748b);
+}

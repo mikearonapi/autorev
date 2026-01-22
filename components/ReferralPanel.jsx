@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './ReferralPanel.module.css';
+import { useReferralData, useSendReferralInvite, useResendReferralInvite } from '@/hooks/useUserData';
+import { platform } from '@/lib/platform';
 
 /**
  * ReferralPanel Component
@@ -15,15 +17,25 @@ import styles from './ReferralPanel.module.css';
  * - List of referrals with resend functionality
  */
 export default function ReferralPanel({ userId }) {
-  const [referralData, setReferralData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // React Query hooks for data fetching and mutations
+  const { 
+    data: referralData, 
+    isLoading, 
+    error: queryError,
+    refetch: fetchReferralData,
+  } = useReferralData({ enabled: !!userId });
+  
+  const sendInviteMutation = useSendReferralInvite();
+  const resendInviteMutation = useResendReferralInvite();
+  
   const [copied, setCopied] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [friendEmail, setFriendEmail] = useState('');
-  const [sendingInvite, setSendingInvite] = useState(false);
   const [inviteSent, setInviteSent] = useState(false);
   const [resendingId, setResendingId] = useState(null);
+  
+  const error = queryError?.message || null;
+  const sendingInvite = sendInviteMutation.isPending;
 
   // Milestones configuration (balanced rewards)
   const MILESTONES = [
@@ -33,56 +45,18 @@ export default function ReferralPanel({ userId }) {
     { key: 'milestone_25', friends: 25, reward: '1 month Tuner', icon: '🏆', type: 'tier' },
   ];
 
-  // Fetch referral data
-  useEffect(() => {
-    fetchReferralData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
-
-  async function fetchReferralData() {
-    if (!userId) return;
-    
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/api/referrals');
-      if (response.ok) {
-        const data = await response.json();
-        setReferralData(data);
-      } else {
-        const errData = await response.json();
-        setError(errData.error || 'Failed to load referral data');
-      }
-    } catch (err) {
-      console.error('Error fetching referral data:', err);
-      setError('Failed to load referral data');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  // Copy link to clipboard
+  // Copy link to clipboard (using platform abstraction for cross-platform support)
   const handleCopyLink = async () => {
     if (!referralData?.referral_link) return;
     
-    try {
-      await navigator.clipboard.writeText(referralData.referral_link);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = referralData.referral_link;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
+    const success = await platform.copyToClipboard(referralData.referral_link);
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  // Native share (mobile)
+  // Native share (mobile) - using platform abstraction for cross-platform support
   const handleNativeShare = async () => {
     if (!referralData?.referral_link) return;
     
@@ -92,16 +66,11 @@ export default function ReferralPanel({ userId }) {
       url: referralData.referral_link,
     };
 
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        handleCopyLink();
-      }
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        handleCopyLink();
-      }
+    const result = await platform.share(shareData);
+    if (result.method === 'clipboard') {
+      // Fallback was used - show copy success
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -110,32 +79,17 @@ export default function ReferralPanel({ userId }) {
     e.preventDefault();
     if (!friendEmail.trim()) return;
     
-    setSendingInvite(true);
     try {
-      const response = await fetch('/api/referrals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: friendEmail.trim() }),
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setInviteSent(true);
-        setFriendEmail('');
-        // Refresh data to show new referral
-        fetchReferralData();
-        setTimeout(() => {
-          setInviteSent(false);
-          setShowEmailModal(false);
-        }, 2000);
-      } else {
-        alert(data.error || 'Failed to send invite');
-      }
+      await sendInviteMutation.mutateAsync({ email: friendEmail.trim() });
+      setInviteSent(true);
+      setFriendEmail('');
+      // Data will be automatically refreshed by React Query
+      setTimeout(() => {
+        setInviteSent(false);
+        setShowEmailModal(false);
+      }, 2000);
     } catch (err) {
-      alert('Failed to send invite');
-    } finally {
-      setSendingInvite(false);
+      alert(err.message || 'Failed to send invite');
     }
   };
 
@@ -143,21 +97,10 @@ export default function ReferralPanel({ userId }) {
   const handleResendInvite = async (referralId) => {
     setResendingId(referralId);
     try {
-      const response = await fetch('/api/referrals', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ referral_id: referralId }),
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        alert('Invite resent!');
-      } else {
-        alert(data.error || 'Failed to resend invite');
-      }
+      await resendInviteMutation.mutateAsync({ referralId });
+      alert('Invite resent!');
     } catch (err) {
-      alert('Failed to resend invite');
+      alert(err.message || 'Failed to resend invite');
     } finally {
       setResendingId(null);
     }

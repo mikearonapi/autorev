@@ -1,8 +1,8 @@
 # AutoRev Scripts Reference
 
-> Complete reference for 170+ operational scripts
+> Complete reference for 266 operational scripts
 >
-> **Last Updated:** December 28, 2024
+> **Last Updated:** January 21, 2026
 
 ---
 
@@ -10,7 +10,7 @@
 
 The `scripts/` directory contains operational scripts for data enrichment, migrations, testing, and maintenance. These are **not** part of the production app but are essential for data operations.
 
-**Total Scripts:** 170+ files (.js + .mjs)
+**Total Scripts:** 266 files (.js + .mjs)
 
 | Category | Count | Purpose |
 |----------|-------|---------|

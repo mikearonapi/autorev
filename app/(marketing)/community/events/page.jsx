@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -11,6 +11,7 @@ import EventCalendarView from '@/components/EventCalendarView';
 import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useAIChat } from '@/components/AIChatContext';
+import { useUserGarage, useUserSavedEvents } from '@/hooks/useUserData';
 
 // Sparkle icon for Ask AL buttons
 const SparkleIcon = ({ size = 16 }) => (
@@ -66,12 +67,35 @@ function EventsContent() {
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [eventTypes, setEventTypes] = useState([]);
-  const [garageBrands, setGarageBrands] = useState([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [groupRecurring, setGroupRecurring] = useState(true); // Group recurring events by default
   
-  // Saved events tracking
+  // React Query hooks for user data
+  const { data: garageData } = useUserGarage(user?.id);
+  const { data: savedEventsData, refetch: refetchSavedEvents } = useUserSavedEvents(
+    user?.id, 
+    { includeExpired: true },
+    { enabled: isAuthenticated && !!user?.id }
+  );
+  
+  // Derive garage brands from garage data
+  const garageBrands = useMemo(() => {
+    if (!garageData) return [];
+    const vehicles = Array.isArray(garageData) ? garageData : garageData.vehicles || [];
+    const brands = new Set(vehicles.map(v => v.make).filter(Boolean));
+    return Array.from(brands);
+  }, [garageData]);
+  
+  // Saved events tracking - derive from query data
   const [savedEventSlugs, setSavedEventSlugs] = useState(new Set());
+  
+  // Update saved slugs when data loads
+  useEffect(() => {
+    if (savedEventsData?.savedEvents) {
+      const slugs = new Set(savedEventsData.savedEvents.map(se => se.event?.slug).filter(Boolean));
+      setSavedEventSlugs(slugs);
+    }
+  }, [savedEventsData]);
   
   // View state (List, Map, Calendar)
   const [view, setView] = useState('list');
@@ -99,49 +123,21 @@ function EventsContent() {
     locationLng: searchParams.get('lng') ? parseFloat(searchParams.get('lng')) : null,
   });
 
-  // Fetch event types, garage brands, and saved events on mount
-  // Wait for auth loading to complete before making authenticated requests
+  // Fetch event types on mount (garage and saved events handled by React Query hooks)
   useEffect(() => {
-    async function fetchMetadata() {
-      // Wait for auth to load before fetching user-specific data
-      if (authLoading) return;
-      
+    async function fetchEventTypes() {
       try {
-        const authHeaders = {};
-        // Saved events is an authenticated endpoint; our client auth may be localStorage-based,
-        // so forward a Bearer token when available.
-        if (session?.access_token) {
-          authHeaders.Authorization = `Bearer ${session.access_token}`;
-        }
-
-        const [typesRes, userRes, savedRes] = await Promise.all([
-          fetch('/api/events/types'),
-          isAuthenticated && user?.id ? fetch(`/api/users/${user.id}/garage`, { headers: authHeaders }) : Promise.resolve(null),
-          isAuthenticated && user?.id ? fetch(`/api/users/${user.id}/saved-events?includeExpired=true`, { headers: authHeaders }) : Promise.resolve(null)
-        ]);
-
+        const typesRes = await fetch('/api/events/types');
         if (typesRes.ok) {
           const data = await typesRes.json();
           setEventTypes(data.types || []);
         }
-
-        if (userRes && userRes.ok) {
-          const data = await userRes.json();
-          const brands = new Set(data.vehicles?.map(v => v.make) || []);
-          setGarageBrands(Array.from(brands));
-        }
-
-        if (savedRes && savedRes.ok) {
-          const data = await savedRes.json();
-          const slugs = new Set((data.savedEvents || []).map(se => se.event?.slug).filter(Boolean));
-          setSavedEventSlugs(slugs);
-        }
       } catch (err) {
-        console.error('Failed to fetch metadata:', err);
+        console.error('Failed to fetch event types:', err);
       }
     }
-    fetchMetadata();
-  }, [isAuthenticated, authLoading, user?.id, session?.access_token]);
+    fetchEventTypes();
+  }, []);
 
   // Handle save toggle - called by SaveEventButton after API call
   const handleSaveToggle = useCallback((eventSlug, isSaved) => {
