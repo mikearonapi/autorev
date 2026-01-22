@@ -852,7 +852,7 @@
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), visibility 0s var(--transition-slow);
   /*
     Now that mobileNav is outside header's stacking context, this z-index
     competes at document level. Set to 1050 to match header and appear
@@ -862,10 +862,20 @@
   z-index: 1050;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  
+  /* CRITICAL: Prevent touch interception when closed (Android Chrome fix)
+     Without this, the off-screen element can still capture touch events
+     on Android Chrome, blocking page scroll. */
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .mobileNavOpen {
   transform: translateX(0);
+  /* Re-enable interactions when open */
+  pointer-events: auto;
+  visibility: visible;
+  transition: transform var(--transition-slow), visibility 0s 0s;
 }
 
 .mobileNavLinks {

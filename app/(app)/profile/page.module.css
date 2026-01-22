@@ -105,7 +105,7 @@
   color: var(--color-text-secondary, #94a3b8);
 }
 
-.logoutBtn {
+.closeBtn {
   width: 44px;
   height: 44px;
   border-radius: 12px;
@@ -120,10 +120,40 @@
   transition: all 0.2s ease;
 }
 
-.logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Thin Sign Out Button - above fuel card */
+.signOutThin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.signOutThin:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
   color: #ef4444;
+}
+
+.signOutThin svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* ============================================
@@ -943,27 +973,6 @@
 }
 
 .tourBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.signOutBtn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  font-size: 13px;
-  color: var(--color-text-secondary, #94a3b8);
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: all 0.2s ease;
-}
-
-.signOutBtn:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 

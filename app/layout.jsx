@@ -329,6 +329,60 @@ export default function RootLayout({ children }) {
         <MetaPixel />
       </head>
       <body>
+        {/* 
+          CRITICAL: Inline script that runs BEFORE React hydrates
+          Shows splash screen immediately if coming from OAuth callback
+          This prevents any flash of loading/unauthenticated states
+          
+          The splash stays visible until AuthProvider calls window.dismissOAuthSplash()
+          after auth is complete and minimum duration has passed.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                // Check for OAuth callback signals
+                var params = new URLSearchParams(window.location.search);
+                var authTs = params.get('auth_ts');
+                var hasCallback = document.cookie.includes('auth_callback_complete=');
+                
+                // If we have fresh OAuth signals, show splash immediately
+                if (authTs || hasCallback) {
+                  var age = authTs ? Date.now() - parseInt(authTs, 10) : 0;
+                  if (hasCallback || (age >= 0 && age < 60000)) {
+                    // Record when splash started (for minimum duration calculation)
+                    window.__splashStartTime = Date.now();
+                    window.__hasSplash = true;
+                    
+                    // Create and inject splash screen
+                    var splash = document.createElement('div');
+                    splash.id = 'oauth-splash';
+                    splash.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;height:100dvh;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999999;opacity:1;transition:opacity 0.5s ease-out;';
+                    splash.innerHTML = '<div style="font-family:Oswald,sans-serif;font-size:clamp(48px,12vw,72px);font-weight:700;letter-spacing:-0.02em;text-transform:uppercase;animation:logoEnter 0.4s ease-out;"><span style="color:#fff;">AUTO</span><span style="color:#d4ff00;">REV</span></div><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
+                    document.body.appendChild(splash);
+                    
+                    // Global function for AuthProvider to dismiss splash
+                    window.dismissOAuthSplash = function(callback) {
+                      var splash = document.getElementById('oauth-splash');
+                      if (splash) {
+                        splash.style.opacity = '0';
+                        setTimeout(function() {
+                          splash.remove();
+                          window.__hasSplash = false;
+                          if (callback) callback();
+                        }, 500);
+                      } else if (callback) {
+                        callback();
+                      }
+                    };
+                    
+                    console.log('[Splash] Inline script showed splash immediately');
+                  }
+                }
+              })();
+            `,
+          }}
+        />
         <GlobalErrorHandler>
           <FetchInterceptor>
             <ConsoleErrorInterceptor>

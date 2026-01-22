@@ -22,6 +22,9 @@
   opacity: 0;
   visibility: hidden;
   
+  /* CRITICAL: Prevent touch interception when closed (Android Chrome fix) */
+  pointer-events: none;
+  
   /* Transition */
   transition: opacity 0.3s ease, visibility 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease;
 }
@@ -32,6 +35,8 @@
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  /* Re-enable interactions when open */
+  pointer-events: auto;
 }
 
 .panel {
@@ -95,7 +100,10 @@
   justify-content: center;
   padding: 12px 0 8px;
   cursor: grab;
-  touch-action: none;
+  /* Allow vertical pan (page scroll) but capture horizontal for swipe-to-dismiss
+     Using 'pan-y' instead of 'none' prevents blocking scroll on Android Chrome
+     when the panel is briefly visible during animations */
+  touch-action: pan-y;
 }
 
 .handleArea:active {

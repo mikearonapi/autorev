@@ -208,6 +208,38 @@ function detectFreshLogin() {
 }
 
 /**
+ * Check if the inline OAuth splash is currently showing.
+ * The inline splash is injected by a script in root layout BEFORE React hydrates.
+ */
+function hasInlineSplash() {
+  if (typeof window === 'undefined') return false;
+  return window.__hasSplash === true;
+}
+
+/**
+ * Dismiss the inline OAuth splash with fade animation.
+ * Ensures minimum display time of 1.5s for branding.
+ * @param {Function} callback - Called after splash is fully removed
+ */
+function dismissInlineSplash(callback) {
+  if (typeof window === 'undefined' || !window.dismissOAuthSplash) {
+    callback?.();
+    return;
+  }
+  
+  const startTime = window.__splashStartTime || Date.now();
+  const elapsed = Date.now() - startTime;
+  const minDuration = 1500; // 1.5 seconds minimum
+  const remaining = Math.max(0, minDuration - elapsed);
+  
+  console.log('[Splash] Will dismiss in', remaining, 'ms (elapsed:', elapsed, 'ms)');
+  
+  setTimeout(() => {
+    window.dismissOAuthSplash(callback);
+  }, remaining);
+}
+
+/**
  * Default auth state
  */
 const defaultAuthState = {
@@ -221,7 +253,7 @@ const defaultAuthState = {
   sessionExpired: false, // True when session was invalidated (token expired)
   sessionRevoked: false, // True when session was revoked (e.g., logout from another device)
   showWelcomeToast: false, // True to show welcome toast after fresh login
-  showSplashScreen: false, // True to show branded splash screen on fresh login
+  showSplashScreen: false, // Only used for email login (OAuth uses inline splash)
 };
 
 /**
@@ -542,7 +574,6 @@ function checkAuthCallbackCookie() {
 export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
-  // We only need resetProgress now - the loading overlay has been replaced with a simple toast
   const { resetProgress } = useLoadingProgress();
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
@@ -550,7 +581,9 @@ export function AuthProvider({ children }) {
   const isAuthenticatedRef = useRef(false);
   const isFreshLoginRef = useRef(false); // Tracks if current session is from a fresh login
   const wasAuthenticatedOnMountRef = useRef(null); // null = not checked yet, true/false = initial auth state
-  const hasShownSplashRef = useRef(false); // Tracks if splash was shown this session
+  // Track if inline splash is being used (for OAuth logins)
+  const usingInlineSplashRef = useRef(typeof window !== 'undefined' && hasInlineSplash());
+  const hasShownSplashRef = useRef(usingInlineSplashRef.current);
   
   // Refs for values used in auth state change listener to avoid stale closures
   const resetProgressRef = useRef(resetProgress);
@@ -571,37 +604,40 @@ export function AuthProvider({ children }) {
   }, [state.isAuthenticated]);
 
   // =============================================================================
-  // SPLASH SCREEN: Show on EVERY login
+  // SPLASH SCREEN: Show on EVERY fresh login
   // =============================================================================
-  // This is the SINGLE source of truth for showing the splash screen.
-  // It detects when user transitions from unauthenticated → authenticated.
-  // The splash gives us 1.5 seconds to preload data for a better UX.
+  // Email/Password Login Splash Detection
+  // 
+  // OAuth logins use the inline splash (injected before React).
+  // This useEffect handles email/password logins which happen in-page.
   // =============================================================================
   useEffect(() => {
     // Skip while still loading initial auth state
     if (state.isLoading) return;
     
-    // Record initial auth state on first check (after loading completes)
-    if (wasAuthenticatedOnMountRef.current === null) {
-      wasAuthenticatedOnMountRef.current = state.isAuthenticated;
-      console.log('[AuthProvider] Initial auth state recorded:', state.isAuthenticated);
-      // Don't return here - continue to check if we should show splash
+    // Skip if using inline splash (OAuth login) or splash already shown
+    if (usingInlineSplashRef.current || hasShownSplashRef.current || state.showSplashScreen) return;
+    
+    // Skip if not authenticated
+    if (!state.isAuthenticated) {
+      // Record that user was not authenticated (for email login detection)
+      if (wasAuthenticatedOnMountRef.current === null) {
+        wasAuthenticatedOnMountRef.current = false;
+        console.log('[Splash] User not authenticated on mount');
+      }
+      return;
     }
     
-    // Show splash when:
-    // 1. User is now authenticated
-    // 2. User was NOT authenticated when we first checked (fresh login, not page refresh)
-    // 3. We haven't already shown the splash this session
-    // 4. Splash isn't already showing
-    const shouldShowSplash = 
-      state.isAuthenticated && 
-      wasAuthenticatedOnMountRef.current === false && 
-      !hasShownSplashRef.current &&
-      !state.showSplashScreen;
+    // Record initial auth state if not already recorded
+    if (wasAuthenticatedOnMountRef.current === null) {
+      wasAuthenticatedOnMountRef.current = state.isAuthenticated;
+    }
     
-    if (shouldShowSplash) {
-      console.log('[AuthProvider] 🚀 Showing splash screen (user just logged in)');
+    // Email login: User became authenticated after being unauthenticated on mount
+    if (wasAuthenticatedOnMountRef.current === false) {
+      console.log('[Splash] 🚀 Email login detected - showing React splash');
       hasShownSplashRef.current = true;
+      isFreshLoginRef.current = true;
       setState(prev => ({ ...prev, showSplashScreen: true }));
     }
   }, [state.isAuthenticated, state.isLoading, state.showSplashScreen]);
@@ -916,8 +952,9 @@ export function AuthProvider({ children }) {
           isAuthenticatedRef.current = true;
           
           // IMMEDIATELY set authenticated state so UI updates right away
-          // NOTE: isDataFetchReady stays false until prefetch completes
-          setState({
+          // NOTE: Use functional update to preserve showSplashScreen if already set
+          setState(prev => ({
+            ...prev,
             user,
             profile: null, // Will be loaded below
             session,
@@ -925,23 +962,26 @@ export function AuthProvider({ children }) {
             isAuthenticated: true,
             isDataFetchReady: false, // Will be set true after prefetch
             authError: null,
-          });
+          }));
           console.log('[AuthProvider] User authenticated via initializeAuth');
           
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
           
-          // Check for fresh OAuth signals (for welcome toast)
+          // Check for fresh OAuth signals
           const { isFresh: isFreshOAuth, hasAuthTs } = checkFreshOAuthSignals();
           
-          // Fresh OAuth login detected - mark for onboarding
-          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
+          // Fresh OAuth login detected
           if (isFreshOAuth) {
-            console.log('[AuthProvider] Fresh OAuth login detected');
+            console.log('[Splash] Fresh OAuth login detected');
+            
+            // Consume the signals
             consumeOAuthSignals();
             consumeLoginIntent();
+            
             // Mark as fresh login for onboarding
             isFreshLoginRef.current = true;
+            hasShownSplashRef.current = true;
             
             // GA4 tracking: Check if new signup vs returning user
             const userCreatedAt = new Date(user.created_at);
@@ -982,13 +1022,27 @@ export function AuthProvider({ children }) {
               });
             }
             // Signal ready for child providers AFTER profile loads
-            // Don't wait for prefetch - it's best-effort optimization
             console.log('[AuthProvider] Profile loaded, signaling ready for child providers');
             setState(prev => ({ ...prev, isDataFetchReady: true }));
+            
+            // Dismiss inline splash (if present) - OAuth login complete
+            if (usingInlineSplashRef.current) {
+              dismissInlineSplash(() => {
+                console.log('[Splash] Inline splash dismissed, showing welcome toast');
+                setState(prev => ({ ...prev, showWelcomeToast: true }));
+              });
+            }
           }).catch(err => {
             console.warn('[AuthProvider] Profile fetch error:', err);
             // Still signal ready so app doesn't hang
             setState(prev => ({ ...prev, isDataFetchReady: true }));
+            
+            // Dismiss inline splash even on error
+            if (usingInlineSplashRef.current) {
+              dismissInlineSplash(() => {
+                setState(prev => ({ ...prev, showWelcomeToast: true }));
+              });
+            }
           });
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
@@ -1045,11 +1099,14 @@ export function AuthProvider({ children }) {
         }));
         scheduleSessionRefresh(session);
         
-        // Fresh login - show welcome toast, load data silently in background
-        // Fresh login via explicit sign-in (email/password, button click)
-          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
-          if (isFreshLogin) {
-            console.log('[AuthProvider] Fresh login via SIGNED_IN detected');
+        // Fresh login via explicit sign-in
+        if (isFreshLogin) {
+          // Only show React splash for email logins (OAuth uses inline splash)
+          if (!usingInlineSplashRef.current && !hasShownSplashRef.current) {
+            console.log('[Splash] 🚀 Fresh email login - showing React splash');
+            hasShownSplashRef.current = true;
+            setState(prev => ({ ...prev, showSplashScreen: true }));
+          }
           
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);
@@ -1211,11 +1268,12 @@ export function AuthProvider({ children }) {
         }));
         scheduleSessionRefresh(session);
         
-        // Fresh login via INITIAL_SESSION - show welcome toast
+        // Fresh login via INITIAL_SESSION
         if (hasFreshSignals) {
-          // Fresh login via INITIAL_SESSION
-          // NOTE: Splash screen is handled by the unified useEffect that watches auth state
-          console.log('[AuthProvider] INITIAL_SESSION is fresh login');
+          console.log('[Splash] Fresh login via INITIAL_SESSION');
+          
+          // Mark as fresh login (inline splash is already showing)
+          hasShownSplashRef.current = true;
           isFreshLoginRef.current = true;
           
           // GA4 tracking: Check if new signup vs returning user
@@ -1246,9 +1304,24 @@ export function AuthProvider({ children }) {
             profile: profile || prev.profile,
             isDataFetchReady: true,
           }));
+          
+          // Dismiss inline splash (if present) - INITIAL_SESSION login complete
+          if (usingInlineSplashRef.current && hasFreshSignals) {
+            dismissInlineSplash(() => {
+              console.log('[Splash] Inline splash dismissed via INITIAL_SESSION');
+              setState(prev => ({ ...prev, showWelcomeToast: true }));
+            });
+          }
         }).catch(err => {
           console.error('[AuthProvider] Error loading data in INITIAL_SESSION:', err);
           setState(prev => ({ ...prev, isDataFetchReady: true }));
+          
+          // Dismiss inline splash even on error
+          if (usingInlineSplashRef.current && hasFreshSignals) {
+            dismissInlineSplash(() => {
+              setState(prev => ({ ...prev, showWelcomeToast: true }));
+            });
+          }
         });
       } else if (session?.user && !isAuthenticatedRef.current) {
         // Catch-all: If we have a valid session but aren't authenticated,
@@ -1448,6 +1521,9 @@ export function AuthProvider({ children }) {
     initAttemptRef.current = 0;
     wasAuthenticatedOnMountRef.current = null; // Reset so next login shows splash
     hasShownSplashRef.current = false;
+    isFreshLoginRef.current = false;
+    
+    console.log('[Splash] Logout - refs reset for next login');
     
     // Reset loading progress immediately
     resetProgress();
@@ -1734,12 +1810,12 @@ export function AuthProvider({ children }) {
     triggerOnboarding,
   ]);
 
-  // Handler for when splash screen finishes - show welcome toast afterwards
+  // Handler for when React splash screen finishes (email login only)
   const handleSplashComplete = useCallback(() => {
     setState(prev => ({ 
       ...prev, 
       showSplashScreen: false,
-      showWelcomeToast: true, // Show welcome toast after splash fades
+      showWelcomeToast: true,
     }));
   }, []);
 

@@ -13,11 +13,16 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
  * This fixes the issue where navigating between pages can load
  * in the middle of the page instead of at the top.
  * 
+ * Also acts as a safety mechanism to unlock body scroll on route changes.
+ * This catches cases where modals/overlays don't properly clean up their
+ * overflow:hidden on body (especially important for Android Chrome).
+ * 
  * Key improvements:
  * - Uses useLayoutEffect to run before paint
  * - Temporarily disables smooth scroll CSS to ensure instant scroll
  * - Uses requestAnimationFrame for proper timing
  * - Falls back to direct scrollTop manipulation if scrollTo fails
+ * - Resets body overflow on every route change (Android scroll fix)
  * 
  * Note: We only track pathname changes, not search params.
  * Using useSearchParams here caused navigation errors during
@@ -37,9 +42,18 @@ export default function ScrollToTop() {
       return;
     }
 
-    // Only scroll if the pathname actually changed (not just a re-render)
+    // Only act if the pathname actually changed (not just a re-render)
     if (previousPathname.current !== pathname) {
       previousPathname.current = pathname;
+      
+      // CRITICAL: Reset body scroll lock on every route change
+      // This is a safety net for Android Chrome where modals/overlays
+      // may not properly clean up overflow:hidden on unmount.
+      // This MUST run synchronously before any RAF to prevent scroll jank.
+      if (document.body.style.overflow === 'hidden') {
+        console.log('[ScrollToTop] Resetting body overflow (was hidden)');
+        document.body.style.overflow = '';
+      }
       
       // Use requestAnimationFrame to ensure DOM is ready
       // and execute scroll before the next paint

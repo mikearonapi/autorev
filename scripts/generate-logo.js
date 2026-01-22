@@ -112,6 +112,161 @@ Reference style: Simple line-art app icons like Strava, fitness apps - just the 
 const LOGO_PROMPTS = {
   tachometer: LOGO_PROMPT,
   
+  minimalist: `Design an ultra-minimalist logo icon for "AutoRev".
+
+CRITICAL REQUIREMENTS:
+- PURE BLACK BACKGROUND (#000000)
+- Thin white line art only - no fills, no gradients
+- A perfect circle outline (thin stroke, approximately 2-3px weight)
+- Inside the circle: stylized letters "AR" or just "A" formed from simple geometric lines
+- Think of the style: clean intersecting lines forming letters, like a monogram
+- The letters should feel modern, angular, slightly abstract but readable
+- Similar aesthetic to luxury watch brand logos or high-end automotive emblems
+
+STYLE REFERENCE:
+- Like the Volkswagen "VW" logo but even more minimal
+- Or like a geometric "AR" monogram inside a circle
+- Clean, confident, premium feel
+- Could use angled lines meeting at vertices to suggest motion/speed
+- The "A" could be formed from two angled lines meeting at a peak
+- The "R" could be suggested with minimal strokes
+
+TECHNICAL:
+- Square format (1:1 aspect ratio)
+- White lines on pure black background
+- Vector-style crisp edges
+- NO gradients, NO fills, NO shadows
+- NO text besides the stylized AR monogram
+- Professional, luxury automotive aesthetic
+
+OUTPUT: A logo that works at any size from favicon (16x16) to billboard.`,
+
+  minimalist_lime: `Design an ultra-minimalist logo icon for "AutoRev" with brand colors.
+
+CRITICAL REQUIREMENTS:
+- PURE BLACK BACKGROUND (#000000)
+- Clean line art style, thin strokes (2-3px weight)
+- A perfect circle outline in WHITE
+- Inside the circle: stylized letters "AR" monogram
+- The "A" should be WHITE
+- The "R" should be LIME GREEN (#d4ff00) - this is our brand accent color
+- The letters should overlap/interlock elegantly, sharing a vertical stroke
+- Modern, angular, clean letterforms
+
+EXACT STYLE TO MATCH:
+- The A and R share a common vertical line where they meet
+- The A is formed from two angled lines meeting at a peak with a horizontal crossbar
+- The R has a rounded top bowl and an angled leg
+- Letters are connected/overlapping, not separate
+- Think luxury automotive monogram style
+
+COLOR SPECIFICATION:
+- Circle outline: Pure white (#FFFFFF)
+- Letter "A": Pure white (#FFFFFF)  
+- Letter "R": Lime green (#d4ff00)
+- Background: Pure black (#000000)
+
+TECHNICAL:
+- Square format (1:1 aspect ratio)
+- Vector-style crisp edges
+- NO gradients, NO shadows, NO 3D effects
+- Clean, flat colors only
+- Professional, premium automotive aesthetic
+
+OUTPUT: A two-color logo (white + lime) on black that works at any size.`,
+
+  minimalist_lime_circle: `Design an ultra-minimalist logo icon for "AutoRev" with brand accent.
+
+CRITICAL REQUIREMENTS:
+- PURE BLACK BACKGROUND (#000000)
+- Circle outline in LIME GREEN (#d4ff00) - our brand accent color
+- Inside the circle: stylized "AR" monogram in WHITE
+- The letters should overlap/interlock elegantly
+- Modern, angular, clean letterforms
+- Thin strokes throughout (2-3px weight)
+
+EXACT STYLE:
+- The A and R share a common vertical stroke where they connect
+- Letters are interlocked, creating a unified monogram
+- Clean geometric construction
+- Premium automotive emblem aesthetic
+
+COLOR SPECIFICATION:
+- Circle outline: Lime green (#d4ff00)
+- Letters "AR": Pure white (#FFFFFF)
+- Background: Pure black (#000000)
+
+TECHNICAL:
+- Square format (1:1 aspect ratio)
+- Vector-style crisp edges
+- NO gradients, NO shadows
+- Clean, flat design
+
+OUTPUT: A logo with lime circle accent on black background.`,
+
+  minimalist_ar_only: `Design an ultra-minimalist logo for "AutoRev" - just the letters, no circle.
+
+CRITICAL REQUIREMENTS:
+- PURE BLACK BACKGROUND (#000000)
+- NO circle outline - just the letters floating on black
+- Stylized "AR" monogram only
+- The "A" is WHITE (#FFFFFF)
+- The "R" is LIME GREEN (#d4ff00)
+- The letters should interlock/overlap elegantly, sharing a vertical stroke
+- Bold, confident letterforms similar to a premium automotive brand
+
+EXACT STYLE TO MATCH:
+- The A and R share a common vertical line where they connect
+- The A is formed from two angled lines meeting at a peak, with the right leg being the shared stroke
+- The R attaches to that shared vertical stroke, with a rounded top bowl and angled leg
+- Letters are connected, creating one unified mark
+- Think luxury car badge aesthetic - bold but refined
+
+LETTERFORM DETAILS:
+- Medium-bold stroke weight (not too thin, not too heavy)
+- Clean geometric construction
+- The A's crossbar can be subtle or implied
+- The R's leg should kick out at an angle for dynamism
+
+COLOR SPECIFICATION:
+- Letter "A": Pure white (#FFFFFF)
+- Letter "R": Lime green (#d4ff00)
+- Background: Pure black (#000000)
+- TWO COLORS ONLY for the letters
+
+TECHNICAL:
+- Square format (1:1 aspect ratio)
+- Logo centered in frame with breathing room
+- Vector-style crisp edges
+- NO gradients, NO shadows, NO 3D effects, NO circle
+- Clean, flat design
+
+OUTPUT: A bold AR monogram (white A, lime R) floating on black - no enclosing shape.`,
+
+  minimalist_lime_subtle: `Design an ultra-minimalist logo icon for "AutoRev" with subtle brand accent.
+
+CRITICAL REQUIREMENTS:
+- PURE BLACK BACKGROUND (#000000)
+- White circle outline
+- Inside: stylized "AR" monogram - mostly white
+- Add a LIME GREEN (#d4ff00) accent on just ONE element:
+  - Option: The diagonal leg of the R in lime
+  - OR: A small accent line/detail in lime
+- Keep it subtle and sophisticated
+
+STYLE:
+- Interlocked AR monogram
+- Letters share a vertical stroke
+- Clean, geometric, premium
+- The lime accent should feel like a signature detail, not overwhelming
+
+COLORS:
+- Background: Black (#000000)
+- Circle and most of AR: White (#FFFFFF)
+- One accent element: Lime (#d4ff00)
+
+OUTPUT: Sophisticated logo with subtle lime accent.`,
+
   compass: `Design a simple, minimalist logo icon for "AutoRev" - an automotive guidance platform.
 
 BRAND CONTEXT:
@@ -324,6 +479,7 @@ Commands:
 
 Styles:
   tachometer    (default) Rev gauge with needle pointing to redline
+  minimalist    Ultra-clean AR monogram in circle (like reference image)
   compass       Direction/guidance themed
   abstract_a    Stylized "A" with motion element
 

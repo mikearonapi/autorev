@@ -24,13 +24,17 @@ export default function SplashScreen({
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
+    console.log('[SplashScreen] 🎬 React splash mounted - showing for', duration, 'ms');
+    
     // Start exit animation after duration
     const exitTimer = setTimeout(() => {
+      console.log('[SplashScreen] Starting fade out');
       setIsExiting(true);
     }, duration);
 
     // Fully hide after fade-out completes (500ms animation)
     const hideTimer = setTimeout(() => {
+      console.log('[SplashScreen] Fade complete, hiding');
       setIsHidden(true);
       onComplete?.();
     }, duration + 500);

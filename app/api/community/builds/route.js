@@ -191,7 +191,18 @@ async function handleGet(request) {
         if (postData?.user_build_id) {
           const { data: projectData } = await supabaseAdmin
             .from('user_projects')
-            .select('final_hp, total_hp_gain, final_zero_to_sixty, final_braking_60_0, final_lateral_g, objective, torque')
+            .select(`
+              final_hp, 
+              stock_hp,
+              total_hp_gain, 
+              final_zero_to_sixty, 
+              stock_zero_to_sixty,
+              final_braking_60_0, 
+              stock_braking_60_0,
+              final_lateral_g,
+              stock_lateral_g,
+              objective
+            `)
             .eq('id', postData.user_build_id)
             .single();
           

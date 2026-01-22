@@ -64,7 +64,7 @@ async function fetchBuilds({ limit = 20, sort = 'algorithm', seed = null, cursor
  * Fetch single build details
  */
 async function fetchBuildDetail(slug) {
-  return fetcher(`/api/community/builds/${slug}`);
+  return apiClient.get(`/api/community/builds/${slug}`);
 }
 
 /**

@@ -25,6 +25,7 @@ import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBil
 
 // Compact Icons
 const Icon = {
+  close: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
   logout: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
   check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
   copy: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
@@ -208,8 +209,14 @@ export default function ProfilePage() {
             <span className={styles.sinceBadge}>Since {memberSince}</span>
           </div>
         </div>
-        <button onClick={handleSignOut} className={styles.logoutBtn} title="Sign Out">{Icon.logout}</button>
+        <button onClick={() => router.back()} className={styles.closeBtn} title="Close">{Icon.close}</button>
       </header>
+
+      {/* Sign Out Button - thin, above fuel card */}
+      <button onClick={handleSignOut} className={styles.signOutThin}>
+        {Icon.logout}
+        <span>Sign out</span>
+      </button>
 
       {/* AL Fuel Card */}
       <section className={styles.fuelCard}>
@@ -426,7 +433,6 @@ export default function ProfilePage() {
             </div>
           )}
           <button onClick={triggerOnboarding} className={styles.tourBtn}>Relaunch Onboarding</button>
-          <button onClick={handleSignOut} className={styles.signOutBtn}>{Icon.logout} Sign out</button>
           <button onClick={() => setShowDeleteModal(true)} className={styles.deleteBtn}>Delete account</button>
         </section>
       </div>
