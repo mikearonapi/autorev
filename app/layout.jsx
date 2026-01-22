@@ -272,7 +272,10 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
         
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+        {/* NOTE: Removed maximum-scale=1 to fix Android scroll issues.
+            maximum-scale=1 can interfere with Android Chrome's scroll handling.
+            iOS Safari handles this fine, but Android devices were completely unable to scroll. */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#0a1628" media="(prefers-color-scheme: light)" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

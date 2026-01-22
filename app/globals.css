@@ -426,8 +426,18 @@ body {
   box-sizing: border-box;
   /* Improve touch scrolling */
   -webkit-overflow-scrolling: touch;
-  /* Prevent overscroll revealing content behind fixed elements (PWA/iOS) */
-  overscroll-behavior-y: none;
+  /* NOTE: overscroll-behavior-y: none was removed from here because it can
+     completely disable scrolling on some Android devices/browsers.
+     It's now applied only on iOS via @supports below. */
+}
+
+/* Apply overscroll-behavior-y: none ONLY on iOS (Safari/WebKit)
+   This prevents pull-to-refresh on iOS without breaking Android scroll.
+   -webkit-touch-callout is only supported by iOS Safari. */
+@supports (-webkit-touch-callout: none) {
+  body {
+    overscroll-behavior-y: none;
+  }
 }
 
 /* --------------------------------------------------------------------------

@@ -33,11 +33,14 @@
   
   /* Allow content to scroll behind fixed tab bar */
   position: relative;
-  /* overflow-x: hidden is fine on nested containers - it just clips horizontal overflow.
-     It's overscroll-behavior-y stacking that causes Android scroll issues (fixed below). */
-  overflow-x: hidden;
   
-  /* NOTE: overscroll-behavior-y is handled by body in globals.css.
+  /* ANDROID SCROLL FIX: Only clip horizontal overflow, let vertical scroll pass through to body.
+     Setting overflow-y: visible explicitly ensures body remains the scroll container.
+     This is critical for Android Chrome which can get confused about which element scrolls. */
+  overflow-x: hidden;
+  overflow-y: visible;
+  
+  /* NOTE: overscroll-behavior-y is handled by body in globals.css (iOS only).
      Duplicate declarations on nested containers can confuse Android Chrome's
      scroll detection. Body is the single source of truth for scroll behavior. */
 }
