@@ -9,7 +9,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { notifyBetaMetrics } from '@/lib/discord';
 import { logCronError } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -76,19 +75,8 @@ export async function GET(request) {
       duration: `${duration}ms`,
     });
     
-    // Send beta metrics to Discord for daily monitoring
-    if (snapshot) {
-      await notifyBetaMetrics({
-        totalUsers: snapshot.total_users,
-        newUsersToday: snapshot.new_users_today,
-        activeUsersToday: snapshot.active_users_today,
-        alConversationsToday: snapshot.al_conversations_today,
-        errorsToday: snapshot.errors_today,
-        criticalErrorsToday: snapshot.critical_errors_today,
-        feedbackToday: 0, // Can be enhanced to track this
-        date: snapshot.snapshot_date,
-      });
-    }
+    // Note: Discord notification removed - the daily-digest cron (9 AM CST) 
+    // handles all Discord notifications. This cron only captures DB snapshots.
     
     return NextResponse.json({
       success: true,
