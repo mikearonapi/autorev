@@ -7,7 +7,7 @@
   min-height: 100dvh;
   background: var(--brand-bg-primary);
   color: var(--brand-text-primary);
-  padding-bottom: 120px;
+  padding-bottom: var(--page-bottom-padding);
 }
 
 .loadingContainer {
@@ -67,7 +67,7 @@
 .costBadge {
   padding: 6px 12px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 700;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -145,7 +145,7 @@
 
 .arrow {
   color: rgba(255, 255, 255, 0.3);
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 .upgradedVal {
@@ -162,7 +162,7 @@
   padding: 2px 6px;
   background: rgba(16, 185, 129, 0.15);
   border-radius: 4px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--brand-teal);
   margin-left: 4px;
@@ -242,8 +242,8 @@
   border: none;
   border-radius: 14px;
   
-  /* Typography - use fixed px for consistency */
-  font-size: 11px;
+  /* Typography - use token for consistency */
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -324,7 +324,7 @@
 }
 
 .ctaText {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
@@ -338,7 +338,7 @@
   border: none;
   border-radius: 12px;
   color: var(--gravl-navy, var(--brand-bg-primary-dark));
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -378,14 +378,14 @@
 }
 
 .emptyTitle {
-  font-size: 20px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 8px 0;
 }
 
 .emptyDescription {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 24px 0;
   max-width: 280px;
@@ -400,7 +400,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   color: var(--brand-text-primary);
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -425,7 +425,7 @@
   }
   
   .vehicleName {
-    font-size: 16px;
+    font-size: var(--text-body);
   }
   
   .content {

@@ -1,0 +1,192 @@
+/* ==========================================================================
+   InfoTooltip Component Styles
+   
+   Educational tooltip with info icon trigger and modal content.
+   Uses design tokens from CSS architecture.
+   ========================================================================== */
+
+/* ==========================================================================
+   TRIGGER WRAPPER
+   ========================================================================== */
+
+.trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 4px);
+}
+
+.trigger.inline {
+  display: inline-flex;
+}
+
+.trigger.block {
+  display: flex;
+}
+
+/* ==========================================================================
+   INFO BUTTON (icon trigger)
+   ========================================================================== */
+
+.infoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Size - touch target compliant */
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  padding: 0;
+  
+  /* Appearance */
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  
+  /* Text/icon */
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  
+  /* Transition */
+  transition: color 0.15s ease, background-color 0.15s ease;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.infoButton:hover {
+  color: var(--color-accent-teal, #10b981);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.infoButton:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
+}
+
+.infoButton:active {
+  transform: scale(0.95);
+}
+
+/* ==========================================================================
+   STANDALONE ICON (for use outside trigger wrapper)
+   ========================================================================== */
+
+.standaloneIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Size - larger touch target */
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  
+  /* Appearance */
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  
+  /* Text/icon */
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  
+  /* Transition */
+  transition: color 0.15s ease, background-color 0.15s ease;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.standaloneIcon:hover {
+  color: var(--color-accent-teal, #10b981);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.standaloneIcon:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   MODAL CONTENT
+   ========================================================================== */
+
+.modalContent {
+  padding: var(--space-4, 16px) var(--space-6, 24px) var(--space-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 20px);
+}
+
+/* ==========================================================================
+   SECTIONS
+   ========================================================================== */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-sm, 12px);
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sectionText {
+  margin: 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-body, 14px);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   ASK AL CTA
+   ========================================================================== */
+
+.alCta {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-2, 8px);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .modalContent {
+    padding: var(--space-4, 16px);
+  }
+  
+  .sectionText {
+    font-size: var(--text-sm, 13px);
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .infoButton,
+  .standaloneIcon {
+    transition: none;
+  }
+  
+  .infoButton:active {
+    transform: none;
+  }
+}

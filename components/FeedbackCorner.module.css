@@ -4,10 +4,10 @@
 
 .feedbackCorner {
   position: fixed;
-  bottom: 88px;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   right: 24px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,13 +134,13 @@
   visibility: visible;
 }
 
-/* Mobile: smaller size and spacing */
+/* Mobile: maintain 44px touch target */
 @media (max-width: 480px) {
   .feedbackCorner {
-    bottom: 78px;
-    right: 20px;
-    width: 36px;
-    height: 36px;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    width: 44px;
+    height: 44px;
   }
   
   .feedbackCorner svg {
@@ -154,23 +154,23 @@
   }
 }
 
-/* Small phones (iPhone SE) */
+/* Small phones (iPhone SE) - maintain 44px touch target */
 @media (max-width: 375px) {
   .feedbackCorner {
-    bottom: 74px;
-    right: 16px;
-    width: 34px;
-    height: 34px;
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    right: 12px;
+    width: 44px;
+    height: 44px;
   }
 }
 
 /* iPad/Tablet */
 @media (min-width: 481px) and (max-width: 1024px) {
   .feedbackCorner {
-    bottom: 92px;
+    bottom: calc(92px + env(safe-area-inset-bottom, 0px));
     right: 24px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -179,7 +179,7 @@
   .feedbackCorner {
     width: 42px;
     height: 42px;
-    bottom: 90px;
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 }
 

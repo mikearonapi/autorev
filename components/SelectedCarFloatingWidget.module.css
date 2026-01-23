@@ -2,7 +2,7 @@
 
 .widget {
   position: fixed;
-  bottom: var(--space-lg);
+  bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   right: var(--space-md);
   z-index: 1000;
   transition: all 0.3s ease;
@@ -11,7 +11,7 @@
 /* Hide when mobile bottom CTA is showing */
 @media (max-width: 768px) {
   .widget {
-    bottom: calc(var(--space-lg) + 60px); /* Account for mobile CTA */
+    bottom: calc(var(--space-lg) + 60px + env(safe-area-inset-bottom, 0px)); /* Account for mobile CTA + safe area */
   }
 }
 

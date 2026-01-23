@@ -65,14 +65,14 @@
 }
 
 .title {
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
   margin: 0;
 }
 
 .gapSummary {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
@@ -96,7 +96,7 @@
 }
 
 .sectionTitle {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -118,7 +118,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.4;
 }
@@ -154,7 +154,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.4;
   padding: 10px 12px;
@@ -180,7 +180,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
@@ -198,7 +198,7 @@
 }
 
 .indicatorPercent {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   opacity: 0.7;
 }
 
@@ -216,11 +216,11 @@
   }
 
   .title {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 
   .gapSummary {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .section {
@@ -230,7 +230,7 @@
 
   .causeItem,
   .recommendationItem {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .recommendationItem {

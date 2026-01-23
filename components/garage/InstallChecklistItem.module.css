@@ -1,0 +1,451 @@
+/* ==========================================================================
+   InstallChecklistItem Component Styles
+   
+   Individual part row in the installation checklist.
+   ========================================================================== */
+
+/* ==========================================================================
+   ITEM CONTAINER
+   ========================================================================== */
+
+.item {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.item:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.item.installed {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.04);
+}
+
+/* ==========================================================================
+   MAIN ROW
+   ========================================================================== */
+
+.mainRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  padding: var(--space-4, 16px);
+}
+
+/* ==========================================================================
+   STATUS ICON
+   ========================================================================== */
+
+.statusIcon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-accent-teal, #10b981);
+  border-radius: 50%;
+  color: #fff;
+}
+
+.pendingCircle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-text-tertiary, #64748b);
+  border-radius: 50%;
+}
+
+/* Purchased - part is ready to install */
+.purchasedCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 2px solid var(--color-accent-teal, #10b981);
+  border-radius: 50%;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* ==========================================================================
+   PART INFO
+   ========================================================================== */
+
+.partInfo {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.partName {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-body, 16px);
+  font-weight: 500;
+  color: var(--color-text-primary, #fff);
+  line-height: 1.3;
+}
+
+.partBrand {
+  display: block;
+  font-size: var(--text-sm, 14px);
+  font-weight: 400;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-top: var(--space-1, 4px);
+}
+
+/* ==========================================================================
+   BADGES
+   ========================================================================== */
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-2, 8px);
+}
+
+.difficultyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--badge-color, #64748b) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--badge-color, #64748b) 30%, transparent);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--badge-color, #64748b);
+  text-transform: capitalize;
+}
+
+.timeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.warningBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-warning, #f59e0b);
+}
+
+.diyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Ready to Install badge - for purchased parts */
+.readyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Not Purchased badge - for planned parts (still need to buy) */
+.plannedBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 11px);
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* ==========================================================================
+   EXPAND BUTTON
+   ========================================================================== */
+
+.expandBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+
+.expandBtn:hover {
+  color: var(--color-text-primary, #fff);
+}
+
+.expandBtn.expanded {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   EXPANDED CONTENT
+   ========================================================================== */
+
+.expandedContent {
+  padding: 0 var(--space-4, 16px) var(--space-4, 16px);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  margin-top: 0;
+}
+
+.notes {
+  margin: var(--space-3, 12px) 0;
+  padding: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   ACTION BUTTONS
+   ========================================================================== */
+
+.actionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-3, 12px);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary, #fff);
+}
+
+.actionBtn.actionBtnActive {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--color-accent-blue, #3b82f6);
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+.markInstalledBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-accent-teal, #10b981);
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: #fff;
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.markInstalledBtn:hover {
+  background: #0ea472;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   INLINE SECTIONS (Tools, Videos)
+   ========================================================================== */
+
+.toolsInline,
+.videosInline {
+  margin-top: var(--space-4, 16px);
+  padding: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md, 8px);
+}
+
+.inlineTitle {
+  margin: 0 0 var(--space-2, 8px) 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+}
+
+.toolsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.toolGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.toolGroupLabel {
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toolTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 4px);
+}
+
+.toolTag {
+  display: inline-flex;
+  padding: 4px 8px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--color-accent-teal, #10b981);
+  text-transform: capitalize;
+}
+
+.toolTag.toolTagRecommended {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+/* No tools found empty state */
+.noToolsFound {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3, 12px);
+  padding: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md, 8px);
+  border: 1px dashed var(--color-border-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.noToolsFound > svg {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary, #64748b);
+  margin-top: 2px;
+}
+
+.noToolsText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.noToolsTitle {
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.noToolsSubtext {
+  margin: 0;
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-tertiary, #64748b);
+  line-height: 1.5;
+}
+
+.videosPlaceholder {
+  margin: 0;
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* ==========================================================================
+   INSTALLED INFO
+   ========================================================================== */
+
+.installedInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-3, 12px);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .mainRow {
+    padding: var(--space-3, 12px);
+  }
+  
+  .partName {
+    font-size: var(--text-sm, 14px);
+  }
+  
+  .badges {
+    gap: var(--space-1, 4px);
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .actionBtn,
+  .markInstalledBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

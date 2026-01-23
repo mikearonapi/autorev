@@ -1,0 +1,339 @@
+/* ==========================================================================
+   DIYVideoEmbed Component Styles
+   
+   Lazy-loading YouTube video embed with thumbnail-first pattern.
+   ========================================================================== */
+
+/* ==========================================================================
+   CONTAINER VARIANTS
+   ========================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+}
+
+.container.card {
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.container.inline {
+  background: transparent;
+}
+
+/* ==========================================================================
+   VIDEO WRAPPER
+   ========================================================================== */
+
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  background: #000;
+}
+
+.iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ==========================================================================
+   THUMBNAIL BUTTON
+   ========================================================================== */
+
+.thumbnailButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   PLAY OVERLAY
+   ========================================================================== */
+
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  transition: background-color 0.2s ease;
+}
+
+.thumbnailButton:hover .playOverlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.playIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  color: #0d1b2a;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.thumbnailButton:hover .playIcon {
+  transform: scale(1.1);
+  background: var(--color-accent-lime, #d4ff00);
+}
+
+/* ==========================================================================
+   DURATION BADGE
+   ========================================================================== */
+
+.duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ==========================================================================
+   VIDEO INFO (card variant)
+   ========================================================================== */
+
+.info {
+  padding: var(--space-3, 12px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.channel {
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-text-primary, #fff);
+  line-height: 1.4;
+  
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-1, 4px);
+}
+
+.playButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 13px);
+  font-weight: 600;
+  color: var(--color-bg-base, #0d1b2a);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.playButton:hover {
+  background: #c4ed00;
+  transform: translateY(-1px);
+}
+
+.youtubeLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  
+  color: var(--color-text-tertiary, #64748b);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md, 8px);
+  
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.youtubeLink:hover {
+  color: var(--color-text-primary, #fff);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   VIDEO LIST
+   ========================================================================== */
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3, 12px);
+}
+
+/* ==========================================================================
+   LOADING / ERROR / EMPTY STATES
+   ========================================================================== */
+
+.loading,
+.error,
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-6, 24px);
+  
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-sm, 14px);
+  text-align: center;
+}
+
+.emptyTitle,
+.errorTitle {
+  margin-top: var(--space-2, 8px);
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.emptySubtext,
+.errorSubtext {
+  margin: 0;
+  max-width: 320px;
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-tertiary, #64748b);
+  line-height: 1.5;
+}
+
+.error svg:first-child {
+  color: var(--color-warning, #f59e0b);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent-lime, #d4ff00);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Primary YouTube search button (for empty/error states) */
+.searchYouTubePrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-3, 12px);
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  
+  background: #ff0000;
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  
+  transition: all 0.15s ease;
+}
+
+.searchYouTubePrimary:hover {
+  background: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+}
+
+/* Secondary YouTube search link (for "find more" after results) */
+.searchYouTube {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 13px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  text-decoration: none;
+  
+  transition: all 0.15s ease;
+}
+
+.searchYouTube:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary, #fff);
+}
+
+.moreVideosLink {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-2, 8px);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .videoGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .playIcon {
+    width: 56px;
+    height: 56px;
+  }
+}

@@ -15,9 +15,9 @@
   right: 0;
   z-index: 1000;
   
-  /* Dimensions */
+  /* Dimensions - use 100% to avoid Android dvw issues */
   width: 100%;
-  max-width: 100dvw;
+  max-width: 100%;
   
   /* Premium dark glass */
   background: linear-gradient(

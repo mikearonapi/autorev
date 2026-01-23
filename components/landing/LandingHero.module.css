@@ -106,7 +106,7 @@
   color: var(--sn-accent);
   padding: 6px var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -192,14 +192,14 @@
 }
 
 .note {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
 
 @media (min-width: 480px) {
   .note {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }
 

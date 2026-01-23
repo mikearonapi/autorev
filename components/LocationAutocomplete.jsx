@@ -102,7 +102,8 @@ export default function LocationAutocomplete({
 
   // Load Google Maps script and initialize services
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+    // Check for Google Maps API key - match the documented env var name
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     
     if (!apiKey) {
       console.info('[LocationAutocomplete] Google Maps API key not set, using Nominatim fallback');
@@ -319,6 +320,10 @@ export default function LocationAutocomplete({
     setInputValue(newValue);
     setShowSuggestions(true);
     setHighlightedIndex(-1);
+    
+    // Notify parent of value change (without coordinates - those come from selection)
+    // This ensures the parent always has the current input value
+    onChange(newValue);
   };
 
   // Handle suggestion selection
@@ -382,11 +387,9 @@ export default function LocationAutocomplete({
 
   // Handle blur
   const handleBlur = () => {
+    // Small delay to allow click events on suggestions to fire first
     setTimeout(() => {
       setShowSuggestions(false);
-      if (inputValue !== value) {
-        onChange(inputValue);
-      }
     }, 200);
   };
 

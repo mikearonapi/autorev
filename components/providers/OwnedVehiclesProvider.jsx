@@ -126,6 +126,7 @@ function transformVehicle(row) {
     model: row.model,
     trim: row.trim,
     matchedCarSlug: row.matched_car_slug,
+    matchedCarId: row.matched_car_id, // UUID for reliable car lookups
     matchedCarVariantId: row.matched_car_variant_id,
     matchedCarVariantKey: row.matched_car_variant_key,
     vinMatchConfidence: row.vin_match_confidence,

@@ -75,26 +75,264 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.copyBtn {
+
+
+/* Status Summary Bar */
+.statusSummary {
+  display: flex;
+  gap: var(--space-4, 16px);
+  padding: var(--space-3, 12px) 0;
+  margin-bottom: var(--space-3, 12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.statusCount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+
+.statusCountNumber {
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+}
+
+.statusCountLabel {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.statusCount.statusmuted .statusCountNumber {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.statusCount.statusteal .statusCountNumber {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.statusCount.statuslime .statusCountNumber {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+/* Status Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusBadge.statusmuted {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.statusBadge.statusmuted:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.statusBadge.statusteal {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.statusBadge.statusteal:hover {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.statusBadge.statuslime {
+  background: rgba(212, 255, 0, 0.15);
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.statusBadge.statuslime:hover {
+  background: rgba(212, 255, 0, 0.25);
+}
+
+/* Installed status - read-only (non-interactive) */
+.statusBadge.statusComplete {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.statusBadge.statusComplete:hover {
+  transform: none;
+}
+
+/* Ready to Install CTA - links to Install page */
+.readyToInstallCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.readyToInstallCta:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.readyToInstallCtaContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.readyToInstallCtaTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.readyToInstallCtaSubtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.readyToInstallCtaIcon {
+  color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
+}
+
+/* Item status colors */
+.listItem.itemmuted {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.listItem.itemteal {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.listItem.itemlime {
+  border-color: rgba(212, 255, 0, 0.3);
+  background: rgba(212, 255, 0, 0.03);
+}
+
+/* Item Status indicator */
+.itemStatus {
+  flex-shrink: 0;
+}
+
+/* Item Actions container */
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Add Part button - circular + icon */
+.addPartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--brand-lime, #d4ff00);
+  border: none;
+  border-radius: 50%;
+  color: var(--brand-bg-primary, #0d1b2a);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.addPartBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(212, 255, 0, 0.3);
+}
+
+/* Find Part button - subtle lime style */
+.findPartBtn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: rgba(212, 255, 0, 0.1);
+  border: 1px solid rgba(212, 255, 0, 0.25);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-accent-lime, #d4ff00);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.copyBtn:hover {
+.findPartBtn:hover {
+  background: rgba(212, 255, 0, 0.18);
+  border-color: rgba(212, 255, 0, 0.4);
+}
+
+.findPartBtn .alAvatar {
+  width: 16px;
+  height: 16px;
+}
+
+/* View Link Button */
+.viewLinkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewLinkBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Part Details Row */
+.partDetailsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 4px;
+}
+
+.itemPrice {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.itemVendor {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.noPartText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+  margin-top: 2px;
+}
 
 /* Shopping List */
 .list {
@@ -118,11 +356,34 @@
 
 .itemHeader {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  /* Equal padding - flexbox centers content */
+  flex-direction: column;
+  gap: 8px;
   padding: 12px 16px;
   box-sizing: border-box;
+}
+
+/* Top row: Status badge + Upgrade name */
+.itemTopRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Bottom row: Sub-details + Actions */
+.itemBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 0; /* Align with name, not status */
+}
+
+.itemSubInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Checkbox */
@@ -165,11 +426,13 @@
 .itemName {
   display: block;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.2;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.3;
   margin: 0;
   padding: 0;
+  /* Allow name to wrap for readability */
+  word-wrap: break-word;
 }
 
 .itemBrand {
@@ -182,8 +445,7 @@
 }
 
 
-/* Inline Add/Edit Part Button - positioned right of item name */
-.addPartInline,
+/* Edit Part Button */
 .editPartInline {
   display: inline-flex;
   align-items: center;
@@ -198,21 +460,6 @@
   transition: all 0.15s;
   flex-shrink: 0;
   white-space: nowrap;
-}
-
-/* Add part button - solid LIME CTA */
-.addPartInline {
-  background: var(--brand-lime);
-  border: none;
-  color: var(--brand-bg-primary);
-}
-
-.addPartInline:hover {
-  background: var(--brand-lime-dark);
-  transform: scale(1.02);
-}
-
-.editPartInline {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.7);
@@ -337,9 +584,6 @@
   }
   
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
     max-width: 100%;
   }
   
@@ -351,11 +595,6 @@
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .title {
     font-size: 0.875rem;
-  }
-  
-  .copyBtn {
-    width: 100%;
-    justify-content: center;
   }
   
   .alRecommendationsBtn {
@@ -381,11 +620,13 @@
   .list {
     max-width: 100%;
     overflow: hidden;
+    gap: 10px;
   }
   
   .listItem {
     max-width: 100%;
     overflow: hidden;
+    border-radius: 12px;
   }
   
   .editRow {
@@ -402,36 +643,81 @@
     max-width: none;
   }
   
+  /* Mobile item layout */
   .itemHeader {
-    padding: 12px;
+    padding: 14px;
     gap: 10px;
     max-width: 100%;
   }
   
-  .itemInfo {
-    flex-wrap: wrap;
-    min-width: 0;
-    overflow: hidden;
+  .itemTopRow {
+    gap: 10px;
   }
   
-  .itemName {
-    font-size: 13px;
-    white-space: nowrap;
+  .itemInfo {
+    min-width: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    flex: 1;
+  }
+  
+  /* Allow full name to show - NO truncation */
+  .itemName {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    line-height: 1.35;
   }
   
   .itemBrand {
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    font-size: 0.8125rem;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    margin-top: 3px;
   }
   
-  .addPartInline,
+  .itemBottomRow {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .noPartText {
+    font-size: 0.8125rem;
+  }
+  
+  .itemActions {
+    gap: 8px;
+  }
+  
+  .addPartBtn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .findPartBtn {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+  
   .editPartInline {
     margin: 0;
+    padding: 10px 14px;
+  }
+  
+  .viewLinkBtn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  /* Status summary spacing */
+  .statusSummary {
+    gap: var(--space-3, 12px);
+    padding: var(--space-2, 8px) 0 var(--space-3, 12px);
+  }
+  
+  .statusCount {
+    font-size: 0.8125rem;
   }
 }

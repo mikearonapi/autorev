@@ -9,6 +9,7 @@ import styles from './Footer.module.css';
 const APP_ROUTES = [
   '/dashboard',
   '/garage',
+  '/insights',
   '/data',
   '/community',
   '/al',

@@ -205,22 +205,34 @@ export default function CommunityPage() {
     setCurrentImageIndex(0);
   }, [currentIndex]);
   
-  // Navigation
+  // Navigation - loops at boundaries
   const goToNext = useCallback(() => {
-    if (currentIndex < builds.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setShowDetails(false);
-      setShowComments(false);
-    }
-  }, [currentIndex, builds.length]);
+    if (builds.length === 0) return;
+    
+    setCurrentIndex(prev => {
+      // If at the last build, loop back to the first
+      if (prev >= builds.length - 1) {
+        return 0;
+      }
+      return prev + 1;
+    });
+    setShowDetails(false);
+    setShowComments(false);
+  }, [builds.length]);
   
   const goToPrev = useCallback(() => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      setShowDetails(false);
-      setShowComments(false);
-    }
-  }, [currentIndex]);
+    if (builds.length === 0) return;
+    
+    setCurrentIndex(prev => {
+      // If at the first build, loop to the last
+      if (prev <= 0) {
+        return builds.length - 1;
+      }
+      return prev - 1;
+    });
+    setShowDetails(false);
+    setShowComments(false);
+  }, [builds.length]);
   
   const goToNextImage = useCallback(() => {
     if (currentImageIndex < buildImages.length - 1) {

@@ -35,9 +35,9 @@ const VERIFICATION_RETRY_DELAY = 200; // ms
 
 /**
  * Default post-login destination
- * Users land on their Dashboard after login to see their progress and engagement
+ * Users land on Insights after login to see personalized vehicle insights
  */
-const DEFAULT_POST_LOGIN_PATH = '/dashboard';
+const DEFAULT_POST_LOGIN_PATH = '/insights';
 
 /**
  * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.
@@ -48,17 +48,17 @@ const DEFAULT_POST_LOGIN_PATH = '/dashboard';
  * - NOT containing a protocol (`https://`, `http://`, `javascript:`, etc.)
  * 
  * @param {string|null} next - The raw `next` query parameter
- * @returns {string} - A safe relative path, defaulting to /dashboard if invalid
+ * @returns {string} - A safe relative path, defaulting to /insights if invalid
  */
 function validateRedirectPath(next) {
-  // Default to dashboard if no next provided
+  // Default to insights if no next provided
   if (!next || typeof next !== 'string') {
     return DEFAULT_POST_LOGIN_PATH;
   }
   
   const trimmed = next.trim();
   
-  // Empty string → default to dashboard
+  // Empty string → default to insights
   if (trimmed === '') {
     return DEFAULT_POST_LOGIN_PATH;
   }
@@ -84,7 +84,7 @@ function validateRedirectPath(next) {
     return DEFAULT_POST_LOGIN_PATH;
   }
   
-  // If user is being redirected to homepage, send them to dashboard instead
+  // If user is being redirected to homepage, send them to insights instead
   // This ensures logged-in users always land in the app, not the marketing page
   if (trimmed === '/') {
     return DEFAULT_POST_LOGIN_PATH;

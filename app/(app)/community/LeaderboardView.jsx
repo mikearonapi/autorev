@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
+import PointsExplainerModal from '@/app/(app)/dashboard/components/PointsExplainerModal';
 import styles from './LeaderboardView.module.css';
 
 /**
- * LeaderboardView - Monthly points leaderboard
+ * LeaderboardView - Points leaderboard with monthly/all-time toggle
  * 
- * Shows top users by points earned in the current month
- * to drive engagement and friendly competition.
+ * Shows top users by points earned. Users can toggle between
+ * monthly (current month) and all-time leaderboards.
  */
 
 // Medal icons for top 3 with distinct designs
@@ -90,38 +91,66 @@ const FireIcon = () => (
   </svg>
 );
 
+const ChevronDownIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M6 9l6 6 6-6"/>
+  </svg>
+);
+
+const InfoIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 16v-4"/>
+    <path d="M12 8h.01"/>
+  </svg>
+);
+
+const PERIOD_OPTIONS = [
+  { value: 'monthly', label: 'This Month' },
+  { value: 'all-time', label: 'All Time' },
+];
+
 export default function LeaderboardView() {
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
-  const [month, setMonth] = useState('');
+  const [periodLabel, setPeriodLabel] = useState('');
+  const [period, setPeriod] = useState('monthly');
   const [currentUserRank, setCurrentUserRank] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showPointsModal, setShowPointsModal] = useState(false);
+
+  const fetchLeaderboard = useCallback(async (selectedPeriod) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await fetch(`/api/community/leaderboard?limit=20&period=${selectedPeriod}`);
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch leaderboard');
+      }
+      
+      const data = await res.json();
+      setLeaderboard(data.leaderboard || []);
+      setPeriodLabel(data.periodLabel || '');
+      setCurrentUserRank(data.currentUserRank);
+    } catch (err) {
+      console.error('[LeaderboardView] Error:', err);
+      setError('Unable to load leaderboard');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchLeaderboard() {
-      try {
-        setIsLoading(true);
-        const res = await fetch('/api/community/leaderboard?limit=20');
-        
-        if (!res.ok) {
-          throw new Error('Failed to fetch leaderboard');
-        }
-        
-        const data = await res.json();
-        setLeaderboard(data.leaderboard || []);
-        setMonth(data.month || '');
-        setCurrentUserRank(data.currentUserRank);
-      } catch (err) {
-        console.error('[LeaderboardView] Error:', err);
-        setError('Unable to load leaderboard');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    fetchLeaderboard();
-  }, []);
+    fetchLeaderboard(period);
+  }, [period, fetchLeaderboard]);
+
+  const handlePeriodChange = (newPeriod) => {
+    setPeriod(newPeriod);
+    setIsDropdownOpen(false);
+  };
 
   // Format points with commas
   const formatPoints = (points) => {
@@ -152,11 +181,57 @@ export default function LeaderboardView() {
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
+        {/* Info button - top left */}
+        <button 
+          className={styles.infoButtonCircle}
+          onClick={() => setShowPointsModal(true)}
+          aria-label="How to earn points"
+        >
+          <InfoIcon />
+        </button>
+
         <h2 className={styles.title}>
           <CrownIcon />
-          Monthly Leaderboard
+          {period === 'monthly' ? 'Monthly' : 'All-Time'} Leaderboard
         </h2>
-        <p className={styles.subtitle}>{month}</p>
+        <div className={styles.headerControls}>
+          <p className={styles.subtitle}>{periodLabel}</p>
+          
+          {/* Period Dropdown */}
+          <div className={styles.dropdownContainer}>
+            <button 
+              className={styles.dropdownTrigger}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              {PERIOD_OPTIONS.find(opt => opt.value === period)?.label}
+              <ChevronDownIcon />
+            </button>
+            
+            {isDropdownOpen && (
+              <>
+                <div 
+                  className={styles.dropdownBackdrop} 
+                  onClick={() => setIsDropdownOpen(false)}
+                />
+                <ul className={styles.dropdownMenu} role="listbox">
+                  {PERIOD_OPTIONS.map(option => (
+                    <li 
+                      key={option.value}
+                      role="option"
+                      aria-selected={period === option.value}
+                      className={`${styles.dropdownItem} ${period === option.value ? styles.active : ''}`}
+                      onClick={() => handlePeriodChange(option.value)}
+                    >
+                      {option.label}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Current User Rank (if not in top 20) */}
@@ -164,7 +239,7 @@ export default function LeaderboardView() {
         <div className={styles.currentUserBanner}>
           <span className={styles.yourRank}>Your Rank</span>
           <span className={styles.rankBadge}>#{currentUserRank.rank}</span>
-          <span className={styles.yourPoints}>{formatPoints(currentUserRank.monthlyPoints)} pts</span>
+          <span className={styles.yourPoints}>{formatPoints(currentUserRank.points)} pts</span>
         </div>
       )}
 
@@ -238,7 +313,7 @@ export default function LeaderboardView() {
 
                 {/* Points */}
                 <div className={styles.pointsContainer}>
-                  <span className={styles.monthlyPoints}>{formatPoints(entry.monthlyPoints)}</span>
+                  <span className={styles.points}>{formatPoints(entry.points)}</span>
                   <span className={styles.pointsLabel}>pts</span>
                 </div>
               </div>
@@ -247,19 +322,11 @@ export default function LeaderboardView() {
         </div>
       )}
 
-      {/* Points Info */}
-      <div className={styles.infoCard}>
-        <h3>How to Earn Points</h3>
-        <ul>
-          <li><span>+100</span> Add a vehicle to your garage</li>
-          <li><span>+100</span> Share your build</li>
-          <li><span>+75</span> Log dyno or track data</li>
-          <li><span>+50</span> Add a modification</li>
-          <li><span>+25</span> Upload photos or ask AL</li>
-          <li><span>+10</span> Comment on builds</li>
-          <li><span>+5</span> Like a post</li>
-        </ul>
-      </div>
+      {/* Points Explainer Modal */}
+      <PointsExplainerModal 
+        isOpen={showPointsModal} 
+        onClose={() => setShowPointsModal(false)} 
+      />
     </div>
   );
 }

@@ -2,74 +2,157 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Suspense } from 'react';
+import { UI_IMAGES } from '@/lib/images';
+
+/**
+ * Auth Error Page - Brand-Consistent Design
+ * 
+ * Matches AutoRev's dark theme with:
+ * - Navy background (#0d1b2a)
+ * - White/slate text hierarchy
+ * - Lime accent CTA
+ * - AL mascot for friendly error state
+ */
+
+// Friendly error messages for common error codes
+const ERROR_MESSAGES = {
+  'flow_state_not_found': 'Your login session expired. Please try signing in again.',
+  'invalid_confirmation_link': 'This confirmation link is invalid or has expired.',
+  'confirmation_failed': 'We couldn\'t confirm your email. Please request a new link.',
+  'authentication_failed': 'Authentication failed. Please try again.',
+  'access_denied': 'Access was denied. Please check your permissions.',
+  'server_error': 'Something went wrong on our end. Please try again.',
+};
+
+function getErrorMessage(error) {
+  // Check if it's a known error code
+  const lowerError = error?.toLowerCase().replace(/\s+/g, '_');
+  if (ERROR_MESSAGES[lowerError]) {
+    return ERROR_MESSAGES[lowerError];
+  }
+  // Return the original error or a default message
+  return error || 'An unexpected error occurred. Please try again.';
+}
 
 function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'An unknown error occurred';
+  const errorCode = searchParams.get('error_code');
+  
+  const friendlyMessage = getErrorMessage(errorCode || error);
 
   return (
     <div style={{
       minHeight: '100vh',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem',
-      background: 'var(--color-gray-50)',
+      background: '#0d1b2a',
     }}>
+      {/* Logo */}
       <div style={{
-        maxWidth: '400px',
-        padding: '2rem',
-        background: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        marginBottom: '2rem',
         textAlign: 'center',
       }}>
-        <div style={{
-          width: '64px',
-          height: '64px',
-          background: 'var(--color-error-light)',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 1.5rem',
+        <span style={{
+          fontFamily: 'var(--font-oswald, Oswald), sans-serif',
+          fontSize: '2rem',
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          letterSpacing: '-0.02em',
         }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-error)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
+          <span style={{ color: '#ffffff' }}>AUTO</span>
+          <span style={{ color: '#d4ff00' }}>REV</span>
+        </span>
+      </div>
+
+      {/* Error Card */}
+      <div style={{
+        maxWidth: '400px',
+        width: '100%',
+        padding: '2rem',
+        background: 'rgba(255, 255, 255, 0.04)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '16px',
+        textAlign: 'center',
+      }}>
+        {/* AL Mascot with concerned expression concept */}
+        <div style={{
+          width: '80px',
+          height: '80px',
+          margin: '0 auto 1.5rem',
+          position: 'relative',
+        }}>
+          <Image 
+            src={UI_IMAGES.alMascotFull}
+            alt="AL"
+            width={80}
+            height={80}
+            style={{ 
+              borderRadius: '50%',
+              opacity: 0.8,
+            }}
+          />
+          {/* Error indicator overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-4px',
+            right: '-4px',
+            width: '28px',
+            height: '28px',
+            background: '#ef4444',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '3px solid #0d1b2a',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </div>
         </div>
         
         <h1 style={{
+          fontFamily: 'var(--font-oswald, Oswald), sans-serif',
           fontSize: '1.5rem',
-          fontWeight: '700',
-          color: 'var(--color-gray-900)',
-          marginBottom: '0.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          marginBottom: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.02em',
         }}>
-          Authentication Error
+          Oops, Something Went Wrong
         </h1>
         
         <p style={{
-          color: 'var(--color-gray-600)',
+          color: '#94a3b8',
           marginBottom: '1.5rem',
-          lineHeight: '1.5',
+          lineHeight: '1.6',
+          fontSize: '0.95rem',
         }}>
-          {error}
+          {friendlyMessage}
         </p>
         
-        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link
             href="/garage"
             style={{
-              padding: '0.75rem 1.5rem',
-              background: 'var(--sn-primary)',
-              color: 'white',
-              borderRadius: '8px',
+              padding: '0.875rem 1.75rem',
+              background: '#d4ff00',
+              color: '#0a1628',
+              borderRadius: '100px',
               textDecoration: 'none',
-              fontWeight: '600',
-              fontSize: '0.9rem',
+              fontWeight: '700',
+              fontSize: '0.875rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              transition: 'all 0.2s ease',
             }}
           >
             Try Again
@@ -77,26 +160,61 @@ function AuthErrorContent() {
           <Link
             href="/"
             style={{
-              padding: '0.75rem 1.5rem',
-              background: 'var(--color-gray-100)',
-              color: 'var(--color-gray-700)',
-              borderRadius: '8px',
+              padding: '0.875rem 1.75rem',
+              background: 'transparent',
+              color: '#94a3b8',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '100px',
               textDecoration: 'none',
-              fontWeight: '500',
-              fontSize: '0.9rem',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              transition: 'all 0.2s ease',
             }}
           >
             Go Home
           </Link>
         </div>
       </div>
+      
+      {/* Help text */}
+      <p style={{
+        marginTop: '1.5rem',
+        color: '#64748b',
+        fontSize: '0.8rem',
+        textAlign: 'center',
+      }}>
+        If this keeps happening, please{' '}
+        <Link 
+          href="/contact" 
+          style={{ 
+            color: '#d4ff00', 
+            textDecoration: 'underline',
+            textUnderlineOffset: '2px',
+          }}
+        >
+          contact support
+        </Link>
+      </p>
     </div>
   );
 }
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0d1b2a',
+        color: '#ffffff',
+      }}>
+        Loading...
+      </div>
+    }>
       <AuthErrorContent />
     </Suspense>
   );

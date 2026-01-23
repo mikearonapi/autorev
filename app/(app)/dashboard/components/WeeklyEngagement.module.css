@@ -17,7 +17,7 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
@@ -38,7 +38,7 @@
 
 .streakCount {
   font-family: var(--font-mono, monospace);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
@@ -92,14 +92,14 @@
 
 .ringScore {
   font-family: var(--font-mono, monospace);
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 800;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
 }
 
 .ringLabel {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum decorative label */
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
 }
@@ -126,7 +126,7 @@
 
 .activityValue {
   font-family: var(--font-mono, monospace);
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--color-text-secondary, #94a3b8);
 }
 
@@ -230,7 +230,7 @@
    All labels: identical positioning and height */
 
 .barLabel {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum for compact chart labels */
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
   margin-top: 6px; /* Consistent spacing from bar to label */
@@ -271,7 +271,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum for compact legend */
   color: var(--color-text-tertiary, #64748b);
 }
 
@@ -324,14 +324,14 @@
 
 .achievementValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
 }
 
 .achievementLabel {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum for compact label */
   color: var(--color-text-secondary, #94a3b8);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -344,10 +344,10 @@
   }
   
   .achievementValue {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   
   .achievementLabel {
-    font-size: 10px;
+    font-size: var(--text-2xs);
   }
 }

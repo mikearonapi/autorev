@@ -1,0 +1,102 @@
+/* Vendor Badge Styles */
+
+.vendorBadge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.vendorName {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.vendorLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-secondary, #94a3b8);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.vendorLink:hover {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Individual Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge.compact {
+  padding: 2px 4px;
+}
+
+.badge.compact span {
+  display: none;
+}
+
+/* Badge Types */
+.badgeVerified {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.badgeBestPrice {
+  background: rgba(212, 255, 0, 0.15);
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.badgePopular {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+.badgeFitment {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Vendor Indicator (inline) */
+.vendorIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.trustedIcon {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.bestPriceTag {
+  padding: 1px 4px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(212, 255, 0, 0.15);
+  color: var(--color-accent-lime, #d4ff00);
+  border-radius: 3px;
+}
+
+.vendorPlain {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+}

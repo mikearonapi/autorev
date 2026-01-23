@@ -26,7 +26,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { fetchCars } from '@/lib/carsClient';
+import { useCarsList } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
@@ -97,7 +97,6 @@ function MySpecsContent() {
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
-  const [allCars, setAllCars] = useState([]);
   const [specsConfirmed, setSpecsConfirmed] = useState(false);
   const [confirmingSpecs, setConfirmingSpecs] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
@@ -108,6 +107,9 @@ function MySpecsContent() {
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles, refreshVehicles } = useOwnedVehicles();
   const { openChatWithPrompt } = useAIChat();
+  
+  // Use cached cars data from React Query hook
+  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
   // Check for action=confirm query param and scroll to confirm button
   const actionParam = searchParams.get('action');
@@ -206,17 +208,6 @@ function MySpecsContent() {
     }, displayMessage);
   }, [selectedCar, openChatWithPrompt]);
 
-  // Fetch all cars
-  useEffect(() => {
-    let cancelled = false;
-    fetchCars().then(cars => {
-      if (!cancelled && Array.isArray(cars)) {
-        setAllCars(cars);
-      }
-    });
-    return () => { cancelled = true; };
-  }, []);
-
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
@@ -249,8 +240,8 @@ function MySpecsContent() {
   };
 
   // Loading state
-  const isLoadingBuild = buildIdParam && (buildsLoading || allCars.length === 0);
-  if (authLoading || isLoadingBuild) {
+  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
+  if (authLoading || carsLoading || isLoadingBuild) {
     return (
       <div className={styles.page}>
         <LoadingSpinner 
@@ -533,7 +524,7 @@ function MySpecsLoading() {
 
 export default function MySpecsPage() {
   return (
-    <ErrorBoundary>
+    <ErrorBoundary name="MySpecsPage" featureContext="garage-my-specs">
       <Suspense fallback={<MySpecsLoading />}>
         <MySpecsContent />
       </Suspense>

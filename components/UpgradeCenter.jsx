@@ -848,13 +848,6 @@ function CategoryPopup({
             const hasConfigOptions = upgrade.configOptions && Object.keys(upgrade.configOptions).length > 0;
             const currentConfig = upgradeConfigs?.[upgrade.key] || {};
             
-            // Calculate HP modifier from config
-            const configHpMod = isSelected && hasConfigOptions 
-              ? calculateConfigHpModifier(upgrade.configOptions, currentConfig)
-              : 0;
-            const baseHpGain = upgrade.metricChanges?.hpGain || 0;
-            const totalHpGain = baseHpGain + configHpMod;
-            
             return (
               <div 
                 key={upgrade.key} 
@@ -878,33 +871,16 @@ function CategoryPopup({
                       {isSelected && <Icons.check size={10} />}
                     </span>
                     <span className={styles.upgradeName}>{upgrade.name}</span>
-                    {totalHpGain > 0 && (
-                      <span className={`${styles.upgradeGain} ${configHpMod > 0 ? styles.upgradeGainBoosted : ''}`}>
-                        +{totalHpGain}hp
-                        {configHpMod > 0 && <span className={styles.configBoost}>*</span>}
-                      </span>
-                    )}
                   </button>
                   {hasConflict && (
                     <span className={styles.conflictBadge} title={`Replaces: ${replacementInfo.names.join(', ')}`}>
                       <Icons.swap size={10} />
                     </span>
                   )}
-                  <button type="button" className={styles.learnMoreBtn} onClick={() => onInfoClick(upgrade)} aria-label={`Learn more about ${upgrade.name}`}>
-                    <span>Learn more</span>
+                  <button type="button" className={styles.infoBtn} onClick={() => onInfoClick(upgrade)} aria-label={`Learn more about ${upgrade.name}`} title={`Learn more about ${upgrade.name}`}>
+                    <Icons.info size={16} />
                   </button>
                 </div>
-                
-                {/* Inline performance preview - shows on selection */}
-                {isSelected && totalHpGain > 0 && (
-                  <div className={styles.inlinePreview}>
-                    <span className={styles.previewLabel}>This upgrade adds:</span>
-                    <span className={styles.previewValue}>+{totalHpGain} HP</span>
-                    {upgrade.metricChanges?.torqueGain > 0 && (
-                      <span className={styles.previewValue}>+{upgrade.metricChanges.torqueGain} lb-ft</span>
-                    )}
-                  </div>
-                )}
                 
                 {/* Inline config panel - shows when upgrade is selected and has configOptions */}
                 {isSelected && hasConfigOptions && (
@@ -993,6 +969,11 @@ export default function UpgradeCenter({
   
   // Video player state
   const [selectedVideo, setSelectedVideo] = useState(null);
+  
+  // Track which build ID we've already loaded to prevent re-loading on every getBuildById change
+  // This fixes a bug where auto-save causes getBuildById reference to change, triggering the
+  // load effect which resets selectedModules to the (stale) saved value
+  const loadedBuildIdRef = useRef(null);
   
   // Tuner Mode: 'basic' or 'advanced' - advanced shows physics-based projections
   const [tunerMode, setTunerMode] = useState('basic');
@@ -1202,6 +1183,8 @@ export default function UpgradeCenter({
     setSelectedPackage('stock');
     setCurrentBuildId(null);
     setActiveCategory(null);
+    // Reset the loaded build tracker so a new build can be loaded for this car
+    loadedBuildIdRef.current = null;
     // Reset advanced specs but keep mode
     setAdvancedSpecs({
       engine: { type: 'stock', cams: 'stock', camDuration: null, headWork: false, displacement: 2.0, internals: 'stock', compression: null, valvetrain: 'stock', blockType: 'stock' },
@@ -1227,11 +1210,27 @@ export default function UpgradeCenter({
   // Turbos are now loaded via React Query (useTurbos hook above)
   
   // Load initial build if provided
+  // IMPORTANT: Only load ONCE per build ID to prevent auto-save from triggering a reload
+  // that would reset selectedModules to the stale saved value
   useEffect(() => {
     if (initialBuildId && safeCarSlug) {
+      // Skip if we've already loaded this build
+      if (loadedBuildIdRef.current === initialBuildId) {
+        return;
+      }
+      
       const build = getBuildById(initialBuildId);
       if (build && build.carSlug === safeCarSlug) {
-        setSelectedModules(build.upgrades || []);
+        // Mark this build as loaded BEFORE setting state to prevent race conditions
+        loadedBuildIdRef.current = initialBuildId;
+        
+        // IMPORTANT: Normalize upgrades to string keys
+        // Database may store full objects or just keys depending on how the build was saved
+        const normalizedUpgrades = (build.upgrades || [])
+          .map(u => typeof u === 'string' ? u : u?.key)
+          .filter(Boolean);
+        
+        setSelectedModules(normalizedUpgrades);
         setSelectedParts(build.parts || build.selectedParts || []);
         setSelectedPackage('custom');
         setCurrentBuildId(initialBuildId);
@@ -2057,11 +2056,16 @@ export default function UpgradeCenter({
         effectiveFinalHp, // Pre-computed based on mode
       });
       
+      // Ensure upgrades are always saved as string keys, not full objects
+      const normalizedUpgrades = effectiveModules
+        .map(u => typeof u === 'string' ? u : u?.key)
+        .filter(Boolean);
+      
       const buildData = {
         carSlug: car.slug,
         carName: car.name,
         name: buildName.trim(),
-        selectedUpgrades: effectiveModules,
+        selectedUpgrades: normalizedUpgrades,
         selectedParts,
         upgradeConfigs: upgradeConfigs,  // Include upgrade configurations (catless, etc.)
         // Use the pre-computed HP values (single source of truth)

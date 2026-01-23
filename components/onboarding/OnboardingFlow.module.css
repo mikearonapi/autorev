@@ -9,7 +9,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
+  /* Use 100% instead of 100vw to avoid scrollbar width issues on Android */
+  width: 100%;
   /* Add extra height to compensate for negative top */
   min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
   min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
@@ -23,6 +24,8 @@
   /* Navy background */
   background: #0d1b2a;
   box-sizing: border-box;
+  /* Prevent horizontal overflow on Android */
+  overflow-x: hidden;
 }
 
 /* Modal Container */
@@ -212,7 +215,7 @@
 }
 
 .intentEmoji {
-  font-size: 28px;
+  font-size: var(--text-h1);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -309,7 +312,7 @@
 }
 
 .optionEmoji {
-  font-size: 24px;
+  font-size: var(--text-h1);
   line-height: 1;
 }
 
@@ -585,7 +588,7 @@
 }
 
 .ctaIcon {
-  font-size: 56px;
+  font-size: var(--text-hero);
   margin-bottom: var(--space-sm);
 }
 
@@ -615,7 +618,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100vw;
+    /* Use 100% instead of 100vw to avoid scrollbar width issues on Android */
+    width: 100%;
     min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
     min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
     display: block;
@@ -623,6 +627,7 @@
     padding: 0;
     margin: 0;
     overflow: hidden;
+    overflow-x: hidden; /* Extra protection for Android */
   }
   
   .modal {
@@ -716,7 +721,7 @@
   }
   
   .progressStep {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: rgba(255, 255, 255, 0.3);
     transition: color 0.3s ease;
     text-transform: uppercase;

@@ -272,10 +272,20 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
         
-        {/* NOTE: Removed maximum-scale=1 to fix Android scroll issues.
-            maximum-scale=1 can interfere with Android Chrome's scroll handling.
-            iOS Safari handles this fine, but Android devices were completely unable to scroll. */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* =============================================================================
+            VIEWPORT CONFIGURATION - Optimized for iOS + Android
+            
+            Key settings:
+            - width=device-width: Match device width
+            - initial-scale=1: Start at 100% zoom
+            - maximum-scale=5: Allow some zoom for accessibility (WCAG)
+            - viewport-fit=cover: Support notched devices (iPhone X+)
+            - interactive-widget=resizes-visual: Android Chrome keyboard handling
+            
+            NOTE: We do NOT use user-scalable=no (accessibility violation).
+            Zoom prevention is handled via CSS touch-action on specific elements.
+            ============================================================================= */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, interactive-widget=resizes-visual" />
         <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#0a1628" media="(prefers-color-scheme: light)" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -360,7 +370,7 @@ export default function RootLayout({ children }) {
                     // Create and inject splash screen
                     var splash = document.createElement('div');
                     splash.id = 'oauth-splash';
-                    splash.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;height:100dvh;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999999;opacity:1;transition:opacity 0.5s ease-out;';
+                    splash.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999999;opacity:1;transition:opacity 0.5s ease-out;overflow:hidden;';
                     splash.innerHTML = '<div style="font-family:Oswald,sans-serif;font-size:clamp(48px,12vw,72px);font-weight:700;letter-spacing:-0.02em;text-transform:uppercase;animation:logoEnter 0.4s ease-out;"><span style="color:#fff;">AUTO</span><span style="color:#d4ff00;">REV</span></div><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
                     document.body.appendChild(splash);
                     

@@ -8,7 +8,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Safe area padding for mobile */
   padding: var(--space-md);
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
   background: transparent;
   animation: fadeIn 0.2s ease;
 }
@@ -60,8 +63,10 @@
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,8 +88,10 @@
   position: absolute;
   top: var(--space-md);
   left: var(--space-md);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,7 +185,7 @@
   width: 100%;
   height: 48px;
   padding: 0 var(--space-md);
-  font-size: var(--font-size-sm);
+  font-size: max(16px, var(--font-size-sm)); /* Prevents iOS Safari auto-zoom on focus */
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   background: var(--color-white);

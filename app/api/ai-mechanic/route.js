@@ -47,6 +47,45 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { notifyALConversation } from '@/lib/discord';
+
+// =============================================================================
+// USER INFO HELPER (for Discord notifications)
+// =============================================================================
+
+/**
+ * Fetch user display name and email for Discord notifications
+ * Non-blocking helper - failures don't affect main flow
+ */
+async function getUserInfoForNotification(userId) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!userId || !supabaseUrl || !supabaseServiceKey) {
+    return { displayName: null, email: null };
+  }
+  
+  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  
+  try {
+    // Fetch display_name from user_profiles and email from auth.users in parallel
+    const [profileResult, authResult] = await Promise.all([
+      supabaseAdmin
+        .from('user_profiles')
+        .select('display_name')
+        .eq('id', userId)
+        .maybeSingle(),
+      supabaseAdmin.auth.admin.getUserById(userId),
+    ]);
+    
+    return {
+      displayName: profileResult.data?.display_name || null,
+      email: authResult.data?.user?.email || null,
+    };
+  } catch (err) {
+    console.warn('[AL API] Failed to fetch user info for notification:', err?.message);
+    return { displayName: null, email: null };
+  }
+}
 import { logServerError } from '@/lib/serverErrorLogger';
 import { getAnthropicConfig } from '@/lib/observability';
 import { trackActivity } from '@/lib/dashboardScoreService';
@@ -498,6 +537,7 @@ async function handleStreamingResponse({
   carSlug,
   userId,
   userPreferences = null,
+  userPersonalization = null,
   attachments = [],
   dailyUsage = null,
   history = [], // Client-provided history for conversation continuity
@@ -535,6 +575,7 @@ async function handleStreamingResponse({
           domains,
           balanceCents: userBalance.balanceCents,
           userPreferences, // Pass user's data source preferences
+          userPersonalization, // Pass user's questionnaire answers for tailoring responses
           currentPage: context.currentPage,
           formattedContext: contextText,
         });
@@ -860,6 +901,7 @@ export async function POST(request) {
     let plan = null;
     let costEstimate = null;
     let userPreferences = null;
+    let userPersonalization = null;
     let dailyUsage = null;
 
     if (!isInternalEval) {
@@ -876,18 +918,27 @@ export async function POST(request) {
       userBalance = await getUserBalance(userId);
       plan = getPlan(userBalance.plan);
 
-      // Fetch user's AL preferences (for tool toggles)
+      // Fetch user's AL preferences (for tool toggles) and personalization preferences (for tailoring responses)
       try {
         const supabaseServiceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (supabaseServiceUrl && supabaseServiceKey) {
           const supabaseAdmin = createClient(supabaseServiceUrl, supabaseServiceKey);
-          const { data: prefs } = await supabaseAdmin
-            .from('al_user_preferences')
-            .select('*')
-            .eq('user_id', userId)
-            .single();
-          userPreferences = prefs || null;
+          // Fetch both AL preferences and personalization preferences in parallel
+          const [alPrefsResult, personalizationResult] = await Promise.all([
+            supabaseAdmin
+              .from('al_user_preferences')
+              .select('*')
+              .eq('user_id', userId)
+              .single(),
+            supabaseAdmin
+              .from('user_preferences')
+              .select('driving_focus, work_preference, budget_comfort, mod_experience, primary_goals, track_frequency, detail_level')
+              .eq('user_id', userId)
+              .single(),
+          ]);
+          userPreferences = alPrefsResult.data || null;
+          userPersonalization = personalizationResult.data || null;
         }
       } catch (prefsError) {
         // Non-fatal - continue with default preferences (all enabled)
@@ -1005,12 +1056,18 @@ export async function POST(request) {
       }
       
       const carContext = body.carContext?.name || body.carContext?.slug;
-      notifyALConversation({
-        id: activeConversationId,
-        firstMessage: body.message,
-        carContext,
-        userTier: userBalance?.plan,
-      }).catch(err => console.error('[AL API] Discord notification failed:', err));
+      // Fetch user info and send Discord notification (non-blocking)
+      (async () => {
+        const userInfo = await getUserInfoForNotification(userId);
+        await notifyALConversation({
+          id: activeConversationId,
+          firstMessage: body.message,
+          carContext,
+          userTier: userBalance?.plan,
+          username: userInfo.displayName,
+          userEmail: userInfo.email,
+        });
+      })().catch(err => console.error('[AL API] Discord notification failed:', err));
     }
 
     // =============================================================================
@@ -1031,6 +1088,7 @@ export async function POST(request) {
         carSlug,
         userId,
         userPreferences,
+        userPersonalization,
         attachments,
         dailyUsage,
         history, // Pass client-provided history for conversation continuity
@@ -1061,6 +1119,7 @@ export async function POST(request) {
       currentPage,
       formattedContext: contextText,
       userPreferences, // Pass user's data source preferences
+      userPersonalization, // Pass user's questionnaire answers for tailoring responses
     });
 
     // Format messages for Claude - use existing conversation history if available

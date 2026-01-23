@@ -69,6 +69,9 @@
   /* Bottom tab bar height (including safe area) */
   --bottom-tab-height: calc(60px + var(--safe-area-bottom));
   
+  /* Page bottom padding - ensures content doesn't hide behind tab bar */
+  --page-bottom-padding: calc(var(--bottom-tab-height) + var(--space-4));
+  
   /* =======================================================================
      BORDER RADIUS
      Consistent rounding across components

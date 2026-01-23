@@ -89,9 +89,20 @@ export const partsKeys = {
 
 /**
  * Fetch all cars list
+ * Returns the cars array from the API response (API returns { cars, count, source })
  */
 async function fetchCarsList() {
-  return fetcher('/api/cars');
+  const data = await fetcher('/api/cars');
+  // Defensive: ensure we always return an array
+  if (data && Array.isArray(data.cars)) {
+    return data.cars;
+  }
+  // If API returns array directly (legacy format)
+  if (Array.isArray(data)) {
+    return data;
+  }
+  console.warn('[useCarData] Unexpected API response format:', data);
+  return [];
 }
 
 /**

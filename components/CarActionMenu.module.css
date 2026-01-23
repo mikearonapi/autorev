@@ -479,13 +479,15 @@
   /* Ensure action buttons meet touch target */
   .actionBtn {
     padding: 10px 14px;
-    min-height: 40px;
+    min-height: 44px;
   }
   
   /* Dropdown trigger */
   .dropdownTrigger {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
   
   /* Dropdown items need proper touch targets */

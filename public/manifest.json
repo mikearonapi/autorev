@@ -46,6 +46,20 @@
       "type": "image/png",
       "form_factor": "wide",
       "label": "AutoRev Homepage"
+    },
+    {
+      "src": "/images/onboarding/garage-01-hero.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AutoRev Garage on Mobile"
+    },
+    {
+      "src": "/images/onboarding/tuning-shop-01-overview.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AutoRev Tuning Shop"
     }
   ],
   "categories": ["automotive", "lifestyle", "sports"],

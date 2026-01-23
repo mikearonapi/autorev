@@ -15,7 +15,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Safe area padding for mobile */
   padding: 20px;
+  padding-top: max(20px, env(safe-area-inset-top));
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
   z-index: 1100;
   animation: fadeIn 0.2s ease;
 }
@@ -50,10 +53,12 @@
 
 .closeBtn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -111,7 +116,7 @@
 
 .title {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 600;
   color: #fff;
   text-align: center;
@@ -120,7 +125,7 @@
 
 .titleDanger {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 600;
   color: #ef4444;
   text-align: center;
@@ -128,7 +133,7 @@
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--color-text-secondary, #94a3b8);
   text-align: center;
   margin: 0 0 24px;
@@ -192,7 +197,7 @@
 }
 
 .reasonLabel {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: #fff;
   flex: 1;
 }
@@ -204,7 +209,7 @@
 
 .detailsLabel {
   display: block;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-text-secondary, #94a3b8);
   margin-bottom: 8px;
@@ -216,7 +221,7 @@
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  font-size: 14px;
+  font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
   color: #fff;
   resize: none;
   font-family: inherit;
@@ -236,7 +241,7 @@
 .charCount {
   display: block;
   text-align: right;
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--color-text-tertiary, #64748b);
   margin-top: 6px;
 }
@@ -254,7 +259,7 @@
 }
 
 .warningTitle {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: #ef4444;
   margin: 0 0 12px;
@@ -267,7 +272,7 @@
 }
 
 .warningList li {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary, #94a3b8);
   margin-bottom: 6px;
   line-height: 1.4;
@@ -284,7 +289,7 @@
 
 .confirmLabel {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--color-text-secondary, #94a3b8);
   margin-bottom: 10px;
   text-align: center;
@@ -304,7 +309,7 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 12px;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 16px;
+  font-size: max(16px, var(--text-h4)); /* Prevents iOS zoom */
   font-weight: 600;
   color: #fff;
   text-align: center;
@@ -329,7 +334,7 @@
 
 /* Error message */
 .error {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: #ef4444;
   text-align: center;
   margin: 0 0 16px;
@@ -354,7 +359,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--color-text-secondary, #94a3b8);
   cursor: pointer;
@@ -373,7 +378,7 @@
   background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: #0a1628;
   cursor: pointer;
@@ -395,7 +400,7 @@
   background: #ef4444;
   border: none;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: #fff;
   cursor: pointer;
@@ -427,7 +432,7 @@
 
   .title,
   .titleDanger {
-    font-size: 20px;
+    font-size: var(--text-h3);
   }
 
   .reasonOption {
@@ -453,10 +458,10 @@
   }
 
   .reasonLabel {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 
   .warningList li {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }

@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
@@ -49,7 +49,7 @@
   background: rgba(255, 255, 255, 0.6);
   border: 1px solid rgba(13, 27, 42, 0.06);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: #475569;
   transition: all 0.15s ease;
 }
@@ -78,7 +78,7 @@
 
 .sourceNumber {
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: #10b981;
   flex-shrink: 0;
@@ -102,7 +102,7 @@
 
 .sourceDomain,
 .sourceDetail {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: #94a3b8;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -133,7 +133,7 @@
   background: transparent;
   border: 1px dashed rgba(13, 27, 42, 0.12);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: #64748b;
   cursor: pointer;
@@ -156,7 +156,7 @@
   background: rgba(16, 185, 129, 0.1);
   color: #10b981;
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
@@ -186,6 +186,6 @@
   }
   
   .sourceLabel {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }

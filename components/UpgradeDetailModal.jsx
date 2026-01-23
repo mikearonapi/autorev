@@ -1,6 +1,7 @@
 'use client';
 
 import { analyzeScenario } from '@/lib/dependencyChecker';
+import InfoTooltip from './ui/InfoTooltip';
 import styles from './UpgradeDetailModal.module.css';
 import { Icons } from '@/components/ui/Icons';
 
@@ -53,7 +54,9 @@ export default function UpgradeDetailModal({
   upgrade, 
   onClose, 
   onAddToBuild = null,
-  showAddToBuild = false
+  showAddToBuild = false,
+  carName = null,
+  carSlug = null,
 }) {
   if (!upgrade) return null;
 
@@ -90,7 +93,9 @@ export default function UpgradeDetailModal({
             {upgrade.difficulty && (
               <span className={styles.metaItem}>
                 <Icons.wrench size={16} />
-                {upgrade.difficulty}
+                <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={carSlug}>
+                  <span>{upgrade.difficulty}</span>
+                </InfoTooltip>
               </span>
             )}
             {upgrade.installTime && (
@@ -215,17 +220,11 @@ export default function UpgradeDetailModal({
             </section>
           )}
 
-          {/* Metric Changes (from performance modules) */}
-          {upgrade.metricChanges && (
+          {/* Metric Changes (from performance modules) - HP gain removed per design */}
+          {upgrade.metricChanges && (upgrade.metricChanges.zeroToSixtyImprovement || upgrade.metricChanges.brakingImprovement || upgrade.metricChanges.lateralGImprovement) && (
             <section className={styles.section}>
               <h3>Performance Impact</h3>
               <div className={styles.gainsGrid}>
-                {upgrade.metricChanges.hpGain && (
-                  <div className={styles.gainItem}>
-                    <span className={styles.gainLabel}>HP Gain</span>
-                    <span className={styles.gainValue}>+{upgrade.metricChanges.hpGain} hp</span>
-                  </div>
-                )}
                 {upgrade.metricChanges.zeroToSixtyImprovement && (
                   <div className={styles.gainItem}>
                     <span className={styles.gainLabel}>0-60 Improvement</span>

@@ -54,7 +54,7 @@
   justify-content: space-between;
   gap: 8px;
   margin: 0;
-  font-size: 11px;
+  font-size: var(--text-xs);
   width: 100%;
   font-weight: 800;
   color: var(--brand-gold);
@@ -63,7 +63,7 @@
 }
 
 .customBadge {
-  font-size: 8px;
+  font-size: 8px; /* Sub-minimum decorative badge */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -79,7 +79,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.05);
@@ -102,7 +102,7 @@
 
 .editHint {
   margin: 6px 0 0 0;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.35);
 }
 
@@ -123,7 +123,7 @@
 
 .sectionLabel {
   display: block;
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum section label */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -142,7 +142,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  font-size: 13px;
+  font-size: var(--text-sm);
   position: relative;
   transition: background 0.15s ease;
   border-radius: 4px;
@@ -184,14 +184,14 @@
 .specLabel {
   color: rgba(255, 255, 255, 0.55);
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .specValue {
   color: var(--brand-text-primary);
   font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
-  font-size: 14px;
+  font-size: var(--text-body);
   text-align: right;
   display: flex;
   align-items: center;
@@ -205,7 +205,7 @@
 }
 
 .stockHint {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum hint */
   color: rgba(255, 255, 255, 0.3);
   text-decoration: line-through;
 }
@@ -260,7 +260,7 @@
 
 .editInput::placeholder {
   color: rgba(255, 255, 255, 0.25);
-  font-size: 10px;
+  font-size: var(--text-2xs);
 }
 
 .editActionBtn {
@@ -315,11 +315,11 @@
 
 .emptyState p {
   margin: 0 0 4px 0;
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 .emptyHint {
-  font-size: 10px !important;
+  font-size: var(--text-2xs) !important;
   color: rgba(255, 255, 255, 0.35) !important;
 }
 
@@ -329,7 +329,7 @@
   gap: 4px;
   margin-top: 10px;
   padding: 6px 10px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: var(--brand-blue);
   background: rgba(var(--brand-blue-rgb), 0.1);
@@ -350,7 +350,7 @@
   width: calc(100% + 28px);
   margin: 10px -14px -12px -14px;
   padding: 8px 14px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.02);
@@ -392,7 +392,7 @@
 }
 
 .fitmentType {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum for compact fitment */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -400,7 +400,7 @@
 }
 
 .fitmentVerified {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum */
   color: var(--brand-teal);
 }
 
@@ -408,14 +408,14 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.6);
   font-family: var(--font-mono, ui-monospace, monospace);
 }
 
 .fitmentNotes {
   margin-top: 4px;
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum */
   color: rgba(255, 255, 255, 0.35);
   font-style: italic;
 }
@@ -427,16 +427,16 @@
   }
   
   .title {
-    font-size: 10px;
+    font-size: var(--text-2xs);
   }
   
   .specRow {
-    font-size: 12px;
+    font-size: var(--text-xs);
     padding: 5px 0;
   }
   
   .specValue {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .editContainer {

@@ -30,7 +30,7 @@
 }
 
 .breakdownTotal {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--color-accent-teal);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
@@ -73,14 +73,14 @@
 /* Center text in donut */
 .donutCenterValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 24px;
+  font-size: var(--text-h2);
   font-weight: 800;
   fill: var(--color-accent-teal, #10b981);
 }
 
 .donutCenterLabel {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   fill: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -131,7 +131,7 @@
 }
 
 .legendLabel {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
@@ -147,7 +147,7 @@
 }
 
 .legendPercent {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
@@ -156,7 +156,7 @@
 }
 
 .legendGain {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   color: var(--color-accent-teal, #10b981);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
@@ -175,7 +175,7 @@
   padding: 12px 0 0;
   margin-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 .adjustmentLabel {
@@ -195,11 +195,11 @@
   text-align: center;
   padding: 24px;
   color: rgba(255, 255, 255, 0.4);
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .breakdownEmptyHint {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.3);
   margin-top: 4px;
 }
@@ -232,19 +232,19 @@
   }
 
   .legendLabel {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .legendPercent {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .legendGain {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .donutCenterValue {
-    font-size: 22px;
+    font-size: var(--text-h2);
   }
 }
 

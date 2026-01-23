@@ -8,7 +8,7 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 12px 0;
@@ -54,7 +54,7 @@
 
 .achievementValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
@@ -74,10 +74,10 @@
   }
   
   .achievementValue {
-    font-size: 14px;
+    font-size: var(--text-sm);
   }
   
   .achievementLabel {
-    font-size: 10px;
+    font-size: var(--text-2xs);
   }
 }

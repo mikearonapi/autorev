@@ -56,8 +56,9 @@ function CarCatalogContent() {
   const [sortBy, setSortBy] = useState('name');
   
   // Fetch cars using React Query (cached, deduplicated)
+  // NOTE: useCarsList returns the cars array directly, not { cars: [...] }
   const { data: carsData, isLoading } = useCarsList();
-  const cars = useMemo(() => carsData?.cars || [], [carsData]);
+  const cars = useMemo(() => carsData || [], [carsData]);
   
   // Prefetch function for hover
   const prefetchCar = usePrefetchCar();

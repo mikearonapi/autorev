@@ -9,6 +9,7 @@
 .container {
   min-height: 100vh;
   background: var(--color-gray-50);
+  padding-bottom: var(--page-bottom-padding);
 }
 
 /* --------------------------------------------------------------------------

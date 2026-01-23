@@ -4,6 +4,7 @@
   min-height: 100vh;
   /* Solid background for consistent app feel */
   background: var(--brand-bg-primary);
+  padding-bottom: var(--page-bottom-padding);
 }
 
 /* Header */

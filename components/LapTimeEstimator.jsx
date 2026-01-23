@@ -15,6 +15,7 @@
 
 import React, { useState, useMemo } from 'react';
 import AskALButton from './AskALButton';
+import InfoTooltip from './ui/InfoTooltip';
 import styles from './LapTimeEstimator.module.css';
 import { Icons } from '@/components/ui/Icons';
 import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
@@ -408,7 +409,9 @@ export default function LapTimeEstimator({
         ) : (
           <div className={styles.lapTimeComparison}>
             <div className={styles.lapTimeColumn}>
-              <span className={styles.lapTimeLabel}>Stock</span>
+              <InfoTooltip topicKey="lapTimeEstimate" carName={carName} carSlug={carSlug}>
+                <span className={styles.lapTimeLabel}>Stock</span>
+              </InfoTooltip>
               <span className={styles.lapTimeStock}>{formatTime(stockLapTime)}</span>
             </div>
             <div className={styles.lapTimeDelta}>
@@ -418,7 +421,9 @@ export default function LapTimeEstimator({
               </span>
             </div>
             <div className={styles.lapTimeColumn}>
-              <span className={styles.lapTimeLabel}>Modified</span>
+              <InfoTooltip topicKey="lapTimeEstimate" carName={carName} carSlug={carSlug}>
+                <span className={styles.lapTimeLabel}>Modified</span>
+              </InfoTooltip>
               <span className={styles.lapTimeMod}>{formatTime(moddedLapTime)}</span>
             </div>
           </div>

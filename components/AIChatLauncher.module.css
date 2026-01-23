@@ -2,7 +2,7 @@
 .launcher {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   width: 56px;
   height: 56px;
   border-radius: 9999px;
@@ -53,7 +53,7 @@
 @media (max-width: 480px) {
   .launcher {
     right: 20px;
-    bottom: 20px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     width: 52px;
     height: 52px;
   }

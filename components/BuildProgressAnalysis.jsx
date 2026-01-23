@@ -9,6 +9,7 @@
  */
 
 import React, { useMemo } from 'react';
+import InfoTooltip from './ui/InfoTooltip';
 import styles from './BuildProgressAnalysis.module.css';
 
 // Icons
@@ -53,6 +54,31 @@ const normalizeUpgradeKey = (key) => {
   return key.toLowerCase().replace(/[-_\s]+/g, '-').trim();
 };
 
+// Mapping of component names to their possible mod key variations
+const COMPONENT_ALIASES = {
+  'tune': ['tune', 'ecu', 'flash', 'piggyback', 'tuner', 'remap', 'chip'],
+  'intake': ['intake', 'cai', 'cold-air', 'air-filter'],
+  'exhaust': ['exhaust', 'catback', 'cat-back', 'axle-back', 'headers', 'downpipe', 'mid-pipe', 'muffler'],
+  'downpipe': ['downpipe', 'dp', 'catless', 'down-pipe'],
+  'headers': ['headers', 'header', 'exhaust-manifold', 'long-tube', 'shorty'],
+  'intercooler': ['intercooler', 'fmic', 'ic', 'charge-cooler'],
+  'turbo': ['turbo', 'turbo-upgrade', 'turbo-kit', 'turbocharger'],
+  'bigger-turbo': ['turbo-kit', 'big-turbo', 'turbo-upgrade', 'hybrid-turbo'],
+  'supercharger': ['supercharger', 'sc', 'blower', 'roots', 'centrifugal'],
+  'fuel-pump': ['fuel-pump', 'fuel', 'lpfp', 'hpfp', 'pump'],
+  'injectors': ['injectors', 'injector', 'fuel-injector'],
+  'coilovers': ['coilover', 'coilovers', 'suspension', 'lowering'],
+  'sway-bar': ['sway', 'sway-bar', 'anti-roll', 'stabilizer'],
+  'brakes': ['brake', 'brakes', 'bbk', 'big-brake', 'pads', 'rotors'],
+  'clutch': ['clutch', 'flywheel', 'lsd'],
+  'boost-controller': ['boost', 'boost-controller', 'mbc', 'ebc'],
+  'air-intake': ['intake', 'cai', 'cold-air'],
+  'cat-back-exhaust': ['catback', 'cat-back', 'exhaust'],
+  'fmic': ['fmic', 'intercooler', 'front-mount'],
+  'methanol-injection': ['meth', 'methanol', 'water-meth', 'wmi'],
+  'e85': ['e85', 'flex-fuel', 'ethanol'],
+};
+
 // Check if a mod key matches a component from stage progressions
 const modMatchesComponent = (modKey, component) => {
   const normMod = normalizeUpgradeKey(modKey);
@@ -61,25 +87,32 @@ const modMatchesComponent = (modKey, component) => {
   // Direct match
   if (normMod === normComp) return true;
   
-  // Partial matching for common variations
-  if (normComp === 'tune' && (normMod.includes('tune') || normMod.includes('ecu'))) return true;
-  if (normComp === 'intake' && normMod.includes('intake')) return true;
-  if (normComp === 'exhaust' && (normMod.includes('exhaust') || normMod === 'headers' || normMod === 'downpipe')) return true;
-  if (normComp === 'downpipe' && normMod.includes('downpipe')) return true;
-  if (normComp === 'headers' && normMod.includes('header')) return true;
-  if (normComp === 'intercooler' && normMod.includes('intercooler')) return true;
-  if (normComp === 'turbo' && (normMod.includes('turbo') || normMod.includes('supercharger'))) return true;
-  if (normComp === 'bigger turbo' && normMod.includes('turbo')) return true;
-  if (normComp === 'fuel pump' && normMod.includes('fuel')) return true;
-  if (normComp === 'injectors' && normMod.includes('injector')) return true;
-  if (normComp.includes('coilover') && normMod.includes('coilover')) return true;
-  if (normComp.includes('sway') && normMod.includes('sway')) return true;
-  if (normComp.includes('brake') && normMod.includes('brake')) return true;
+  // Check if mod contains component name
+  if (normMod.includes(normComp) || normComp.includes(normMod)) return true;
+  
+  // Check aliases for this component
+  const aliases = COMPONENT_ALIASES[normComp];
+  if (aliases) {
+    for (const alias of aliases) {
+      if (normMod.includes(alias) || alias.includes(normMod)) {
+        return true;
+      }
+    }
+  }
+  
+  // Reverse check - see if any alias set contains both
+  for (const [category, categoryAliases] of Object.entries(COMPONENT_ALIASES)) {
+    const modMatches = categoryAliases.some(a => normMod.includes(a));
+    const compMatches = categoryAliases.some(a => normComp.includes(a)) || normComp.includes(category);
+    if (modMatches && compMatches) {
+      return true;
+    }
+  }
   
   return false;
 };
 
-export default function BuildProgressAnalysis({ stageProgressions, installedUpgrades, stockHp, currentHp }) {
+export default function BuildProgressAnalysis({ stageProgressions, installedUpgrades, stockHp, currentHp, carName = null, carSlug = null }) {
   // Analyze build progress across all stages
   const analysis = useMemo(() => {
     if (!stageProgressions || stageProgressions.length === 0) {
@@ -184,7 +217,9 @@ export default function BuildProgressAnalysis({ stageProgressions, installedUpgr
     <div className={styles.buildProgress}>
       <div className={styles.header}>
         <RocketIcon size={18} />
-        <span>Build Progression</span>
+        <InfoTooltip topicKey="stageProgression" carName={carName} carSlug={carSlug}>
+          <span>Build Progression</span>
+        </InfoTooltip>
         {allComplete && (
           <span className={styles.maxedBadge}>Maxed Out!</span>
         )}

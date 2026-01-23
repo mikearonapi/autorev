@@ -36,7 +36,7 @@
 /* Brand Title - Large, bold, two-tone */
 .brandTitle {
   font-family: var(--font-display);
-  font-size: 56px;
+  font-size: var(--text-hero);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -56,7 +56,7 @@
 /* Welcome text - "You're in, Mike." */
 .welcomeText {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--text-h1);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
@@ -65,7 +65,7 @@
 
 /* Subtitle - "Welcome to the garage." */
 .subtitleText {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 400;
   color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
   margin: 0;
@@ -84,7 +84,7 @@
   border: none;
   border-radius: 100px;
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--color-bg-base, #0d1b2a);
   cursor: pointer;
@@ -142,22 +142,22 @@
   }
   
   .brandTitle {
-    font-size: 44px;
+    font-size: var(--text-hero);
     margin-bottom: 12px;
   }
   
   .welcomeText {
-    font-size: 24px;
+    font-size: var(--text-h1);
   }
   
   .subtitleText {
-    font-size: 15px;
+    font-size: var(--text-body);
   }
   
   .ctaButton {
     max-width: 100%;
     padding: 16px 28px;
-    font-size: 15px;
+    font-size: var(--text-body);
     margin-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   }
 }
@@ -165,10 +165,10 @@
 /* Small phones */
 @media (max-width: 380px) {
   .brandTitle {
-    font-size: 38px;
+    font-size: var(--text-h1);
   }
   
   .welcomeText {
-    font-size: 22px;
+    font-size: var(--text-h2);
   }
 }

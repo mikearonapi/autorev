@@ -6,6 +6,9 @@
  * Focused modification workflow for a specific vehicle/build.
  * Users configure upgrades here and see how they affect performance.
  * 
+ * AUTO-SAVE: All changes are automatically saved - no manual save needed.
+ * Share button controls community visibility (see share-toggle todo).
+ * 
  * Part of the My Garage trinity:
  * - My Build: Configure upgrades (this page)
  * - My Performance: See performance impact
@@ -32,57 +35,36 @@ import UpgradeCenter from '@/components/UpgradeCenter';
 import BuildWizard from '@/components/BuildWizard';
 import CarPickerFullscreen from '@/components/CarPickerFullscreen';
 import AddVehicleModal from '@/components/AddVehicleModal';
-import { fetchCars } from '@/lib/carsClient';
+import { useCarsList } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import ShareBuildButton from '@/components/ShareBuildButton';
 
 // Tuning shop components
 import { useWheelTireSelection } from '@/components/tuning-shop';
+import { Icons } from '@/components/ui/Icons';
 
-// Icons
-const Icons = {
-  plus: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"/>
-      <line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>
-  ),
-  wrench: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-    </svg>
-  ),
-  folder: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-    </svg>
-  ),
-  save: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-      <polyline points="17 21 17 13 7 13 7 21"/>
-      <polyline points="7 3 7 8 15 8"/>
-    </svg>
-  ),
-  car: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
-    </svg>
-  ),
-};
-
-// Save Button Component for right action
-function SaveButton({ onClick }) {
+// Auto-save Status Indicator - shows saving/saved status
+function AutoSaveIndicator({ status }) {
+  if (status === 'idle') return null;
+  
   return (
-    <button 
-      className={styles.saveButton}
-      onClick={onClick}
-      title="Save Build"
-    >
-      <Icons.save size={18} />
-    </button>
+    <div className={styles.autoSaveIndicator}>
+      {status === 'saving' && (
+        <>
+          <Icons.loader size={14} className={styles.spinningIcon} />
+          <span>Saving...</span>
+        </>
+      )}
+      {status === 'saved' && (
+        <>
+          <Icons.check size={14} />
+          <span>Saved</span>
+        </>
+      )}
+      {status === 'error' && (
+        <span className={styles.autoSaveError}>Save failed</span>
+      )}
+    </div>
   );
 }
 
@@ -91,7 +73,6 @@ function MyBuildContent() {
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
-  const [allCars, setAllCars] = useState([]);
   const [showBuildWizard, setShowBuildWizard] = useState(false);
   const [showCarPicker, setShowCarPicker] = useState(false);
   const [showAddVehicle, setShowAddVehicle] = useState(false);
@@ -112,24 +93,16 @@ function MyBuildContent() {
   // Hooks
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
-  const { builds, isLoading: buildsLoading } = useSavedBuilds();
+  const { builds, isLoading: buildsLoading, autoSaveBuild, autoSaveStatus } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
+  
+  // Use cached cars data from React Query hook
+  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
   // Get user's hero image for this car
   const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
 
   const isMountedRef = useRef(true);
-
-  // Fetch all cars
-  useEffect(() => {
-    let cancelled = false;
-    fetchCars().then(cars => {
-      if (!cancelled && Array.isArray(cars)) {
-        setAllCars(cars);
-      }
-    });
-    return () => { cancelled = true; };
-  }, []);
 
   // Get URL params
   const buildIdParam = searchParams.get('build');
@@ -152,6 +125,12 @@ function MyBuildContent() {
         const car = allCars.find(c => c.slug === build.carSlug);
         if (car) {
           loadedBuildRef.current = buildIdParam;
+          // Reset auto-save protection - we're loading an existing build
+          // Set initial load as NOT complete until UpgradeCenter loads the upgrades
+          initialLoadCompleteRef.current = false;
+          expectedUpgradeCountRef.current = build.upgrades?.length || 0;
+          lastAutoSaveRef.current = null;
+          
           flushSync(() => {
             setSelectedCar(car);
             setCurrentBuildId(build.id);
@@ -165,6 +144,11 @@ function MyBuildContent() {
     } else if (carSlugParam) {
       const car = allCars.find(c => c.slug === carSlugParam);
       if (car) {
+        // New car, no existing build - mark as ready for auto-save
+        initialLoadCompleteRef.current = true;
+        expectedUpgradeCountRef.current = null;
+        lastAutoSaveRef.current = null;
+        
         flushSync(() => {
           setSelectedCar(car);
         });
@@ -182,6 +166,10 @@ function MyBuildContent() {
     setFactoryConfig(null);
     setCurrentGoal(null);
     clearFitmentSelection();
+    // Reset auto-save protection refs for new car (no existing build to protect)
+    initialLoadCompleteRef.current = true;
+    expectedUpgradeCountRef.current = null;
+    lastAutoSaveRef.current = null;
     window.history.pushState({}, '', `/garage/my-build?car=${car.slug}`);
     setShowCarPicker(false);
     setShowBuildWizard(false);
@@ -199,28 +187,82 @@ function MyBuildContent() {
     setShowBuildWizard(false);
   }, [selectFitment]);
 
+  // Track the last auto-save to avoid redundant saves
+  const lastAutoSaveRef = useRef(null);
+  
+  // Track whether the initial build load is complete
+  // This prevents auto-save from firing with empty upgrades before data loads
+  // These refs are set in the useLayoutEffect above when loading builds from URL params
+  const initialLoadCompleteRef = useRef(false);
+  const expectedUpgradeCountRef = useRef(null);
+  
   const handleBuildSummaryUpdate = useCallback((summary) => {
     setBuildSummary(summary);
-  }, []);
+    
+    // Auto-save when build changes (only if we have a car selected)
+    if (selectedCar && summary.upgradeCount >= 0) {
+      // SAFETY CHECK: If editing an existing build, don't auto-save with empty upgrades
+      // unless the initial load is complete. This prevents data loss when the page loads
+      // and UpgradeCenter fires an update before loading the saved upgrades.
+      if (currentBuildId && !initialLoadCompleteRef.current) {
+        const expectedCount = expectedUpgradeCountRef.current;
+        
+        // If we expected upgrades but got none, this is likely the initial empty state
+        // before the build data has loaded into UpgradeCenter - skip this save
+        if (expectedCount > 0 && summary.upgradeCount === 0) {
+          console.log('[MyBuild] Skipping auto-save: waiting for initial build load (expected', expectedCount, 'upgrades)');
+          return;
+        }
+        
+        // Once we see the expected number of upgrades (or any non-zero count),
+        // mark the initial load as complete
+        if (summary.upgradeCount >= expectedCount || summary.upgradeCount > 0) {
+          initialLoadCompleteRef.current = true;
+        }
+      }
+      
+      // Calculate final HP from stock + gain
+      const stockHp = selectedCar.hp || 0;
+      const hpGain = summary.totalHpGain || 0;
+      const finalHp = stockHp + hpGain;
+      
+      const buildData = {
+        carSlug: selectedCar.slug,
+        carName: selectedCar.name,
+        name: currentBuildId ? builds.find(b => b.id === currentBuildId)?.name : `${selectedCar.name} Build`,
+        goal: currentGoal,
+        selectedUpgrades: summary.selectedUpgrades?.map(u => u.key) || [],
+        totalHpGain: hpGain,
+        finalHp: finalHp,
+        stockHp: stockHp,
+        totalCostLow: summary.totalCost || 0,
+        totalCostHigh: summary.totalCost || 0,
+        factoryConfig,
+        wheelFitment: selectedFitment,
+      };
+      
+      // Create a simple hash to avoid duplicate saves
+      const buildHash = JSON.stringify({
+        upgrades: buildData.selectedUpgrades,
+        goal: buildData.goal,
+      });
+      
+      if (lastAutoSaveRef.current !== buildHash) {
+        lastAutoSaveRef.current = buildHash;
+        autoSaveBuild(currentBuildId, buildData);
+      }
+    }
+  }, [selectedCar, currentBuildId, currentGoal, factoryConfig, selectedFitment, autoSaveBuild, builds]);
 
   const handleBack = () => {
     router.push('/garage');
   };
 
-  const handleSaveBuild = useCallback(() => {
-    if (!isAuthenticated) {
-      authModal.open('Sign in to save your build');
-      return;
-    }
-    // Dispatch event that UpgradeCenter listens for to open save modal
-    document.dispatchEvent(new CustomEvent('tuning-shop:save-build'));
-  }, [isAuthenticated, authModal]);
-
   // Check if we're loading a specific build
-  const isLoadingBuild = buildIdParam && (buildsLoading || allCars.length === 0);
+  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
 
   // Loading state
-  if (authLoading || isLoadingBuild) {
+  if (authLoading || carsLoading || isLoadingBuild) {
     return (
       <div className={styles.page}>
         <LoadingSpinner 
@@ -297,13 +339,29 @@ function MyBuildContent() {
   }
 
   // Car selected - show Upgrade Center with dropdown nav
+  // Get current build's share status
+  const isShared = currentBuild?.isShared || false;
+  const communitySlug = currentBuild?.communitySlug || null;
+  const uploadedImages = currentBuild?.uploadedImages || [];
+  
   return (
     <div className={styles.page}>
       <MyGarageSubNav 
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
-        rightAction={<SaveButton onClick={handleSaveBuild} />}
+        leftAction={<AutoSaveIndicator status={autoSaveStatus} />}
+        rightAction={
+          isAuthenticated && currentBuildId && (
+            <ShareBuildButton
+              build={currentBuild}
+              car={selectedCar}
+              isShared={isShared}
+              communitySlug={communitySlug}
+              existingImages={uploadedImages}
+            />
+          )
+        }
       />
       
       {/* Vehicle Info Bar */}
@@ -326,6 +384,28 @@ function MyBuildContent() {
           onGoalChange={setCurrentGoal}
         />
       </div>
+      
+      {/* Continue to Parts CTA - shown when upgrades are selected */}
+      {buildSummary.upgradeCount > 0 && (
+        <div className={styles.continueCtaContainer}>
+          <Link 
+            href={currentBuildId ? `/garage/my-parts?build=${currentBuildId}` : `/garage/my-parts?car=${selectedCar.slug}`}
+            className={styles.continueCta}
+          >
+            <div className={styles.ctaContent}>
+              <span className={styles.ctaTitle}>Ready to source parts?</span>
+              <span className={styles.ctaSubtitle}>
+                {buildSummary.upgradeCount} upgrade{buildSummary.upgradeCount !== 1 ? 's' : ''} selected 
+                {buildSummary.totalHpGain > 0 && ` • +${buildSummary.totalHpGain} HP`}
+              </span>
+            </div>
+            <div className={styles.ctaAction}>
+              <span>Continue to Parts</span>
+              <Icons.chevronRight size={18} />
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* Car Picker Modal */}
       <CarPickerFullscreen

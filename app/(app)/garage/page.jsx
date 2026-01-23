@@ -8,7 +8,7 @@
  * - Builds: Your saved build projects and modifications
  * - Tuning Shop: Link to the full modification planner
  * 
- * Each vehicle has sub-views: Specs, Build, Performance, Parts, Photos
+ * Each vehicle has sub-views: Specs, Build, Performance, Parts, Install, Photos
  * Photo management is centralized here (not in Tuning Shop).
  */
 
@@ -30,7 +30,7 @@ import CarActionMenu from '@/components/CarActionMenu';
 import BuildDetailView from '@/components/BuildDetailView';
 import ServiceLogModal from '@/components/ServiceLogModal';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
-import { fetchCars } from '@/lib/carsClient';
+import { useCarsList } from '@/hooks/useCarData';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchAllMaintenanceData, fetchUserServiceLogs, addServiceLog, updateServiceLog, deleteServiceLog } from '@/lib/maintenanceService';
@@ -1249,7 +1249,7 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
         </div>
       )}
       
-      {/* Bottom Action Bar - Specs, Build, Performance, Parts, Photos (when not in details view) */}
+      {/* Bottom Action Bar - Specs, Build, Performance, Parts, Install, Photos (when not in details view) */}
       {panelState !== 'details' && (
         <div className={styles.heroBottomBar}>
           {/* Specs - links to dedicated page */}
@@ -1282,6 +1282,14 @@ function HeroVehicleDisplay({ item, type, onAction, onUpdateVehicle, onClearModi
               >
                 <Icons.package size={18} />
                 <span>Parts</span>
+              </Link>
+              {/* Install - links to dedicated page */}
+              <Link 
+                href={item.vehicle?.activeBuildId ? `/garage/my-install?build=${item.vehicle.activeBuildId}` : `/garage/my-install?car=${car.slug}`}
+                className={styles.heroBottomBtn}
+              >
+                <Icons.tool size={18} />
+                <span>Install</span>
               </Link>
               {/* Photos - links to dedicated page */}
               <Link 
@@ -2833,7 +2841,9 @@ function GarageContent() {
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
-  const [allCars, setAllCars] = useState([]);
+  
+  // Use cached cars data from React Query hook
+  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
   // Quick mileage update mode state
   const [quickUpdateMode, setQuickUpdateMode] = useState(false);
@@ -2883,37 +2893,35 @@ function GarageContent() {
     // Wait for prefetch to complete before showing any data
     if (!isDataFetchReady) return true;
     
-    return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading]);
-
-  // Fetch car data from database on mount
-  useEffect(() => {
-    fetchCars().then(setAllCars).catch(console.error);
-  }, []);
+    return vehiclesLoading || carsLoading;
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, carsLoading]);
   
   // Merge favorites with full car data (from database)
+  // Guard: ensure allCars is an array before using array methods
+  const carsArray = Array.isArray(allCars) ? allCars : [];
+  
   const favoriteCars = useMemo(() => {
     return favorites.map(fav => {
-      const fullCarData = allCars.find(c => c.slug === fav.slug);
+      const fullCarData = carsArray.find(c => c.slug === fav.slug);
       return fullCarData ? { ...fullCarData, addedAt: fav.addedAt } : fav;
     });
-  }, [favorites, allCars]);
+  }, [favorites, carsArray]);
   
   // Get cars for builds (from database)
   const buildsWithCars = useMemo(() => {
-    if (allCars.length === 0) return [];
+    if (carsArray.length === 0) return [];
     return builds.map(build => ({
       ...build,
-      car: allCars.find(c => c.slug === build.carSlug)
+      car: carsArray.find(c => c.slug === build.carSlug)
     })).filter(b => b.car);
-  }, [builds, allCars]);
+  }, [builds, carsArray]);
 
   // Get matched car data for owned vehicles (from database)
   // When allCars hasn't loaded yet, create a temporary car-like object from vehicle data
   // so the UI shows the vehicle info immediately instead of "Loading..."
   const vehiclesWithCars = useMemo(() => {
     return vehicles.map(vehicle => {
-      const matchedCar = vehicle.matchedCarSlug ? allCars.find(c => c.slug === vehicle.matchedCarSlug) : null;
+      const matchedCar = vehicle.matchedCarSlug ? carsArray.find(c => c.slug === vehicle.matchedCarSlug) : null;
       
       // Get the active build data if the vehicle has one linked
       // This ensures we show the CURRENT build HP gain, not the stale cached value on user_vehicles
@@ -2943,10 +2951,10 @@ function GarageContent() {
         // Include the active build data for HP gain display
         build: activeBuild,
         // Only show loading state if we expect to get real car data eventually
-        _isCarDataLoading: !matchedCar && vehicle.matchedCarSlug && allCars.length === 0,
+        _isCarDataLoading: !matchedCar && vehicle.matchedCarSlug && carsArray.length === 0,
       };
     });
-  }, [vehicles, allCars, builds]);
+  }, [vehicles, carsArray, builds]);
 
   // Check if a car is already in My Collection
   const isInMyCars = (slug) => vehicles.some(v => v.matchedCarSlug === slug);
@@ -3332,7 +3340,7 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
       <div className={styles.page}>
         <BuildDetailView 
           build={selectedBuild}
-          car={allCars.find(c => c.slug === selectedBuild.carSlug)}
+          car={carsArray.find(c => c.slug === selectedBuild.carSlug)}
           onBack={() => {
             setSelectedBuild(null);
             window.history.pushState({}, '', '/garage');

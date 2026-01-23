@@ -238,7 +238,7 @@
 
 .input {
   padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
+  font-size: max(16px, 0.875rem); /* Prevents iOS Safari auto-zoom on focus */
   color: var(--text-primary, var(--brand-text-primary));
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);

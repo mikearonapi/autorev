@@ -11,6 +11,11 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 24px;
+  /* Prevent chart elements from overflowing and causing page zoom on mobile */
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .compact {
@@ -110,6 +115,24 @@
   margin-top: 1px;
 }
 
+/* Profile Note - Shows turbo/SC characteristics */
+.dynoProfileNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--color-accent-teal, #10b981);
+  margin-bottom: 16px;
+}
+
+.dynoProfileIcon {
+  font-size: 0.875rem;
+}
+
 /* Legend */
 .dynoLegend {
   display: flex;
@@ -122,7 +145,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
 }
@@ -133,6 +156,18 @@
   border-radius: 1px;
 }
 
+.dynoLegendGain {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 6px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+}
+
 /* Chart Container */
 .dynoChart {
   display: grid;
@@ -140,15 +175,16 @@
   grid-template-rows: 1fr 28px;
   gap: 6px;
   height: 320px;
-  /* Add padding to accommodate peak markers (top) and gain annotation (right) */
+  /* Add padding to accommodate peak markers (top) */
   padding-top: 36px;
-  padding-right: 45px;
+  /* No right padding needed - annotations now stay inside container */
+  padding-right: 0;
 }
 
 .compact .dynoChart {
   height: 280px;
   padding-top: 32px;
-  padding-right: 40px;
+  padding-right: 0;
 }
 
 /* Y Axis */
@@ -158,7 +194,7 @@
   justify-content: space-between;
   align-items: flex-end;
   padding: 4px 6px 4px 0;
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.4);
   font-weight: 500;
 }
@@ -168,7 +204,9 @@
   position: relative;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 12px;
-  overflow: visible; /* Allow peak markers and annotations to extend beyond chart */
+  /* FIXED: Changed from overflow: visible to prevent page zoom on mobile.
+     Peak markers now stay within bounds. */
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -210,7 +248,7 @@
   display: flex;
   justify-content: space-between;
   padding: 4px 6px 0;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.4);
   font-weight: 500;
 }
@@ -229,7 +267,7 @@
 }
 
 .dynoPeakValueStock {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -248,15 +286,43 @@
 }
 
 .dynoPeakValueMod {
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 800;
   color: var(--brand-text-primary);
 }
 
 .dynoPeakLabelMod {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* TQ Peak Marker - Blue for torque */
+.dynoPeakMarkerTq {
+  position: absolute;
+  transform: translate(-50%, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 10px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0.2) 100%);
+  border: 1.5px solid var(--color-accent-blue, #3b82f6);
+  border-radius: 8px;
+  z-index: 9;
+}
+
+.dynoPeakValueTq {
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--brand-text-primary);
+}
+
+.dynoPeakLabelTq {
+  font-size: 9px; /* Sub-minimum decorative label */
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -274,11 +340,12 @@
 
 .dynoGainAnnotation {
   position: absolute;
-  right: -40px;
+  /* Changed from right: -40px to stay within container bounds */
+  right: 4px;
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(16, 185, 129, 0.4);
   color: var(--color-accent-teal);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
@@ -312,6 +379,11 @@
     font-size: 0.75rem;
   }
 
+  .dynoProfileNote {
+    font-size: 0.6875rem;
+    padding: 6px 10px;
+  }
+
   .dynoGainBadge {
     padding: 10px 14px;
     width: 100%;
@@ -323,7 +395,7 @@
   }
 
   .dynoLegend {
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
@@ -336,33 +408,58 @@
     width: 18px;
   }
 
+  .dynoLegendGain {
+    font-size: 0.625rem;
+    padding: 3px 8px;
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 4px;
+  }
+
   /* Chart height on mobile */
   .dynoChart {
     height: 280px;
     grid-template-columns: 32px 1fr;
     padding-top: 32px;
-    padding-right: 36px;
+    padding-right: 0;
   }
 
   .dynoYAxis {
-    font-size: 9px;
+    font-size: 9px; /* Sub-minimum for compact mobile */
     padding-right: 4px;
   }
 
   .dynoXAxis {
-    font-size: 8px;
+    font-size: 8px; /* Sub-minimum for compact mobile */
+  }
+
+  .dynoPeakMarkerMod {
+    padding: 4px 8px;
   }
 
   .dynoPeakValueMod {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 
   .dynoPeakLabelMod {
-    font-size: 8px;
+    font-size: 8px; /* Sub-minimum for compact mobile */
+  }
+
+  .dynoPeakMarkerTq {
+    padding: 3px 6px;
+  }
+
+  .dynoPeakValueTq {
+    font-size: var(--text-xs);
+  }
+
+  .dynoPeakLabelTq {
+    font-size: 7px; /* Sub-minimum for compact mobile */
   }
 
   .dynoGainAnnotation {
-    font-size: 10px;
-    right: -32px;
+    font-size: var(--text-2xs);
+    right: 2px;
   }
 }

@@ -7,7 +7,7 @@
   min-height: 100dvh;
   background: var(--brand-bg-primary);
   color: var(--brand-text-primary);
-  padding-bottom: 120px;
+  padding-bottom: var(--page-bottom-padding);
 }
 
 .loadingContainer {
@@ -15,6 +15,97 @@
   align-items: center;
   justify-content: center;
   min-height: 50vh;
+}
+
+/* ===========================================
+   COST SUMMARY HEADER
+   =========================================== */
+
+.costSummary {
+  padding: var(--space-4, 16px);
+  margin: var(--space-3, 12px) var(--space-4, 16px) 0;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-lg, 12px);
+}
+
+.costRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4, 16px);
+}
+
+.costItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.costItem:last-child {
+  text-align: right;
+}
+
+.costLabel {
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.costValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.costValueActual {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-body, 16px);
+  font-weight: 700;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.costBreakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-3, 12px);
+  padding-top: var(--space-3, 12px);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.costBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-accent-teal, #10b981);
+}
+
+.costBadge svg {
+  flex-shrink: 0;
+}
+
+.costBadgePlanned {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+.costBadgePlanned svg {
+  flex-shrink: 0;
 }
 
 /* ===========================================
@@ -72,14 +163,14 @@
 }
 
 .emptyTitle {
-  font-size: 20px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 8px 0;
 }
 
 .emptyDescription {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 24px 0;
   max-width: 280px;
@@ -94,7 +185,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   color: var(--brand-text-primary);
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -134,14 +225,14 @@
 }
 
 .noBuildTitle {
-  font-size: 18px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 8px 0;
 }
 
 .noBuildDescription {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 20px 0;
   max-width: 300px;
@@ -156,7 +247,7 @@
   border: none;
   border-radius: 12px;
   color: var(--gravl-navy, var(--brand-bg-primary-dark));
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -184,7 +275,7 @@
   }
   
   .vehicleName {
-    font-size: 16px;
+    font-size: var(--text-body);
   }
   
   .content {
@@ -195,5 +286,23 @@
   .noBuildState {
     padding: 32px 16px;
     min-height: 250px;
+  }
+  
+  .costSummary {
+    margin: var(--space-2, 8px) var(--space-3, 12px) 0;
+    padding: var(--space-3, 12px);
+  }
+  
+  .costRow {
+    flex-direction: column;
+    gap: var(--space-3, 12px);
+  }
+  
+  .costItem:last-child {
+    text-align: left;
+  }
+  
+  .costBreakdown {
+    flex-direction: column;
   }
 }

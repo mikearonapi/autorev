@@ -123,6 +123,12 @@ export default function CalculatedPerformance({
   wheelWeight = null,
   handlingScore = 100,
   brakingScore = 100,
+  // ACTUAL stock performance metrics from database (preferred over calculations)
+  stockZeroToSixty = null,
+  stockQuarterMile = null,
+  stockBraking = null,
+  stockLateralG = null,
+  stockTrapSpeed = null,
   // Experience score props (optional - will calculate defaults if not provided)
   stockComfort = 8.5,
   upgradedComfort = null,
@@ -174,32 +180,44 @@ export default function CalculatedPerformance({
   };
   const baseK = drivetrainK[drivetrain] || 1.30;
   
-  // Calculate 0-60
+  // Calculate weight/HP ratios for physics calculations
   const weightToHp = effectiveWeight / safeEstimatedHp;
   const stockWeightToHp = stockEffectiveWeight / safeStockHp;
-  const estimated060 = Math.max(2.0, Math.sqrt(weightToHp) * baseK * kTire);
-  const stock060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
+  const hpGainRatio = safeEstimatedHp / safeStockHp;
   
-  // 1/4 mile
+  // ============================================================================
+  // Use ACTUAL stock values from database when available, fall back to physics
+  // ============================================================================
+  
+  // 0-60 time: Use actual data if available
+  const calculated060 = Math.max(2.5, Math.sqrt(stockWeightToHp) * baseK);
+  const stock060 = stockZeroToSixty ?? calculated060;
+  // Improvement is roughly proportional to sqrt of power increase
+  const estimated060 = Math.max(2.0, stock060 / Math.sqrt(hpGainRatio) * kTire);
+  
+  // 1/4 mile: Use actual data if available
   const tractionBonus = tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
-  const estimatedQuarter = 5.825 * Math.pow(weightToHp, 0.333) * tractionBonus;
-  const stockQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
+  const calculatedQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
+  const stockQuarter = stockQuarterMile ?? calculatedQuarter;
+  // Quarter mile improves roughly with cube root of power increase
+  const estimatedQuarter = stockQuarter / Math.pow(hpGainRatio, 0.333) * tractionBonus;
 
-  // Trap speed
+  // Trap speed: Use actual data if available
   const finalDriveFactor = finalDrive ? Math.min(1.02, 3.5 / finalDrive) : 1.0;
-  const estimatedTrap = 234 * Math.pow(safeEstimatedHp / effectiveWeight, 0.333) * finalDriveFactor;
-  const stockTrap = 234 * Math.pow(safeStockHp / stockEffectiveWeight, 0.333);
+  const calculatedTrap = 234 * Math.pow(safeStockHp / stockEffectiveWeight, 0.333);
+  const stockTrap = stockTrapSpeed ?? calculatedTrap;
+  // Trap speed improves with cube root of power increase
+  const estimatedTrap = stockTrap * Math.pow(hpGainRatio, 0.333) * finalDriveFactor;
   
-  // Braking distance
-  const stockBraking60 = 120;
+  // Braking distance: Use actual data if available
+  const stockBraking60 = stockBraking ?? 120;
   const brakingImprovement = (brakingScore - 100) / 100;
   const estimatedBraking60 = Math.round(stockBraking60 * (1 - brakingImprovement * 0.25));
   
-  // Lateral G
-  const baseG = 0.90;
+  // Lateral G: Use actual data if available
+  const baseG = stockLateralG ?? 0.90;
   const handlingImprovement = (handlingScore - 100) / 100;
   const estimatedLateralG = baseG * (1 + handlingImprovement * 0.3);
-  const stockLateralG = baseG;
   
   // Power/Weight ratio
   const powerToWeight = (safeEstimatedHp / effectiveWeight) * 2000;

@@ -13,25 +13,21 @@ import { CloseIcon, GarageIcon, DataIcon, CommunityIcon, MessageIcon, FlameIcon 
 import styles from './PointsExplainerModal.module.css';
 
 // Points configuration - matches lib/pointsService.js
+// 5-tier system: Growth (250) > Community (100) > Real Data (50) > Engagement (10) > Participation (5)
 const POINTS_BY_CATEGORY = {
-  garage: {
-    label: 'Garage',
-    icon: GarageIcon,
-    color: '#d4ff00',
+  growth: {
+    label: 'Growth',
+    icon: ({ size }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    ),
+    color: '#f59e0b',
     actions: [
-      { label: 'Add a vehicle', points: 100 },
-      { label: 'Add a modification', points: 50 },
-      { label: 'Upload a photo', points: 25 },
-      { label: 'Add part details', points: 25 },
-    ],
-  },
-  data: {
-    label: 'Data',
-    icon: DataIcon,
-    color: '#10b981',
-    actions: [
-      { label: 'Log dyno data', points: 75 },
-      { label: 'Log track time', points: 75 },
+      { label: 'Refer a friend', points: 250 },
     ],
   },
   community: {
@@ -41,7 +37,27 @@ const POINTS_BY_CATEGORY = {
     actions: [
       { label: 'Share your build', points: 100 },
       { label: 'Post a comment', points: 10 },
-      { label: 'Like a post', points: 5 },
+      { label: 'Like a build', points: 5 },
+    ],
+  },
+  data: {
+    label: 'Data',
+    icon: DataIcon,
+    color: '#10b981',
+    actions: [
+      { label: 'Log dyno data', points: 50 },
+      { label: 'Log track time', points: 50 },
+    ],
+  },
+  garage: {
+    label: 'Garage',
+    icon: GarageIcon,
+    color: '#d4ff00',
+    actions: [
+      { label: 'Install an upgrade', points: 50 },
+      { label: 'Add a vehicle', points: 10 },
+      { label: 'Plan an upgrade', points: 10 },
+      { label: 'Upload a photo', points: 5 },
     ],
   },
   al: {
@@ -49,7 +65,7 @@ const POINTS_BY_CATEGORY = {
     icon: MessageIcon,
     color: '#a855f7',
     actions: [
-      { label: 'Ask AL a question', points: 25 },
+      { label: 'Ask AL a question', points: 10 },
     ],
   },
 };

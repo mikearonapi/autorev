@@ -118,7 +118,8 @@ function DataPageContent() {
                     'My';
   const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
   const { data: carsData } = useCarsList();
-  const allCars = useMemo(() => carsData?.cars || [], [carsData]);
+  // NOTE: useCarsList returns the cars array directly, not { cars: [...] }
+  const allCars = useMemo(() => carsData || [], [carsData]);
   const authModal = useAuthModal();
   
   
@@ -148,19 +149,28 @@ function DataPageContent() {
   
   // Get user's vehicles with matched car data FIRST
   // Note: vehicles from provider are flat objects with year, make, model directly on them
+  // PRIORITY: Prefer matchedCarId (UUID) over matchedCarSlug for reliable lookups
   const userVehicles = useMemo(() => {
     if (!vehicles || vehicles.length === 0) return [];
     
     return vehicles.map(vehicle => {
       // Find matched car in catalog for additional specs (hp, weight, etc.)
-      const matchedCar = vehicle.matchedCarSlug 
-        ? allCars.find(c => c.slug === vehicle.matchedCarSlug) 
-        : null;
+      // PRIORITY 1: Match by car ID (most reliable)
+      // PRIORITY 2: Match by slug (fallback for legacy data)
+      let matchedCar = null;
+      if (vehicle.matchedCarId) {
+        matchedCar = allCars.find(c => c.id === vehicle.matchedCarId);
+      }
+      if (!matchedCar && vehicle.matchedCarSlug) {
+        matchedCar = allCars.find(c => c.slug === vehicle.matchedCarSlug);
+      }
       
       return {
         ...vehicle,
         // Attach the matched car for specs like hp, weight, drivetrain
         matchedCar,
+        // Flag if car resolution failed (for error states)
+        matchedCarResolved: !!matchedCar,
       };
     });
   }, [vehicles, allCars]);
@@ -247,8 +257,10 @@ function DataPageContent() {
   }, [showVehicleDropdown]);
   
   // Get selected vehicle data - derived from selectedVehicleId
+  // userVehicles already has matchedCar attached via the useMemo above
   const selectedVehicle = useMemo(() => {
     if (!selectedVehicleId) return null;
+    // userVehicles already has matchedCar, matchedCarResolved attached
     return userVehicles.find(v => v.id === selectedVehicleId) || null;
   }, [userVehicles, selectedVehicleId]);
   
@@ -327,69 +339,121 @@ function DataPageContent() {
     { enabled: !!selectedVehicle?.matchedCarSlug }
   );
   
-  // Get build data for selected vehicle from SavedBuildsProvider
-  // Builds are stored by car_slug, so we match on matchedCarSlug
+  // Get build data for selected vehicle
+  // PRIORITY ORDER:
+  // 1. Vehicle's installedModifications (what's actually on the car via OwnedVehiclesProvider)
+  // 2. Active build linked to vehicle (activeBuildId)
+  // 3. Most recent build for this car slug
+  // 4. Default stock values
   const vehicleBuildData = useMemo(() => {
     if (!selectedVehicle) return null;
     
+    const matchedCar = selectedVehicle.matchedCar;
     const carSlug = selectedVehicle.matchedCarSlug;
-    if (!carSlug) {
-      // No matched car slug - return default data from catalog
-      const matchedCar = selectedVehicle.matchedCar;
-      return {
-        specs: selectedVehicle.customSpecs || {},
-        selectedUpgrades: { upgrades: [] },
-        stockHp: matchedCar?.hp || 300,
-        totalHpGain: 0,
-        finalHp: matchedCar?.hp || 300,
-        weight: matchedCar?.curb_weight || matchedCar?.weight || 3500,
-        drivetrain: matchedCar?.drivetrain || 'RWD',
-      };
+    const carId = selectedVehicle.matchedCarId;
+    
+    // WARNING: If we have a slug/id but no resolved car, data will be incorrect
+    // This indicates a database or catalog mismatch
+    const hasCarReference = !!(carSlug || carId);
+    const matchedCarNotFound = hasCarReference && !matchedCar;
+    
+    if (matchedCarNotFound) {
+      console.warn(`[Data Page] Vehicle ${selectedVehicle.id} has car reference (slug: ${carSlug}, id: ${carId}) but matchedCar not found in catalog. Using fallback values.`);
     }
     
-    // Find builds for this car by slug
-    const carBuilds = getBuildsByCarSlug(carSlug);
+    // Use actual values when available, with explicit fallbacks for missing data
+    // NOTE: Fallbacks are only used when matchedCar is missing - this is a data issue
+    const stockHp = matchedCar?.hp || (matchedCarNotFound ? null : 300);
+    const weight = matchedCar?.curb_weight || matchedCar?.weight || (matchedCarNotFound ? null : 3500);
+    const drivetrain = matchedCar?.drivetrain || (matchedCarNotFound ? null : 'RWD');
     
-    if (carBuilds && carBuilds.length > 0) {
-      // Use the most recent build for this car
-      const latestBuild = carBuilds[0]; // Already sorted by created_at desc
-      const matchedCar = selectedVehicle.matchedCar;
+    // 1. PRIORITY: Check if vehicle has direct installed modifications
+    // This is the source of truth for "what's actually on this car"
+    const vehicleMods = selectedVehicle.installedModifications || [];
+    const vehicleHpGain = selectedVehicle.totalHpGain || 0;
+    const vehicleActiveBuildId = selectedVehicle.activeBuildId;
+    
+    if (vehicleMods.length > 0 || vehicleHpGain > 0) {
+      // Vehicle has direct modifications - use these as primary source
+      // If there's an active build, get additional data from it
+      let buildData = null;
+      if (vehicleActiveBuildId) {
+        buildData = builds.find(b => b.id === vehicleActiveBuildId);
+      }
       
       return {
-        id: latestBuild.id,
-        projectName: latestBuild.name,
-        // Use 'upgrades' array from the transformed build
+        id: vehicleActiveBuildId,
+        projectName: buildData?.name || 'My Build',
+        // Use vehicle's installed mods as the primary source
         selectedUpgrades: {
-          upgrades: latestBuild.upgrades || [],
-          wheelFitment: latestBuild.wheelFitment,
-          factoryConfig: latestBuild.factoryConfig,
+          upgrades: vehicleMods,
+          wheelFitment: buildData?.wheelFitment || selectedVehicle.customSpecs?.wheels,
+          factoryConfig: buildData?.factoryConfig,
         },
-        specs: {}, // Legacy format not used
-        stockHp: matchedCar?.hp || 300,
-        totalHpGain: latestBuild.totalHpGain || 0,
-        finalHp: latestBuild.finalHp || (matchedCar?.hp || 300),
-        weight: matchedCar?.curb_weight || matchedCar?.weight || 3500,
-        drivetrain: matchedCar?.drivetrain || 'RWD',
+        specs: selectedVehicle.customSpecs || {},
+        stockHp,
+        totalHpGain: vehicleHpGain,
+        finalHp: stockHp !== null ? stockHp + vehicleHpGain : null,
+        weight,
+        drivetrain,
+        // Mark that this data comes from the vehicle directly
+        sourceType: 'vehicle',
+        // Flag when car baseline data is missing (for error states)
+        matchedCarNotFound,
       };
     }
     
-    // No build found - return default data from catalog
-    const matchedCar = selectedVehicle.matchedCar;
+    // 2. No direct mods on vehicle - try to find a build for this car
+    if (carSlug) {
+      const carBuilds = getBuildsByCarSlug(carSlug);
+      
+      if (carBuilds && carBuilds.length > 0) {
+        // Use the most recent build for this car
+        const latestBuild = carBuilds[0]; // Already sorted by created_at desc
+        
+        return {
+          id: latestBuild.id,
+          projectName: latestBuild.name,
+          selectedUpgrades: {
+            upgrades: latestBuild.upgrades || [],
+            wheelFitment: latestBuild.wheelFitment,
+            factoryConfig: latestBuild.factoryConfig,
+          },
+          specs: {},
+          stockHp,
+          totalHpGain: latestBuild.totalHpGain || 0,
+          finalHp: latestBuild.finalHp || stockHp,
+          weight,
+          drivetrain,
+          sourceType: 'build',
+          matchedCarNotFound,
+        };
+      }
+    }
+    
+    // 3. No modifications or builds found - return stock values
     return {
       specs: selectedVehicle.customSpecs || {},
       selectedUpgrades: { upgrades: [] },
-      stockHp: matchedCar?.hp || 300,
+      stockHp,
       totalHpGain: 0,
-      finalHp: matchedCar?.hp || 300,
-      weight: matchedCar?.curb_weight || matchedCar?.weight || 3500,
-      drivetrain: matchedCar?.drivetrain || 'RWD',
+      finalHp: stockHp,
+      weight,
+      drivetrain,
+      sourceType: 'stock',
+      matchedCarNotFound,
     };
-  }, [selectedVehicle, getBuildsByCarSlug]);
+  }, [selectedVehicle, getBuildsByCarSlug, builds]);
   
   // Get HP values directly from build data (already calculated and stored)
-  const stockHp = vehicleBuildData?.stockHp || selectedVehicle?.matchedCar?.hp || 300;
+  // NOTE: When matchedCarNotFound is true, stockHp may be null - use 0 to avoid NaN
+  // The UI should display an error state in this case
+  const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
   const hpGain = vehicleBuildData?.totalHpGain || 0;
-  const estimatedHp = vehicleBuildData?.finalHp || (stockHp + hpGain);
+  const estimatedHp = vehicleBuildData?.finalHp ?? (stockHp + hpGain);
+  
+  // Flag for UI to show warning when car baseline data couldn't be resolved
+  const hasDataIssue = vehicleBuildData?.matchedCarNotFound === true;
   
   // Get tire compound from build - stored in wheelFitment or suspension
   const tireCompound = useMemo(() => {
@@ -412,6 +476,54 @@ function DataPageContent() {
       hasSuspension: upgrades.some(k => k.includes('coilover') || k.includes('spring') || k.includes('sway')),
     };
   }, [installedUpgrades]);
+  
+  // DIAGNOSTIC: Log data flow for debugging (remove in production)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && selectedVehicle) {
+      console.group('[MyData] Data Flow Diagnostics');
+      console.log('Selected Vehicle:', {
+        id: selectedVehicle.id,
+        year: selectedVehicle.year,
+        make: selectedVehicle.make,
+        model: selectedVehicle.model,
+        matchedCarSlug: selectedVehicle.matchedCarSlug,
+        // CRITICAL: Check if matchedCar was found from catalog
+        matchedCarFound: !!selectedVehicle.matchedCar,
+        matchedCarHp: selectedVehicle.matchedCar?.hp || 'NOT FOUND - using fallback',
+        matchedCarTorque: selectedVehicle.matchedCar?.torque || 'NOT FOUND',
+        installedModifications: selectedVehicle.installedModifications,
+        totalHpGain: selectedVehicle.totalHpGain,
+        activeBuildId: selectedVehicle.activeBuildId,
+      });
+      console.log('Cars Catalog Status:', {
+        carsLoaded: allCars.length,
+        carLookupAttempted: !!selectedVehicle.matchedCarSlug,
+      });
+      console.log('Vehicle Build Data:', {
+        sourceType: vehicleBuildData?.sourceType,
+        id: vehicleBuildData?.id,
+        projectName: vehicleBuildData?.projectName,
+        stockHp: vehicleBuildData?.stockHp,
+        totalHpGain: vehicleBuildData?.totalHpGain,
+        finalHp: vehicleBuildData?.finalHp,
+        upgradeCount: vehicleBuildData?.selectedUpgrades?.upgrades?.length || 0,
+        upgrades: vehicleBuildData?.selectedUpgrades?.upgrades?.map(u => typeof u === 'string' ? u : u?.key),
+      });
+      console.log('Derived Values:', {
+        stockHp,
+        hpGain,
+        estimatedHp,
+        installedUpgradesCount: installedUpgrades.length,
+        installedUpgradeKeys: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key),
+        upgradeCategories,
+      });
+      console.log('Tuning Profile:', tuningProfile ? {
+        hasStageProgressions: !!tuningProfile.stage_progressions,
+        stagesCount: tuningProfile.stage_progressions?.length || 0,
+      } : 'No tuning profile');
+      console.groupEnd();
+    }
+  }, [selectedVehicle, vehicleBuildData, stockHp, hpGain, estimatedHp, installedUpgrades, upgradeCategories, tuningProfile, allCars]);
   
   // Note: Dyno results are now fetched via useDynoResults hook above
   
@@ -655,10 +767,12 @@ function DataPageContent() {
                   stockHp={selectedVehicle.matchedCar?.hp || 300}
                   estimatedHp={estimatedHp}
                   stockTorque={selectedVehicle.matchedCar?.torque || (selectedVehicle.matchedCar?.hp || 300) * 0.85}
-                  estimatedTq={estimatedHp * 0.9}
+                  estimatedTq={estimatedHp * 0.88}
                   peakRpm={selectedVehicle.matchedCar?.peak_hp_rpm || 6500}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                   carSlug={selectedVehicle.matchedCarSlug}
+                  car={selectedVehicle.matchedCar}
+                  selectedUpgrades={installedUpgrades}
                 />
               </div>
               
@@ -666,10 +780,16 @@ function DataPageContent() {
               <CalculatedPerformance
                 stockHp={selectedVehicle.matchedCar?.hp || 300}
                 estimatedHp={estimatedHp}
-                weight={selectedVehicle.matchedCar?.curb_weight || selectedVehicle.matchedCar?.weight || 3500}
+                weight={selectedVehicle.matchedCar?.curbWeight || selectedVehicle.matchedCar?.weight || 3500}
                 drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
                 tireCompound={tireCompound}
                 weightMod={vehicleBuildData?.specs?.weight?.reduction || 0}
+                // Pass ACTUAL stock metrics from database
+                stockZeroToSixty={selectedVehicle.matchedCar?.zeroToSixty}
+                stockQuarterMile={selectedVehicle.matchedCar?.quarterMile}
+                stockBraking={selectedVehicle.matchedCar?.braking60To0}
+                stockLateralG={selectedVehicle.matchedCar?.lateralG}
+                stockTrapSpeed={null} // Not in cars table
                 hasExhaust={upgradeCategories.hasExhaust}
                 hasIntake={upgradeCategories.hasIntake}
                 hasTune={upgradeCategories.hasTune}

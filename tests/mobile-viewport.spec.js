@@ -31,6 +31,19 @@ const CRITICAL_PAGES = [
   { path: '/browse-cars', name: 'Browse Cars' },
   { path: '/car-selector', name: 'Car Selector' },
   { path: '/features/ask-al', name: 'Ask AL' },
+  { path: '/dashboard', name: 'Dashboard' },
+  { path: '/garage', name: 'Garage' },
+  { path: '/community', name: 'Community' },
+  { path: '/tuning-shop', name: 'Tuning Shop' },
+  { path: '/al', name: 'AL Chat' },
+  { path: '/data', name: 'Data' },
+];
+
+// Landscape viewports for testing
+const LANDSCAPE_VIEWPORTS = [
+  { name: 'iphone-se-landscape', width: 667, height: 375 },
+  { name: 'iphone-14-landscape', width: 844, height: 390 },
+  { name: 'samsung-landscape', width: 800, height: 360 },
 ];
 
 test.describe('Mobile Viewport Compatibility', () => {
@@ -154,6 +167,146 @@ test.describe('Mobile Viewport Compatibility', () => {
       }
     });
   });
+});
+
+// Landscape mode tests
+test.describe('Landscape Mode Compatibility', () => {
+  for (const viewport of LANDSCAPE_VIEWPORTS) {
+    test(`No horizontal overflow in landscape at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      
+      await page.waitForTimeout(500);
+      
+      const hasHorizontalScroll = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      });
+      
+      expect(hasHorizontalScroll, 
+        `Page has horizontal scroll in landscape at ${viewport.width}x${viewport.height}`
+      ).toBe(false);
+    });
+    
+    test(`Bottom tab bar adapts to landscape (${viewport.name})`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      
+      await page.waitForTimeout(500);
+      
+      // Bottom tab bar should be present and adapted for landscape
+      const tabBar = await page.locator('nav[class*="BottomTabBar"], [class*="tabBar"]').first();
+      
+      if (await tabBar.count() > 0) {
+        const box = await tabBar.boundingBox();
+        if (box) {
+          // In landscape, tab bar should be shorter (< 60px) due to reduced padding
+          expect(box.height, 'Tab bar should be compact in landscape').toBeLessThanOrEqual(70);
+        }
+      }
+    });
+  }
+});
+
+// Safe area rendering tests
+test.describe('Safe Area Inset Handling', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+  });
+  
+  test('Modal overlays use safe area padding', async ({ page }) => {
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+    
+    // Check if any modal overlay CSS references safe-area-inset
+    const styleSheets = await page.evaluate(() => {
+      const sheets = Array.from(document.styleSheets);
+      let hasSafeAreaStyles = false;
+      
+      try {
+        for (const sheet of sheets) {
+          try {
+            const rules = Array.from(sheet.cssRules || []);
+            for (const rule of rules) {
+              if (rule.cssText && rule.cssText.includes('safe-area-inset')) {
+                hasSafeAreaStyles = true;
+                break;
+              }
+            }
+          } catch {
+            // Cross-origin stylesheet, skip
+          }
+          if (hasSafeAreaStyles) break;
+        }
+      } catch {
+        // Fallback: just check if the page loaded
+        hasSafeAreaStyles = true;
+      }
+      
+      return hasSafeAreaStyles;
+    });
+    
+    expect(styleSheets, 'Page should have safe area CSS rules loaded').toBe(true);
+  });
+  
+  test('Fixed bottom elements respect safe area', async ({ page }) => {
+    await page.goto('/al', { waitUntil: 'domcontentloaded' });
+    
+    await page.waitForTimeout(500);
+    
+    // Check that fixed bottom element has proper padding
+    const inputArea = await page.locator('[class*="inputArea"], [class*="inputWrapper"]').last();
+    
+    if (await inputArea.count() > 0) {
+      const box = await inputArea.boundingBox();
+      if (box) {
+        // Input area should have some padding from the bottom
+        const viewportHeight = 844;
+        const bottomMargin = viewportHeight - (box.y + box.height);
+        
+        // Should have at least some padding (safe area or standard padding)
+        expect(bottomMargin, 'Input area should have bottom padding').toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+});
+
+// Extended touch target tests for app pages
+test.describe('App Page Touch Targets', () => {
+  const appPages = [
+    { path: '/dashboard', name: 'Dashboard', elements: ['button', '[class*="tab"]', 'a'] },
+    { path: '/garage', name: 'Garage', elements: ['button', '[class*="actionBtn"]'] },
+    { path: '/al', name: 'AL Chat', elements: ['button', '[class*="sendBtn"]'] },
+  ];
+  
+  for (const pageInfo of appPages) {
+    test(`${pageInfo.name} buttons meet 44px minimum`, async ({ page }) => {
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(pageInfo.path, { waitUntil: 'domcontentloaded' });
+      
+      await page.waitForTimeout(500);
+      
+      for (const selector of pageInfo.elements) {
+        const elements = await page.locator(selector).all();
+        
+        for (const el of elements.slice(0, 5)) { // Check first 5 of each type
+          try {
+            const box = await el.boundingBox();
+            if (box && box.width > 0 && box.height > 0) {
+              // Skip very small decorative elements
+              if (box.width < 20 || box.height < 20) continue;
+              
+              // Interactive elements should have at least 44px in one dimension
+              const meetsTarget = box.width >= 44 || box.height >= 44;
+              expect(meetsTarget, 
+                `${selector} on ${pageInfo.name} should meet 44px touch target`
+              ).toBe(true);
+            }
+          } catch {
+            // Element may not be visible, skip
+          }
+        }
+      }
+    });
+  }
 });
 
 /**

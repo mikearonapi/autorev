@@ -29,7 +29,7 @@ import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ImageUploader from '@/components/ImageUploader';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
 import { useCarImages } from '@/hooks/useCarImages';
-import { fetchCars } from '@/lib/carsClient';
+import { useCarsList } from '@/hooks/useCarData';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
 
@@ -48,7 +48,6 @@ function MyPhotosContent() {
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
-  const [allCars, setAllCars] = useState([]);
   const [vehicleId, setVehicleId] = useState(null);
   const uploadSectionRef = useRef(null);
   
@@ -56,6 +55,9 @@ function MyPhotosContent() {
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
+  
+  // Use cached cars data from React Query hook
+  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
   // Check for action=upload query param
   const actionParam = searchParams.get('action');
@@ -68,17 +70,6 @@ function MyPhotosContent() {
     setHeroImage: setCarHeroImage,
     clearHeroImage: clearCarHeroImage
   } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
-
-  // Fetch all cars
-  useEffect(() => {
-    let cancelled = false;
-    fetchCars().then(cars => {
-      if (!cancelled && Array.isArray(cars)) {
-        setAllCars(cars);
-      }
-    });
-    return () => { cancelled = true; };
-  }, []);
 
   // Get URL params
   const buildIdParam = searchParams.get('build');
@@ -137,8 +128,8 @@ function MyPhotosContent() {
   };
 
   // Loading state
-  const isLoadingBuild = buildIdParam && (buildsLoading || allCars.length === 0);
-  if (authLoading || isLoadingBuild) {
+  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
+  if (authLoading || carsLoading || isLoadingBuild) {
     return (
       <div className={styles.page}>
         <LoadingSpinner 
@@ -282,7 +273,7 @@ function MyPhotosLoading() {
 
 export default function MyPhotosPage() {
   return (
-    <ErrorBoundary>
+    <ErrorBoundary name="MyPhotosPage" featureContext="garage-my-photos">
       <Suspense fallback={<MyPhotosLoading />}>
         <MyPhotosContent />
       </Suspense>

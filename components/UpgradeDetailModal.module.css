@@ -13,8 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Account for fixed header + beta banner on all screen sizes */
-  padding: calc(100px + 1rem) 1rem 1rem 1rem;
+  padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -29,8 +28,7 @@
   border-radius: 16px;
   max-width: 640px;
   width: 100%;
-  /* Reduced max-height to account for header padding */
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 2rem);
   overflow-y: auto;
   position: relative;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -55,19 +53,20 @@
   .overlay {
     padding: 0;
     background: var(--surface-elevated, var(--brand-bg-card-dark));
-    align-items: flex-start; /* Start from top on mobile */
-    /* Account for fixed header + beta banner at top of page */
-    padding-top: calc(100px + env(safe-area-inset-top, 0px));
+    align-items: stretch;
   }
   
   .panel {
     width: 100%;
-    height: auto;
+    height: 100%;
     max-width: none;
-    max-height: calc(100vh - 100px - env(safe-area-inset-top, 0px));
+    max-height: none;
     border-radius: 0;
     animation: mobileSlideUp 0.3s ease-out;
-    overflow-y: auto; /* Ensure panel itself can scroll */
+    overflow-y: auto;
+    /* Account for safe areas */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
   @keyframes mobileSlideUp {
@@ -111,9 +110,9 @@
 /* Mobile: Ensure close button is easily tappable and in safe area */
 @media (max-width: 480px) {
   .closeBtn {
-    /* Position relative to modal content (overlay already has header offset) */
-    top: 1rem;
-    right: 1rem;
+    /* Position below safe area inset */
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    right: 0.75rem;
     width: 44px;
     height: 44px;
     background: rgba(255, 255, 255, 0.12);
@@ -256,7 +255,7 @@
 @media (max-width: 480px) {
   .body {
     padding: 1rem;
-    padding-bottom: max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem));
+    padding-bottom: 1.5rem; /* Extra space at bottom for scrolling comfort */
   }
   
   .section {
@@ -587,7 +586,6 @@
   
   .footer {
     padding: 0.75rem 1rem;
-    padding-bottom: max(0.75rem, calc(env(safe-area-inset-bottom, 0px) + 0.5rem));
   }
   
   .addToBuildBtn {

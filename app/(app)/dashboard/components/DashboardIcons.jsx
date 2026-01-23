@@ -227,6 +227,9 @@ export const SettingsIcon = ({ size = 18 }) => (
   </svg>
 );
 
+// Alias for GearIcon (same as SettingsIcon)
+export const GearIcon = SettingsIcon;
+
 // Info icon (circle with i)
 export const InfoIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" 

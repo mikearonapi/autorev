@@ -36,29 +36,51 @@ const CATEGORY_CONFIG = {
 
 /**
  * Determine category for an upgrade key
+ * Works by inspecting the key string, with fallback to upgrade registry
  */
 function getCategoryForUpgrade(key) {
-  const upgrade = getUpgradeByKey(key);
-  if (!upgrade) return 'other';
+  if (!key) return 'other';
   
-  if (key.includes('tune') || key.includes('ecu') || key === 'piggyback-tuner') {
+  const keyLower = key.toLowerCase();
+  
+  // Check key patterns first (works even if upgrade not in registry)
+  if (keyLower.includes('tune') || keyLower.includes('ecu') || keyLower === 'piggyback-tuner') {
     return 'tune';
   }
-  if (key.includes('exhaust') || key === 'headers' || key === 'downpipe') {
+  if (keyLower.includes('exhaust') || keyLower === 'headers' || keyLower.includes('downpipe') || keyLower.includes('catback')) {
     return 'exhaust';
   }
-  if (key.includes('intake') || key === 'throttle-body' || key === 'intake-manifold') {
+  if (keyLower.includes('intake') || keyLower === 'throttle-body' || keyLower.includes('intake-manifold') || keyLower.includes('cai')) {
     return 'intake';
   }
-  if (upgrade.category === 'forcedInduction' || 
-      key.includes('turbo') || 
-      key.includes('supercharger') || 
-      key.includes('intercooler') ||
-      key.includes('boost')) {
+  if (keyLower.includes('turbo') || keyLower.includes('supercharger') || keyLower.includes('intercooler') || keyLower.includes('boost')) {
+    return 'forcedInduction';
+  }
+  
+  // Fallback to checking upgrade registry
+  const upgrade = getUpgradeByKey(key);
+  if (upgrade?.category === 'forcedInduction') {
     return 'forcedInduction';
   }
   
   return 'other';
+}
+
+/**
+ * Estimate HP gain for an upgrade key when calculator doesn't have the data
+ * Provides reasonable fallback values by category
+ */
+function estimateHpGainForCategory(category, engineType = 'na') {
+  const estimates = {
+    tune: { na: 15, turbo: 50, sc: 35 },
+    exhaust: { na: 12, turbo: 15, sc: 10 },
+    intake: { na: 8, turbo: 12, sc: 8 },
+    forcedInduction: { na: 0, turbo: 30, sc: 20 },
+    other: { na: 5, turbo: 5, sc: 5 },
+  };
+  
+  const categoryEstimates = estimates[category] || estimates.other;
+  return categoryEstimates[engineType] || categoryEstimates.na;
 }
 
 /**
@@ -144,19 +166,73 @@ export default function PowerBreakdown({
   const [hoveredSegment, setHoveredSegment] = useState(null);
   
   // Calculate the breakdown using the smart calculator
+  // If calculator fails, create a fallback breakdown from the upgrade keys
   const calculationResult = useMemo(() => {
-    if (!car || !upgrades || upgrades.length === 0) {
-      return null;
-    }
-    
-    const upgradeKeys = upgrades.map(u => typeof u === 'string' ? u : u.key).filter(Boolean);
+    // Extract upgrade keys from various formats
+    const upgradeKeys = (upgrades || [])
+      .map(u => {
+        if (typeof u === 'string') return u;
+        if (u?.key) return u.key;
+        if (u?.name) return u.name;
+        return null;
+      })
+      .filter(Boolean);
     
     if (upgradeKeys.length === 0) {
       return null;
     }
     
-    return calculateSmartHpGain(car, upgradeKeys);
-  }, [car, upgrades]);
+    // Try the smart calculator if we have car data
+    if (car && car.hp) {
+      try {
+        const result = calculateSmartHpGain(car, upgradeKeys);
+        if (result && result.totalGain > 0) {
+          return result;
+        }
+      } catch (e) {
+        console.warn('[PowerBreakdown] Calculator failed, using fallback:', e.message);
+      }
+    }
+    
+    // Fallback: Create breakdown from upgrade keys without full calculation
+    // This ensures SOMETHING displays even when car data is incomplete
+    const engineType = car?.engine?.toLowerCase().includes('turbo') ? 'turbo' :
+                       car?.engine?.toLowerCase().includes('supercharg') ? 'sc' : 'na';
+    
+    const breakdown = {};
+    let estimatedTotal = 0;
+    
+    upgradeKeys.forEach(key => {
+      const category = getCategoryForUpgrade(key);
+      const estimatedGain = estimateHpGainForCategory(category, engineType);
+      
+      if (!breakdown[key]) {
+        breakdown[key] = {
+          name: key.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+          rawGain: estimatedGain,
+          appliedGain: estimatedGain,
+          conflicts: [],
+        };
+        estimatedTotal += estimatedGain;
+      }
+    });
+    
+    // If we have a provided total, scale the estimates to match
+    if (providedTotalGain && providedTotalGain > 0 && estimatedTotal > 0) {
+      const scaleFactor = providedTotalGain / estimatedTotal;
+      Object.values(breakdown).forEach(item => {
+        item.appliedGain = Math.round(item.appliedGain * scaleFactor);
+        item.rawGain = Math.round(item.rawGain * scaleFactor);
+      });
+      estimatedTotal = providedTotalGain;
+    }
+    
+    return {
+      totalGain: estimatedTotal,
+      breakdown,
+      isFallback: true, // Mark this as fallback data
+    };
+  }, [car, upgrades, providedTotalGain]);
   
   // Group breakdown items by category and calculate percentages
   const { categoryBreakdown, segments } = useMemo(() => {

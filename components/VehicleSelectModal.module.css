@@ -11,6 +11,9 @@
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(4px);
   -webkit-tap-highlight-color: transparent;
+  /* Safe area padding for mobile */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Modal - sibling of backdrop, higher z-index */

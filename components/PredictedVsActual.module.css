@@ -54,7 +54,7 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
@@ -87,7 +87,7 @@
 
 .gapPercent {
   opacity: 0.7;
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 /* Values Row */
@@ -110,7 +110,7 @@
 }
 
 .valueLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -118,7 +118,7 @@
 }
 
 .predictedValue {
-  font-size: 24px;
+  font-size: var(--text-h1);
   font-weight: 700;
   color: var(--color-accent-blue, #3b82f6);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
@@ -128,7 +128,7 @@
 }
 
 .actualValue {
-  font-size: 24px;
+  font-size: var(--text-h1);
   font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   display: flex;
@@ -149,13 +149,13 @@
 }
 
 .unit {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .arrow {
-  font-size: 20px;
+  font-size: var(--text-h2);
   color: rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
 }
@@ -170,7 +170,7 @@
   border: 1px dashed rgba(212, 255, 0, 0.4);
   border-radius: 10px;
   color: var(--color-accent-lime, #d4ff00);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -198,7 +198,7 @@
 }
 
 .insightText {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.5;
   margin: 0;
@@ -212,7 +212,7 @@
 }
 
 .lastLogged {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.35);
 }
 
@@ -224,7 +224,7 @@
 }
 
 .emptyPrompt p {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.4);
   margin: 0;
   text-align: center;
@@ -245,7 +245,7 @@
 }
 
 .compactLabel {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -254,7 +254,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .compactPredicted {
@@ -263,8 +263,8 @@
 }
 
 .compactArrow {
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.3);
-  font-size: 11px;
 }
 
 .compactActual {
@@ -284,7 +284,7 @@
 }
 
 .compactGap {
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 .compactGap.positive {
@@ -296,7 +296,7 @@
 }
 
 .compactUnit {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.4);
 }
 
@@ -314,12 +314,12 @@
   }
 
   .label {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 
   .gapBadge {
     padding: 5px 10px;
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .valuesRow {
@@ -328,12 +328,12 @@
 
   .predictedValue,
   .actualValue {
-    font-size: 20px;
+    font-size: var(--text-h2);
   }
 
   .logButton {
     padding: 10px 16px;
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .insightSection {
@@ -341,6 +341,6 @@
   }
 
   .insightText {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 }

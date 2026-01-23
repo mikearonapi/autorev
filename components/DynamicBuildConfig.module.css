@@ -22,12 +22,12 @@
 }
 
 .configSummaryText {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
 .configSummaryCount {
-  font-size: 11px;
+  font-size: var(--text-xs);
   padding: 3px 8px;
   background: rgba(16, 185, 129, 0.15);
   border-radius: 10px;
@@ -59,7 +59,7 @@
 }
 
 .upgradeName {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
 }
@@ -93,7 +93,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--brand-teal);
 }
 
@@ -105,7 +105,7 @@
   padding: 12px 0 0;
   margin-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.4);
   line-height: 1.4;
 }
@@ -137,13 +137,13 @@
 }
 
 .emptyStateTitle {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .emptyStateText {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.4);
   line-height: 1.5;
 }
@@ -155,7 +155,7 @@
   }
   
   .upgradeName {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   
   .upgradeSimpleCard {

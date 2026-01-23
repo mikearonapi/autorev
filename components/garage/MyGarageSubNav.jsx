@@ -8,9 +8,10 @@
  * - Build: Configure upgrades and modifications
  * - Performance: See performance impact of upgrades
  * - Parts: Research and select specific parts
+ * - Install: Track installation progress and find service centers
  * - Photos: Manage vehicle photos
  * 
- * Used across all five vehicle-specific pages in My Garage.
+ * Used across all six vehicle-specific pages in My Garage.
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -49,6 +50,13 @@ const NAV_OPTIONS = [
     icon: 'box'
   },
   { 
+    id: 'my-install', 
+    label: 'Install',
+    href: '/garage/my-install',
+    description: 'Track installations',
+    icon: 'tool'
+  },
+  { 
     id: 'my-photos', 
     label: 'Photos',
     href: '/garage/my-photos',
@@ -67,6 +75,7 @@ function getIcon(iconName) {
     case 'bolt': return Icons.bolt;
     case 'box': return Icons.box;
     case 'camera': return Icons.camera;
+    case 'tool': return Icons.tool;
     default: return Icons.specs;
   }
 }
@@ -75,6 +84,7 @@ export default function MyGarageSubNav({
   carSlug, 
   buildId,
   onBack,
+  leftAction,
   rightAction,
 }) {
   const pathname = usePathname();
@@ -135,6 +145,13 @@ export default function MyGarageSubNav({
       >
         <Icons.arrowLeft size={20} />
       </button>
+      
+      {/* Left Action (optional, e.g., Save status) */}
+      {leftAction && (
+        <div className={styles.leftAction}>
+          {leftAction}
+        </div>
+      )}
       
       {/* Dropdown Trigger */}
       <div className={styles.dropdownContainer} ref={dropdownRef}>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LEADERBOARD VIEW - Monthly Points Leaderboard
+   LEADERBOARD VIEW - Points Leaderboard with Monthly/All-Time Toggle
    ========================================================================== */
 
 .container {
@@ -7,7 +7,8 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-4);
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 100px);
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -28,6 +29,7 @@
    ========================================================================== */
 
 .header {
+  position: relative;
   text-align: center;
   margin-bottom: var(--space-4);
 }
@@ -46,10 +48,114 @@
   letter-spacing: 0.02em;
 }
 
+.headerControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
 .subtitle {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
-  margin-top: var(--space-1);
+  margin: 0;
+}
+
+/* ==========================================================================
+   PERIOD DROPDOWN
+   ========================================================================== */
+
+.dropdownContainer {
+  position: relative;
+}
+
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 32px;
+}
+
+.dropdownTrigger:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dropdownTrigger:focus {
+  outline: none;
+  border-color: var(--color-accent-teal);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.dropdownTrigger svg {
+  transition: transform 0.2s ease;
+}
+
+.dropdownTrigger[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.dropdownBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 140px;
+  padding: 4px;
+  margin: 0;
+  list-style: none;
+  background: var(--color-bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  animation: dropdownFadeIn 0.15s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.dropdownItem.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal);
 }
 
 /* ==========================================================================
@@ -262,7 +368,7 @@
   flex-shrink: 0;
 }
 
-.monthlyPoints {
+.points {
   font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 800;
@@ -315,49 +421,35 @@
 }
 
 /* ==========================================================================
-   INFO CARD
+   INFO BUTTON (Circular, top-left)
    ========================================================================== */
 
-.infoCard {
-  margin-top: var(--space-6);
-  padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-}
-
-.infoCard h3 {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 var(--space-3) 0;
-}
-
-.infoCard ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.infoCard li {
+.infoButtonCircle {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  font-size: 0.8125rem;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.infoButtonCircle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
   color: var(--color-text-secondary);
 }
 
-.infoCard li span {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-accent-teal);
-  min-width: 40px;
+.infoButtonCircle svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* ==========================================================================
@@ -383,15 +475,7 @@
     font-size: 0.875rem;
   }
 
-  .monthlyPoints {
+  .points {
     font-size: 1.125rem;
-  }
-
-  .infoCard {
-    padding: var(--space-5);
-  }
-
-  .infoCard li {
-    font-size: 0.875rem;
   }
 }

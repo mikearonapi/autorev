@@ -12,7 +12,8 @@
   box-sizing: border-box;
   background: var(--brand-bg-primary);
   color: var(--color-white);
-  padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
   display: flex;
   flex-direction: column;
 }

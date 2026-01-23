@@ -1,10 +1,9 @@
 /**
  * Community Leaderboard API
  * 
- * GET /api/community/leaderboard - Get monthly points leaderboard
+ * GET /api/community/leaderboard - Get points leaderboard
  * 
- * Returns top users by points earned in the current month
- * to drive engagement and friendly competition.
+ * Returns top users by points earned. Supports both monthly and all-time views.
  * 
  * @route /api/community/leaderboard
  */
@@ -38,17 +37,26 @@ function getCurrentMonthName() {
 
 /**
  * GET /api/community/leaderboard
- * Get monthly points leaderboard
+ * Get points leaderboard
  * 
  * Query params:
  * - limit: max users to return (default 20, max 50)
+ * - period: 'monthly' (default) or 'all-time'
  */
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
+  const period = searchParams.get('period') || 'monthly';
   
+  const isAllTime = period === 'all-time';
   const monthStart = getMonthStart();
-  
+
+  // For all-time, we can use the pre-aggregated total_points from user_profiles
+  if (isAllTime) {
+    return handleAllTimeLeaderboard(request, limit);
+  }
+
+  // Monthly leaderboard - aggregate from history
   // Step 1: Get all points earned this month
   const { data: pointsData, error: pointsError } = await supabaseAdmin
     .from('user_points_history')
@@ -72,8 +80,8 @@ async function handleGet(request) {
   if (userIds.length === 0) {
     return NextResponse.json({
       leaderboard: [],
-      month: getCurrentMonthName(),
-      monthStart,
+      period: 'monthly',
+      periodLabel: getCurrentMonthName(),
       currentUserRank: null,
     });
   }
@@ -98,10 +106,10 @@ async function handleGet(request) {
       avatarUrl: profile.avatar_url,
       selectedTitle: profile.selected_title,
       totalPoints: profile.total_points || 0,
-      monthlyPoints: pointsMap.get(profile.id) || 0,
+      points: pointsMap.get(profile.id) || 0,
     }))
-    .filter(u => u.monthlyPoints > 0)
-    .sort((a, b) => b.monthlyPoints - a.monthlyPoints)
+    .filter(u => u.points > 0)
+    .sort((a, b) => b.points - a.points)
     .slice(0, limit)
     .map((user, index) => ({
       ...user,
@@ -109,7 +117,72 @@ async function handleGet(request) {
     }));
 
   // Step 5: Get current user's rank if authenticated
-  let currentUserRank = null;
+  const currentUserRank = await getCurrentUserRank(request, pointsMap, 'monthly');
+
+  return NextResponse.json({
+    leaderboard: finalLeaderboard,
+    period: 'monthly',
+    periodLabel: getCurrentMonthName(),
+    currentUserRank,
+  });
+}
+
+/**
+ * Handle all-time leaderboard using pre-aggregated total_points
+ */
+async function handleAllTimeLeaderboard(request, limit) {
+  // Get all users with points, sorted by total_points
+  const { data: profiles, error: profileError } = await supabaseAdmin
+    .from('user_profiles')
+    .select('id, display_name, avatar_url, selected_title, total_points')
+    .gt('total_points', 0)
+    .not('display_name', 'is', null)
+    .order('total_points', { ascending: false })
+    .limit(limit);
+
+  if (profileError) {
+    console.error('[Leaderboard API] All-time profile query error:', profileError);
+    return errors.database('Failed to fetch user profiles');
+  }
+
+  // Build leaderboard
+  const finalLeaderboard = (profiles || []).map((profile, index) => ({
+    userId: profile.id,
+    displayName: profile.display_name,
+    avatarUrl: profile.avatar_url,
+    selectedTitle: profile.selected_title,
+    totalPoints: profile.total_points || 0,
+    points: profile.total_points || 0,
+    rank: index + 1,
+  }));
+
+  // Build points map for current user rank calculation
+  const pointsMap = new Map();
+  
+  // Get all users' total points for accurate ranking
+  const { data: allPoints } = await supabaseAdmin
+    .from('user_profiles')
+    .select('id, total_points')
+    .gt('total_points', 0);
+  
+  for (const row of allPoints || []) {
+    pointsMap.set(row.id, row.total_points || 0);
+  }
+
+  const currentUserRank = await getCurrentUserRank(request, pointsMap, 'all-time');
+
+  return NextResponse.json({
+    leaderboard: finalLeaderboard,
+    period: 'all-time',
+    periodLabel: 'All Time',
+    currentUserRank,
+  });
+}
+
+/**
+ * Get current user's rank from the points map
+ */
+async function getCurrentUserRank(request, pointsMap, period) {
   try {
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken 
@@ -122,14 +195,14 @@ async function handleGet(request) {
         : await supabase.auth.getUser();
 
       if (user) {
-        const userMonthlyPoints = pointsMap.get(user.id) || 0;
-        if (userMonthlyPoints > 0) {
+        const userPoints = pointsMap.get(user.id) || 0;
+        if (userPoints > 0) {
           // Count how many users have more points
           const usersAbove = Array.from(pointsMap.entries())
-            .filter(([_, points]) => points > userMonthlyPoints).length;
-          currentUserRank = {
+            .filter(([_, points]) => points > userPoints).length;
+          return {
             rank: usersAbove + 1,
-            monthlyPoints: userMonthlyPoints,
+            points: userPoints,
           };
         }
       }
@@ -138,13 +211,7 @@ async function handleGet(request) {
     // Ignore auth errors - user just won't see their rank
     console.warn('[Leaderboard API] Auth check failed:', authError.message);
   }
-
-  return NextResponse.json({
-    leaderboard: finalLeaderboard,
-    month: getCurrentMonthName(),
-    monthStart,
-    currentUserRank,
-  });
+  return null;
 }
 
 // Export wrapped handler with error logging

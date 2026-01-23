@@ -19,7 +19,7 @@
 }
 
 .variantCompact .title {
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .variantHighlighted {
@@ -83,7 +83,7 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -92,13 +92,13 @@
   padding: 3px 8px;
   background: rgba(16, 185, 129, 0.15);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-teal);
 }
 
 .summary {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
   white-space: nowrap;
   overflow: hidden;
@@ -153,7 +153,7 @@
 }
 
 .performanceIcon {
-  font-size: 16px;
+  font-size: var(--text-h4);
 }
 
 .performanceStats {
@@ -169,13 +169,13 @@
 }
 
 .performanceValue {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-teal);
 }
 
 .performanceLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
@@ -198,14 +198,14 @@
 }
 
 .performanceCardLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .performanceCardValue {
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: var(--brand-text-primary);
 }
@@ -217,7 +217,7 @@
   }
   
   .title {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   
   .content {
@@ -229,7 +229,7 @@
   }
   
   .performanceValue {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 }
 

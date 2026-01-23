@@ -14,8 +14,8 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0 16px;
-  /* Bottom padding for tab bar */
-  padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
   background: var(--brand-bg-primary);
   color: var(--color-white);
   display: flex;
@@ -23,12 +23,11 @@
   overflow-x: hidden;
 }
 
-/* Mobile: Tighter horizontal padding + extra bottom for action buttons */
+/* Mobile: Tighter horizontal padding */
 @media (max-width: 767px) {
   .page {
     padding: 0 12px;
-    /* Increased bottom padding to ensure action buttons stay above PWA menu */
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 24px));
+    padding-bottom: var(--page-bottom-padding);
   }
 }
 
@@ -267,7 +266,7 @@
 }
 
 .vehicleListName {
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-white);
   margin: 0 0 2px 0;
@@ -277,7 +276,7 @@
 }
 
 .vehicleListSubtitle {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0 6px 0;
   white-space: nowrap;
@@ -295,7 +294,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -307,7 +306,7 @@
 .vehicleListStatLabel {
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
 }
 
@@ -386,7 +385,7 @@
 
 .titleCompact {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 800;
   color: var(--color-white);
   margin: 0;
@@ -397,7 +396,7 @@
 
 @media (min-width: 1024px) {
   .titleCompact {
-    font-size: 20px;
+    font-size: var(--text-stat-lg);
   }
 }
 
@@ -480,7 +479,7 @@
   border: none;
   border-radius: 10px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -497,7 +496,7 @@
 @media (min-width: 480px) {
   .tabPill {
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   
   .tabPill svg {
@@ -512,7 +511,7 @@
   .tabPill {
     flex: none;
     padding: 12px 20px;
-    font-size: 14px;
+    font-size: var(--text-body);
     min-height: 44px;
   }
   
@@ -601,7 +600,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -626,7 +625,7 @@
 @media (min-width: 640px) {
   .addButton {
     padding: 8px 14px;
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
   
   .addButton span {
@@ -693,7 +692,7 @@
   background: rgba(16, 185, 129, 0.15);
   border: 1px solid var(--brand-teal);
   border-radius: 20px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   color: var(--brand-teal);
   letter-spacing: 0.1em;
@@ -702,7 +701,7 @@
 
 .buildHeroName {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--text-stat-hero);
   font-weight: 700;
   color: var(--color-white);
   margin: 0;
@@ -710,13 +709,13 @@
 }
 
 .buildHeroCar {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
 
 .buildHeroNotes {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
   margin: 8px 0 0;
   max-width: 400px;
@@ -740,7 +739,7 @@
   border: none;
   border-radius: 10px;
   color: var(--brand-bg-primary);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -761,7 +760,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   color: var(--color-white);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -786,7 +785,7 @@
   }
   
   .buildHeroName {
-    font-size: 20px;
+    font-size: var(--text-stat-lg);
   }
 }
 
@@ -803,7 +802,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 20px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-white);
 }
@@ -925,7 +924,7 @@
   .heroBottomBtn {
     padding: 10px 16px;
     min-width: 70px;
-    font-size: 9px;
+    font-size: var(--text-2xs);
   }
 }
 
@@ -947,7 +946,7 @@
 
 .heroPlaceholderText {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -963,7 +962,7 @@
   }
   
   .heroPlaceholderText {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 }
 
@@ -1003,7 +1002,7 @@
 
 /* Brand name labels use TEAL for visual rhythm with stat labels */
 .vehicleInfoHeader .brandName {
-  font-size: 11px;
+  font-size: var(--text-xs);
   letter-spacing: 0.18em;
   font-weight: 700;
   color: var(--brand-teal);
@@ -1011,13 +1010,13 @@
 }
 
 .vehicleInfoHeader .vehicleYear {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .vehicleInfoHeader .heroVehicleName {
-  font-size: 24px;
+  font-size: var(--text-stat-hero);
   font-weight: 800;
   margin: 0;
   color: var(--brand-text-primary);
@@ -1028,7 +1027,7 @@
 
 @media (max-width: 480px) {
   .vehicleInfoHeader .heroVehicleName {
-    font-size: 22px;
+    font-size: var(--text-h2);
   }
 }
 
@@ -1037,7 +1036,7 @@
   align-items: center;
   gap: 2px;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
   padding-top: 2px;
@@ -1287,7 +1286,7 @@
 /* Brand name labels use TEAL for visual rhythm with stat labels */
 .brandName {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1296,7 +1295,7 @@
 
 @media (max-width: 767px) {
   .brandName {
-    font-size: 11px;
+    font-size: var(--text-xs);
     letter-spacing: 0.18em;
     font-weight: 800;
   }
@@ -1304,14 +1303,14 @@
 
 @media (min-width: 768px) {
   .brandName {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }
 
 /* Vehicle Name - GRAVL-style prominent display */
 .heroVehicleName {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--text-stat-hero);
   font-weight: 800;
   color: var(--color-white);
   margin: 0 0 4px;
@@ -1324,7 +1323,7 @@
 /* Mobile: Premium larger vehicle name */
 @media (max-width: 767px) {
   .heroVehicleName {
-    font-size: 26px;
+    font-size: var(--text-h1);
     font-weight: 800;
     line-height: 1.1;
     margin: 0 0 6px;
@@ -1335,24 +1334,24 @@
 /* Very narrow screens */
 @media (max-width: 374px) {
   .heroVehicleName {
-    font-size: 22px;
+    font-size: var(--text-h2);
   }
 }
 
 @media (min-width: 768px) {
   .heroVehicleName {
-    font-size: 28px;
+    font-size: var(--text-h1);
   }
 }
 
 @media (min-width: 1200px) {
   .heroVehicleName {
-    font-size: 32px;
+    font-size: var(--text-hero);
   }
 }
 
 .heroSubInfo {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.55);
   margin: 0;
   font-style: italic;
@@ -1362,7 +1361,7 @@
 /* Mobile: Premium sub info */
 @media (max-width: 767px) {
   .heroSubInfo {
-    font-size: 15px;
+    font-size: var(--text-body);
     color: rgba(255, 255, 255, 0.55);
     margin-top: 0;
     font-style: italic;
@@ -1371,7 +1370,7 @@
 
 @media (min-width: 768px) {
   .heroSubInfo {
-    font-size: 15px;
+    font-size: var(--text-body);
   }
 }
 
@@ -1459,7 +1458,7 @@
 }
 
 .variantMatchLabel {
-  font-size: 9px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.65);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1486,7 +1485,7 @@
 /* Mobile - even smaller for narrow screens */
 @media (max-width: 480px) {
   .variantMatchValue {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     max-width: calc(100vw - 60px);
     letter-spacing: -0.02em; /* Slight tightening for fit */
     -webkit-line-clamp: 2;
@@ -1515,7 +1514,7 @@
 }
 
 .variantMatchLink span {
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 /* Daily Driver Enrichment Prompt */
@@ -1536,7 +1535,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
@@ -1557,7 +1556,7 @@
   color: var(--brand-bg-primary);
   border: none;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: transform 150ms ease, box-shadow 150ms ease;
@@ -1581,7 +1580,7 @@
   background: rgba(var(--brand-success-rgb), 0.12);
   border: 1px solid rgba(var(--brand-success-rgb), 0.3);
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgb(134, 239, 172);
   font-weight: 600;
 }
@@ -1601,7 +1600,7 @@
 }
 
 .specLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.55);
   font-weight: 500;
   flex-shrink: 0;
@@ -1612,7 +1611,7 @@
 /* Mobile: Larger labels for premium feel */
 @media (max-width: 767px) {
   .specLabel {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: rgba(255, 255, 255, 0.6);
     font-weight: 500;
     text-transform: none;
@@ -1622,12 +1621,12 @@
 
 @media (min-width: 768px) {
   .specLabel {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }
 
 .specValue {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--brand-text-primary);
   font-weight: 600;
   font-family: var(--font-mono);
@@ -1637,7 +1636,7 @@
 /* Mobile: Larger, bolder values - Gravl inspired */
 @media (max-width: 767px) {
   .specValue {
-    font-size: 16px;
+    font-size: var(--text-h4);
     font-weight: 700;
     color: var(--brand-text-primary);
   }
@@ -1645,7 +1644,7 @@
 
 @media (min-width: 768px) {
   .specValue {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 }
 
@@ -1660,7 +1659,7 @@
 
 .priceLabel {
   display: block;
-  font-size: 9px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1668,7 +1667,7 @@
 }
 
 .priceValue {
-  font-size: 16px;
+  font-size: var(--text-h4);
   color: var(--sn-gold);
   font-weight: 700;
   font-family: var(--font-mono);
@@ -1728,7 +1727,7 @@
 
 /* Brand name labels use TEAL for visual rhythm */
 .specPanelHeaderInfo .brandName {
-  font-size: 11px;
+  font-size: var(--text-xs);
   letter-spacing: 0.18em;
   font-weight: 700;
   color: var(--brand-teal);
@@ -1736,13 +1735,13 @@
 }
 
 .specPanelHeaderInfo .vehicleYear {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .specPanelHeaderInfo .heroVehicleName {
-  font-size: 26px;
+  font-size: var(--text-h1);
   font-weight: 800;
   margin: 0;
   color: var(--brand-text-primary);
@@ -1964,7 +1963,8 @@
     /* Let panel body content flow naturally, parent handles scroll */
     max-height: none;
     overflow: visible;
-    padding-bottom: 100px; /* Extra padding for vehicle tab bar and scroll comfort */
+    /* Extra padding for vehicle tab bar and scroll comfort */
+    padding-bottom: var(--page-bottom-padding);
   }
 }
 
@@ -2166,7 +2166,7 @@
 
 .keySpecValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 28px;
+  font-size: var(--text-h1);
   font-weight: 800;
   color: var(--brand-text-primary);
   letter-spacing: -0.02em;
@@ -2175,7 +2175,7 @@
 
 @media (max-width: 767px) {
   .keySpecValue {
-    font-size: 24px;  /* Mobile-optimized: increased from 22px per brand guidelines */
+    font-size: var(--text-stat-hero);  /* Mobile-optimized: increased from 22px per brand guidelines */
     font-weight: 800;
     line-height: 1;
     background: linear-gradient(180deg, var(--brand-text-primary) 0%, rgba(255, 255, 255, 0.85) 100%);
@@ -2187,13 +2187,13 @@
 
 @media (max-width: 380px) {
   .keySpecValue {
-    font-size: 22px;  /* Slightly smaller on very small screens */
+    font-size: var(--text-h2);  /* Slightly smaller on very small screens */
   }
 }
 
 /* Performance stat labels use TEAL - they represent positive metrics */
 .keySpecLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   color: var(--brand-teal);
   text-transform: uppercase;
@@ -2203,7 +2203,7 @@
 @media (max-width: 767px) {
   /* Performance stat labels - teal for visual rhythm */
   .keySpecLabel {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     color: var(--brand-teal);
     letter-spacing: 0.12em;
@@ -2222,8 +2222,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 6px;
+  padding: 14px 12px;
   padding-bottom: calc(14px + env(safe-area-inset-bottom, 0));
   background: linear-gradient(to top, 
     rgba(10, 15, 20, 0.95) 0%,
@@ -2238,15 +2238,15 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  min-width: 72px;
-  padding: 10px 16px;
+  min-width: 58px;
+  padding: 10px 12px;
   background: rgba(30, 40, 50, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 9px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2276,7 +2276,7 @@
   transform-origin: center;
   z-index: -1;
   opacity: 0;
-  animation: glowJump 7.5s ease-in-out infinite;
+  animation: glowJump 9s ease-in-out infinite;
 }
 
 .heroBottomBtn::after {
@@ -2288,12 +2288,13 @@
   z-index: -1;
 }
 
-/* Each button takes turns - only ONE glows at a time */
+/* Each button takes turns - only ONE glows at a time (6 buttons, 9s total cycle) */
 .heroBottomBtn:nth-child(1)::before { animation-delay: 0s; }
 .heroBottomBtn:nth-child(2)::before { animation-delay: 1.5s; }
 .heroBottomBtn:nth-child(3)::before { animation-delay: 3s; }
 .heroBottomBtn:nth-child(4)::before { animation-delay: 4.5s; }
 .heroBottomBtn:nth-child(5)::before { animation-delay: 6s; }
+.heroBottomBtn:nth-child(6)::before { animation-delay: 7.5s; }
 
 @keyframes glowJump {
   /* Glow appears and rotates only during this button's turn (0-20% of cycle) */
@@ -2377,8 +2378,8 @@
   .heroBottomBar {
     position: relative;
     bottom: auto;
-    padding: 4px 10px;
-    gap: 6px;
+    padding: 4px 8px;
+    gap: 4px;
     background: transparent;
     width: 100%;
     max-width: 100%;
@@ -2389,10 +2390,10 @@
   
   .heroBottomBtn {
     flex: 1 1 auto;
-    padding: 10px 10px;
+    padding: 8px 6px;
     min-width: fit-content;
-    font-size: 9px;
-    gap: 4px;
+    font-size: var(--text-2xs);
+    gap: 3px;
     border-radius: 10px;
     position: relative;
     overflow: hidden;
@@ -2642,7 +2643,7 @@
 }
 
 .vinSaveSuccess {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: var(--brand-teal, var(--brand-teal));
   background: rgba(16, 185, 129, 0.15);
@@ -2654,7 +2655,7 @@
 
 /* Saving state - muted/neutral styling */
 .vinSaving {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.1);
@@ -2665,7 +2666,7 @@
 }
 
 .vinSaveError {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: var(--brand-error);
   background: rgba(var(--brand-error-rgb), 0.15);
@@ -2694,7 +2695,7 @@
 }
 
 .vinDecodeItem span:first-child {
-  font-size: 9px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -2702,7 +2703,7 @@
 }
 
 .vinDecodeItem span:last-child {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-text-primary);
 }
@@ -2712,7 +2713,7 @@
 }
 
 .vinDataOld {
-  font-size: 10px !important;
+  font-size: var(--text-2xs) !important;
   font-weight: 400 !important;
   color: rgba(255, 255, 255, 0.4) !important;
 }
@@ -2723,7 +2724,7 @@
   background: rgba(var(--brand-error-rgb), 0.1);
   border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 0.5rem;
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--brand-error-light);
 }
 
@@ -2755,7 +2756,7 @@
   gap: 12px;
   padding: 40px 20px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .spinnerIcon {
@@ -2785,14 +2786,14 @@
 }
 
 .safetyStatValue {
-  font-size: 24px;
+  font-size: var(--text-stat-hero);
   font-weight: 700;
   color: var(--brand-text-primary);
   font-family: var(--font-mono, monospace);
 }
 
 .safetyStatLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2815,7 +2816,7 @@
 }
 
 .noDataText {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   margin: 0;
@@ -2842,33 +2843,33 @@
 }
 
 .recallCampaign {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--brand-error);
   font-family: var(--font-mono, monospace);
 }
 
 .recallDate {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
 .recallComponent {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-text-primary);
   margin: 0 0 6px;
 }
 
 .recallSummary {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.4;
   margin: 0;
 }
 
 .recallRemedy {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(16, 185, 129, 0.9);
   line-height: 1.4;
   margin: 8px 0 0;
@@ -2895,18 +2896,18 @@
 
 /* Complaint label - muted white for labels */
 .complaintComponent {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .complaintWarning {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--brand-error);
 }
 
 .complaintSummary {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.4;
   margin: 0;
@@ -2932,13 +2933,13 @@
 }
 
 .ratingLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.6);
 }
 
 /* Ratings use teal (positive metric) */
 .ratingStars {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--brand-teal);
 }
@@ -2970,7 +2971,7 @@
   border: 1px solid rgba(var(--brand-lime-rgb), 0.3);
   border-radius: 6px;
   color: var(--brand-lime, var(--brand-lime));
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2997,11 +2998,11 @@
 
 .emptyServiceLog p {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 
 .emptyServiceHint {
-  font-size: 12px !important;
+  font-size: var(--text-xs) !important;
   color: rgba(255, 255, 255, 0.4) !important;
   margin-top: 8px !important;
   max-width: 280px;
@@ -3018,7 +3019,7 @@
   border: none;
   border-radius: 8px;
   color: var(--gravl-navy, var(--brand-bg-primary-dark));
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3061,14 +3062,14 @@
 
 /* Label - muted white per brand guidelines */
 .serviceLogMonth {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
 
 .serviceLogDay {
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: var(--brand-text-primary);
   line-height: 1;
@@ -3082,25 +3083,25 @@
 }
 
 .serviceLogType {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-text-primary);
 }
 
 .serviceLogMiles {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono, monospace);
 }
 
 .serviceLogCost {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-teal, var(--brand-teal));
 }
 
 .serviceLogNotes {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.4;
   margin: 4px 0 0;
@@ -3157,7 +3158,7 @@
 
 /* Details Summary - tagline at top */
 .detailsSummary {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.7);
   font-style: italic;
   line-height: 1.4;
@@ -3169,7 +3170,7 @@
 /* Mobile: Premium tagline styling */
 @media (max-width: 767px) {
   .detailsSummary {
-    font-size: 14px;
+    font-size: var(--text-body);
     color: rgba(255, 255, 255, 0.65);
     margin: 0 16px 20px;
     padding: 0 0 16px;
@@ -3231,18 +3232,18 @@
 /* CF-009: Mobile-optimized detail blocks - compact and consistent */
 @media (max-width: 767px) {
   .detailBlockTitle {
-    font-size: 11px;
+    font-size: var(--text-xs);
     margin-bottom: 10px;
     padding-bottom: 8px;
   }
   
   .detailBlockItem {
-    font-size: 13px;
+    font-size: var(--text-sm);
     padding: 8px 0;
   }
   
   .detailBlockItem span:last-child {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   
   /* Larger touch targets for interactive elements */
@@ -3251,11 +3252,11 @@
   }
   
   .prosConsBlockTitle {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .prosConsList li {
-    font-size: 12px;
+    font-size: var(--text-xs);
     padding: 6px 0;
   }
 }
@@ -3280,7 +3281,7 @@
 
 .proItem,
 .conItem {
-  font-size: 13px;
+  font-size: var(--text-sm);
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.85);
   word-break: break-word;
@@ -3311,7 +3312,7 @@
 
   .proItem,
   .conItem {
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
   }
 }
@@ -3431,7 +3432,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 800;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -3444,7 +3445,7 @@
 /* Mobile: Larger, more prominent section titles */
 @media (max-width: 767px) {
   .detailBlockTitle {
-    font-size: 13px;
+    font-size: var(--text-sm);
     letter-spacing: 0.12em;
     margin-bottom: 16px;
     padding-bottom: 12px;
@@ -3473,7 +3474,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--text-xs);
   gap: 8px;
 }
 
@@ -3482,7 +3483,7 @@
   .detailBlockItem {
     padding: 9px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   
   .detailBlockItem:last-child {
@@ -3504,7 +3505,7 @@
 @media (max-width: 767px) {
   .detailBlockItem span:first-child {
     color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 }
 
@@ -3512,7 +3513,7 @@
   color: var(--brand-text-primary);
   font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
-  font-size: 11px;
+  font-size: var(--text-xs);
   text-align: right;
   letter-spacing: -0.02em;
 }
@@ -3520,7 +3521,7 @@
 /* Mobile: COMPACT values - monospace */
 @media (max-width: 767px) {
   .detailBlockItem span:last-child {
-    font-size: 14px;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--brand-text-primary);
     font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
@@ -3537,7 +3538,7 @@
 
 .detailBlockEmpty p {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
+  font-size: var(--text-xs);
   line-height: 1.5;
   margin: 0;
 }
@@ -3548,7 +3549,7 @@
 }
 
 .detailBlockHint {
-  font-size: 10px !important;
+  font-size: var(--text-2xs) !important;
   color: rgba(255, 255, 255, 0.4) !important;
   font-style: italic;
 }
@@ -3582,7 +3583,7 @@
   flex: 0 0 auto;
   min-width: 80px;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 .ratingBarTrack {
@@ -3627,7 +3628,7 @@
   text-align: right;
   font-family: var(--font-mono, monospace);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 .ratingScoreValue.high {
@@ -3718,7 +3719,7 @@
 }
 
 .performanceScoreNumber {
-  font-size: 32px;
+  font-size: var(--text-hero);
   font-weight: 800;
   color: var(--brand-text-primary);
   line-height: 1;
@@ -3726,7 +3727,7 @@
 }
 
 .performanceScoreLabel {
-  font-size: 9px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -3735,7 +3736,7 @@
 
 /* Label uses muted white per brand guidelines */
 .performanceScoreSubtitle {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -3756,20 +3757,20 @@
 }
 
 .performanceKeyStatValue {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   font-family: var(--font-mono, monospace);
   color: var(--brand-text-primary);
 }
 
 .performanceKeyStatUnit {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.4);
   margin-left: 2px;
 }
 
 .performanceKeyStatLabel {
-  font-size: 9px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -3786,7 +3787,7 @@
   background: transparent;
   border: none;
   color: var(--sn-gold);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -3822,7 +3823,7 @@
 }
 
 .fitmentType {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -3830,7 +3831,7 @@
 }
 
 .fitmentVerified {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--brand-teal, var(--brand-teal));
   background: rgba(16, 185, 129, 0.1);
   padding: 2px 6px;
@@ -3841,14 +3842,14 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-family: var(--font-mono);
   color: rgba(255, 255, 255, 0.9);
 }
 
 .fitmentNotes {
   margin-top: 6px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.4;
   font-style: italic;
@@ -3867,7 +3868,7 @@
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 10px;
-  font-size: 9px;
+  font-size: var(--text-2xs);
   color: rgba(16, 185, 129, 0.8);
   text-transform: lowercase;
 }
@@ -3891,13 +3892,13 @@
   border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 12px;
   color: var(--sn-gold);
-  font-size: 9px;
+  font-size: var(--text-2xs);
   font-weight: 600;
 }
 
 /* Highlight quote */
 .highlight {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--sn-gold);
   margin: 0;
   font-weight: 600;
@@ -3906,7 +3907,7 @@
 
 /* Tagline */
 .tagline {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0 4px;
   line-height: 1.4;
@@ -3924,13 +3925,13 @@
 }
 
 .proItem {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--brand-teal, var(--brand-teal));
   line-height: 1.3;
 }
 
 .conItem {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--brand-error-light);
   line-height: 1.3;
 }
@@ -3946,7 +3947,7 @@
 }
 
 .issuesList li {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.3;
   padding-left: 10px;
@@ -3971,7 +3972,7 @@
   border: none;
   border-radius: 8px;
   color: var(--brand-border-subtle);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3991,7 +3992,7 @@
   border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 8px;
   color: var(--brand-teal, var(--brand-teal));
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4010,7 +4011,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: var(--brand-text-primary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -4087,7 +4088,7 @@
   border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 8px;
   color: var(--sn-gold);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4148,7 +4149,7 @@
   
   .seeDetailsBtn {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 }
 
@@ -4161,7 +4162,7 @@
   gap: 4px;
   padding: 6px 10px;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4217,7 +4218,7 @@
   border: none;
   border-radius: 6px;
   color: var(--brand-border-subtle);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4241,7 +4242,7 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 6px;
   color: var(--brand-text-primary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4262,7 +4263,7 @@
   border: 1px solid rgba(16, 185, 129, 0.5);
   border-radius: 6px;
   color: var(--brand-teal, var(--brand-teal));
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4359,7 +4360,7 @@
 }
 
 .quickActionItem span {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -4373,7 +4374,7 @@
   }
   
   .quickActionItem span {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 }
 
@@ -4393,7 +4394,7 @@
   padding: 8px 16px;
   background: rgba(var(--brand-success-rgb), 0.9);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -4412,7 +4413,7 @@
   padding: 5px 10px;
   background: rgba(var(--brand-success-rgb), 0.9);
   border-radius: 6px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -4425,7 +4426,7 @@
   .heroBadgeOwned {
     gap: 6px;
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     border-radius: 8px;
     letter-spacing: 0.1em;
   }
@@ -4603,7 +4604,7 @@
   height: 20px;
   background: var(--brand-teal, var(--brand-teal));
   border-radius: 50%;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   color: var(--text-primary, #ffffff);
   z-index: 3;
@@ -4630,7 +4631,7 @@
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(4px);
   border-radius: 10px;
-  font-size: 9px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: var(--brand-teal);
   z-index: 3;
@@ -4645,12 +4646,12 @@
   .thumbnailBuildBadge {
     width: 24px;
     height: 24px;
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .thumbnailModIcon {
     padding: 3px 8px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
   }
   
   .thumbnailModIcon svg {
@@ -4805,7 +4806,7 @@
 
 /* Reorder position number */
 .reorderPosition {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--sn-gold);
   min-width: 20px;
@@ -4857,7 +4858,7 @@
   }
   
   .reorderPosition {
-    font-size: 14px;
+    font-size: var(--text-body);
     min-width: 24px;
   }
 }
@@ -4871,7 +4872,7 @@
   align-items: baseline;
   gap: 4px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   z-index: 10;
 }
@@ -4888,13 +4889,13 @@
     -webkit-backdrop-filter: blur(8px);
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 15;
   }
   
   .vehicleCounter span:first-child {
-    font-size: 18px;
+    font-size: var(--text-h3);
     font-weight: 700;
     color: var(--brand-text-primary);
   }
@@ -4904,19 +4905,19 @@
   .vehicleCounter {
     right: 32px;
     bottom: 130px;
-    font-size: 16px;
+    font-size: var(--text-h4);
   }
 }
 
 .vehicleCounter span:first-child {
-  font-size: 24px;
+  font-size: var(--text-stat-hero);
   font-weight: 700;
   color: var(--brand-text-primary);
 }
 
 @media (min-width: 768px) {
   .vehicleCounter span:first-child {
-    font-size: 32px;
+    font-size: var(--text-hero);
   }
 }
 
@@ -5008,7 +5009,7 @@
 
 .loadingTitle {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: var(--text-stat-lg);
   font-weight: 700;
   color: var(--color-white);
   margin: 0 0 8px;
@@ -5017,7 +5018,7 @@
 }
 
 .loadingSubtitle {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.5);
   margin: 0;
   animation: textFade 2s ease-in-out infinite;
@@ -5093,7 +5094,7 @@
 
 .emptyTitle {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 700;
   color: var(--color-white);
   margin: 0 0 12px;
@@ -5104,13 +5105,13 @@
 /* Mobile: Slightly smaller title */
 @media (max-width: 480px) {
   .emptyTitle {
-    font-size: 18px;
+    font-size: var(--text-h3);
     letter-spacing: 0.06em;
   }
 }
 
 .emptyDescription {
-  font-size: 15px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.6;
   max-width: 320px;
@@ -5120,7 +5121,7 @@
 /* Mobile: Smaller description */
 @media (max-width: 480px) {
   .emptyDescription {
-    font-size: 14px;
+    font-size: var(--text-body);
     max-width: 280px;
   }
 }
@@ -5135,7 +5136,7 @@
   border: none;
   border-radius: 12px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--text-body);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -5185,7 +5186,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--color-gray-500);
   }
 
@@ -5200,7 +5201,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--color-white);
   }
@@ -5225,7 +5226,7 @@
   }
   
   .titleCompact {
-    font-size: 14px;
+    font-size: var(--text-body);
     letter-spacing: 0.08em;
   }
   
@@ -5236,7 +5237,7 @@
   }
   
   .heroVehicleName {
-    font-size: 18px;
+    font-size: var(--text-h3);
   }
   
   .specGrid {
@@ -5256,7 +5257,7 @@
   }
   
   .titleCompact {
-    font-size: 18px;
+    font-size: var(--text-h3);
   }
   
   /* Ensure tabs are always visible and centered on tablet */
@@ -5266,7 +5267,7 @@
   
   .tabPill {
     padding: 10px 18px;
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   
   /* Adjust quick action bar for tablet */
@@ -5402,7 +5403,7 @@
 
 .overlayTitle {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 4px;
@@ -5410,7 +5411,7 @@
 }
 
 .overlaySubtitle {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
@@ -5439,7 +5440,7 @@
 }
 
 .detailSectionTitle {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--sn-gold);
   text-transform: uppercase;
@@ -5457,7 +5458,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .detailItem span:first-child {
@@ -5501,13 +5502,13 @@
 }
 
 .perfCategory span {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--brand-text-primary);
 }
 
 .perfCategory small {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.3;
 }
@@ -5529,7 +5530,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: var(--brand-text-primary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -5549,7 +5550,7 @@
   border: none;
   border-radius: 8px;
   color: var(--brand-border-subtle);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 700;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -5595,14 +5596,14 @@
 }
 
 .carPickerHeader h2 {
-  font-size: 20px;
+  font-size: var(--text-stat-lg);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 4px 0;
 }
 
 .carPickerHeader p {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
@@ -5648,7 +5649,7 @@
   background: transparent;
   border: none;
   outline: none;
-  font-size: 16px;
+  font-size: max(16px, var(--text-h4));
   color: var(--brand-text-primary);
 }
 
@@ -5708,7 +5709,7 @@
 }
 
 .carPickerName {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
   white-space: nowrap;
@@ -5717,12 +5718,12 @@
 }
 
 .carPickerMeta {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
 .carPickerExisting {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--sn-gold);
   opacity: 0.8;
 }
@@ -5758,7 +5759,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -5770,7 +5771,7 @@
 }
 
 .planningTitle {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 600;
   color: var(--brand-text-primary);
   margin: 0;
@@ -5801,7 +5802,7 @@
   }
   
   .planningTitle {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 }
 
@@ -5864,14 +5865,14 @@
 
 .confirmTitle {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 10px;
 }
 
 .confirmMessage {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.5;
   margin: 0 0 24px;
@@ -5889,7 +5890,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -5907,7 +5908,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: var(--brand-text-primary);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -5941,7 +5942,7 @@
 
 .projectsHeader h3 {
   font-family: var(--font-display, system-ui);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 700;
   color: var(--text-primary, #ffffff);
   margin: 0 0 var(--space-xs, 8px);
@@ -5949,7 +5950,7 @@
 }
 
 .projectsHeader p {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--text-secondary, rgba(255, 255, 255, 0.5));
   margin: 0;
 }
@@ -6014,7 +6015,7 @@
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   border-radius: var(--radius-full, 20px);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -6050,7 +6051,7 @@
 
 .projectCardContent h4 {
   font-family: var(--font-display, system-ui);
-  font-size: 17px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--text-primary, #ffffff);
   margin: 0 0 var(--space-2xs, 4px);
@@ -6064,7 +6065,7 @@
 }
 
 .projectCardCar {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--text-secondary, rgba(255, 255, 255, 0.5));
   margin: 0 0 var(--space-md, 16px);
 }
@@ -6082,7 +6083,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -6112,14 +6113,14 @@
 }
 
 .progressText {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--text-secondary, rgba(255, 255, 255, 0.4));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .progressPercent {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-teal, var(--brand-teal));
 }
@@ -6182,7 +6183,7 @@
   }
   
   .projectCardContent h4 {
-    font-size: 16px;
+    font-size: var(--text-h4);
   }
 }
 
@@ -6205,14 +6206,14 @@
 
 .projectsEmptyTitle {
   font-family: var(--font-display, system-ui);
-  font-size: 20px;
+  font-size: var(--text-stat-lg);
   font-weight: 600;
   color: var(--text-primary, #ffffff);
   margin: 0 0 var(--space-xs, 8px);
 }
 
 .projectsEmptyText {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--text-secondary, rgba(255, 255, 255, 0.5));
   margin: 0 0 var(--space-lg, 24px);
   max-width: 400px;
@@ -6262,7 +6263,7 @@
   padding: 4px 10px;
   background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
   border-radius: 4px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   color: var(--brand-text-primary);
   text-transform: uppercase;
@@ -6315,7 +6316,7 @@
   padding: 0 4px;
   background: var(--brand-blue);
   border-radius: 8px;
-  font-size: 9px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin-left: 4px;
@@ -6354,7 +6355,7 @@
 
 .photosHeader h3 {
   margin: 0 0 8px 0;
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: var(--color-white);
   letter-spacing: -0.01em;
@@ -6362,7 +6363,7 @@
 
 .photosHint {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.55);
   line-height: 1.5;
 }
@@ -6381,7 +6382,7 @@
   padding: 6px 12px;
   background: rgba(var(--brand-blue-rgb), 0.1);
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-blue);
   text-decoration: none;
@@ -6403,13 +6404,13 @@
 }
 
 .modsHpLabel {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .modsHpValue {
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: var(--brand-teal, var(--brand-teal));
 }
@@ -6443,7 +6444,7 @@
 }
 
 .modName {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
 }
@@ -6455,7 +6456,7 @@
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
@@ -6477,7 +6478,7 @@
   background: transparent;
   border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-error);
   cursor: pointer;
@@ -6506,13 +6507,13 @@
 
 .modsEmptyState p {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
 }
 
 .modsEmptyDesc {
   margin-top: 4px !important;
-  font-size: 12px !important;
+  font-size: var(--text-xs) !important;
   font-weight: 400 !important;
   color: rgba(255, 255, 255, 0.4) !important;
 }
@@ -6525,7 +6526,7 @@
   padding: 10px 20px;
   background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-text-primary);
   text-decoration: none;
@@ -6544,7 +6545,7 @@
   gap: 8px;
   margin-top: 16px;
   padding: 12px 16px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.03);
   border: 1px dashed rgba(255, 255, 255, 0.1);
@@ -6574,7 +6575,7 @@
   
   .quickActionBtn {
     padding: 6px 8px;
-    font-size: 11px;
+    font-size: var(--text-xs);
     border-radius: 6px;
   }
   
@@ -6585,7 +6586,7 @@
   
   .analyzeAllBtn {
     padding: 6px 8px;
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .analyzeAllBtn img {
@@ -6614,7 +6615,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
@@ -6653,7 +6654,7 @@
   background: var(--brand-lime, var(--brand-lime));
   border: 1px solid var(--brand-lime, var(--brand-lime));
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-text-primary);
   text-decoration: none;
@@ -6672,7 +6673,7 @@
 @media (max-width: 767px) {
   .startBuildBtn {
     padding: 6px 10px;
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .startBuildBtn svg {
@@ -6682,7 +6683,7 @@
   
   .addVehicleBtn {
     padding: 6px 8px;
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .addVehicleBtn svg {
@@ -6699,7 +6700,7 @@
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-teal);
   cursor: pointer;
@@ -6773,14 +6774,14 @@
 
 .quickUpdateHeader h3 {
   margin: 0 0 4px 0;
-  font-size: 18px;
+  font-size: var(--text-h3);
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
 }
 
 .quickUpdateHeader p {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -6819,7 +6820,7 @@
 }
 
 .quickUpdateVehicleName {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
@@ -6828,7 +6829,7 @@
 }
 
 .quickUpdateCurrentMileage {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -6838,7 +6839,7 @@
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  font-size: 14px;
+  font-size: max(16px, var(--text-body));
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   text-align: right;
@@ -6869,7 +6870,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
@@ -6894,7 +6895,7 @@
   background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
   cursor: pointer;

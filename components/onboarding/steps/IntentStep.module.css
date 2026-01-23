@@ -90,7 +90,7 @@
 
 /* Emoji */
 .emoji {
-  font-size: 28px;
+  font-size: var(--text-h1);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -169,7 +169,7 @@
   }
   
   .emoji {
-    font-size: 24px;
+    font-size: var(--text-h1);
   }
   
   .optionTitle {
@@ -177,7 +177,7 @@
   }
   
   .optionDesc {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   
   .checkbox {
@@ -193,6 +193,6 @@
   }
   
   .emoji {
-    font-size: 22px;
+    font-size: var(--text-h2);
   }
 }

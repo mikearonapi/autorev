@@ -680,8 +680,139 @@
   border-width: 3px;
 }
 
+/* ==========================================================================
+   ANDROID-SPECIFIC MOBILE OPTIMIZATIONS
+   
+   These utilities address common Android Chrome issues:
+   - Unwanted zoom on double-tap
+   - Font boosting in narrow columns
+   - Scroll/zoom interference
+   ========================================================================== */
 
+/* Prevent double-tap zoom on cards and list items */
+.no-double-tap-zoom {
+  touch-action: manipulation;
+}
 
+/* Prevent all zooming on an element (use sparingly - accessibility concern) */
+.prevent-zoom {
+  touch-action: pan-x pan-y;
+}
+
+/* Scrollable container that doesn't trigger zoom */
+.scroll-container-no-zoom {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Horizontal scroll without zoom interference */
+.scroll-x-no-zoom {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Android font boosting prevention for narrow text columns */
+.no-font-boost {
+  max-height: 1000000px;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Full-width container that won't cause horizontal overflow */
+.full-width-safe {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Fixed overlay that covers viewport without causing zoom */
+.overlay-safe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* ==========================================================================
+   LANDSCAPE MODE OPTIMIZATIONS
+   
+   Handles landscape orientation on mobile devices:
+   - Reduces vertical padding/margins
+   - Adjusts fixed elements (tab bar, headers)
+   - Enables horizontal layouts where appropriate
+   ========================================================================== */
+
+/* Landscape mode detection */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Reduce vertical padding globally in landscape */
+  .landscape-reduce-padding {
+    padding-top: var(--space-2, 8px) !important;
+    padding-bottom: var(--space-2, 8px) !important;
+  }
+  
+  /* Hide elements that take too much vertical space */
+  .landscape-hide {
+    display: none !important;
+  }
+  
+  /* Compress vertical spacing */
+  .landscape-compact {
+    gap: var(--space-2, 8px) !important;
+    margin-top: var(--space-2, 8px) !important;
+    margin-bottom: var(--space-2, 8px) !important;
+  }
+  
+  /* Convert column to row for better landscape layout */
+  .landscape-row {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+  }
+  
+  /* Shrink hero sections */
+  .landscape-hero-compact {
+    min-height: auto !important;
+    padding-top: var(--space-4, 16px) !important;
+    padding-bottom: var(--space-4, 16px) !important;
+  }
+  
+  /* Modal adjustments for landscape */
+  .modal-content-mobile {
+    max-height: 80vh;
+    max-height: 80dvh;
+  }
+  
+  /* Make scrollable content shorter to fit */
+  .landscape-scroll-short {
+    max-height: 50vh;
+    max-height: 50dvh;
+    overflow-y: auto;
+  }
+}
+
+/* Tablet landscape (wider but still landscape-ish) */
+@media (min-width: 768px) and (max-height: 600px) and (orientation: landscape) {
+  .landscape-tablet-row {
+    flex-direction: row !important;
+    align-items: flex-start;
+    gap: var(--space-6, 24px);
+  }
+  
+  .landscape-tablet-row > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
 
 
 

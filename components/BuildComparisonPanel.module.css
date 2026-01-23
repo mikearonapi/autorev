@@ -1,0 +1,229 @@
+/* Build Comparison Panel - Theoretical vs Actual */
+
+.panel {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-4, 16px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-bottom: var(--space-4, 16px);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-teal, #10b981);
+  margin: 0;
+}
+
+/* HP Blocks */
+.comparison {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.hpBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md, 10px);
+}
+
+.hpBlock.actualHp {
+  background: rgba(212, 255, 0, 0.05);
+  border: 1px solid rgba(212, 255, 0, 0.15);
+}
+
+.hpLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hpValue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 8px);
+}
+
+.hpNumber {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.actualHp .hpNumber {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.hpGain,
+.hpNote {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.hpGain {
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Breakdown by Status */
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+  padding-left: var(--space-4, 16px);
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  margin-left: var(--space-2, 8px);
+}
+
+.breakdownItem {
+  padding: var(--space-2, 8px) 0;
+}
+
+.breakdownLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.breakdownLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.breakdownHp {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+}
+
+.breakdownMods {
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary, #64748b);
+  margin-top: 2px;
+  padding-left: 20px;
+}
+
+.awaitingInstall {
+  font-style: italic;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* Status Colors */
+.statusInstalled .breakdownLabel,
+.statusInstalled .breakdownHp {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.statusPurchased .breakdownLabel,
+.statusPurchased .breakdownHp {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.statusPlanned .breakdownLabel,
+.statusPlanned .breakdownHp {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* Progress Bar */
+.progressContainer {
+  margin-top: var(--space-4, 16px);
+}
+
+.progressBar {
+  display: flex;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressStock {
+  background: var(--color-accent-blue, #3b82f6);
+  transition: width 0.5s ease;
+}
+
+.progressInstalled {
+  background: var(--color-accent-lime, #d4ff00);
+  transition: width 0.5s ease;
+}
+
+.progressPurchased {
+  background: var(--color-accent-teal, #10b981);
+  transition: width 0.5s ease;
+}
+
+.progressPlanned {
+  background: rgba(255, 255, 255, 0.2);
+  transition: width 0.5s ease;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.progressLabelStock,
+.progressLabelTarget {
+  font-size: 0.625rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.progressLabelStock {
+  color: var(--color-accent-blue, #3b82f6);
+}
+
+/* Completion */
+.completion {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 8px);
+  margin-top: var(--space-4, 16px);
+  padding-top: var(--space-3, 12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.completionPercent {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+.completionLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .hpBlock {
+    flex-direction: column;
+    gap: var(--space-1, 4px);
+    align-items: flex-start;
+  }
+  
+  .hpNumber {
+    font-size: 1.25rem;
+  }
+  
+  .breakdownMods {
+    display: none; /* Hide mod names on mobile to save space */
+  }
+}

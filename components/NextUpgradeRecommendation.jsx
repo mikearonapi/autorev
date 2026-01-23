@@ -232,19 +232,61 @@ const normalizeKey = (key) => {
   return key.toLowerCase().replace(/[-_\s]+/g, '-').trim();
 };
 
+// Extended aliases for matching installed mods to upgrade recommendations
+const UPGRADE_ALIASES = {
+  'tune': ['tune', 'ecu', 'flash', 'piggyback', 'tuner', 'remap', 'chip', 'stage-1', 'stage-2', 'stage-3'],
+  'intake': ['intake', 'cai', 'cold-air', 'air-filter', 'throttle-body'],
+  'exhaust': ['exhaust', 'catback', 'cat-back', 'axle-back', 'muffler'],
+  'downpipe': ['downpipe', 'dp', 'down-pipe', 'catless'],
+  'intercooler': ['intercooler', 'fmic', 'ic', 'front-mount'],
+  'headers': ['headers', 'header', 'long-tube', 'shorty', 'exhaust-manifold'],
+  'coilovers': ['coilover', 'coilovers', 'suspension', 'lowering', 'springs'],
+  'sway-bars': ['sway', 'sway-bar', 'anti-roll', 'stabilizer'],
+  'brake-pads': ['brake-pad', 'track-pad', 'brake', 'pads'],
+  'big-brake-kit': ['bbk', 'big-brake', 'brake-kit'],
+  'tires': ['tire', 'tires', 'rubber'],
+  'wheels': ['wheel', 'wheels', 'forged', 'rims'],
+  'turbo-upgrade': ['turbo-upgrade', 'bigger-turbo', 'hybrid-turbo', 'turbo-kit', 'turbo'],
+  'fuel': ['fuel', 'pump', 'injector', 'lpfp', 'hpfp'],
+};
+
 // Check if user has an upgrade installed
 const hasUpgrade = (installedKeys, upgradeKeys) => {
-  return installedKeys.some(installed => 
-    upgradeKeys.some(key => 
-      normalizeKey(installed).includes(normalizeKey(key)) ||
-      normalizeKey(key).includes(normalizeKey(installed))
-    )
-  );
+  if (!installedKeys || installedKeys.length === 0) return false;
+  if (!upgradeKeys || upgradeKeys.length === 0) return false;
+  
+  return installedKeys.some(installed => {
+    const normInstalled = normalizeKey(installed);
+    
+    // Check direct match with upgrade keys
+    const directMatch = upgradeKeys.some(key => {
+      const normKey = normalizeKey(key);
+      return normInstalled.includes(normKey) || normKey.includes(normInstalled);
+    });
+    
+    if (directMatch) return true;
+    
+    // Check aliases
+    for (const [category, aliases] of Object.entries(UPGRADE_ALIASES)) {
+      const installedMatchesAlias = aliases.some(alias => normInstalled.includes(alias));
+      const upgradeMatchesCategory = upgradeKeys.some(key => {
+        const normKey = normalizeKey(key);
+        return aliases.some(alias => normKey.includes(alias));
+      });
+      
+      if (installedMatchesAlias && upgradeMatchesCategory) {
+        return true;
+      }
+    }
+    
+    return false;
+  });
 };
 
 // Check if prerequisites are met
 const hasPrerequisites = (installedKeys, requires) => {
   if (!requires || requires.length === 0) return true;
+  if (!installedKeys || installedKeys.length === 0) return false;
   
   return requires.every(reqId => {
     const reqUpgrade = UPGRADE_PATHS.find(u => u.id === reqId);

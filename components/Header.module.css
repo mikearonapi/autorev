@@ -189,7 +189,7 @@
 
 .logoName {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--color-gray-900);
   text-transform: uppercase;
@@ -201,7 +201,7 @@
 }
 
 .logoSuffix {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   text-transform: lowercase;
   letter-spacing: 0.02em;
@@ -221,7 +221,7 @@
 }
 
 .logoTagline {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: var(--color-gray-500);
   text-transform: uppercase;
@@ -234,7 +234,7 @@
 }
 
 .navLink {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: var(--color-gray-600);
   padding: 5px 8px;
@@ -315,7 +315,7 @@
 .dropdownItem {
   display: block;
   padding: 6px 12px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: var(--color-gray-600);
   transition: background var(--transition-fast), color var(--transition-fast);
@@ -347,7 +347,7 @@
   background: transparent;
   color: var(--color-gray-600, #4b5563);
   border: none;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -408,7 +408,7 @@
 
 /* Profile greeting text - "Hi [Name]" */
 .profileGreeting {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-gray-700);
   white-space: nowrap;
@@ -493,13 +493,13 @@
 }
 
 .profileDropdownName {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-gray-900);
 }
 
 .profileDropdownEmail {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--color-gray-500);
 }
 
@@ -514,7 +514,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--color-gray-700);
   text-decoration: none;
@@ -621,7 +621,7 @@
   border: 1px solid var(--color-gray-200);
   border-radius: 12px;
   color: var(--color-gray-700);
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -677,7 +677,7 @@
   border: 2px solid var(--color-gray-300);
   border-radius: 12px;
   color: var(--color-gray-700);
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -763,7 +763,7 @@
 }
 
 .mobileGreetingText {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-gray-700);
   white-space: nowrap;
@@ -972,7 +972,7 @@
   }
 
   .logoTagline {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .mobileNav {
@@ -993,7 +993,7 @@
   }
   
   .logoTagline {
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   /* Show desktop nav, hide mobile */

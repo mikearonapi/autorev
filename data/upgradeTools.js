@@ -610,6 +610,244 @@ export const upgradeToolRequirements = {
     diyFriendly: false,
     notes: 'Requires professional alignment equipment. Specify performance specs.',
   },
+
+  // ============================================================================
+  // ADDITIONAL UPGRADE MAPPINGS (added for complete coverage)
+  // ============================================================================
+
+  // Cat-back exhaust (alias for exhaust-catback)
+  'cat-back-exhaust': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'breaker-bar'],
+    recommended: ['penetrating-oil', 'oxygen-sensor-socket'],
+    difficulty: 'moderate',
+    timeEstimate: '2-4 hours',
+    diyFriendly: true,
+    notes: 'Exhaust bolts can be corroded. Use penetrating oil overnight if possible.',
+  },
+  
+  // TCU/DCT Tune
+  'dct-tune': {
+    essential: ['obd-scanner', 'laptop', 'tuning-cable'],
+    recommended: [],
+    difficulty: 'easy',
+    timeEstimate: '30 min - 1 hour',
+    diyFriendly: true,
+    notes: 'Transmission Control Unit flash via OBD port. Improves shift speed and behavior.',
+  },
+  'tcu-tune': {
+    essential: ['obd-scanner', 'laptop', 'tuning-cable'],
+    recommended: [],
+    difficulty: 'easy',
+    timeEstimate: '30 min - 1 hour',
+    diyFriendly: true,
+    notes: 'Transmission Control Unit flash via OBD port. Improves shift speed and behavior.',
+  },
+
+  // Piggyback Tuner
+  'piggyback-tuner': {
+    essential: ['socket-set-metric', 'screwdriver-set', 'multimeter', 'wire-crimper'],
+    recommended: ['laptop'],
+    difficulty: 'moderate',
+    timeEstimate: '2-4 hours',
+    diyFriendly: true,
+    notes: 'Splices into factory sensors. Follow wiring diagrams carefully.',
+  },
+
+  // Charge Pipe Upgrade
+  'charge-pipe-upgrade': {
+    essential: ['socket-set-metric', 'pliers-set', 'screwdriver-set'],
+    recommended: ['torque-wrench'],
+    difficulty: 'moderate',
+    timeEstimate: '1-3 hours',
+    diyFriendly: true,
+    notes: 'Replaces plastic factory charge pipes with aluminum. Prevents boost leaks.',
+  },
+
+  // High-Pressure Fuel Pump (HPFP)
+  'hpfp-upgrade': {
+    essential: ['socket-set-metric', 'torque-wrench', 'drain-pan'],
+    recommended: ['fuel-line-disconnect-tool'],
+    difficulty: 'advanced',
+    timeEstimate: '3-5 hours',
+    diyFriendly: false,
+    notes: 'Fuel system work requires careful attention to cleanliness. May require fuel system depressurization.',
+  },
+
+  // Flex Fuel / E85
+  'flex-fuel-e85': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'multimeter', 'wire-crimper', 'obd-scanner', 'laptop'],
+    recommended: ['fuel-line-disconnect-tool'],
+    difficulty: 'advanced',
+    timeEstimate: '4-8 hours',
+    diyFriendly: false,
+    notes: 'Requires tune and often HPFP upgrade. Ethanol content sensor installation needed.',
+  },
+
+  // Methanol Injection
+  'methanol-injection': {
+    essential: ['socket-set-metric', 'drill', 'multimeter', 'wire-crimper'],
+    recommended: ['torque-wrench'],
+    difficulty: 'advanced',
+    timeEstimate: '4-6 hours',
+    diyFriendly: false,
+    notes: 'Requires careful nozzle placement and tank mounting. Must be tuned properly.',
+  },
+
+  // Camshafts
+  'camshafts': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands'],
+    recommended: ['timing-tools'],
+    difficulty: 'expert',
+    timeEstimate: '8-12 hours',
+    diyFriendly: false,
+    notes: 'Requires valve timing expertise. Professional installation strongly recommended.',
+  },
+
+  // Ported Heads
+  'ported-heads': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands'],
+    recommended: [],
+    difficulty: 'expert',
+    timeEstimate: '12-20 hours',
+    diyFriendly: false,
+    notes: 'Major engine work. Head gasket replacement required. Professional install recommended.',
+  },
+
+  // Forged Internals
+  'forged-internals': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'piston-ring-compressor'],
+    recommended: ['engine-hoist', 'engine-stand'],
+    difficulty: 'expert',
+    timeEstimate: '20-40 hours',
+    diyFriendly: false,
+    notes: 'Complete engine rebuild. Requires machine shop services. Professional install only.',
+  },
+
+  // Stroker Kit
+  'stroker-kit': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'piston-ring-compressor'],
+    recommended: ['engine-hoist', 'engine-stand'],
+    difficulty: 'expert',
+    timeEstimate: '30-50 hours',
+    diyFriendly: false,
+    notes: 'Complete engine rebuild with larger displacement. Machine shop required. Professional only.',
+  },
+
+  // Throttle Body
+  'throttle-body': {
+    essential: ['socket-set-metric', 'screwdriver-set'],
+    recommended: ['torque-wrench', 'obd-scanner'],
+    difficulty: 'easy',
+    timeEstimate: '1-2 hours',
+    diyFriendly: true,
+    notes: 'Simple bolt-on upgrade. May require throttle body relearn procedure.',
+  },
+
+  // Intake Manifold
+  'intake-manifold': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'drain-pan'],
+    recommended: ['coolant-pressure-tester'],
+    difficulty: 'advanced',
+    timeEstimate: '4-8 hours',
+    diyFriendly: false,
+    notes: 'Requires coolant drain on some vehicles. Vacuum line routing must be correct.',
+  },
+
+  // Twin Turbo Kit
+  'turbo-kit-twin': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'multimeter', 'obd-scanner', 'laptop', 'welder'],
+    recommended: ['wideband-o2', 'boost-gauge', 'vehicle-lift'],
+    difficulty: 'expert',
+    timeEstimate: '40-80 hours',
+    diyFriendly: false,
+    notes: 'Major fabrication required. Professional-only installation and tuning essential.',
+  },
+
+  // Turbo Upgrade (existing turbo cars)
+  'turbo-upgrade-existing': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'obd-scanner', 'laptop'],
+    recommended: ['wideband-o2', 'boost-gauge'],
+    difficulty: 'advanced',
+    timeEstimate: '8-16 hours',
+    diyFriendly: false,
+    notes: 'Requires supporting mods and custom tune. May need oil/coolant line modifications.',
+  },
+
+  // Supercharger Pulley Tune
+  'pulley-tune-sc': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'obd-scanner', 'laptop', 'tuning-cable'],
+    recommended: ['wideband-o2', 'harmonic-balancer-puller'],
+    difficulty: 'moderate',
+    timeEstimate: '2-4 hours',
+    diyFriendly: true,
+    notes: 'Smaller pulley = more boost. Requires tune to match. Watch belt alignment.',
+  },
+
+  // Supercharger Heat Exchanger
+  'heat-exchanger-sc': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'drain-pan', 'funnel-set'],
+    recommended: ['torque-wrench', 'coolant-pressure-tester'],
+    difficulty: 'moderate',
+    timeEstimate: '3-5 hours',
+    diyFriendly: true,
+    notes: 'Larger heat exchanger reduces intake temps. Requires coolant drain and refill.',
+  },
+
+  // Chassis Bracing / Strut Tower Brace
+  'chassis-bracing': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench'],
+    recommended: [],
+    difficulty: 'easy',
+    timeEstimate: '1-2 hours',
+    diyFriendly: true,
+    notes: 'Simple bolt-on installation. Some braces require minor trimming of covers.',
+  },
+  'strut-tower-brace': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench'],
+    recommended: [],
+    difficulty: 'easy',
+    timeEstimate: '30 min - 1 hour',
+    diyFriendly: true,
+    notes: 'Bolts to strut tower tops. Very straightforward installation.',
+  },
+
+  // Slotted/Drilled Rotors
+  'slotted-rotors': {
+    essential: ['socket-set-metric', 'floor-jack', 'jack-stands', 'breaker-bar', 'torque-wrench'],
+    recommended: ['brake-bleeder'],
+    difficulty: 'easy',
+    timeEstimate: '2-3 hours',
+    diyFriendly: true,
+    notes: 'Same process as brake pad change. Bed in properly with new pads.',
+  },
+  'drilled-rotors': {
+    essential: ['socket-set-metric', 'floor-jack', 'jack-stands', 'breaker-bar', 'torque-wrench'],
+    recommended: ['brake-bleeder'],
+    difficulty: 'easy',
+    timeEstimate: '2-3 hours',
+    diyFriendly: true,
+    notes: 'Same process as brake pad change. Bed in properly with new pads.',
+  },
+
+  // Transmission Cooler
+  'trans-cooler': {
+    essential: ['socket-set-metric', 'wrench-set-metric', 'drain-pan', 'funnel-set'],
+    recommended: ['torque-wrench', 'hose-clamp-pliers'],
+    difficulty: 'moderate',
+    timeEstimate: '3-5 hours',
+    diyFriendly: true,
+    notes: 'Requires trans fluid drain. Route lines away from heat sources.',
+  },
+
+  // Stage 3 Tune (high power)
+  'stage3-tune': {
+    essential: ['obd-scanner', 'laptop', 'tuning-cable', 'wideband-o2'],
+    recommended: ['boost-gauge'],
+    difficulty: 'advanced',
+    timeEstimate: '2-4 hours',
+    diyFriendly: false,
+    notes: 'Requires extensive supporting mods. Custom dyno tuning essential. High stress on drivetrain.',
+  },
 };
 
 /**
@@ -686,17 +924,29 @@ export function getToolsForBuild(upgradeKeys) {
   const essential = Array.from(essentialSet).map(k => tools[k]).filter(Boolean);
   const recommended = Array.from(recommendedSet).map(k => tools[k]).filter(Boolean);
   
-  // Group by category
+  // Group by category, tracking essential vs recommended
   const byCategory = {};
-  [...essential, ...recommended].forEach(tool => {
+  essential.forEach(tool => {
     const cat = tool.category;
     if (!byCategory[cat]) {
       byCategory[cat] = {
         ...toolCategories[cat],
-        tools: [],
+        essential: [],
+        recommended: [],
       };
     }
-    byCategory[cat].tools.push(tool);
+    byCategory[cat].essential.push(tool);
+  });
+  recommended.forEach(tool => {
+    const cat = tool.category;
+    if (!byCategory[cat]) {
+      byCategory[cat] = {
+        ...toolCategories[cat],
+        essential: [],
+        recommended: [],
+      };
+    }
+    byCategory[cat].recommended.push(tool);
   });
   
   return { essential, recommended, byCategory };

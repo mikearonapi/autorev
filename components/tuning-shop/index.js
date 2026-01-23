@@ -28,3 +28,6 @@ export { default as BuildSummaryBar, InlineBuildSummary } from './BuildSummaryBa
 export { default as CategoryNav, CategoryNavVertical } from './CategoryNav';
 export { default as CollapsibleSection, CollapsibleAccordion, PerformanceSummarySection } from './CollapsibleSection';
 
+// Parts Components
+export { default as PartRecommendationCard, ALPartsResults } from './PartRecommendationCard';
+

@@ -10,7 +10,7 @@
  * @module components/providers/SavedBuildsProvider
  */
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   fetchUserProjects,
@@ -21,6 +21,9 @@ import {
 import { getPrefetchedData } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { hasAccess, IS_BETA } from '@/lib/tierAccess';
+
+// Auto-save debounce delay (milliseconds)
+const AUTO_SAVE_DEBOUNCE_MS = 500;
 
 // LocalStorage key for guest builds
 const STORAGE_KEY = 'autorev_saved_builds';
@@ -79,6 +82,10 @@ function saveLocalBuilds(builds) {
  */
 
 /**
+ * @typedef {'idle' | 'saving' | 'saved' | 'error'} AutoSaveStatus
+ */
+
+/**
  * @typedef {Object} SavedBuildsContextValue
  * @property {SavedBuild[]} builds - Array of saved builds
  * @property {boolean} isLoading - Whether builds are loading
@@ -89,6 +96,9 @@ function saveLocalBuilds(builds) {
  * @property {function(string): SavedBuild|undefined} getBuildById - Get a build by ID
  * @property {function(string): SavedBuild[]} getBuildsByCarSlug - Get builds for a car
  * @property {function(): void} refreshBuilds - Refresh builds from server
+ * @property {function(string, Object): void} autoSaveBuild - Auto-save build with debounce
+ * @property {AutoSaveStatus} autoSaveStatus - Current auto-save status
+ * @property {string|null} autoSaveError - Auto-save error message if any
  */
 
 const SavedBuildsContext = createContext(null);
@@ -112,6 +122,12 @@ export function SavedBuildsProvider({ children }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const syncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
+  
+  // Auto-save state
+  const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
+  const [autoSaveError, setAutoSaveError] = useState(null);
+  const autoSaveTimerRef = useRef(null);
+  const autoSavePendingRef = useRef(null); // Stores pending save data
 
   // Mark as hydrated immediately since we loaded synchronously
   useEffect(() => {
@@ -202,6 +218,12 @@ return {
             fitmentNotes: p.fitment_notes,
             fitmentSourceUrl: p.fitment_source_url,
             metadata: p.metadata,
+            // Status tracking fields
+            status: p.status || 'planned',
+            purchasedAt: p.purchased_at,
+            installedAt: p.installed_at,
+            // Extract upgradeKey from metadata if present
+            upgradeKey: p.metadata?.upgradeKey || p.category,
             createdAt: p.created_at,
             updatedAt: p.updated_at,
           })) : [],
@@ -211,6 +233,11 @@ return {
           finalHp: build.final_hp,
           notes: build.notes,
           isFavorite: build.is_favorite || false,
+          // Sharing fields
+          isShared: build.is_shared || false,
+          communitySlug: build.community_slug || null,
+          sharedAt: build.shared_at || null,
+          shareName: build.share_name || null,
           createdAt: build.created_at,
           updatedAt: build.updated_at,
         };
@@ -330,6 +357,12 @@ return {
             fitmentNotes: p.fitment_notes,
             fitmentSourceUrl: p.fitment_source_url,
             metadata: p.metadata,
+            // Status tracking fields
+            status: p.status || 'planned',
+            purchasedAt: p.purchased_at,
+            installedAt: p.installed_at,
+            // Extract upgradeKey from metadata if present
+            upgradeKey: p.metadata?.upgradeKey || p.category,
             createdAt: p.created_at,
             updatedAt: p.updated_at,
           })) : [],
@@ -339,6 +372,11 @@ return {
           finalHp: build.final_hp,
           notes: build.notes,
           isFavorite: build.is_favorite || false,
+          // Sharing fields
+          isShared: build.is_shared || false,
+          communitySlug: build.community_slug || null,
+          sharedAt: build.shared_at || null,
+          shareName: build.share_name || null,
           createdAt: build.created_at,
           updatedAt: build.updated_at,
         };
@@ -644,6 +682,90 @@ useEffect(() => {
     fetchBuilds({ current: false }, true, builds.length);
   }, [fetchBuilds, builds.length]);
 
+  /**
+   * Auto-save build with debouncing
+   * Called automatically when build state changes - no manual save needed
+   * 
+   * @param {string} buildId - Existing build ID to update
+   * @param {Object} buildData - Full build data to save
+   */
+  const autoSaveBuild = useCallback((buildId, buildData) => {
+    // Clear any pending auto-save
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+    
+    // Store the pending data
+    autoSavePendingRef.current = { buildId, buildData };
+    
+    // Set status to indicate save is pending
+    setAutoSaveStatus('saving');
+    setAutoSaveError(null);
+    
+    // Debounce the actual save
+    autoSaveTimerRef.current = setTimeout(async () => {
+      const pending = autoSavePendingRef.current;
+      if (!pending) return;
+      
+      const { buildId: id, buildData: data } = pending;
+      
+      try {
+        let result;
+        
+        if (id) {
+          // Update existing build
+          result = await updateBuildHandler(id, data);
+        } else if (isAuthenticated && user?.id && canSaveBuilds) {
+          // Create new build (only for authenticated users with save access)
+          result = await saveBuild(data);
+        } else {
+          // Not authenticated or no save access - save to localStorage
+          const localBuild = {
+            id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            ...data,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          setBuilds(prev => {
+            const existing = prev.find(b => b.carSlug === data.carSlug);
+            if (existing) {
+              return prev.map(b => b.id === existing.id ? { ...b, ...data, updatedAt: new Date().toISOString() } : b);
+            }
+            return [localBuild, ...prev];
+          });
+          result = { data: localBuild, error: null };
+        }
+        
+        if (result?.error) {
+          console.error('[SavedBuildsProvider] Auto-save failed:', result.error);
+          setAutoSaveStatus('error');
+          setAutoSaveError(result.error.message || 'Failed to save');
+        } else {
+          setAutoSaveStatus('saved');
+          // Reset status after showing "Saved" briefly
+          setTimeout(() => {
+            setAutoSaveStatus('idle');
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('[SavedBuildsProvider] Auto-save error:', err);
+        setAutoSaveStatus('error');
+        setAutoSaveError(err.message || 'Unexpected error saving build');
+      }
+      
+      autoSavePendingRef.current = null;
+    }, AUTO_SAVE_DEBOUNCE_MS);
+  }, [isAuthenticated, user?.id, canSaveBuilds, updateBuildHandler, saveBuild]);
+
+  // Cleanup auto-save timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, []);
+
   const value = {
     builds,
     isLoading,
@@ -654,6 +776,10 @@ useEffect(() => {
     getBuildById,
     getBuildsByCarSlug,
     refreshBuilds,
+    // Auto-save functionality
+    autoSaveBuild,
+    autoSaveStatus,
+    autoSaveError,
     userTier,
     isBeta: IS_BETA,
   };

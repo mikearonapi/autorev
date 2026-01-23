@@ -11,9 +11,9 @@
 | API | Status | Primary Use Case | Free Tier |
 |-----|--------|------------------|-----------|
 | YouTube Data API v3 | ✅ Integrated | Expert Reviews tab | 10,000 units/day |
-| Places API | 🔲 Enabled | Track venue enrichment | $200/mo credit |
+| Places API | ✅ Integrated | Service Center Finder | $200/mo credit |
 | Maps JavaScript API | 🔲 Enabled | Interactive track maps | $200/mo credit |
-| Geocoding API | 🔲 Enabled | Address → coordinates | $200/mo credit |
+| Geocoding API | ✅ Integrated | Address → coordinates | $200/mo credit |
 | Custom Search API | 🔲 Enabled | AL forum search tool | 100 queries/day |
 | Cloud Vision API | 🔲 Enabled | VIN-from-photo OCR | 1,000 units/mo |
 | Cloud Natural Language | 🔲 Enabled | Content intelligence | 5,000 units/mo |
@@ -79,21 +79,28 @@
 
 ### 2. Places API
 
-**Status:** 🔲 Enabled (not yet implemented)
+**Status:** ✅ Integrated
 
-**Potential Use Cases:**
-1. **Track Venue Enrichment** — Add accurate addresses, coordinates, photos, ratings to `track_venues` table (21 rows)
-2. **Find a Specialist** — Future feature to locate performance shops near user
-3. **Service Log Enhancement** — Verify and enrich shop details when users log service
-4. **Nearby Tracks** — "Tracks near me" feature for Tuning Shop
+**Current Implementation:**
+- **Service Center Finder** — Find automotive service centers near user's location
+- Uses Nearby Search to find `car_repair` and `car_dealer` establishments
+- Also searches by keyword: "auto repair performance shop"
+- Results are cached in `service_center_cache` table (7-day TTL)
 
-**Tables Would Affect:**
-- `track_venues` — Add `place_id`, `google_rating`, `photo_reference`, `formatted_address`
-- Future: `shops` table for mechanic/tuner finder
+**Used By:**
+- `/api/service-centers/search` — Server-side Places Nearby Search
+- `/api/locations/geocode` — Location string to coordinates conversion
+- `lib/serviceCenterService.js` — Core service logic
+- `components/garage/ServiceCenterFinder.jsx` — UI component
 
-**User Value:**
-- Tuner tier users planning track days get richer venue data
-- Verified shop information for service records
+**Tables Affected:**
+- `service_center_cache` — Cached shop results (reduces API costs)
+- `geocode_cache` — Cached geocoding results
+
+**Future Use Cases:**
+- Track venue enrichment
+- Service log enhancement
+- Nearby tracks feature
 
 **Cost Estimate:**
 - Place Details: $17/1,000 requests
@@ -134,21 +141,25 @@
 
 ### 4. Geocoding API
 
-**Status:** 🔲 Enabled (not yet implemented)
+**Status:** ✅ Integrated
 
-**Potential Use Cases:**
-1. **Track Venue Coordinates** — Convert addresses to lat/long for map display
-2. **Location Normalization** — Standardize user-entered locations in service logs
-3. **Distance Queries** — Enable "tracks within X miles" search
-4. **Event Geocoding** — Add coordinates to events missing lat/long
+**Current Implementation:**
+- **Service Center Finder** — Geocode ZIP codes and city/state strings to coordinates
+- Falls back to OpenStreetMap Nominatim if Google API unavailable
+- Results cached in `geocode_cache` table
 
-**Would Enhance:**
-- `track_venues` table (add `latitude`, `longitude`)
-- `events` table (backfill missing coordinates)
+**Used By:**
+- `/api/locations/geocode` — Server-side geocoding endpoint
+- `lib/geocodingService.js` — Core geocoding logic (Nominatim)
+- `components/LocationAutocomplete.jsx` — Client-side location input
 
-**User Value:**
-- Enables all map-based features
-- Powers radius-based event search
+**Tables Affected:**
+- `geocode_cache` — Cached geocoding results
+
+**Future Use Cases:**
+- Track venue coordinate enrichment
+- Event location normalization
+- Radius-based search features
 
 **Cost Estimate:**
 - $5/1,000 requests

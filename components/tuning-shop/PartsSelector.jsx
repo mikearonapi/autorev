@@ -3,25 +3,43 @@
 /**
  * Parts Shopping List Component
  * 
+ * SCOPE: Shopping/purchasing workflow (planned → purchased)
+ * Installation tracking is handled by the Install page (/garage/my-install)
+ * 
  * Shows the selected upgrades as a shopping list - items the user needs to buy.
  * Users can:
  * - See all upgrades they've selected as line items
- * - Ask AL for specific product recommendations (with full build context)
+ * - Track shopping status: planned → purchased
+ * - Use "Find with AL" for one-click part recommendations
  * - Add/edit specific part details (brand, model, price, etc.)
  * - Get AL to review the entire build for compatibility and suggestions
- * - Copy the full shopping list
+ * - Link to Install page when parts are ready
+ * 
+ * STATUS TRACKING (on this page):
+ * - Planned: Selected upgrade, no part chosen yet (gray)
+ * - Purchased: Part acquired, ready for installation (teal)
+ * - Installed: Shows as complete (read-only, lime) - managed by Install page
  * 
  * @module components/tuning-shop/PartsSelector
  */
 
 import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { getUpgradeByKey } from '@/lib/upgrades';
 import { useAIChat } from '@/components/AIChatContext';
 import { UI_IMAGES } from '@/lib/images';
 import { Icons } from '@/components/ui/Icons';
-import { platform } from '@/lib/platform';
 import styles from './PartsSelector.module.css';
+
+// Status definitions
+// NOTE: Parts page only handles planned → purchased
+// The "installed" status is managed by the Install page
+const PART_STATUS = {
+  planned: { label: 'Planned', color: 'muted', next: 'purchased', canToggle: true },
+  purchased: { label: 'Purchased', color: 'teal', next: null, canToggle: true }, // Stops here - Install page handles next step
+  installed: { label: 'Installed', color: 'lime', next: null, canToggle: false }, // Read-only on Parts page
+};
 
 /**
  * AL Avatar component - consistent with rest of site
@@ -59,12 +77,55 @@ function buildContextSummary(upgrades) {
 }
 
 /**
+ * Status Badge Component
+ * NOTE: On the Parts page, we only allow toggling between planned/purchased
+ * The "installed" status is read-only here - managed by the Install page
+ */
+function StatusBadge({ status, onClick, disabled }) {
+  const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
+  const canClick = statusInfo.canToggle && statusInfo.next && !disabled;
+  
+  // For installed parts, show as complete (non-interactive)
+  if (status === 'installed') {
+    return (
+      <span
+        className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]} ${styles.statusComplete}`}
+        title="Part installed - tracked on Install page"
+      >
+        <Icons.check size={10} />
+        {statusInfo.label}
+      </span>
+    );
+  }
+  
+  return (
+    <button
+      className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]}`}
+      onClick={canClick ? onClick : undefined}
+      disabled={!canClick}
+      title={canClick 
+        ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` 
+        : status === 'purchased' 
+          ? 'Ready to install - track on Install page'
+          : statusInfo.label
+      }
+    >
+      {status === 'purchased' && <Icons.shoppingCart size={10} />}
+      {statusInfo.label}
+    </button>
+  );
+}
+
+/**
  * Single shopping list item for an upgrade
  */
 function ShoppingListItem({ 
   upgrade, 
   partDetails, 
-  onUpdatePart, 
+  onUpdatePart,
+  onStatusChange,
+  onFindWithAL,
+  carSlug,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   
@@ -72,12 +133,15 @@ function ShoppingListItem({
     brandName: partDetails?.brandName || '',
     partName: partDetails?.partName || '',
     partNumber: partDetails?.partNumber || '',
-    price: partDetails?.price || '',
+    price: partDetails?.price || partDetails?.priceCents ? (partDetails.priceCents / 100) : '',
     productUrl: partDetails?.productUrl || '',
+    vendorName: partDetails?.vendorName || '',
     notes: partDetails?.notes || '',
   });
 
   const hasPartDetails = partDetails?.brandName || partDetails?.partName;
+  const status = partDetails?.status || 'planned';
+  const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
   
   const handleSave = () => {
     onUpdatePart({
@@ -85,6 +149,7 @@ function ShoppingListItem({
       upgradeKey: upgrade.key,
       upgradeName: upgrade.name,
       category: upgrade.category,
+      status: partDetails?.status || 'planned',
     });
     setIsEditing(false);
   };
@@ -94,55 +159,118 @@ function ShoppingListItem({
       brandName: partDetails?.brandName || '',
       partName: partDetails?.partName || '',
       partNumber: partDetails?.partNumber || '',
-      price: partDetails?.price || '',
+      price: partDetails?.price || partDetails?.priceCents ? (partDetails.priceCents / 100) : '',
       productUrl: partDetails?.productUrl || '',
+      vendorName: partDetails?.vendorName || '',
       notes: partDetails?.notes || '',
     });
     setIsEditing(false);
   };
 
+  const handleStatusToggle = () => {
+    // Only allow toggling if status supports it and has a next state
+    if (!statusInfo.canToggle || !statusInfo.next) return;
+    
+    const nextStatus = statusInfo.next;
+    const now = new Date().toISOString();
+    
+    const statusUpdate = {
+      status: nextStatus,
+      ...(nextStatus === 'purchased' ? { purchasedAt: now } : {}),
+      // NOTE: installed status is handled by Install page, not here
+    };
+    
+    onStatusChange?.(upgrade.key, statusUpdate);
+  };
+
+  const handleFindWithAL = () => {
+    onFindWithAL?.(upgrade, carSlug);
+  };
+
   return (
-    <div className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''}`}>
+    <div className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}>
       <div className={styles.itemHeader}>
-        <div className={styles.itemCheckbox}>
-          {hasPartDetails ? (
-            <span className={styles.checkboxChecked}>
-              <Icons.check size={12} />
-            </span>
-          ) : (
-            <span className={styles.checkboxEmpty} />
-          )}
+        {/* Top row: Status + Name */}
+        <div className={styles.itemTopRow}>
+          <div className={styles.itemStatus}>
+            <StatusBadge status={status} onClick={handleStatusToggle} />
+          </div>
+          
+          <div className={styles.itemInfo}>
+            <span className={styles.itemName}>{upgrade.name}</span>
+            {hasPartDetails && (
+              <span className={styles.itemBrand}>
+                {partDetails.brandName} {partDetails.partName}
+              </span>
+            )}
+          </div>
         </div>
         
-        <div className={styles.itemInfo}>
-          <span className={styles.itemName}>{upgrade.name}</span>
-          {hasPartDetails && (
-            <span className={styles.itemBrand}>
-              {partDetails.brandName} {partDetails.partName}
-              {partDetails.price && ` • $${Number(partDetails.price).toLocaleString()}`}
-            </span>
-          )}
+        {/* Bottom row: Sub-details + Actions */}
+        <div className={styles.itemBottomRow}>
+          {/* Left side: Add button + text */}
+          <div className={styles.itemSubInfo}>
+            {!isEditing && !hasPartDetails && (
+              <button
+                className={styles.addPartBtn}
+                onClick={() => setIsEditing(true)}
+                title="Add part manually"
+              >
+                <Icons.plus size={12} />
+              </button>
+            )}
+            {hasPartDetails ? (
+              <div className={styles.partDetailsRow}>
+                {(partDetails.price || partDetails.priceCents) && (
+                  <span className={styles.itemPrice}>
+                    ${Number(partDetails.price || partDetails.priceCents / 100).toLocaleString()}
+                  </span>
+                )}
+                {partDetails.vendorName && (
+                  <span className={styles.itemVendor}>{partDetails.vendorName}</span>
+                )}
+              </div>
+            ) : (
+              <span className={styles.noPartText}>No part selected</span>
+            )}
+          </div>
+          
+          {/* Right side: Actions */}
+          <div className={styles.itemActions}>
+            {!isEditing && !hasPartDetails && (
+              <button
+                className={styles.findPartBtn}
+                onClick={handleFindWithAL}
+                title="Find part with AL"
+              >
+                <ALAvatar size={16} />
+                <span>Find Part</span>
+              </button>
+            )}
+            {!isEditing && hasPartDetails && (
+              <>
+                {partDetails.productUrl && (
+                  <a
+                    href={partDetails.productUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.viewLinkBtn}
+                    title="View product"
+                  >
+                    <Icons.externalLink size={12} />
+                  </a>
+                )}
+                <button
+                  className={styles.editPartInline}
+                  onClick={() => setIsEditing(true)}
+                  title="Edit part details"
+                >
+                  <Icons.edit size={12} />
+                </button>
+              </>
+            )}
+          </div>
         </div>
-        
-        {/* Add/Edit part button - positioned right */}
-        {!isEditing && !hasPartDetails && (
-          <button
-            className={styles.addPartInline}
-            onClick={() => setIsEditing(true)}
-          >
-            <Icons.plus size={10} />
-            Add your part
-          </button>
-        )}
-        {!isEditing && hasPartDetails && (
-          <button
-            className={styles.editPartInline}
-            onClick={() => setIsEditing(true)}
-          >
-            <Icons.edit size={10} />
-            Edit
-          </button>
-        )}
       </div>
 
       {isEditing && (
@@ -181,6 +309,15 @@ function ShoppingListItem({
               step="0.01"
             />
             <input
+              type="text"
+              placeholder="Vendor Name"
+              value={editData.vendorName}
+              onChange={(e) => setEditData({ ...editData, vendorName: e.target.value })}
+              className={`${styles.input} ${styles.inputSmall}`}
+            />
+          </div>
+          <div className={styles.editRow}>
+            <input
               type="url"
               placeholder="Product URL (optional)"
               value={editData.productUrl}
@@ -204,17 +341,21 @@ function ShoppingListItem({
 
 /**
  * Main Parts Shopping List Component
+ * 
+ * SCOPE: This component handles SHOPPING (planned → purchased)
+ * Installation tracking is handled by the Install page (/garage/my-install)
  */
 export default function PartsSelector({
   selectedUpgrades = [],
   selectedParts = [],
   onPartsChange,
+  onStatusChange,
   carName,
   carSlug,
+  buildId = null, // Optional build ID for linking to install page
   totalHpGain = 0,
   totalCostRange = null, // { low, high }
 }) {
-  const [copySuccess, setCopySuccess] = useState(false);
   const { openChatWithPrompt } = useAIChat();
 
   // Get full upgrade objects from keys
@@ -240,12 +381,34 @@ export default function PartsSelector({
 
   // Calculate totals
   const totalCost = useMemo(() => {
-    return selectedParts.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
+    return selectedParts.reduce((sum, p) => {
+      const price = Number(p.price) || (p.priceCents ? p.priceCents / 100 : 0);
+      return sum + price;
+    }, 0);
   }, [selectedParts]);
 
-  const partsCount = useMemo(() => {
-    return selectedParts.filter(p => p.brandName || p.partName).length;
-  }, [selectedParts]);
+  // Status counts for summary
+  const statusCounts = useMemo(() => {
+    const counts = { planned: 0, purchased: 0, installed: 0 };
+    
+    // Count parts by status
+    selectedParts.forEach(p => {
+      const status = p.status || 'planned';
+      if (counts[status] !== undefined) {
+        counts[status]++;
+      }
+    });
+    
+    // Upgrades without parts are "planned"
+    const partsWithStatus = selectedParts.filter(p => p.status).map(p => p.upgradeKey);
+    upgrades.forEach(u => {
+      if (!partsWithStatus.includes(u.key)) {
+        counts.planned++;
+      }
+    });
+    
+    return counts;
+  }, [selectedParts, upgrades]);
 
   const handleUpdatePart = useCallback((partData) => {
     const existingIndex = selectedParts.findIndex(p => p.upgradeKey === partData.upgradeKey);
@@ -264,6 +427,7 @@ export default function PartsSelector({
         {
           ...partData,
           id: `part_${Date.now()}`,
+          status: 'planned',
         },
       ];
     }
@@ -271,32 +435,50 @@ export default function PartsSelector({
     onPartsChange(newParts);
   }, [selectedParts, onPartsChange]);
 
-  const handleCopyList = useCallback(async () => {
-    const lines = upgrades.map(upgrade => {
-      const part = partsByUpgrade[upgrade.key];
-      let line = `☐ ${upgrade.name}`;
-      if (part?.brandName || part?.partName) {
-        line = `☑ ${upgrade.name}`;
-        if (part.brandName) line += `\n   Brand: ${part.brandName}`;
-        if (part.partName) line += `\n   Part: ${part.partName}`;
-        if (part.partNumber) line += `\n   Part #: ${part.partNumber}`;
-        if (part.price) line += `\n   Price: $${Number(part.price).toLocaleString()}`;
-        if (part.productUrl) line += `\n   URL: ${part.productUrl}`;
-      }
-      return line;
-    });
-
-    const header = `🛒 ${carName} Build - Parts Shopping List\n${'='.repeat(40)}\n`;
-    const footer = totalCost > 0 
-      ? `\n${'='.repeat(40)}\nTotal: $${totalCost.toLocaleString()} (${partsCount}/${upgrades.length} specified)`
-      : `\n${'='.repeat(40)}\n${partsCount}/${upgrades.length} parts specified`;
-
-    const success = await platform.copyToClipboard(header + lines.join('\n\n') + footer);
-    if (success) {
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
+  // Handle status change for a part
+  const handleStatusChange = useCallback((upgradeKey, statusUpdate) => {
+    const existingIndex = selectedParts.findIndex(p => p.upgradeKey === upgradeKey);
+    
+    let newParts;
+    if (existingIndex >= 0) {
+      newParts = [...selectedParts];
+      newParts[existingIndex] = {
+        ...newParts[existingIndex],
+        ...statusUpdate,
+      };
+    } else {
+      // Create a new part entry just for status tracking
+      newParts = [
+        ...selectedParts,
+        {
+          id: `part_${Date.now()}`,
+          upgradeKey,
+          ...statusUpdate,
+        },
+      ];
     }
-  }, [upgrades, partsByUpgrade, carName, totalCost, partsCount]);
+    
+    onPartsChange?.(newParts);
+    onStatusChange?.(upgradeKey, statusUpdate);
+  }, [selectedParts, onPartsChange, onStatusChange]);
+
+  // Handle "Find with AL" for a specific upgrade
+  const handleFindWithAL = useCallback((upgrade, slug) => {
+    const prompt = `I need to find the best ${upgrade.name} for my ${carName}. 
+
+Please use the find_best_parts tool to search for parts that fit my car and give me your top recommendations. I'm looking for:
+- Parts with verified fitment for this specific car
+- Good balance of quality and price
+- Any important installation notes or things I should know
+
+My car: ${carName} (${slug})
+Upgrade type: ${upgrade.name} (category: ${upgrade.category})`;
+
+    openChatWithPrompt(prompt, {
+      category: `Parts for ${carName}`,
+      carSlug: slug,
+    }, `Find best ${upgrade.name} for ${carName}`);
+  }, [carName, openChatWithPrompt]);
 
   // AL Build Review - comprehensive analysis of the entire build
   const handleALBuildReview = useCallback(() => {
@@ -377,14 +559,24 @@ Be specific to my ${carName} and this exact build configuration.`;
           <Icons.shoppingCart size={16} />
           <span className={styles.title}>Parts Shopping List</span>
         </div>
-        <button
-          className={styles.copyBtn}
-          onClick={handleCopyList}
-          title="Copy shopping list"
-        >
-          {copySuccess ? <Icons.check size={14} /> : <Icons.copy size={14} />}
-          {copySuccess ? 'Copied!' : 'Copy List'}
-        </button>
+      </div>
+
+      {/* Status Summary - Shopping focused (planned/purchased) */}
+      <div className={styles.statusSummary}>
+        <div className={`${styles.statusCount} ${styles.statusmuted}`}>
+          <span className={styles.statusCountNumber}>{statusCounts.planned}</span>
+          <span className={styles.statusCountLabel}>Planned</span>
+        </div>
+        <div className={`${styles.statusCount} ${styles.statusteal}`}>
+          <span className={styles.statusCountNumber}>{statusCounts.purchased}</span>
+          <span className={styles.statusCountLabel}>Purchased</span>
+        </div>
+        {statusCounts.installed > 0 && (
+          <div className={`${styles.statusCount} ${styles.statuslime}`}>
+            <span className={styles.statusCountNumber}>{statusCounts.installed}</span>
+            <span className={styles.statusCountLabel}>Installed</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.list}>
@@ -394,6 +586,9 @@ Be specific to my ${carName} and this exact build configuration.`;
             upgrade={upgrade}
             partDetails={partsByUpgrade[upgrade.key]}
             onUpdatePart={handleUpdatePart}
+            onStatusChange={handleStatusChange}
+            onFindWithAL={handleFindWithAL}
+            carSlug={carSlug}
           />
         ))}
       </div>
@@ -403,6 +598,24 @@ Be specific to my ${carName} and this exact build configuration.`;
           <span>Estimated Total</span>
           <span className={styles.totalAmount}>${totalCost.toLocaleString()}</span>
         </div>
+      )}
+
+      {/* Ready to Install CTA - shows when there are purchased parts */}
+      {statusCounts.purchased > 0 && (
+        <Link 
+          href={buildId ? `/garage/my-install?build=${buildId}` : `/garage/my-install?car=${carSlug}`}
+          className={styles.readyToInstallCta}
+        >
+          <div className={styles.readyToInstallCtaContent}>
+            <span className={styles.readyToInstallCtaTitle}>
+              {statusCounts.purchased} {statusCounts.purchased === 1 ? 'Part' : 'Parts'} Ready to Install
+            </span>
+            <span className={styles.readyToInstallCtaSubtitle}>
+              Track your installation progress, find DIY videos, or locate service centers
+            </span>
+          </div>
+          <Icons.chevronRight size={20} className={styles.readyToInstallCtaIcon} />
+        </Link>
       )}
     </div>
   );

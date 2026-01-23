@@ -17,6 +17,7 @@
 import { useMemo } from 'react';
 import Link from 'next/link';
 import CarImage from './CarImage';
+import InfoTooltip, { InfoTooltipIcon } from './ui/InfoTooltip';
 import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from '@/lib/upgrades.js';
 import { validateUpgradeSelection, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
 import { getToolsForBuild, calculateBuildComplexity, difficultyLevels, toolCategories } from '@/data/upgradeTools.js';
@@ -366,7 +367,7 @@ function InstallationNotesSection({ complexity }) {
 /**
  * Selected Parts Section - snapshot list (fitment/pricing)
  */
-function PartsListSection({ parts }) {
+function PartsListSection({ parts, carName, carSlug }) {
   if (!Array.isArray(parts) || parts.length === 0) return null;
 
   return (
@@ -396,9 +397,17 @@ function PartsListSection({ parts }) {
             </div>
             <div className={styles.partBadges}>
               {p.verified && <span className={styles.badgeVerified}>Verified</span>}
-              {typeof p.confidence === 'number' && <span className={styles.badge}>Conf {Math.round(p.confidence * 100)}%</span>}
+              {typeof p.confidence === 'number' && (
+                <InfoTooltip topicKey="fitmentConfidence" carName={carName} carSlug={carSlug}>
+                  <span className={styles.badge}>Conf {Math.round(p.confidence * 100)}%</span>
+                </InfoTooltip>
+              )}
               {p.requiresTune && <span className={styles.badgeWarn}>Requires tune</span>}
-              {p.installDifficulty && <span className={styles.badge}>{p.installDifficulty}</span>}
+              {p.installDifficulty && (
+                <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={carSlug}>
+                  <span className={styles.badge}>{p.installDifficulty}</span>
+                </InfoTooltip>
+              )}
               {Number.isFinite(p.priceCents) && <span className={styles.badgePrice}>${Math.round(p.priceCents / 100).toLocaleString()}</span>}
             </div>
             {p.fitmentNotes && <div className={styles.partNotes}>{p.fitmentNotes}</div>}
@@ -505,7 +514,7 @@ export default function BuildDetailView({ build, car, onBack }) {
       />
 
       {/* Selected Parts */}
-      <PartsListSection parts={selectedParts} />
+      <PartsListSection parts={selectedParts} carName={car.name} carSlug={car.slug} />
       
       {/* Tools Required */}
       <ToolsSection toolsData={toolsData} />

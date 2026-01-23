@@ -1,0 +1,192 @@
+/* ==========================================================================
+   CelebrationModal Component Styles
+   ========================================================================== */
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6, 24px);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   ICON
+   ========================================================================== */
+
+.iconWrapper {
+  margin-bottom: var(--space-4, 16px);
+}
+
+.iconCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(212, 255, 0, 0.2) 100%);
+  border: 2px solid var(--color-accent-teal, #10b981);
+  border-radius: 50%;
+  color: var(--color-accent-teal, #10b981);
+  animation: pulseScale 0.6s ease-out;
+}
+
+@keyframes pulseScale {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   TEXT
+   ========================================================================== */
+
+.title {
+  margin: 0 0 var(--space-2, 8px) 0;
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-h2, 28px);
+  font-weight: 700;
+  color: var(--color-text-primary, #fff);
+  animation: slideUp 0.4s ease-out 0.2s both;
+}
+
+.partName {
+  margin: 0 0 var(--space-4, 16px) 0;
+  font-size: var(--text-lg, 18px);
+  font-weight: 500;
+  color: var(--color-accent-lime, #d4ff00);
+  animation: slideUp 0.4s ease-out 0.3s both;
+}
+
+.message {
+  margin: 0 0 var(--space-4, 16px) 0;
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, #94a3b8);
+  animation: slideUp 0.4s ease-out 0.5s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   PROGRESS
+   ========================================================================== */
+
+.progress {
+  width: 100%;
+  max-width: 200px;
+  margin-bottom: var(--space-4, 16px);
+  animation: slideUp 0.4s ease-out 0.4s both;
+}
+
+.progressBar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full, 9999px);
+  overflow: hidden;
+  margin-bottom: var(--space-2, 8px);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-teal, #10b981), var(--color-accent-lime, #d4ff00));
+  border-radius: var(--radius-full, 9999px);
+  transition: width 0.5s ease;
+}
+
+.progressText {
+  margin: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* ==========================================================================
+   CLOSE BUTTON
+   ========================================================================== */
+
+.closeBtn {
+  padding: var(--space-3, 12px) var(--space-6, 24px);
+  
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: var(--radius-full, 9999px);
+  
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-bg-base, #0d1b2a);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+  animation: slideUp 0.4s ease-out 0.6s both;
+}
+
+.closeBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 255, 0, 0.3);
+}
+
+/* ==========================================================================
+   CONFETTI
+   ========================================================================== */
+
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.confetti {
+  position: absolute;
+  top: -10px;
+  border-radius: 2px;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Add some variation with nth-child */
+.confetti:nth-child(odd) {
+  border-radius: 50%;
+}
+
+.confetti:nth-child(3n) {
+  animation-timing-function: ease-in;
+}
+
+.confetti:nth-child(5n) {
+  animation-timing-function: ease-out;
+}

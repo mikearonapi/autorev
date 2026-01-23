@@ -130,7 +130,7 @@
   color: var(--sn-accent);
   padding: 4px var(--space-sm) 4px 4px;
   border-radius: var(--radius-full);
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -139,7 +139,7 @@
 
 @media (min-width: 480px) {
   .badge {
-    font-size: 11px;
+    font-size: var(--text-xs);
     margin-bottom: var(--space-md);
   }
 }
@@ -212,7 +212,7 @@
 }
 
 .examplesLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -276,7 +276,7 @@
 }
 
 .note {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.45);
   margin: 0;
 }

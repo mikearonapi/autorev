@@ -1,6 +1,7 @@
 /* Car Catalog Page */
 .catalogPage {
   min-height: 100vh;
+  padding-bottom: var(--page-bottom-padding);
 }
 
 /* Hero Section - Matching home page style */
@@ -78,7 +79,7 @@
 
 .badge {
   display: inline-block;
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -214,7 +215,7 @@
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: max(16px, var(--text-xs)); /* Prevents iOS zoom */
   background-color: var(--bg-card, #161616);
   color: var(--color-gray-900);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -260,7 +261,7 @@
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: max(16px, var(--text-xs)); /* Prevents iOS zoom */
   background-color: var(--bg-card, #161616);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -427,7 +428,7 @@
   left: var(--space-2xs);
   padding: 2px var(--space-xs);
   border-radius: var(--radius-sm);
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum decorative badge */
   font-weight: 600;
   color: var(--color-white);
   text-transform: uppercase;
@@ -604,7 +605,7 @@
 }
 
 .carYears {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--color-gray-500);
   margin-bottom: var(--space-2xs);
 }
@@ -631,7 +632,7 @@
 }
 
 .spec {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: var(--color-gray-700);
 }
@@ -658,7 +659,7 @@
 }
 
 .priceRange {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--sn-primary);
 }
@@ -803,8 +804,8 @@
   border: none;
   border-radius: 14px;
   
-  /* Typography - use fixed px for consistency */
-  font-size: 11px;
+  /* Typography */
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;

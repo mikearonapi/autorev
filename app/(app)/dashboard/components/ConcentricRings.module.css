@@ -4,10 +4,13 @@
   position: relative;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  gap: var(--space-3, 12px);
+  justify-content: space-between;
+  gap: var(--space-2, 8px);
   width: 100%;
-  padding: 0 var(--space-2, 8px);
+  max-width: 100%;
+  padding: 0; /* Container provides padding */
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 /* Left controls - info button */
@@ -16,8 +19,8 @@
   flex-direction: column;
   align-items: flex-start;
   padding-top: 8px;
-  padding-left: 4px;
-  min-width: 70px;
+  flex-shrink: 0;
+  min-width: 32px;
 }
 
 /* Center container for rings and legend */
@@ -26,6 +29,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-3, 12px);
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 /* Right controls - streak and points stats */
@@ -35,8 +40,24 @@
   align-items: flex-end;
   gap: var(--space-3, 12px);
   padding-top: 8px;
-  padding-right: 4px;
-  min-width: 70px;
+  flex-shrink: 0;
+  min-width: 50px;
+}
+
+/* Responsive: Smaller screens tighten spacing */
+@media (max-width: 374px) {
+  .wrapper {
+    gap: var(--space-1, 4px);
+  }
+  
+  .leftControls {
+    min-width: 28px;
+  }
+  
+  .rightControls {
+    min-width: 44px;
+    gap: var(--space-2, 8px);
+  }
 }
 
 /* Streak badge */
@@ -53,14 +74,14 @@
 
 .streakCount {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
 }
 
 .streakUnit {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
   text-transform: lowercase;
@@ -83,18 +104,39 @@
 
 .pointsStatValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .pointsStatLabel {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum decorative label */
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* Responsive: Smaller text on narrow screens */
+@media (max-width: 374px) {
+  .pointsStatValue {
+    font-size: var(--text-xs);
+  }
+  
+  .pointsStatLabel {
+    font-size: 8px; /* Sub-minimum for compact mobile */
+  }
+  
+  .streakCount {
+    font-size: var(--text-xs);
+  }
+  
+  .streakUnit {
+    font-size: 9px; /* Sub-minimum for compact mobile */
+  }
 }
 
 /* Info button */
@@ -163,7 +205,7 @@
 
 .pointsValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 22px;
+  font-size: var(--text-h2);
   font-weight: 800;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
@@ -171,7 +213,7 @@
 }
 
 .pointsLabel {
-  font-size: 9px;
+  font-size: 9px; /* Sub-minimum decorative label */
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
@@ -203,7 +245,7 @@
 }
 
 .legendLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 500;
   color: var(--color-text-secondary, #94a3b8);
   text-transform: uppercase;
@@ -219,13 +261,13 @@
 }
 
 .streakMessage {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   color: var(--color-text-primary, #ffffff);
 }
 
 .longestStreak {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--color-text-tertiary, #64748b);
 }
 

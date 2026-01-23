@@ -12,7 +12,8 @@
   box-sizing: border-box;
   background: var(--brand-bg-primary);
   color: var(--color-white);
-  padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
   display: flex;
   flex-direction: column;
 }
@@ -30,7 +31,45 @@
   /* UpgradeCenter handles its own padding */
 }
 
-/* Save Button */
+/* Header Actions Container */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Auto-Save Indicator */
+.autoSaveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent-teal);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 100px;
+  transition: all 0.3s ease;
+}
+
+.autoSaveIndicator span {
+  opacity: 0.9;
+}
+
+.autoSaveError {
+  color: var(--color-error, #ef4444);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinningIcon {
+  animation: spin 1s linear infinite;
+}
+
+/* Legacy Save Button - kept for backwards compatibility */
 .saveButton {
   width: 40px;
   height: 40px;
@@ -147,6 +186,69 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* ==========================================================================
+   CONTINUE TO PARTS CTA
+   ========================================================================== */
+
+.continueCtaContainer {
+  padding: var(--space-4, 16px);
+  padding-bottom: calc(var(--space-4, 16px) + 60px); /* Space for bottom tab bar */
+}
+
+.continueCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 16px);
+  padding: var(--space-4, 16px);
+  
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg, 12px);
+  
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.continueCta:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.ctaContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.ctaTitle {
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+}
+
+.ctaSubtitle {
+  font-size: var(--text-sm, 14px);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.ctaAction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-accent-teal, #10b981);
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
 /* Mobile Responsive */
 @media (max-width: 480px) {
   .emptyTitle {
@@ -165,5 +267,16 @@
   .emptyActionSecondary {
     padding: 12px 20px;
     font-size: 0.875rem;
+  }
+  
+  .continueCta {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .ctaAction {
+    justify-content: center;
+    width: 100%;
   }
 }

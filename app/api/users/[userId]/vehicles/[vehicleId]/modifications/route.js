@@ -124,15 +124,15 @@ async function handlePost(request, { params }) {
       );
     }
 
-    // Award points for adding modifications (only for new mods, not resets)
+    // Award points for INSTALLING modifications (50 pts - Real Data tier)
+    // This is when mods are marked as actually installed on the vehicle
+    // Award once per install action, not per individual mod
     if (upgrades.length > 0) {
-      // Award points per modification added (non-blocking)
-      for (let i = 0; i < upgrades.length; i++) {
-        awardPoints(userId, 'garage_add_modification', { 
-          vehicleId, 
-          modificationKey: upgrades[i] 
-        }).catch(() => {});
-      }
+      awardPoints(userId, 'garage_install_upgrade', { 
+        vehicleId, 
+        upgradeCount: upgrades.length,
+        upgradeKeys: upgrades.slice(0, 5), // Include first 5 for context
+      }).catch(() => {});
     }
 
     return NextResponse.json({

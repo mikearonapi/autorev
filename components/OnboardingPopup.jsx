@@ -391,27 +391,27 @@ export const garageOnboardingSteps = [
     features: [
       'Curated recommendations, not overwhelming lists',
       'Why each upgrade matters for your build',
-      'Stage-by-stage progression paths',
+      'Categories prioritized by your goal',
     ],
   },
   {
     icon: OnboardingIcons.gauge,
     title: 'See the Impact First',
-    description: 'Visualize what each upgrade actually does to your car BEFORE you buy. HP gains, torque curves, lap time predictions.',
+    description: 'Visualize what each upgrade actually does to your car BEFORE you buy. HP gains, 0-60 times, and experience scores.',
     features: [
       'Real-time performance estimates',
-      'Virtual dyno with HP/TQ curves',
-      'Track time impact predictions',
+      'See HP, braking, and grip improvements',
+      'Track comfort, reliability, and sound tradeoffs',
     ],
   },
   {
     icon: OnboardingIcons.shield,
     title: 'Find the Exact Parts',
-    description: '"I need an intake" → but which one? There are 47 options. We show you which ones work, offer best value, and why.',
+    description: '"I need an intake" → but which one? Ask AL for personalized part recommendations with pricing and compatibility info.',
     features: [
-      'Navigate from upgrade to specific parts',
-      'Value clarity: best bang for your buck',
-      'Premium vs budget—and when it matters',
+      'One-click "Find with AL" for any upgrade',
+      'Track your shopping list: planned → purchased → installed',
+      'Copy your full parts list to share or shop',
     ],
   },
 ];

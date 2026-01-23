@@ -91,7 +91,7 @@
   color: var(--sn-accent);
   padding: 5px var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -245,7 +245,7 @@
 }
 
 .caption {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
   letter-spacing: 0.06em;

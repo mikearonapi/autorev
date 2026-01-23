@@ -39,14 +39,14 @@
 }
 
 .headerTitle {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 2px;
 }
 
 .headerSubtitle {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
@@ -60,7 +60,7 @@
   border: none;
   border-radius: 8px;
   color: var(--brand-bg-primary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -82,7 +82,7 @@
 }
 
 .sectionLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
@@ -129,7 +129,7 @@
   justify-content: center;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 8px;
-  font-size: 16px;
+  font-size: var(--text-h4);
   flex-shrink: 0;
 }
 
@@ -144,7 +144,7 @@
 }
 
 .goalTitle {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
   margin: 0 0 4px;
@@ -158,7 +158,7 @@
 }
 
 .goalTarget {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono, monospace);
 }
@@ -167,7 +167,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.4);
 }
 
@@ -234,13 +234,13 @@
 }
 
 .currentValue {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono, monospace);
 }
 
 .progressPercent {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--brand-teal);
 }
@@ -254,7 +254,7 @@
   padding: 10px 12px;
   background: rgba(16, 185, 129, 0.1);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-teal);
 }
@@ -266,7 +266,7 @@
 
 .completedDate {
   margin-left: auto;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 400;
   color: rgba(16, 185, 129, 0.7);
 }
@@ -279,7 +279,7 @@
 }
 
 .formTitle {
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0 0 16px;
@@ -295,7 +295,7 @@
 }
 
 .suggestionsLabel {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -305,7 +305,7 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 6px;
   color: var(--brand-teal);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -364,7 +364,7 @@
 }
 
 .typeLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -400,7 +400,7 @@
 }
 
 .label {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
@@ -414,7 +414,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   color: var(--brand-text-primary);
-  font-size: 14px;
+  font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
   transition: all 0.2s ease;
 }
 
@@ -442,7 +442,7 @@
   position: absolute;
   right: 12px;
   color: rgba(255, 255, 255, 0.4);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   pointer-events: none;
 }
@@ -460,7 +460,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -481,7 +481,7 @@
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -510,7 +510,7 @@
 }
 
 .emptyDescription {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
   line-height: 1.4;
@@ -530,7 +530,7 @@
   border: none;
   border-radius: 8px;
   color: var(--brand-bg-primary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;

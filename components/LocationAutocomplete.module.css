@@ -65,7 +65,7 @@
   --gmp-theme-text-color-primary: var(--color-gray-900, #1a1a1a);
   --gmp-theme-text-color-placeholder: var(--color-gray-500, #666);
   font-family: var(--font-primary, Inter, sans-serif);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 
 .googlePlacesWrapper :global(gmp-place-autocomplete input) {
@@ -156,7 +156,7 @@
 .suggestionText {
   flex: 1;
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--color-gray-900, #1a1a1a);
   display: flex;
   align-items: baseline;
@@ -178,13 +178,13 @@
 
 .countyText {
   color: var(--color-gray-400, #888);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 400;
   margin-left: 4px;
 }
 
 .suggestionZip {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--color-gray-500, #666);
   background: var(--color-gray-100, #f5f5f5);
   padding: 2px 6px;
@@ -206,7 +206,7 @@
 }
 
 .osmAttribution {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--color-gray-400, #999);
 }
 

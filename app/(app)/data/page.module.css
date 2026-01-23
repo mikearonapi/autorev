@@ -13,21 +13,24 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0 16px;
-  /* Bottom padding for tab bar */
-  padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
   background: var(--color-bg-base, #0d1b2a);
   color: var(--color-text-primary, #ffffff);
   display: flex;
   flex-direction: column;
+  /* Prevent any child from causing horizontal overflow (which triggers zoom on mobile) */
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Mobile: Tighter horizontal padding + extra bottom for action buttons */
+/* Mobile: Tighter horizontal padding */
 @media (max-width: 767px) {
   .container {
     padding: 0 12px;
-    /* Increased bottom padding to ensure action buttons stay above PWA menu */
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 24px));
+    padding-bottom: var(--page-bottom-padding);
   }
 }
 
@@ -426,10 +429,19 @@
 
 .syntheticDataSection {
   margin-bottom: 24px;
+  /* Prevent any child from causing horizontal overflow */
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dataCard {
   margin-bottom: 12px;
+  /* Prevent chart/component overflow from causing page zoom */
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .dataCard:last-child {

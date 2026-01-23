@@ -378,14 +378,37 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
-  /* Prevent font size adjustment on orientation change (iOS) */
+  
+  /* =======================================================================
+     MOBILE TEXT SIZE & ZOOM PREVENTION
+     
+     These rules prevent unwanted zoom behaviors on mobile devices:
+     - text-size-adjust: Prevents iOS/Android from auto-scaling text on rotation
+     - touch-action: Controls how touch gestures are handled
+     ======================================================================= */
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Prevent horizontal overflow causing zoom */
-  overflow-x: hidden;
+  
+  /* =======================================================================
+     CRITICAL: PREVENT HORIZONTAL OVERFLOW
+     
+     This is a multi-layered approach to prevent any horizontal overflow:
+     1. width: 100% - Base constraint
+     2. max-width: 100vw - Viewport constraint (includes scrollbar on desktop)
+     3. overflow-x: clip - Most aggressive overflow clipping
+     ======================================================================= */
+  width: 100%;
   max-width: 100vw;
+  overflow-x: clip;
+  
+  /* Allow vertical scroll + pinch zoom, prevent horizontal pan that triggers zoom */
+  touch-action: pan-y pinch-zoom;
+  
   /* NOTE: overscroll-behavior-y is set on body only (not html) to avoid
      conflicting scroll containers on Android Chrome. Body is the scroll container. */
+  
   /* Improve scroll performance - account for fixed header + beta banner */
   scroll-padding-top: var(--header-plus-banner-mobile);
   
@@ -418,14 +441,36 @@ body {
   background: var(--bg-primary);
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
-  /* Prevent horizontal scroll on all devices */
+  
+  /* =======================================================================
+     PREVENT HORIZONTAL SCROLL & ZOOM TRIGGERS
+     
+     Content wider than viewport can cause:
+     - Horizontal scroll (which triggers zoom on Android)
+     - Unexpected layout shifts
+     
+     NOTE: Use 100% as primary, with vw as fallback for edge cases.
+     Avoid dvw as it has inconsistent Android support.
+     ======================================================================= */
   width: 100%;
-  max-width: 100vw;
-  max-width: 100dvw;
+  max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  /* Improve touch scrolling */
+  
+  /* Improve touch scrolling on iOS */
   -webkit-overflow-scrolling: touch;
+  
+  /* =======================================================================
+     ANDROID-SPECIFIC FIXES
+     
+     Android Chrome can auto-boost font sizes in certain conditions.
+     These rules prevent that behavior while maintaining readability.
+     ======================================================================= */
+  /* Prevent Android font boosting (can cause layout shifts) */
+  text-rendering: optimizeLegibility;
+  /* Ensure consistent touch behavior */
+  touch-action: pan-y pinch-zoom;
+  
   /* NOTE: overscroll-behavior-y: none was removed from here because it can
      completely disable scrolling on some Android devices/browsers.
      It's now applied only on iOS via @supports below. */
@@ -437,6 +482,56 @@ body {
 @supports (-webkit-touch-callout: none) {
   body {
     overscroll-behavior-y: none;
+  }
+}
+
+/* ==========================================================================
+   ANDROID-SPECIFIC OPTIMIZATIONS
+   
+   Android Chrome has unique behaviors that can cause issues:
+   1. Font boosting - auto-scales text in certain conditions
+   2. Tap delay - 300ms delay on taps (fixed with touch-action)
+   3. Scroll anchoring - can cause layout jumps
+   4. Double-tap zoom - can trigger unexpectedly
+   
+   These rules address common Android issues.
+   ========================================================================== */
+
+/* Prevent Android Chrome's text autosizing/font boosting */
+@media screen and (max-width: 767px) {
+  /* Force max-height on text containers to prevent font inflation */
+  p, li, td, th, label, span, a {
+    max-height: 1000000px;
+  }
+}
+
+/* Disable double-tap zoom on interactive elements
+   This prevents accidental zoom when users tap buttons/links quickly */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex]:not([tabindex="-1"]) {
+  touch-action: manipulation;
+}
+
+/* Prevent zoom on specific UI elements that should never zoom */
+.no-zoom {
+  touch-action: pan-y pan-x;
+}
+
+/* Fix for Android Chrome address bar resize issues */
+@supports (height: 100dvh) {
+  :root {
+    --vh-fix: 100dvh;
+  }
+}
+
+@supports not (height: 100dvh) {
+  :root {
+    --vh-fix: calc(var(--vh, 1vh) * 100);
   }
 }
 
@@ -463,9 +558,27 @@ html:not([data-has-banner]) {
   }
 }
 
+/* =======================================================================
+   GLOBAL WIDTH CONSTRAINTS
+   
+   These rules ensure no element can extend beyond the viewport width.
+   Critical for preventing mobile "zoom" issues caused by overflow.
+   ======================================================================= */
+
+/* Body direct children - constrain everything */
+body > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* Main content area - automatically offset below fixed header/banners */
 main {
   padding-top: var(--content-offset-mobile);
+  /* Prevent child elements from causing horizontal overflow */
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {

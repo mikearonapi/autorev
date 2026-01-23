@@ -11,6 +11,7 @@ import { useAuth } from './providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { prefetchForRoute } from '@/lib/prefetch';
 import { UI_IMAGES } from '@/lib/images';
+import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -39,37 +40,21 @@ const ChevronIcon = () => (
   </svg>
 );
 
-// Navigation links - 5-Tab Structure with Dashboard (January 2026)
-// 1. Dashboard - Gamification, scores, achievements
-// 2. Garage - Vehicles, Builds, Upgrades
-// 3. Data - Track sessions, OBD2, telemetry
-// 4. Community - TikTok/IG style build feed
-// 5. AL - AI assistant + search
-// Profile - Settings, account (in avatar dropdown, not main nav)
+// Navigation links - 5-Tab Structure (January 2026)
+// Matches BottomTabBar tabs: Insights, Garage, Data, Community, AL
+// Profile/Settings accessed via profile button, not main nav
 const navLinks = [
-  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/insights', label: 'Insights' },
   { href: '/garage', label: 'Garage' },
   { href: '/data', label: 'Data' },
   { href: '/community', label: 'Community' },
   { href: '/al', label: 'AL' },
 ];
 
-// App routes where tab bar is shown (header should be minimal on mobile)
-const APP_ROUTES = [
-  '/dashboard',
-  '/garage',
-  '/data',
-  '/community',
-  '/profile',
-  '/al',
-  // Sub-routes within Garage
-  '/build',
-  '/performance',
-  '/parts',
-  // Legacy routes (redirect but still match for tab bar)
-  '/tuning-shop',
-  '/my-builds',
-  '/track', // Legacy - redirects to /data
+// Routes where header should be completely hidden (standalone pages)
+// These pages have their own navigation or are full-screen experiences
+const STANDALONE_ROUTES = [
+  '/auth',  // Auth pages (login, error, callback, etc.)
 ];
 
 // AL Mascot Avatar for mobile menu
@@ -139,8 +124,14 @@ export default function Header() {
   }, [user?.email]);
   
   // Check if on an app page (where bottom tab bar is shown)
+  // Uses shared APP_ROUTES from lib/appRoutes.js for consistency
   const isAppPage = useMemo(() => {
-    return APP_ROUTES.some(route => pathname?.startsWith(route));
+    return isAppRoute(pathname);
+  }, [pathname]);
+  
+  // Check if on a standalone page (where header should be completely hidden)
+  const isStandalonePage = useMemo(() => {
+    return STANDALONE_ROUTES.some(route => pathname?.startsWith(route));
   }, [pathname]);
 
   // Close menu on route change
@@ -199,11 +190,11 @@ export default function Header() {
   }, [isAuthenticated, user?.id]);
 
   // GRAVL-STYLE: Hide header completely on standalone pages
-  // Homepage and legal pages are standalone - no navigation header
+  // Homepage, legal pages, and auth pages are standalone - no navigation header
   // NOTE: This early return MUST come AFTER all hooks
   const isHomepage = pathname === '/';
   const isLegalPage = pathname === '/terms' || pathname === '/privacy' || pathname === '/contact';
-  if (isHomepage || isLegalPage) {
+  if (isHomepage || isLegalPage || isStandalonePage) {
     return null;
   }
   

@@ -16,7 +16,7 @@ import WeeklyEngagement from './components/WeeklyEngagement';
 import LifetimeAchievements from './components/LifetimeAchievements';
 import ImprovementActions from './components/ImprovementActions';
 import UserGreeting from './components/UserGreeting';
-import { UserIcon } from './components/DashboardIcons';
+import { UserIcon, GearIcon } from './components/DashboardIcons';
 import Link from 'next/link';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -161,19 +161,8 @@ export default function DashboardClient() {
       {/* Header */}
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>{firstName}&apos;s Dashboard</h1>
-        <Link href="/profile" className={styles.profileLink} aria-label="Profile">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt=""
-              width={36}
-              height={36}
-              className={styles.profileAvatar}
-              style={{ objectFit: 'cover' }}
-            />
-          ) : (
-            <UserIcon size={20} />
-          )}
+        <Link href="/settings" className={styles.profileLink} aria-label="Settings">
+          <GearIcon size={20} />
         </Link>
       </header>
 

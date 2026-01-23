@@ -562,7 +562,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  font-size: 0.9375rem;
+  font-size: max(16px, 0.9375rem); /* Prevents iOS Safari auto-zoom on focus */
   color: var(--color-text-primary);
   outline: none;
   transition: all 0.15s ease;

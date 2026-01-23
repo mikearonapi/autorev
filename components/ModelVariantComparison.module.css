@@ -18,7 +18,7 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
   margin: 0;
@@ -29,8 +29,10 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   background: rgba(255, 255, 255, 0.08);
   border: none;
   border-radius: 8px;
@@ -55,7 +57,7 @@
 .subtitle {
   padding: 0 20px;
   margin: 12px 0 16px;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -109,7 +111,7 @@
 }
 
 .variantName {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--brand-text-primary);
   white-space: nowrap;
@@ -118,7 +120,7 @@
 }
 
 .variantMeta {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -139,7 +141,7 @@
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 13px;
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -168,7 +170,7 @@
 }
 
 .carColumn h4 {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-text-primary);
   margin: 0;
@@ -189,7 +191,7 @@
 }
 
 .vsIndicator {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--sn-gold, var(--brand-teal));
   padding: 6px 10px;
@@ -207,7 +209,7 @@
 }
 
 .summary p {
-  font-size: 13px;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
   margin: 0;
@@ -219,7 +221,7 @@
 }
 
 .sectionTitle {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -248,7 +250,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -258,7 +260,7 @@
 }
 
 .diffValue {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--brand-text-primary);
   text-align: center;
@@ -269,7 +271,7 @@
 }
 
 .diffIndicator {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
@@ -292,7 +294,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
   padding: 8px 12px;
   background: rgba(16, 185, 129, 0.08);
@@ -313,7 +315,7 @@
 }
 
 .chipsLabel {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
 }
@@ -329,7 +331,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
   cursor: pointer;

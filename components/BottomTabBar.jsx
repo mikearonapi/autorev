@@ -19,12 +19,18 @@ import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
  */
 
 // Refined icons - consistent 1.5px stroke, cleaner paths
-const DashboardIcon = ({ active }) => (
+const InsightsIcon = ({ active }) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
     strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="9"/>
-    <circle cx="12" cy="12" r="5"/>
-    <circle cx="12" cy="12" r="1"/>
+    <path d="M12 2v4"/>
+    <path d="M12 18v4"/>
+    <path d="m4.93 4.93 2.83 2.83"/>
+    <path d="m16.24 16.24 2.83 2.83"/>
+    <path d="M2 12h4"/>
+    <path d="M18 12h4"/>
+    <path d="m4.93 19.07 2.83-2.83"/>
+    <path d="m16.24 7.76 2.83-2.83"/>
+    <circle cx="12" cy="12" r="4"/>
   </svg>
 );
 
@@ -81,18 +87,18 @@ const ProfileIcon = ({ active }) => (
 
 const tabs = [
   { 
-    id: 'dashboard', 
-    label: 'Dashboard', 
-    href: '/dashboard', 
-    Icon: DashboardIcon,
-    matchPaths: ['/dashboard']
+    id: 'insights', 
+    label: 'Insights', 
+    href: '/insights', 
+    Icon: InsightsIcon,
+    matchPaths: ['/insights']
   },
   { 
     id: 'garage', 
     label: 'Garage', 
     href: '/garage', 
     Icon: GarageIcon,
-    matchPaths: ['/garage', '/garage/builds', '/garage/my-specs', '/garage/my-build', '/garage/my-performance', '/garage/my-parts', '/garage/my-photos', '/garage/tuning-shop', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
+    matchPaths: ['/garage', '/garage/builds', '/garage/my-specs', '/garage/my-build', '/garage/my-performance', '/garage/my-parts', '/garage/my-install', '/garage/my-photos', '/garage/tuning-shop', '/my-builds', '/build', '/tuning-shop', '/performance', '/parts']
   },
   { 
     id: 'data', 

@@ -285,8 +285,10 @@
   }
 
   .imageContainer {
-    width: 100vw;
+    /* Use 100% instead of 100vw to avoid scrollbar width issues on Android */
+    width: 100%;
     height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
   }
 
   .thumbnails {
