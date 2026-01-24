@@ -25,7 +25,7 @@ export default defineConfig({
     globals: true,
 
     // Setup files run before each test file
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ['./tests/setup.tsx'],
 
     // Include patterns for test files
     include: [

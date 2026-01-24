@@ -2,7 +2,7 @@
 
 /**
  * DashboardClient Component
- * 
+ *
  * Simple, Duolingo-inspired dashboard.
  * - Streak counter (the ONE number)
  * - Achievements as hero (real metrics)
@@ -10,16 +10,18 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/components/providers/AuthProvider';
-import WeeklyPointsSummary from './components/WeeklyPointsSummary';
-import WeeklyEngagement from './components/WeeklyEngagement';
-import LifetimeAchievements from './components/LifetimeAchievements';
-import ImprovementActions from './components/ImprovementActions';
-import UserGreeting from './components/UserGreeting';
-import { UserIcon, GearIcon } from './components/DashboardIcons';
+
 import Link from 'next/link';
-import Image from 'next/image';
+
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/providers/AuthProvider';
+
+import { GearIcon } from './components/DashboardIcons';
+import ImprovementActions from './components/ImprovementActions';
+import LifetimeAchievements from './components/LifetimeAchievements';
+import UserGreeting from './components/UserGreeting';
+import WeeklyEngagement from './components/WeeklyEngagement';
+import WeeklyPointsSummary from './components/WeeklyPointsSummary';
 import styles from './page.module.css';
 
 export default function DashboardClient() {
@@ -27,34 +29,26 @@ export default function DashboardClient() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-    fetchDashboardData();
-  }, [user?.id, authLoading]);
+  const _avatarUrl =
+    profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(`/api/users/${user.id}/dashboard`, {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
-      
+
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Failed to fetch dashboard data');
-      
+
       setDashboardData(result.data);
       setLoading(false);
     } catch (err) {
@@ -67,24 +61,36 @@ export default function DashboardClient() {
       }
       setLoading(false);
     }
-  };
-
-  const handleTitleChange = useCallback(async (newTitle) => {
-    if (!user?.id) return;
-    
-    setDashboardData(prev => ({
-      ...prev,
-      profile: { ...prev?.profile, selectedTitle: newTitle },
-    }));
-
-    try {
-      await fetch(`/api/users/${user.id}/dashboard?action=update-title&title=${newTitle}`, {
-        method: 'POST',
-      });
-    } catch (err) {
-      console.error('Failed to update title:', err);
-    }
   }, [user?.id]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+    fetchDashboardData();
+  }, [user?.id, authLoading, fetchDashboardData]);
+
+  const handleTitleChange = useCallback(
+    async (newTitle) => {
+      if (!user?.id) return;
+
+      setDashboardData((prev) => ({
+        ...prev,
+        profile: { ...prev?.profile, selectedTitle: newTitle },
+      }));
+
+      try {
+        await fetch(`/api/users/${user.id}/dashboard?action=update-title&title=${newTitle}`, {
+          method: 'POST',
+        });
+      } catch (err) {
+        console.error('Failed to update title:', err);
+      }
+    },
+    [user?.id]
+  );
 
   // Not logged in
   if (!authLoading && !user) {
@@ -99,11 +105,11 @@ export default function DashboardClient() {
   // Loading
   if (loading || authLoading) {
     return (
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Dashboard" 
+      <LoadingSpinner
+        variant="branded"
+        text="Loading Dashboard"
         subtext="Fetching your progress..."
-        fullPage 
+        fullPage
       />
     );
   }
@@ -113,32 +119,34 @@ export default function DashboardClient() {
     return (
       <div className={styles.error}>
         <p>{error}</p>
-        <button onClick={fetchDashboardData} className={styles.retryButton}>Try Again</button>
+        <button onClick={fetchDashboardData} className={styles.retryButton}>
+          Try Again
+        </button>
       </div>
     );
   }
 
-  const { 
+  const {
     streak,
     points,
-    engagement, 
+    engagement: _engagement,
     dailyActivity,
     monthlyActivity,
     yearlyActivity,
-    achievements, 
+    achievements,
     profile: dashboardProfile,
     completion,
   } = dashboardData || {};
 
   // Map achievements for the component
-  const mappedAchievements = (achievements || []).map(a => ({
+  const mappedAchievements = (achievements || []).map((a) => ({
     ...a,
     achievement_type: a.type,
     display_value: a.displayValue,
   }));
 
   // Calculate weekly activity totals from daily activity
-  const weeklyActivity = (dailyActivity || []).reduce(
+  const _weeklyActivity = (dailyActivity || []).reduce(
     (acc, day) => ({
       al: acc.al + (day?.al || 0),
       community: acc.community + (day?.community || 0),
@@ -149,12 +157,11 @@ export default function DashboardClient() {
   );
 
   // Get garage score from completion data
-  const garageScore = completion?.garage_score || 0;
+  const _garageScore = completion?.garage_score || 0;
 
   // Get first name
-  const firstName = dashboardProfile?.displayName?.split(' ')[0] || 
-                    user?.email?.split('@')[0] || 
-                    'there';
+  const firstName =
+    dashboardProfile?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
 
   return (
     <div className={styles.container}>
@@ -205,12 +212,9 @@ export default function DashboardClient() {
         <LifetimeAchievements achievements={mappedAchievements} />
       </section>
 
-      {/* Earn More Points - Ways to earn points */}
+      {/* How to Earn Points - Ways to earn points */}
       <section className={styles.actionsSection}>
-        <ImprovementActions 
-          title="Earn More Points"
-          showPoints={true}
-        />
+        <ImprovementActions title="How to Earn Points" />
       </section>
     </div>
   );

@@ -2,7 +2,7 @@
 
 /**
  * My Specs Page - Vehicle Specifications
- * 
+ *
  * Shows full vehicle specifications for a selected vehicle.
  * Part of the My Garage suite:
  * - Specs: Vehicle specifications (this page)
@@ -10,34 +10,36 @@
  * - Performance: See performance impact
  * - Parts: Research and buy parts
  * - Photos: Manage vehicle photos
- * 
+ *
  * URL: /garage/my-specs?car=<carSlug> or ?build=<buildId>
  */
 
 import React, { useState, useEffect, Suspense, useCallback, useRef, useMemo } from 'react';
+
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import styles from './page.module.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAIChat } from '@/components/AIChatContext';
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
-import { useAIChat } from '@/components/AIChatContext';
-import { Icons } from '@/components/ui/Icons';
-import EmptyState from '@/components/ui/EmptyState';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+
+import styles from './page.module.css';
 
 // Local alias for sparkle (used with fill instead of stroke)
 const LocalIcons = {
   sparkle: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/>
+      <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" />
     </svg>
   ),
 };
@@ -46,13 +48,10 @@ const LocalIcons = {
  * AskALSectionButton - Opens AL chat with a section-specific prompt
  * For use in card headers on specs pages
  */
-function AskALSectionButton({ prompt, category, carName, onClick }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Reserved for future use
+function AskALSectionButton({ prompt: _prompt, category, carName: _carName, onClick }) {
   return (
-    <button 
-      className={styles.askAlBtn}
-      onClick={onClick}
-      title={`Ask AL about ${category}`}
-    >
+    <button className={styles.askAlBtn} onClick={onClick} title={`Ask AL about ${category}`}>
       <LocalIcons.sparkle size={12} />
       Ask AL
     </button>
@@ -63,14 +62,16 @@ function AskALSectionButton({ prompt, category, carName, onClick }) {
 function RatingBar({ value, label, maxValue = 10 }) {
   if (value === undefined || value === null) return null;
   const percentage = Math.min(Math.max((value / maxValue) * 100, 0), 100);
-  
+
   return (
     <div className={styles.ratingRow}>
       <span className={styles.ratingLabel}>{label}</span>
       <div className={styles.ratingTrack}>
         <div className={styles.ratingFill} style={{ width: `${percentage}%` }} />
       </div>
-      <span className={styles.ratingValue}>{value}/{maxValue}</span>
+      <span className={styles.ratingValue}>
+        {value}/{maxValue}
+      </span>
     </div>
   );
 }
@@ -84,40 +85,42 @@ function MySpecsContent() {
   const [confirmingSpecs, setConfirmingSpecs] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
   const confirmButtonRef = useRef(null);
-  
+
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles, refreshVehicles } = useOwnedVehicles();
   const { openChatWithPrompt } = useAIChat();
-  
+
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
-  
+
   // Get URL params for fallback fetch
   const carSlugParam = searchParams.get('car');
-  
+
   // Fallback: fetch single car if not in list (handles case when full list fails to load)
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
   });
-  
+
   // Check for action=confirm query param and scroll to confirm button
   const actionParam = searchParams.get('action');
-  
+
   // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
-  
+  const { heroImageUrl: _heroImageUrl } = useCarImages(selectedCar?.slug, {
+    enabled: !!selectedCar?.slug,
+  });
+
   // Find the user's vehicle for this car (to get specs_confirmed status and vehicle ID)
-  const userVehicle = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
-  
+  const userVehicle = vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug);
+
   // Initialize specs_confirmed state from vehicle data
   useEffect(() => {
     if (userVehicle) {
       setSpecsConfirmed(!!userVehicle.specsConfirmed || !!userVehicle.specs_confirmed);
     }
   }, [userVehicle]);
-  
+
   // Scroll to confirm button when action=confirm
   useEffect(() => {
     if (actionParam === 'confirm' && confirmButtonRef.current && selectedCar) {
@@ -132,11 +135,11 @@ function MySpecsContent() {
       }, 500);
     }
   }, [actionParam, selectedCar]);
-  
+
   // Handler to confirm specs
   const handleConfirmSpecs = useCallback(async () => {
     if (!user?.id || !userVehicle?.id) return;
-    
+
     setConfirmingSpecs(true);
     try {
       const response = await fetch(`/api/users/${user.id}/vehicles/${userVehicle.id}`, {
@@ -144,7 +147,7 @@ function MySpecsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ specs_confirmed: true }),
       });
-      
+
       if (response.ok) {
         setSpecsConfirmed(true);
         setConfirmSuccess(true);
@@ -163,41 +166,48 @@ function MySpecsContent() {
       setConfirmingSpecs(false);
     }
   }, [user?.id, userVehicle?.id, refreshVehicles]);
-  
+
   // Create contextualized AL prompt handlers for each section
   // Each section has a detailed prompt (sent to AL) and a short displayMessage (shown to user)
-  const askALAboutSection = useCallback((section) => {
-    if (!selectedCar) return;
-    
-    const carName = selectedCar.name;
-    
-    // Detailed prompts sent to AL
-    const prompts = {
-      performance: `Tell me about the performance specs of my ${carName}. What makes it special, and how does it compare to competitors? What should I know about its acceleration, handling, and track potential?`,
-      engine: `Tell me about the ${selectedCar.engine || 'engine'} in my ${carName}. What are its strengths, common maintenance items, and tuning potential? Any reliability concerns I should know about?`,
-      chassis: `Tell me about the chassis and body of my ${carName}. How does the weight distribution affect handling? What makes the platform special?`,
-      ownership: `What should I know about owning a ${carName}? What are typical maintenance costs, common issues to watch for, and ownership tips from experienced owners?`,
-      ratings: `Explain the AutoRev ratings for my ${carName}. Why does it score the way it does for driver fun, track capability, sound, reliability, and value?`,
-    };
-    
-    // Short, clear questions shown to user in the confirmation card
-    const displayMessages = {
-      performance: `How does the ${carName} perform? How fast is it, and what's it like on track?`,
-      engine: `What should I know about the ${selectedCar.engine || 'engine'}? Reliability, maintenance, tuning potential?`,
-      chassis: `How does the ${carName}'s weight and chassis affect handling?`,
-      ownership: `What are the real costs and common issues with owning a ${carName}?`,
-      ratings: `Why does the ${carName} score the way it does in AutoRev ratings?`,
-    };
-    
-    const prompt = prompts[section] || `Tell me more about ${section} for my ${carName}`;
-    const displayMessage = displayMessages[section] || prompt;
-    
-    openChatWithPrompt(prompt, {
-      category: section.charAt(0).toUpperCase() + section.slice(1),
-      carSlug: selectedCar.slug,
-      carName: carName,
-    }, displayMessage);
-  }, [selectedCar, openChatWithPrompt]);
+  const askALAboutSection = useCallback(
+    (section) => {
+      if (!selectedCar) return;
+
+      const carName = selectedCar.name;
+
+      // Detailed prompts sent to AL
+      const prompts = {
+        performance: `Tell me about the performance specs of my ${carName}. What makes it special, and how does it compare to competitors? What should I know about its acceleration, handling, and track potential?`,
+        engine: `Tell me about the ${selectedCar.engine || 'engine'} in my ${carName}. What are its strengths, common maintenance items, and tuning potential? Any reliability concerns I should know about?`,
+        chassis: `Tell me about the chassis and body of my ${carName}. How does the weight distribution affect handling? What makes the platform special?`,
+        ownership: `What should I know about owning a ${carName}? What are typical maintenance costs, common issues to watch for, and ownership tips from experienced owners?`,
+        ratings: `Explain the AutoRev ratings for my ${carName}. Why does it score the way it does for driver fun, track capability, sound, reliability, and value?`,
+      };
+
+      // Short, clear questions shown to user in the confirmation card
+      const displayMessages = {
+        performance: `How does the ${carName} perform? How fast is it, and what's it like on track?`,
+        engine: `What should I know about the ${selectedCar.engine || 'engine'}? Reliability, maintenance, tuning potential?`,
+        chassis: `How does the ${carName}'s weight and chassis affect handling?`,
+        ownership: `What are the real costs and common issues with owning a ${carName}?`,
+        ratings: `Why does the ${carName} score the way it does in AutoRev ratings?`,
+      };
+
+      const prompt = prompts[section] || `Tell me more about ${section} for my ${carName}`;
+      const displayMessage = displayMessages[section] || prompt;
+
+      openChatWithPrompt(
+        prompt,
+        {
+          category: section.charAt(0).toUpperCase() + section.slice(1),
+          carSlug: selectedCar.slug,
+          carName: carName,
+        },
+        displayMessage
+      );
+    },
+    [selectedCar, openChatWithPrompt]
+  );
 
   // Get URL params
   const buildIdParam = searchParams.get('build');
@@ -208,16 +218,16 @@ function MySpecsContent() {
     if (allCars.length > 0) {
       if (buildIdParam) {
         if (buildsLoading) return;
-        const build = builds.find(b => b.id === buildIdParam);
+        const build = builds.find((b) => b.id === buildIdParam);
         if (build) {
-          const car = allCars.find(c => c.slug === build.carSlug);
+          const car = allCars.find((c) => c.slug === build.carSlug);
           if (car) {
             setSelectedCar(car);
             setCurrentBuildId(buildIdParam);
           }
         }
       } else if (carSlugParam) {
-        const car = allCars.find(c => c.slug === carSlugParam);
+        const car = allCars.find((c) => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
           setCurrentBuildId(null);
@@ -234,40 +244,25 @@ function MySpecsContent() {
     router.push('/garage');
   };
 
-  // Loading state
-  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
-  const isLoadingCar = carSlugParam && carsLoading && !fallbackCar;
-  if (authLoading || isLoadingBuild || isLoadingCar || fallbackLoading) {
-    return (
-      <div className={styles.page}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Specs" 
-          subtext="Fetching vehicle specifications..."
-          fullPage 
-        />
-      </div>
-    );
-  }
-
   // Get current build for display
-  const currentBuild = builds.find(b => b.id === currentBuildId);
-  const buildName = currentBuild?.name;
-  
+  const currentBuild = builds.find((b) => b.id === currentBuildId);
+  const _buildName = currentBuild?.name;
+
   // SOURCE OF TRUTH: Calculate HP gain dynamically from installed mods
   // Never use stored values (currentBuild?.totalHpGain) - they can become stale
   // See docs/SOURCE_OF_TRUTH.md Rule 8
+  // NOTE: This must be called before any early returns (React hooks rules)
   const { hpGain, finalHp, hasBuildUpgrades } = useMemo(() => {
     const installedMods = userVehicle?.installedModifications || [];
-    
+
     if (installedMods.length === 0) {
       return { hpGain: 0, finalHp: selectedCar?.hp || null, hasBuildUpgrades: false };
     }
-    
+
     const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
     const calculatedHpGain = modificationGains.hpGain || 0;
     const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
-    
+
     return {
       hpGain: calculatedHpGain,
       finalHp: calculatedFinalHp,
@@ -275,20 +270,32 @@ function MySpecsContent() {
     };
   }, [userVehicle?.installedModifications, selectedCar]);
 
+  // Loading state
+  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
+  const isLoadingCar = carSlugParam && carsLoading && !fallbackCar;
+  if (authLoading || isLoadingBuild || isLoadingCar || fallbackLoading) {
+    return (
+      <div className={styles.page}>
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Specs"
+          subtext="Fetching vehicle specifications..."
+          fullPage
+        />
+      </div>
+    );
+  }
+
   // No car selected
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav 
-          carSlug={carSlugParam}
-          buildId={buildIdParam}
-          onBack={handleBack}
-        />
+        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
         <EmptyState
           icon={Icons.gauge}
           title="Select a Vehicle"
           description="Choose a vehicle from your garage to view its specifications"
-          action={{ label: "Go to My Garage", href: "/garage" }}
+          action={{ label: 'Go to My Garage', href: '/garage' }}
           variant="centered"
           size="lg"
         />
@@ -300,16 +307,9 @@ function MySpecsContent() {
   // Car selected - show specs
   return (
     <div className={styles.page}>
-      <MyGarageSubNav 
-        carSlug={selectedCar.slug}
-        buildId={currentBuildId}
-        onBack={handleBack}
-      />
-      
-      <GarageVehicleSelector 
-        selectedCarSlug={selectedCar.slug}
-        buildId={currentBuildId}
-      />
+      <MyGarageSubNav carSlug={selectedCar.slug} buildId={currentBuildId} onBack={handleBack} />
+
+      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
 
       <div className={styles.content}>
         {/* Specs Grid */}
@@ -318,7 +318,7 @@ function MySpecsContent() {
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
               <h3 className={styles.cardTitle}>Performance</h3>
-              <button 
+              <button
                 className={styles.askAlBtn}
                 onClick={() => askALAboutSection('performance')}
                 title="Ask AL about performance"
@@ -343,12 +343,42 @@ function MySpecsContent() {
                   )}
                 </div>
               )}
-              {selectedCar.torque && <div className={styles.specItem}><span>Torque</span><span>{selectedCar.torque} lb-ft</span></div>}
-              {selectedCar.zeroToSixty && <div className={styles.specItem}><span>0-60 mph</span><span>{selectedCar.zeroToSixty}s</span></div>}
-              {selectedCar.quarterMile && <div className={styles.specItem}><span>1/4 Mile</span><span>{selectedCar.quarterMile}s</span></div>}
-              {selectedCar.topSpeed && <div className={styles.specItem}><span>Top Speed</span><span>{selectedCar.topSpeed} mph</span></div>}
-              {selectedCar.braking60To0 && <div className={styles.specItem}><span>60-0 Braking</span><span>{selectedCar.braking60To0} ft</span></div>}
-              {selectedCar.lateralG && <div className={styles.specItem}><span>Lateral G</span><span>{selectedCar.lateralG}g</span></div>}
+              {selectedCar.torque && (
+                <div className={styles.specItem}>
+                  <span>Torque</span>
+                  <span>{selectedCar.torque} lb-ft</span>
+                </div>
+              )}
+              {selectedCar.zeroToSixty && (
+                <div className={styles.specItem}>
+                  <span>0-60 mph</span>
+                  <span>{selectedCar.zeroToSixty}s</span>
+                </div>
+              )}
+              {selectedCar.quarterMile && (
+                <div className={styles.specItem}>
+                  <span>1/4 Mile</span>
+                  <span>{selectedCar.quarterMile}s</span>
+                </div>
+              )}
+              {selectedCar.topSpeed && (
+                <div className={styles.specItem}>
+                  <span>Top Speed</span>
+                  <span>{selectedCar.topSpeed} mph</span>
+                </div>
+              )}
+              {selectedCar.braking60To0 && (
+                <div className={styles.specItem}>
+                  <span>60-0 Braking</span>
+                  <span>{selectedCar.braking60To0} ft</span>
+                </div>
+              )}
+              {selectedCar.lateralG && (
+                <div className={styles.specItem}>
+                  <span>Lateral G</span>
+                  <span>{selectedCar.lateralG}g</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -356,7 +386,7 @@ function MySpecsContent() {
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
               <h3 className={styles.cardTitle}>Engine & Drivetrain</h3>
-              <button 
+              <button
                 className={styles.askAlBtn}
                 onClick={() => askALAboutSection('engine')}
                 title="Ask AL about engine & drivetrain"
@@ -366,10 +396,30 @@ function MySpecsContent() {
               </button>
             </div>
             <div className={styles.specItems}>
-              {selectedCar.engine && <div className={styles.specItem}><span>Engine</span><span>{selectedCar.engine}</span></div>}
-              {selectedCar.trans && <div className={styles.specItem}><span>Transmission</span><span>{selectedCar.trans}</span></div>}
-              {selectedCar.drivetrain && <div className={styles.specItem}><span>Drivetrain</span><span>{selectedCar.drivetrain}</span></div>}
-              {selectedCar.category && <div className={styles.specItem}><span>Layout</span><span>{selectedCar.category}</span></div>}
+              {selectedCar.engine && (
+                <div className={styles.specItem}>
+                  <span>Engine</span>
+                  <span>{selectedCar.engine}</span>
+                </div>
+              )}
+              {selectedCar.trans && (
+                <div className={styles.specItem}>
+                  <span>Transmission</span>
+                  <span>{selectedCar.trans}</span>
+                </div>
+              )}
+              {selectedCar.drivetrain && (
+                <div className={styles.specItem}>
+                  <span>Drivetrain</span>
+                  <span>{selectedCar.drivetrain}</span>
+                </div>
+              )}
+              {selectedCar.category && (
+                <div className={styles.specItem}>
+                  <span>Layout</span>
+                  <span>{selectedCar.category}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -377,7 +427,7 @@ function MySpecsContent() {
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
               <h3 className={styles.cardTitle}>Chassis & Body</h3>
-              <button 
+              <button
                 className={styles.askAlBtn}
                 onClick={() => askALAboutSection('chassis')}
                 title="Ask AL about chassis & body"
@@ -387,10 +437,30 @@ function MySpecsContent() {
               </button>
             </div>
             <div className={styles.specItems}>
-              {selectedCar.curbWeight && <div className={styles.specItem}><span>Curb Weight</span><span>{selectedCar.curbWeight.toLocaleString()} lbs</span></div>}
-              {selectedCar.seats && <div className={styles.specItem}><span>Seats</span><span>{selectedCar.seats}</span></div>}
-              {selectedCar.country && <div className={styles.specItem}><span>Origin</span><span>{selectedCar.country}</span></div>}
-              {selectedCar.years && <div className={styles.specItem}><span>Model Years</span><span>{selectedCar.years}</span></div>}
+              {selectedCar.curbWeight && (
+                <div className={styles.specItem}>
+                  <span>Curb Weight</span>
+                  <span>{selectedCar.curbWeight.toLocaleString()} lbs</span>
+                </div>
+              )}
+              {selectedCar.seats && (
+                <div className={styles.specItem}>
+                  <span>Seats</span>
+                  <span>{selectedCar.seats}</span>
+                </div>
+              )}
+              {selectedCar.country && (
+                <div className={styles.specItem}>
+                  <span>Origin</span>
+                  <span>{selectedCar.country}</span>
+                </div>
+              )}
+              {selectedCar.years && (
+                <div className={styles.specItem}>
+                  <span>Model Years</span>
+                  <span>{selectedCar.years}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -398,7 +468,7 @@ function MySpecsContent() {
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
               <h3 className={styles.cardTitle}>Ownership</h3>
-              <button 
+              <button
                 className={styles.askAlBtn}
                 onClick={() => askALAboutSection('ownership')}
                 title="Ask AL about ownership"
@@ -408,9 +478,24 @@ function MySpecsContent() {
               </button>
             </div>
             <div className={styles.specItems}>
-              {selectedCar.priceRange && <div className={styles.specItem}><span>Price Range</span><span>{selectedCar.priceRange}</span></div>}
-              {selectedCar.dailyUsabilityTag && <div className={styles.specItem}><span>Daily Use</span><span>{selectedCar.dailyUsabilityTag}</span></div>}
-              {selectedCar.fuelEconomyCombined && <div className={styles.specItem}><span>MPG Combined</span><span>{selectedCar.fuelEconomyCombined}</span></div>}
+              {selectedCar.priceRange && (
+                <div className={styles.specItem}>
+                  <span>Price Range</span>
+                  <span>{selectedCar.priceRange}</span>
+                </div>
+              )}
+              {selectedCar.dailyUsabilityTag && (
+                <div className={styles.specItem}>
+                  <span>Daily Use</span>
+                  <span>{selectedCar.dailyUsabilityTag}</span>
+                </div>
+              )}
+              {selectedCar.fuelEconomyCombined && (
+                <div className={styles.specItem}>
+                  <span>MPG Combined</span>
+                  <span>{selectedCar.fuelEconomyCombined}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -419,7 +504,7 @@ function MySpecsContent() {
         <div className={styles.ratingsCard}>
           <div className={styles.cardHeader}>
             <h3 className={styles.cardTitle}>AutoRev Ratings</h3>
-            <button 
+            <button
               className={styles.askAlBtn}
               onClick={() => askALAboutSection('ratings')}
               title="Ask AL about ratings"
@@ -468,7 +553,7 @@ function MySpecsContent() {
             )}
           </div>
         )}
-        
+
         {/* Confirm Specs Section */}
         {isAuthenticated && userVehicle && (
           <div className={styles.confirmSection} ref={confirmButtonRef}>
@@ -477,7 +562,9 @@ function MySpecsContent() {
                 <span className={styles.confirmedIcon}>✓</span>
                 <div className={styles.confirmedText}>
                   <strong>Specs Confirmed</strong>
-                  <span>You&apos;ve verified these specifications are accurate for your vehicle</span>
+                  <span>
+                    You&apos;ve verified these specifications are accurate for your vehicle
+                  </span>
                 </div>
               </div>
             ) : (
@@ -486,7 +573,7 @@ function MySpecsContent() {
                   <strong>Are these specs accurate?</strong>
                   <span>Review the specs above and confirm they match your {selectedCar.name}</span>
                 </div>
-                <button 
+                <button
                   className={styles.confirmButton}
                   onClick={handleConfirmSpecs}
                   disabled={confirmingSpecs}
@@ -513,12 +600,16 @@ function MySpecsContent() {
           </div>
         )}
       </div>
-      
+
       {/* Continue to Build CTA */}
       {selectedCar && (
         <div className={styles.continueCtaContainer}>
-          <Link 
-            href={currentBuildId ? `/garage/my-build?build=${currentBuildId}` : `/garage/my-build?car=${selectedCar.slug}`}
+          <Link
+            href={
+              currentBuildId
+                ? `/garage/my-build?build=${currentBuildId}`
+                : `/garage/my-build?car=${selectedCar.slug}`
+            }
             className={styles.continueCta}
           >
             <div className={styles.ctaContent}>
@@ -531,7 +622,7 @@ function MySpecsContent() {
           </Link>
         </div>
       )}
-      
+
       <AuthModal {...authModal.props} />
     </div>
   );
@@ -540,11 +631,11 @@ function MySpecsContent() {
 function MySpecsLoading() {
   return (
     <div className={styles.page}>
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Specs" 
+      <LoadingSpinner
+        variant="branded"
+        text="Loading Specs"
         subtext="Fetching vehicle specifications..."
-        fullPage 
+        fullPage
       />
     </div>
   );

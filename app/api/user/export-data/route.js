@@ -1,21 +1,23 @@
 /**
  * GDPR Data Export API (Right to Access)
- * 
+ *
  * Allows users to export all their personal data in JSON format.
  * This endpoint:
  * 1. Verifies the user is authenticated
  * 2. Fetches all user data from Supabase tables
  * 3. Returns a comprehensive JSON export
- * 
+ *
  * GET /api/user/export-data
- * 
+ *
  * @module app/api/user/export-data
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@/lib/supabase/server';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 // Service role client for fetching all user data
 const supabaseAdmin = createClient(
@@ -33,18 +35,30 @@ const EXPORT_CONFIG = [
   { table: 'saved_builds', select: '*', label: 'Saved Builds' },
   { table: 'build_upgrades', select: '*', label: 'Build Upgrades' },
   { table: 'saved_events', select: '*', label: 'Saved Events' },
-  { table: 'al_conversations', select: 'id, created_at, title, message_count', label: 'AL Conversations' },
-  { table: 'al_messages', select: 'id, conversation_id, role, content, created_at', label: 'AL Messages' },
+  {
+    table: 'al_conversations',
+    select: 'id, created_at, title, message_count',
+    label: 'AL Conversations',
+  },
+  {
+    table: 'al_messages',
+    select: 'id, conversation_id, role, content, created_at',
+    label: 'AL Messages',
+  },
   { table: 'user_activity', select: 'event_type, event_data, created_at', label: 'Activity Log' },
   { table: 'weekly_engagement', select: '*', label: 'Engagement History' },
-  { table: 'user_feedback', select: 'category, message, page_url, created_at', label: 'Feedback Submitted' },
+  {
+    table: 'user_feedback',
+    select: 'category, message, page_url, created_at',
+    label: 'Feedback Submitted',
+  },
 ];
 
 /**
  * Fetch data from a table for a user
- * @param {string} table 
- * @param {string} select 
- * @param {string} userId 
+ * @param {string} table
+ * @param {string} select
+ * @param {string} userId
  */
 async function fetchTableData(table, select, userId) {
   try {
@@ -74,50 +88,51 @@ async function fetchTableData(table, select, userId) {
 
 /**
  * Sanitize sensitive data from export
- * @param {Object} data 
+ * @param {Object} data
  */
 function sanitizeExportData(data) {
   const sanitized = { ...data };
-  
+
   // Remove sensitive fields that shouldn't be exported
   const sensitiveFields = [
     'stripe_customer_id',
-    'stripe_subscription_id', 
+    'stripe_subscription_id',
     'ip_address',
     'user_agent',
   ];
-  
+
   for (const field of sensitiveFields) {
     if (field in sanitized) {
       sanitized[field] = '[REDACTED]';
     }
   }
-  
+
   return sanitized;
 }
 
 /**
  * GET /api/user/export-data
- * 
+ *
  * Export all user data (GDPR Right to Access)
- * 
+ *
  * Requires authentication. User can only export their own data.
- * 
+ *
  * Response: JSON file download with all user data
  */
 async function handleGet(request) {
   // Get authenticated user
-  const supabase = await createServerClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json(
-      { error: 'Authentication required' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
   const userId = user.id;
+  // eslint-disable-next-line no-console -- Audit logging for GDPR compliance
   console.log(`[Export Data] Starting data export for user: ${userId.slice(0, 8)}...`);
 
   // Build export object
@@ -145,12 +160,10 @@ async function handleGet(request) {
   // Fetch data from each table
   for (const config of EXPORT_CONFIG) {
     const result = await fetchTableData(config.table, config.select, userId);
-    
+
     if (result.data) {
       // Sanitize each record
-      exportData.data[config.label] = result.data.map(record => 
-        sanitizeExportData(record)
-      );
+      exportData.data[config.label] = result.data.map((record) => sanitizeExportData(record));
       exportData.metadata.tables[config.table] = {
         recordCount: result.data.length,
         status: 'exported',
@@ -169,14 +182,20 @@ async function handleGet(request) {
   }
 
   // Calculate totals
-  const totalRecords = Object.values(exportData.data)
-    .reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
-  
-  exportData.metadata.totalRecords = totalRecords;
-  exportData.metadata.tablesExported = Object.values(exportData.metadata.tables)
-    .filter(t => t.status === 'exported').length;
+  const totalRecords = Object.values(exportData.data).reduce(
+    (sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0),
+    0
+  );
 
-  console.log(`[Export Data] Export complete: ${totalRecords} records from ${exportData.metadata.tablesExported} tables`);
+  exportData.metadata.totalRecords = totalRecords;
+  exportData.metadata.tablesExported = Object.values(exportData.metadata.tables).filter(
+    (t) => t.status === 'exported'
+  ).length;
+
+  // eslint-disable-next-line no-console -- Audit logging for GDPR compliance
+  console.log(
+    `[Export Data] Export complete: ${totalRecords} records from ${exportData.metadata.tablesExported} tables`
+  );
 
   // Check for download format parameter
   const { searchParams } = new URL(request.url);
@@ -185,7 +204,7 @@ async function handleGet(request) {
   if (format === 'download') {
     // Return as file download
     const filename = `autorev-data-export-${new Date().toISOString().split('T')[0]}.json`;
-    
+
     return new NextResponse(JSON.stringify(exportData, null, 2), {
       status: 200,
       headers: {
@@ -199,7 +218,7 @@ async function handleGet(request) {
   return NextResponse.json(exportData);
 }
 
-export const GET = withErrorLogging(handleGet, { 
-  route: 'user/export-data', 
-  feature: 'gdpr' 
+export const GET = withErrorLogging(handleGet, {
+  route: 'user/export-data',
+  feature: 'gdpr',
 });

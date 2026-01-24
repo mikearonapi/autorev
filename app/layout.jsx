@@ -1,59 +1,58 @@
 /**
  * Root Layout
- * 
+ *
  * Contains ALL providers for backward compatibility during route group migration.
- * 
+ *
  * Migration strategy:
  * 1. Keep all providers in root layout
  * 2. Move routes into (marketing) or (app) groups
  * 3. Once all routes are in groups, remove unused providers from root
- * 
+ *
  * Route group layouts:
  * - app/(marketing)/layout.jsx - adds UI elements for marketing pages
  * - app/(app)/layout.jsx - adds UI elements for app pages
  */
 
 import { Suspense } from 'react';
+
 import dynamic from 'next/dynamic';
+
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
-import MetaPixel from '@/components/MetaPixel';
-import './globals.css';
-import { fontVariables } from '@/lib/fonts';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { QueryProvider } from '@/components/providers/QueryProvider';
-import { AppConfigProvider } from '@/lib/hooks/useAppConfig';
-import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
-import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
-import { CompareProvider } from '@/components/providers/CompareProvider';
-import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
-import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
-import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
-import GlobalErrorHandler from '@/components/GlobalErrorHandler';
+
+import BetaBanner from '@/components/BetaBanner';
+import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
-import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
-import { BannerProvider } from '@/components/providers/BannerProvider';
-import { PostHogProvider } from '@/components/providers/PostHogProvider';
-import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
-import ScrollToTop from '@/components/ScrollToTop';
+import Footer from '@/components/Footer';
+import GlobalErrorHandler from '@/components/GlobalErrorHandler';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import Header from '@/components/Header';
+import MetaPixel from '@/components/MetaPixel';
 import PageViewTracker from '@/components/PageViewTracker';
-import BetaBanner from '@/components/BetaBanner';
+import { AuthProvider } from '@/components/providers/AuthProvider';
+import { BannerProvider } from '@/components/providers/BannerProvider';
+import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
+import { CompareProvider } from '@/components/providers/CompareProvider';
+import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
+import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
+import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
+import { QueryProvider } from '@/components/providers/QueryProvider';
+import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import ScrollToTop from '@/components/ScrollToTop';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import SkipLink from '@/components/SkipLink';
+import { fontVariables } from '@/lib/fonts';
+import { AppConfigProvider } from '@/lib/hooks/useAppConfig';
+
+import './globals.css';
 
 // =============================================================================
 // LAZY-LOADED COMPONENTS (Deferred for better LCP)
 // These components are not critical for initial render and can load after hydration
 // =============================================================================
-
-// Deferred Providers - Heavy providers load after first paint
-// This reduces Total Blocking Time (TBT) by deferring large code bundles
-// NOTE: AIChatHost removed - AL chat now uses dedicated /al page (ALPageClient.jsx)
-import { FeedbackHost } from '@/components/FeedbackContext';
 
 // Compare Bar - Only shows when user adds cars to compare
 const CompareBar = dynamic(() => import('@/components/CompareBar'), { ssr: false });
@@ -61,11 +60,10 @@ const CompareBar = dynamic(() => import('@/components/CompareBar'), { ssr: false
 // Mobile CTA - Only shows on scroll
 const MobileBottomCta = dynamic(() => import('@/components/MobileBottomCta'), { ssr: false });
 
-// Feedback Corner - Non-critical UI element
-const FeedbackCorner = dynamic(() => import('@/components/FeedbackCorner'), { ssr: false });
-
 // Cookie Consent Banner - GDPR compliance
 const CookieConsent = dynamic(() => import('@/components/CookieConsent'), { ssr: false });
+
+// NOTE: FeedbackHost and FeedbackCorner removed - not currently in use
 
 const siteUrl = 'https://autorev.app';
 
@@ -75,7 +73,8 @@ export const metadata = {
     default: 'AutoRev | Build Planning for Performance Enthusiasts',
     template: '%s | AutoRev',
   },
-  description: 'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. The complete platform for performance modifications. Research parts, track your project, join the community.',
+  description:
+    'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. The complete platform for performance modifications. Research parts, track your project, join the community.',
   keywords: [
     // Core positioning
     'car AI assistant',
@@ -131,7 +130,8 @@ export const metadata = {
     url: siteUrl,
     siteName: 'AutoRev',
     title: 'AutoRev | Your AI Car Expert',
-    description: 'Like having an obsessive car nerd in your pocket. Specs, troubleshooting, mods, recalls — answered instantly, without bias. Tony Stark had Jarvis. Now you have AL.',
+    description:
+      'Like having an obsessive car nerd in your pocket. Specs, troubleshooting, mods, recalls — answered instantly, without bias. Tony Stark had Jarvis. Now you have AL.',
     images: [
       {
         url: '/opengraph-image',
@@ -147,7 +147,8 @@ export const metadata = {
     site: '@autorev',
     creator: '@autorev',
     title: 'AutoRev | Your AI Car Expert',
-    description: 'The obsessive car nerd in your pocket. Specs, mods, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
+    description:
+      'The obsessive car nerd in your pocket. Specs, mods, recalls — answered instantly. Tony Stark had Jarvis. Now you have AL.',
     images: [
       {
         url: '/twitter-image',
@@ -198,11 +199,9 @@ const organizationSchema = {
   name: 'AutoRev',
   url: siteUrl,
   logo: `${siteUrl}/apple-icon`,
-  description: 'AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls. Tony Stark had Jarvis, now you have AL.',
-  sameAs: [
-    'https://instagram.com/autorev',
-    'https://youtube.com/@autorev'
-  ],
+  description:
+    'AI-powered research platform for sports car enthusiasts. Like having the obsessive car nerd in your pocket — specs, troubleshooting, mods, recalls. Tony Stark had Jarvis, now you have AL.',
+  sameAs: ['https://instagram.com/autorev', 'https://youtube.com/@autorev'],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
@@ -216,7 +215,8 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'AutoRev',
   url: siteUrl,
-  description: 'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events — with AL, your AI car expert.',
+  description:
+    'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events — with AL, your AI car expert.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -239,7 +239,8 @@ const softwareAppSchema = {
     price: '0',
     priceCurrency: 'USD',
   },
-  description: 'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events.',
+  description:
+    'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events.',
   featureList: [
     'AI car assistant (AL) for instant answers',
     'Sports car database with 300+ vehicles',
@@ -270,7 +271,11 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
         <link rel="dns-prefetch" href="https://pcbkerqlfcjbnhaxjyqj.supabase.co" />
         {/* Vercel Blob - crossOrigin="anonymous" for public image assets */}
-        <link rel="preconnect" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com" />
         {/* Google Analytics / Tag Manager - loaded via script (deferred until interaction) */}
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
@@ -278,7 +283,7 @@ export default function RootLayout({ children }) {
         {/* Facebook Pixel - loaded via script (deferred until interaction) */}
         <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
-        
+
         {/* =============================================================================
             VIEWPORT CONFIGURATION - Optimized for iOS + Android
             
@@ -292,16 +297,19 @@ export default function RootLayout({ children }) {
             NOTE: We do NOT use user-scalable=no (accessibility violation).
             Zoom prevention is handled via CSS touch-action on specific elements.
             ============================================================================= */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, interactive-widget=resizes-visual" />
-        <meta name="theme-color" content="#1a4d6e" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#0a1628" media="(prefers-color-scheme: light)" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, interactive-widget=resizes-visual"
+        />
+        <meta name="theme-color" content="#0d1b2a" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#0d1b2a" media="(prefers-color-scheme: light)" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="AutoRev" />
-        
+
         {/* Facebook Domain Verification */}
         <meta name="facebook-domain-verification" content="vu8n45bve2gdnsxj7x3leq648aci5e" />
-        
+
         {/* =============================================================================
             LCP IMAGE PRELOAD HINTS
             REMOVED from root layout - each page should handle its own LCP preload
@@ -311,19 +319,19 @@ export default function RootLayout({ children }) {
             - Homepage: app/(app)/page.jsx metadata or generateMetadata
             - Landing pages: handled by Next.js Image priority prop
             ============================================================================= */}
-        
+
         {/* Favicons - static files for maximum compatibility */}
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-        
+
         {/* Apple Touch Icons - REQUIRED for "Add to Home Screen" on iOS */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        
+
         {/* PWA manifest - REQUIRED for "Add to Home Screen" prompt */}
         <link rel="manifest" href="/manifest.json" />
-        
+
         {/* Social sharing optimization for iMessage, WhatsApp, etc. */}
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -341,10 +349,10 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
         />
-        
+
         {/* Google Analytics 4 */}
         <GoogleAnalytics />
-        
+
         {/* Meta Pixel (Facebook Pixel) */}
         <MetaPixel />
       </head>
@@ -405,63 +413,63 @@ export default function RootLayout({ children }) {
         />
         {/* Skip to main content link - WCAG 2.1 AA compliance */}
         <SkipLink />
-        
+
         <ThemeProvider>
-        <GlobalErrorHandler>
-          <FetchInterceptor>
-            <ConsoleErrorInterceptor>
-              <ErrorBoundary name="RootLayout" featureContext="app">
-                <QueryProvider>
-                  <LoadingProgressProvider>
-                    <AuthProvider>
-                      <PostHogProvider>
-                      <AppConfigProvider>
-                        <CarSelectionProvider>
-                          <FavoritesProvider>
-                            <CompareProvider>
-                              <SavedBuildsProvider>
-                                <OwnedVehiclesProvider>
-                                  <BannerProvider>
-                                    {/* Scroll to top on route change + Analytics tracking */}
-                                    <Suspense fallback={null}>
-                                      <ScrollToTop />
-                                      <PageViewTracker />
-                                    </Suspense>
-                                    <Header />
-                                    
-                                    {/* Beta banner - DISABLED (launch mode) */}
-                                    <BetaBanner visible={false} />
-                                    
-                                    {/* AI Chat removed - AL now uses dedicated /al page */}
-                                    
-                                    <main id="main-content" tabIndex={-1}>
-                                      {children}
-                                    </main>
-                                    
-                                    <Footer />
-                                    
-                                    {/* Floating Compare Bar - shows when cars added to compare */}
-                                    <Suspense fallback={null}>
-                                      <CompareBar />
-                                    </Suspense>
-                                    
-                                    {/* Mobile sticky CTA bar - shows on scroll */}
-                                    <MobileBottomCta />
-                                  </BannerProvider>
-                                </OwnedVehiclesProvider>
-                              </SavedBuildsProvider>
-                            </CompareProvider>
-                          </FavoritesProvider>
-                        </CarSelectionProvider>
-                      </AppConfigProvider>
-                      </PostHogProvider>
-                    </AuthProvider>
-                  </LoadingProgressProvider>
-                </QueryProvider>
-              </ErrorBoundary>
-            </ConsoleErrorInterceptor>
-          </FetchInterceptor>
-        </GlobalErrorHandler>
+          <GlobalErrorHandler>
+            <FetchInterceptor>
+              <ConsoleErrorInterceptor>
+                <ErrorBoundary name="RootLayout" featureContext="app">
+                  <QueryProvider>
+                    <LoadingProgressProvider>
+                      <AuthProvider>
+                        <PostHogProvider>
+                          <AppConfigProvider>
+                            <CarSelectionProvider>
+                              <FavoritesProvider>
+                                <CompareProvider>
+                                  <SavedBuildsProvider>
+                                    <OwnedVehiclesProvider>
+                                      <BannerProvider>
+                                        {/* Scroll to top on route change + Analytics tracking */}
+                                        <Suspense fallback={null}>
+                                          <ScrollToTop />
+                                          <PageViewTracker />
+                                        </Suspense>
+                                        <Header />
+
+                                        {/* Beta banner - DISABLED (launch mode) */}
+                                        <BetaBanner visible={false} />
+
+                                        {/* AI Chat removed - AL now uses dedicated /al page */}
+
+                                        <main id="main-content" tabIndex={-1}>
+                                          {children}
+                                        </main>
+
+                                        <Footer />
+
+                                        {/* Floating Compare Bar - shows when cars added to compare */}
+                                        <Suspense fallback={null}>
+                                          <CompareBar />
+                                        </Suspense>
+
+                                        {/* Mobile sticky CTA bar - shows on scroll */}
+                                        <MobileBottomCta />
+                                      </BannerProvider>
+                                    </OwnedVehiclesProvider>
+                                  </SavedBuildsProvider>
+                                </CompareProvider>
+                              </FavoritesProvider>
+                            </CarSelectionProvider>
+                          </AppConfigProvider>
+                        </PostHogProvider>
+                      </AuthProvider>
+                    </LoadingProgressProvider>
+                  </QueryProvider>
+                </ErrorBoundary>
+              </ConsoleErrorInterceptor>
+            </FetchInterceptor>
+          </GlobalErrorHandler>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights sampleRate={0.5} />
@@ -471,4 +479,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

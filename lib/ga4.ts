@@ -1,18 +1,18 @@
 /**
  * Google Analytics 4 (GA4) Tracking Utilities
- * 
+ *
  * Provides typed functions for tracking GA4 conversion events.
  * All functions safely handle cases where gtag is undefined (ad blockers).
- * 
+ *
  * NAMING CONVENTION: "Object + Past-Tense Verb" in Title Case
- * 
+ *
  * Events tracked:
  * - Sign Up: User creates account via Google OAuth
  * - Car Selector Completed: User finishes Car Selector and sees results
  * - AL Conversation Started: User sends first message to AL
  * - Garage Vehicle Added: User adds a car to their garage/favorites
  * - Car Detail Viewed: User views a car detail page
- * 
+ *
  * @module lib/ga4
  */
 
@@ -30,9 +30,9 @@ function safeGtag(
   if (typeof window === 'undefined') return;
   if (typeof window.gtag !== 'function') return;
   if (!GA_MEASUREMENT_ID) return;
-  
+
   try {
-    (window.gtag as Function)(command, ...args);
+    (window.gtag as (...args: unknown[]) => void)(command, ...args);
   } catch (error) {
     // Silently fail - analytics should never break the app
     console.warn('[GA4] gtag call failed:', error);
@@ -300,11 +300,7 @@ export function trackSearch(searchTerm: string): void {
 /**
  * Track share event
  */
-export function trackShare(params: {
-  method: string;
-  contentType: string;
-  itemId?: string;
-}): void {
+export function trackShare(params: { method: string; contentType: string; itemId?: string }): void {
   trackEvent('Share', {
     method: params.method,
     content_type: params.contentType,
@@ -336,4 +332,3 @@ export const ga4 = {
 };
 
 export default ga4;
-

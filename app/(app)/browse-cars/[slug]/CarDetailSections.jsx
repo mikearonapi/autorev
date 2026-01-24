@@ -2,18 +2,21 @@
 
 /**
  * Car Detail Page Async Sections
- * 
+ *
  * Suspense-ready async components for streaming enriched data.
  * Each section fetches its own data and can load independently.
- * 
+ *
  * @module app/browse-cars/[slug]/CarDetailSections
  */
 
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import { Suspense } from 'react';
+
 import styles from './page.module.css';
 
 // Loading skeleton components
-function SectionSkeleton({ title, icon }) {
+function SectionSkeleton({ title: _title, icon }) {
   return (
     <div className={styles.contentSection}>
       <div className={styles.sectionHeader}>
@@ -33,7 +36,7 @@ function SectionSkeleton({ title, icon }) {
  */
 export function AsyncFuelEconomySection({ carSlug }) {
   const { FuelEconomySection } = require('@/components/CarDetailSections');
-  
+
   return (
     <Suspense fallback={<SectionSkeleton title="Fuel Economy" />}>
       <FuelEconomySection carSlug={carSlug} />
@@ -47,7 +50,7 @@ export function AsyncFuelEconomySection({ carSlug }) {
  */
 export function AsyncSafetySection({ carSlug }) {
   const { SafetyRatingsSection } = require('@/components/CarDetailSections');
-  
+
   return (
     <Suspense fallback={<SectionSkeleton title="Safety Ratings" />}>
       <SafetyRatingsSection carSlug={carSlug} />
@@ -61,7 +64,7 @@ export function AsyncSafetySection({ carSlug }) {
  */
 export function AsyncPriceByYearSection({ carSlug, carName }) {
   const { PriceByYearSection } = require('@/components/CarDetailSections');
-  
+
   return (
     <Suspense fallback={<SectionSkeleton title="Price by Model Year" />}>
       <PriceByYearSection carSlug={carSlug} carName={carName} />
@@ -75,7 +78,7 @@ export function AsyncPriceByYearSection({ carSlug, carName }) {
  */
 export function AsyncExpertReviewsSection({ carSlug, car }) {
   const ExpertReviews = require('@/components/ExpertReviews').default;
-  
+
   return (
     <Suspense fallback={<SectionSkeleton title="Expert Reviews" />}>
       <ExpertReviews carSlug={carSlug} car={car} />
@@ -89,7 +92,7 @@ export function AsyncExpertReviewsSection({ carSlug, car }) {
  */
 export function AsyncLapTimesSection({ carSlug, carName, isTeaser }) {
   const { LapTimesSection } = require('@/components/PerformanceData');
-  
+
   return (
     <Suspense fallback={<SectionSkeleton title="Track Lap Times" />}>
       <LapTimesSection carSlug={carSlug} carName={carName} isTeaser={isTeaser} />
@@ -106,4 +109,3 @@ const CarDetailSections = {
 };
 
 export default CarDetailSections;
-

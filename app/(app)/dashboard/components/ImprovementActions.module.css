@@ -1,7 +1,8 @@
 /**
  * ImprovementActions Styles
  * 
- * Compact cards showing ways to earn points
+ * Category-based layout matching PointsExplainerModal for consistency.
+ * Shows ways to earn points organized by category (Growth, Community, Data, Garage, AL).
  */
 
 .container {
@@ -12,139 +13,217 @@
 }
 
 .header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: var(--space-3, 12px);
+  margin-bottom: var(--space-2, 8px);
 }
 
 .title {
-  font-size: var(--text-base, 15px);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-h4);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
-.subtitle {
-  font-size: var(--text-xs, 11px);
-  color: var(--color-text-tertiary, #64748b);
+.intro {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.5;
+  margin: 0 0 var(--space-4, 16px) 0;
 }
 
-/* Actions List */
-.actionsList {
+/* Categories */
+.categories {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-3, 12px);
 }
 
-/* Individual Action Card - Compact */
-.actionCard {
+.category {
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: var(--space-3, 12px);
+}
+
+.categoryHeader {
   display: flex;
   align-items: center;
   gap: var(--space-2, 8px);
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.15s ease;
-  min-height: 40px;
+  margin-bottom: var(--space-2, 8px);
 }
 
-.actionCard:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.actionCard:active {
-  transform: scale(0.99);
-}
-
-/* Action Icon - Compact */
-.actionIcon {
+.categoryIcon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  flex-shrink: 0;
 }
 
-/* Action Label */
-.actionLabel {
-  flex: 1;
-  font-size: var(--text-sm);
-  font-weight: 500;
+.categoryLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
   color: var(--color-text-primary, #ffffff);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-/* Action Meta (points + arrow) */
-.actionMeta {
+/* Action list */
+.actionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.actionItem {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.actionItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Clickable action link - keeps same color as non-link for visual consistency with modal */
+.actionLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.actionLink:hover {
+  opacity: 0.8;
+}
+
+.actionLink:active {
+  opacity: 0.6;
+}
+
+.actionLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .actionPoints {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
-.actionArrow {
-  color: var(--color-text-muted, #475569);
-  display: flex;
-  align-items: center;
-  opacity: 0.6;
-  transition: all 0.15s ease;
-}
-
-.actionCard:hover .actionArrow {
-  opacity: 1;
-  transform: translateX(2px);
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-/* Complete State */
-.completeState {
+/* Referral action - clickable row */
+.actionItemReferral {
   display: flex;
   flex-direction: column;
+  gap: var(--space-2, 8px);
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.actionItemReferral:last-child {
+  border-bottom: none;
+}
+
+.referralButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  margin: 4px 0;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.referralButton:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.referralButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.referralButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.referralButtonCopied {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.referralButtonCopied:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.referralButtonContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.referralIcon {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-6, 24px) var(--space-4, 16px);
-  text-align: center;
+  color: #f59e0b;
+  flex-shrink: 0;
 }
 
-.completeIcon {
-  font-size: var(--text-h1);
-  margin-bottom: var(--space-2, 8px);
+.referralButtonCopied .referralIcon {
+  color: #10b981;
 }
 
-.completeText {
-  font-size: var(--text-sm, 13px);
-  font-weight: 600;
+.referralLabel {
+  font-size: var(--text-sm);
   color: var(--color-text-primary, #ffffff);
-  margin: 0 0 var(--space-1, 4px) 0;
+  font-weight: 500;
 }
 
-.completeSubtext {
-  font-size: var(--text-xs, 11px);
-  color: var(--color-text-tertiary, #64748b);
-  margin: 0;
+.referralHint {
+  font-size: var(--text-xs);
+  color: #10b981;
+  line-height: 1.4;
+  padding: 0 4px;
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile Optimizations */
 @media (min-width: 481px) {
   .container {
     padding: var(--space-3, 12px);
-  }
-  
-  .actionCard {
-    padding: 8px;
   }
 }
